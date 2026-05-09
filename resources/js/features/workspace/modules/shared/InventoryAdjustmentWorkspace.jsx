@@ -1,0 +1,417 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableHead,
+    DataTableHeader,
+    DataTableRow,
+} from '@/components/ui/DataTable';
+import SelectField from '@/components/ui/SelectField';
+import TextInput from '@/components/ui/TextInput';
+import TextareaField from '@/components/ui/TextareaField';
+import TableListView from '@/features/workspace/modules/TableListView';
+import InventoryAdjustmentItemModal from '@/features/workspace/modules/shared/InventoryAdjustmentItemModal';
+import {
+    TransactionDateInput,
+    TransactionDock,
+    TransactionFieldLabel,
+    TransactionSectionHeading,
+    TransactionSectionRail,
+    TransactionSwitch,
+    TransactionToolbarIconButton,
+    TransactionToolbarSplitButton,
+    TransactionTotalCard,
+} from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { CogIcon, PrintIcon, SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+
+function cloneList(values) {
+    return Array.isArray(values) ? [...values] : values ? [values] : [];
+}
+
+function cloneItems(items = []) {
+    return items.map((item) => ({
+        ...item,
+        unitLookup: cloneList(item.unitLookup),
+        warehouse: cloneList(item.warehouse),
+        department: cloneList(item.department),
+    }));
+}
+
+function buildFormValues(source = {}) {
+    return {
+        ...source,
+        adjustmentAccount: cloneList(source.adjustmentAccount),
+        branches: cloneList(source.branches),
+        items: cloneItems(source.items),
+    };
+}
+
+function resolveCellAlignClassName(align) {
+    if (align === 'right') {
+        return 'text-right';
+    }
+
+    if (align === 'center') {
+        return 'text-center';
+    }
+
+    return 'text-left';
+}
+
+function InventoryAdjustmentFieldRow({ label, required = false, labelClassName = '', children }) {
+    return (
+        <div className="grid gap-3 sm:grid-cols-[190px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <TransactionFieldLabel label={label} required={required} className={labelClassName} />
+            <div>{children}</div>
+        </div>
+    );
+}
+
+function InventoryAdjustmentHeader({ config, values, setValues, isDetail }) {
+    return (
+        <div className="border-b border-[#d8dde7] px-4 py-4">
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] xl:items-start">
+                <div className="space-y-3">
+                    <InventoryAdjustmentFieldRow label={config.labels.date} required>
+                        <TransactionDateInput value={values.date} className="max-w-[282px]" />
+                    </InventoryAdjustmentFieldRow>
+                </div>
+
+                <div className="space-y-3">
+                    {isDetail ? (
+                        <InventoryAdjustmentFieldRow
+                            label={config.labels.documentNumber}
+                            required
+                            labelClassName="sm:text-right"
+                        >
+                            <TextInput
+                                value={values.documentNumber}
+                                readOnly
+                                trailing={<span className="text-[22px] font-semibold text-[#1f2436]">×</span>}
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-[15px] text-[#1f2436]"
+                                trailingClassName="px-3"
+                            />
+                        </InventoryAdjustmentFieldRow>
+                    ) : (
+                        <div className="grid gap-3 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                            <div className="flex items-center justify-start gap-4 sm:justify-end">
+                                <TransactionFieldLabel label={config.labels.documentNumber} required />
+                                <TransactionSwitch
+                                    checked={values.autoNumber}
+                                    onChange={(nextValue) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            autoNumber: nextValue,
+                                        }))
+                                    }
+                                />
+                            </div>
+
+                            <SelectField
+                                value={values.numberingType}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        numberingType: event.target.value,
+                                    }))
+                                }
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                selectClassName="text-[15px] text-[#1f2436]"
+                            >
+                                {config.numberingOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        </div>
+                    )}
+
+                    <div className="flex justify-end">
+                        <button
+                            type="button"
+                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                        >
+                            {config.takeButtonLabel}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function InventoryAdjustmentTableSection({ columns, items, emptyLabel, isDetail, onOpenItem, minWidthClassName }) {
+    return (
+        <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
+            <div className={minWidthClassName}>
+                <DataTable wrapperClassName="border-[#d1d8e4]">
+                    <DataTableHeader className="bg-[#5f7690]">
+                        <tr>
+                            {columns.map((column) => (
+                                <DataTableHead
+                                    key={column.id}
+                                    className={`${column.widthClassName ?? ''} px-3 py-2 text-[16px] font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
+                                >
+                                    {column.label}
+                                </DataTableHead>
+                            ))}
+                        </tr>
+                    </DataTableHeader>
+
+                    <DataTableBody>
+                        {items.length ? (
+                            items.map((item, index) => (
+                                <DataTableRow
+                                    key={item.id}
+                                    className={`border-[#dde1e8] transition ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${isDetail ? 'cursor-pointer hover:bg-[#eef3fb]' : ''}`.trim()}
+                                    onClick={isDetail ? () => onOpenItem(item) : undefined}
+                                >
+                                    {columns.map((column) => (
+                                        <DataTableCell
+                                            key={column.id}
+                                            className={`px-3 text-[15px] text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
+                                        >
+                                            {item[column.id] ?? ''}
+                                        </DataTableCell>
+                                    ))}
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="border-[#dde1e8] bg-white">
+                                <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                    {emptyLabel}
+                                </DataTableCell>
+                            </DataTableRow>
+                        )}
+                    </DataTableBody>
+                </DataTable>
+            </div>
+        </div>
+    );
+}
+
+function InventoryAdjustmentDetailsSection({ config, values, setValues, isDetail, onOpenItem }) {
+    return (
+        <div className="flex min-h-[520px] flex-col">
+            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 flex-1 flex-col gap-3 sm:max-w-[820px] sm:flex-row sm:items-center">
+                    <div className="min-w-0 flex-1">
+                        <TextInput
+                            value={values.itemSearch}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    itemSearch: event.target.value,
+                                }))
+                            }
+                            placeholder={config.detailSearchPlaceholder}
+                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            inputClassName="text-[15px] text-[#1f2436]"
+                        />
+                    </div>
+
+                    <SelectField
+                        value={values.detailMode}
+                        onChange={(event) =>
+                            setValues((current) => ({
+                                ...current,
+                                detailMode: event.target.value,
+                            }))
+                        }
+                        className="h-[34px] min-w-[82px] rounded-[4px] border-[#7aa2d5]"
+                        selectClassName="text-[15px] text-[#21539b]"
+                        containerClassName="w-auto shrink-0"
+                    >
+                        {config.detailModeOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </SelectField>
+
+                    {isDetail ? (
+                        <TransactionToolbarSplitButton
+                            label="Opsi rincian barang"
+                            icon={<TableActionIcon className="h-4.5 w-4.5" />}
+                            items={values.copyItems ?? []}
+                        />
+                    ) : null}
+                </div>
+
+                <div className="flex items-center gap-3 self-end sm:self-auto">
+                    <TransactionToolbarIconButton label={`Cari ${config.itemSectionTitle}`}>
+                        <SearchIcon className="h-5 w-5 text-[#1f2436]" />
+                    </TransactionToolbarIconButton>
+                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                        {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
+                    </div>
+                </div>
+            </div>
+
+            <InventoryAdjustmentTableSection
+                columns={config.itemTable.columns}
+                items={values.items}
+                emptyLabel={config.itemTable.emptyLabel}
+                isDetail={isDetail}
+                onOpenItem={onOpenItem}
+                minWidthClassName={config.itemTable.minWidthClassName}
+            />
+        </div>
+    );
+}
+
+function InventoryAdjustmentInfoSection({ config, values, setValues }) {
+    return (
+        <div className="min-h-[520px]">
+            <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
+
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,560px)] sm:items-start sm:gap-x-4">
+                <TransactionFieldLabel label={config.labels.adjustmentAccount} />
+                <ChipLookupField
+                    values={values.adjustmentAccount}
+                    placeholder="Cari/Pilih..."
+                    searchLabel="Cari akun penyesuaian"
+                    onRemove={(accountValue) =>
+                        setValues((current) => ({
+                            ...current,
+                            adjustmentAccount: current.adjustmentAccount.filter((item) => item !== accountValue),
+                        }))
+                    }
+                    heightClassName="h-[34px]"
+                />
+
+                <TransactionFieldLabel label={config.labels.notes} />
+                <TextareaField
+                    value={values.notes}
+                    onChange={(event) =>
+                        setValues((current) => ({
+                            ...current,
+                            notes: event.target.value,
+                        }))
+                    }
+                    rows={4}
+                    className="rounded-[4px] border-[#cfd6e2]"
+                    textareaClassName="min-h-[72px] text-[15px] text-[#1f2436]"
+                />
+
+                <TransactionFieldLabel label={config.labels.branch} required />
+                <ChipLookupField
+                    values={values.branches}
+                    placeholder="Cari/Pilih..."
+                    searchLabel="Cari cabang"
+                    onRemove={(branchValue) =>
+                        setValues((current) => ({
+                            ...current,
+                            branches: current.branches.filter((item) => item !== branchValue),
+                        }))
+                    }
+                    heightClassName="h-[34px]"
+                />
+            </div>
+        </div>
+    );
+}
+
+export function InventoryAdjustmentFormView({ config, activeLevel2Tab, buildRecord }) {
+    const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const sourceRecord = useMemo(
+        () =>
+            activeRecordId
+                ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId) ?? { id: activeRecordId }, config)
+                : config.draft,
+        [activeRecordId, buildRecord, config],
+    );
+    const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
+    const [values, setValues] = useState(() => buildFormValues(sourceRecord));
+    const [selectedItem, setSelectedItem] = useState(null);
+    const isDetail = Boolean(activeRecordId);
+
+    useEffect(() => {
+        setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+        setValues(buildFormValues(sourceRecord));
+        setSelectedItem(null);
+    }, [config.sectionTabs, sourceRecord]);
+
+    return (
+        <div className="flex min-h-full flex-col gap-3">
+            <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+                <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+                    <InventoryAdjustmentHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />
+
+                    <div className="flex min-h-0 flex-col gap-4 px-4 py-4 lg:flex-row">
+                        <TransactionSectionRail
+                            tabs={config.sectionTabs}
+                            activeTabId={activeSectionId}
+                            onSelectTab={setActiveSectionId}
+                        />
+
+                        <div className="min-w-0 flex-1">
+                            {activeSectionId === 'additional-info' ? (
+                                <InventoryAdjustmentInfoSection config={config} values={values} setValues={setValues} />
+                            ) : (
+                                <InventoryAdjustmentDetailsSection
+                                    config={config}
+                                    values={values}
+                                    setValues={setValues}
+                                    isDetail={isDetail}
+                                    onOpenItem={setSelectedItem}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <TransactionDock actions={values.dockActions ?? []} />
+            </div>
+
+            <div className="flex justify-end">
+                <TransactionTotalCard label="Total" value={values.totalValue} />
+            </div>
+
+            <InventoryAdjustmentItemModal
+                open={Boolean(selectedItem)}
+                onClose={() => setSelectedItem(null)}
+                modal={{
+                    ...(values.itemModal ?? {}),
+                    adjustmentTypeOptions: config.adjustmentTypeOptions,
+                }}
+                item={selectedItem}
+            />
+        </div>
+    );
+}
+
+export function InventoryAdjustmentTableView({ config, onCreate, onOpenDetail }) {
+    return (
+        <TableListView
+            table={config.table}
+            createButton={{
+                label: config.table.createLabel,
+                onClick: onCreate,
+            }}
+            rightControls={
+                <>
+                    <TransactionToolbarIconButton label="Cetak">
+                        <PrintIcon className="h-4 w-4" />
+                    </TransactionToolbarIconButton>
+                    <TransactionToolbarIconButton label="Pengaturan tabel">
+                        <CogIcon className="h-4 w-4" />
+                    </TransactionToolbarIconButton>
+                </>
+            }
+            onRowClick={(row) =>
+                onOpenDetail?.({
+                    recordId: row.id,
+                    label: row.number,
+                    tabLabel: row.number,
+                })
+            }
+        />
+    );
+}

@@ -1,0 +1,19 @@
+import { useMemo } from 'react';
+
+import SalesDocumentView from '@/features/workspace/modules/SalesDocumentView';
+import { buildSalesOrderConfig, buildSalesOrderRecord } from '@/features/workspace/modules/salesOrderConfig';
+
+export default function SalesOrderView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
+    const config = useMemo(() => buildSalesOrderConfig(page.salesOrder), [page.salesOrder]);
+
+    return (
+        <SalesDocumentView
+            config={config}
+            buildRecord={buildSalesOrderRecord}
+            mode={mode}
+            activeLevel2Tab={activeLevel2Tab}
+            onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
+        />
+    );
+}

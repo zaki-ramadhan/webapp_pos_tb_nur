@@ -1,0 +1,29 @@
+export default function DropdownMenuItem({
+    icon = null,
+    badge = null,
+    children,
+    className = '',
+    iconClassName = '',
+    contentClassName = '',
+    ...props
+}) {
+    return (
+        <button
+            type="button"
+            className={`inline-flex w-full items-center gap-2.5 rounded-[4px] px-2.5 py-2 text-left text-[14px] leading-5 text-[#2b3348] transition-colors duration-100 hover:bg-[#f5f7fb] ${className}`.trim()}
+            {...props}
+        >
+            {icon ? (
+                <span className={`inline-flex h-4 w-4 shrink-0 items-center justify-center text-[#2b3348] ${iconClassName}`.trim()}>
+                    {icon}
+                </span>
+            ) : null}
+            <span className={`block flex-1 whitespace-normal ${contentClassName}`.trim()}>{children}</span>
+            {badge ? (
+                <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-[#f25759] px-1.5 text-[10px] font-semibold text-white">
+                    {badge}
+                </span>
+            ) : null}
+        </button>
+    );
+}

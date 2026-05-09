@@ -1,0 +1,77 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.jsx';
+
+@theme {
+    --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-surface: #fffaf3;
+    --color-panel: #f6efe2;
+    --color-line: rgba(110, 72, 43, 0.14);
+    --color-ink: #2f2419;
+    --color-muted: #6e5844;
+    --color-accent: #b85d20;
+    --color-input-focus: #5a84e5;
+    --color-input-focus-ring: rgba(90, 132, 229, 0.16);
+}
+
+@layer base {
+    html {
+        overflow-x: hidden;
+    }
+
+    body {
+        min-height: 100vh;
+        background-color: var(--color-surface);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        overflow-x: hidden;
+    }
+
+    * {
+        border-color: var(--color-line);
+    }
+
+    button,
+    [role='button'],
+    a[href],
+    summary {
+        cursor: pointer;
+    }
+
+    button *,
+    [role='button'] *,
+    a[href] *,
+    summary * {
+        cursor: inherit;
+    }
+
+    button:disabled,
+    button[disabled],
+    [role='button'][aria-disabled='true'],
+    a[aria-disabled='true'] {
+        cursor: default !important;
+        pointer-events: none;
+    }
+
+    button:disabled *,
+    button[disabled] *,
+    [role='button'][aria-disabled='true'] *,
+    a[aria-disabled='true'] * {
+        cursor: inherit !important;
+    }
+}
+
+@layer components {
+    .workspace-screen {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .workspace-screen * {
+        font-family: inherit;
+    }
+}
