@@ -5,12 +5,17 @@ export default function DropdownMenuItem({
     className = '',
     iconClassName = '',
     contentClassName = '',
+    disabled = false,
     ...props
 }) {
     return (
         <button
             type="button"
-            className={`inline-flex w-full items-center gap-2.5 rounded-[4px] px-2.5 py-2 text-left text-[14px] leading-5 text-[#2b3348] transition-colors duration-100 hover:bg-[#f5f7fb] ${className}`.trim()}
+            disabled={disabled}
+            aria-disabled={disabled}
+            className={`inline-flex w-full items-center gap-2.5 rounded-[4px] px-2.5 py-2 text-left text-[14px] leading-5 text-[#2b3348] transition-colors duration-100 ${
+                disabled ? 'cursor-not-allowed opacity-65' : 'hover:bg-[#f5f7fb]'
+            } ${className}`.trim()}
             {...props}
         >
             {icon ? (

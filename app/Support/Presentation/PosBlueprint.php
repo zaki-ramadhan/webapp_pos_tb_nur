@@ -14,22 +14,17 @@ final class PosBlueprint
             ...self::baseData(),
             'login' => [
                 'brand' => 'TB Nur POS',
-                'title' => 'Masuk ke TB Nur POS',
-                'subtitle' => 'Masuk menggunakan akun internal organisasi Anda.',
+                'title' => 'Selamat datang kembali',
+                'subtitle' => 'Masukkan data akun Anda untuk melanjutkan.',
                 'identifierLabel' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
-                'identifierPlaceholder' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
-                'identifierHint' => self::supportsUserPhone()
-                    ? 'Untuk handphone, Anda bisa pakai 08..., 62..., atau +62.... Sistem akan mengenalinya sebagai nomor yang sama.'
-                    : null,
+                'identifierPlaceholder' => self::supportsUserPhone() ? 'contoh@domain.com atau 081234567890' : 'contoh@domain.com',
                 'passwordLabel' => 'Password',
+                'passwordPlaceholder' => 'Masukkan password Anda',
                 'forgotPassword' => 'Lupa Password?',
                 'forgotPasswordModal' => [
                     'title' => 'Lupa Password',
-                    'identifierLabel' => 'Akun TB Nur POS Anda',
-                    'identifierPlaceholder' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
-                    'identifierHint' => self::supportsUserPhone()
-                        ? 'Masukkan email atau nomor handphone aktif. Format 08..., 62..., atau +62... tetap dikenali.'
-                        : null,
+                    'identifierLabel' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
+                    'identifierPlaceholder' => self::supportsUserPhone() ? 'contoh@domain.com atau 081234567890' : 'contoh@domain.com',
                     'submitLabel' => 'Reset Password',
                     'closeLabel' => 'Tutup modal lupa password',
                     'successMessage' => 'Jika akun ditemukan, tautan reset password akan dikirim ke email terdaftar.',
@@ -38,7 +33,7 @@ final class PosBlueprint
                 'submitHref' => route('dashboard'),
                 'socialDivider' => 'atau masuk dengan',
                 'googleLabel' => 'Google',
-                'signupPrompt' => AuthFeatureFlags::allowsPublicRegistration() ? 'Belum memiliki akun TB Nur POS?' : null,
+                'signupPrompt' => AuthFeatureFlags::allowsPublicRegistration() ? 'Belum memiliki akun?' : null,
                 'signupCta' => AuthFeatureFlags::allowsPublicRegistration() ? 'Daftar Sekarang' : null,
                 'signupHref' => AuthFeatureFlags::allowsPublicRegistration() ? '/register' : null,
             ],
@@ -51,16 +46,18 @@ final class PosBlueprint
             ...self::baseData(),
             'register' => [
                 'brand' => 'TB Nur POS',
-                'title' => 'Daftar Akun TB Nur POS',
-                'subtitle' => 'Pendaftaran ini hanya untuk kebutuhan internal satu organisasi.',
+                'title' => 'Buat akun baru',
+                'subtitle' => 'Lengkapi data berikut untuk melanjutkan.',
                 'nameLabel' => 'Nama Lengkap',
                 'namePrefix' => 'Bpk',
+                'namePlaceholder' => 'Zaki Ramadhan',
                 'emailLabel' => 'Email',
+                'emailPlaceholder' => 'contoh@domain.com',
                 'phoneLabel' => 'No Handphone',
-                'phoneHint' => 'Gunakan nomor handphone Indonesia yang aktif. Anda bisa menulis 0812..., 62812..., atau +62812.... Sistem akan menyimpan ke format 62....',
+                'phonePlaceholder' => '081234567890',
                 'showPhoneField' => self::supportsUserPhone(),
                 'passwordLabel' => 'Password',
-                'internalNote' => 'Pendaftaran akun hanya diperuntukkan bagi anggota internal organisasi. Gunakan email dan nomor handphone yang benar-benar aktif.',
+                'passwordPlaceholder' => 'Minimal 8 karakter',
                 'submitLabel' => 'Daftar',
                 'loginPrompt' => 'Sudah memiliki akun?',
                 'loginCta' => 'Masuk Sekarang',
@@ -78,8 +75,11 @@ final class PosBlueprint
                 'title' => 'Buat Password Baru',
                 'subtitle' => 'Masukkan password baru untuk mengaktifkan kembali akses akun Anda.',
                 'emailLabel' => 'Email',
+                'emailPlaceholder' => 'contoh@domain.com',
                 'passwordLabel' => 'Password Baru',
+                'passwordPlaceholder' => 'Minimal 8 karakter',
                 'passwordConfirmationLabel' => 'Konfirmasi Password Baru',
+                'passwordConfirmationPlaceholder' => 'Ulangi password baru',
                 'submitLabel' => 'Simpan Password',
                 'loginPrompt' => 'Sudah ingat password lama?',
                 'loginCta' => 'Kembali ke Login',
@@ -9987,4 +9987,3 @@ final class PosBlueprint
         }
     }
 }
-

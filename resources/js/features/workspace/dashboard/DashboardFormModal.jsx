@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
 
@@ -13,6 +14,8 @@ export default function DashboardFormModal({
     onDelete,
 }) {
     const [name, setName] = useState(initialValue);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         if (!open) {
@@ -20,19 +23,41 @@ export default function DashboardFormModal({
         }
 
         setName(initialValue);
+        setIsSubmitting(false);
+        setIsDeleting(false);
     }, [initialValue, open]);
 
     const isEditMode = mode === 'edit';
     const trimmedName = name.trim();
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
 
-        if (!trimmedName) {
+        if (!trimmedName || isSubmitting) {
             return;
         }
 
-        onSubmit?.(trimmedName);
+        setIsSubmitting(true);
+
+        try {
+            await Promise.resolve(onSubmit?.(trimmedName));
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    async function handleDelete() {
+        if (isDeleting) {
+            return;
+        }
+
+        setIsDeleting(true);
+
+        try {
+            await Promise.resolve(onDelete?.());
+        } finally {
+            setIsDeleting(false);
+        }
     }
 
     return (
@@ -87,23 +112,30 @@ export default function DashboardFormModal({
                 <div className="mt-4 flex items-center justify-between gap-4">
                     <div>
                         {isEditMode ? (
-                            <button
+                            <Button
                                 type="button"
-                                onClick={onDelete}
-                                className="inline-flex h-9 items-center rounded-[4px] px-3 text-[15px] font-medium text-[#1f63ad]"
+                                variant="ghost"
+                                size="md"
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                loading={isDeleting}
+                                loadingLabel="Memproses..."
+                                className="rounded-[4px] px-3 text-[15px] font-medium text-[#1f63ad] hover:no-underline"
                             >
                                 {modal.deleteLabel}
-                            </button>
+                            </Button>
                         ) : null}
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
-                        disabled={!trimmedName}
-                        className="inline-flex h-10 min-w-[88px] items-center justify-center rounded-[4px] bg-[#234d97] px-5 text-[15px] font-medium text-white disabled:opacity-55"
+                        disabled={!trimmedName || isSubmitting}
+                        loading={isSubmitting}
+                        loadingLabel="Memproses..."
+                        className="min-w-[88px] rounded-[4px] bg-[#234d97] px-5 text-[15px] hover:bg-[#1d4386]"
                     >
                         {modal.submitLabel}
-                    </button>
+                    </Button>
                 </div>
             </form>
         </ModalBase>

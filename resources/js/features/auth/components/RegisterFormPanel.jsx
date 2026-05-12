@@ -2,7 +2,6 @@ import { useForm } from '@inertiajs/react';
 
 import Button from '@/components/ui/Button';
 import FormField from '@/components/ui/FormField';
-import Notice from '@/components/ui/Notice';
 import TextInput from '@/components/ui/TextInput';
 import { dismissToast, showErrorToast, showLoadingToast } from '@/components/feedback/toast';
 import { applyClientErrors, getAuthFormMessage, getFirstInlineError, validateRegisterForm } from '@/features/auth/authFormFeedback';
@@ -11,10 +10,10 @@ import AuthHeading from '@/features/auth/components/AuthHeading';
 import AuthInput from '@/features/auth/components/AuthInput';
 import PasswordField from '@/features/auth/components/PasswordField';
 
-function NameField({ prefix, label, value, onChange, error }) {
+function NameField({ prefix, label, value, onChange, error, placeholder }) {
     return (
         <FormField label={label}>
-            <TextInput prefix={prefix} value={value} onChange={onChange} error={error} />
+            <TextInput prefix={prefix} value={value} onChange={onChange} error={error} placeholder={placeholder} />
         </FormField>
     );
 }
@@ -75,16 +74,13 @@ export default function RegisterFormPanel({ register }) {
     return (
         <div className="flex h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
-                <AuthHeading
-                    brand={register.brand}
-                    title={register.title}
-                    subtitle={register.subtitle}
-                />
+                <AuthHeading title={register.title} subtitle={register.subtitle} />
 
                 <form className="mt-6 space-y-4 sm:mt-8" onSubmit={submit}>
                     <NameField
                         prefix={register.namePrefix}
                         label={register.nameLabel}
+                        placeholder={register.namePlaceholder}
                         value={form.data.name}
                         onChange={(event) => form.setData('name', event.target.value)}
                         error={form.errors.name}
@@ -97,6 +93,7 @@ export default function RegisterFormPanel({ register }) {
                         autoCapitalize="none"
                         autoCorrect="off"
                         spellCheck={false}
+                        placeholder={register.emailPlaceholder}
                         value={form.data.email}
                         onChange={(event) => form.setData('email', event.target.value)}
                         error={form.errors.email}
@@ -104,9 +101,9 @@ export default function RegisterFormPanel({ register }) {
                     {register.showPhoneField ? (
                         <AuthInput
                             label={register.phoneLabel}
-                            hint={register.phoneHint}
                             name="phone"
                             autoComplete="tel"
+                            placeholder={register.phonePlaceholder}
                             value={form.data.phone}
                             onChange={(event) => form.setData('phone', event.target.value)}
                             error={form.errors.phone}
@@ -115,15 +112,20 @@ export default function RegisterFormPanel({ register }) {
                     <PasswordField
                         label={register.passwordLabel}
                         name="password"
+                        placeholder={register.passwordPlaceholder}
                         autoComplete="new-password"
                         value={form.data.password}
                         onChange={(event) => form.setData('password', event.target.value)}
                         error={form.errors.password}
                     />
 
-                    <Notice tone="info">{register.internalNote}</Notice>
-
-                    <Button type="submit" fullWidth disabled={form.processing}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        disabled={form.processing}
+                        loading={form.processing}
+                        loadingLabel="Memproses..."
+                    >
                         {register.submitLabel}
                     </Button>
                 </form>

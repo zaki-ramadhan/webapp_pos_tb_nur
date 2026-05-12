@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import EmptyState from '@/components/ui/EmptyState';
+import Spinner from '@/components/ui/Spinner';
 import BrandMark from '@/features/auth/components/BrandMark';
 import { BellIcon, ChevronDownIcon, LogoutIcon, SearchIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import UserAvatar from '@/features/workspace/shared/UserAvatar';
@@ -33,12 +34,20 @@ export default function DashboardTopBar({
 }) {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
     const notificationButtonRef = useRef(null);
     const userMenuButtonRef = useRef(null);
 
     function handleLogout() {
+        if (isLoggingOut) {
+            return;
+        }
+
         setIsUserMenuOpen(false);
-        router.post('/logout');
+        setIsLoggingOut(true);
+        router.post('/logout', {}, {
+            onFinish: () => setIsLoggingOut(false),
+        });
     }
 
     return (
@@ -139,10 +148,11 @@ export default function DashboardTopBar({
                         >
                             <DropdownMenuItem
                                 onClick={handleLogout}
-                                icon={<LogoutIcon />}
+                                icon={isLoggingOut ? <Spinner className="h-4 w-4 text-[#1f63ad]" /> : <LogoutIcon />}
+                                disabled={isLoggingOut}
                                 className="text-[12px] font-medium text-[#1f2536] md:text-[13px]"
                             >
-                                Logout
+                                {isLoggingOut ? 'Memproses logout...' : 'Logout'}
                             </DropdownMenuItem>
                         </DropdownMenu>
                     </div>

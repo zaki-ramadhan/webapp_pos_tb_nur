@@ -90,7 +90,6 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                 <form className="mt-6 space-y-4" onSubmit={submit}>
                     <AuthInput
                         label={modal.identifierLabel}
-                        hint={modal.identifierHint}
                         name="identifier"
                         placeholder={modal.identifierPlaceholder}
                         autoCapitalize="none"
@@ -106,7 +105,13 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                     {props.flash?.error ? <Notice tone="danger">{props.flash.error}</Notice> : null}
 
                     <div className="flex justify-end pt-2">
-                        <Button type="submit" className="min-w-[160px] rounded-[10px] bg-[#f2356d] hover:bg-[#e02d63]" disabled={form.processing}>
+                        <Button
+                            type="submit"
+                            className="min-w-[160px] rounded-[10px] bg-[#f2356d] hover:bg-[#e02d63]"
+                            disabled={form.processing}
+                            loading={form.processing}
+                            loadingLabel="Memproses..."
+                        >
                             {modal.submitLabel}
                         </Button>
                     </div>

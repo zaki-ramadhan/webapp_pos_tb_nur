@@ -69,14 +69,13 @@ export default function LoginFormPanel({ login }) {
     return (
         <div className="flex h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
-                <AuthHeading brand={login.brand} title={login.title} subtitle={login.subtitle} />
+                <AuthHeading title={login.title} subtitle={login.subtitle} />
 
                 <form className="mt-6 space-y-4 sm:mt-8" onSubmit={submit}>
                     {props.flash?.status ? <Notice tone="success">{props.flash.status}</Notice> : null}
                     {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
                     <AuthInput
                         label={login.identifierLabel}
-                        hint={login.identifierHint}
                         name="identifier"
                         placeholder={login.identifierPlaceholder}
                         autoComplete="username"
@@ -90,6 +89,7 @@ export default function LoginFormPanel({ login }) {
                     <PasswordField
                         label={login.passwordLabel}
                         name="password"
+                        placeholder={login.passwordPlaceholder}
                         autoComplete="current-password"
                         value={form.data.password}
                         onChange={(event) => form.setData('password', event.target.value)}
@@ -106,7 +106,13 @@ export default function LoginFormPanel({ login }) {
                         </button>
                     </div>
 
-                    <Button type="submit" fullWidth disabled={form.processing}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        disabled={form.processing}
+                        loading={form.processing}
+                        loadingLabel="Memproses..."
+                    >
                         {login.submitLabel}
                     </Button>
 
@@ -114,7 +120,7 @@ export default function LoginFormPanel({ login }) {
                         <Divider label={login.socialDivider} />
                     </div>
 
-                    <SocialButton label={login.googleLabel} />
+                    <SocialButton label={`Masuk dengan ${login.googleLabel}`} />
                 </form>
 
                 <AuthFooterPrompt

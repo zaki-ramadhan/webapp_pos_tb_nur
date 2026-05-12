@@ -51,6 +51,29 @@ const toastIcons = {
     loading: LoadingToastIcon,
 };
 
+const toastSurfaceStyles = {
+    success: {
+        background: 'linear-gradient(135deg,#ecfdf3 0%,#d7f8e5 100%)',
+        borderColor: '#7fd7a6',
+        color: '#16613f',
+    },
+    error: {
+        background: 'linear-gradient(135deg,#fff1f3 0%,#ffd9df 100%)',
+        borderColor: '#f39aac',
+        color: '#a6324e',
+    },
+    warning: {
+        background: 'linear-gradient(135deg,#fff8e7 0%,#ffe6b0 100%)',
+        borderColor: '#f0c15d',
+        color: '#915c00',
+    },
+    loading: {
+        background: 'linear-gradient(135deg,#eef6ff 0%,#d6e9ff 100%)',
+        borderColor: '#83b7f1',
+        color: '#185ea9',
+    },
+};
+
 function ToastMessage({ title, message, tone }) {
     const Icon = toastIcons[tone] ?? SuccessToastIcon;
 
@@ -79,6 +102,7 @@ function buildToastOptions(tone, overrides = {}) {
         className: `app-toast app-toast--${tone}`,
         bodyClassName: 'app-toast__body',
         progressClassName: 'app-toast__progress',
+        style: toastSurfaceStyles[tone],
         ...overrides,
     };
 }
@@ -116,6 +140,7 @@ export function updateToastToError(id, { title = 'Terjadi masalah', message }) {
         className: 'app-toast app-toast--error',
         bodyClassName: 'app-toast__body',
         progressClassName: 'app-toast__progress',
+        style: toastSurfaceStyles.error,
     });
 }
 

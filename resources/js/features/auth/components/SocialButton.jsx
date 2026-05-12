@@ -2,7 +2,7 @@ import Button from '@/components/ui/Button';
 
 function GoogleMark() {
     return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 inline-block mr-2">
             <path
                 fill="#4285F4"
                 d="M21.6 12.23c0-.68-.06-1.33-.17-1.96H12v3.7h5.39a4.61 4.61 0 0 1-2 3.03v2.52h3.24c1.89-1.74 2.97-4.3 2.97-7.29Z"

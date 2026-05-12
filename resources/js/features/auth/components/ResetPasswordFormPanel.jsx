@@ -66,11 +66,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
     return (
         <div className="flex h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
-                <AuthHeading
-                    brand={resetPassword.brand}
-                    title={resetPassword.title}
-                    subtitle={resetPassword.subtitle}
-                />
+                <AuthHeading title={resetPassword.title} subtitle={resetPassword.subtitle} />
 
                 <form className="mt-6 space-y-4 sm:mt-8" onSubmit={submit}>
                     {props.flash?.error ? <Notice tone="danger">{props.flash.error}</Notice> : null}
@@ -80,6 +76,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
                         label={resetPassword.emailLabel}
                         type="email"
                         name="email"
+                        placeholder={resetPassword.emailPlaceholder}
                         autoComplete="email"
                         autoCapitalize="none"
                         autoCorrect="off"
@@ -91,6 +88,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
                     <PasswordField
                         label={resetPassword.passwordLabel}
                         name="password"
+                        placeholder={resetPassword.passwordPlaceholder}
                         autoComplete="new-password"
                         value={form.data.password}
                         onChange={(event) => form.setData('password', event.target.value)}
@@ -99,13 +97,20 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
                     <PasswordField
                         label={resetPassword.passwordConfirmationLabel}
                         name="password_confirmation"
+                        placeholder={resetPassword.passwordConfirmationPlaceholder}
                         autoComplete="new-password"
                         value={form.data.password_confirmation}
                         onChange={(event) => form.setData('password_confirmation', event.target.value)}
                         error={form.errors.password_confirmation}
                     />
 
-                    <Button type="submit" fullWidth disabled={form.processing}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        disabled={form.processing}
+                        loading={form.processing}
+                        loadingLabel="Memproses..."
+                    >
                         {resetPassword.submitLabel}
                     </Button>
                 </form>
