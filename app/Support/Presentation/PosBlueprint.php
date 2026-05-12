@@ -2,6 +2,10 @@
 
 namespace App\Support\Presentation;
 
+use App\Support\Auth\AuthFeatureFlags;
+use Illuminate\Support\Facades\Schema;
+use Throwable;
+
 final class PosBlueprint
 {
     public static function forLogin(): array
@@ -11,17 +15,32 @@ final class PosBlueprint
             'login' => [
                 'brand' => 'accurate',
                 'title' => 'Masuk Akun Accurate',
-                'subtitle' => 'Selamat datang kembali',
-                'identifierLabel' => 'Email atau No Handphone',
+                'subtitle' => 'Masuk menggunakan akun internal organisasi Anda.',
+                'identifierLabel' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
+                'identifierPlaceholder' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
+                'identifierHint' => self::supportsUserPhone()
+                    ? 'Untuk handphone, Anda bisa pakai 08..., 62..., atau +62.... Sistem akan mengenalinya sebagai nomor yang sama.'
+                    : null,
                 'passwordLabel' => 'Password',
                 'forgotPassword' => 'Lupa Password?',
+                'forgotPasswordModal' => [
+                    'title' => 'Lupa Password',
+                    'identifierLabel' => 'Akun Accurate Anda',
+                    'identifierPlaceholder' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
+                    'identifierHint' => self::supportsUserPhone()
+                        ? 'Masukkan email atau nomor handphone aktif. Format 08..., 62..., atau +62... tetap dikenali.'
+                        : null,
+                    'submitLabel' => 'Reset Password',
+                    'closeLabel' => 'Tutup modal lupa password',
+                    'successMessage' => 'Jika akun ditemukan, tautan reset password akan dikirim ke email terdaftar.',
+                ],
                 'submitLabel' => 'Masuk',
                 'submitHref' => route('dashboard'),
                 'socialDivider' => 'atau masuk dengan',
                 'googleLabel' => 'Google',
-                'signupPrompt' => 'Belum memiliki akun Accurate?',
-                'signupCta' => 'Daftar Sekarang',
-                'signupHref' => '/register',
+                'signupPrompt' => AuthFeatureFlags::allowsPublicRegistration() ? 'Belum memiliki akun Accurate?' : null,
+                'signupCta' => AuthFeatureFlags::allowsPublicRegistration() ? 'Daftar Sekarang' : null,
+                'signupHref' => AuthFeatureFlags::allowsPublicRegistration() ? '/register' : null,
             ],
         ];
     }
@@ -33,19 +52,40 @@ final class PosBlueprint
             'register' => [
                 'brand' => 'accurate',
                 'title' => 'Daftar Akun Accurate',
-                'subtitle' => 'Lengkapi data akun Anda',
+                'subtitle' => 'Pendaftaran ini hanya untuk kebutuhan internal satu organisasi.',
                 'nameLabel' => 'Nama Lengkap',
                 'namePrefix' => 'Bpk',
                 'emailLabel' => 'Email',
                 'phoneLabel' => 'No Handphone',
+                'phoneHint' => 'Gunakan nomor handphone Indonesia yang aktif. Anda bisa menulis 0812..., 62812..., atau +62812.... Sistem akan menyimpan ke format 62....',
+                'showPhoneField' => self::supportsUserPhone(),
                 'passwordLabel' => 'Password',
-                'termsLabel' => 'Dengan melanjutkan pendaftaran, Saya menyetujui',
-                'termsLinkLabel' => 'Syarat & Ketentuan',
-                'privacyLinkLabel' => 'Kebijakan Privasi',
+                'internalNote' => 'Pendaftaran akun hanya diperuntukkan bagi anggota internal organisasi. Gunakan email dan nomor handphone yang benar-benar aktif.',
                 'submitLabel' => 'Daftar',
                 'loginPrompt' => 'Sudah memiliki akun?',
                 'loginCta' => 'Masuk Sekarang',
                 'loginHref' => '/',
+            ],
+        ];
+    }
+
+    public static function forResetPassword(string $token, ?string $email = null): array
+    {
+        return [
+            ...self::baseData(),
+            'resetPassword' => [
+                'brand' => 'accurate',
+                'title' => 'Buat Password Baru',
+                'subtitle' => 'Masukkan password baru untuk mengaktifkan kembali akses akun Anda.',
+                'emailLabel' => 'Email',
+                'passwordLabel' => 'Password Baru',
+                'passwordConfirmationLabel' => 'Konfirmasi Password Baru',
+                'submitLabel' => 'Simpan Password',
+                'loginPrompt' => 'Sudah ingat password lama?',
+                'loginCta' => 'Kembali ke Login',
+                'loginHref' => '/',
+                'token' => $token,
+                'email' => $email,
             ],
         ];
     }
@@ -78,39 +118,11 @@ final class PosBlueprint
                 'flag' => 'ID',
             ],
             'carousel' => [
-                'autoplayMs' => 5000,
-                'slides' => [
-                    [
-                        'id' => 'operations-overview',
-                        'kicker' => 'Operasional',
-                        'title' => 'Siapkan slide dashboard operasional toko bangunan',
-                        'caption' => 'Nanti ganti placeholder ini dengan gambar dashboard atau hero visual yang ingin ditampilkan di panel kiri.',
-                        'badge' => 'Slide 01',
-                        'accent' => 'coral',
-                        'imageSrc' => null,
-                        'alt' => 'Placeholder slide dashboard operasional',
-                    ],
-                    [
-                        'id' => 'inventory-monitoring',
-                        'kicker' => 'Inventory',
-                        'title' => 'Tempatkan visual stok, gudang, atau mutasi barang',
-                        'caption' => 'Komponen ini sudah autoplay. Kamu tinggal isi `imageSrc` saat aset final sudah ada.',
-                        'badge' => 'Slide 02',
-                        'accent' => 'blue',
-                        'imageSrc' => null,
-                        'alt' => 'Placeholder slide inventory monitoring',
-                    ],
-                    [
-                        'id' => 'sales-flow',
-                        'kicker' => 'Sales',
-                        'title' => 'Masukkan gambar flow kasir, penjualan, atau promo',
-                        'caption' => 'Struktur panel kiri sengaja dibuat khusus untuk slider gambar agar mudah dipakai ulang di halaman auth lain.',
-                        'badge' => 'Slide 03',
-                        'accent' => 'teal',
-                        'imageSrc' => null,
-                        'alt' => 'Placeholder slide sales flow',
-                    ],
-                ],
+                'eyebrow' => 'POS Internal Workspace',
+                'title' => 'Satu panel akses untuk operasional, transaksi, dan pemantauan bisnis internal.',
+                'caption' => 'Tampilan autentikasi ini sekarang memakai visual statis agar lebih fokus, cepat dimuat, dan tidak terdistraksi slider.',
+                'imageSrc' => 'https://images.unsplash.com/photo-1726065235239-b20b88d43eea?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=80&w=1600',
+                'imageAlt' => 'Perangkat POS di atas meja kasir kafe.',
             ],
         ];
     }
@@ -9964,5 +9976,14 @@ final class PosBlueprint
         }
 
         return $samples[0];
+    }
+
+    private static function supportsUserPhone(): bool
+    {
+        try {
+            return Schema::hasColumn('users', 'phone');
+        } catch (Throwable) {
+            return false;
+        }
     }
 }

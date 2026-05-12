@@ -1,16 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import {
+    TransactionDataTable,
     TransactionDateInput,
     TransactionDualTotalCard,
     TransactionFieldLabel,
@@ -48,18 +41,6 @@ function buildDefaultValues(config) {
     };
 }
 
-function resolveCellAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
-
-    if (align === 'center') {
-        return 'text-center';
-    }
-
-    return 'text-left';
-}
-
 function PayrollEmployeeSection({ config, values }) {
     return (
         <div className="flex min-h-[540px] flex-col">
@@ -83,57 +64,22 @@ function PayrollEmployeeSection({ config, values }) {
             </div>
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
-                <div className="min-w-[760px]">
-                    <DataTable wrapperClassName="border-[#d1d8e4]">
-                        <DataTableHeader className="bg-[#5f7690]">
-                            <tr>
-                                {config.employeeTable.columns.map((column) => (
-                                    <DataTableHead
-                                        key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
-                                    >
-                                        {column.kind === 'spacer' ? (
-                                            <span className="flex justify-center">
-                                                <SortIcon className="h-3 w-3 text-white/55" />
-                                            </span>
-                                        ) : (
-                                            column.label
-                                        )}
-                                    </DataTableHead>
-                                ))}
-                            </tr>
-                        </DataTableHeader>
-
-                        <DataTableBody>
-                            {config.employeeTable.rows.length ? (
-                                config.employeeTable.rows.map((row, index) => (
-                                    <DataTableRow
-                                        key={row.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                                    >
-                                        {config.employeeTable.columns.map((column) => (
-                                            <DataTableCell
-                                                key={column.id}
-                                                className={`${resolveCellAlignClassName(column.align)} px-3 text-[15px] text-[#131a28]`.trim()}
-                                            >
-                                                {column.kind === 'spacer' ? '' : formatTableTextValue(row[column.id])}
-                                            </DataTableCell>
-                                        ))}
-                                    </DataTableRow>
-                                ))
-                            ) : (
-                                <DataTableRow className="bg-white">
-                                    <DataTableCell
-                                        colSpan={config.employeeTable.columns.length}
-                                        className="px-3 py-3 text-center text-[15px] text-[#131a28]"
-                                    >
-                                        {config.employeeTable.emptyLabel}
-                                    </DataTableCell>
-                                </DataTableRow>
-                            )}
-                        </DataTableBody>
-                    </DataTable>
-                </div>
+                <TransactionDataTable
+                    columns={config.employeeTable.columns}
+                    rows={config.employeeTable.rows}
+                    emptyLabel={config.employeeTable.emptyLabel}
+                    minWidthClassName="min-w-[760px]"
+                    renderHeaderCell={(column) =>
+                        column.kind === 'spacer' ? (
+                            <span className="flex justify-center">
+                                <SortIcon className="h-3 w-3 text-white/55" />
+                            </span>
+                        ) : (
+                            column.label
+                        )
+                    }
+                    renderCell={({ row, column }) => (column.kind === 'spacer' ? '' : formatTableTextValue(row[column.id]))}
+                />
             </div>
 
             <div className="mt-5 flex justify-end">
@@ -442,47 +388,25 @@ function PayrollTableView({ config, onCreate }) {
                 />
 
                 <div className="mt-3 min-h-0 overflow-x-auto">
-                    <div className="min-w-[1180px]">
-                        <DataTable wrapperClassName="border-[#d1d8e4]">
-                            <DataTableHeader className="bg-[#5f7690]">
-                                <tr>
-                                    {config.table.columns.map((column) => (
-                                        <DataTableHead
-                                            key={column.id}
-                                            className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
-                                        >
-                                            <span
-                                                className={`flex items-center gap-2 ${
-                                                    column.align === 'right' ? 'justify-end' : 'justify-start'
-                                                }`.trim()}
-                                            >
-                                                <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                                <span>{column.label}</span>
-                                            </span>
-                                        </DataTableHead>
-                                    ))}
-                                </tr>
-                            </DataTableHeader>
-
-                            <DataTableBody>
-                                {filteredRows.map((row, index) => (
-                                    <DataTableRow
-                                        key={row.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                                    >
-                                        {config.table.columns.map((column) => (
-                                            <DataTableCell
-                                                key={column.id}
-                                                className={`${resolveCellAlignClassName(column.align)} px-3 text-[15px] text-[#131a28]`.trim()}
-                                            >
-                                                <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
-                                            </DataTableCell>
-                                        ))}
-                                    </DataTableRow>
-                                ))}
-                            </DataTableBody>
-                        </DataTable>
-                    </div>
+                    <TransactionDataTable
+                        columns={config.table.columns}
+                        rows={filteredRows}
+                        emptyLabel={config.table.emptyLabel}
+                        minWidthClassName="min-w-[1180px]"
+                        renderHeaderCell={(column) => (
+                            <span
+                                className={`flex items-center gap-2 ${
+                                    column.align === 'right' ? 'justify-end' : 'justify-start'
+                                }`.trim()}
+                            >
+                                <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
+                                <span>{column.label}</span>
+                            </span>
+                        )}
+                        renderCell={({ row, column }) => (
+                            <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                        )}
+                    />
                 </div>
             </div>
         </div>

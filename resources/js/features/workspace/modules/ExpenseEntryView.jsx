@@ -1,15 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import {
+    TransactionDataTable,
     TransactionDateInput,
     TransactionFieldLabel,
     TransactionFormLayout,
@@ -384,71 +377,33 @@ function ExpenseEntryTableView({ config, onCreate, onOpenDetail }) {
                 />
 
                 <div className="mt-3 min-h-0 overflow-x-auto">
-                    <div className="min-w-[1180px]">
-                        <DataTable wrapperClassName="border-[#d1d8e4]">
-                            <DataTableHeader className="bg-[#5f7690]">
-                                <tr>
-                                    {config.table.columns.map((column) => (
-                                        <DataTableHead
-                                            key={column.id}
-                                            className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${
-                                                column.align === 'right' ? 'text-right' : 'text-left'
-                                            }`.trim()}
-                                        >
-                                            <span
-                                                className={`flex items-center gap-2 ${
-                                                    column.align === 'right' ? 'justify-end' : 'justify-start'
-                                                }`.trim()}
-                                            >
-                                                <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                                <span>{column.label}</span>
-                                            </span>
-                                        </DataTableHead>
-                                    ))}
-                                </tr>
-                            </DataTableHeader>
-
-                            <DataTableBody>
-                                {filteredRows.length ? (
-                                    filteredRows.map((row, index) => (
-                                        <DataTableRow
-                                            key={row.id}
-                                            className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                                index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
-                                            }`.trim()}
-                                            onClick={() =>
-                                                onOpenDetail?.({
-                                                    recordId: row.id,
-                                                    label: row.documentNumber,
-                                                    tabLabel: row.documentNumber,
-                                                })
-                                            }
-                                        >
-                                            {config.table.columns.map((column) => (
-                                                <DataTableCell
-                                                    key={column.id}
-                                                    className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-[15px] text-[#131a28]`.trim()}
-                                                >
-                                                    <span className="block truncate">
-                                                        {formatTableTextValue(row[column.id])}
-                                                    </span>
-                                                </DataTableCell>
-                                            ))}
-                                        </DataTableRow>
-                                    ))
-                                ) : (
-                                    <DataTableRow className="bg-white">
-                                        <DataTableCell
-                                            colSpan={config.table.columns.length}
-                                            className="px-3 py-3 text-center text-[15px] text-[#131a28]"
-                                        >
-                                            {config.table.emptyLabel}
-                                        </DataTableCell>
-                                    </DataTableRow>
-                                )}
-                            </DataTableBody>
-                        </DataTable>
-                    </div>
+                    <TransactionDataTable
+                        columns={config.table.columns}
+                        rows={filteredRows}
+                        emptyLabel={config.table.emptyLabel}
+                        minWidthClassName="min-w-[1180px]"
+                        onRowClick={(row) =>
+                            onOpenDetail?.({
+                                recordId: row.id,
+                                label: row.documentNumber,
+                                tabLabel: row.documentNumber,
+                            })
+                        }
+                        getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                        renderHeaderCell={(column) => (
+                            <span
+                                className={`flex items-center gap-2 ${
+                                    column.align === 'right' ? 'justify-end' : 'justify-start'
+                                }`.trim()}
+                            >
+                                <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
+                                <span>{column.label}</span>
+                            </span>
+                        )}
+                        renderCell={({ row, column }) => (
+                            <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                        )}
+                    />
                 </div>
             </div>
         </div>

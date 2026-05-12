@@ -1,22 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import CheckboxField from '@/components/ui/CheckboxField';
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import {
+    TransactionDataTable,
+    TransactionFieldLabel,
+} from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     CloseIcon,
     CogIcon,
@@ -61,10 +56,7 @@ function buildFormValues(config, detailRow = null) {
 function WarehouseFieldRow({ label, required = false, children, className = '' }) {
     return (
         <div className={`grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
-            <label className="pt-2 text-[17px] leading-6 text-[#1f2436]">
-                {label}
-                {required ? <span className="text-[#ED3969]"> *</span> : null}
-            </label>
+            <TransactionFieldLabel label={label} required={required} className="pt-2 leading-6" />
             <div>{children}</div>
         </div>
     );
@@ -331,10 +323,6 @@ function WarehouseFormView({ config, activeLevel2Tab }) {
     );
 }
 
-function resolveRowAlignClassName(align) {
-    return align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left';
-}
-
 function WarehouseTableView({ config, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const [inactiveFilter, setInactiveFilter] = useState(config.table.filters?.[0]?.options?.[0]?.value ?? 'all');
@@ -425,47 +413,20 @@ function WarehouseTableView({ config, onCreate, onOpenDetail }) {
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <div className="min-w-[940px]">
-                    <DataTable wrapperClassName="border-[#d1d8e4]">
-                        <DataTableHeader className="bg-[#5f7690]">
-                            <tr>
-                                {config.table.columns.map((column) => (
-                                    <DataTableHead
-                                        key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveRowAlignClassName(column.align)}`.trim()}
-                                    >
-                                        {column.label}
-                                    </DataTableHead>
-                                ))}
-                            </tr>
-                        </DataTableHeader>
-
-                        <DataTableBody>
-                            {filteredRows.map((row, index) => (
-                                <DataTableRow
-                                    key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                                    onClick={() =>
-                                        onOpenDetail({
-                                            recordId: row.id,
-                                            label: row.tabLabel ?? row.name,
-                                            tabLabel: row.tabLabel ?? row.name,
-                                        })
-                                    }
-                                >
-                                    {config.table.columns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className={`px-3 text-[15px] text-[#131a28] ${resolveRowAlignClassName(column.align)}`.trim()}
-                                        >
-                                            {formatTableTextValue(row[column.id])}
-                                        </DataTableCell>
-                                    ))}
-                                </DataTableRow>
-                            ))}
-                        </DataTableBody>
-                    </DataTable>
-                </div>
+                <TransactionDataTable
+                    columns={config.table.columns}
+                    rows={filteredRows}
+                    emptyLabel={config.table.emptyLabel ?? 'Belum ada data'}
+                    minWidthClassName="min-w-[940px]"
+                    onRowClick={(row) =>
+                        onOpenDetail({
+                            recordId: row.id,
+                            label: row.tabLabel ?? row.name,
+                            tabLabel: row.tabLabel ?? row.name,
+                        })
+                    }
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                />
             </div>
         </div>
     );

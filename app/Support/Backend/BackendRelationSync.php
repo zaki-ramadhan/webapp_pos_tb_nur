@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class BackendRelationSync
 {
@@ -18,7 +19,14 @@ class BackendRelationSync
             return;
         }
 
-        $record->{$relation}()->sync($ids ?? []);
+        $normalizedIds = Collection::make($ids ?? [])
+            ->filter(fn ($id) => filled($id) && is_numeric($id))
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $record->{$relation}()->sync($normalizedIds);
     }
 
     /**
@@ -50,6 +58,15 @@ class BackendRelationSync
             ->filter(fn ($id) => filled($id))
             ->map(fn ($id) => (int) $id)
             ->all();
+
+        $existingIds = $relationQuery->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $invalidIds = array_values(array_diff($keptIds, $existingIds));
+
+        if ($invalidIds !== []) {
+            throw ValidationException::withMessages([
+                $relation => ['One or more related records do not belong to the current resource.'],
+            ]);
+        }
 
         $relationQuery
             ->when($keptIds !== [], fn (HasMany $query) => $query->whereNotIn('id', $keptIds), fn (HasMany $query) => $query)

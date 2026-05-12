@@ -3,6 +3,15 @@ import { useId, useState } from 'react';
 import FormField from '@/components/ui/FormField';
 import TextInput from '@/components/ui/TextInput';
 
+function EyeIcon() {
+    return (
+        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6Z" />
+            <circle cx="12" cy="12" r="3.1" />
+        </svg>
+    );
+}
+
 function EyeOffIcon() {
     return (
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -20,11 +29,14 @@ export default function PasswordField({
     value,
     onChange,
     placeholder = '',
+    error = '',
     className = '',
+    ...props
 }) {
     const [showPassword, setShowPassword] = useState(false);
     const generatedId = useId();
     const inputId = id ?? generatedId;
+    const toggleLabel = showPassword ? 'Sembunyikan password' : 'Tampilkan password';
 
     return (
         <FormField label={label} htmlFor={inputId} className={className}>
@@ -34,15 +46,20 @@ export default function PasswordField({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
+                error={error}
                 trailing={
                     <button
                         type="button"
-                        aria-label="Toggle password visibility"
+                        aria-label={toggleLabel}
+                        aria-pressed={showPassword}
+                        title={toggleLabel}
                         onClick={() => setShowPassword((value) => !value)}
+                        className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600 focus:outline-none"
                     >
-                        <EyeOffIcon />
+                        {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                     </button>
                 }
+                {...props}
             />
         </FormField>
     );

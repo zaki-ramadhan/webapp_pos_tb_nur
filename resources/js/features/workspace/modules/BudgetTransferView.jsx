@@ -1,16 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import {
+    TransactionDataTable,
     TransactionDateInput,
     TransactionFieldLabel,
     TransactionFormLayout,
@@ -47,18 +40,6 @@ function buildInitialValues(config) {
         toBudget: config.defaults?.toBudget ?? '',
         notes: config.defaults?.notes ?? '',
     };
-}
-
-function resolveCellAlignClassName(align, fallback = 'text-left') {
-    if (align === 'right') {
-        return 'text-right';
-    }
-
-    if (align === 'center') {
-        return 'text-center';
-    }
-
-    return fallback;
 }
 
 function BudgetLookupInput({ value, placeholder, onChange }) {
@@ -325,6 +306,14 @@ function TableUtilityButton({ label, children }) {
 function BudgetTransferTableView({ config, onCreate }) {
     const [keyword, setKeyword] = useState('');
     const [dateFilter, setDateFilter] = useState(config.table.filters[0]?.options?.[0]?.value ?? 'all');
+    const tableColumns = useMemo(
+        () =>
+            config.table.columns.map((column) => ({
+                ...column,
+                align: column.align ?? 'center',
+            })),
+        [config.table.columns],
+    );
 
     const filteredRows = useMemo(
         () =>
@@ -339,13 +328,13 @@ function BudgetTransferTableView({ config, onCreate }) {
                     return true;
                 }
 
-                return config.table.columns.some((column) =>
+                return tableColumns.some((column) =>
                     String(row[column.id] ?? '')
                         .toLowerCase()
                         .includes(normalizedKeyword),
                 );
             }),
-        [config.table.columns, config.table.rows, dateFilter, keyword],
+        [config.table.rows, dateFilter, keyword, tableColumns],
     );
 
     return (
@@ -404,53 +393,18 @@ function BudgetTransferTableView({ config, onCreate }) {
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1180px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
-                        <tr>
-                            {config.table.columns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
-                                >
-                                    <span
-                                        className={`flex items-center gap-2 ${
-                                            column.align === 'right' ? 'justify-end' : 'justify-center'
-                                        }`.trim()}
-                                    >
-                                        <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                        <span>{column.label}</span>
-                                    </span>
-                                </DataTableHead>
-                            ))}
-                        </tr>
-                    </DataTableHeader>
-
-                    <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
-                                <DataTableRow
-                                    key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                                >
-                                    {config.table.columns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className={`${resolveCellAlignClassName(column.align, 'text-center')} px-2.5 text-[15px] text-[#131a28]`.trim()}
-                                        >
-                                            {formatTableTextValue(row[column.id])}
-                                        </DataTableCell>
-                                    ))}
-                                </DataTableRow>
-                            ))
-                        ) : (
-                            <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
-                                    {config.table.emptyLabel}
-                                </DataTableCell>
-                            </DataTableRow>
-                        )}
-                    </DataTableBody>
-                </DataTable>
+                <TransactionDataTable
+                    columns={tableColumns}
+                    rows={filteredRows}
+                    emptyLabel={config.table.emptyLabel}
+                    minWidthClassName="min-w-[1180px]"
+                    renderHeaderCell={(column) => (
+                        <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-center'}`.trim()}>
+                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
+                            <span>{column.label}</span>
+                        </span>
+                    )}
+                />
             </div>
         </div>
     );

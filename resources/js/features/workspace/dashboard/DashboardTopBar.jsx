@@ -38,7 +38,7 @@ export default function DashboardTopBar({
 
     function handleLogout() {
         setIsUserMenuOpen(false);
-        router.visit('/');
+        router.post('/logout');
     }
 
     return (

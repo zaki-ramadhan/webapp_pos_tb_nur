@@ -1,24 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import TargetDetailEntryModal from '@/features/workspace/modules/shared/TargetDetailEntryModal';
 import {
+    TransactionDataTable,
     TransactionDateInput,
-    TransactionDock,
     TransactionFieldLabel,
+    TransactionFormLayout,
     TransactionSectionHeading,
-    TransactionSectionRail,
     TransactionToolbarIconButton,
     TransactionToolbarSplitButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -96,59 +88,21 @@ function SalesTargetDetailsSection({ values, setValues, onOpenModal }) {
             </div>
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
-                <div className="min-w-[980px]">
-                    <DataTable wrapperClassName="border-[#d1d8e4]">
-                        <DataTableHeader className="bg-[#5f7690]">
-                            <tr>
-                                {values.detailColumns.map((column) => (
-                                    <DataTableHead
-                                        key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${
-                                            column.align === 'right' ? 'text-right' : 'text-left'
-                                        }`.trim()}
-                                    >
-                                        <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
-                                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                            <span>{column.label}</span>
-                                        </span>
-                                    </DataTableHead>
-                                ))}
-                            </tr>
-                        </DataTableHeader>
-
-                        <DataTableBody>
-                            {values.detailRows.length ? (
-                                values.detailRows.map((row, index) => (
-                                    <DataTableRow
-                                        key={row.id}
-                                        className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                            index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
-                                        }`.trim()}
-                                        onClick={() => values.detailModal && onOpenModal(row)}
-                                    >
-                                        {values.detailColumns.map((column) => (
-                                            <DataTableCell
-                                                key={column.id}
-                                                className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-[15px] text-[#131a28]`.trim()}
-                                            >
-                                                {row[column.id] ?? ''}
-                                            </DataTableCell>
-                                        ))}
-                                    </DataTableRow>
-                                ))
-                            ) : (
-                                <DataTableRow className="bg-white">
-                                    <DataTableCell
-                                        colSpan={values.detailColumns.length}
-                                        className="px-3 py-3 text-center text-[15px] text-[#131a28]"
-                                    >
-                                        Belum ada data
-                                    </DataTableCell>
-                                </DataTableRow>
-                            )}
-                        </DataTableBody>
-                    </DataTable>
-                </div>
+                <TransactionDataTable
+                    columns={values.detailColumns}
+                    rows={values.detailRows}
+                    emptyLabel="Belum ada data"
+                    minWidthClassName="min-w-[980px]"
+                    renderHeaderCell={(column) => (
+                        <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
+                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
+                            <span>{column.label}</span>
+                        </span>
+                    )}
+                    renderCell={({ row, column }) => row[column.id] ?? ''}
+                    onRowClick={values.detailModal ? (row) => onOpenModal(row) : null}
+                    getRowClassName={() => (values.detailModal ? 'cursor-pointer transition hover:bg-[#eef3fb]' : '')}
+                />
             </div>
         </div>
     );
@@ -205,104 +159,95 @@ function SalesTargetFormView({ config, activeLevel2Tab }) {
     }, [config, detailRecord]);
 
     return (
-        <div className="flex min-h-full flex-col gap-3">
-            <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-                    <div className="border-b border-[#d8dde7] px-4 py-4">
-                        <div className="grid gap-x-10 gap-y-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.78fr)]">
-                            <div className="space-y-3">
-                                <FormFieldRow label={config.labels.name} required>
-                                    <TextInput
-                                        value={values.name}
-                                        onChange={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                name: event.target.value,
-                                            }))
-                                        }
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                        inputClassName="text-[15px] text-[#1f2436]"
-                                    />
-                                </FormFieldRow>
+        <>
+            <TransactionFormLayout
+                header={
+                    <div className="grid gap-x-10 gap-y-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.78fr)]">
+                        <div className="space-y-3">
+                            <FormFieldRow label={config.labels.name} required>
+                                <TextInput
+                                    value={values.name}
+                                    onChange={(event) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            name: event.target.value,
+                                        }))
+                                    }
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    inputClassName="text-[15px] text-[#1f2436]"
+                                />
+                            </FormFieldRow>
 
-                                <FormFieldRow label={config.labels.type}>
-                                    <SelectField
-                                        value={values.targetType}
-                                        onChange={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                targetType: event.target.value,
-                                            }))
-                                        }
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                        selectClassName="text-[15px] text-[#1f2436]"
-                                    >
-                                        {config.targetTypeOptions.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        ))}
-                                    </SelectField>
-                                </FormFieldRow>
+                            <FormFieldRow label={config.labels.type}>
+                                <SelectField
+                                    value={values.targetType}
+                                    onChange={(event) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            targetType: event.target.value,
+                                        }))
+                                    }
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    selectClassName="text-[15px] text-[#1f2436]"
+                                >
+                                    {config.targetTypeOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </SelectField>
+                            </FormFieldRow>
 
-                                <FormFieldRow label={config.labels.branch}>
-                                    <SelectField
-                                        value={values.branch}
-                                        onChange={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                branch: event.target.value,
-                                            }))
-                                        }
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                        selectClassName="text-[15px] text-[#1f2436]"
-                                    >
-                                        {config.branchOptions.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        ))}
-                                    </SelectField>
-                                </FormFieldRow>
-                            </div>
+                            <FormFieldRow label={config.labels.branch}>
+                                <SelectField
+                                    value={values.branch}
+                                    onChange={(event) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            branch: event.target.value,
+                                        }))
+                                    }
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    selectClassName="text-[15px] text-[#1f2436]"
+                                >
+                                    {config.branchOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </SelectField>
+                            </FormFieldRow>
+                        </div>
 
-                            <div className="space-y-3">
-                                <FormFieldRow label={config.labels.startDate}>
-                                    <TransactionDateInput value={values.startDate} className="max-w-[282px]" />
-                                </FormFieldRow>
+                        <div className="space-y-3">
+                            <FormFieldRow label={config.labels.startDate}>
+                                <TransactionDateInput value={values.startDate} className="max-w-[282px]" />
+                            </FormFieldRow>
 
-                                <FormFieldRow label={config.labels.endDate} required>
-                                    <TransactionDateInput value={values.endDate} className="max-w-[282px]" />
-                                </FormFieldRow>
-                            </div>
+                            <FormFieldRow label={config.labels.endDate} required>
+                                <TransactionDateInput value={values.endDate} className="max-w-[282px]" />
+                            </FormFieldRow>
                         </div>
                     </div>
-
-                    <div className="flex min-h-[620px] gap-3 px-2 py-2 sm:px-3">
-                        <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
-
-                        <div className="min-w-0 flex-1 rounded-[4px] border border-[#d3d9e5] bg-white px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-                            {activeSectionId === 'additional-info' ? (
-                                <SalesTargetAdditionalInfoSection config={config} values={values} setValues={setValues} />
-                            ) : (
-                                <SalesTargetDetailsSection values={values} setValues={setValues} onOpenModal={setActiveModalRow} />
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="shrink-0 lg:w-[104px]">
-                    <TransactionDock actions={isDetail ? config.detailDockActions : config.createDockActions} />
-                </div>
-            </div>
-
+                }
+                sectionTabs={config.sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                dockActions={isDetail ? config.detailDockActions : config.createDockActions}
+            >
+                {activeSectionId === 'additional-info' ? (
+                    <SalesTargetAdditionalInfoSection config={config} values={values} setValues={setValues} />
+                ) : (
+                    <SalesTargetDetailsSection values={values} setValues={setValues} onOpenModal={setActiveModalRow} />
+                )}
+            </TransactionFormLayout>
             <TargetDetailEntryModal
                 open={Boolean(activeModalRow)}
                 modal={values.detailModal}
                 row={activeModalRow}
                 onClose={() => setActiveModalRow(null)}
             />
-        </div>
+        </>
     );
 }
 
@@ -415,51 +360,26 @@ function SalesTargetTableView({ config, onCreate, onOpenDetail }) {
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1360px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
-                        <tr>
-                            {config.table.columns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${
-                                        column.align === 'right' ? 'text-right' : 'text-left'
-                                    }`.trim()}
-                                >
-                                    <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
-                                        <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                        <span>{column.label}</span>
-                                    </span>
-                                </DataTableHead>
-                            ))}
-                        </tr>
-                    </DataTableHeader>
-
-                    <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                    index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
-                                }`.trim()}
-                                onClick={() =>
-                                    onOpenDetail?.({
-                                        recordId: row.id,
-                                        label: row.name,
-                                    })
-                                }
-                            >
-                                {config.table.columns.map((column) => (
-                                    <DataTableCell
-                                        key={column.id}
-                                        className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
-                                    >
-                                        <span className="block truncate">{row[column.id] ?? ''}</span>
-                                    </DataTableCell>
-                                ))}
-                            </DataTableRow>
-                        ))}
-                    </DataTableBody>
-                </DataTable>
+                <TransactionDataTable
+                    columns={config.table.columns}
+                    rows={filteredRows}
+                    emptyLabel={config.table.emptyLabel ?? 'Belum ada data'}
+                    minWidthClassName="min-w-[1360px]"
+                    renderHeaderCell={(column) => (
+                        <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
+                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
+                            <span>{column.label}</span>
+                        </span>
+                    )}
+                    renderCell={({ row, column }) => <span className="block truncate">{row[column.id] ?? ''}</span>}
+                    onRowClick={(row) =>
+                        onOpenDetail?.({
+                            recordId: row.id,
+                            label: row.name,
+                        })
+                    }
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                />
             </div>
         </div>
     );

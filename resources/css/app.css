@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'react-toastify/dist/ReactToastify.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -74,4 +75,117 @@
     .workspace-screen * {
         font-family: inherit;
     }
-}
+
+    .Toastify__toast-container {
+        width: min(100%, 24rem);
+        padding: 1rem;
+    }
+
+    .app-toast {
+        border-radius: 1rem;
+        border: 1px solid transparent;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+        min-height: 0;
+        padding: 0;
+        font-family: var(--font-sans);
+        overflow: hidden;
+    }
+
+    .app-toast__body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-toast__inner {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.9rem;
+        padding: 0.95rem 1rem 0.95rem 1.15rem;
+    }
+
+    .app-toast__icon {
+        display: inline-flex;
+        height: 2.2rem;
+        width: 2.2rem;
+        flex: 0 0 2.2rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        border: 1px solid currentColor;
+        background: color-mix(in srgb, currentColor 10%, white);
+    }
+
+    .app-toast__icon-svg {
+        height: 1.1rem;
+        width: 1.1rem;
+        display: block;
+    }
+
+    .app-toast__icon-svg--spin {
+        animation: app-toast-spin 0.9s linear infinite;
+    }
+
+    .app-toast__content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.05rem 0 0;
+        flex: 1 1 auto;
+    }
+
+    .app-toast__title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .app-toast__message {
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+
+    .app-toast--success {
+        border-color: #b8dfca;
+        background: #f4fbf7;
+        color: #1f7a4d;
+    }
+
+    .app-toast--error {
+        border-color: #efc0ca;
+        background: #fff4f6;
+        color: #d6455d;
+    }
+
+    .app-toast--warning {
+        border-color: #f1d8a0;
+        background: #fff8ea;
+        color: #c78618;
+    }
+
+    .app-toast--loading {
+        border-color: #b8d1f0;
+        background: #f3f8ff;
+        color: #2f74d0;
+    }
+
+    .app-toast .Toastify__close-button {
+        align-self: center;
+        color: inherit;
+        opacity: 0.68;
+    }
+
+    .app-toast--loading .Toastify__spinner {
+        border-color: rgba(47, 116, 208, 0.18);
+        border-top-color: #2f74d0;
+    }
+
+    @keyframes app-toast-spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+  }

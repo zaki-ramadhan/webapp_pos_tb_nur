@@ -19,6 +19,7 @@ class BackendResourceBlueprint
         public readonly string $key,
         public readonly string $label,
         public readonly string $modelClass,
+        public readonly ?string $permissionKey = null,
         public readonly array $searchColumns = [],
         public readonly array $with = [],
         public readonly array|Closure $storeRules = [],
@@ -53,6 +54,11 @@ class BackendResourceBlueprint
     public function modelClass(): string
     {
         return $this->modelClass;
+    }
+
+    public function permissionKey(): string
+    {
+        return $this->permissionKey ?? $this->key;
     }
 
     /**

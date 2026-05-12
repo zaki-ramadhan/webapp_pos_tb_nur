@@ -4,6 +4,10 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ToastContainer } from 'react-toastify';
+
+import FlashToastBridge from '@/components/feedback/FlashToastBridge';
+import AppErrorBoundary from '@/components/error/AppErrorBoundary';
 
 const applicationName = typeof document !== 'undefined' ? document.title || 'WebApp POS' : 'WebApp POS';
 
@@ -24,7 +28,11 @@ createInertiaApp({
     setup({ el, App, props }) {
         createRoot(el).render(
             <StrictMode>
-                <App {...props} />
+                <AppErrorBoundary pageProps={props.initialPage?.props}>
+                    <App {...props} />
+                    <FlashToastBridge />
+                    <ToastContainer newestOnTop limit={4} />
+                </AppErrorBoundary>
             </StrictMode>,
         );
     },

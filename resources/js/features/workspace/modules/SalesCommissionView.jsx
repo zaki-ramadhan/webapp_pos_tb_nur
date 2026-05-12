@@ -1,18 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import CheckboxField from '@/components/ui/CheckboxField';
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
+import { TransactionDataTable } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -420,51 +413,26 @@ function SalesCommissionTableView({ config, onCreate, onOpenDetail }) {
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1180px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
-                        <tr>
-                            {config.table.columns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${
-                                        column.align === 'right' ? 'text-right' : 'text-left'
-                                    }`.trim()}
-                                >
-                                    <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
-                                        <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                        <span>{column.label}</span>
-                                    </span>
-                                </DataTableHead>
-                            ))}
-                        </tr>
-                    </DataTableHeader>
-
-                    <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                    index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
-                                }`.trim()}
-                                onClick={() =>
-                                    onOpenDetail?.({
-                                        recordId: row.id,
-                                        label: row.name,
-                                    })
-                                }
-                            >
-                                {config.table.columns.map((column) => (
-                                    <DataTableCell
-                                        key={column.id}
-                                        className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
-                                    >
-                                        <span className="block truncate">{row[column.id] ?? ''}</span>
-                                    </DataTableCell>
-                                ))}
-                            </DataTableRow>
-                        ))}
-                    </DataTableBody>
-                </DataTable>
+                <TransactionDataTable
+                    columns={config.table.columns}
+                    rows={filteredRows}
+                    emptyLabel="Belum ada data"
+                    minWidthClassName="min-w-[1180px]"
+                    onRowClick={(row) =>
+                        onOpenDetail?.({
+                            recordId: row.id,
+                            label: row.name,
+                        })
+                    }
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                    renderHeaderCell={(column) => (
+                        <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
+                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
+                            <span>{column.label}</span>
+                        </span>
+                    )}
+                    renderCell={({ row, column }) => <span className="block truncate">{row[column.id] ?? ''}</span>}
+                />
             </div>
         </div>
     );

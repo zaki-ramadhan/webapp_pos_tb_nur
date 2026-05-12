@@ -13,9 +13,8 @@ class HomePageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('HomePage')
-                ->where('carousel.autoplayMs', 5000)
+                ->where('carousel.imageSrc', 'https://images.unsplash.com/photo-1726065235239-b20b88d43eea?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=80&w=1600')
                 ->where('login.submitHref', route('dashboard'))
-                ->has('carousel.slides', 3)
                 ->has('login'));
     }
 }

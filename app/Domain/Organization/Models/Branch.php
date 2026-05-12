@@ -3,6 +3,10 @@
 namespace App\Domain\Organization\Models;
 
 use App\Domain\Catalog\Models\Warehouse;
+use App\Domain\Finance\Models\Account;
+use App\Domain\Identity\Models\TransactionApprovalRule;
+use App\Domain\Partner\Models\Customer;
+use App\Domain\Partner\Models\Supplier;
 use App\Domain\Support\Models\DomainModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -40,5 +44,30 @@ class Branch extends DomainModel
     public function warehouses(): HasMany
     {
         return $this->hasMany(Warehouse::class);
+    }
+
+    public function accounts(): BelongsToMany
+    {
+        return $this->belongsToMany(Account::class);
+    }
+
+    public function customers(): BelongsToMany
+    {
+        return $this->belongsToMany(Customer::class, 'customer_branch');
+    }
+
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class, 'branch_supplier');
+    }
+
+    public function employees(): HasMany
+    {
+        return $this->hasMany(Employee::class);
+    }
+
+    public function transactionApprovalRules(): HasMany
+    {
+        return $this->hasMany(TransactionApprovalRule::class);
     }
 }
