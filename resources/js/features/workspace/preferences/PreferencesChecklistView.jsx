@@ -3,14 +3,25 @@ import { AlertTriangleIcon } from '@/features/workspace/shared/Icons';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
+import {
+    isPreferenceChecklistItemInactive,
+    WORKSPACE_INACTIVE_BADGE_LABEL,
+    WORKSPACE_INACTIVE_HINT,
+} from '@/features/workspace/shared/workspaceAvailability';
 
 function ChecklistItem({ item, inputId, onToggle }) {
+    const isInactive = isPreferenceChecklistItemInactive(item.id);
     const label = (
         <>
             <span className="text-[15px] leading-7 sm:text-[16px] md:text-[17px]">{item.label}</span>
             {item.note ? (
                 <span className="ml-2 inline text-[14px] italic text-[#2b8de8] sm:text-[15px] md:text-[16px]">
                     ({item.note})
+                </span>
+            ) : null}
+            {isInactive ? (
+                <span className="ml-2 inline-flex rounded-full bg-[#f6dfab] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                    {WORKSPACE_INACTIVE_BADGE_LABEL}
                 </span>
             ) : null}
         </>
@@ -20,10 +31,10 @@ function ChecklistItem({ item, inputId, onToggle }) {
         <CheckboxField
             id={inputId}
             checked={Boolean(item.checked)}
-            disabled={Boolean(item.disabled)}
+            disabled={Boolean(item.disabled) || isInactive}
             error={item.error}
             message={item.message}
-            hint={item.hint}
+            hint={isInactive ? WORKSPACE_INACTIVE_HINT : item.hint}
             size="sm"
             align="center"
             label={label}

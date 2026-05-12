@@ -26,21 +26,36 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
     return (
         <div className="flex flex-wrap items-center gap-2">
             {filters.map((filter) => (
-                <SelectField
-                    key={filter.id}
-                    value={values[filter.id]}
-                    onChange={(event) => onChange(filter.id, event.target.value)}
-                    containerClassName="w-auto shrink-0"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2] sm:min-w-[138px]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
-                >
-                    {filter.options.map((option, optionIndex) => (
-                        <option key={`${filter.id}-${option.value}-${optionIndex}`} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </SelectField>
+                <div key={filter.id} className="flex flex-col gap-1">
+                    <SelectField
+                        value={values[filter.id]}
+                        onChange={(event) => onChange(filter.id, event.target.value)}
+                        disabled={Boolean(filter.disabled)}
+                        containerClassName="w-auto shrink-0"
+                        className={`h-[34px] min-w-[118px] rounded-[4px] sm:min-w-[138px] ${
+                            filter.disabled ? 'border-[#ead6a7] bg-[#fff8e9]' : 'border-[#cfd6e2]'
+                        }`.trim()}
+                        selectClassName={`px-3 text-[15px] ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#394157]'}`.trim()}
+                        iconClassName={`mr-2 ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#6c7894]'}`.trim()}
+                    >
+                        {filter.options.map((option, optionIndex) => (
+                            <option key={`${filter.id}-${option.value}-${optionIndex}`} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </SelectField>
+
+                    {filter.disabled && filter.hint ? (
+                        <div className="flex flex-wrap items-center gap-1.5 pl-1 text-[11px] text-[#9a7b35]">
+                            {filter.badgeLabel ? (
+                                <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                                    {filter.badgeLabel}
+                                </span>
+                            ) : null}
+                            <span>{filter.hint}</span>
+                        </div>
+                    ) : null}
+                </div>
             ))}
 
             {filterButtonLabel ? (

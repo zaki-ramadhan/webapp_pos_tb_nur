@@ -3,6 +3,12 @@ import { useRef } from 'react';
 import Tooltip from '@/components/ui/Tooltip';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import SidebarFlyout from '@/features/workspace/navigation/SidebarFlyout';
+import implementedWorkspacePageIds from '@/features/workspace/shared/implementedWorkspacePageIds';
+import {
+    isWorkspacePageInactive,
+    WORKSPACE_INACTIVE_BADGE_LABEL,
+    WORKSPACE_INACTIVE_HINT,
+} from '@/features/workspace/shared/workspaceAvailability';
 
 function SidebarButton({ item, active, onClick, buttonRef }) {
     return (
@@ -56,21 +62,50 @@ function MobileModuleButton({ item, active, onSelect }) {
 }
 
 function MobilePanelItemButton({ item, onSelect }) {
+    const isInactive = isWorkspacePageInactive(item.id);
+    const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
+    const statusLabel = isInactive
+        ? WORKSPACE_INACTIVE_HINT
+        : !isImplemented
+          ? 'Belum diimplementasikan penuh'
+          : 'Buka halaman modul';
+
     return (
         <button
             type="button"
-            onClick={() => onSelect(item)}
-            className="flex w-full items-start gap-2.5 rounded-[8px] border border-[#d7ddea] bg-white px-2.5 py-2.5 text-left transition hover:bg-[#f8fbff]"
+            onClick={() => {
+                if (!isInactive && isImplemented) {
+                    onSelect(item);
+                }
+            }}
+            className={`flex w-full items-start gap-2.5 rounded-[8px] border px-2.5 py-2.5 text-left transition ${
+                isInactive
+                    ? 'cursor-not-allowed border-[#f0d9a3] bg-[#fff8e9]'
+                    : 'border-[#d7ddea] bg-white hover:bg-[#f8fbff]'
+            }`.trim()}
+            aria-disabled={isInactive || !isImplemented}
+            title={statusLabel}
         >
-            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] bg-[#edf3fb] text-[#4e678f]">
+            <span
+                className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] ${
+                    isInactive ? 'bg-[#f9e7bb] text-[#b67d12]' : 'bg-[#edf3fb] text-[#4e678f]'
+                }`.trim()}
+            >
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
-                <span className="block text-[12px] font-medium leading-4.5 text-[#22304a]">{item.label}</span>
-                <span className="mt-0.5 block text-[10px] leading-4 text-[#7b849c]">
-                    {item.implemented === false ? 'Belum diimplementasikan penuh' : 'Buka halaman modul'}
+                <span className={`block text-[12px] font-medium leading-4.5 ${isInactive ? 'text-[#7d6220]' : 'text-[#22304a]'}`.trim()}>
+                    {item.label}
+                </span>
+                <span className={`mt-0.5 block text-[10px] leading-4 ${isInactive ? 'text-[#9a7b35]' : 'text-[#7b849c]'}`.trim()}>
+                    {statusLabel}
                 </span>
             </span>
+            {isInactive ? (
+                <span className="shrink-0 rounded-full bg-[#f6dfab] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                    {WORKSPACE_INACTIVE_BADGE_LABEL}
+                </span>
+            ) : null}
         </button>
     );
 }

@@ -1,3 +1,5 @@
+import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
+
 const WORKSPACE_PAGE_STATE_STORAGE_KEY = 'pos-workspace-open-pages:v1';
 
 function canUseBrowserStorage() {
@@ -15,7 +17,12 @@ function normalizePageIds(pageIds, pages, dashboardPage) {
     [dashboardPage.id, ...(pageIds ?? [])].forEach((pageId) => {
         const normalizedId = String(pageId ?? '');
 
-        if (!normalizedId || !validIds.has(normalizedId) || uniqueIds.includes(normalizedId)) {
+        if (
+            !normalizedId ||
+            !validIds.has(normalizedId) ||
+            uniqueIds.includes(normalizedId) ||
+            (normalizedId !== dashboardPage.id && isWorkspacePageInactive(normalizedId))
+        ) {
             return;
         }
 

@@ -154,6 +154,7 @@ export function LookupField({
     onRemove,
     className = '',
     heightClassName = 'h-[40px]',
+    disabled = false,
 }) {
     return (
         <ChipLookupField
@@ -163,6 +164,7 @@ export function LookupField({
             onRemove={onRemove}
             className={className}
             heightClassName={heightClassName}
+            disabled={disabled}
         />
     );
 }

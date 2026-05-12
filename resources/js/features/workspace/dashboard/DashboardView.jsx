@@ -25,6 +25,7 @@ import {
     loadWorkspacePageState,
     saveWorkspacePageState,
 } from '@/features/workspace/dashboard/workspacePagePersistence';
+import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 const DashboardView = forwardRef(function DashboardView(
     {
@@ -136,6 +137,12 @@ const DashboardView = forwardRef(function DashboardView(
     });
 
     function openPageById(pageId) {
+        if (pageId !== dashboardPage.id && isWorkspacePageInactive(pageId)) {
+            setActivePanelId(null);
+            onCloseMobileWorkspaceMenu?.();
+            return;
+        }
+
         const nextPage = pages[pageId];
 
         if (!nextPage) {

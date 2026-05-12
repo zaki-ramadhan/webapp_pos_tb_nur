@@ -1,3 +1,9 @@
+import {
+    isWorkspaceControlInactive,
+    WORKSPACE_INACTIVE_BADGE_LABEL,
+    WORKSPACE_INACTIVE_HINT,
+} from '@/features/workspace/shared/workspaceAvailability';
+
 const detailQuickActions = ['Harga Jual', 'Mutasi', 'Gudang'];
 
 const itemTabs = [
@@ -168,6 +174,9 @@ const defaultConfig = {
             {
                 id: 'brand',
                 rowKey: 'brand',
+                disabled: isWorkspaceControlInactive('item-brand-filter'),
+                badgeLabel: WORKSPACE_INACTIVE_BADGE_LABEL,
+                hint: WORKSPACE_INACTIVE_HINT,
                 options: [
                     { value: 'all', label: 'Merek Barang: Semua' },
                     { value: 'Apple', label: 'Merek Barang: Apple' },

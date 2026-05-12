@@ -5,6 +5,11 @@ import ModalBase from '@/components/ui/ModalBase';
 import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import implementedWorkspacePageIds from '@/features/workspace/shared/implementedWorkspacePageIds';
+import {
+    isWorkspacePageInactive,
+    WORKSPACE_INACTIVE_BADGE_LABEL,
+    WORKSPACE_INACTIVE_HINT,
+} from '@/features/workspace/shared/workspaceAvailability';
 import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 function resolveToneClassName(tone) {
@@ -39,27 +44,43 @@ function resolveToneClassName(tone) {
 
 function SearchMenuCard({ item, onSelect }) {
     const toneClassName = resolveToneClassName(item.tone);
+    const isInactive = isWorkspacePageInactive(item.id);
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
-    const className = isImplemented
-        ? `${toneClassName.border} ${toneClassName.hover}`
-        : 'border-[#d6d9e2] bg-[#eef0f4] text-[#9aa3b1] opacity-80 saturate-0';
-    const iconClassName = isImplemented ? toneClassName.icon : 'text-[#9aa3b1]';
-    const labelClassName = isImplemented ? 'text-[#495164]' : 'text-[#8f97a7]';
+    const isSelectable = isImplemented && !isInactive;
+    const className = isInactive
+        ? 'border-[#f0d9a3] bg-[#fff8e9] text-[#9d7a24]'
+        : isImplemented
+          ? `${toneClassName.border} ${toneClassName.hover}`
+          : 'border-[#d6d9e2] bg-[#eef0f4] text-[#9aa3b1] opacity-80 saturate-0';
+    const iconClassName = isInactive ? 'text-[#b67d12]' : isImplemented ? toneClassName.icon : 'text-[#9aa3b1]';
+    const labelClassName = isInactive ? 'text-[#7d6220]' : isImplemented ? 'text-[#495164]' : 'text-[#8f97a7]';
+    const statusLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
     return (
         <button
             type="button"
             onClick={() => {
-                if (isImplemented) {
+                if (isSelectable) {
                     onSelect(item);
                 }
             }}
-            className={`flex min-h-[108px] flex-col items-center justify-center gap-2.5 rounded-[8px] border px-5 py-5 text-center transition ${className}`.trim()}
-            title={item.label}
-            aria-disabled={!isImplemented}
+            className={`flex min-h-[108px] flex-col items-center justify-center gap-2.5 rounded-[8px] border px-5 py-5 text-center transition ${
+                isSelectable ? '' : 'cursor-not-allowed'
+            } ${className}`.trim()}
+            title={statusLabel || item.label}
+            aria-disabled={!isSelectable}
         >
             <NavigationIcon type={item.icon} className={`h-7 w-7 ${iconClassName}`.trim()} strokeWidth={1.65} />
             <span className={`text-[14px] font-medium leading-5 ${labelClassName}`.trim()}>{item.label}</span>
+            {statusLabel ? (
+                <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${
+                        isInactive ? 'bg-[#f6dfab] text-[#8b6511]' : 'bg-[#dde2ea] text-[#7d8698]'
+                    }`.trim()}
+                >
+                    {isInactive ? WORKSPACE_INACTIVE_BADGE_LABEL : 'Draft'}
+                </span>
+            ) : null}
         </button>
     );
 }
@@ -105,6 +126,14 @@ export default function WorkspaceSearchModal({
 
         return (modal.items ?? []).filter((item) => item.keywords.includes(normalizedKeyword));
     }, [keyword, modal.items, modal.topItems]);
+    const firstSelectableItem = useMemo(
+        () =>
+            filteredItems.find((item) => {
+                const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
+                return isImplemented && !isWorkspacePageInactive(item.id);
+            }) ?? null,
+        [filteredItems],
+    );
 
     const sectionTitle = keyword.trim() ? modal.resultLabel ?? 'Hasil Pencarian' : modal.topLabel ?? 'Menu Teratas';
 
@@ -123,8 +152,8 @@ export default function WorkspaceSearchModal({
                             autoFocus
                             onChange={(event) => setKeyword(event.target.value)}
                             onKeyDown={(event) => {
-                                if (event.key === 'Enter' && filteredItems[0]) {
-                                    onSelectItem(filteredItems[0]);
+                                if (event.key === 'Enter' && firstSelectableItem) {
+                                    onSelectItem(firstSelectableItem);
                                 }
                             }}
                             placeholder={modal.searchPlaceholder ?? 'Cari...'}

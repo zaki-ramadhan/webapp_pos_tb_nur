@@ -1,5 +1,10 @@
 import SelectField from '@/components/ui/SelectField';
 import { TransactionSwitch } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import {
+    isWorkspaceControlInactive,
+    WORKSPACE_INACTIVE_BADGE_LABEL,
+    WORKSPACE_INACTIVE_HINT,
+} from '@/features/workspace/shared/workspaceAvailability';
 import { InfoIcon } from '@/features/workspace/shared/Icons';
 import {
     ClearableTextInput,
@@ -11,6 +16,8 @@ import {
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
 
 export function ItemGeneralTab({ config, values, onChange, isDetail }) {
+    const isBrandFieldInactive = isWorkspaceControlInactive('item-brand-field');
+
     return (
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <section className="space-y-4">
@@ -134,17 +141,28 @@ export function ItemGeneralTab({ config, values, onChange, isDetail }) {
                 <SectionHeading title={config.labels.moreInfo} />
 
                 <FormRow label="Merek Barang">
-                    <LookupField
-                        values={values.brand}
-                        placeholder="Cari/Pilih Merek..."
-                        searchLabel="Cari merek"
-                        onRemove={(item) =>
-                            onChange(
-                                'brand',
-                                values.brand.filter((value) => value !== item),
-                            )
-                        }
-                    />
+                    <div className="space-y-2">
+                        <LookupField
+                            values={values.brand}
+                            placeholder="Cari/Pilih Merek..."
+                            searchLabel="Cari merek"
+                            onRemove={(item) =>
+                                onChange(
+                                    'brand',
+                                    values.brand.filter((value) => value !== item),
+                                )
+                            }
+                            disabled={isBrandFieldInactive}
+                        />
+                        {isBrandFieldInactive ? (
+                            <div className="flex flex-wrap items-center gap-2 text-[13px] text-[#9a7b35]">
+                                <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                                    {WORKSPACE_INACTIVE_BADGE_LABEL}
+                                </span>
+                                <span>{WORKSPACE_INACTIVE_HINT}</span>
+                            </div>
+                        ) : null}
+                    </div>
                 </FormRow>
 
                 <div className="flex items-center gap-10 pt-2">

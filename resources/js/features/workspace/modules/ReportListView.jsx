@@ -5,22 +5,41 @@ import Panel from '@/components/ui/Panel';
 import TextInput from '@/components/ui/TextInput';
 import { buildReportListConfig } from '@/features/workspace/modules/reportListConfig';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
+import {
+    isReportCategoryInactive,
+    WORKSPACE_INACTIVE_BADGE_LABEL,
+    WORKSPACE_INACTIVE_HINT,
+} from '@/features/workspace/shared/workspaceAvailability';
 import { DownloadIcon, SaveIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 function SidebarCategoryButton({ category, active, count, onSelect }) {
+    const isInactive = isReportCategoryInactive(category.id);
+
     return (
         <button
             type="button"
-            onClick={() => onSelect(category.id)}
+            onClick={() => {
+                if (!isInactive) {
+                    onSelect(category.id);
+                }
+            }}
             className={`group flex min-w-[172px] items-center gap-3 rounded-[10px] border px-3 py-3 text-left transition sm:min-w-[196px] lg:min-w-0 ${
-                active
+                isInactive
+                    ? 'cursor-not-allowed border-[#f0d9a3] bg-[#fff8e9] text-[#7d6220]'
+                    : active
                     ? 'border-[#ef3968] bg-[#ef3968] text-white shadow-[0_10px_24px_rgba(239,57,104,0.18)]'
                     : 'border-transparent bg-transparent text-[#35405b] hover:border-[#e5eaf4] hover:bg-[#f7f9fc]'
             }`.trim()}
+            aria-disabled={isInactive}
+            title={isInactive ? WORKSPACE_INACTIVE_HINT : category.label}
         >
             <span
                 className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] ${
-                    active ? 'bg-white/16 text-white' : 'bg-[#eef4fb] text-[#4b617f]'
+                    isInactive
+                        ? 'bg-[#f7e4b3] text-[#b67d12]'
+                        : active
+                          ? 'bg-white/16 text-white'
+                          : 'bg-[#eef4fb] text-[#4b617f]'
                 }`.trim()}
             >
                 {category.icon === 'save' ? (
@@ -32,11 +51,20 @@ function SidebarCategoryButton({ category, active, count, onSelect }) {
 
             <span className="min-w-0 flex-1">
                 <span className="block truncate text-[15px] font-medium">{category.label}</span>
+                {isInactive ? (
+                    <span className="mt-1 inline-flex rounded-full bg-[#f6dfab] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                        {WORKSPACE_INACTIVE_BADGE_LABEL}
+                    </span>
+                ) : null}
             </span>
 
             <span
                 className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${
-                    active ? 'bg-white/16 text-white' : 'bg-[#edf2f8] text-[#7b879d]'
+                    isInactive
+                        ? 'bg-[#f7e4b3] text-[#8b6511]'
+                        : active
+                          ? 'bg-white/16 text-white'
+                          : 'bg-[#edf2f8] text-[#7b879d]'
                 }`.trim()}
             >
                 {count}
@@ -132,10 +160,14 @@ function buildVisibleSections(reports, activeCategoryId, keyword) {
 
 export default function ReportListView({ page }) {
     const config = page.reportList ?? buildReportListConfig();
-    const [activeCategoryId, setActiveCategoryId] = useState(config.categories[0]?.id ?? '');
+    const firstActiveCategoryId = config.categories.find((category) => !isReportCategoryInactive(category.id))?.id ?? config.categories[0]?.id ?? '';
+    const [activeCategoryId, setActiveCategoryId] = useState(firstActiveCategoryId);
     const [searchValue, setSearchValue] = useState('');
     const deferredKeyword = useDeferredValue(searchValue.trim().toLowerCase());
-    const activeCategory = config.categories.find((category) => category.id === activeCategoryId) ?? config.categories[0];
+    const activeCategory =
+        config.categories.find((category) => category.id === activeCategoryId && !isReportCategoryInactive(category.id)) ??
+        config.categories.find((category) => !isReportCategoryInactive(category.id)) ??
+        config.categories[0];
     const visibleSections = buildVisibleSections(config.reports, activeCategory?.id ?? '', deferredKeyword);
 
     return (
