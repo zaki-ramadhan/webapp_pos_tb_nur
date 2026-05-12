@@ -1,11 +1,13 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 import GlobalBackgroundArt from '@/components/shared/GlobalBackgroundArt';
 
 export default function AuthLayout({ children, title }) {
+    const appName = usePage().props.app?.name ?? 'TB Nur POS';
+
     return (
         <>
-            <Head title={title} />
+            <Head title={title ? `${title} - ${appName}` : appName} />
 
             <div className="auth-screen relative min-h-screen overflow-x-hidden bg-[#9ab8ea] text-slate-700">
                 <GlobalBackgroundArt />

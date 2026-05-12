@@ -46,7 +46,7 @@ export default function DashboardTopBar({
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
                     <BrandMark
-                        name="accurate"
+                        name="TB Nur POS"
                         className="shrink-0 scale-[0.76] origin-left sm:scale-[0.82]"
                         badgeClassName="shadow-none"
                         textClassName="text-white"

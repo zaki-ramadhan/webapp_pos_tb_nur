@@ -5,7 +5,7 @@ import ErrorExperience, { buildErrorActions } from '@/features/error/ErrorExperi
 export default function ErrorPage({ status = 500 }) {
     const { props } = usePage();
     const hasAuthSession = Boolean(props.auth?.user);
-    const appName = props.app?.name ?? 'WebApp POS';
+    const appName = props.app?.name ?? 'TB Nur POS';
 
     return (
         <>

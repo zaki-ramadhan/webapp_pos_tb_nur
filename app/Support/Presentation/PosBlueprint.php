@@ -13,8 +13,8 @@ final class PosBlueprint
         return [
             ...self::baseData(),
             'login' => [
-                'brand' => 'accurate',
-                'title' => 'Masuk Akun Accurate',
+                'brand' => 'TB Nur POS',
+                'title' => 'Masuk ke TB Nur POS',
                 'subtitle' => 'Masuk menggunakan akun internal organisasi Anda.',
                 'identifierLabel' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
                 'identifierPlaceholder' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
@@ -25,7 +25,7 @@ final class PosBlueprint
                 'forgotPassword' => 'Lupa Password?',
                 'forgotPasswordModal' => [
                     'title' => 'Lupa Password',
-                    'identifierLabel' => 'Akun Accurate Anda',
+                    'identifierLabel' => 'Akun TB Nur POS Anda',
                     'identifierPlaceholder' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
                     'identifierHint' => self::supportsUserPhone()
                         ? 'Masukkan email atau nomor handphone aktif. Format 08..., 62..., atau +62... tetap dikenali.'
@@ -38,7 +38,7 @@ final class PosBlueprint
                 'submitHref' => route('dashboard'),
                 'socialDivider' => 'atau masuk dengan',
                 'googleLabel' => 'Google',
-                'signupPrompt' => AuthFeatureFlags::allowsPublicRegistration() ? 'Belum memiliki akun Accurate?' : null,
+                'signupPrompt' => AuthFeatureFlags::allowsPublicRegistration() ? 'Belum memiliki akun TB Nur POS?' : null,
                 'signupCta' => AuthFeatureFlags::allowsPublicRegistration() ? 'Daftar Sekarang' : null,
                 'signupHref' => AuthFeatureFlags::allowsPublicRegistration() ? '/register' : null,
             ],
@@ -50,8 +50,8 @@ final class PosBlueprint
         return [
             ...self::baseData(),
             'register' => [
-                'brand' => 'accurate',
-                'title' => 'Daftar Akun Accurate',
+                'brand' => 'TB Nur POS',
+                'title' => 'Daftar Akun TB Nur POS',
                 'subtitle' => 'Pendaftaran ini hanya untuk kebutuhan internal satu organisasi.',
                 'nameLabel' => 'Nama Lengkap',
                 'namePrefix' => 'Bpk',
@@ -74,7 +74,7 @@ final class PosBlueprint
         return [
             ...self::baseData(),
             'resetPassword' => [
-                'brand' => 'accurate',
+                'brand' => 'TB Nur POS',
                 'title' => 'Buat Password Baru',
                 'subtitle' => 'Masukkan password baru untuk mengaktifkan kembali akses akun Anda.',
                 'emailLabel' => 'Email',
@@ -118,11 +118,11 @@ final class PosBlueprint
                 'flag' => 'ID',
             ],
             'carousel' => [
-                'eyebrow' => 'POS Internal Workspace',
-                'title' => 'Satu panel akses untuk operasional, transaksi, dan pemantauan bisnis internal.',
-                'caption' => 'Tampilan autentikasi ini sekarang memakai visual statis agar lebih fokus, cepat dimuat, dan tidak terdistraksi slider.',
+                'eyebrow' => 'TB Nur POS',
+                'title' => 'Satu workspace operasional untuk transaksi, stok, dan administrasi TB Nur.',
+                'caption' => 'Dirancang untuk membantu operasional harian toko berjalan lebih rapi, cepat, dan terkontrol.',
                 'imageSrc' => 'https://images.unsplash.com/photo-1726065235239-b20b88d43eea?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=80&w=1600',
-                'imageAlt' => 'Perangkat POS di atas meja kasir kafe.',
+                'imageAlt' => 'Meja kasir toko dengan perangkat point of sale.',
             ],
         ];
     }
@@ -1955,7 +1955,7 @@ final class PosBlueprint
                             '2026',
                             '2025',
                         ],
-                        'taxCalculationNote' => 'Penghasilan dan PPh sebelumnya HANYA PERLU diisikan jika PPh sudah dihitung dan dibayarkan dari januari, namun Pencatatan gaji di Accurate hanya di isi mulai bulan April 2026',
+                        'taxCalculationNote' => 'Penghasilan dan PPh sebelumnya HANYA PERLU diisikan jika PPh sudah dihitung dan dibayarkan dari januari, namun Pencatatan gaji di TB Nur POS hanya di isi mulai bulan April 2026',
                         'defaults' => [
                             'salutation' => '- Sapaan -',
                             'fullName' => '',
@@ -2787,7 +2787,7 @@ final class PosBlueprint
                                 'rowKey' => 'userValue',
                                 'options' => [
                                     ['value' => 'all', 'label' => 'Pengguna: Semua'],
-                                    ['value' => 'accurate-system', 'label' => 'Pengguna: Accurate System'],
+                                    ['value' => 'accurate-system', 'label' => 'Pengguna: TB Nur POS System'],
                                 ],
                             ],
                             [
@@ -2866,8 +2866,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2882,8 +2882,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2898,8 +2898,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2914,8 +2914,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2930,8 +2930,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2946,8 +2946,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2962,8 +2962,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2978,8 +2978,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -2994,8 +2994,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3010,8 +3010,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3026,8 +3026,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Preferensi',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3042,8 +3042,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3058,8 +3058,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3074,8 +3074,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3090,8 +3090,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3106,8 +3106,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3122,8 +3122,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3138,8 +3138,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                             [
@@ -3154,8 +3154,8 @@ final class PosBlueprint
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
                                 'userValue' => 'accurate-system',
-                                'userName' => 'Accurate System',
-                                'email' => 'system@accurate.id',
+                                'userName' => 'TB Nur POS System',
+                                'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
                             ],
                         ],
@@ -4435,7 +4435,7 @@ final class PosBlueprint
                                 'contentClassName' => 'max-w-[1120px]',
                                 'intro' => [
                                     'title' => 'Konfigurasi Pengiriman Email Transaksi',
-                                    'description' => 'Accurate Online akan menggunakan Konfigurasi ini untuk mengirimkan email transaksi anda.',
+                                    'description' => 'TB Nur POS akan menggunakan konfigurasi ini untuk mengirimkan email transaksi anda.',
                                 ],
                                 'rows' => [
                                     [
@@ -4445,7 +4445,7 @@ final class PosBlueprint
                                         'options' => [
                                             [
                                                 'value' => 'default-accurate',
-                                                'label' => 'Default Accurate (Info@accurate.id)',
+                                                'label' => 'Default TB Nur POS (info@tbnurpos.local)',
                                             ],
                                             [
                                                 'value' => 'company-smtp',
@@ -9987,3 +9987,4 @@ final class PosBlueprint
         }
     }
 }
+

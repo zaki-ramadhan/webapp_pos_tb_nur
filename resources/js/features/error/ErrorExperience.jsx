@@ -188,7 +188,7 @@ export function buildErrorActions({ hasAuthSession = false, status = 500, fallba
 
 export default function ErrorExperience({
     status = 500,
-    appName = 'WebApp POS',
+    appName = 'TB Nur POS',
     subtitle,
     actions = [],
     isClientCrash = false,

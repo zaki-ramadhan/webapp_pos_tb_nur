@@ -1,11 +1,13 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 import GlobalBackgroundArt from '@/components/shared/GlobalBackgroundArt';
 
 export default function WorkspaceLayout({ children, title = 'Workspace' }) {
+    const appName = usePage().props.app?.name ?? 'TB Nur POS';
+
     return (
         <>
-            <Head title={title} />
+            <Head title={title ? `${title} - ${appName}` : appName} />
 
             <div className="workspace-screen relative min-h-screen overflow-x-hidden bg-[#9ab8ea] text-[#4f5679]">
                 <GlobalBackgroundArt />

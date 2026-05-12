@@ -27,7 +27,7 @@ export default class AppErrorBoundary extends Component {
         }
 
         const hasAuthSession = Boolean(this.props.pageProps?.auth?.user);
-        const appName = this.props.pageProps?.app?.name ?? 'WebApp POS';
+        const appName = this.props.pageProps?.app?.name ?? 'TB Nur POS';
 
         return (
             <ErrorExperience

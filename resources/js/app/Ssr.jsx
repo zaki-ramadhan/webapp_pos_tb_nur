@@ -5,7 +5,7 @@ import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { renderToString } from 'react-dom/server';
 
-const applicationName = 'WebApp POS';
+const applicationName = 'TB Nur POS';
 
 createServer((page) =>
     createInertiaApp({

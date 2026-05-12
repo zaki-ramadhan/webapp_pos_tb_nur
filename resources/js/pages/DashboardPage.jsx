@@ -42,7 +42,7 @@ export default function DashboardPage({ locale, dashboard }) {
     }, []);
 
     return (
-        <WorkspaceLayout title={`${dashboard.sample.label} Demo`}>
+        <WorkspaceLayout title={dashboard.sample.label}>
             <div className="flex min-h-screen flex-col overflow-x-hidden">
                 <div ref={topBarRef} className="fixed inset-x-0 top-0 z-50">
                     <DashboardTopBar

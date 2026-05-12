@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import FlashToastBridge from '@/components/feedback/FlashToastBridge';
 import AppErrorBoundary from '@/components/error/AppErrorBoundary';
 
-const applicationName = typeof document !== 'undefined' ? document.title || 'WebApp POS' : 'WebApp POS';
+const applicationName = typeof document !== 'undefined' ? document.title || 'TB Nur POS' : 'TB Nur POS';
 
 createInertiaApp({
     title: (title) => (title ? `${title} | ${applicationName}` : applicationName),

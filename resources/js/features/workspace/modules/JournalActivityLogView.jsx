@@ -23,7 +23,7 @@ function buildFallbackDetailRecord(row, config) {
         transactionType: row.typeLabel,
         selectedDisplay: config.displayOptions?.[0] ?? 'Semua Perubahan',
         reviewedAt: `Per ${row.date} 22:56:52 (Aktif)`,
-        reviewer: 'Pengguna : Accurate System',
+        reviewer: 'Pengguna : TB Nur POS System',
         entries: [
             {
                 id: `${row.id}-line-1`,
