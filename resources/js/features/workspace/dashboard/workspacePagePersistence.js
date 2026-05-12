@@ -121,3 +121,15 @@ export function saveWorkspacePageState({
         // Ignore persistence failures and keep workspace tabs usable.
     }
 }
+
+export function clearWorkspacePageState() {
+    if (!canUseBrowserStorage()) {
+        return;
+    }
+
+    try {
+        window.localStorage.removeItem(WORKSPACE_PAGE_STATE_STORAGE_KEY);
+    } catch {
+        // Ignore persistence cleanup failures.
+    }
+}

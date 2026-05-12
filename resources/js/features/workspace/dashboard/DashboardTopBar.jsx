@@ -3,10 +3,10 @@ import { useRef, useState } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
-import EmptyState from '@/components/ui/EmptyState';
 import Spinner from '@/components/ui/Spinner';
 import BrandMark from '@/features/auth/components/BrandMark';
-import { BellIcon, ChevronDownIcon, LogoutIcon, SearchIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
+import { clearWorkspaceClientState } from '@/features/workspace/dashboard/workspaceClientState';
+import { ChevronDownIcon, LogoutIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import UserAvatar from '@/features/workspace/shared/UserAvatar';
 
 function TopBarIcon({ children, label, onClick, buttonRef }) {
@@ -24,18 +24,14 @@ function TopBarIcon({ children, label, onClick, buttonRef }) {
 }
 
 export default function DashboardTopBar({
-    locale,
     currentIp,
     user,
     sample,
     workspaceMenuOpen = false,
     onToggleWorkspaceMenu,
-    onOpenSearch,
 }) {
-    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const notificationButtonRef = useRef(null);
     const userMenuButtonRef = useRef(null);
 
     function handleLogout() {
@@ -45,6 +41,7 @@ export default function DashboardTopBar({
 
         setIsUserMenuOpen(false);
         setIsLoggingOut(true);
+        clearWorkspaceClientState();
         router.post('/logout', {}, {
             onFinish: () => setIsLoggingOut(false),
         });
@@ -75,39 +72,6 @@ export default function DashboardTopBar({
                                 }`.trim()}
                             />
                         </TopBarIcon>
-                    </div>
-                    <TopBarIcon label="Cari" onClick={onOpenSearch}>
-                        <SearchIcon className="h-4.5 w-4.5 text-white/90 sm:h-5 sm:w-5" />
-                    </TopBarIcon>
-                    <div className="relative">
-                        <TopBarIcon
-                            label="Notifikasi"
-                            buttonRef={notificationButtonRef}
-                            onClick={() => setIsNotificationOpen((currentValue) => !currentValue)}
-                        >
-                            <BellIcon className="h-4.5 w-4.5 text-white/90 sm:h-5 sm:w-5" />
-                        </TopBarIcon>
-
-                        <DropdownMenu
-                            open={isNotificationOpen}
-                            onClose={() => setIsNotificationOpen(false)}
-                            anchorRef={notificationButtonRef}
-                            widthClassName="w-[min(404px,calc(100vw-1rem))]"
-                            className="z-[70]"
-                            panelClassName="min-h-[360px] rounded-[8px] border-[#d6d6d6] p-0 shadow-[0_8px_18px_rgba(15,23,42,0.18)] sm:min-h-[420px]"
-                        >
-                            <EmptyState
-                                fill
-                                tone="subtle"
-                                size="sm"
-                                iconName="notification"
-                                title="Tidak ada pemberitahuan"
-                                description="Pemberitahuan baru akan muncul di sini."
-                                className="min-h-[360px] rounded-[8px] px-4 py-6 sm:min-h-[420px] sm:px-6"
-                                titleClassName="text-[16px] font-medium text-[#4f5678] sm:text-[18px]"
-                                descriptionClassName="mt-2 text-[13px] leading-5 text-[#7f889d]"
-                            />
-                        </DropdownMenu>
                     </div>
 
                     <div className="h-5 w-px bg-white/20" />

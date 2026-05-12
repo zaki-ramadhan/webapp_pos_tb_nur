@@ -1,9 +1,15 @@
 import { Head, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
 
 import GlobalBackgroundArt from '@/components/shared/GlobalBackgroundArt';
+import { clearWorkspaceClientState } from '@/features/workspace/dashboard/workspaceClientState';
 
 export default function AuthLayout({ children, title }) {
     const appName = usePage().props.app?.name ?? 'TB Nur POS';
+
+    useEffect(() => {
+        clearWorkspaceClientState();
+    }, []);
 
     return (
         <>

@@ -1,21 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import DashboardTopBar from '@/features/workspace/dashboard/DashboardTopBar';
 import DashboardView from '@/features/workspace/dashboard/DashboardView';
-import buildWorkspaceSearchItems from '@/features/workspace/dashboard/buildWorkspaceSearchItems';
-import WorkspaceSearchModal from '@/features/workspace/dashboard/WorkspaceSearchModal';
 import WorkspaceLayout from '@/layouts/WorkspaceLayout';
 
-export default function DashboardPage({ locale, dashboard }) {
-    const dashboardViewRef = useRef(null);
+export default function DashboardPage({ dashboard }) {
     const topBarRef = useRef(null);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
     const [topbarHeight, setTopbarHeight] = useState(0);
-    const searchModal = useMemo(
-        () => buildWorkspaceSearchItems(dashboard.sampleDashboard),
-        [dashboard.sampleDashboard],
-    );
 
     useEffect(() => {
         if (!topBarRef.current) {
@@ -46,13 +38,11 @@ export default function DashboardPage({ locale, dashboard }) {
             <div className="flex min-h-screen flex-col overflow-x-hidden">
                 <div ref={topBarRef} className="fixed inset-x-0 top-0 z-50">
                     <DashboardTopBar
-                        locale={locale}
                         currentIp={dashboard.currentIp}
                         user={dashboard.user}
                         sample={dashboard.sample}
                         workspaceMenuOpen={isWorkspaceMenuOpen}
                         onToggleWorkspaceMenu={() => setIsWorkspaceMenuOpen((currentValue) => !currentValue)}
-                        onOpenSearch={() => setIsSearchOpen(true)}
                     />
                 </div>
 
@@ -61,23 +51,12 @@ export default function DashboardPage({ locale, dashboard }) {
                     style={topbarHeight ? { paddingTop: `${topbarHeight}px` } : undefined}
                 >
                     <DashboardView
-                        ref={dashboardViewRef}
                         dashboard={dashboard.sampleDashboard}
                         topbarHeight={topbarHeight}
                         mobileWorkspaceMenuOpen={isWorkspaceMenuOpen}
                         onCloseMobileWorkspaceMenu={() => setIsWorkspaceMenuOpen(false)}
                     />
                 </main>
-
-                <WorkspaceSearchModal
-                    open={isSearchOpen}
-                    modal={searchModal}
-                    onClose={() => setIsSearchOpen(false)}
-                    onSelectItem={(item) => {
-                        dashboardViewRef.current?.openPage(item.id);
-                        setIsSearchOpen(false);
-                    }}
-                />
             </div>
         </WorkspaceLayout>
     );

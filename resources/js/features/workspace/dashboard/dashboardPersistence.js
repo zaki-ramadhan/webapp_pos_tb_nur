@@ -111,6 +111,18 @@ export function saveDashboardPreferences(preferences) {
     }
 }
 
+export function clearDashboardPreferences() {
+    if (!canUseBrowserStorage()) {
+        return;
+    }
+
+    try {
+        window.localStorage.removeItem(DASHBOARD_PREFERENCES_STORAGE_KEY);
+    } catch {
+        // Ignore persistence cleanup failures.
+    }
+}
+
 export function buildWidgetTemplateMap(widgets = []) {
     const templateMap = new Map();
 

@@ -10,10 +10,30 @@ import {
     WORKSPACE_INACTIVE_HINT,
 } from '@/features/workspace/shared/workspaceAvailability';
 
+const DISABLED_SIDEBAR_GROUP_IDS = new Set(['fixed-assets', 'tax-center']);
+
+function getVisiblePanelItems(item) {
+    return (item.panel?.items ?? []).filter((panelItem) => !isWorkspacePageInactive(panelItem.id));
+}
+
+function normalizeSidebarItem(item) {
+    const visiblePanelItems = getVisiblePanelItems(item);
+    const isForcedDisabled = DISABLED_SIDEBAR_GROUP_IDS.has(item.id);
+
+    return {
+        ...item,
+        disabled: isForcedDisabled || visiblePanelItems.length === 0,
+        panel: {
+            ...item.panel,
+            items: visiblePanelItems,
+        },
+    };
+}
+
 function SidebarButton({ item, active, onClick, buttonRef }) {
     return (
         <Tooltip
-            content={item.label}
+            content={item.disabled ? `${item.label} · Nonaktif` : item.label}
             side="right"
             portal
             className="flex"
@@ -24,11 +44,14 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
                 type="button"
                 onClick={onClick}
                 className={`inline-flex h-11 w-11 items-center justify-center rounded-[4px] border p-[7px] transition sm:h-[44px] sm:w-[44px] sm:p-2 ${
-                    active
+                    item.disabled
+                        ? 'cursor-not-allowed border-transparent bg-transparent text-white/18 opacity-45'
+                        : active
                         ? 'border-[#8292b0] bg-[rgba(71,84,108,0.92)] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]'
                         : 'border-transparent bg-transparent text-white/95 hover:bg-white/10'
                 }`.trim()}
                 aria-label={item.label}
+                aria-disabled={item.disabled}
             >
                 <NavigationIcon type={item.icon} className="h-[26px] w-[26px] sm:h-[28px] sm:w-[28px]" />
             </button>
@@ -40,16 +63,27 @@ function MobileModuleButton({ item, active, onSelect }) {
     return (
         <button
             type="button"
-            onClick={() => onSelect(item.id)}
+            onClick={() => {
+                if (!item.disabled) {
+                    onSelect(item.id);
+                }
+            }}
             className={`flex w-full items-center gap-2.5 rounded-[8px] border px-2.5 py-2 text-left transition ${
-                active
+                item.disabled
+                    ? 'cursor-not-allowed border-[#e8ebf2] bg-[#f5f7fb] text-[#a8afbc] opacity-70'
+                    : active
                     ? 'border-[#7aa2d5] bg-[#e8f2ff] text-[#1f4f96]'
                     : 'border-[#d7ddea] bg-white text-[#33415c] hover:bg-[#f6f9fe]'
             }`.trim()}
+            aria-disabled={item.disabled}
         >
             <span
                 className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] ${
-                    active ? 'bg-[#d7e8ff] text-[#1f5ca9]' : 'bg-[#edf3fb] text-[#5c6782]'
+                    item.disabled
+                        ? 'bg-[#eceff5] text-[#b1b8c4]'
+                        : active
+                          ? 'bg-[#d7e8ff] text-[#1f5ca9]'
+                          : 'bg-[#edf3fb] text-[#5c6782]'
                 }`.trim()}
             >
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
@@ -57,6 +91,11 @@ function MobileModuleButton({ item, active, onSelect }) {
             <span className="min-w-0 flex-1">
                 <span className="block truncate text-[12px] font-medium">{item.label}</span>
             </span>
+            {item.disabled ? (
+                <span className="shrink-0 rounded-full bg-[#e6e9f0] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#7b8496]">
+                    Nonaktif
+                </span>
+            ) : null}
         </button>
     );
 }
@@ -122,7 +161,8 @@ export default function DashboardSidebar({
 }) {
     const railRef = useRef(null);
     const buttonRefs = useRef({});
-    const activeItem = sidebar.items.find((item) => item.id === activePanelId) ?? null;
+    const sidebarItems = sidebar.items.map(normalizeSidebarItem);
+    const activeItem = sidebarItems.find((item) => item.id === activePanelId && !item.disabled) ?? null;
     const activeButtonElement = activePanelId ? buttonRefs.current[activePanelId] ?? null : null;
 
     return (
@@ -157,7 +197,7 @@ export default function DashboardSidebar({
                         </div>
 
                         <div className="mt-2 grid gap-2">
-                            {sidebar.items.map((item) => (
+                            {sidebarItems.map((item) => (
                                 <MobileModuleButton
                                     key={item.id}
                                     item={item}
@@ -200,7 +240,7 @@ export default function DashboardSidebar({
                 ref={railRef}
                 className="relative z-30 hidden w-full shrink-0 gap-1.5 overflow-x-auto overflow-y-hidden border-b border-[#18325e] bg-[linear-gradient(90deg,#0d2246_0%,#1a3769_40%,#2d4c88_100%)] px-1.5 py-1.5 lg:flex lg:h-full lg:w-[58px] lg:flex-col lg:items-center lg:justify-start lg:overflow-x-hidden lg:overflow-y-auto lg:border-b-0 lg:border-r lg:pt-3"
             >
-                {sidebar.items.map((item) => (
+                {sidebarItems.map((item) => (
                     <SidebarButton
                         key={item.id}
                         item={item}
@@ -220,7 +260,7 @@ export default function DashboardSidebar({
 
             <div className="hidden lg:block">
                 <SidebarFlyout
-                    open={Boolean(activeItem)}
+                    open={Boolean(activeItem && activeItem.panel?.items?.length)}
                     onClose={onClosePanel}
                     title={activeItem?.panel?.title ?? ''}
                     items={activeItem?.panel?.items ?? []}
