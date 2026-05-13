@@ -10,6 +10,7 @@ export default function GoodsReceiptView({ page, mode, activeLevel2Tab, onOpenCo
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildRecord}
             mode={mode}

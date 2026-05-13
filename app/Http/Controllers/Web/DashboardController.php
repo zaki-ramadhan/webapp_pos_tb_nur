@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Support\Presentation\AuthenticatedUserPresenter;
 use App\Support\Presentation\PosBlueprint;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,12 +17,7 @@ class DashboardController extends Controller
         $user = $request->user();
 
         if ($user !== null) {
-            $props['dashboard']['user'] = [
-                ...($props['dashboard']['user'] ?? []),
-                'name' => $user->name,
-                'email' => $user->email,
-                'status' => $user->is_active ? 'active' : 'inactive',
-            ];
+            $props['dashboard']['user'] = AuthenticatedUserPresenter::present($user);
         }
 
         return Inertia::render('DashboardPage', $props);

@@ -9,6 +9,7 @@ export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, onOpe
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildRecord}
             mode={mode}

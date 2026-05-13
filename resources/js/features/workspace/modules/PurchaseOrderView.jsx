@@ -21,6 +21,7 @@ export default function PurchaseOrderView({ page, mode, activeLevel2Tab, onOpenC
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildRecord}
             mode={mode}

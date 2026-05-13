@@ -71,13 +71,13 @@ export function resolveSectionComponent(activeSectionId) {
     }
 }
 
-export function buildSectionProps(activeSectionId, config, values, isDetail, openItemModal) {
+export function buildSectionProps(activeSectionId, config, values, setValues, isDetail, handlers) {
     if (activeSectionId === 'additional-info') {
-        return { config, values, isDetail };
+        return { config, values, setValues, isDetail, handlers };
     }
 
     if (activeSectionId === 'additional-costs' || activeSectionId === 'advance-payments' || activeSectionId === 'order-info') {
-        return { config, values };
+        return { config, values, handlers };
     }
 
     if (activeSectionId === 'smartlink') {
@@ -87,10 +87,12 @@ export function buildSectionProps(activeSectionId, config, values, isDetail, ope
     return {
         config: {
             ...config,
-            onOpenItemModal: openItemModal,
+            onOpenItemModal: handlers.openItemModal,
         },
         values,
+        setValues,
         isDetail,
+        handlers,
     };
 }
 
@@ -168,6 +170,7 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
         refreshButton: {
             label: config.table.refreshLabel,
             icon: <LinkIcon className="h-4.5 w-4.5" />,
+            onClick: config.table.onRefresh,
         },
         rightControls: buildSalesDocumentRightControls(config).length ? <>{buildSalesDocumentRightControls(config)}</> : null,
         search: {

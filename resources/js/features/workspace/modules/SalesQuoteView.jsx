@@ -8,6 +8,7 @@ export default function SalesQuoteView({ page, mode, activeLevel2Tab, onOpenCont
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildSalesQuoteRecord}
             mode={mode}

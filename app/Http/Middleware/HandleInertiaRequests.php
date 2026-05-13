@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Presentation\AuthenticatedUserPresenter;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,7 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'timezone' => config('app.timezone'),
             ],
             'auth' => [
-                'user' => $request->user()?->only('id', 'name', 'email'),
+                'user' => AuthenticatedUserPresenter::present($request->user()),
             ],
             'flash' => [
                 'status' => fn () => $request->session()->get('status'),

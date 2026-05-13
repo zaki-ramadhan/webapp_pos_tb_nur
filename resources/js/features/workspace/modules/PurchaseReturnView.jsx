@@ -9,6 +9,7 @@ export default function PurchaseReturnView({ page, mode, activeLevel2Tab, onOpen
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildRecord}
             mode={mode}

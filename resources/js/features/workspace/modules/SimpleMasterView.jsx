@@ -20,6 +20,7 @@ import {
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { SIMPLE_MASTER_BACKEND_CONFIG } from '@/features/workspace/backend/workspaceBackendAdapters';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
@@ -245,11 +246,12 @@ function SimpleMasterFormView({
     const [values, setValues] = useState(() => buildFormValues(form, detailRow));
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
+    const initialValues = useMemo(() => buildFormValues(form, detailRow), [detailRow, form]);
 
     useEffect(() => {
-        setValues(buildFormValues(form, detailRow));
+        setValues(initialValues);
         setStatus({ tone: '', message: '' });
-    }, [detailRow, form]);
+    }, [initialValues]);
 
     function handleChange(fieldId, nextValue) {
         setValues((currentValues) => ({
@@ -257,6 +259,25 @@ function SimpleMasterFormView({
             [fieldId]: nextValue,
         }));
     }
+
+    const validationMessage = useMemo(() => {
+        const requiredChecks = (form.fields ?? [])
+            .filter((field) => field.required && field.type !== 'heading' && field.type !== 'checkbox')
+            .map((field) => ({
+                label: field.label,
+                value: values[field.id],
+                type: field.type === 'lookup' ? 'lookup' : 'text',
+            }));
+        const requiredValidationMessage = validateRequiredChecks(requiredChecks);
+
+        if (requiredValidationMessage) {
+            return requiredValidationMessage;
+        }
+
+        return backendConfig?.validate?.(values) ?? '';
+    }, [backendConfig, form.fields, values]);
+    const isDirty = useMemo(() => !areComparableValuesEqual(values, initialValues), [initialValues, values]);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     async function handleAction(actionId) {
         if (!backendConfig) {
@@ -283,8 +304,6 @@ function SimpleMasterFormView({
 
             return;
         }
-
-        const validationMessage = backendConfig.validate?.(values) ?? '';
 
         if (validationMessage) {
             setStatus({ tone: 'error', message: validationMessage });
@@ -358,6 +377,7 @@ function SimpleMasterFormView({
                             tone={action.tone}
                             icon={renderDockIcon(action.icon)}
                             onClick={saving ? undefined : () => handleAction(action.id)}
+                            disabled={action.id === 'save' ? saveDisabled : saving}
                             className={saving ? 'pointer-events-none opacity-70' : ''}
                         />
                     ))}

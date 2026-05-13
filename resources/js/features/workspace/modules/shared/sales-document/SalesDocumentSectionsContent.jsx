@@ -132,11 +132,31 @@ function SalesDocumentInvoiceTaxSection({ values }) {
                     <TransactionFieldLabel label="Pajak" />
                     <div className="flex flex-wrap gap-8 text-[17px] text-[#1f2436]">
                         <label className="inline-flex items-center gap-3">
-                            <input type="checkbox" checked={values.taxEnabled} readOnly className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
+                            <input
+                                type="checkbox"
+                                checked={values.taxEnabled}
+                                onChange={(event) =>
+                                    values.setValues?.((current) => ({
+                                        ...current,
+                                        taxEnabled: event.target.checked,
+                                    }))
+                                }
+                                className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
+                            />
                             <span>Kena Pajak</span>
                         </label>
                         <label className="inline-flex items-center gap-3">
-                            <input type="checkbox" checked={values.taxIncluded} readOnly className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
+                            <input
+                                type="checkbox"
+                                checked={values.taxIncluded}
+                                onChange={(event) =>
+                                    values.setValues?.((current) => ({
+                                        ...current,
+                                        taxIncluded: event.target.checked,
+                                    }))
+                                }
+                                className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
+                            />
                             <span>Total termasuk Pajak</span>
                         </label>
                     </div>
@@ -172,13 +192,52 @@ function SalesDocumentInvoiceTaxSection({ values }) {
                 <TransactionSectionHeading title="Info Pengiriman" icon="truck" />
                 <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label="Tgl Pengiriman" />
-                    <TransactionDateInput value={values.shippingDate} className="max-w-[272px]" />
+                    <TransactionDateInput
+                        value={values.shippingDate}
+                        onChange={(nextDisplayValue) =>
+                            values.setValues?.((current) => ({
+                                ...current,
+                                shippingDate: nextDisplayValue,
+                            }))
+                        }
+                        className="max-w-[272px]"
+                    />
 
                     <TransactionFieldLabel label="Pengiriman" />
-                    <ChipLookupField values={values.shippingMethod} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari pengiriman" heightClassName="h-[34px]" />
+                    <ChipLookupField
+                        values={values.shippingMethod}
+                        placeholder="Cari/Pilih..."
+                        onRemove={(value) =>
+                            values.setValues?.((current) => ({
+                                ...current,
+                                shippingMethod: current.shippingMethod.filter((item) => item !== value),
+                                __shippingMethodId: current.shippingMethod.filter((item) => item !== value).length
+                                    ? current.__shippingMethodId
+                                    : null,
+                            }))
+                        }
+                        onSearch={values.handlers?.onSelectShippingMethod}
+                        searchLabel="Cari pengiriman"
+                        heightClassName="h-[34px]"
+                    />
 
                     <TransactionFieldLabel label="FOB" />
-                    <ChipLookupField values={values.fob} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari FOB" heightClassName="h-[34px]" />
+                    <ChipLookupField
+                        values={values.fob}
+                        placeholder="Cari/Pilih..."
+                        onRemove={(value) =>
+                            values.setValues?.((current) => ({
+                                ...current,
+                                fob: current.fob.filter((item) => item !== value),
+                                __fobId: current.fob.filter((item) => item !== value).length
+                                    ? current.__fobId
+                                    : null,
+                            }))
+                        }
+                        onSearch={values.handlers?.onSelectFob}
+                        searchLabel="Cari FOB"
+                        heightClassName="h-[34px]"
+                    />
                 </div>
             </div>
 
@@ -189,7 +248,7 @@ function SalesDocumentInvoiceTaxSection({ values }) {
     );
 }
 
-export function SalesDocumentItemsSection({ config, values, isDetail }) {
+export function SalesDocumentItemsSection({ config, values, isDetail, handlers }) {
     const itemTitle = values.itemCountLabel || config.itemSectionTitle;
     const canOpenItemModal = isDetail && config.itemModal?.enabled && Boolean(values.itemModal);
     const itemLeadingAction =
@@ -197,7 +256,14 @@ export function SalesDocumentItemsSection({ config, values, isDetail }) {
             ? null
             : config.itemSectionLeadingActionCreateOnly && isDetail
               ? null
-              : config.itemSectionLeadingAction;
+              : config.itemSectionLeadingAction ?? (!isDetail ? { label: 'Tambah Item', onClick: handlers?.onCreateItem } : null);
+
+    const itemRowClick = canOpenItemModal
+        ? config.onOpenItemModal
+        : handlers?.onEditItem;
+    const itemTitleClick = canOpenItemModal
+        ? config.onOpenItemModal
+        : handlers?.onCreateItem;
 
     return (
         <SearchableTableSection
@@ -211,13 +277,13 @@ export function SalesDocumentItemsSection({ config, values, isDetail }) {
             showTitleSearchButton={config.showItemTitleSearchButton ?? isDetail}
             hideSearchField={config.hideItemSearchField}
             leadingAction={itemLeadingAction}
-            onTitleClick={canOpenItemModal ? config.onOpenItemModal : undefined}
-            onRowClick={canOpenItemModal ? config.onOpenItemModal : undefined}
+            onTitleClick={itemTitleClick}
+            onRowClick={itemRowClick}
         />
     );
 }
 
-export function SalesDocumentAdditionalInfoSection({ config, values, isDetail }) {
+export function SalesDocumentAdditionalInfoSection({ config, values, setValues, isDetail, handlers }) {
     const additionalInfoLeadingFields = config.additionalInfoLeadingFields ?? [];
     const additionalLookupFields = config.additionalInfoLookupFields ?? [];
     const additionalTrailingFields = config.additionalInfoTrailingFields ?? [];
@@ -314,7 +380,20 @@ export function SalesDocumentAdditionalInfoSection({ config, values, isDetail })
                     {config.showPaymentTerms !== false ? (
                         <>
                             <TransactionFieldLabel label={config.labels.paymentTerms} />
-                            <ChipLookupField values={values.paymentTerms} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari syarat pembayaran" heightClassName="h-[34px]" />
+                            <ChipLookupField
+                                values={values.paymentTerms}
+                                placeholder="Cari/Pilih..."
+                                onRemove={(value) =>
+                                    setValues?.((current) => ({
+                                        ...current,
+                                        paymentTerms: current.paymentTerms.filter((item) => item !== value),
+                                        __paymentTermId: current.paymentTerms.filter((item) => item !== value).length ? current.__paymentTermId : null,
+                                    }))
+                                }
+                                onSearch={handlers?.onSelectPaymentTerm}
+                                searchLabel="Cari syarat pembayaran"
+                                heightClassName="h-[34px]"
+                            />
                         </>
                     ) : null}
 
@@ -323,7 +402,17 @@ export function SalesDocumentAdditionalInfoSection({ config, values, isDetail })
                     {config.showPurchaseOrderNumber !== false ? (
                         <>
                             <TransactionFieldLabel label={config.labels.purchaseOrderNumber} />
-                            <TextInput value={values.purchaseOrderNumber} readOnly className="h-[34px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
+                            <TextInput
+                                value={values.purchaseOrderNumber}
+                                onChange={(event) =>
+                                    setValues?.((current) => ({
+                                        ...current,
+                                        purchaseOrderNumber: event.target.value,
+                                    }))
+                                }
+                                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-[15px] text-[#1f2436]"
+                            />
                         </>
                     ) : null}
 
@@ -337,17 +426,60 @@ export function SalesDocumentAdditionalInfoSection({ config, values, isDetail })
                             >
                                 <PinIcon className="h-[18px] w-[18px] text-[#21539b]" />
                             </button>
-                            <ReadonlyDocumentTextarea value={values.address} className="min-h-[86px] flex-1" />
+                            <textarea
+                                value={values.address}
+                                onChange={(event) =>
+                                    setValues?.((current) => ({
+                                        ...current,
+                                        address: event.target.value,
+                                    }))
+                                }
+                                rows={4}
+                                className="min-h-[86px] flex-1 resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                            />
                         </div>
                     ) : (
-                        <ReadonlyDocumentTextarea value={values.address} className="min-h-[84px]" />
+                        <textarea
+                            value={values.address}
+                            onChange={(event) =>
+                                setValues?.((current) => ({
+                                    ...current,
+                                    address: event.target.value,
+                                }))
+                            }
+                            rows={4}
+                            className="min-h-[84px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                        />
                     )}
 
                     <TransactionFieldLabel label={config.labels.branch} required />
-                    <ChipLookupField values={values.branches} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari cabang" heightClassName="h-[34px]" />
+                    <ChipLookupField
+                        values={values.branches}
+                        placeholder="Cari/Pilih..."
+                        onRemove={(value) =>
+                            setValues?.((current) => ({
+                                ...current,
+                                branches: current.branches.filter((item) => item !== value),
+                                __branchId: current.branches.filter((item) => item !== value).length ? current.__branchId : null,
+                            }))
+                        }
+                        onSearch={handlers?.onSelectBranch}
+                        searchLabel="Cari cabang"
+                        heightClassName="h-[34px]"
+                    />
 
                     <TransactionFieldLabel label={config.labels.notes} />
-                    <ReadonlyDocumentTextarea value={values.notes} className="min-h-[72px]" />
+                    <textarea
+                        value={values.notes}
+                        onChange={(event) =>
+                            setValues?.((current) => ({
+                                ...current,
+                                notes: event.target.value,
+                            }))
+                        }
+                        rows={4}
+                        className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                    />
 
                     {additionalTrailingFields.map((field, index) => renderAdditionalField(field, `${field.valueKey ?? field.label}-trailing-${index}`))}
 
@@ -361,7 +493,9 @@ export function SalesDocumentAdditionalInfoSection({ config, values, isDetail })
             </section>
 
             <section>
-                {config.taxInfoMode === 'invoice' ? <SalesDocumentInvoiceTaxSection values={values} /> : null}
+                {config.taxInfoMode === 'invoice' ? (
+                    <SalesDocumentInvoiceTaxSection values={{ ...values, setValues, handlers }} />
+                ) : null}
 
                 {config.showTaxInfo !== false && config.taxInfoMode !== 'invoice' ? (
                     <>
@@ -371,11 +505,31 @@ export function SalesDocumentAdditionalInfoSection({ config, values, isDetail })
                             <TransactionFieldLabel label={config.labels.tax} />
                             <div className="flex flex-wrap gap-8 text-[17px] text-[#1f2436]">
                                 <label className="inline-flex items-center gap-3">
-                                    <input type="checkbox" checked={values.taxEnabled} readOnly className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
+                                    <input
+                                        type="checkbox"
+                                        checked={values.taxEnabled}
+                                        onChange={(event) =>
+                                            setValues?.((current) => ({
+                                                ...current,
+                                                taxEnabled: event.target.checked,
+                                            }))
+                                        }
+                                        className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
+                                    />
                                     <span>Kena Pajak</span>
                                 </label>
                                 <label className="inline-flex items-center gap-3">
-                                    <input type="checkbox" checked={values.taxIncluded} readOnly className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
+                                    <input
+                                        type="checkbox"
+                                        checked={values.taxIncluded}
+                                        onChange={(event) =>
+                                            setValues?.((current) => ({
+                                                ...current,
+                                                taxIncluded: event.target.checked,
+                                            }))
+                                        }
+                                        className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
+                                    />
                                     <span>Total termasuk Pajak</span>
                                 </label>
                             </div>
@@ -388,17 +542,56 @@ export function SalesDocumentAdditionalInfoSection({ config, values, isDetail })
                         <TransactionSectionHeading title={config.shippingInfoTitle} icon="truck" />
                         <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.shippingDate} />
-                            <TransactionDateInput value={values.shippingDate} className="max-w-[272px]" />
+                            <TransactionDateInput
+                                value={values.shippingDate}
+                                onChange={(nextDisplayValue) =>
+                                    setValues?.((current) => ({
+                                        ...current,
+                                        shippingDate: nextDisplayValue,
+                                    }))
+                                }
+                                className="max-w-[272px]"
+                            />
 
                             <TransactionFieldLabel label={config.labels.shippingMethod} />
-                            <ChipLookupField values={values.shippingMethod} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari pengiriman" heightClassName="h-[34px]" />
+                    <ChipLookupField
+                        values={values.shippingMethod}
+                        placeholder="Cari/Pilih..."
+                        onRemove={(value) =>
+                            setValues?.((current) => ({
+                                ...current,
+                                shippingMethod: current.shippingMethod.filter((item) => item !== value),
+                                __shippingMethodId: current.shippingMethod.filter((item) => item !== value).length
+                                    ? current.__shippingMethodId
+                                    : null,
+                            }))
+                        }
+                        onSearch={handlers?.onSelectShippingMethod}
+                        searchLabel="Cari pengiriman"
+                        heightClassName="h-[34px]"
+                    />
 
-                            {config.showFobInShippingInfo ? (
-                                <>
-                                    <TransactionFieldLabel label={config.labels.fob} />
-                                    <ChipLookupField values={values.fob} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari FOB" heightClassName="h-[34px]" />
-                                </>
-                            ) : null}
+                    {config.showFobInShippingInfo ? (
+                        <>
+                            <TransactionFieldLabel label={config.labels.fob} />
+                            <ChipLookupField
+                                values={values.fob}
+                                placeholder="Cari/Pilih..."
+                                onRemove={(value) =>
+                                    setValues?.((current) => ({
+                                        ...current,
+                                        fob: current.fob.filter((item) => item !== value),
+                                        __fobId: current.fob.filter((item) => item !== value).length
+                                            ? current.__fobId
+                                            : null,
+                                    }))
+                                }
+                                onSearch={handlers?.onSelectFob}
+                                searchLabel="Cari FOB"
+                                heightClassName="h-[34px]"
+                            />
+                        </>
+                    ) : null}
                         </div>
                     </div>
                 ) : null}
@@ -408,7 +601,22 @@ export function SalesDocumentAdditionalInfoSection({ config, values, isDetail })
                         <TransactionSectionHeading title={config.extraInfoTitle} icon="payment" />
                         <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.fob} />
-                            <ChipLookupField values={values.fob} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari FOB" heightClassName="h-[34px]" />
+                            <ChipLookupField
+                                values={values.fob}
+                                placeholder="Cari/Pilih..."
+                                onRemove={(value) =>
+                                    setValues?.((current) => ({
+                                        ...current,
+                                        fob: current.fob.filter((item) => item !== value),
+                                        __fobId: current.fob.filter((item) => item !== value).length
+                                            ? current.__fobId
+                                            : null,
+                                    }))
+                                }
+                                onSearch={handlers?.onSelectFob}
+                                searchLabel="Cari FOB"
+                                heightClassName="h-[34px]"
+                            />
                         </div>
                     </div>
                 ) : null}

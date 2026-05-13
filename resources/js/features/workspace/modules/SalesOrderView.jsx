@@ -8,6 +8,7 @@ export default function SalesOrderView({ page, mode, activeLevel2Tab, onOpenCont
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildSalesOrderRecord}
             mode={mode}

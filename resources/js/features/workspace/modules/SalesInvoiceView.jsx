@@ -8,6 +8,7 @@ export default function SalesInvoiceView({ page, mode, activeLevel2Tab, onOpenCo
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildSalesInvoiceRecord}
             mode={mode}

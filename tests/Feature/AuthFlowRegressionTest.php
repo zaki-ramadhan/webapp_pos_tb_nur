@@ -5,6 +5,9 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Contracts\Provider;
+use Laravel\Socialite\Contracts\User as OAuthUser;
+use Laravel\Socialite\Facades\Socialite;
 use PDO;
 use Tests\TestCase;
 
@@ -19,6 +22,10 @@ class AuthFlowRegressionTest extends TestCase
         }
 
         parent::setUp();
+
+        config()->set('services.google.client_id', 'test-google-client');
+        config()->set('services.google.client_secret', 'test-google-secret');
+        config()->set('services.google.redirect', 'http://localhost/auth/google/callback');
     }
 
     public function test_registered_user_can_logout_and_login_again_with_same_credentials(): void
@@ -108,5 +115,93 @@ class AuthFlowRegressionTest extends TestCase
             ]);
 
         $this->assertGuest();
+    }
+
+    public function test_google_callback_logs_in_existing_user_and_links_google_identity(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'google.user@example.com',
+            'is_active' => true,
+            'google_id' => null,
+            'google_avatar' => null,
+        ]);
+
+        $this->mockGoogleUser(
+            id: 'google-user-123',
+            email: 'google.user@example.com',
+            name: 'Google User',
+            avatar: 'https://example.com/avatar.png',
+        );
+
+        $this->get('/auth/google/callback?code=fake-code')
+            ->assertRedirect(route('dashboard'));
+
+        $this->assertAuthenticatedAs($user->fresh());
+        $this->assertSame('google-user-123', $user->fresh()->google_id);
+        $this->assertSame('https://example.com/avatar.png', $user->fresh()->google_avatar);
+        $this->assertNotNull($user->fresh()->last_login_at);
+    }
+
+    public function test_google_callback_creates_new_user_when_email_not_registered(): void
+    {
+        $this->mockGoogleUser(
+            id: 'google-new-456',
+            email: 'new.google.user@example.com',
+            name: 'New Google User',
+            avatar: 'https://example.com/new-avatar.png',
+        );
+
+        $this->get('/auth/google/callback?code=fake-code')
+            ->assertRedirect(route('dashboard'));
+
+        $user = User::query()->where('email', 'new.google.user@example.com')->firstOrFail();
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertSame('google-new-456', $user->google_id);
+        $this->assertSame('https://example.com/new-avatar.png', $user->google_avatar);
+        $this->assertTrue((bool) $user->is_active);
+        $this->assertNotNull($user->email_verified_at);
+    }
+
+    public function test_google_callback_rejects_inactive_existing_user(): void
+    {
+        User::factory()->create([
+            'email' => 'inactive.google.user@example.com',
+            'is_active' => false,
+        ]);
+
+        $this->mockGoogleUser(
+            id: 'google-inactive-789',
+            email: 'inactive.google.user@example.com',
+            name: 'Inactive Google User',
+            avatar: 'https://example.com/inactive-avatar.png',
+        );
+
+        $this->from('/')->get('/auth/google/callback?code=fake-code')
+            ->assertRedirect(route('home'))
+            ->assertSessionHasErrors([
+                'auth' => 'Akun ini tidak aktif. Hubungi administrator.',
+            ]);
+
+        $this->assertGuest();
+    }
+
+    private function mockGoogleUser(string $id, string $email, string $name, string $avatar): void
+    {
+        $oauthUser = \Mockery::mock(OAuthUser::class);
+        $oauthUser->shouldReceive('getId')->andReturn($id);
+        $oauthUser->shouldReceive('getEmail')->andReturn($email);
+        $oauthUser->shouldReceive('getName')->andReturn($name);
+        $oauthUser->shouldReceive('getNickname')->andReturn(null);
+        $oauthUser->shouldReceive('getAvatar')->andReturn($avatar);
+
+        $provider = \Mockery::mock(Provider::class);
+        $provider->shouldReceive('stateless')->andReturnSelf();
+        $provider->shouldReceive('user')->andReturn($oauthUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('google')
+            ->andReturn($provider);
     }
 }

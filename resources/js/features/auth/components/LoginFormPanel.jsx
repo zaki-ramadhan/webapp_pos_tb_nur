@@ -120,7 +120,11 @@ export default function LoginFormPanel({ login }) {
                         <Divider label={login.socialDivider} />
                     </div>
 
-                    <SocialButton label={`Masuk dengan ${login.googleLabel}`} />
+                    <SocialButton
+                        label={`Masuk dengan ${login.googleLabel}`}
+                        href={login.googleHref}
+                        disabled={form.processing}
+                    />
                 </form>
 
                 <AuthFooterPrompt

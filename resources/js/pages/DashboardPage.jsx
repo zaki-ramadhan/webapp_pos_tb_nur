@@ -38,9 +38,8 @@ export default function DashboardPage({ dashboard }) {
             <div className="flex min-h-screen flex-col overflow-x-hidden">
                 <div ref={topBarRef} className="fixed inset-x-0 top-0 z-50">
                     <DashboardTopBar
-                        currentIp={dashboard.currentIp}
+                        contextLabel={dashboard.headerContextLabel}
                         user={dashboard.user}
-                        sample={dashboard.sample}
                         workspaceMenuOpen={isWorkspaceMenuOpen}
                         onToggleWorkspaceMenu={() => setIsWorkspaceMenuOpen((currentValue) => !currentValue)}
                     />

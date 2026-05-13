@@ -8,6 +8,7 @@ export default function SalesDeliveryView({ page, mode, activeLevel2Tab, onOpenC
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildSalesDeliveryRecord}
             mode={mode}

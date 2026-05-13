@@ -24,9 +24,8 @@ function TopBarIcon({ children, label, onClick, buttonRef }) {
 }
 
 export default function DashboardTopBar({
-    currentIp,
+    contextLabel = 'Workspace Aktif',
     user,
-    sample,
     workspaceMenuOpen = false,
     onToggleWorkspaceMenu,
 }) {
@@ -50,17 +49,13 @@ export default function DashboardTopBar({
     return (
         <header className="relative z-20 border-b border-[#ED3969] bg-[linear-gradient(90deg,#213e75_0%,#1b315d_100%)] px-3 py-1.5 text-white shadow-[0_4px_12px_rgba(15,23,42,0.14)] sm:px-4 sm:py-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-3">
+                <div className="flex min-w-0 items-center">
                     <BrandMark
                         name="TB Nur POS"
                         className="shrink-0 scale-[0.76] origin-left sm:scale-[0.82]"
                         badgeClassName="shadow-none"
                         textClassName="text-white"
                     />
-                    <div className="hidden min-w-0 items-center gap-2 text-[12px] text-white/80 md:flex md:text-[13px]">
-                        <span className="h-5 w-px bg-white/20" />
-                        <span className="truncate">IP Saat ini: {currentIp}</span>
-                    </div>
                 </div>
 
                 <div className="ml-auto flex items-center gap-1 sm:gap-1.5 lg:gap-1.5">
@@ -85,7 +80,7 @@ export default function DashboardTopBar({
                             aria-label="Buka menu pengguna"
                         >
                             <div className="hidden min-w-0 text-right leading-tight lg:block">
-                                <p className="truncate text-[13px] font-semibold text-white md:text-[14px]">{sample.label}</p>
+                                <p className="truncate text-[13px] font-semibold text-white md:text-[14px]">{contextLabel}</p>
                                 <p className="truncate text-[11px] text-white/75 md:text-[12px]">
                                     {user.name}
                                     {user.role ? ` • ${user.role}` : ''}
@@ -94,8 +89,9 @@ export default function DashboardTopBar({
 
                             <UserAvatar
                                 name={user.name}
+                                imageUrl={user.avatarUrl}
                                 className="h-7 w-7 bg-white text-[11px] font-semibold text-[#56607c] sm:h-7.5 sm:w-7.5 sm:text-[11px] md:h-8 md:w-8 md:text-[12px]"
-                                statusClassName="bg-[#45c678]"
+                                showStatusIndicator={false}
                             />
 
                             <span className="text-white/80">

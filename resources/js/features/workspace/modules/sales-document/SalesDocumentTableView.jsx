@@ -106,7 +106,7 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                                     colSpan={config.table.columns.length}
                                     className="px-2.5 py-6 text-center text-[15px] text-[#7d879a]"
                                 >
-                                    Belum ada data
+                                    {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

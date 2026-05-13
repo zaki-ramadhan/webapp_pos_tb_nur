@@ -131,6 +131,7 @@ export function SearchableTableSection({
                     {leadingAction ? (
                         <button
                             type="button"
+                            onClick={leadingAction.onClick}
                             className="inline-flex h-[40px] w-full shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[15px] text-[#21539b] sm:w-auto"
                         >
                             {leadingAction.label}

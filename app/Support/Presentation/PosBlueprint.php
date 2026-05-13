@@ -33,6 +33,7 @@ final class PosBlueprint
                 'submitHref' => route('dashboard'),
                 'socialDivider' => 'atau masuk dengan',
                 'googleLabel' => 'Google',
+                'googleHref' => route('auth.google.redirect'),
                 'signupPrompt' => AuthFeatureFlags::allowsPublicRegistration() ? 'Belum memiliki akun?' : null,
                 'signupCta' => AuthFeatureFlags::allowsPublicRegistration() ? 'Daftar Sekarang' : null,
                 'signupHref' => AuthFeatureFlags::allowsPublicRegistration() ? '/register' : null,
@@ -97,12 +98,13 @@ final class PosBlueprint
         return [
             ...self::baseData(),
             'dashboard' => [
-                'currentIp' => '182.10.183.70',
+                'headerContextLabel' => 'Workspace Aktif',
                 'user' => [
                     'name' => 'Zaki Ramadhan',
                     'email' => 'piscokpiscok2610@gmail.com',
                     'role' => 'Administrator',
                     'status' => 'active',
+                    'avatarUrl' => null,
                 ],
                 'sample' => $selectedSample,
                 'sampleDashboard' => self::sampleDashboard(),

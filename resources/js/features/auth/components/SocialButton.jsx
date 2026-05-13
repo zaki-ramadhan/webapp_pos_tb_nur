@@ -23,9 +23,18 @@ function GoogleMark() {
     );
 }
 
-export default function SocialButton({ label }) {
+export default function SocialButton({ label, onClick, href = null, disabled = false }) {
     return (
-        <Button type="button" variant="secondary" size="md" fullWidth>
+        <Button
+            as={href ? 'a' : 'button'}
+            type={href ? undefined : 'button'}
+            href={href ?? undefined}
+            onClick={onClick}
+            disabled={disabled}
+            variant="secondary"
+            size="md"
+            fullWidth
+        >
             <GoogleMark />
             <span>{label}</span>
         </Button>

@@ -423,20 +423,30 @@ function TransactionDockButton({ action }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
     const hasMenu = Boolean(action.items?.length);
+    const isDisabled = Boolean(action.disabled);
 
     return (
         <div className="relative">
             <button
                 ref={buttonRef}
                 type="button"
+                disabled={isDisabled}
+                aria-disabled={isDisabled}
                 aria-label={action.label}
                 title={action.label}
                 onClick={() => {
+                    if (isDisabled) {
+                        return;
+                    }
+
                     if (hasMenu) {
                         setOpen((current) => !current);
+                        return;
                     }
+
+                    action.onClick?.();
                 }}
-                className={`inline-flex h-[48px] w-[78px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[52px] sm:w-[88px] lg:h-[56px] lg:w-[96px] ${resolveDockToneClassName(action.tone)}`.trim()}
+                className={`inline-flex h-[48px] w-[78px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[52px] sm:w-[88px] lg:h-[56px] lg:w-[96px] ${resolveDockToneClassName(action.tone)} ${isDisabled ? 'cursor-not-allowed opacity-55' : ''}`.trim()}
             >
                 <span className="inline-flex flex-1 items-center justify-center">
                     <TransactionDockIcon icon={action.icon} />

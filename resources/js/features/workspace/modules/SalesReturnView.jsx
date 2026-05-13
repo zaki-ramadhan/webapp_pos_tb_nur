@@ -9,6 +9,7 @@ export default function SalesReturnView({ page, mode, activeLevel2Tab, onOpenCon
 
     return (
         <SalesDocumentView
+            pageId={page.id}
             config={config}
             buildRecord={buildRecord}
             mode={mode}
