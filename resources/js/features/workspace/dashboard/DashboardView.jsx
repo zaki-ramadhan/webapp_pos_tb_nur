@@ -310,6 +310,41 @@ const DashboardView = forwardRef(function DashboardView(
         }
     }
 
+    function handleCloseDetailTab(pageId, recordId) {
+        if (!pageId || recordId == null) {
+            return;
+        }
+
+        const tabId = `${pageId}-detail-${recordId}`;
+
+        setPageLevel2ContentTabs((currentTabs) => {
+            const pageTabs = currentTabs[pageId] ?? initialLevel2ContentTabs[pageId] ?? [];
+            const remainingTabs = pageTabs.filter((tab) => tab.id !== tabId);
+
+            if (remainingTabs.length === pageTabs.length) {
+                return currentTabs;
+            }
+
+             setActiveLevel2Tabs((currentLevel2Tabs) => {
+                if (currentLevel2Tabs[pageId] !== tabId) {
+                    return currentLevel2Tabs;
+                }
+
+                return {
+                    ...currentLevel2Tabs,
+                    [pageId]: remainingTabs.length
+                        ? remainingTabs[remainingTabs.length - 1].id
+                        : initialLevel2Tabs[pageId],
+                };
+            });
+
+            return {
+                ...currentTabs,
+                [pageId]: remainingTabs,
+            };
+        });
+    }
+
     useEffect(() => {
         if (!pageOpeningLoading) {
             return undefined;
@@ -382,6 +417,7 @@ const DashboardView = forwardRef(function DashboardView(
                         detailTabOpeners={detailTabOpeners}
                         createDetailTabOpener={createDetailTabOpener}
                         handleOpenDefaultContentTab={handleOpenDefaultContentTab}
+                        handleCloseDetailTab={handleCloseDetailTab}
                         isDashboardPageActive={isDashboardPageActive}
                     />
                 </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import {
@@ -41,6 +42,13 @@ import {
     SalesDocumentHeaderButtons,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import {
+    finishCrudLoadingToast,
+    showCrudErrorToast,
+    showCrudLoadingToast,
+    showCrudSuccessToast,
+    showCrudValidationToast,
+} from '@/features/workspace/shared/crudFeedback';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 
 const sectionComponentMap = {
@@ -287,11 +295,13 @@ export default function SalesDocumentFormView({
     backendConfig,
     onOpenContent,
     onOpenDetail,
+    onCloseDetail,
     onRefresh,
 }) {
     const [itemModalOpen, setItemModalOpen] = useState(false);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(
         () => (activeRecordId ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId)) : config.draft),
@@ -312,6 +322,7 @@ export default function SalesDocumentFormView({
         setValues(buildSalesDocumentFormState(sourceRecord));
         setItemModalOpen(false);
         setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
     }, [config, isDetail, sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);
@@ -375,15 +386,19 @@ export default function SalesDocumentFormView({
 
     async function handleSave() {
         if (!backendConfig) {
-            setStatus({ tone: 'error', message: 'Konfigurasi backend dokumen belum tersedia.' });
+            const errorMessage = 'Konfigurasi backend dokumen belum tersedia.';
+            setStatus({ tone: 'error', message: errorMessage });
+            showCrudErrorToast(errorMessage);
             return;
         }
 
         if (validationMessage) {
             setStatus({ tone: 'error', message: validationMessage });
+            showCrudValidationToast(validationMessage);
             return;
         }
 
+        const loadingToastId = showCrudLoadingToast(isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.');
         setSaving(true);
         setStatus({ tone: '', message: '' });
 
@@ -407,10 +422,13 @@ export default function SalesDocumentFormView({
             const record = response?.data ?? null;
 
             await onRefresh?.();
+            const successMessage = isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.';
             setStatus({
                 tone: 'success',
-                message: isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.',
+                message: successMessage,
             });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
 
             if (!isDetail && record?.id && onOpenDetail) {
                 onOpenDetail({
@@ -420,10 +438,21 @@ export default function SalesDocumentFormView({
                 });
             }
         } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
         } finally {
             setSaving(false);
         }
+    }
+
+    function requestDelete() {
+        if (!backendConfig || !values.__backendRecordId || saving) {
+            return;
+        }
+
+        setDeleteConfirmationOpen(true);
     }
 
     async function handleDelete() {
@@ -431,20 +460,25 @@ export default function SalesDocumentFormView({
             return;
         }
 
-        if (!window.confirm('Hapus dokumen ini?')) {
-            return;
-        }
-
+        const loadingToastId = showCrudLoadingToast('Sedang menghapus dokumen.');
         setSaving(true);
         setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
 
         try {
             await deleteBackendResource(backendConfig.resource, values.__backendRecordId);
             await onRefresh?.();
-            setStatus({ tone: 'success', message: 'Dokumen berhasil dihapus.' });
+            const successMessage = 'Dokumen berhasil dihapus.';
+            setStatus({ tone: 'success', message: successMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
+            onCloseDetail?.(values.__backendRecordId);
             onOpenContent?.();
         } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
         } finally {
             setSaving(false);
         }
@@ -507,7 +541,7 @@ export default function SalesDocumentFormView({
                     return {
                         ...action,
                         label: saving ? 'Memproses...' : action.label,
-                        onClick: handleDelete,
+                        onClick: requestDelete,
                     };
                 }
 
@@ -739,6 +773,17 @@ export default function SalesDocumentFormView({
             </div>
 
             <SalesDocumentItemModal open={itemModalOpen} onClose={() => setItemModalOpen(false)} modal={values.itemModal} />
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Dokumen"
+                message="Dokumen ini akan dihapus permanen. Lanjutkan?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                confirmLoading={saving}
+            />
         </div>
     );
 }

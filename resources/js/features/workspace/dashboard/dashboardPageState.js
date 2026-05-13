@@ -54,6 +54,7 @@ const DETAIL_TAB_PAGE_IDS = [
     'cash-receipt',
     'bank-transfer',
     'journal-activity-log',
+    'department',
 ];
 
 export function buildInitialLevel2TabsState(pages) {

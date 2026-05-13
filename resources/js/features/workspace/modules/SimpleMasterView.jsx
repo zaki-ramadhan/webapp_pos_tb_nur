@@ -20,6 +20,13 @@ import {
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { SIMPLE_MASTER_BACKEND_CONFIG } from '@/features/workspace/backend/workspaceBackendAdapters';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import {
+    finishCrudLoadingToast,
+    showCrudErrorToast,
+    showCrudLoadingToast,
+    showCrudSuccessToast,
+    showCrudValidationToast,
+} from '@/features/workspace/shared/crudFeedback';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -238,6 +245,7 @@ function SimpleMasterFormView({
     backendConfig = null,
     onOpenContent,
     onOpenDetail,
+    onCloseDetail,
     onRefresh,
 }) {
     const { form, table } = page;
@@ -289,15 +297,23 @@ function SimpleMasterFormView({
                 return;
             }
 
+            const loadingToastId = showCrudLoadingToast('Sedang menghapus data.');
             setSaving(true);
 
             try {
                 await deleteBackendResource(backendConfig.resource, detailRow.id);
                 await onRefresh?.();
-                setStatus({ tone: 'success', message: 'Data berhasil dihapus.' });
+                const successMessage = 'Data berhasil dihapus.';
+                setStatus({ tone: 'success', message: successMessage });
+                finishCrudLoadingToast(loadingToastId);
+                showCrudSuccessToast(successMessage);
+                onCloseDetail?.(detailRow.id);
                 onOpenContent?.();
             } catch (error) {
-                setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+                const errorMessage = getBackendErrorMessage(error);
+                setStatus({ tone: 'error', message: errorMessage });
+                finishCrudLoadingToast(loadingToastId);
+                showCrudErrorToast(errorMessage);
             } finally {
                 setSaving(false);
             }
@@ -307,9 +323,11 @@ function SimpleMasterFormView({
 
         if (validationMessage) {
             setStatus({ tone: 'error', message: validationMessage });
+            showCrudValidationToast(validationMessage);
             return;
         }
 
+        const loadingToastId = showCrudLoadingToast(isDetailMode ? 'Sedang memperbarui data.' : 'Sedang menyimpan data baru.');
         setSaving(true);
 
         try {
@@ -320,7 +338,10 @@ function SimpleMasterFormView({
             const record = response?.data ?? null;
 
             await onRefresh?.();
-            setStatus({ tone: 'success', message: isDetailMode ? 'Data berhasil diperbarui.' : 'Data berhasil dibuat.' });
+            const successMessage = isDetailMode ? 'Data berhasil diperbarui.' : 'Data berhasil dibuat.';
+            setStatus({ tone: 'success', message: successMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
 
             if (!isDetailMode && record && onOpenDetail) {
                 const row = backendConfig.toRow(record);
@@ -332,7 +353,10 @@ function SimpleMasterFormView({
                 });
             }
         } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
         } finally {
             setSaving(false);
         }
@@ -515,7 +539,7 @@ function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
     );
 }
 
-export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
+export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const backendConfig = SIMPLE_MASTER_BACKEND_CONFIG[page.id] ?? null;
     const { rows, total, loading, error, reload } = useBackendIndexResource({
         resource: backendConfig?.resource,
@@ -554,6 +578,7 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenCo
             backendConfig={backendConfig}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
     );

@@ -34,11 +34,15 @@ export default function ConfirmationModal({
     onClose,
     onConfirm,
     maxWidthClassName = 'max-w-[620px]',
+    confirmVariant = 'primary',
+    confirmDisabled = false,
+    confirmLoading = false,
+    cancelDisabled = false,
 }) {
     return (
         <ModalBase
             open={open}
-            onBackdropClick={onClose}
+            onBackdropClick={confirmLoading ? null : onClose}
             className="bg-[rgba(20,30,49,0.58)] px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_14px_30px_rgba(15,23,42,0.2)]`.trim()}
         >
@@ -52,6 +56,7 @@ export default function ConfirmationModal({
                     <button
                         type="button"
                         onClick={onClose}
+                        disabled={confirmLoading}
                         className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition hover:bg-white/10"
                         aria-label={closeLabel}
                     >
@@ -71,9 +76,13 @@ export default function ConfirmationModal({
 
                 <div className="mt-5 flex items-center justify-end gap-2.5">
                     <Button
+                        variant={confirmVariant}
                         size="md"
                         onClick={onConfirm}
-                        className="h-10 min-w-[60px] rounded-[4px] bg-[#1f57a9] px-5 text-[15px] shadow-none hover:bg-[#1a4c95]"
+                        disabled={confirmDisabled}
+                        loading={confirmLoading}
+                        loadingLabel={confirmLabel}
+                        className="h-10 min-w-[60px] rounded-[4px] px-5 text-[15px] shadow-none"
                     >
                         {confirmLabel}
                     </Button>
@@ -82,6 +91,7 @@ export default function ConfirmationModal({
                         variant="secondary"
                         size="md"
                         onClick={onClose}
+                        disabled={cancelDisabled || confirmLoading}
                         className="h-10 min-w-[60px] rounded-[4px] border-[#8ec1ef] px-4 text-[15px] text-[#1a63b3] shadow-none"
                     >
                         {cancelLabel}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import CheckboxField from '@/components/ui/CheckboxField';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     DataTable,
     DataTableBody,
@@ -10,21 +11,82 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import TextInput from '@/components/ui/TextInput';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import {
+    createBackendResource,
+    deleteBackendResource,
+    getBackendErrorMessage,
+    updateBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import {
+    finishCrudLoadingToast,
+    showCrudErrorToast,
+    showCrudLoadingToast,
+    showCrudSuccessToast,
+    showCrudValidationToast,
+} from '@/features/workspace/shared/crudFeedback';
 import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
-import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
+import { SearchIcon, SortIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 
-function buildDefaultValues(form) {
+function buildDefaultValues(form, detailRow = null) {
     return {
-        name: form.defaults?.name ?? '',
-        description: form.defaults?.description ?? '',
-        isSubDepartment: Boolean(form.defaults?.isSubDepartment),
+        name: detailRow?.name ?? form.defaults?.name ?? '',
+        description: detailRow?.notes ?? form.defaults?.description ?? '',
+        isSubDepartment: false,
         openingDate: form.defaults?.openingDate ?? '',
         openingBalanceKeyword: '',
-        allUsers: form.userAccess?.allUsersChecked ?? true,
+        allUsers: !(detailRow?.userIds?.length),
+        __backendRecordId: detailRow?.id ?? null,
+        __code: detailRow?.code ?? '',
     };
+}
+
+function buildDepartmentSnapshot(values) {
+    return {
+        name: values.name,
+        description: values.description,
+        isSubDepartment: values.isSubDepartment,
+        allUsers: values.allUsers,
+    };
+}
+
+function buildDepartmentCode(name, currentCode = '') {
+    if (String(currentCode ?? '').trim()) {
+        return String(currentCode).trim();
+    }
+
+    const baseSlug = String(name ?? '')
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 18);
+    const suffix = Date.now().toString().slice(-6);
+
+    return `DEPT-${baseSlug || 'AUTO'}-${suffix}`;
+}
+
+function validateDepartmentValues(values, form) {
+    const requiredMessage = validateRequiredChecks([
+        { label: form.labels.name, value: values.name },
+    ]);
+
+    if (requiredMessage) {
+        return requiredMessage;
+    }
+
+    if (values.isSubDepartment) {
+        return 'Sub departemen belum bisa disimpan karena parent departemen belum tersedia di form ini.';
+    }
+
+    if (!values.allUsers) {
+        return 'Pembatasan pengguna departemen belum bisa disimpan karena pemilihan user belum tersedia di form ini.';
+    }
+
+    return '';
 }
 
 function DepartmentFieldRow({ label, required = false, children }) {
@@ -35,6 +97,23 @@ function DepartmentFieldRow({ label, required = false, children }) {
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
             <div>{children}</div>
+        </div>
+    );
+}
+
+function StatusMessage({ status }) {
+    if (!status?.message) {
+        return null;
+    }
+
+    const toneClassName =
+        status.tone === 'error'
+            ? 'border-[#f0c4c4] bg-[#fff6f6] text-[#a33939]'
+            : 'border-[#c8dfc9] bg-[#f3fff4] text-[#2e6b34]';
+
+    return (
+        <div className={`mb-4 rounded-[6px] border px-3 py-2 text-[14px] ${toneClassName}`.trim()}>
+            {status.message}
         </div>
     );
 }
@@ -209,20 +288,137 @@ function DepartmentUsersTab({ form, values, onChange }) {
     );
 }
 
-export default function DepartmentFormView({ form }) {
+export default function DepartmentFormView({
+    form,
+    tableRows = [],
+    activeLevel2Tab,
+    onOpenContent,
+    onOpenDetail,
+    onCloseDetail,
+    onRefresh,
+}) {
+    const detailRow = useMemo(() => {
+        const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+
+        if (!recordId) {
+            return null;
+        }
+
+        return tableRows.find((row) => String(row.id) === String(recordId)) ?? null;
+    }, [activeLevel2Tab, tableRows]);
     const [activeTabId, setActiveTabId] = useState(form.tabs?.[0]?.id ?? 'department-general');
-    const [values, setValues] = useState(() => buildDefaultValues(form));
+    const initialValues = useMemo(() => buildDefaultValues(form, detailRow), [detailRow, form]);
+    const [values, setValues] = useState(() => initialValues);
+    const [status, setStatus] = useState({ tone: '', message: '' });
+    const [saving, setSaving] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const isDetailMode = Boolean(detailRow);
 
     useEffect(() => {
         setActiveTabId(form.tabs?.[0]?.id ?? 'department-general');
-        setValues(buildDefaultValues(form));
-    }, [form]);
+        setValues(initialValues);
+        setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
+    }, [form, initialValues]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
             ...currentValues,
             [field]: nextValue,
         }));
+    }
+
+    const validationMessage = useMemo(() => validateDepartmentValues(values, form), [form, values]);
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(buildDepartmentSnapshot(values), buildDepartmentSnapshot(initialValues)),
+        [initialValues, values],
+    );
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+
+    async function handleSave() {
+        if (validationMessage) {
+            setStatus({ tone: 'error', message: validationMessage });
+            showCrudValidationToast(validationMessage);
+            return;
+        }
+
+        const loadingToastId = showCrudLoadingToast(isDetailMode ? 'Sedang memperbarui departemen.' : 'Sedang menyimpan departemen.');
+        setSaving(true);
+        setStatus({ tone: '', message: '' });
+
+        try {
+            const payload = {
+                code: buildDepartmentCode(values.name, values.__code),
+                name: values.name.trim(),
+                notes: values.description.trim() || null,
+                is_active: true,
+            };
+            const response = isDetailMode && values.__backendRecordId
+                ? await updateBackendResource('departments', values.__backendRecordId, payload)
+                : await createBackendResource('departments', payload);
+            const record = response?.data ?? null;
+
+            await onRefresh?.();
+            const successMessage = isDetailMode ? 'Departemen berhasil diperbarui.' : 'Departemen berhasil dibuat.';
+            setStatus({
+                tone: 'success',
+                message: successMessage,
+            });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
+
+            if (!isDetailMode && record?.id) {
+                onOpenDetail?.({
+                    recordId: String(record.id),
+                    label: record.name ?? values.name.trim(),
+                    tabLabel: record.name ?? values.name.trim(),
+                });
+            }
+        } catch (error) {
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    function requestDelete() {
+        if (!values.__backendRecordId || saving) {
+            return;
+        }
+
+        setDeleteConfirmationOpen(true);
+    }
+
+    async function handleDelete() {
+        if (!values.__backendRecordId) {
+            return;
+        }
+
+        const loadingToastId = showCrudLoadingToast('Sedang menghapus departemen.');
+        setSaving(true);
+        setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
+
+        try {
+            await deleteBackendResource('departments', values.__backendRecordId);
+            await onRefresh?.();
+            const successMessage = 'Departemen berhasil dihapus.';
+            setStatus({ tone: 'success', message: successMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
+            onCloseDetail?.(values.__backendRecordId);
+            onOpenContent?.();
+        } catch (error) {
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
+        } finally {
+            setSaving(false);
+        }
     }
 
     return (
@@ -235,6 +431,8 @@ export default function DepartmentFormView({ form }) {
 
             <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 xl:flex-row xl:items-start">
                 <div className="order-2 min-w-0 flex-1 xl:order-1">
+                    <StatusMessage status={status} />
+
                     {activeTabId === 'department-opening-balance' ? (
                         <DepartmentOpeningBalanceTab form={form} values={values} onChange={handleChange} />
                     ) : activeTabId === 'department-users' ? (
@@ -244,10 +442,35 @@ export default function DepartmentFormView({ form }) {
                     )}
                 </div>
 
-                <div className="order-1 flex justify-end xl:order-2 xl:shrink-0">
-                    <DockSaveButton label={form.saveLabel} />
+                <div className="order-1 flex justify-end gap-3 xl:order-2 xl:shrink-0 xl:flex-col">
+                    <DockSaveButton
+                        label={saving ? 'Memproses...' : form.saveLabel}
+                        disabled={saveDisabled}
+                        onClick={handleSave}
+                    />
+                    {isDetailMode ? (
+                        <DockActionButton
+                            label={saving ? 'Memproses...' : 'Hapus'}
+                            tone="danger"
+                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                            disabled={saving}
+                            onClick={requestDelete}
+                        />
+                    ) : null}
                 </div>
             </div>
+
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Departemen"
+                message="Departemen ini akan dihapus permanen. Lanjutkan?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                confirmLoading={saving}
+            />
         </div>
     );
 }

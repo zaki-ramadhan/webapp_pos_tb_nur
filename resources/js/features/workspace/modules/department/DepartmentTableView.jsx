@@ -117,6 +117,7 @@ function DepartmentTableToolbar({
 
                     <DepartmentToolbarButton
                         label={table.refreshLabel}
+                        onClick={table.onRefresh}
                         className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
                     >
                         <RefreshIcon className="h-5 w-5" />
@@ -155,7 +156,7 @@ function DepartmentTableToolbar({
     );
 }
 
-export default function DepartmentTableView({ table, onCreate }) {
+export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
 
@@ -216,7 +217,14 @@ export default function DepartmentTableView({ table, onCreate }) {
                                 filteredRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''}`.trim()}
+                                        onClick={() =>
+                                            onOpenDetail?.({
+                                                recordId: String(row.id),
+                                                label: row.name,
+                                                tabLabel: row.tabLabel ?? row.name,
+                                            })
+                                        }
                                     >
                                         <DataTableCell className="px-3 text-[15px] text-[#131a28]">
                                             <span className="block truncate">{formatTableTextValue(row.name)}</span>

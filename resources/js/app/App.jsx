@@ -4,7 +4,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'sonner';
 
 import FlashToastBridge from '@/components/feedback/FlashToastBridge';
 import AppErrorBoundary from '@/components/error/AppErrorBoundary';
@@ -31,7 +31,13 @@ createInertiaApp({
                 <AppErrorBoundary pageProps={props.initialPage?.props}>
                     <App {...props} />
                     <FlashToastBridge />
-                    <ToastContainer newestOnTop limit={4} />
+                    <Toaster
+                        position="top-right"
+                        visibleToasts={4}
+                        richColors
+                        expand
+                        closeButton={false}
+                    />
                 </AppErrorBoundary>
             </StrictMode>,
         );

@@ -18,6 +18,7 @@ export default function SalesDocumentView({
     activeLevel2Tab,
     onOpenContent,
     onOpenDetail,
+    onCloseDetail,
 }) {
     const backendConfig = OPERATION_DOCUMENT_BACKEND_CONFIG[pageId] ?? null;
     const { rows, total, loading, error, reload } = useBackendIndexResource({
@@ -71,6 +72,7 @@ export default function SalesDocumentView({
             backendConfig={backendConfig}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
     );

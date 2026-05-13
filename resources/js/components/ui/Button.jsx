@@ -3,6 +3,8 @@ import Spinner from '@/components/ui/Spinner';
 const variantClasses = {
     primary:
         'border border-transparent bg-[#f2356d] text-white shadow-[0_4px_12px_rgba(15,23,42,0.12)] hover:bg-[#e72d65]',
+    danger:
+        'border border-transparent bg-[#db2347] text-white shadow-[0_4px_12px_rgba(15,23,42,0.12)] hover:bg-[#c81f40]',
     secondary:
         'border border-slate-300 bg-white text-slate-500 shadow-[0_2px_8px_rgba(15,23,42,0.08)] hover:bg-slate-50',
     ghost: 'border border-transparent bg-transparent text-[#4285f4] hover:underline',

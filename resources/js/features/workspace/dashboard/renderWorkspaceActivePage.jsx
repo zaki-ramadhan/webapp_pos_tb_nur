@@ -11,17 +11,27 @@ import {
     STATIC_PAGE_RENDERERS,
 } from '@/features/workspace/dashboard/workspacePageRegistry';
 
-function renderContentPage(Component, { page, mode, onOpenContent }) {
-    return <Component page={page} mode={mode} onOpenContent={onOpenContent} />;
-}
-
-function renderLevel2ContentPage(Component, { page, mode, activeLevel2Tab, onOpenContent }) {
+function renderContentPage(Component, { page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     return (
         <Component
             page={page}
             mode={mode}
             activeLevel2Tab={activeLevel2Tab}
             onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
+        />
+    );
+}
+
+function renderLevel2ContentPage(Component, { page, mode, activeLevel2Tab, onOpenContent, onCloseDetail }) {
+    return (
+        <Component
+            page={page}
+            mode={mode}
+            activeLevel2Tab={activeLevel2Tab}
+            onOpenContent={onOpenContent}
+            onCloseDetail={onCloseDetail}
         />
     );
 }
@@ -34,6 +44,7 @@ function renderLevel2DetailPage(
         activeLevel2Tab,
         onOpenContent,
         onOpenDetail,
+        onCloseDetail,
     },
 ) {
     return (
@@ -43,6 +54,7 @@ function renderLevel2DetailPage(
             activeLevel2Tab={activeLevel2Tab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
         />
     );
 }
@@ -54,8 +66,10 @@ export default function renderWorkspaceActivePage({
     detailTabOpeners,
     createDetailTabOpener,
     handleOpenDefaultContentTab,
+    handleCloseDetailTab,
 }) {
     const openContent = () => handleOpenDefaultContentTab(activePage.id);
+    const closeDetail = (recordId) => handleCloseDetailTab(activePage.id, recordId);
     const staticRenderer = STATIC_PAGE_RENDERERS[activePage.id];
 
     if (staticRenderer) {
@@ -72,7 +86,10 @@ export default function renderWorkspaceActivePage({
         return renderContentPage(contentComponent, {
             page: activePage,
             mode: activePageMode,
+            activeLevel2Tab,
             onOpenContent: openContent,
+            onOpenDetail: detailTabOpeners[activePage.id],
+            onCloseDetail: closeDetail,
         });
     }
 
@@ -84,6 +101,7 @@ export default function renderWorkspaceActivePage({
             mode: activePageMode,
             activeLevel2Tab,
             onOpenContent: openContent,
+            onCloseDetail: closeDetail,
         });
     }
 
@@ -96,6 +114,7 @@ export default function renderWorkspaceActivePage({
             activeLevel2Tab,
             onOpenContent: openContent,
             onOpenDetail: detailTabOpeners[activePage.id],
+            onCloseDetail: closeDetail,
         });
     }
 
@@ -108,6 +127,7 @@ export default function renderWorkspaceActivePage({
                     activeLevel2Tab={activeLevel2Tab}
                     onOpenContent={openContent}
                     onOpenDetail={detailTabOpeners.customers}
+                    onCloseDetail={closeDetail}
                     partnerType="customer"
                 />
             );
@@ -119,6 +139,7 @@ export default function renderWorkspaceActivePage({
                     activeLevel2Tab={activeLevel2Tab}
                     onOpenContent={openContent}
                     onOpenDetail={detailTabOpeners.suppliers}
+                    onCloseDetail={closeDetail}
                     partnerType="supplier"
                 />
             );
@@ -130,6 +151,7 @@ export default function renderWorkspaceActivePage({
                     activeLevel2Tab={activeLevel2Tab}
                     onOpenContent={openContent}
                     onOpenDetail={createDetailTabOpener('work-completion')}
+                    onCloseDetail={closeDetail}
                 />
             );
         case 'journal-activity-log':
@@ -138,6 +160,7 @@ export default function renderWorkspaceActivePage({
                     page={activePage}
                     activeLevel2Tab={activeLevel2Tab}
                     onOpenDetail={detailTabOpeners['journal-activity-log']}
+                    onCloseDetail={closeDetail}
                 />
             );
         default:

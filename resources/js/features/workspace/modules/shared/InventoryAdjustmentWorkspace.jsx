@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     DataTable,
     DataTableBody,
@@ -36,6 +37,13 @@ import {
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import {
+    finishCrudLoadingToast,
+    showCrudErrorToast,
+    showCrudLoadingToast,
+    showCrudSuccessToast,
+    showCrudValidationToast,
+} from '@/features/workspace/shared/crudFeedback';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { CogIcon, PrintIcon, SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 
@@ -481,6 +489,7 @@ export function InventoryAdjustmentFormView({
     backendConfig,
     onOpenContent,
     onOpenDetail,
+    onCloseDetail,
     onRefresh,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -496,6 +505,7 @@ export function InventoryAdjustmentFormView({
     const [selectedItem, setSelectedItem] = useState(null);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const isDetail = Boolean(activeRecordId);
     const initialSnapshot = useMemo(() => buildInventoryComparableSnapshot(buildFormValues(sourceRecord)), [sourceRecord]);
 
@@ -504,6 +514,7 @@ export function InventoryAdjustmentFormView({
         setValues(buildFormValues(sourceRecord));
         setSelectedItem(null);
         setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
     }, [config.sectionTabs, sourceRecord]);
 
     const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail), [config, isDetail, values]);
@@ -669,12 +680,15 @@ export function InventoryAdjustmentFormView({
 
     async function handleSave() {
         if (!backendConfig) {
-            setStatus({ tone: 'error', message: 'Konfigurasi backend belum tersedia.' });
+            const errorMessage = 'Konfigurasi backend belum tersedia.';
+            setStatus({ tone: 'error', message: errorMessage });
+            showCrudErrorToast(errorMessage);
             return;
         }
 
         if (validationMessage) {
             setStatus({ tone: 'error', message: validationMessage });
+            showCrudValidationToast(validationMessage);
             return;
         }
 
@@ -683,6 +697,7 @@ export function InventoryAdjustmentFormView({
                 ? `${pageId === 'price-adjustment' ? 'PA' : 'IA'}.${new Date().toISOString().slice(0, 10).replaceAll('-', '.')}.${Date.now()}`
                 : values.documentNumber;
 
+        const loadingToastId = showCrudLoadingToast(isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.');
         setSaving(true);
         setStatus({ tone: '', message: '' });
 
@@ -698,10 +713,13 @@ export function InventoryAdjustmentFormView({
             const record = response?.data ?? null;
 
             await onRefresh?.();
+            const successMessage = isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.';
             setStatus({
                 tone: 'success',
-                message: isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.',
+                message: successMessage,
             });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
 
             if (!isDetail && record?.id) {
                 onOpenDetail?.({
@@ -711,10 +729,21 @@ export function InventoryAdjustmentFormView({
                 });
             }
         } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
         } finally {
             setSaving(false);
         }
+    }
+
+    function requestDelete() {
+        if (!backendConfig || !values.__backendRecordId || saving) {
+            return;
+        }
+
+        setDeleteConfirmationOpen(true);
     }
 
     async function handleDelete() {
@@ -722,20 +751,25 @@ export function InventoryAdjustmentFormView({
             return;
         }
 
-        if (!window.confirm('Hapus dokumen ini?')) {
-            return;
-        }
-
+        const loadingToastId = showCrudLoadingToast('Sedang menghapus dokumen.');
         setSaving(true);
         setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
 
         try {
             await deleteBackendResource(backendConfig.resource, values.__backendRecordId);
             await onRefresh?.();
-            setStatus({ tone: 'success', message: 'Dokumen berhasil dihapus.' });
+            const successMessage = 'Dokumen berhasil dihapus.';
+            setStatus({ tone: 'success', message: successMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
+            onCloseDetail?.(values.__backendRecordId);
             onOpenContent?.();
         } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
         } finally {
             setSaving(false);
         }
@@ -757,7 +791,7 @@ export function InventoryAdjustmentFormView({
                     return {
                         ...action,
                         label: saving ? 'Memproses...' : action.label,
-                        onClick: handleDelete,
+                        onClick: requestDelete,
                     };
                 }
 
@@ -834,6 +868,17 @@ export function InventoryAdjustmentFormView({
                     adjustmentTypeOptions: config.adjustmentTypeOptions,
                 }}
                 item={selectedItem}
+            />
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Dokumen"
+                message="Dokumen ini akan dihapus permanen. Lanjutkan?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                confirmLoading={saving}
             />
         </div>
     );

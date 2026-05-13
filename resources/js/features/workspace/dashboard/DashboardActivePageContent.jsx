@@ -20,6 +20,7 @@ export default function DashboardActivePageContent({
     detailTabOpeners,
     createDetailTabOpener,
     handleOpenDefaultContentTab,
+    handleCloseDetailTab,
     isDashboardPageActive,
 }) {
     if (isDashboardPageActive) {
@@ -66,6 +67,7 @@ export default function DashboardActivePageContent({
                 detailTabOpeners,
                 createDetailTabOpener,
                 handleOpenDefaultContentTab,
+                handleCloseDetailTab,
             })}
         </div>
     );

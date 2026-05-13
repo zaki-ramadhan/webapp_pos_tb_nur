@@ -21,6 +21,7 @@ export default function InventoryAdjustmentView({
     activeLevel2Tab,
     onOpenContent,
     onOpenDetail,
+    onCloseDetail,
 }) {
     const backendConfig = INVENTORY_ADJUSTMENT_BACKEND_CONFIG[page.id] ?? null;
     const { rows, total, loading, error, reload } = useBackendIndexResource({
@@ -81,6 +82,7 @@ export default function InventoryAdjustmentView({
             backendConfig={backendConfig}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
     );
