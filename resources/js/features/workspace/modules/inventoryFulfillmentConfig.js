@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const sharedSecondaryDockActions = [
     createDocumentDockAction(),
@@ -54,7 +57,7 @@ const workCompletionTableRows = [
 ];
 
 const workCompletionDraft = {
-    entryDate: '28/04/2026',
+    entryDate: todayDisplayDate,
     jobOrderNumber: '',
     completionType: 'Barang',
     autoNumber: true,

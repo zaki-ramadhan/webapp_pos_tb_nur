@@ -124,6 +124,7 @@ export default function ActivityLogView({ page }) {
                     label: table.refreshLabel,
                     icon: <RefreshIcon className="h-5 w-5" />,
                     onClick: reload,
+                    loading,
                 }}
                 menuButton={{
                     label: table.actionsLabel,

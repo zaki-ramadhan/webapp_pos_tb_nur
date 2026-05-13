@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const priceAdjustmentSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
@@ -156,7 +159,7 @@ const tableRows = [
 ];
 
 const draftRecord = {
-    date: '29/04/2026',
+    date: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Penyesuaian Persediaan',
     documentNumber: '',

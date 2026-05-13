@@ -41,6 +41,7 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenCont
                 ...page.table,
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
+                loading,
                 refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
                 emptyLabel: error || page.table?.emptyLabel || 'Tidak ada data',
                 onRefresh: reload,

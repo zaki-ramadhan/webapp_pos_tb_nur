@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const purchasePaymentCreateDockActions = [
     createSaveDockAction(),
@@ -146,7 +149,7 @@ const defaultPurchasePaymentDraft = {
     paymentAmount: '',
     paymentAmountPrefix: '',
     paymentAmountDisplay: '0',
-    entryDate: '28/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Bank BCA IDR Jakarta (069-773-3993)',
     documentNumber: '',

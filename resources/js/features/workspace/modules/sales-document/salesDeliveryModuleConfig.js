@@ -32,7 +32,7 @@ const salesDeliveryTableRows = [
 const salesDeliveryDraft = {
     ...salesOrderDraft,
     customer: [],
-    entryDate: '25/04/2026',
+    entryDate: salesOrderDraft.entryDate,
     numberingType: 'Pengiriman Pesanan',
     documentNumber: '',
     currency: '',

@@ -117,10 +117,10 @@ function DepartmentTableToolbar({
 
                     <DepartmentToolbarButton
                         label={table.refreshLabel}
-                        onClick={table.onRefresh}
-                        className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                        onClick={table.loading ? undefined : table.onRefresh}
+                        className={`inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${table.loading ? 'pointer-events-none opacity-80' : ''}`.trim()}
                     >
-                        <RefreshIcon className="h-5 w-5" />
+                        <RefreshIcon className={`h-5 w-5 ${table.loading ? 'animate-spin' : ''}`.trim()} />
                     </DepartmentToolbarButton>
                 </div>
 

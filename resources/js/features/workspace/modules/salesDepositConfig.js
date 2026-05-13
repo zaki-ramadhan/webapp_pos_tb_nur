@@ -1,9 +1,12 @@
 import { sharedDetailDockActions } from '@/features/workspace/modules/salesOrderConfig';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import {
     createAttachmentDockAction,
     createDocumentDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const salesDepositTopActions = [
     {
@@ -74,7 +77,7 @@ const draftDockActions = [
 
 const salesDepositDraft = {
     customer: [],
-    entryDate: '26/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Faktur Penjualan',
     documentNumber: '',

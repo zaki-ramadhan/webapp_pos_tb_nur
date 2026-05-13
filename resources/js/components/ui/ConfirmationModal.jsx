@@ -1,6 +1,5 @@
 import Button from '@/components/ui/Button';
-import ModalBase from '@/components/ui/ModalBase';
-import { CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 
 function ConfirmationIllustration() {
     return (
@@ -40,41 +39,15 @@ export default function ConfirmationModal({
     cancelDisabled = false,
 }) {
     return (
-        <ModalBase
+        <WorkspaceDialog
             open={open}
-            onBackdropClick={confirmLoading ? null : onClose}
-            className="bg-[rgba(20,30,49,0.58)] px-3 py-4 sm:px-4 sm:py-6"
-            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_14px_30px_rgba(15,23,42,0.2)]`.trim()}
-        >
-            <div className="border-b border-[#14345c] bg-[#173664] px-4 py-3 text-white">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex min-w-0 items-center gap-3">
-                        <InfoIcon className="h-5 w-5 text-white" />
-                        <h2 className="truncate text-[15px] font-medium sm:text-[16px]">{title}</h2>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        disabled={confirmLoading}
-                        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition hover:bg-white/10"
-                        aria-label={closeLabel}
-                    >
-                        <CloseIcon className="h-5 w-5" />
-                    </button>
-                </div>
-            </div>
-
-            <div className="bg-white px-5 py-4 sm:px-6 sm:py-5">
-                <div className="flex items-start gap-5">
-                    <ConfirmationIllustration />
-
-                    <div className="min-w-0 flex-1 pt-2">
-                        <p className="text-[16px] leading-6 text-[#db2347] sm:text-[17px]">{message}</p>
-                    </div>
-                </div>
-
-                <div className="mt-5 flex items-center justify-end gap-2.5">
+            onClose={onClose}
+            disableClose={confirmLoading}
+            title={title}
+            closeLabel={closeLabel}
+            maxWidthClassName={maxWidthClassName}
+            footer={(
+                <div className="flex items-center justify-end gap-2.5">
                     <Button
                         variant={confirmVariant}
                         size="md"
@@ -97,7 +70,15 @@ export default function ConfirmationModal({
                         {cancelLabel}
                     </Button>
                 </div>
+            )}
+        >
+            <div className="flex items-start gap-5">
+                <ConfirmationIllustration />
+
+                <div className="min-w-0 flex-1 pt-2">
+                    <p className="text-[16px] leading-6 text-[#db2347] sm:text-[17px]">{message}</p>
+                </div>
             </div>
-        </ModalBase>
+        </WorkspaceDialog>
     );
 }

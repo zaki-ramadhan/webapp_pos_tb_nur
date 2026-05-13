@@ -43,6 +43,7 @@ export default function SalesDocumentView({
                 rows: mappedRows,
                 filters: buildOperationDocumentFilters(config.table.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
+                loading,
                 refreshLabel: loading ? 'Memuat data...' : config.table.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,

@@ -24,6 +24,16 @@ export default function useBackendIndexResource({
     const [reloadVersion, setReloadVersion] = useState(0);
     const serializedFilters = JSON.stringify(filters ?? {});
     const normalizedFilters = useMemo(() => sanitizeFilters(filters), [serializedFilters]);
+    const requestFilters = useMemo(() => {
+        if (reloadVersion < 1) {
+            return normalizedFilters;
+        }
+
+        return {
+            ...normalizedFilters,
+            _refresh: reloadVersion,
+        };
+    }, [normalizedFilters, reloadVersion]);
 
     useEffect(() => {
         if (!enabled || !resource) {
@@ -37,7 +47,7 @@ export default function useBackendIndexResource({
             setError('');
 
             try {
-                const nextPayload = await listBackendResource(resource, normalizedFilters);
+                const nextPayload = await listBackendResource(resource, requestFilters);
 
                 if (!active) {
                     return;
@@ -62,7 +72,7 @@ export default function useBackendIndexResource({
         return () => {
             active = false;
         };
-    }, [enabled, normalizedFilters, reloadVersion, resource]);
+    }, [enabled, requestFilters, resource]);
 
     return {
         payload,

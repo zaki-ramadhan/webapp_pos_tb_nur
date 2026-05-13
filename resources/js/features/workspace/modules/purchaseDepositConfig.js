@@ -1,9 +1,12 @@
 import { sharedDetailDockActions } from '@/features/workspace/modules/salesOrderConfig';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import {
     createAttachmentDockAction,
     createDocumentDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const purchaseDepositTopActions = [
     {
@@ -62,7 +65,7 @@ const purchaseDepositTableRows = [
 
 const purchaseDepositDraft = {
     supplier: [],
-    entryDate: '29/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Faktur Pembelian',
     documentNumber: '',

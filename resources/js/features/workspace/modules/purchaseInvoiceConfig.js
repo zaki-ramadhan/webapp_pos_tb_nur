@@ -3,12 +3,15 @@ import {
     mergeSalesDocumentConfigWithPage,
     sharedDetailDockActions,
 } from '@/features/workspace/modules/salesOrderConfig';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import {
     createAttachmentDockAction,
     createDocumentDockAction,
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const purchaseInvoiceSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
@@ -78,7 +81,7 @@ const purchaseInvoiceCreateDockActions = [
 
 const defaultPurchaseInvoiceDraft = {
     customer: [],
-    entryDate: '28/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Faktur Pembelian',
     documentNumber: '',
@@ -100,7 +103,7 @@ const defaultPurchaseInvoiceDraft = {
     notes: '',
     taxEnabled: false,
     taxIncluded: false,
-    shippingDate: '28/04/2026',
+    shippingDate: todayDisplayDate,
     shippingMethod: [],
     fob: [],
     costSearch: '',

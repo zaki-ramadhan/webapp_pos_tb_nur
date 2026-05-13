@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const tableColumns = [
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
@@ -49,12 +52,12 @@ const detailDockActions = [
 const draftRecord = {
     autoNumber: true,
     numberingType: 'Perintah Stok Opname',
-    date: '29/04/2026',
+    date: todayDisplayDate,
     number: '',
     status: '',
     branches: ['JAKARTA'],
     department: [],
-    startDate: '29/04/2026',
+    startDate: todayDisplayDate,
     responsiblePerson: '',
     workers: [],
     notes: '',

@@ -16,6 +16,9 @@ import {
     salesInvoiceSectionTabs,
     salesOrderDraft,
 } from '@/features/workspace/modules/sales-document/salesOrderModuleConfig';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const salesInvoiceTableRows = [
     { id: 'SI.2017.02.00010', number: 'SI.2017.02.00010', date: '10/02/2017', customer: 'Abadi Phone Center', customerShort: 'Abadi Phone Center', notes: '', status: 'Belum Lunas', requiredIdType: '', age: '3362', total: '2,059,200,000', statusTone: 'pending' },
@@ -43,7 +46,7 @@ const salesInvoiceDraft = {
     ...salesOrderDraft,
     numberingType: 'Faktur Penjualan',
     paymentTerms: [],
-    shippingDate: '26/04/2026',
+    shippingDate: todayDisplayDate,
     preInvoice: false,
     contacts: [],
     taxInvoiceDate: '',

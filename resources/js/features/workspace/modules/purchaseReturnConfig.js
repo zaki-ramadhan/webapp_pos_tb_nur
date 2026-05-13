@@ -2,6 +2,7 @@ import {
     buildSalesDocumentRecord,
     mergeSalesDocumentConfigWithPage,
 } from '@/features/workspace/modules/salesOrderConfig';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import {
     createAttachmentDockAction,
     createDeleteDockAction,
@@ -9,6 +10,8 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const purchaseReturnSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
@@ -80,7 +83,7 @@ const purchaseReturnDetailDockActions = [
 
 const defaultPurchaseReturnDraft = {
     customer: [],
-    entryDate: '28/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Retur Pembelian',
     documentNumber: '',

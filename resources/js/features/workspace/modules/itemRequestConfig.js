@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const itemRequestSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
@@ -87,7 +90,7 @@ const itemRequestTableRows = [
 ];
 
 const defaultItemRequestDraft = {
-    requestDate: '28/04/2026',
+    requestDate: todayDisplayDate,
     requestType: 'Beli Barang',
     autoNumber: true,
     numberingType: 'Permintaan Pembelian',

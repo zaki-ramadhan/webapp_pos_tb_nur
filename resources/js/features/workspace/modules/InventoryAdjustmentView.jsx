@@ -48,6 +48,7 @@ export default function InventoryAdjustmentView({
                     ...baseConfig.table,
                     rows: mappedRows,
                     pageValue: total.toLocaleString('id-ID'),
+                    loading,
                     refreshLabel: loading ? 'Memuat data...' : baseConfig.table.refreshLabel,
                     emptyLabel: error || 'Belum ada data',
                     onRefresh: reload,

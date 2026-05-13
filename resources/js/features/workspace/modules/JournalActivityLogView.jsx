@@ -74,6 +74,7 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                     label: config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
                     onClick: config.table.onRefresh,
+                    loading: Boolean(config.table.loading),
                 }}
                 menuButton={{
                     label: config.table.settingsLabel,
@@ -257,6 +258,7 @@ export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDe
                 ...page.journalActivityLog.table,
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
+                loading,
                 refreshLabel: loading ? 'Memuat data...' : page.journalActivityLog.table?.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,

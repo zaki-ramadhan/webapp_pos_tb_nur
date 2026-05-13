@@ -5,10 +5,13 @@ import {
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
 import {
+    buildTodayDisplayDate,
     buildSalesDocumentRecord,
     mergeSalesDocumentConfigWithPage,
     sharedDetailDockActions,
 } from '@/features/workspace/modules/sales-document/salesDocumentConfigCore';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 export const salesOrderTopActions = [
     {
@@ -129,7 +132,7 @@ const salesOrderTableRows = [
 
 export const salesOrderDraft = {
     customer: [],
-    entryDate: '25/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Pesanan Penjualan',
     documentNumber: '',
@@ -144,7 +147,7 @@ export const salesOrderDraft = {
     notes: '',
     taxEnabled: false,
     taxIncluded: false,
-    shippingDate: '25/04/2026',
+    shippingDate: todayDisplayDate,
     shippingMethod: [],
     fob: [],
     costSearch: '',

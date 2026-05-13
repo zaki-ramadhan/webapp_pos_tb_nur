@@ -1,3 +1,7 @@
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
+
 function createSearchControl() {
     return {
         id: 'keyword',
@@ -30,13 +34,13 @@ function createAction(id, icon, label, tone = 'default') {
 
 const DEFAULT_CONTROLS = [
     createSearchControl(),
-    createDateControl('startDate', '01/04/2026'),
+    createDateControl('startDate', todayDisplayDate),
     {
         type: 'label',
         label: 's/d',
         wrapperClassName: 'px-1 text-center',
     },
-    createDateControl('endDate', '30/04/2026'),
+    createDateControl('endDate', todayDisplayDate),
 ];
 
 const DEFAULT_EMPTY_SPACE_CLASS_NAME = 'min-h-[320px] sm:min-h-[420px] xl:min-h-[64vh]';

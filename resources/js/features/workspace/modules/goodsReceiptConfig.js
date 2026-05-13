@@ -3,12 +3,15 @@ import {
     mergeSalesDocumentConfigWithPage,
     sharedDetailDockActions,
 } from '@/features/workspace/modules/salesOrderConfig';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import {
     createAttachmentDockAction,
     createDocumentDockAction,
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const goodsReceiptListColumns = [
     { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
@@ -42,7 +45,7 @@ const goodsReceiptCreateDockActions = [
 
 const defaultGoodsReceiptDraft = {
     customer: [],
-    entryDate: '28/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Penerimaan Barang',
     documentNumber: '',
@@ -54,7 +57,7 @@ const defaultGoodsReceiptDraft = {
     address: '',
     branches: ['JAKARTA'],
     notes: '',
-    shippingDate: '28/04/2026',
+    shippingDate: todayDisplayDate,
     shippingMethod: [],
     fob: [],
     summary: [

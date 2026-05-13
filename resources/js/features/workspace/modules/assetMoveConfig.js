@@ -1,3 +1,7 @@
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
+
 const sectionTabs = [
     { id: 'details', label: 'Detail Aset', icon: 'document' },
     { id: 'additional-info', label: 'Info lainnya', icon: 'info' },
@@ -77,7 +81,7 @@ const draftRecord = {
     autoNumber: true,
     numberingType: 'Pindah Aset',
     number: '',
-    date: '29/04/2026',
+    date: todayDisplayDate,
     sourceAddress: [],
     destinationAddress: [],
     itemSearch: '',

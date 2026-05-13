@@ -470,7 +470,7 @@ function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
                         ? table.leftButtons.map((button) => <ToolbarLeftButton key={button.id} button={button} />)
                         : null
                 }
-                refreshButton={{ label: table.refreshLabel, onClick: table.onRefresh }}
+                refreshButton={{ label: table.refreshLabel, onClick: table.onRefresh, loading: table.loading }}
                 printButton={table.printLabel ? { label: table.printLabel } : null}
                 search={{
                     value: keyword,
@@ -562,6 +562,7 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenCo
                 ...page.table,
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
+                loading,
                 refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,

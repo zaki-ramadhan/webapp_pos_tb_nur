@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const workOrderSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
@@ -81,7 +84,7 @@ const draftRecord = {
     autoNumber: true,
     numberingType: 'Pekerjaan Pesanan',
     documentNumber: '',
-    date: '29/04/2026',
+    date: todayDisplayDate,
     itemSearch: '',
     chargeSearch: '',
     customerReference: '',

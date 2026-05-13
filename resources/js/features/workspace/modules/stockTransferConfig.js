@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const stockTransferSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
@@ -82,7 +85,7 @@ const draftRecord = {
     warehouse: [],
     counterpartWarehouse: [],
     counterpartWarehouseLabel: 'Gudang Tujuan',
-    date: '29/04/2026',
+    date: todayDisplayDate,
     itemSearch: '',
     notes: '',
     branches: ['JAKARTA'],

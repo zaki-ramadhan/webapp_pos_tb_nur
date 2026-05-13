@@ -1,6 +1,9 @@
 import { createElement } from 'react';
 
 import { CircleCheckIcon } from '@/features/workspace/shared/Icons';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const tableColumns = [
     { id: 'status', label: '#', widthClassName: 'w-[56px]', align: 'center', sortable: false },
@@ -100,8 +103,8 @@ const draftRecord = {
     codeType: 'Aset Tetap',
     code: '',
     name: '',
-    purchaseDate: '29/04/2026',
-    usageDate: '29/04/2026',
+    purchaseDate: todayDisplayDate,
+    usageDate: todayDisplayDate,
     intangibleAsset: false,
     depreciationMethod: 'Metode Garis Lurus',
     assetAccount: [],

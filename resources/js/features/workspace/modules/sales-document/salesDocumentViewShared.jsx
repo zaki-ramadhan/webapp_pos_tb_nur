@@ -171,6 +171,7 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
             label: config.table.refreshLabel,
             icon: <LinkIcon className="h-4.5 w-4.5" />,
             onClick: config.table.onRefresh,
+            loading: Boolean(config.table.loading),
         },
         rightControls: buildSalesDocumentRightControls(config).length ? <>{buildSalesDocumentRightControls(config)}</> : null,
         search: {

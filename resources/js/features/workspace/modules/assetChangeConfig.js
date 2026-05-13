@@ -1,3 +1,7 @@
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
+
 const sectionTabs = [
     { id: 'general', label: 'Informasi umum', icon: 'document' },
     { id: 'expense', label: 'Pengeluaran', icon: 'payment' },
@@ -44,11 +48,11 @@ const detailDockActions = [
 const draftRecord = {
     changeType: 'Data',
     asset: [],
-    lastDepreciation: '30/04/2026',
+    lastDepreciation: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Perubahan Aset Tetap',
     documentNumber: '',
-    transactionDate: '30/04/2026',
+    transactionDate: todayDisplayDate,
     bookValue: '0',
     depreciationMethod: 'Tidak Terdepresiasi',
     residualValue: '0',

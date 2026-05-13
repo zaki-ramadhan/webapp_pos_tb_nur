@@ -5,6 +5,9 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
+const todayDisplayDate = buildTodayDisplayDate();
 
 const salesReceiptTopActions = [
     {
@@ -79,7 +82,7 @@ const salesReceiptTableRows = [
 const salesReceiptDraft = {
     customer: [],
     bankAccounts: [],
-    entryDate: '26/04/2026',
+    entryDate: todayDisplayDate,
     autoNumber: true,
     numberingType: 'Bank BCA IDR Jakarta (069-773-3993)',
     documentNumber: '',

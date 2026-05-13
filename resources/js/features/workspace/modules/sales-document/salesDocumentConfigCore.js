@@ -5,6 +5,7 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { buildTodayDisplayDate as buildSharedTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 
 export const sharedDetailDockActions = [
     createSaveDockAction({ tone: 'muted', items: [] }),
@@ -20,6 +21,10 @@ export const sharedDetailDockActions = [
     createMoreDockAction(),
     createDeleteDockAction(),
 ];
+
+export function buildTodayDisplayDate() {
+    return buildSharedTodayDisplayDate();
+}
 
 export function mergeSalesDocumentConfigWithPage(baseConfig, pageConfig = {}) {
     const mergedCostTable =

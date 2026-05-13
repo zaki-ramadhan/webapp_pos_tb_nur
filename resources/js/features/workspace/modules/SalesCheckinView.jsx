@@ -22,6 +22,7 @@ export default function SalesCheckinView({ page }) {
             rows: mappedRows,
             filters: buildSalesCheckinFilters(mappedRows),
             pageValue: total.toLocaleString('id-ID'),
+            loading,
             refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
             emptyLabel: error || 'Belum ada data',
             onRefresh: reload,
