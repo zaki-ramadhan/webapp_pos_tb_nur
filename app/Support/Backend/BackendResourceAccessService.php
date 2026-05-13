@@ -27,6 +27,10 @@ class BackendResourceAccessService
 
     public function can(User $user, BackendResourceBlueprint $blueprint, string $ability): bool
     {
+        if (in_array($ability, ['create', 'update', 'delete'], true) && ! $blueprint->canMutate()) {
+            return false;
+        }
+
         if ($this->isBootstrapMode()) {
             return true;
         }

@@ -10,8 +10,14 @@ class BackendResourceIndexQuery
     /**
      * @param  array<string, mixed>  $filters
      */
-    public function paginate(BackendResourceBlueprint $blueprint, array $filters): LengthAwarePaginator
+    public function paginate(BackendResourceBlueprint $blueprint, array $filters): LengthAwarePaginator|array
     {
+        $customResult = $blueprint->runIndex($filters);
+
+        if ($customResult !== null) {
+            return $customResult;
+        }
+
         $modelClass = $blueprint->modelClass();
         $search = trim((string) ($filters['search'] ?? ''));
         $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 100));

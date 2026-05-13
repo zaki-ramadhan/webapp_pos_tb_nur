@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -9,6 +9,11 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import {
+    buildActivityLogFilters,
+    mapActivityLogRows,
+} from '@/features/workspace/backend/workspaceBackendAdapters';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CogIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
@@ -22,14 +27,41 @@ function matchesFilter(row, filter, selectedValue) {
 }
 
 export default function ActivityLogView({ page }) {
-    const table = page.table;
     const [keyword, setKeyword] = useState('');
+    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+        resource: 'activity-logs',
+        filters: {
+            search: keyword.trim(),
+            per_page: 100,
+        },
+    });
+    const rows = useMemo(() => mapActivityLogRows(backendRows), [backendRows]);
+    const filtersConfig = useMemo(() => buildActivityLogFilters(rows), [rows]);
+    const table = useMemo(() => ({
+        ...page.table,
+        filters: filtersConfig,
+        rows,
+        pageValue: total.toLocaleString('id-ID'),
+    }), [filtersConfig, page.table, rows, total]);
     const [filters, setFilters] = useState(() =>
-        table.filters.reduce((result, filter) => {
+        filtersConfig.reduce((result, filter) => {
             result[filter.id] = filter.options?.[0]?.value ?? 'all';
             return result;
         }, {}),
     );
+
+    useEffect(() => {
+        setFilters((currentFilters) =>
+            filtersConfig.reduce((result, filter) => {
+                const currentValue = currentFilters[filter.id];
+                const optionExists = filter.options.some((option) => option.value === currentValue);
+
+                result[filter.id] = optionExists ? currentValue : (filter.options?.[0]?.value ?? 'all');
+
+                return result;
+            }, {}),
+        );
+    }, [filtersConfig]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -60,6 +92,8 @@ export default function ActivityLogView({ page }) {
         });
     }, [filters, keyword, table.filters, table.rows]);
 
+    const emptyLabel = loading ? 'Memuat data...' : (error || 'Belum ada data');
+
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
@@ -89,6 +123,7 @@ export default function ActivityLogView({ page }) {
                 refreshButton={{
                     label: table.refreshLabel,
                     icon: <RefreshIcon className="h-5 w-5" />,
+                    onClick: reload,
                 }}
                 menuButton={{
                     label: table.actionsLabel,
@@ -122,37 +157,45 @@ export default function ActivityLogView({ page }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                            >
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.transactionDateLabel)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.referenceName)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.actionLabel)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.transactionTypeLabel)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.loggedAt)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.userName)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.email)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    {formatTableTextValue(row.ipAddress)}
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                >
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.transactionDateLabel)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.referenceName)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.actionLabel)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.transactionTypeLabel)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.loggedAt)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.userName)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.email)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        {formatTableTextValue(row.ipAddress)}
+                                    </DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                    {emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>

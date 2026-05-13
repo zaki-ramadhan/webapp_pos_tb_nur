@@ -45,6 +45,7 @@ import PurchaseReturnView from '@/features/workspace/modules/PurchaseReturnView'
 import ReportListView from '@/features/workspace/modules/ReportListView';
 import SalaryAllowanceView from '@/features/workspace/modules/SalaryAllowanceView';
 import SalesCommissionView from '@/features/workspace/modules/SalesCommissionView';
+import SalesCheckinView from '@/features/workspace/modules/SalesCheckinView';
 import SalesDeliveryView from '@/features/workspace/modules/SalesDeliveryView';
 import SalesDepositView from '@/features/workspace/modules/SalesDepositView';
 import SalesInvoiceView from '@/features/workspace/modules/SalesInvoiceView';
@@ -71,7 +72,7 @@ import WorkOrderView from '@/features/workspace/modules/WorkOrderView';
 export const STATIC_PAGE_RENDERERS = {
     preferences: (page) => <PreferencesView page={page} />,
     'activity-log': (page) => <ActivityLogView page={page} />,
-    'sales-checkin': (page) => <TableListView table={page.table} />,
+    'sales-checkin': (page) => <SalesCheckinView page={page} />,
     'report-list': (page) => <ReportListView page={page} />,
     'budget-monitor': (page) => <BudgetMonitorView page={page} />,
     contacts: (page) => <ContactView page={page} />,

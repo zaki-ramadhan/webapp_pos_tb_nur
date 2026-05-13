@@ -138,6 +138,7 @@ export default function TableListView({
                         ? {
                               label: table.refreshLabel,
                               icon: <LinkIcon className="h-4.5 w-4.5" />,
+                              onClick: table.onRefresh,
                           }
                         : null
                 }

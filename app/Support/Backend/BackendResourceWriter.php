@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class BackendResourceWriter
 {
+    public function __construct(
+        protected BackendActivityLogger $activityLogger,
+    ) {
+    }
+
     /**
      * @param  array<string, mixed>  $payload
      */
@@ -29,10 +34,18 @@ class BackendResourceWriter
         return $this->persist($blueprint, $record, $payload);
     }
 
-    public function delete(Model $record): void
+    public function delete(BackendResourceBlueprint $blueprint, Model $record): void
     {
-        DB::transaction(function () use ($record): void {
+        DB::transaction(function () use ($blueprint, $record): void {
+            $before = $this->activityLogger->snapshot($record);
             $record->delete();
+            $this->activityLogger->logMutation(
+                $blueprint,
+                'delete',
+                $record,
+                $before,
+                null,
+            );
         });
     }
 
@@ -42,12 +55,23 @@ class BackendResourceWriter
     protected function persist(BackendResourceBlueprint $blueprint, Model $record, array $payload): Model
     {
         return DB::transaction(function () use ($blueprint, $record, $payload): Model {
+            $before = $record->exists ? $this->activityLogger->snapshot($record) : null;
             $record->fill(Arr::only($payload, $record->getFillable()));
             $record->save();
 
             $blueprint->sync($record, $payload);
 
-            return $record->fresh($blueprint->with) ?? $record;
+            $freshRecord = $record->fresh($blueprint->with) ?? $record;
+
+            $this->activityLogger->logMutation(
+                $blueprint,
+                $record->wasRecentlyCreated ? 'create' : 'update',
+                $freshRecord,
+                $before,
+                $this->activityLogger->snapshot($freshRecord),
+            );
+
+            return $freshRecord;
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Support\Backend;
 
 use Closure;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
 class BackendResourceBlueprint
@@ -11,8 +12,11 @@ class BackendResourceBlueprint
      * @param  class-string<Model>  $modelClass
      * @param  array<int, string>  $searchColumns
      * @param  array<int, string>  $with
+     * @param  array<string, mixed>|Closure(): array<string, mixed>  $indexRules
      * @param  array<string, mixed>|Closure(): array<string, mixed>  $storeRules
      * @param  array<string, mixed>|Closure(Model): array<string, mixed>|null  $updateRules
+     * @param  (Closure(array<string, mixed>): LengthAwarePaginator|array<string, mixed>)|null  $indexUsing
+     * @param  (Closure(int): Model|array<string, mixed>|null)|null  $showUsing
      * @param  (Closure(Model, array<string, mixed>): void)|null  $syncUsing
      */
     public function __construct(
@@ -22,10 +26,22 @@ class BackendResourceBlueprint
         public readonly ?string $permissionKey = null,
         public readonly array $searchColumns = [],
         public readonly array $with = [],
+        public readonly array|Closure $indexRules = [],
         public readonly array|Closure $storeRules = [],
         public readonly array|Closure|null $updateRules = null,
+        public readonly ?Closure $indexUsing = null,
+        public readonly ?Closure $showUsing = null,
         public readonly ?Closure $syncUsing = null,
+        public readonly bool $readOnly = false,
     ) {
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function indexRules(): array
+    {
+        return is_array($this->indexRules) ? $this->indexRules : ($this->indexRules)();
     }
 
     /**
@@ -59,6 +75,36 @@ class BackendResourceBlueprint
     public function permissionKey(): string
     {
         return $this->permissionKey ?? $this->key;
+    }
+
+    public function canMutate(): bool
+    {
+        return ! $this->readOnly;
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator|array<string, mixed>|null
+     */
+    public function runIndex(array $filters): LengthAwarePaginator|array|null
+    {
+        if (! $this->indexUsing instanceof Closure) {
+            return null;
+        }
+
+        return ($this->indexUsing)($filters);
+    }
+
+    /**
+     * @return Model|array<string, mixed>|null
+     */
+    public function runShow(int $record): Model|array|null
+    {
+        if (! $this->showUsing instanceof Closure) {
+            return null;
+        }
+
+        return ($this->showUsing)($record);
     }
 
     /**

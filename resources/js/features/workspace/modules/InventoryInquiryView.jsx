@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -37,7 +37,7 @@ function resolveAlignClassName(align) {
     return 'text-left';
 }
 
-function InquiryIconButton({ icon, label }) {
+function InquiryIconButton({ icon, label, onClick }) {
     const IconComponent = icon === 'external-link' ? ExternalLinkIcon : LinkIcon;
 
     return (
@@ -45,6 +45,7 @@ function InquiryIconButton({ icon, label }) {
             type="button"
             aria-label={label}
             title={label}
+            onClick={onClick}
             className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
         >
             <IconComponent className="h-4.5 w-4.5" />
@@ -67,7 +68,7 @@ function InquiryTextButton({ label, tone = 'default' }) {
     );
 }
 
-function InquiryControl({ control, value, onChange }) {
+function InquiryControl({ control, value, onChange, onRefresh }) {
     if (control.type === 'select') {
         return (
             <SelectField
@@ -99,7 +100,7 @@ function InquiryControl({ control, value, onChange }) {
     }
 
     if (control.type === 'icon-button') {
-        return <InquiryIconButton icon={control.icon} label={control.label} />;
+        return <InquiryIconButton icon={control.icon} label={control.label} onClick={control.id === 'refresh' ? onRefresh : undefined} />;
     }
 
     if (control.type === 'button') {
@@ -119,30 +120,44 @@ function InquiryControl({ control, value, onChange }) {
     );
 }
 
-export default function InventoryInquiryView({ config }) {
+export default function InventoryInquiryView({
+    config,
+    rows = null,
+    loading = false,
+    error = '',
+    onRefresh = null,
+    onFiltersChange = null,
+}) {
     const [values, setValues] = useState(() => buildInitialValues(config));
     const [keyword, setKeyword] = useState(config.search?.value ?? '');
 
+    useEffect(() => {
+        onFiltersChange?.({
+            ...values,
+            keyword,
+        });
+    }, [keyword, onFiltersChange, values]);
+
     const filteredRows = useMemo(() => {
-        const rows = config.table.rows ?? [];
+        const sourceRows = rows ?? config.table.rows ?? [];
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         if (!normalizedKeyword) {
-            return rows;
+            return sourceRows;
         }
 
         const searchKeys = config.table.searchKeys?.length
             ? config.table.searchKeys
             : config.table.columns.filter((column) => column.kind !== 'checkbox').map((column) => column.id);
 
-        return rows.filter((row) =>
+        return sourceRows.filter((row) =>
             searchKeys.some((key) =>
                 String(row[key] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             ),
         );
-    }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword]);
+    }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword, rows]);
 
     function handleChange(controlId, nextValue) {
         setValues((currentValues) => ({
@@ -159,7 +174,7 @@ export default function InventoryInquiryView({ config }) {
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                     {(config.controls ?? []).map((control) => (
                         <div key={control.id} className={control.wrapperClassName ?? ''}>
-                            <InquiryControl control={control} value={values[control.id] ?? ''} onChange={handleChange} />
+                            <InquiryControl control={control} value={values[control.id] ?? ''} onChange={handleChange} onRefresh={onRefresh} />
                         </div>
                     ))}
                 </div>
@@ -178,6 +193,12 @@ export default function InventoryInquiryView({ config }) {
                     </div>
                 ) : null}
             </div>
+
+            {error ? (
+                <div className="mt-3 rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-[14px] text-[#a33939]">
+                    {error}
+                </div>
+            ) : null}
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-[#d1d8e4]">
@@ -228,7 +249,7 @@ export default function InventoryInquiryView({ config }) {
                                     colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
                                     className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
                                 >
-                                    {config.table.emptyLabel ?? 'Belum ada data'}
+                                    {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

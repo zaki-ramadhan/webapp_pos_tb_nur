@@ -11,6 +11,14 @@ import {
 } from '@/components/ui/DataTable';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import {
+    createBackendResource,
+    deleteBackendResource,
+    getBackendErrorMessage,
+    updateBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import { SIMPLE_MASTER_BACKEND_CONFIG } from '@/features/workspace/backend/workspaceBackendAdapters';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -203,17 +211,44 @@ function findDetailRow(tableRows, activeLevel2Tab) {
         return null;
     }
 
-    return (tableRows ?? []).find((row) => row.id === recordId) ?? null;
+    return (tableRows ?? []).find((row) => String(row.id) === String(recordId)) ?? null;
 }
 
-function SimpleMasterFormView({ page, activeLevel2Tab }) {
+function StatusMessage({ status }) {
+    if (!status?.message) {
+        return null;
+    }
+
+    const toneClassName =
+        status.tone === 'error'
+            ? 'border-[#f0c4c4] bg-[#fff6f6] text-[#a33939]'
+            : 'border-[#c8dfc9] bg-[#f3fff4] text-[#2e6b34]';
+
+    return (
+        <div className={`mb-4 rounded-[6px] border px-3 py-2 text-[14px] ${toneClassName}`.trim()}>
+            {status.message}
+        </div>
+    );
+}
+
+function SimpleMasterFormView({
+    page,
+    activeLevel2Tab,
+    backendConfig = null,
+    onOpenContent,
+    onOpenDetail,
+    onRefresh,
+}) {
     const { form, table } = page;
     const detailRow = findDetailRow(table?.rows, activeLevel2Tab);
     const isDetailMode = Boolean(detailRow);
     const [values, setValues] = useState(() => buildFormValues(form, detailRow));
+    const [status, setStatus] = useState({ tone: '', message: '' });
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         setValues(buildFormValues(form, detailRow));
+        setStatus({ tone: '', message: '' });
     }, [detailRow, form]);
 
     function handleChange(fieldId, nextValue) {
@@ -221,6 +256,67 @@ function SimpleMasterFormView({ page, activeLevel2Tab }) {
             ...currentValues,
             [fieldId]: nextValue,
         }));
+    }
+
+    async function handleAction(actionId) {
+        if (!backendConfig) {
+            return;
+        }
+
+        if (actionId === 'delete') {
+            if (!detailRow?.id) {
+                return;
+            }
+
+            setSaving(true);
+
+            try {
+                await deleteBackendResource(backendConfig.resource, detailRow.id);
+                await onRefresh?.();
+                setStatus({ tone: 'success', message: 'Data berhasil dihapus.' });
+                onOpenContent?.();
+            } catch (error) {
+                setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+            } finally {
+                setSaving(false);
+            }
+
+            return;
+        }
+
+        const validationMessage = backendConfig.validate?.(values) ?? '';
+
+        if (validationMessage) {
+            setStatus({ tone: 'error', message: validationMessage });
+            return;
+        }
+
+        setSaving(true);
+
+        try {
+            const payload = backendConfig.toPayload(values);
+            const response = isDetailMode && detailRow?.id
+                ? await updateBackendResource(backendConfig.resource, detailRow.id, payload)
+                : await createBackendResource(backendConfig.resource, payload);
+            const record = response?.data ?? null;
+
+            await onRefresh?.();
+            setStatus({ tone: 'success', message: isDetailMode ? 'Data berhasil diperbarui.' : 'Data berhasil dibuat.' });
+
+            if (!isDetailMode && record && onOpenDetail) {
+                const row = backendConfig.toRow(record);
+
+                onOpenDetail({
+                    recordId: row.id,
+                    label: row[backendConfig.labelField] ?? row.name ?? row.id,
+                    tabLabel: row.tabLabel ?? row[backendConfig.labelField] ?? row.name ?? row.id,
+                });
+            }
+        } catch (error) {
+            setStatus({ tone: 'error', message: getBackendErrorMessage(error) });
+        } finally {
+            setSaving(false);
+        }
     }
 
     return (
@@ -231,6 +327,8 @@ function SimpleMasterFormView({ page, activeLevel2Tab }) {
 
             <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
                 <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+                    <StatusMessage status={status} />
+
                     <div className="space-y-4">
                         {(form.fields ?? []).map((field) => (
                             field.standalone ? (
@@ -256,9 +354,11 @@ function SimpleMasterFormView({ page, activeLevel2Tab }) {
                     {buildDockActions(form, isDetailMode).map((action) => (
                         <DockActionButton
                             key={action.id}
-                            label={action.label}
+                            label={saving ? 'Memproses...' : action.label}
                             tone={action.tone}
                             icon={renderDockIcon(action.icon)}
+                            onClick={saving ? undefined : () => handleAction(action.id)}
+                            className={saving ? 'pointer-events-none opacity-70' : ''}
                         />
                     ))}
                 </div>
@@ -294,7 +394,7 @@ function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
 
-        return table.rows.filter((row) => {
+        return (table.rows ?? []).filter((row) => {
             if (!normalizedKeyword) {
                 return true;
             }
@@ -326,7 +426,7 @@ function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
                         ? table.leftButtons.map((button) => <ToolbarLeftButton key={button.id} button={button} />)
                         : null
                 }
-                refreshButton={{ label: table.refreshLabel }}
+                refreshButton={{ label: table.refreshLabel, onClick: table.onRefresh }}
                 printButton={table.printLabel ? { label: table.printLabel } : null}
                 search={{
                     value: keyword,
@@ -354,32 +454,40 @@ function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`${isRowInteractive ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''} border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                                onClick={() =>
-                                    onOpenDetail?.({
-                                        recordId: row.id,
-                                        label: row.name ?? row.label ?? row.id,
-                                        tabLabel: row.tabLabel ?? row.name ?? row.label ?? row.id,
-                                    })
-                                }
-                            >
-                                {table.columns.map((column) => (
-                                    <DataTableCell
-                                        key={column.id}
-                                        className={`${column.cellClassName ?? ''} px-3 text-[15px] text-[#131a28]`.trim()}
-                                    >
-                                        {column.kind === 'spacer' ? null : (
-                                            <span className={column.truncate === false ? '' : 'block truncate'}>
-                                                {renderCellValue(column, row)}
-                                            </span>
-                                        )}
-                                    </DataTableCell>
-                                ))}
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className={`${isRowInteractive ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''} border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    onClick={() =>
+                                        onOpenDetail?.({
+                                            recordId: row.id,
+                                            label: row.name ?? row.label ?? row.id,
+                                            tabLabel: row.tabLabel ?? row.name ?? row.label ?? row.id,
+                                        })
+                                    }
+                                >
+                                    {table.columns.map((column) => (
+                                        <DataTableCell
+                                            key={column.id}
+                                            className={`${column.cellClassName ?? ''} px-3 text-[15px] text-[#131a28]`.trim()}
+                                        >
+                                            {column.kind === 'spacer' ? null : (
+                                                <span className={column.truncate === false ? '' : 'block truncate'}>
+                                                    {renderCellValue(column, row)}
+                                                </span>
+                                            )}
+                                        </DataTableCell>
+                                    ))}
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={table.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                    {table.emptyLabel ?? 'Belum ada data'}
+                                </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
@@ -388,9 +496,45 @@ function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
 }
 
 export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
+    const backendConfig = SIMPLE_MASTER_BACKEND_CONFIG[page.id] ?? null;
+    const { rows, total, loading, error, reload } = useBackendIndexResource({
+        resource: backendConfig?.resource,
+        filters: {
+            per_page: 100,
+        },
+        enabled: Boolean(backendConfig),
+    });
+
+    const resolvedPage = useMemo(() => {
+        if (!backendConfig) {
+            return page;
+        }
+
+        const mappedRows = rows.map((row) => backendConfig.toRow(row));
+
+        return {
+            ...page,
+            table: {
+                ...page.table,
+                rows: mappedRows,
+                pageValue: total.toLocaleString('id-ID'),
+                refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
+                emptyLabel: error || 'Belum ada data',
+                onRefresh: reload,
+            },
+        };
+    }, [backendConfig, error, loading, page, reload, rows, total]);
+
     return mode === 'table' ? (
-        <SimpleMasterTableView table={page.table} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
+        <SimpleMasterTableView table={resolvedPage.table} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
     ) : (
-        <SimpleMasterFormView page={page} activeLevel2Tab={activeLevel2Tab} />
+        <SimpleMasterFormView
+            page={resolvedPage}
+            activeLevel2Tab={activeLevel2Tab}
+            backendConfig={backendConfig}
+            onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            onRefresh={reload}
+        />
     );
 }

@@ -5,6 +5,10 @@ namespace App\Support\Backend;
 use App\Support\Backend\Definitions\CatalogBackendResources;
 use App\Support\Backend\Definitions\FinanceBackendResources;
 use App\Support\Backend\Definitions\IdentityBackendResources;
+use App\Support\Backend\Definitions\InventoryBackendResources;
+use App\Support\Backend\Definitions\AssetBackendResources;
+use App\Support\Backend\Definitions\OperationBackendResources;
+use App\Support\Backend\Definitions\WorkspaceBackendResources;
 use App\Support\Backend\Definitions\OrganizationBackendResources;
 use App\Support\Backend\Definitions\PartnerBackendResources;
 use Illuminate\Support\Arr;
@@ -27,6 +31,10 @@ class BackendResourceRegistry
             FinanceBackendResources::definitions(),
             PartnerBackendResources::definitions(),
             CatalogBackendResources::definitions(),
+            InventoryBackendResources::definitions(),
+            AssetBackendResources::definitions(),
+            OperationBackendResources::definitions(),
+            WorkspaceBackendResources::definitions(),
         );
     }
 

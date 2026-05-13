@@ -60,9 +60,10 @@ class BackendResourceController extends Controller
     {
         $blueprint = $this->resolveBlueprint($resource);
         $this->access->authorize($request->user(), $blueprint, 'view');
+        $customRecord = $blueprint->runShow($record);
 
         return response()->json([
-            'data' => $this->findRecord($blueprint, $record),
+            'data' => $customRecord ?? $this->findRecord($blueprint, $record),
         ]);
     }
 
@@ -85,7 +86,7 @@ class BackendResourceController extends Controller
         $this->access->authorize($request->user(), $blueprint, 'delete');
         $entity = $this->findRecord($blueprint, $record);
 
-        $this->writer->delete($entity);
+        $this->writer->delete($blueprint, $entity);
 
         return response()->json([
             'message' => "{$blueprint->label} deleted successfully.",

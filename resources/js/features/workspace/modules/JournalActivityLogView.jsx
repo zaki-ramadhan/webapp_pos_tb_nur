@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import { mapJournalActivityRows } from '@/features/workspace/backend/workspaceBackendAdapters';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
@@ -71,6 +73,7 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    onClick: config.table.onRefresh,
                 }}
                 menuButton={{
                     label: config.table.settingsLabel,
@@ -106,26 +109,34 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                    index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
-                                }`.trim()}
-                                onClick={() =>
-                                    onOpenDetail?.({
-                                        recordId: row.id,
-                                        label: row.number,
-                                        tabLabel: row.number,
-                                    })
-                                }
-                            >
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.date)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.number)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.transactionNumber)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.typeLabel)}</DataTableCell>
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
+                                        index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
+                                    }`.trim()}
+                                    onClick={() =>
+                                        onOpenDetail?.({
+                                            recordId: row.id,
+                                            label: row.number,
+                                            tabLabel: row.number,
+                                        })
+                                    }
+                                >
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.date)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.number)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.transactionNumber)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.typeLabel)}</DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                    {config.table.emptyLabel ?? 'Belum ada data'}
+                                </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
@@ -232,15 +243,30 @@ function JournalActivityLogDetailView({ config, activeLevel2Tab }) {
 }
 
 export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDetail }) {
+    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+        resource: 'journal-activity-logs',
+        filters: {
+            per_page: 100,
+        },
+    });
+    const mappedRows = useMemo(() => mapJournalActivityRows(backendRows), [backendRows]);
     const config = useMemo(
         () => ({
             ...page.journalActivityLog,
-            rowMap: (page.journalActivityLog.table?.rows ?? []).reduce((result, row) => {
+            table: {
+                ...page.journalActivityLog.table,
+                rows: mappedRows,
+                pageValue: total.toLocaleString('id-ID'),
+                refreshLabel: loading ? 'Memuat data...' : page.journalActivityLog.table?.refreshLabel,
+                emptyLabel: error || 'Belum ada data',
+                onRefresh: reload,
+            },
+            rowMap: mappedRows.reduce((result, row) => {
                 result[row.id] = row;
                 return result;
             }, {}),
         }),
-        [page.journalActivityLog],
+        [error, loading, mappedRows, page.journalActivityLog, reload, total],
     );
 
     return activeLevel2Tab?.tabType === 'detail' ? (

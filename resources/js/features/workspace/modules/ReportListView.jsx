@@ -3,6 +3,8 @@ import { startTransition, useDeferredValue, useState } from 'react';
 import EmptyState from '@/components/ui/EmptyState';
 import Panel from '@/components/ui/Panel';
 import TextInput from '@/components/ui/TextInput';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import { buildReportListConfig as buildBackendReportListConfig } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { buildReportListConfig } from '@/features/workspace/modules/reportListConfig';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import {
@@ -159,7 +161,19 @@ function buildVisibleSections(reports, activeCategoryId, keyword) {
 }
 
 export default function ReportListView({ page }) {
-    const config = page.reportList ?? buildReportListConfig();
+    const fallbackConfig = page.reportList ?? buildReportListConfig();
+    const { rows } = useBackendIndexResource({
+        resource: 'report-lists',
+        filters: {
+            per_page: 100,
+        },
+    });
+    const config = rows.length
+        ? buildBackendReportListConfig(rows, fallbackConfig)
+        : {
+              ...fallbackConfig,
+              reports: [],
+          };
     const firstActiveCategoryId = config.categories.find((category) => !isReportCategoryInactive(category.id))?.id ?? config.categories[0]?.id ?? '';
     const [activeCategoryId, setActiveCategoryId] = useState(firstActiveCategoryId);
     const [searchValue, setSearchValue] = useState('');

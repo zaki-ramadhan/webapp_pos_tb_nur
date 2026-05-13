@@ -1,0 +1,75 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import {
+    extractBackendRows,
+    extractBackendTotal,
+    getBackendErrorMessage,
+    listBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
+
+function sanitizeFilters(filters = {}) {
+    return Object.fromEntries(
+        Object.entries(filters).filter(([, value]) => value !== undefined && value !== null && value !== ''),
+    );
+}
+
+export default function useBackendIndexResource({
+    resource,
+    filters = {},
+    enabled = true,
+}) {
+    const [payload, setPayload] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [reloadVersion, setReloadVersion] = useState(0);
+    const serializedFilters = JSON.stringify(filters ?? {});
+    const normalizedFilters = useMemo(() => sanitizeFilters(filters), [serializedFilters]);
+
+    useEffect(() => {
+        if (!enabled || !resource) {
+            return undefined;
+        }
+
+        let active = true;
+
+        async function run() {
+            setLoading(true);
+            setError('');
+
+            try {
+                const nextPayload = await listBackendResource(resource, normalizedFilters);
+
+                if (!active) {
+                    return;
+                }
+
+                setPayload(nextPayload);
+            } catch (requestError) {
+                if (!active) {
+                    return;
+                }
+
+                setError(getBackendErrorMessage(requestError));
+            } finally {
+                if (active) {
+                    setLoading(false);
+                }
+            }
+        }
+
+        run();
+
+        return () => {
+            active = false;
+        };
+    }, [enabled, normalizedFilters, reloadVersion, resource]);
+
+    return {
+        payload,
+        rows: extractBackendRows(payload),
+        total: extractBackendTotal(payload),
+        loading,
+        error,
+        reload: () => setReloadVersion((currentValue) => currentValue + 1),
+    };
+}

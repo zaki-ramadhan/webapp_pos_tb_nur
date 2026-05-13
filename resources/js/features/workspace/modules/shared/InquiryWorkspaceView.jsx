@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -58,7 +58,7 @@ function resolveActionIcon(action) {
     }
 }
 
-function InquiryActionButton({ action }) {
+function InquiryActionButton({ action, onClick }) {
     const toneClassName =
         action.tone === 'warning'
             ? 'border-[#f4b038] bg-[#ffab13] text-white'
@@ -69,6 +69,7 @@ function InquiryActionButton({ action }) {
             type="button"
             aria-label={action.label}
             title={action.label}
+            onClick={onClick}
             className={`inline-flex h-[34px] min-w-[40px] items-center justify-center rounded-[4px] border px-3 ${toneClassName}`.trim()}
         >
             {resolveActionIcon(action)}
@@ -123,7 +124,14 @@ function InquiryControl({ control, value, onChange }) {
     );
 }
 
-export default function InquiryWorkspaceView({ config }) {
+export default function InquiryWorkspaceView({
+    config,
+    rows = null,
+    loading = false,
+    error = '',
+    onRefresh = null,
+    onValuesChange = null,
+}) {
     const controls = config.controls ?? [];
     const actions = (config.actions ?? []).filter((action) => action.tone !== 'warning' && action.icon !== 'idea' && action.id !== 'help');
     const hasSidePanel = config.sidePanel?.hidden !== true;
@@ -131,12 +139,16 @@ export default function InquiryWorkspaceView({ config }) {
     const keywordControl = controls.find((control) => control.type === 'search');
     const keyword = keywordControl ? values[keywordControl.id] ?? '' : '';
 
+    useEffect(() => {
+        onValuesChange?.(values);
+    }, [onValuesChange, values]);
+
     const filteredRows = useMemo(() => {
-        const rows = config.table.rows ?? [];
+        const sourceRows = rows ?? config.table.rows ?? [];
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         if (!normalizedKeyword) {
-            return rows;
+            return sourceRows;
         }
 
         const searchKeys =
@@ -144,14 +156,14 @@ export default function InquiryWorkspaceView({ config }) {
                 ? config.table.searchKeys
                 : config.table.columns.map((column) => column.id);
 
-        return rows.filter((row) =>
+        return sourceRows.filter((row) =>
             searchKeys.some((key) =>
                 String(row[key] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             ),
         );
-    }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword]);
+    }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword, rows]);
 
     function handleChange(controlId, nextValue) {
         setValues((currentValues) => ({
@@ -176,11 +188,21 @@ export default function InquiryWorkspaceView({ config }) {
                 {actions.length ? (
                     <div className="flex flex-col items-end gap-2">
                         {actions.map((action) => (
-                            <InquiryActionButton key={action.id} action={action} />
+                            <InquiryActionButton
+                                key={action.id}
+                                action={action}
+                                onClick={action.id === 'reload' ? onRefresh : undefined}
+                            />
                         ))}
                     </div>
                 ) : null}
             </div>
+
+            {error ? (
+                <div className="rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-[14px] text-[#a33939]">
+                    {error}
+                </div>
+            ) : null}
 
             <div
                 className={`grid min-h-0 flex-1 gap-3 ${
@@ -232,7 +254,7 @@ export default function InquiryWorkspaceView({ config }) {
                                             colSpan={config.table.columns.length}
                                             className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
                                         >
-                                            {config.table.emptyLabel ?? 'Belum ada data'}
+                                            {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                         </DataTableCell>
                                     </DataTableRow>
                                 )}
