@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
     buildCurrencyValue,
     TransactionDataTable,
@@ -137,6 +138,20 @@ function JournalLinesSection({ config, values, setValues }) {
                 }))
             }
             searchPlaceholder={config.lineSearchPlaceholder}
+            searchInput={
+                <AccountLookupTextInput
+                    value={values.lineLookup}
+                    placeholder={config.lineSearchPlaceholder}
+                    searchLabel="Cari akun jurnal"
+                    dialogTitle="Pilih Akun Jurnal"
+                    onSelectAccount={(_, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            lineLookup: label,
+                        }))
+                    }
+                />
+            }
             title={detailTitle}
             columns={config.lineTable.columns}
             rows={values.lineItems}

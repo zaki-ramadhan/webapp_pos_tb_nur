@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import {
     TransactionDataTable,
     TransactionDateInput,
@@ -96,9 +97,10 @@ function PayrollAdditionalInfoSection({ config, values, setValues }) {
 
             <div className="mt-4 grid gap-4 lg:grid-cols-[250px_minmax(0,570px)] lg:items-start">
                 <TransactionFieldLabel label={config.additionalInfoFields.liabilityAccountLabel} required />
-                <ChipLookupField
+                <AccountLookupField
                     values={values.liabilityAccounts}
                     placeholder={config.additionalInfoFields.liabilityAccountPlaceholder}
+                    dialogTitle="Pilih Akun Hutang Beban"
                     onRemove={(value) =>
                         setValues((current) => ({
                             ...current,
@@ -106,6 +108,12 @@ function PayrollAdditionalInfoSection({ config, values, setValues }) {
                         }))
                     }
                     searchLabel="Cari akun hutang beban"
+                    onSelectAccount={(_, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            liabilityAccounts: label ? [label] : [],
+                        }))
+                    }
                 />
 
                 <TransactionFieldLabel label={config.additionalInfoFields.noteLabel} />

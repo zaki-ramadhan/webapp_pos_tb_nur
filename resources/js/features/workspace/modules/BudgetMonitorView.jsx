@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 function MonitorSearchField({ value, onChange, placeholder }) {
@@ -67,10 +68,17 @@ function MonitorToolbar({ config, values, setValues }) {
                 ))}
             </SelectField>
 
-            <MonitorSearchField
+            <AccountLookupTextInput
                 value={values.account}
-                onChange={(event) => setValues((current) => ({ ...current, account: event.target.value }))}
                 placeholder={config.accountPlaceholder}
+                dialogTitle="Pilih Akun Monitoring Anggaran"
+                searchLabel="Cari akun monitoring anggaran"
+                onSelectAccount={(_, label) =>
+                    setValues((current) => ({
+                        ...current,
+                        account: label,
+                    }))
+                }
             />
 
             <MonitorSearchField

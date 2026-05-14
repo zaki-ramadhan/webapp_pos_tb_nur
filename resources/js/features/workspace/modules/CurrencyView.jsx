@@ -9,6 +9,7 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -94,10 +95,29 @@ function CurrencyFormView({ page, activeLevel2Tab }) {
                         <div className="max-w-[1180px] space-y-3">
                             {config.accountFields.map((field) => (
                                 <CurrencyFieldRow key={field.id} label={field.label}>
-                                    <ChipLookupField
+                                    <AccountLookupField
                                         value={values.defaultAccounts[field.id] ?? ''}
                                         placeholder={config.accountPlaceholder}
                                         searchLabel={`Cari ${field.label}`}
+                                        dialogTitle={`Pilih ${field.label}`}
+                                        onSelectAccount={(_, label) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                defaultAccounts: {
+                                                    ...current.defaultAccounts,
+                                                    [field.id]: label,
+                                                },
+                                            }))
+                                        }
+                                        onRemove={() =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                defaultAccounts: {
+                                                    ...current.defaultAccounts,
+                                                    [field.id]: '',
+                                                },
+                                            }))
+                                        }
                                     />
                                 </CurrencyFieldRow>
                             ))}

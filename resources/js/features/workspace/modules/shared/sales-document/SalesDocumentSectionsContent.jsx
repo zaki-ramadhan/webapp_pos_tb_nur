@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
     buildCurrencyValue,
     TransactionDateInput,
@@ -625,7 +626,7 @@ export function SalesDocumentAdditionalInfoSection({ config, values, setValues, 
     );
 }
 
-export function SalesDocumentAdditionalCostSection({ config, values }) {
+export function SalesDocumentAdditionalCostSection({ config, values, setValues }) {
     const costLeadingAction =
         config.costSectionLeadingActionDetailOnly && !values.documentNumber
             ? null
@@ -637,6 +638,20 @@ export function SalesDocumentAdditionalCostSection({ config, values }) {
         <SearchableTableSection
             searchValue={values.costSearch}
             searchPlaceholder={config.costSearchPlaceholder}
+            searchInput={
+                <AccountLookupTextInput
+                    value={values.costSearch}
+                    placeholder={config.costSearchPlaceholder}
+                    searchLabel={`Cari ${config.additionalCostsTitle}`}
+                    dialogTitle={`Pilih ${config.additionalCostsTitle}`}
+                    onSelectAccount={(_, label) =>
+                        setValues?.((current) => ({
+                            ...current,
+                            costSearch: label,
+                        }))
+                    }
+                />
+            }
             title={config.additionalCostsTitle}
             columns={config.costTable.columns}
             rows={values.additionalCosts}

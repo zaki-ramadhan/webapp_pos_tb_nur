@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 export default function ChipLookupField({
     value = '',
@@ -14,6 +14,7 @@ export default function ChipLookupField({
     heightClassName = 'h-[40px]',
     disabled = false,
     onSearch = null,
+    searching = false,
 }) {
     const searchButtonRef = useRef(null);
     const items = Array.isArray(values) ? values.filter(Boolean) : value ? [value] : [];
@@ -78,7 +79,11 @@ export default function ChipLookupField({
                 aria-label={searchLabel}
                 className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:cursor-not-allowed disabled:text-slate-300"
             >
-                <SearchIcon className="h-5 w-5 text-[#111827]" />
+                {searching ? (
+                    <RefreshIcon className="h-5 w-5 animate-spin text-[#111827]" />
+                ) : (
+                    <SearchIcon className="h-5 w-5 text-[#111827]" />
+                )}
             </button>
         </div>
     );

@@ -17,6 +17,7 @@ import {
     TransactionSectionRail,
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 
 function SectionCard({ children, className = '' }) {
@@ -159,14 +160,21 @@ function AssetDisposalGeneralSection({ config, values, setValues }) {
                     </DisposalFieldRow>
 
                     <DisposalFieldRow label={config.labels.profitLossAccount} required>
-                        <ChipLookupField
+                        <AccountLookupField
                             values={values.profitLossAccount}
                             placeholder="Cari/Pilih Akun Perkiraan..."
                             searchLabel="Cari akun laba rugi"
+                            dialogTitle="Pilih Akun Laba Rugi"
                             onRemove={(item) =>
                                 setValues((current) => ({
                                     ...current,
                                     profitLossAccount: current.profitLossAccount.filter((value) => value !== item),
+                                }))
+                            }
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    profitLossAccount: label ? [label] : [],
                                 }))
                             }
                             className="max-w-[580px]"

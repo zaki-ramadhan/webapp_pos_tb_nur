@@ -1,5 +1,6 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import TextareaField from '@/components/ui/TextareaField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import {
     ChipLookupField,
     FormFieldRow,
@@ -141,11 +142,25 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                     <SectionHeading title="Akun Pembelian" />
                     <div className="mt-4 space-y-3">
                         <FormFieldRow label={purchaseConfig.payableLabel}>
-                            <ChipLookupField values={values.payableAccount} placeholder={config.lookupPlaceholders.default} onRemove={() => {}} searchLabel="Cari akun utang" />
+                            <AccountLookupField
+                                values={values.payableAccount}
+                                placeholder={config.lookupPlaceholders.default}
+                                onRemove={() => onChange('payableAccount', [])}
+                                searchLabel="Cari akun utang"
+                                dialogTitle="Pilih Akun Utang"
+                                onSelectAccount={(_, label) => onChange('payableAccount', label ? [label] : [])}
+                            />
                         </FormFieldRow>
 
                         <FormFieldRow label={purchaseConfig.advanceLabel}>
-                            <ChipLookupField values={values.advanceAccount} placeholder={config.lookupPlaceholders.default} onRemove={() => {}} searchLabel="Cari akun uang muka" />
+                            <AccountLookupField
+                                values={values.advanceAccount}
+                                placeholder={config.lookupPlaceholders.default}
+                                onRemove={() => onChange('advanceAccount', [])}
+                                searchLabel="Cari akun uang muka"
+                                dialogTitle="Pilih Akun Uang Muka"
+                                onSelectAccount={(_, label) => onChange('advanceAccount', label ? [label] : [])}
+                            />
                         </FormFieldRow>
                     </div>
 

@@ -55,7 +55,7 @@ export default function FixedAssetsFormView({ config, activeLevel2Tab }) {
                             {activeSectionId === 'additional-info' ? (
                                 <FixedAssetsAdditionalInfoSection config={config} values={values} setValues={setValues} isDetail={isDetail} />
                             ) : activeSectionId === 'expense-account' ? (
-                                <FixedAssetsExpenseSection config={config} values={values} onOpenExpense={setSelectedExpense} />
+                                <FixedAssetsExpenseSection config={config} values={values} setValues={setValues} onOpenExpense={setSelectedExpense} />
                             ) : activeSectionId === 'asset-location' ? (
                                 <FixedAssetsLocationSection config={config} values={values} />
                             ) : (

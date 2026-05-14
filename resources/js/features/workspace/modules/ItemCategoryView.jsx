@@ -12,7 +12,7 @@ import {
 import TextInput from '@/components/ui/TextInput';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import { TransactionToolbarIconButton, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
@@ -128,11 +128,13 @@ function ItemCategoryAccountsTab({ config, values, onAccountChange }) {
             <div className="space-y-3">
                 {config.accountFields.map((field) => (
                     <ItemCategoryFieldRow key={field.id} label={field.label}>
-                        <ChipLookupField
+                        <AccountLookupField
                             value={values.accounts[field.id] ?? ''}
                             placeholder={config.accountPlaceholder}
                             searchLabel={`Cari ${field.label}`}
                             onRemove={() => onAccountChange(field.id, '')}
+                            onSelectAccount={(_, label) => onAccountChange(field.id, label)}
+                            dialogTitle={`Pilih ${field.label}`}
                             className="max-w-[640px]"
                         />
                     </ItemCategoryFieldRow>

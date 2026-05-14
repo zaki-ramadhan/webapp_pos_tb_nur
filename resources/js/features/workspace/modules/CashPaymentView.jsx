@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
     buildCurrencyValue,
     TransactionDataTable,
@@ -92,7 +93,7 @@ function buildFormState(source = {}, config) {
     };
 }
 
-function PaymentLineItemsSection({ config, values }) {
+function PaymentLineItemsSection({ config, values, setValues }) {
     const detailTitle = values.lineItems.length
         ? `${values.lineItems.length} ${config.lineSectionTitle}`
         : config.lineSectionTitle;
@@ -103,6 +104,20 @@ function PaymentLineItemsSection({ config, values }) {
             onSearchChange={() => {}}
             searchReadOnly
             searchPlaceholder={config.lineSearchPlaceholder}
+            searchInput={
+                <AccountLookupTextInput
+                    value={values.lineLookup}
+                    placeholder={config.lineSearchPlaceholder}
+                    searchLabel="Cari akun pembayaran"
+                    dialogTitle="Pilih Akun Pembayaran"
+                    onSelectAccount={(_, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            lineLookup: label,
+                        }))
+                    }
+                />
+            }
             title={detailTitle}
             columns={config.lineTable.columns}
             rows={values.lineItems}
@@ -331,7 +346,7 @@ function CashPaymentFormView({ config, activeLevel2Tab }) {
             {activeSectionId === 'additional-info' ? (
                 <PaymentInfoSection config={config} values={values} isDetail={Boolean(activeRecordId)} />
             ) : (
-                <PaymentLineItemsSection config={config} values={values} />
+                <PaymentLineItemsSection config={config} values={values} setValues={setValues} />
             )}
         </TransactionFormLayout>
     );

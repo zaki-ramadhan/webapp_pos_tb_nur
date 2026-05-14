@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
     TransactionDataTable,
     TransactionDateInput,
@@ -40,19 +41,6 @@ function buildInitialValues(config) {
         toBudget: config.defaults?.toBudget ?? '',
         notes: config.defaults?.notes ?? '',
     };
-}
-
-function BudgetLookupInput({ value, placeholder, onChange }) {
-    return (
-        <TextInput
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-            inputClassName="text-[15px] text-[#1f2436]"
-        />
-    );
 }
 
 function TransferAmountInput({ value, onChange, prefix }) {
@@ -102,10 +90,17 @@ function TransferDetailsSection({ config, values, setValues }) {
                         </SelectField>
 
                         <TransactionFieldLabel label={config.labels.budget} required />
-                        <BudgetLookupInput
+                        <AccountLookupTextInput
                             value={values.fromBudget}
                             placeholder={config.accountPlaceholder}
-                            onChange={(event) => setValues((current) => ({ ...current, fromBudget: event.target.value }))}
+                            dialogTitle="Pilih Anggaran Asal"
+                            searchLabel="Cari akun anggaran asal"
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    fromBudget: label,
+                                }))
+                            }
                         />
 
                         <TransactionFieldLabel label={config.labels.remainingBudget} />
@@ -139,10 +134,17 @@ function TransferDetailsSection({ config, values, setValues }) {
                         </SelectField>
 
                         <TransactionFieldLabel label={config.labels.budget} required />
-                        <BudgetLookupInput
+                        <AccountLookupTextInput
                             value={values.toBudget}
                             placeholder={config.accountPlaceholder}
-                            onChange={(event) => setValues((current) => ({ ...current, toBudget: event.target.value }))}
+                            dialogTitle="Pilih Anggaran Tujuan"
+                            searchLabel="Cari akun anggaran tujuan"
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    toBudget: label,
+                                }))
+                            }
                         />
                     </div>
                 </TransferBudgetPanel>

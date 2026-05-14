@@ -13,6 +13,10 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import {
+    AccountLookupField,
+    buildAccountLookupLabel,
+} from '@/features/workspace/shared/AccountLookupControls';
+import {
     buildInventoryAdjustmentPayload,
 } from '@/features/workspace/backend/inventoryAdjustmentBackend';
 import {
@@ -47,16 +51,7 @@ import {
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { CogIcon, PrintIcon, SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 
-function buildLookupLabel(record) {
-    const code = String(record?.code ?? '').trim();
-    const name = String(record?.name ?? '').trim();
-
-    if (code && name) {
-        return `[${code}] ${name}`;
-    }
-
-    return name || code;
-}
+const buildLookupLabel = buildAccountLookupLabel;
 
 function formatCurrencyValue(value) {
     const numericValue = Number(value ?? 0);
@@ -428,10 +423,11 @@ function InventoryAdjustmentInfoSection({ config, values, setValues, handlers })
 
             <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,560px)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.adjustmentAccount} />
-                <ChipLookupField
+                <AccountLookupField
                     values={values.adjustmentAccount}
                     placeholder="Cari/Pilih..."
                     searchLabel="Cari akun penyesuaian"
+                    dialogTitle="Pilih Akun Penyesuaian"
                     onRemove={(accountValue) =>
                         setValues((current) => ({
                             ...current,
@@ -441,7 +437,13 @@ function InventoryAdjustmentInfoSection({ config, values, setValues, handlers })
                                 : null,
                         }))
                     }
-                    onSearch={handlers?.onSelectAdjustmentAccount}
+                    onSelectAccount={(record, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            adjustmentAccount: label ? [label] : [],
+                            __adjustmentAccountId: record?.id ?? null,
+                        }))
+                    }
                     heightClassName="h-[34px]"
                 />
 

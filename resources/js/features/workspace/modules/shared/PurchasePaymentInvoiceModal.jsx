@@ -11,7 +11,7 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import {
     CloseIcon,
     PencilIcon,
@@ -206,11 +206,23 @@ function DiscountInfoTab({ values, setValues }) {
         <div className="space-y-4">
             <div className="grid gap-y-4 sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-x-4">
                 <TransactionFieldLabel label="Akun Diskon" />
-                <ChipLookupField
+                <AccountLookupField
                     values={values.discountAccount}
                     placeholder="Cari/Pilih..."
-                    onRemove={() => {}}
+                    onRemove={() =>
+                        setValues((current) => ({
+                            ...current,
+                            discountAccount: [],
+                        }))
+                    }
                     searchLabel="Cari akun diskon"
+                    dialogTitle="Pilih Akun Diskon"
+                    onSelectAccount={(_, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            discountAccount: label ? [label] : [],
+                        }))
+                    }
                     heightClassName="h-[36px]"
                 />
 

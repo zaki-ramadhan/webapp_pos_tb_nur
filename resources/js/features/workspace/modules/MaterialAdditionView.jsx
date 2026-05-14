@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
     buildMaterialAdditionConfig,
     buildMaterialAdditionRecord,
@@ -336,18 +337,30 @@ function MaterialAdditionHeader({ config, values, setValues, isDetail }) {
 }
 
 function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholder, title }) {
+    const isAccountLookup = placeholder === 'Cari/Pilih Akun Perkiraan...';
+
     return (
         <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 flex-1 items-center gap-3 sm:max-w-[720px]">
                 <div className="min-w-0 flex-1">
-                    <TextInput
-                        value={searchValue}
-                        onChange={onSearchChange}
-                        placeholder={placeholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
-                    />
+                    {isAccountLookup ? (
+                        <AccountLookupTextInput
+                            value={searchValue}
+                            placeholder={placeholder}
+                            searchLabel={`Cari ${title}`}
+                            dialogTitle={`Pilih ${title}`}
+                            onSelectAccount={(_, label) => onSearchChange({ target: { value: label } })}
+                        />
+                    ) : (
+                        <TextInput
+                            value={searchValue}
+                            onChange={onSearchChange}
+                            placeholder={placeholder}
+                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            inputClassName="text-[15px] text-[#1f2436]"
+                        />
+                    )}
                 </div>
             </div>
 

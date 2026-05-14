@@ -19,6 +19,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import {
     finishCrudLoadingToast,
@@ -29,7 +30,7 @@ import {
 } from '@/features/workspace/shared/crudFeedback';
 import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
-import { SearchIcon, SortIcon, TrashIcon } from '@/features/workspace/shared/Icons';
+import { SortIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 
 function buildDefaultValues(form, detailRow = null) {
@@ -158,17 +159,21 @@ function DepartmentGeneralTab({ form, values, onChange }) {
 function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
+        const normalizedTokens = normalizedKeyword
+            .replace(/[\[\]]/g, ' ')
+            .split(/\s+/)
+            .filter(Boolean);
 
         return openingBalance.rows.filter((row) => {
             if (!normalizedKeyword) {
                 return true;
             }
 
-            return [row.code, row.name, row.value].some((value) =>
-                String(value ?? '')
-                    .toLowerCase()
-                    .includes(normalizedKeyword),
-            );
+            const searchableValue = [row.code, row.name, row.value]
+                .map((value) => String(value ?? '').toLowerCase())
+                .join(' ');
+
+            return normalizedTokens.every((token) => searchableValue.includes(token));
         });
     }, [keyword, openingBalance.rows]);
 
@@ -183,9 +188,7 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white`.trim()}
                                 >
-                                    <span
-                                        className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-center'}`.trim()}
-                                    >
+                                    <span className="flex items-center justify-center gap-2">
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span>{column.label}</span>
                                     </span>
@@ -248,14 +251,15 @@ function DepartmentOpeningBalanceTab({ form, values, onChange }) {
             </div>
 
             <div className="max-w-[420px]">
-                <TextInput
+                <AccountLookupTextInput
                     value={values.openingBalanceKeyword}
-                    onChange={(event) => onChange('openingBalanceKeyword', event.target.value)}
                     placeholder={openingBalance.accountPlaceholder}
-                    trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
+                    searchLabel="Cari akun perkiraan saldo awal"
+                    dialogTitle="Pilih Akun Perkiraan Saldo Awal"
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                     inputClassName="text-[15px] text-[#1f2436]"
                     trailingClassName="px-2.5"
+                    onSelectAccount={(_, label) => onChange('openingBalanceKeyword', label ?? '')}
                 />
             </div>
 

@@ -10,12 +10,15 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import {
+    AccountLookupField,
+    AccountLookupTextInput,
+} from '@/features/workspace/shared/AccountLookupControls';
+import {
     TransactionDateInput,
     TransactionFieldLabel,
     TransactionSectionHeading,
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { SearchIcon } from '@/features/workspace/shared/Icons';
 import {
     FixedAssetFieldRow,
     FixedAssetLookupField,
@@ -167,26 +170,47 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                     </FixedAssetFieldRow>
 
                     <FixedAssetFieldRow label={config.labels.assetAccount} required>
-                        <FixedAssetLookupField
+                        <AccountLookupField
                             values={values.assetAccount}
                             placeholder="Cari/Pilih Akun Perkiraan..."
                             searchLabel="Cari akun aset"
+                            dialogTitle="Pilih Akun Aset"
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    assetAccount: label ? [label] : [],
+                                }))
+                            }
                         />
                     </FixedAssetFieldRow>
 
                     <FixedAssetFieldRow label={config.labels.accumulatedDepreciationAccount} required>
-                        <FixedAssetLookupField
+                        <AccountLookupField
                             values={values.accumulatedDepreciationAccount}
                             placeholder="Cari/Pilih Akun Perkiraan..."
                             searchLabel="Cari akun akumulasi penyusutan"
+                            dialogTitle="Pilih Akun Akumulasi Penyusutan"
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    accumulatedDepreciationAccount: label ? [label] : [],
+                                }))
+                            }
                         />
                     </FixedAssetFieldRow>
 
                     <FixedAssetFieldRow label={config.labels.depreciationExpenseAccount} required>
-                        <FixedAssetLookupField
+                        <AccountLookupField
                             values={values.depreciationExpenseAccount}
                             placeholder="Cari/Pilih Akun Perkiraan..."
                             searchLabel="Cari akun beban penyusutan"
+                            dialogTitle="Pilih Akun Beban Penyusutan"
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    depreciationExpenseAccount: label ? [label] : [],
+                                }))
+                            }
                         />
                     </FixedAssetFieldRow>
                 </div>
@@ -367,17 +391,23 @@ export function FixedAssetsAdditionalInfoSection({ config, values, setValues, is
     );
 }
 
-export function FixedAssetsExpenseSection({ config, values, onOpenExpense }) {
+export function FixedAssetsExpenseSection({ config, values, setValues, onOpenExpense }) {
     return (
         <SectionCard className="min-h-[620px]">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 lg:flex-row lg:items-start lg:justify-between">
-                <TextInput
+                <AccountLookupTextInput
                     value={values.expenseSearch}
-                    readOnly
                     placeholder="Cari/Pilih Akun Perkiraan..."
-                    trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2] lg:max-w-[560px]"
                     inputClassName="text-[15px] text-[#1f2436]"
+                    dialogTitle="Pilih Akun Pengeluaran"
+                    searchLabel="Cari akun pengeluaran"
+                    onSelectAccount={(_, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            expenseSearch: label,
+                        }))
+                    }
                 />
 
                 <div className="text-right text-[22px] font-normal text-[#1f2436]">

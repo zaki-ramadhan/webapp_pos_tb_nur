@@ -8,11 +8,11 @@ import {
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextareaField from '@/components/ui/TextareaField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { PlusIcon } from '@/features/workspace/shared/Icons';
 import {
     FormRow,
-    LookupField,
     SectionHeading,
     SimpleTextField,
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
@@ -123,16 +123,23 @@ export function ItemAccountsTab({ config, values, onChange }) {
             <div className="space-y-3 pt-2">
                 {accountRows.map(([key, label]) => (
                     <FormRow key={key} label={label}>
-                        <LookupField
+                        <AccountLookupField
                             values={values.accounts[key] ?? []}
                             placeholder="Cari/Pilih..."
                             searchLabel={`Cari akun ${label}`}
+                            dialogTitle={`Pilih akun ${label}`}
                             onRemove={(item) =>
                                 onChange('accounts', {
                                     ...values.accounts,
                                     [key]: (values.accounts[key] ?? []).filter(
                                         (value) => value !== item,
                                     ),
+                                })
+                            }
+                            onSelectAccount={(_, accountLabel) =>
+                                onChange('accounts', {
+                                    ...values.accounts,
+                                    [key]: accountLabel ? [accountLabel] : [],
                                 })
                             }
                             className="max-w-[680px]"

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import {
@@ -139,13 +140,19 @@ function BudgetFormView({ page }) {
                 <div className="flex min-h-[540px] flex-col">
                     <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-                            <TextInput
+                            <AccountLookupTextInput
                                 value={values.keyword}
-                                onChange={(event) => setValues((current) => ({ ...current, keyword: event.target.value }))}
                                 placeholder={config.accountPlaceholder}
-                                trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2] sm:max-w-[590px]"
                                 inputClassName="text-[15px] text-[#1f2436]"
+                                dialogTitle="Pilih Akun Anggaran"
+                                searchLabel="Cari akun anggaran"
+                                onSelectAccount={(_, label) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        keyword: label,
+                                    }))
+                                }
                             />
 
                             <button

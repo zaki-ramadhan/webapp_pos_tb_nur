@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import PanelActions from '@/features/workspace/shared/PanelActions';
 import SectionTab from '@/features/workspace/shared/SectionTab';
@@ -23,24 +23,14 @@ import {
     TrashIcon,
 } from '@/features/workspace/shared/Icons';
 
-function AccountLookupField({ value, placeholder, disabled = false }) {
-    return (
-        <ChipLookupField
-            value={value}
-            placeholder={placeholder}
-            disabled={disabled}
-            searchLabel="Cari akun beban"
-            heightClassName="min-h-[38px]"
-            className="rounded-[4px] border-[#cfd6e2]"
-            contentClassName="px-3 py-1.5"
-            chipClassName="text-[#24324a]"
-        />
-    );
-}
-
 function SalaryAllowanceForm({ config, entry, actions, editableDetail = false }) {
     const fields = config.fields;
     const isDetail = Boolean(entry.name) && entry.id !== config.newEntry.id;
+    const [expenseAccount, setExpenseAccount] = useState(entry.expenseAccount ?? '');
+
+    useEffect(() => {
+        setExpenseAccount(entry.expenseAccount ?? '');
+    }, [entry.expenseAccount]);
 
     return (
         <div className="min-h-full rounded-[4px] border border-[#d3d9e5] bg-[#f4f4f5] px-3 pb-3 pt-2">
@@ -92,9 +82,17 @@ function SalaryAllowanceForm({ config, entry, actions, editableDetail = false })
                         {fields.expenseAccountLabel} <span className="text-[#ED3969]">*</span>
                     </label>
                     <AccountLookupField
-                        value={entry.expenseAccount}
+                        value={expenseAccount}
                         placeholder="Cari/Pilih Akun Perkiraan..."
                         disabled={isDetail}
+                        searchLabel="Cari akun beban"
+                        dialogTitle="Pilih Akun Beban"
+                        heightClassName="min-h-[38px]"
+                        className="rounded-[4px] border-[#cfd6e2]"
+                        contentClassName="px-3 py-1.5"
+                        chipClassName="text-[#24324a]"
+                        onRemove={() => setExpenseAccount('')}
+                        onSelectAccount={(_, label) => setExpenseAccount(label)}
                     />
 
                     {isDetail ? (

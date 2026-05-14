@@ -412,6 +412,7 @@ export function TransactionLineItemsSection({
     titleRequired = true,
     showTitleSearchButton = false,
     searchReadOnly = false,
+    searchInput = null,
     spacerHeaderContent = null,
     spacerCellContent = null,
     emptyLeadingCellContent = null,
@@ -422,15 +423,17 @@ export function TransactionLineItemsSection({
         <div className={`flex flex-col ${hasRows ? 'min-h-[540px]' : 'min-h-[240px]'}`.trim()}>
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0 flex-1 sm:max-w-[560px]">
-                    <TextInput
-                        value={searchValue}
-                        onChange={onSearchChange}
-                        readOnly={searchReadOnly}
-                        placeholder={searchPlaceholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
-                    />
+                    {searchInput ?? (
+                        <TextInput
+                            value={searchValue}
+                            onChange={onSearchChange}
+                            readOnly={searchReadOnly}
+                            placeholder={searchPlaceholder}
+                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            inputClassName="text-[15px] text-[#1f2436]"
+                        />
+                    )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3">

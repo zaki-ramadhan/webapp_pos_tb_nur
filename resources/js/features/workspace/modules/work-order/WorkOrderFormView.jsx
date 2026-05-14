@@ -5,6 +5,10 @@ import TextareaField from '@/components/ui/TextareaField';
 import SelectField from '@/components/ui/SelectField';
 import WorkOrderItemModal from '@/features/workspace/modules/shared/WorkOrderItemModal';
 import {
+    AccountLookupField,
+    AccountLookupTextInput,
+} from '@/features/workspace/shared/AccountLookupControls';
+import {
     TransactionDataTable,
     TransactionDateInput,
     TransactionFieldLabel,
@@ -108,18 +112,30 @@ function WorkOrderHeader({ config, values, setValues, isDetail }) {
 }
 
 function WorkOrderSectionHeader({ searchValue, onSearchChange, placeholder, title, actionButton }) {
+    const isAccountLookup = placeholder === 'Cari/Pilih Akun Perkiraan...';
+
     return (
         <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 flex-1 items-center gap-3 sm:max-w-[720px]">
                 <div className="min-w-0 flex-1">
-                    <TextInput
-                        value={searchValue}
-                        onChange={onSearchChange}
-                        placeholder={placeholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
-                    />
+                    {isAccountLookup ? (
+                        <AccountLookupTextInput
+                            value={searchValue}
+                            placeholder={placeholder}
+                            searchLabel={`Cari ${title}`}
+                            dialogTitle={`Pilih ${title}`}
+                            onSelectAccount={(_, label) => onSearchChange({ target: { value: label } })}
+                        />
+                    ) : (
+                        <TextInput
+                            value={searchValue}
+                            onChange={onSearchChange}
+                            placeholder={placeholder}
+                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            inputClassName="text-[15px] text-[#1f2436]"
+                        />
+                    )}
                 </div>
 
                 {actionButton}
@@ -246,14 +262,22 @@ function WorkOrderAdditionalInfoSection({ config, values, setValues, isDetail })
                             inputClassName="text-[15px] text-[#5f6980]"
                         />
                     ) : (
-                        <ChipLookupField
+                        <AccountLookupField
                             values={values.expenseAccounts}
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari akun biaya"
+                            dialogTitle="Pilih Akun Biaya"
                             onRemove={(accountValue) =>
                                 setValues((current) => ({
                                     ...current,
                                     expenseAccounts: current.expenseAccounts.filter((item) => item !== accountValue),
+                                }))
+                            }
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    expenseAccounts: label ? [label] : [],
+                                    expenseAccountText: label,
                                 }))
                             }
                             heightClassName="h-[36px]"
@@ -271,14 +295,22 @@ function WorkOrderAdditionalInfoSection({ config, values, setValues, isDetail })
                             inputClassName="text-[15px] text-[#5f6980]"
                         />
                     ) : (
-                        <ChipLookupField
+                        <AccountLookupField
                             values={values.varianceAccounts}
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari akun selisih biaya"
+                            dialogTitle="Pilih Akun Selisih Biaya"
                             onRemove={(accountValue) =>
                                 setValues((current) => ({
                                     ...current,
                                     varianceAccounts: current.varianceAccounts.filter((item) => item !== accountValue),
+                                }))
+                            }
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    varianceAccounts: label ? [label] : [],
+                                    varianceAccountText: label,
                                 }))
                             }
                             heightClassName="h-[36px]"

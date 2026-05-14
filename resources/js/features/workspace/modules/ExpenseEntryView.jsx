@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import {
+    AccountLookupField,
+    AccountLookupTextInput,
+} from '@/features/workspace/shared/AccountLookupControls';
+import {
     TransactionDataTable,
     TransactionDateInput,
     TransactionFieldLabel,
@@ -62,6 +66,20 @@ function ExpenseLineItemsSection({ config, values, setValues }) {
                 }))
             }
             searchPlaceholder={config.lineSearchPlaceholder}
+            searchInput={
+                <AccountLookupTextInput
+                    value={values.lineLookup}
+                    placeholder={config.lineSearchPlaceholder}
+                    searchLabel="Cari akun rincian beban"
+                    dialogTitle="Pilih Akun Rincian Beban"
+                    onSelectAccount={(_, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            lineLookup: label,
+                        }))
+                    }
+                />
+            }
             title={detailTitle}
             columns={config.lineTable.columns}
             rows={values.lineItems}
@@ -172,9 +190,10 @@ function ExpenseFormView({ config, activeLevel2Tab }) {
                 <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
                     <div className="grid gap-y-3 sm:grid-cols-[250px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.liabilityAccount} required />
-                        <ChipLookupField
+                        <AccountLookupField
                             values={values.liabilityAccounts}
                             placeholder={config.liabilityAccountPlaceholder}
+                            dialogTitle="Pilih Akun Hutang Beban"
                             onRemove={(value) =>
                                 setValues((current) => ({
                                     ...current,
@@ -182,6 +201,12 @@ function ExpenseFormView({ config, activeLevel2Tab }) {
                                 }))
                             }
                             searchLabel="Cari akun hutang beban"
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    liabilityAccounts: label ? [label] : [],
+                                }))
+                            }
                         />
 
                         <TransactionFieldLabel label={config.labels.entryDate} required />

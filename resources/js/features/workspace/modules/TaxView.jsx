@@ -12,6 +12,7 @@ import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import {
@@ -271,31 +272,6 @@ function TaxFieldRow({ label, required = false, children }) {
     );
 }
 
-function TaxAccountPicker({ value, placeholder, searchLabel }) {
-    return (
-        <div className="group flex h-[34px] w-full items-center overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]">
-            <div className="min-w-0 flex-1 px-1.5">
-                {value ? (
-                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-[14px] text-[#295089]">
-                        <span className="truncate">{value}</span>
-                        <CloseIcon className="h-4 w-4 shrink-0" />
-                    </span>
-                ) : (
-                    <span className="block truncate px-2 text-[15px] text-[#a1a8b7]">{placeholder}</span>
-                )}
-            </div>
-
-            <button
-                type="button"
-                aria-label={searchLabel}
-                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827]"
-            >
-                <SearchIcon className="h-5 w-5 text-[#111827]" />
-            </button>
-        </div>
-    );
-}
-
 function TaxFormView({ page, activeLevel2Tab }) {
     const form = page.form;
     const activeRecord = useMemo(
@@ -370,18 +346,26 @@ function TaxFormView({ page, activeLevel2Tab }) {
                         ) : null}
 
                         <TaxFieldRow label={form.labels.salesAccount} required>
-                            <TaxAccountPicker
+                            <AccountLookupField
                                 value={values.salesAccount}
                                 placeholder={form.accountPlaceholder}
                                 searchLabel={form.salesAccountSearchLabel}
+                                dialogTitle="Pilih Akun Penjualan"
+                                onRemove={() => handleChange('salesAccount', '')}
+                                onSelectAccount={(_, label) => handleChange('salesAccount', label)}
+                                heightClassName="h-[34px]"
                             />
                         </TaxFieldRow>
 
                         <TaxFieldRow label={form.labels.purchaseAccount} required>
-                            <TaxAccountPicker
+                            <AccountLookupField
                                 value={values.purchaseAccount}
                                 placeholder={form.accountPlaceholder}
                                 searchLabel={form.purchaseAccountSearchLabel}
+                                dialogTitle="Pilih Akun Pembelian"
+                                onRemove={() => handleChange('purchaseAccount', '')}
+                                onSelectAccount={(_, label) => handleChange('purchaseAccount', label)}
+                                heightClassName="h-[34px]"
                             />
                         </TaxFieldRow>
                     </div>

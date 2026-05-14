@@ -17,8 +17,11 @@ import {
     TransactionSectionHeading,
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import {
+    AccountLookupField,
+    AccountLookupTextInput,
+} from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { SearchIcon } from '@/features/workspace/shared/Icons';
 
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -291,17 +294,23 @@ function AssetChangeGeneralSection({ config, values, setValues, isDetail }) {
     );
 }
 
-function AssetChangeExpenseSection({ config, values }) {
+function AssetChangeExpenseSection({ config, values, setValues }) {
     return (
         <div className="min-h-[560px]">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 lg:flex-row lg:items-start lg:justify-between">
-                <TextInput
+                <AccountLookupTextInput
                     value={values.expenseSearch}
-                    readOnly
                     placeholder={config.expenseSearchPlaceholder}
-                    trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2] lg:max-w-[560px]"
                     inputClassName="text-[15px] text-[#1f2436]"
+                    dialogTitle="Pilih Akun Pengeluaran"
+                    searchLabel="Cari akun pengeluaran"
+                    onSelectAccount={(_, label) =>
+                        setValues((current) => ({
+                            ...current,
+                            expenseSearch: label,
+                        }))
+                    }
                 />
 
                 <div className="text-right text-[22px] font-normal text-[#1f2436]">
@@ -370,10 +379,11 @@ function AssetChangeAdditionalInfoSection({ config, values, setValues, isDetail 
                     </AssetChangeFieldRow>
 
                     <AssetChangeFieldRow label={config.labels.assetAccount}>
-                        <AssetChangeLookupField
+                        <AccountLookupField
                             values={values.assetAccount}
                             placeholder={config.assetAccountPlaceholder}
                             searchLabel={config.assetAccountSearchLabel}
+                            dialogTitle="Pilih Akun Aset"
                             onRemove={
                                 isDetail
                                     ? null
@@ -382,6 +392,12 @@ function AssetChangeAdditionalInfoSection({ config, values, setValues, isDetail 
                                               ...current,
                                               assetAccount: current.assetAccount.filter((item) => item !== value),
                                           }))
+                            }
+                            onSelectAccount={(_, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    assetAccount: label ? [label] : [],
+                                }))
                             }
                             className="max-w-[580px]"
                         />
@@ -428,7 +444,7 @@ function AssetChangeFormView({ config, activeLevel2Tab }) {
             dockActions={values.dockActions ?? []}
         >
             {activeSectionId === 'expense' ? (
-                <AssetChangeExpenseSection config={config} values={values} />
+                <AssetChangeExpenseSection config={config} values={values} setValues={setValues} />
             ) : activeSectionId === 'additional-info' ? (
                 <AssetChangeAdditionalInfoSection
                     config={config}

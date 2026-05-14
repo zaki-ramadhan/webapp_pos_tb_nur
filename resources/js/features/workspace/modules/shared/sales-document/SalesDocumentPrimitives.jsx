@@ -112,6 +112,7 @@ export function SearchableTableSection({
     titleRequired = true,
     showTitleSearchButton = false,
     hideSearchField = false,
+    searchInput = null,
     leadingAction = null,
     onTitleClick,
     onRowClick,
@@ -140,14 +141,16 @@ export function SearchableTableSection({
 
                     {!hideSearchField ? (
                         <div className="min-w-0 flex-1">
-                            <TextInput
-                                value={searchValue}
-                                readOnly
-                                placeholder={searchPlaceholder}
-                                trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
-                            />
+                            {searchInput ?? (
+                                <TextInput
+                                    value={searchValue}
+                                    readOnly
+                                    placeholder={searchPlaceholder}
+                                    trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    inputClassName="text-[15px] text-[#1f2436]"
+                                />
+                            )}
                         </div>
                     ) : null}
                 </div>
