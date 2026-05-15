@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import FixedAssetExpenseModal from '@/features/workspace/modules/shared/FixedAssetExpenseModal';
-import { buildFixedAssetsRecord } from '@/features/workspace/modules/fixedAssetsConfig';
+import { buildFixedAssetsRecord } from '@/features/workspace/modules/fixed-assets/fixedAssetsConfig';
 import {
     TransactionDock,
     TransactionSectionRail,

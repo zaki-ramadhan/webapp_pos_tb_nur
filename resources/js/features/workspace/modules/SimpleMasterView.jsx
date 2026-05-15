@@ -19,6 +19,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { SIMPLE_MASTER_BACKEND_CONFIG } from '@/features/workspace/backend/workspaceBackendAdapters';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import {
     finishCrudLoadingToast,
@@ -27,6 +28,7 @@ import {
     showCrudSuccessToast,
     showCrudValidationToast,
 } from '@/features/workspace/shared/crudFeedback';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -222,23 +224,6 @@ function findDetailRow(tableRows, activeLevel2Tab) {
     return (tableRows ?? []).find((row) => String(row.id) === String(recordId)) ?? null;
 }
 
-function StatusMessage({ status }) {
-    if (!status?.message) {
-        return null;
-    }
-
-    const toneClassName =
-        status.tone === 'error'
-            ? 'border-[#f0c4c4] bg-[#fff6f6] text-[#a33939]'
-            : 'border-[#c8dfc9] bg-[#f3fff4] text-[#2e6b34]';
-
-    return (
-        <div className={`mb-4 rounded-[6px] border px-3 py-2 text-[14px] ${toneClassName}`.trim()}>
-            {status.message}
-        </div>
-    );
-}
-
 function SimpleMasterFormView({
     page,
     activeLevel2Tab,
@@ -286,6 +271,13 @@ function SimpleMasterFormView({
     }, [backendConfig, form.fields, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(values, initialValues), [initialValues, values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+
+    useWorkspaceDirtyRegistration({
+        pageId: page.id,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(activeLevel2Tab?.id),
+    });
 
     async function handleAction(actionId) {
         if (!backendConfig) {
@@ -370,7 +362,7 @@ function SimpleMasterFormView({
 
             <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
                 <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
-                    <StatusMessage status={status} />
+                    <CrudStatusMessage status={status} />
 
                     <div className="space-y-4">
                         {(form.fields ?? []).map((field) => (

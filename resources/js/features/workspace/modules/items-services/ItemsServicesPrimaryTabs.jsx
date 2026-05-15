@@ -201,6 +201,7 @@ export function ItemSalesPurchaseTab({ config, values, onChange }) {
                     <SimpleTextField
                         value={values.sellPriceLevel1}
                         onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
+                        formatAsAmount
                     />
                 </FormRow>
 
@@ -270,6 +271,7 @@ export function ItemSalesPurchaseTab({ config, values, onChange }) {
                             value={values.purchasePrice}
                             onChange={(event) => onChange('purchasePrice', event.target.value)}
                             prefix="Rp"
+                            formatAsAmount
                             className="max-w-[420px]"
                         />
                     </FormRow>

@@ -1912,10 +1912,8 @@ final class PosBlueprint
                             ],
                         ],
                         'salutationOptions' => [
-                            '- Sapaan -',
-                            'Tn.',
-                            'Ny.',
-                            'Sdri.',
+                            'Bapak',
+                            'Ibu',
                         ],
                         'nationalityOptions' => [
                             'Indonesia',
@@ -1929,6 +1927,18 @@ final class PosBlueprint
                         'branchOptions' => [
                             'JAKARTA',
                             'SURABAYA',
+                        ],
+                        'departmentOptions' => [
+                            'Accounting',
+                            'Gudang',
+                            'Keuangan',
+                            'Penjualan',
+                        ],
+                        'bankOptions' => [
+                            'Bank BCA',
+                            'Bank BNI',
+                            'Bank BRI',
+                            'Bank Mandiri',
                         ],
                         'employmentStatusOptions' => [
                             'Pegawai Tetap',
@@ -1959,7 +1969,7 @@ final class PosBlueprint
                         ],
                         'taxCalculationNote' => 'Penghasilan dan PPh sebelumnya HANYA PERLU diisikan jika PPh sudah dihitung dan dibayarkan dari januari, namun Pencatatan gaji di TB Nur POS hanya di isi mulai bulan April 2026',
                         'defaults' => [
-                            'salutation' => '- Sapaan -',
+                            'salutation' => 'Bapak',
                             'fullName' => '',
                             'position' => '',
                             'email' => '',
@@ -2808,9 +2818,9 @@ final class PosBlueprint
                         'columns' => [
                             [
                                 'id' => 'transactionDateLabel',
-                                'label' => 'Tgl Tran...',
+                                'label' => 'Tgl Transaksi',
                                 'align' => 'left',
-                                'widthClassName' => 'w-[72px]',
+                                'widthClassName' => 'w-[220px]',
                             ],
                             [
                                 'id' => 'referenceName',
@@ -2834,7 +2844,7 @@ final class PosBlueprint
                                 'id' => 'loggedAt',
                                 'label' => 'Tanggal',
                                 'align' => 'left',
-                                'widthClassName' => 'w-[190px]',
+                                'widthClassName' => 'w-[220px]',
                             ],
                             [
                                 'id' => 'userName',

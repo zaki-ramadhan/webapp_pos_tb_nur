@@ -160,7 +160,11 @@ export default function DashboardPageTabs({
             {activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length ? (
                 <div className="border-t border-[#d8dbe2] bg-[#f6f6f7] px-2 pb-0 pt-1.5 sm:px-2.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-                        <div className="relative -mb-px inline-flex h-9 items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-[#58bc32] border-r-[#58bc32] border-t-[#90e66a] bg-[#59c62e] px-3 text-white sm:h-9.5 sm:px-4">
+                        <div
+                            aria-disabled="true"
+                            title="Mode daftar tidak dapat diubah pada halaman ini"
+                            className="relative -mb-px inline-flex h-9 cursor-not-allowed items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-[#58bc32] border-r-[#58bc32] border-t-[#90e66a] bg-[#59c62e] px-3 text-white opacity-60 saturate-[0.85] sm:h-9.5 sm:px-4"
+                        >
                             <ViewModeIcon />
                         </div>
 

@@ -3,11 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import SystemErrorModal from '@/components/ui/SystemErrorModal';
 import TextInput from '@/components/ui/TextInput';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import {
     buildGeneralState,
     buildInitialPermissionCategories,
     resolveDeleteConfirmationMessage,
-} from '@/features/workspace/modules/groupAccessUtils';
+} from './groupAccessUtils';
 import GroupAccessRightsView from '@/features/workspace/modules/group-access/GroupAccessRightsView';
 import {
     GroupAccessActionDock,
@@ -15,7 +16,7 @@ import {
 } from '@/features/workspace/modules/group-access/groupAccessViewShared';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 
-export default function GroupAccessFormView({ form }) {
+export default function GroupAccessFormView({ pageId, activeLevel2Tab, form }) {
     const [activeTabId, setActiveTabId] = useState(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
     const [generalValues, setGeneralValues] = useState(() => buildGeneralState(form.general));
     const [permissionCategories, setPermissionCategories] = useState(() =>
@@ -40,6 +41,12 @@ export default function GroupAccessFormView({ form }) {
     const isDirty =
         JSON.stringify(generalValues) !== initialGeneralSnapshot ||
         JSON.stringify(permissionCategories) !== initialPermissionSnapshot;
+    useWorkspaceDirtyRegistration({
+        pageId,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(pageId && activeLevel2Tab?.id),
+    });
     const deleteConfirmation = form.deleteConfirmation ?? {};
     const deleteConfirmationMessage = resolveDeleteConfirmationMessage(
         deleteConfirmation.messageTemplate,

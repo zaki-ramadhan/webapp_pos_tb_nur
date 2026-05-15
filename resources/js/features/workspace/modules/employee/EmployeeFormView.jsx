@@ -7,17 +7,18 @@ import TextareaField from '@/components/ui/TextareaField';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
-import { SearchIcon } from '@/features/workspace/shared/Icons';
 import {
     AttachmentSelectButton,
     buildEmployeeFormValues,
     EmployeeFieldRow,
     PrefixedInput,
     PrefixedTextArea,
+    SuggestionTextInput,
     ToggleSwitch,
+    validateEmployeeWebsite,
 } from '@/features/workspace/modules/employee/employeeViewShared';
 
-function EmployeeGeneralTab({ form, values, onChange }) {
+function EmployeeGeneralTab({ form, values, errors, onChange }) {
     return (
         <div className="grid gap-8 xl:grid-cols-2">
             <div className="space-y-3.5">
@@ -102,6 +103,7 @@ function EmployeeGeneralTab({ form, values, onChange }) {
                     <TextInput
                         value={values.website}
                         onChange={(event) => onChange('website', event.target.value)}
+                        error={errors.website}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-[15px] text-[#1f2436]"
                     />
@@ -181,13 +183,15 @@ function EmployeeGeneralTab({ form, values, onChange }) {
                 </EmployeeFieldRow>
 
                 <EmployeeFieldRow label="Departemen">
-                    <TextInput
+                    <SuggestionTextInput
                         value={values.department}
-                        onChange={(event) => onChange('department', event.target.value)}
+                        onChange={(nextValue) => onChange('department', nextValue)}
+                        options={form.departmentOptions ?? []}
                         placeholder="Cari/Pilih..."
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-[15px] text-[#1f2436]"
-                        trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
+                        searchLabel="Cari departemen"
+                        emptyLabel="Departemen tidak ditemukan."
                     />
                 </EmployeeFieldRow>
 
@@ -390,17 +394,19 @@ function EmployeeTaxTab({ form, values, onChange }) {
     );
 }
 
-function EmployeeBankTab({ values, onChange }) {
+function EmployeeBankTab({ form, values, onChange }) {
     return (
         <div className="max-w-[980px] space-y-3.5">
             <EmployeeFieldRow label="Nama Bank">
-                <TextInput
+                <SuggestionTextInput
                     value={values.bankName}
-                    onChange={(event) => onChange('bankName', event.target.value)}
+                    onChange={(nextValue) => onChange('bankName', nextValue)}
+                    options={form.bankOptions ?? []}
                     placeholder="Cari/Pilih..."
                     className="h-[40px] rounded-[4px] border-[#cfd6e2] md:max-w-[568px]"
                     inputClassName="text-[15px] text-[#1f2436]"
-                    trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
+                    searchLabel="Cari bank"
+                    emptyLabel="Nama bank tidak ditemukan."
                 />
             </EmployeeFieldRow>
 
@@ -428,13 +434,26 @@ function EmployeeBankTab({ values, onChange }) {
 export default function EmployeeFormView({ form }) {
     const [activeTabId, setActiveTabId] = useState(form.tabs?.[0]?.id ?? 'employee-general');
     const [values, setValues] = useState(() => buildEmployeeFormValues(form));
+    const [errors, setErrors] = useState(() => ({
+        website: validateEmployeeWebsite(form.defaults?.website ?? ''),
+    }));
 
     useEffect(() => {
         setActiveTabId(form.tabs?.[0]?.id ?? 'employee-general');
         setValues(buildEmployeeFormValues(form));
+        setErrors({
+            website: validateEmployeeWebsite(form.defaults?.website ?? ''),
+        });
     }, [form]);
 
     function handleChange(field, nextValue) {
+        if (field === 'website') {
+            setErrors((currentErrors) => ({
+                ...currentErrors,
+                website: validateEmployeeWebsite(nextValue),
+            }));
+        }
+
         setValues((currentValues) => ({
             ...currentValues,
             [field]: nextValue,
@@ -456,13 +475,13 @@ export default function EmployeeFormView({ form }) {
                     ) : activeTabId === 'employee-tax' ? (
                         <EmployeeTaxTab form={form} values={values} onChange={handleChange} />
                     ) : activeTabId === 'employee-bank' ? (
-                        <EmployeeBankTab values={values} onChange={handleChange} />
+                        <EmployeeBankTab form={form} values={values} onChange={handleChange} />
                     ) : (
-                        <EmployeeGeneralTab form={form} values={values} onChange={handleChange} />
+                        <EmployeeGeneralTab form={form} values={values} errors={errors} onChange={handleChange} />
                     )}
                 </div>
 
-                <div className="flex shrink-0 flex-row justify-end gap-3 xl:flex-col">
+                <div className="flex shrink-0 flex-row justify-start gap-3 self-start xl:flex-col">
                     <DockSaveButton label={form.saveLabel} />
                     <AttachmentSelectButton label={form.attachmentLabel} />
                 </div>

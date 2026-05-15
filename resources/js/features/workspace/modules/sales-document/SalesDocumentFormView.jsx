@@ -6,9 +6,7 @@ import TextInput from '@/components/ui/TextInput';
 import {
     createBackendResource,
     deleteBackendResource,
-    extractBackendRows,
     getBackendErrorMessage,
-    listBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import {
@@ -42,14 +40,12 @@ import {
     SalesDocumentHeaderButtons,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import {
-    finishCrudLoadingToast,
-    showCrudErrorToast,
-    showCrudLoadingToast,
-    showCrudSuccessToast,
-    showCrudValidationToast,
-} from '@/features/workspace/shared/crudFeedback';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
+import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 
 const sectionComponentMap = {
     'additional-info': SalesDocumentAdditionalInfoSection,
@@ -178,58 +174,6 @@ function validateSalesDocumentValues(values, config) {
     return '';
 }
 
-function StatusMessage({ status }) {
-    if (!status?.message) {
-        return null;
-    }
-
-    const toneClassName =
-        status.tone === 'error'
-            ? 'border-[#f0c4c4] bg-[#fff6f6] text-[#a33939]'
-            : 'border-[#c8dfc9] bg-[#f3fff4] text-[#2e6b34]';
-
-    return (
-        <div className={`mx-3 mt-3 rounded-[6px] border px-3 py-2 text-[14px] ${toneClassName}`.trim()}>
-            {status.message}
-        </div>
-    );
-}
-
-async function promptSelectBackendRecord(resource, title, labelBuilder) {
-    const keyword = window.prompt(`Cari ${title}`);
-
-    if (keyword === null) {
-        return null;
-    }
-
-    const payload = await listBackendResource(resource, {
-        search: keyword.trim(),
-        per_page: 10,
-    });
-    const records = extractBackendRows(payload);
-
-    if (!records.length) {
-        throw new Error(`${title} tidak ditemukan.`);
-    }
-
-    const optionText = records
-        .map((record, index) => `${index + 1}. ${labelBuilder(record)}`)
-        .join('\n');
-    const pickedValue = window.prompt(`Pilih ${title}:\n${optionText}\nKetik nomor pilihan.`);
-
-    if (pickedValue === null) {
-        return null;
-    }
-
-    const pickedIndex = Number.parseInt(pickedValue, 10) - 1;
-
-    if (!Number.isInteger(pickedIndex) || !records[pickedIndex]) {
-        throw new Error(`Pilihan ${title} tidak valid.`);
-    }
-
-    return records[pickedIndex];
-}
-
 function promptItemEditor(item = null) {
     const name = window.prompt('Nama barang', item?.name ?? '');
 
@@ -287,6 +231,26 @@ function promptItemEditor(item = null) {
     };
 }
 
+function applyPromptItemUpdate(item, updateItems, setStatus) {
+    try {
+        const nextItem = promptItemEditor(item);
+
+        if (!nextItem) {
+            return;
+        }
+
+        updateItems((items) =>
+            item ? items.map((entry) => (entry.id === item.id ? nextItem : entry)) : [...items, nextItem],
+        );
+        setStatus({
+            tone: 'success',
+            message: item ? 'Item diperbarui.' : 'Item ditambahkan ke dokumen.',
+        });
+    } catch (error) {
+        setStatus({ tone: 'error', message: error.message });
+    }
+}
+
 export default function SalesDocumentFormView({
     pageId,
     config,
@@ -332,6 +296,13 @@ export default function SalesDocumentFormView({
     );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
+    useWorkspaceDirtyRegistration({
+        pageId,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(pageId && activeLevel2Tab?.id),
+    });
+
     async function selectLookup(resource, title, labelBuilder, onApply) {
         try {
             const record = await promptSelectBackendRecord(resource, title, labelBuilder);
@@ -355,33 +326,11 @@ export default function SalesDocumentFormView({
     }
 
     function handleCreateItem() {
-        try {
-            const nextItem = promptItemEditor();
-
-            if (!nextItem) {
-                return;
-            }
-
-            updateItems((items) => [...items, nextItem]);
-            setStatus({ tone: 'success', message: 'Item ditambahkan ke dokumen.' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: error.message });
-        }
+        applyPromptItemUpdate(null, updateItems, setStatus);
     }
 
     function handleEditItem(item) {
-        try {
-            const nextItem = promptItemEditor(item);
-
-            if (!nextItem) {
-                return;
-            }
-
-            updateItems((items) => items.map((entry) => (entry.id === item.id ? nextItem : entry)));
-            setStatus({ tone: 'success', message: 'Item diperbarui.' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: error.message });
-        }
+        applyPromptItemUpdate(item, updateItems, setStatus);
     }
 
     async function handleSave() {
@@ -393,58 +342,51 @@ export default function SalesDocumentFormView({
         }
 
         if (validationMessage) {
-            setStatus({ tone: 'error', message: validationMessage });
-            showCrudValidationToast(validationMessage);
+            rejectCrudFormAction(validationMessage, { setStatus });
             return;
         }
 
-        const loadingToastId = showCrudLoadingToast(isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.');
-        setSaving(true);
-        setStatus({ tone: '', message: '' });
+        await executeCrudFormAction({
+            loadingMessage: isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.',
+            successMessage: isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.',
+            setSaving,
+            setStatus,
+            getErrorMessage: getBackendErrorMessage,
+            execute: async () => {
+                const resolvedDocumentNumber =
+                    values.autoNumber || !String(values.documentNumber ?? '').trim()
+                        ? buildGeneratedDocumentNumber(pageId)
+                        : values.documentNumber;
+                const payload = buildOperationDocumentPayload(
+                    {
+                        ...values,
+                        documentNumber: resolvedDocumentNumber,
+                    },
+                    pageId,
+                    backendConfig,
+                );
+                const response =
+                    isDetail && values.__backendRecordId
+                        ? await updateBackendResource(backendConfig.resource, values.__backendRecordId, payload)
+                        : await createBackendResource(backendConfig.resource, payload);
 
-        try {
-            const resolvedDocumentNumber =
-                values.autoNumber || !String(values.documentNumber ?? '').trim()
-                    ? buildGeneratedDocumentNumber(pageId)
-                    : values.documentNumber;
-            const payload = buildOperationDocumentPayload(
-                {
-                    ...values,
-                    documentNumber: resolvedDocumentNumber,
-                },
-                pageId,
-                backendConfig,
-            );
-            const response =
-                isDetail && values.__backendRecordId
-                    ? await updateBackendResource(backendConfig.resource, values.__backendRecordId, payload)
-                    : await createBackendResource(backendConfig.resource, payload);
-            const record = response?.data ?? null;
+                return {
+                    record: response?.data ?? null,
+                    resolvedDocumentNumber,
+                };
+            },
+            onSuccess: async ({ record, resolvedDocumentNumber }) => {
+                await onRefresh?.();
 
-            await onRefresh?.();
-            const successMessage = isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.';
-            setStatus({
-                tone: 'success',
-                message: successMessage,
-            });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
-
-            if (!isDetail && record?.id && onOpenDetail) {
-                onOpenDetail({
-                    recordId: String(record.id),
-                    label: record.document_number ?? resolvedDocumentNumber,
-                    tabLabel: record.document_number ?? resolvedDocumentNumber,
-                });
-            }
-        } catch (error) {
-            const errorMessage = getBackendErrorMessage(error);
-            setStatus({ tone: 'error', message: errorMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudErrorToast(errorMessage);
-        } finally {
-            setSaving(false);
-        }
+                if (!isDetail && record?.id && onOpenDetail) {
+                    onOpenDetail({
+                        recordId: String(record.id),
+                        label: record.document_number ?? resolvedDocumentNumber,
+                        tabLabel: record.document_number ?? resolvedDocumentNumber,
+                    });
+                }
+            },
+        });
     }
 
     function requestDelete() {
@@ -460,28 +402,20 @@ export default function SalesDocumentFormView({
             return;
         }
 
-        const loadingToastId = showCrudLoadingToast('Sedang menghapus dokumen.');
-        setSaving(true);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
-
-        try {
-            await deleteBackendResource(backendConfig.resource, values.__backendRecordId);
-            await onRefresh?.();
-            const successMessage = 'Dokumen berhasil dihapus.';
-            setStatus({ tone: 'success', message: successMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
-            onCloseDetail?.(values.__backendRecordId);
-            onOpenContent?.();
-        } catch (error) {
-            const errorMessage = getBackendErrorMessage(error);
-            setStatus({ tone: 'error', message: errorMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudErrorToast(errorMessage);
-        } finally {
-            setSaving(false);
-        }
+        await executeCrudFormAction({
+            loadingMessage: 'Sedang menghapus dokumen.',
+            successMessage: 'Dokumen berhasil dihapus.',
+            setSaving,
+            setStatus,
+            getErrorMessage: getBackendErrorMessage,
+            onStart: () => setDeleteConfirmationOpen(false),
+            execute: () => deleteBackendResource(backendConfig.resource, values.__backendRecordId),
+            onSuccess: async () => {
+                await onRefresh?.();
+                onCloseDetail?.(values.__backendRecordId);
+                onOpenContent?.();
+            },
+        });
     }
 
     const handlers = useMemo(
@@ -733,7 +667,7 @@ export default function SalesDocumentFormView({
                         </div>
                     </div>
 
-                    <StatusMessage status={status} />
+                    <CrudStatusMessage status={status} className="mx-3 mt-3" />
 
                     <div className="flex items-start gap-3 px-2 py-2 sm:px-3">
                         <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />

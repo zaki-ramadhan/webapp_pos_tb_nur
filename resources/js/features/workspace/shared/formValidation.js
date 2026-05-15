@@ -50,6 +50,12 @@ export function validateRequiredChecks(checks = []) {
         }
 
         if (type === 'number') {
+            const normalizedValue = String(value ?? '').trim();
+
+            if (normalizedValue === '') {
+                return check.message ?? `${label} wajib diisi.`;
+            }
+
             const numericValue = Number(value);
 
             if (!Number.isFinite(numericValue) || numericValue < (check.min ?? 0)) {
@@ -65,4 +71,27 @@ export function validateRequiredChecks(checks = []) {
     }
 
     return '';
+}
+
+export function resolveDocumentRequirementValue(autoNumber, numberingType, documentNumber) {
+    return autoNumber ? numberingType : documentNumber;
+}
+
+export function resolveSaveDisabledState({
+    checks = [],
+    initialComparable = null,
+    currentComparable = null,
+    saving = false,
+}) {
+    const validationMessage = validateRequiredChecks(checks);
+    const isDirty =
+        initialComparable === null || currentComparable === null
+            ? true
+            : !areComparableValuesEqual(initialComparable, currentComparable);
+
+    return {
+        validationMessage,
+        isDirty,
+        saveDisabled: Boolean(saving || validationMessage || !isDirty),
+    };
 }

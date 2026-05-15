@@ -1,7 +1,7 @@
-import BusinessPartnerView from '@/features/workspace/modules/BusinessPartnerView';
-import JournalActivityLogView from '@/features/workspace/modules/JournalActivityLogView';
+import BusinessPartnerView from '@/features/workspace/modules/business-partner/BusinessPartnerView';
+import JournalActivityLogView from '@/features/workspace/modules/journal-activity-log/JournalActivityLogView';
 import ModulePageView from '@/features/workspace/modules/ModulePageView';
-import WorkCompletionView from '@/features/workspace/modules/WorkCompletionView';
+import WorkCompletionView from '@/features/workspace/modules/inventory-fulfillment/WorkCompletionView';
 import {
     BANK_INQUIRY_PAGE_IDS,
     BankInquiryView,

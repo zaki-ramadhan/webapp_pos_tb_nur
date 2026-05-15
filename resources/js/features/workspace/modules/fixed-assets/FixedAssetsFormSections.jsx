@@ -13,6 +13,7 @@ import {
     AccountLookupField,
     AccountLookupTextInput,
 } from '@/features/workspace/shared/AccountLookupControls';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -285,7 +286,7 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                     </FixedAssetFieldRow>
 
                     <FixedAssetFieldRow label={config.labels.residualValue}>
-                        <TextInput
+                        <FormattedAmountInput
                             value={values.residualValue}
                             readOnly={isDetail}
                             onChange={(event) =>

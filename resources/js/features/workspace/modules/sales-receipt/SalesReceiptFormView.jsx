@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import { buildSalesReceiptRecord } from '@/features/workspace/modules/salesReceiptConfig';
+import { buildSalesReceiptRecord } from '@/features/workspace/modules/sales-receipt/salesReceiptConfig';
 import SalesReceiptInvoiceModal from '@/features/workspace/modules/shared/SalesReceiptInvoiceModal';
 import {
     TransactionDateInput,

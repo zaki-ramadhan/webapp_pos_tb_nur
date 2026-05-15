@@ -58,9 +58,14 @@ export default function ChipLookupField({
                             <span className="truncate">{item}</span>
                             <button
                                 type="button"
-                                onClick={() => onRemove?.(item)}
+                                onClick={() => {
+                                    if (!disabled) {
+                                        onRemove?.(item);
+                                    }
+                                }}
+                                disabled={disabled}
                                 aria-label={`Hapus ${item}`}
-                                className="inline-flex h-4 w-4 shrink-0 items-center justify-center"
+                                className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300"
                             >
                                 <CloseIcon className="h-4 w-4" />
                             </button>

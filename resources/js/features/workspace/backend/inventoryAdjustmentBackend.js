@@ -1,4 +1,5 @@
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export const INVENTORY_ADJUSTMENT_BACKEND_CONFIG = {
     'inventory-adjustment': {
@@ -77,20 +78,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
 }
 
 function parseNumericInput(value) {
-    const normalizedValue = String(value ?? '')
-        .replace(/Rp/gi, '')
-        .replace(/[^\d,.-]/g, '')
-        .replace(/\./g, '')
-        .replace(',', '.')
-        .trim();
-
-    if (!normalizedValue) {
-        return 0;
-    }
-
-    const parsedValue = Number(normalizedValue);
-
-    return Number.isFinite(parsedValue) ? parsedValue : 0;
+    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
 }
 
 export function buildInventoryAdjustmentPayload(values) {

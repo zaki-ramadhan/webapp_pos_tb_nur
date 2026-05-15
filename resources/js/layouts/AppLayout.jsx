@@ -6,7 +6,7 @@ export default function AppLayout({ children, title = 'Workspace' }) {
 
     return (
         <>
-            <Head title={title ? `${title} - ${appName}` : appName} />
+            <Head title={title || appName} />
 
             <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(222,146,72,0.18),transparent_28%),linear-gradient(180deg,#fffaf3_0%,#fff8ef_48%,#f3ece1_100%)]">
                 <header className="border-b border-[color:var(--color-line)] bg-white/70 backdrop-blur">

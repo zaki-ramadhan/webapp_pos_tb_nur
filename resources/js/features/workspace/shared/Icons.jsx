@@ -1,5 +1,4 @@
 import {
-    ArrowUpDown,
     Bell,
     CalendarDays,
     ChevronDown,
@@ -103,7 +102,8 @@ export function ChevronDownIcon({ className = 'h-4 w-4' }) {
 }
 
 export function SortIcon({ className = 'h-3 w-3 text-white/55' }) {
-    return <AppIcon icon={ArrowUpDown} className={className} strokeWidth={2.1} />;
+    void className;
+    return null;
 }
 
 export function TableActionIcon({ className = 'h-4 w-4' }) {

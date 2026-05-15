@@ -1,6 +1,7 @@
 import DashboardFormModal from '@/features/workspace/dashboard/DashboardFormModal';
 import WidgetLibraryModal from '@/features/workspace/dashboard/WidgetLibraryModal';
 import LoadingOverlay from '@/features/workspace/shared/LoadingOverlay';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 export default function DashboardViewModals({
     dashboard,
@@ -15,6 +16,9 @@ export default function DashboardViewModals({
     selectedDashboard,
     handleUpdateDashboard,
     handleDeleteDashboard,
+    unsavedChangesModalOpen,
+    onCloseUnsavedChangesModal,
+    onConfirmUnsavedChangesModal,
 }) {
     return (
         <>
@@ -57,6 +61,16 @@ export default function DashboardViewModals({
                 onClose={() => setActiveDashboardModal(null)}
                 onSubmit={handleUpdateDashboard}
                 onDelete={handleDeleteDashboard}
+            />
+
+            <ConfirmationModal
+                open={unsavedChangesModalOpen}
+                onClose={onCloseUnsavedChangesModal}
+                onConfirm={onConfirmUnsavedChangesModal}
+                title="Konfirmasi"
+                message="Perubahan yang Anda lakukan akan dibatalkan, lanjutkan?"
+                confirmLabel="Ya"
+                cancelLabel="Batal"
             />
         </>
     );

@@ -4,6 +4,7 @@ import ModalBase from '@/components/ui/ModalBase';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { CloseIcon, PencilIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
@@ -122,7 +123,7 @@ function DetailTab({ values, setValues, modal }) {
             </ModalFieldRow>
 
             <ModalFieldRow label="Biaya Satuan">
-                <TextInput
+                <FormattedAmountInput
                     value={values.unitCost}
                     onChange={(event) =>
                         setValues((current) => ({

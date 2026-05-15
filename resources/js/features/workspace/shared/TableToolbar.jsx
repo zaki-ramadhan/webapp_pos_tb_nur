@@ -111,6 +111,10 @@ export default function TableToolbar({
     rightControlsClassName = '',
 }) {
     const sizeStyle = SIZE_STYLES[size] ?? SIZE_STYLES.default;
+    const searchLoading = Boolean(search?.loading ?? refreshButton?.loading);
+    const searchTrailing = searchLoading
+        ? <RefreshIcon className={`${sizeStyle.searchIcon} animate-spin`.trim()} />
+        : (search?.trailing ?? <SearchIcon className={sizeStyle.searchIcon} />);
 
     return (
         <div className={className}>
@@ -152,7 +156,7 @@ export default function TableToolbar({
                 <div
                     className={`flex w-full min-w-0 flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center md:flex-nowrap ${rightControlsClassName}`.trim()}
                 >
-                    {rightControls ? <div className="flex shrink-0 flex-col items-stretch gap-2">{rightControls}</div> : null}
+                    {rightControls ? <div className="flex shrink-0 flex-row flex-wrap items-center gap-2">{rightControls}</div> : null}
 
                     {menuButton ? <ToolbarActionMenu menuButton={menuButton} sizeStyle={sizeStyle} /> : null}
 
@@ -171,7 +175,7 @@ export default function TableToolbar({
                             value={search.value}
                             onChange={search.onChange}
                             placeholder={search.placeholder}
-                            trailing={search.trailing ?? <SearchIcon className={sizeStyle.searchIcon} />}
+                            trailing={searchTrailing}
                             className={`${sizeStyle.searchInput} w-full rounded-[4px] border-[#cfd6e2] ${search.widthClassName ?? 'sm:max-w-[248px]'}`.trim()}
                             inputClassName={search.inputClassName ?? `${sizeStyle.searchText} text-[#1f2436]`}
                             trailingClassName={search.trailingClassName ?? 'px-3'}

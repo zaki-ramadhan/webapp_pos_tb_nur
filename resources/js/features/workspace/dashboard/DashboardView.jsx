@@ -3,6 +3,12 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useSt
 import DashboardActivePageContent from '@/features/workspace/dashboard/DashboardActivePageContent';
 import DashboardSidebar from '@/features/workspace/dashboard/DashboardSidebar';
 import {
+    hasAnyDirtyTabs,
+    hasDirtyTabsForPage,
+    withDirtyLabel,
+    WorkspaceDraftStateProvider,
+} from '@/features/workspace/dashboard/WorkspaceDraftState';
+import {
     buildWidgetTemplateMap,
 } from '@/features/workspace/dashboard/dashboardPersistence';
 import {
@@ -57,6 +63,8 @@ const DashboardView = forwardRef(function DashboardView(
     const [activeLevel2Tabs, setActiveLevel2Tabs] = useState(initialWorkspacePageState.activeLevel2Tabs);
     const [pageLevel2ContentTabs, setPageLevel2ContentTabs] = useState(initialWorkspacePageState.pageLevel2ContentTabs);
     const [pageOpeningLoading, setPageOpeningLoading] = useState(null);
+    const [dirtyTabs, setDirtyTabs] = useState({});
+    const [pendingCloseRequest, setPendingCloseRequest] = useState(null);
 
     useEffect(() => {
         setOpenPages((currentPages) => {
@@ -176,7 +184,6 @@ const DashboardView = forwardRef(function DashboardView(
     }));
     const activePage = resolveActivePage(openPages, activePageId, dashboardPage);
     const activePageContentTabs = resolveActivePageContentTabs(activePage, pageLevel2ContentTabs);
-    const tabItems = buildTabItems(openPages, dashboardPage.id);
     const isDashboardPageActive = activePage.id === dashboardPage.id;
     const {
         level2Tabs,
@@ -186,11 +193,102 @@ const DashboardView = forwardRef(function DashboardView(
     } = resolveLevel2State(activePage, activePageContentTabs, activeLevel2Tabs);
     const activePageLevel2Actions = resolvePageLevel2Actions(activePage);
 
-    function handleClosePage(pageId) {
+    const setTabDirty = useCallback((pageId, tabId) => {
+        if (!pageId || !tabId) {
+            return;
+        }
+
+        setDirtyTabs((currentTabs) => {
+            if (currentTabs?.[pageId]?.[tabId]) {
+                return currentTabs;
+            }
+
+            return {
+                ...currentTabs,
+                [pageId]: {
+                    ...(currentTabs[pageId] ?? {}),
+                    [tabId]: true,
+                },
+            };
+        });
+    }, []);
+
+    const clearTabDirty = useCallback((pageId, tabId) => {
+        if (!pageId || !tabId) {
+            return;
+        }
+
+        setDirtyTabs((currentTabs) => {
+            if (!currentTabs?.[pageId]?.[tabId]) {
+                return currentTabs;
+            }
+
+            const nextPageTabs = { ...(currentTabs[pageId] ?? {}) };
+            delete nextPageTabs[tabId];
+
+            if (Object.keys(nextPageTabs).length) {
+                return {
+                    ...currentTabs,
+                    [pageId]: nextPageTabs,
+                };
+            }
+
+            const nextTabs = { ...currentTabs };
+            delete nextTabs[pageId];
+            return nextTabs;
+        });
+    }, []);
+
+    const clearPageDirty = useCallback((pageId) => {
+        if (!pageId) {
+            return;
+        }
+
+        setDirtyTabs((currentTabs) => {
+            if (!currentTabs?.[pageId]) {
+                return currentTabs;
+            }
+
+            const nextTabs = { ...currentTabs };
+            delete nextTabs[pageId];
+            return nextTabs;
+        });
+    }, []);
+
+    const draftStateValue = useMemo(
+        () => ({
+            dirtyTabs,
+            setTabDirty,
+            clearTabDirty,
+            clearPageDirty,
+        }),
+        [clearPageDirty, clearTabDirty, dirtyTabs, setTabDirty],
+    );
+
+    const tabItems = useMemo(
+        () =>
+            buildTabItems(openPages, dashboardPage.id).map((tab) => ({
+                ...tab,
+                label: withDirtyLabel(tab.label, hasDirtyTabsForPage(dirtyTabs, tab.id)),
+            })),
+        [dashboardPage.id, dirtyTabs, openPages],
+    );
+    const decoratedLevel2Tabs = useMemo(
+        () =>
+            level2Tabs.map((tab) => ({
+                ...tab,
+                label: withDirtyLabel(tab.label, Boolean(dirtyTabs?.[activePage.id]?.[tab.id])),
+                title: withDirtyLabel(tab.title ?? tab.label, Boolean(dirtyTabs?.[activePage.id]?.[tab.id])),
+            })),
+        [activePage.id, dirtyTabs, level2Tabs],
+    );
+
+    function closePageNow(pageId) {
         if (pageId === dashboardPage.id) {
             return;
         }
 
+        clearPageDirty(pageId);
         setOpenPages((currentPages) => currentPages.filter((page) => page.id !== pageId));
         setPageLevel2ContentTabs((currentTabs) => ({
             ...currentTabs,
@@ -201,6 +299,22 @@ const DashboardView = forwardRef(function DashboardView(
             [pageId]: initialLevel2Tabs[pageId] ?? currentTabs[pageId],
         }));
         setActivePageId((currentPageId) => (currentPageId === pageId ? dashboardPage.id : currentPageId));
+    }
+
+    function requestClosePage(pageId) {
+        if (pageId === dashboardPage.id) {
+            return;
+        }
+
+        if (!hasDirtyTabsForPage(dirtyTabs, pageId)) {
+            closePageNow(pageId);
+            return;
+        }
+
+        setPendingCloseRequest({
+            type: 'page',
+            pageId,
+        });
     }
 
     function handleOpenContentTab(pageId, tab) {
@@ -273,7 +387,8 @@ const DashboardView = forwardRef(function DashboardView(
         }));
     }
 
-    function handleCloseLevel2Tab(tabId) {
+    function closeLevel2TabNow(tabId) {
+        clearTabDirty(activePage.id, tabId);
         const remainingTabs = activePageContentTabs.filter((tab) => tab.id !== tabId);
 
         if (remainingTabs.length === activePageContentTabs.length) {
@@ -293,7 +408,7 @@ const DashboardView = forwardRef(function DashboardView(
                 return;
             }
 
-            handleClosePage(activePage.id);
+            closePageNow(activePage.id);
             return;
         }
 
@@ -310,12 +425,30 @@ const DashboardView = forwardRef(function DashboardView(
         }
     }
 
+    function requestCloseLevel2Tab(tabId) {
+        if (!tabId) {
+            return;
+        }
+
+        if (!dirtyTabs?.[activePage.id]?.[tabId]) {
+            closeLevel2TabNow(tabId);
+            return;
+        }
+
+        setPendingCloseRequest({
+            type: 'level2-tab',
+            pageId: activePage.id,
+            tabId,
+        });
+    }
+
     function handleCloseDetailTab(pageId, recordId) {
         if (!pageId || recordId == null) {
             return;
         }
 
         const tabId = `${pageId}-detail-${recordId}`;
+        clearTabDirty(pageId, tabId);
 
         setPageLevel2ContentTabs((currentTabs) => {
             const pageTabs = currentTabs[pageId] ?? initialLevel2ContentTabs[pageId] ?? [];
@@ -368,8 +501,38 @@ const DashboardView = forwardRef(function DashboardView(
         return () => clearTimeout(timeoutId);
     }, [pageOpeningLoading, pages]);
 
+    useEffect(() => {
+        if (!hasAnyDirtyTabs(dirtyTabs)) {
+            return undefined;
+        }
+
+        function handleBeforeUnload(event) {
+            event.preventDefault();
+            event.returnValue = '';
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [dirtyTabs]);
+
+    function handleConfirmPendingClose() {
+        if (!pendingCloseRequest) {
+            return;
+        }
+
+        if (pendingCloseRequest.type === 'page') {
+            closePageNow(pendingCloseRequest.pageId);
+        }
+
+        if (pendingCloseRequest.type === 'level2-tab') {
+            closeLevel2TabNow(pendingCloseRequest.tabId);
+        }
+
+        setPendingCloseRequest(null);
+    }
+
     return (
-        <>
+        <WorkspaceDraftStateProvider value={draftStateValue}>
             <section className="flex min-h-full min-w-0 flex-1 flex-col lg:flex-row lg:items-stretch">
                 <div className="min-h-0 shrink-0 self-stretch lg:w-[58px]">
                     <DashboardSidebar
@@ -391,12 +554,12 @@ const DashboardView = forwardRef(function DashboardView(
                         tabs={tabItems}
                         activePage={activePage}
                         onSelectPage={setActivePageId}
-                        onClosePage={handleClosePage}
-                        level2Tabs={level2Tabs}
+                        onClosePage={requestClosePage}
+                        level2Tabs={decoratedLevel2Tabs}
                         level2Actions={activePageLevel2Actions}
                         activeLevel2TabId={activeLevel2TabId}
                         onSelectLevel2Tab={handleSelectLevel2Tab}
-                        onCloseLevel2Tab={handleCloseLevel2Tab}
+                        onCloseLevel2Tab={requestCloseLevel2Tab}
                     />
 
                     <DashboardActivePageContent
@@ -436,8 +599,11 @@ const DashboardView = forwardRef(function DashboardView(
                 selectedDashboard={selectedDashboard}
                 handleUpdateDashboard={handleUpdateDashboard}
                 handleDeleteDashboard={handleDeleteDashboard}
+                unsavedChangesModalOpen={Boolean(pendingCloseRequest)}
+                onCloseUnsavedChangesModal={() => setPendingCloseRequest(null)}
+                onConfirmUnsavedChangesModal={handleConfirmPendingClose}
             />
-        </>
+        </WorkspaceDraftStateProvider>
     );
 });
 

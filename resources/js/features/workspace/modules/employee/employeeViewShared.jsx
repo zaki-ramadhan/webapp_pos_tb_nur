@@ -1,16 +1,41 @@
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import AttachmentDockButton from '@/features/workspace/shared/AttachmentDockButton';
-import { CogIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, CogIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 
 export function buildEmployeeFormValues(form) {
     return {
         ...form.defaults,
     };
+}
+
+export function validateEmployeeWebsite(value) {
+    const normalizedValue = String(value ?? '').trim();
+
+    if (!normalizedValue) {
+        return '';
+    }
+
+    try {
+        const parsedUrl = new URL(normalizedValue);
+
+        if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+            return 'Website harus diawali http:// atau https://.';
+        }
+
+        if (!parsedUrl.hostname || !parsedUrl.hostname.includes('.')) {
+            return 'Masukkan domain website yang valid.';
+        }
+
+        return '';
+    } catch {
+        return 'Masukkan URL lengkap, misalnya https://dicoding.com.';
+    }
 }
 
 export function matchesEmployeeFilter(row, filter, selectedValue) {
@@ -29,6 +54,142 @@ export function EmployeeFieldRow({ label, required = false, children }) {
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
             <div>{children}</div>
+        </div>
+    );
+}
+
+export function SuggestionTextInput({
+    value = '',
+    onChange,
+    options = [],
+    placeholder = 'Cari/Pilih...',
+    searchLabel = 'Cari data',
+    emptyLabel = 'Tidak ada data yang cocok.',
+    className = 'h-[40px] rounded-[4px] border-[#cfd6e2]',
+    inputClassName = 'text-[15px] text-[#1f2436]',
+}) {
+    const rootRef = useRef(null);
+    const normalizedValue = String(value ?? '');
+    const [open, setOpen] = useState(false);
+
+    const filteredOptions = useMemo(() => {
+        const keyword = normalizedValue.trim().toLowerCase();
+
+        if (!keyword) {
+            return [];
+        }
+
+        return options.filter((option) => String(option).toLowerCase().includes(keyword));
+    }, [normalizedValue, options]);
+
+    useEffect(() => {
+        if (!open) {
+            return undefined;
+        }
+
+        function handlePointerDown(event) {
+            const target = event.target;
+
+            if (rootRef.current?.contains(target)) {
+                return;
+            }
+
+            setOpen(false);
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Escape') {
+                setOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handlePointerDown);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('mousedown', handlePointerDown);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [open]);
+
+    function handleInputFocus() {
+        if (normalizedValue.trim()) {
+            setOpen(true);
+        }
+    }
+
+    function handleInputChange(nextValue) {
+        onChange?.(nextValue);
+        setOpen(Boolean(nextValue.trim()));
+    }
+
+    function handleSelect(option) {
+        onChange?.(option);
+        setOpen(false);
+    }
+
+    function handleClear() {
+        onChange?.('');
+        setOpen(false);
+    }
+
+    return (
+        <div ref={rootRef} className="relative">
+            <TextInput
+                value={normalizedValue}
+                onFocus={handleInputFocus}
+                onChange={(event) => handleInputChange(event.target.value)}
+                placeholder={placeholder}
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                trailing={(
+                    <div className="flex items-center gap-1">
+                        {normalizedValue ? (
+                            <button
+                                type="button"
+                                onClick={handleClear}
+                                aria-label={`Hapus ${searchLabel.toLowerCase()}`}
+                                className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-[#6b7280] transition hover:bg-[#eef3fb] hover:text-[#1f2436]"
+                            >
+                                <CloseIcon className="h-4 w-4" />
+                            </button>
+                        ) : null}
+                        <SearchIcon className="h-5 w-5 text-[#1f2436]" />
+                    </div>
+                )}
+                className={className}
+                inputClassName={inputClassName}
+                trailingClassName="gap-1 pr-2"
+            />
+
+            {open ? (
+                <LookupDropdownSurface>
+                    <div className="max-h-[240px] overflow-y-auto bg-white">
+                        {filteredOptions.length ? (
+                            filteredOptions.map((option) => {
+                                const selected = option === normalizedValue;
+
+                                return (
+                                    <button
+                                        key={option}
+                                        type="button"
+                                        onClick={() => handleSelect(option)}
+                                        className={`block w-full border-t border-[#e6ebf2] px-4 py-3 text-left text-[14px] text-[#1f2436] transition first:border-t-0 hover:bg-[#eef3fb] ${selected ? 'bg-[#f5f9ff] font-medium' : 'bg-white'}`.trim()}
+                                    >
+                                        {option}
+                                    </button>
+                                );
+                            })
+                        ) : (
+                            <LookupEmptyState
+                                title={emptyLabel}
+                                description="Coba kata kunci lain yang lebih spesifik."
+                            />
+                        )}
+                    </div>
+                </LookupDropdownSurface>
+            ) : null}
         </div>
     );
 }

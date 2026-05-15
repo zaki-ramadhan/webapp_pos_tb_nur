@@ -7,7 +7,7 @@ export default function WorkspaceLayout({ children, title = 'Workspace' }) {
 
     return (
         <>
-            <Head title={title ? `${title} - ${appName}` : appName} />
+            <Head title={title || appName} />
 
             <div className="workspace-screen relative min-h-screen overflow-x-hidden bg-[#9ab8ea] text-[#4f5679]">
                 <GlobalBackgroundArt />

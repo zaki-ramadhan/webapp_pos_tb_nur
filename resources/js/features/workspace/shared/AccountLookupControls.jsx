@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import Panel from '@/components/ui/Panel';
 import TextInput from '@/components/ui/TextInput';
 import {
     extractBackendRows,
@@ -8,7 +7,8 @@ import {
     listBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { CloseIcon, InfoIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 
 export function buildAccountLookupLabel(record) {
     const code = String(record?.code ?? '').trim();
@@ -57,7 +57,7 @@ function useAccountLookupController({ value, values, disabled = false }) {
 
     useEffect(() => {
         if (!open) {
-            setDraftValue(selectedValue);
+            setDraftValue('');
         }
     }, [open, selectedValue]);
 
@@ -76,7 +76,7 @@ function useAccountLookupController({ value, values, disabled = false }) {
             setOpen(false);
             setQuery('');
             setError('');
-            setDraftValue(selectedValue);
+            setDraftValue('');
         }
 
         function handleKeyDown(event) {
@@ -84,7 +84,7 @@ function useAccountLookupController({ value, values, disabled = false }) {
                 setOpen(false);
                 setQuery('');
                 setError('');
-                setDraftValue(selectedValue);
+                setDraftValue('');
             }
         }
 
@@ -148,14 +148,10 @@ function useAccountLookupController({ value, values, disabled = false }) {
         setOpen(false);
         setQuery('');
         setError('');
-        setDraftValue(selectedValue);
+        setDraftValue('');
     }
 
-    function handleInputFocus() {
-        if (draftValue.trim()) {
-            openLookup(draftValue);
-        }
-    }
+    function handleInputFocus() {}
 
     function handleInputChange(nextValue) {
         setDraftValue(nextValue);
@@ -195,6 +191,7 @@ function useAccountLookupController({ value, values, disabled = false }) {
         rootRef,
         rows,
         selectedLabels,
+        selectedValue,
         closeLookup,
         handleInputChange,
         handleInputFocus,
@@ -229,7 +226,7 @@ function AccountLookupSuggestions({
     }
 
     return (
-        <Panel className={`absolute left-0 top-[calc(100%+8px)] z-50 w-full overflow-hidden rounded-[8px] border border-[#d6deea] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.14)] ${className}`.trim()}>
+        <LookupDropdownSurface className={className}>
             {showInlineSearch ? (
                 <div className="border-b border-[#e6ebf2] p-3">
                     <TextInput
@@ -287,29 +284,21 @@ function AccountLookupSuggestions({
                         );
                     })
                 ) : (
-                    <div className="px-4 py-6 text-center">
-                        <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#eef3fb] text-[#355784]">
-                            <InfoIcon className="h-5 w-5 text-current" />
-                        </div>
-                        <div className="mt-3 text-[14px] font-medium text-[#4b5567]">{emptyMessage}</div>
-                        {!query.trim() ? (
-                            <div className="mt-1 text-[12px] text-[#8a94a8]">
-                                Mulai ketik kode atau nama akun untuk melihat saran.
-                            </div>
-                        ) : (
-                            <div className="mt-1 text-[12px] text-[#8a94a8]">
-                                Coba kata kunci lain yang lebih spesifik.
-                            </div>
-                        )}
-                    </div>
+                    <LookupEmptyState
+                        title={emptyMessage}
+                        description={!query.trim()
+                            ? 'Mulai ketik kode atau nama akun untuk melihat saran.'
+                            : 'Coba kata kunci lain yang lebih spesifik.'}
+                    />
                 )}
             </div>
-        </Panel>
+        </LookupDropdownSurface>
     );
 }
 
 function AccountLookupSearchInput({
     value,
+    selectedValue = '',
     placeholder,
     searchLabel,
     disabled,
@@ -321,39 +310,77 @@ function AccountLookupSearchInput({
     onChange,
     onClear,
 }) {
+    const inputRef = useRef(null);
+    const hasSelectedValue = Boolean(selectedValue);
+
+    function focusInputFromWrapper(event) {
+        if (disabled) {
+            return;
+        }
+
+        const target = event.target;
+
+        if (
+            target instanceof HTMLElement &&
+            target.closest('button, a, input, select, textarea') !== null
+        ) {
+            return;
+        }
+
+        inputRef.current?.focus();
+    }
+
     return (
-        <TextInput
-            value={value}
-            onFocus={onFocus}
-            onChange={(event) => onChange(event.target.value)}
-            disabled={disabled}
-            placeholder={placeholder}
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-            trailing={
-                <div className="flex items-center gap-1">
-                    {value ? (
+        <div
+            onMouseDown={focusInputFromWrapper}
+            className={`group flex w-full items-center overflow-hidden rounded-[4px] border border-slate-300 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'bg-slate-100 text-slate-400' : 'bg-white'} ${className}`.trim()}
+        >
+            <div className="flex min-w-0 flex-1 items-center gap-2 px-3">
+                {hasSelectedValue ? (
+                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-[14px] text-[#295089]">
+                        <span className="truncate">{selectedValue}</span>
                         <button
                             type="button"
-                            onClick={onClear}
+                            onClick={() => {
+                                if (!disabled) {
+                                    onClear?.();
+                                }
+                            }}
+                            disabled={disabled}
                             aria-label={`Hapus ${searchLabel.toLowerCase()}`}
-                            className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-[#6b7280] transition hover:bg-[#eef3fb] hover:text-[#1f2436]"
+                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-[#295089] disabled:text-slate-300"
                         >
                             <CloseIcon className="h-4 w-4" />
                         </button>
-                    ) : null}
+                    </span>
+                ) : null}
+
+                <input
+                    ref={inputRef}
+                    value={value}
+                    onFocus={onFocus}
+                    onChange={(event) => onChange(event.target.value)}
+                    disabled={disabled}
+                    placeholder={hasSelectedValue ? '' : placeholder}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-slate-300 disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} ${inputClassName}`.trim()}
+                />
+            </div>
+
+            <span
+                className={`flex h-full items-center px-3 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
+            >
+                <div className="flex items-center gap-1">
                     {loading ? (
                         <RefreshIcon className="h-5 w-5 animate-spin text-[#1f2436]" />
                     ) : (
                         <SearchIcon className="h-5 w-5 text-[#1f2436]" />
                     )}
                 </div>
-            }
-            className={className}
-            inputClassName={inputClassName}
-            trailingClassName={trailingClassName}
-        />
+            </span>
+        </div>
     );
 }
 
@@ -394,6 +421,7 @@ export function AccountLookupField({
             ) : (
                 <AccountLookupSearchInput
                     value={controller.draftValue}
+                    selectedValue={controller.selectedValue}
                     placeholder={placeholder}
                     searchLabel={searchLabel}
                     disabled={disabled}
@@ -403,7 +431,16 @@ export function AccountLookupField({
                     loading={controller.loading && controller.open}
                     onFocus={controller.handleInputFocus}
                     onChange={controller.handleInputChange}
-                    onClear={() => controller.handleRemove(onRemove)}
+                    onClear={() =>
+                        controller.handleRemove((clearedValue) => {
+                            if (onRemove) {
+                                onRemove(clearedValue);
+                                return;
+                            }
+
+                            onSelectAccount?.(null, '');
+                        })
+                    }
                 />
             )}
 
@@ -439,6 +476,7 @@ export function AccountLookupTextInput({
         <div ref={controller.rootRef} className="relative">
             <AccountLookupSearchInput
                 value={normalizeInputValue(controller.draftValue)}
+                selectedValue={controller.selectedValue}
                 placeholder={placeholder}
                 searchLabel={searchLabel}
                 disabled={disabled}

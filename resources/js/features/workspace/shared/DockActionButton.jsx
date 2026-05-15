@@ -21,7 +21,7 @@ export default function DockActionButton({
             aria-disabled={disabled}
             aria-label={label}
             title={label}
-            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border shadow-[0_5px_10px_rgba(24,53,97,0.18)] transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] ${toneClassName} ${disabled ? 'cursor-not-allowed opacity-55' : ''} ${className}`.trim()}
+            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border shadow-[0_5px_10px_rgba(24,53,97,0.18)] transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] ${toneClassName} ${disabled ? 'cursor-default opacity-55' : ''} ${className}`.trim()}
         >
             {icon}
         </button>

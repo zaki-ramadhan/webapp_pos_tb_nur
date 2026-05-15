@@ -7,6 +7,7 @@ use App\Domain\Catalog\Models\Unit;
 use App\Domain\Catalog\Models\Warehouse;
 use App\Domain\Finance\Models\Account;
 use App\Domain\Organization\Models\Branch;
+use App\Domain\Support\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PDO;
@@ -82,6 +83,15 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'checkin_number' => 'CI.2026.05.00001',
             'sales_user_id' => $user->id,
         ]);
+
+        $activityLog = ActivityLog::query()
+            ->where('resource_key', 'sales-checkins')
+            ->where('action', 'create')
+            ->latest('id')
+            ->first();
+
+        $this->assertNotNull($activityLog);
+        $this->assertSame('2026-05-13', data_get($activityLog->metadata, 'transaction_date'));
     }
 
     public function test_bank_statement_resource_can_return_read_only_ledger_rows(): void

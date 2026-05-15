@@ -5,7 +5,7 @@ import {
     applyPermissionPreset,
     buildPresetProfile,
     filterSections,
-} from '@/features/workspace/modules/groupAccessUtils';
+} from './groupAccessUtils';
 import {
     CopyPermissionsButton,
     GroupAccessCategoryList,

@@ -3,6 +3,8 @@
 namespace App\Support\Backend;
 
 use App\Domain\Support\Models\ActivityLog;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +43,14 @@ class BackendActivityLogger
         }
 
         $user = Auth::user();
+        $metadata = [
+            'resource_model' => $record::class,
+        ];
+        $transactionDate = $this->resolveTransactionDate($record, $after, $before);
+
+        if ($transactionDate !== null) {
+            $metadata['transaction_date'] = $transactionDate;
+        }
 
         ActivityLog::query()->create([
             'log_group' => $this->resolveLogGroup($blueprint, $record),
@@ -60,9 +70,7 @@ class BackendActivityLogger
             'occurred_at' => now(),
             'before_payload' => $before,
             'after_payload' => $after,
-            'metadata' => [
-                'resource_model' => $record::class,
-            ],
+            'metadata' => $metadata,
         ]);
     }
 
@@ -125,5 +133,88 @@ class BackendActivityLogger
         $subject = $this->resolveSubjectLabel($record) ?? $blueprint->label;
 
         return sprintf('%s %s', ucfirst($action), $subject);
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $after
+     * @param  array<string, mixed>|null  $before
+     */
+    protected function resolveTransactionDate(Model $record, ?array $after = null, ?array $before = null): ?string
+    {
+        foreach ($this->transactionDateCandidateFields() as $field) {
+            $resolved = $this->normalizeDateValue($record->getAttribute($field));
+
+            if ($resolved !== null) {
+                return $resolved;
+            }
+        }
+
+        foreach ([$after, $before] as $payload) {
+            if (! is_array($payload)) {
+                continue;
+            }
+
+            foreach ($this->transactionDateCandidateFields() as $field) {
+                $resolved = $this->normalizeDateValue($payload[$field] ?? null);
+
+                if ($resolved !== null) {
+                    return $resolved;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function transactionDateCandidateFields(): array
+    {
+        return [
+            'document_date',
+            'entry_date',
+            'checked_in_at',
+            'joined_at',
+            'purchase_date',
+            'usage_date',
+            'expense_date',
+            'opening_balance_date',
+            'effective_date',
+            'shipping_date',
+            'check_date',
+            'due_date',
+            'line_date',
+            'date',
+        ];
+    }
+
+    protected function normalizeDateValue(mixed $value): ?string
+    {
+        if ($value instanceof CarbonInterface) {
+            return $value->toDateString();
+        }
+
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d');
+        }
+
+        if (! filled($value)) {
+            return null;
+        }
+
+        if (is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1) {
+            return $value;
+        }
+
+        if (is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/', $value) === 1) {
+            return substr($value, 0, 10);
+        }
+
+        try {
+            return Carbon::parse((string) $value)->toDateString();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import SelectField from '@/components/ui/SelectField';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import WorkOrderItemModal from '@/features/workspace/modules/shared/WorkOrderItemModal';
 import {
     AccountLookupField,
@@ -23,13 +24,17 @@ import {
     resolveWorkOrderCellAlignClassName,
 } from '@/features/workspace/modules/work-order/workOrderViewShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import {
+    resolveDocumentRequirementValue,
+    resolveSaveDisabledState,
+} from '@/features/workspace/shared/formValidation';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     ChevronDownIcon,
     SearchIcon,
     TableActionIcon,
 } from '@/features/workspace/shared/Icons';
-import { buildWorkOrderRecord } from '@/features/workspace/modules/workOrderConfig';
+import { buildWorkOrderRecord } from '@/features/workspace/modules/work-order/workOrderConfig';
 
 function WorkOrderHeader({ config, values, setValues, isDetail }) {
     return (
@@ -38,7 +43,11 @@ function WorkOrderHeader({ config, values, setValues, isDetail }) {
                 <div className="space-y-3">
                     <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.date} required />
-                        <TransactionDateInput value={values.date} className="max-w-[330px]" />
+                        <TransactionDateInput
+                            value={values.date}
+                            onChange={(nextValue) => setValues((current) => ({ ...current, date: nextValue }))}
+                            className="max-w-[330px]"
+                        />
                     </div>
                 </div>
 
@@ -445,7 +454,7 @@ function WorkOrderTotalsBar({ values }) {
     );
 }
 
-export default function WorkOrderFormView({ config, activeLevel2Tab }) {
+export default function WorkOrderFormView({ pageId, config, activeLevel2Tab }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(
@@ -468,6 +477,86 @@ export default function WorkOrderFormView({ config, activeLevel2Tab }) {
         setSelectedItem(null);
     }, [config.sectionTabs, sourceRecord]);
 
+    const initialComparable = useMemo(
+        () => ({
+            date: sourceRecord.date ?? '',
+            autoNumber: sourceRecord.autoNumber ?? true,
+            numberingType: sourceRecord.numberingType ?? '',
+            documentNumber: sourceRecord.documentNumber ?? '',
+            items: sourceRecord.items ?? [],
+            customerReference: sourceRecord.customerReference ?? '',
+            expenseAccounts: sourceRecord.expenseAccounts ?? [],
+            varianceAccounts: sourceRecord.varianceAccounts ?? [],
+            branches: sourceRecord.branches ?? [],
+            notes: sourceRecord.notes ?? '',
+        }),
+        [sourceRecord],
+    );
+
+    const currentComparable = useMemo(
+        () => ({
+            date: values.date,
+            autoNumber: values.autoNumber,
+            numberingType: values.numberingType,
+            documentNumber: values.documentNumber,
+            items: values.items,
+            customerReference: values.customerReference,
+            expenseAccounts: values.expenseAccounts,
+            varianceAccounts: values.varianceAccounts,
+            branches: values.branches,
+            notes: values.notes,
+        }),
+        [values],
+    );
+
+    const { isDirty, saveDisabled } = useMemo(
+        () =>
+            resolveSaveDisabledState({
+                checks: [
+                    { label: config.labels.date, value: values.date },
+                    {
+                        label: config.labels.documentNumber,
+                        value: resolveDocumentRequirementValue(values.autoNumber, values.numberingType, values.documentNumber),
+                    },
+                    { label: config.labels.branch, type: 'array', value: values.branches },
+                ],
+                initialComparable,
+                currentComparable,
+            }),
+        [
+            config.labels.branch,
+            config.labels.date,
+            config.labels.documentNumber,
+            currentComparable,
+            initialComparable,
+            values.autoNumber,
+            values.branches,
+            values.date,
+            values.documentNumber,
+            values.numberingType,
+        ],
+    );
+
+    const dockActions = useMemo(
+        () =>
+            (values.dockActions ?? []).map((action) =>
+                action.id === 'save'
+                    ? {
+                          ...action,
+                          disabled: saveDisabled,
+                      }
+                    : action,
+            ),
+        [saveDisabled, values.dockActions],
+    );
+
+    useWorkspaceDirtyRegistration({
+        pageId,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(pageId && activeLevel2Tab?.id),
+    });
+
     return (
         <>
             <TransactionFormLayout
@@ -476,7 +565,7 @@ export default function WorkOrderFormView({ config, activeLevel2Tab }) {
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
                 footer={values.showTotals ? <WorkOrderTotalsBar values={values} /> : null}
-                dockActions={values.dockActions ?? []}
+                dockActions={dockActions}
             >
                 {activeSectionId === 'charges' ? (
                     <WorkOrderChargesSection config={config} values={values} setValues={setValues} />

@@ -65,12 +65,6 @@ export function extractBackendTotal(payload) {
 }
 
 export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan backend gagal diproses.') {
-    const responseMessage = error?.response?.data?.message;
-
-    if (typeof responseMessage === 'string' && responseMessage.trim()) {
-        return responseMessage;
-    }
-
     const validationErrors = error?.response?.data?.errors;
 
     if (validationErrors && typeof validationErrors === 'object') {
@@ -81,6 +75,12 @@ export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan back
         if (firstError) {
             return firstError;
         }
+    }
+
+    const responseMessage = error?.response?.data?.message;
+
+    if (typeof responseMessage === 'string' && responseMessage.trim()) {
+        return responseMessage;
     }
 
     if (typeof error?.message === 'string' && error.message.trim()) {

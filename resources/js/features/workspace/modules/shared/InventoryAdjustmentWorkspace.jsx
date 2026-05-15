@@ -22,9 +22,7 @@ import {
 import {
     createBackendResource,
     deleteBackendResource,
-    extractBackendRows,
     getBackendErrorMessage,
-    listBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import TableListView from '@/features/workspace/modules/TableListView';
@@ -41,15 +39,14 @@ import {
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import {
-    finishCrudLoadingToast,
-    showCrudErrorToast,
-    showCrudLoadingToast,
-    showCrudSuccessToast,
-    showCrudValidationToast,
-} from '@/features/workspace/shared/crudFeedback';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { CogIcon, PrintIcon, SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 
 const buildLookupLabel = buildAccountLookupLabel;
 
@@ -67,20 +64,7 @@ function formatCurrencyValue(value) {
 }
 
 function parseNumericInput(value) {
-    const normalizedValue = String(value ?? '')
-        .replace(/Rp/gi, '')
-        .replace(/[^\d,.-]/g, '')
-        .replace(/\./g, '')
-        .replace(',', '.')
-        .trim();
-
-    if (!normalizedValue) {
-        return 0;
-    }
-
-    const parsedValue = Number(normalizedValue);
-
-    return Number.isFinite(parsedValue) ? parsedValue : 0;
+    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
 }
 
 function buildTotals(values, items) {
@@ -92,23 +76,6 @@ function buildTotals(values, items) {
         itemCountLabel: items.length ? `${items.length} Barang` : 'Rincian Barang',
         totalValue: `Rp ${formatCurrencyValue(totalAmount)}`,
     };
-}
-
-function StatusMessage({ status }) {
-    if (!status?.message) {
-        return null;
-    }
-
-    const toneClassName =
-        status.tone === 'error'
-            ? 'border-[#f0c4c4] bg-[#fff6f6] text-[#a33939]'
-            : 'border-[#c8dfc9] bg-[#f3fff4] text-[#2e6b34]';
-
-    return (
-        <div className={`mx-4 mt-3 rounded-[6px] border px-3 py-2 text-[14px] ${toneClassName}`.trim()}>
-            {status.message}
-        </div>
-    );
 }
 
 function cloneList(values) {
@@ -180,6 +147,92 @@ function validateInventoryAdjustmentValues(values, config, isDetail) {
     }
 
     return '';
+}
+
+function buildInventoryDocumentNumber(pageId) {
+    const prefix = pageId === 'price-adjustment' ? 'PA' : 'IA';
+    const dateLabel = new Date().toISOString().slice(0, 10).replaceAll('-', '.');
+
+    return `${prefix}.${dateLabel}.${Date.now()}`;
+}
+
+function promptInventoryAdjustmentItemEditor(item = null) {
+    const name = window.prompt('Nama barang', item?.name ?? '');
+
+    if (name === null) {
+        return null;
+    }
+
+    const trimmedName = name.trim();
+
+    if (!trimmedName) {
+        throw new Error('Nama barang wajib diisi.');
+    }
+
+    const code = window.prompt('Kode barang', item?.code ?? '') ?? '';
+    const adjustmentType = window.prompt('Tipe penyesuaian', item?.adjustmentType ?? 'Penambahan') ?? item?.adjustmentType ?? 'Penambahan';
+    const quantity = window.prompt('Kuantitas', item?.quantity ?? '1');
+
+    if (quantity === null) {
+        return null;
+    }
+
+    const unit = window.prompt('Satuan', item?.unit ?? 'PCS');
+
+    if (unit === null) {
+        return null;
+    }
+
+    const unitCost = window.prompt('Harga satuan', item?.unitCost ?? '0');
+
+    if (unitCost === null) {
+        return null;
+    }
+
+    const quantityAmount = parseNumericInput(quantity);
+    const unitCostAmount = parseNumericInput(unitCost);
+    const resolvedUnit = unit.trim() || 'PCS';
+
+    return {
+        ...item,
+        id: item?.id ?? `draft-item-${Date.now()}`,
+        name: trimmedName,
+        code: code.trim(),
+        adjustmentType: adjustmentType.trim() || 'Penambahan',
+        quantity: String(quantityAmount || 0),
+        unit: resolvedUnit,
+        unitLookup: [resolvedUnit],
+        unitCost: formatCurrencyValue(unitCostAmount),
+        totalCost: formatCurrencyValue(quantityAmount * unitCostAmount),
+        warehouse: item?.warehouse ?? [],
+        department: item?.department ?? [],
+        notes: item?.notes ?? '',
+    };
+}
+
+function applyInventoryPromptItemUpdate(item, setValues, setStatus) {
+    try {
+        const nextItem = promptInventoryAdjustmentItemEditor(item);
+
+        if (!nextItem) {
+            return;
+        }
+
+        setValues((current) =>
+            buildTotals(
+                current,
+                item
+                    ? (current.items ?? []).map((entry) => (entry.id === item.id ? nextItem : entry))
+                    : [...(current.items ?? []), nextItem],
+            ),
+        );
+        setStatus({
+            tone: 'success',
+            message: item ? 'Item diperbarui.' : 'Item ditambahkan.',
+        });
+    } catch (error) {
+        setStatus({ tone: 'error', message: error.message });
+    }
 }
 
 function resolveCellAlignClassName(align) {
@@ -526,40 +579,22 @@ export function InventoryAdjustmentFormView({
     );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
+    useWorkspaceDirtyRegistration({
+        pageId,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(pageId && activeLevel2Tab?.id),
+    });
+
     async function selectLookup(resource, title, onApply) {
         try {
-            const keyword = window.prompt(`Cari ${title}`);
+            const record = await promptSelectBackendRecord(resource, title, buildLookupLabel);
 
-            if (keyword === null) {
+            if (!record) {
                 return;
             }
 
-            const payload = await listBackendResource(resource, {
-                search: keyword.trim(),
-                per_page: 10,
-            });
-            const records = extractBackendRows(payload);
-
-            if (!records.length) {
-                throw new Error(`${title} tidak ditemukan.`);
-            }
-
-            const optionText = records
-                .map((record, index) => `${index + 1}. ${buildLookupLabel(record)}`)
-                .join('\n');
-            const pickedValue = window.prompt(`Pilih ${title}:\n${optionText}\nKetik nomor pilihan.`);
-
-            if (pickedValue === null) {
-                return;
-            }
-
-            const pickedIndex = Number.parseInt(pickedValue, 10) - 1;
-
-            if (!Number.isInteger(pickedIndex) || !records[pickedIndex]) {
-                throw new Error(`Pilihan ${title} tidak valid.`);
-            }
-
-            onApply(records[pickedIndex]);
+            onApply(record);
             setStatus({ tone: '', message: '' });
         } catch (error) {
             setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
@@ -567,117 +602,11 @@ export function InventoryAdjustmentFormView({
     }
 
     function handleCreateItem() {
-        try {
-            const name = window.prompt('Nama barang');
-
-            if (name === null) {
-                return;
-            }
-
-            if (!name.trim()) {
-                throw new Error('Nama barang wajib diisi.');
-            }
-
-            const code = window.prompt('Kode barang', '') ?? '';
-            const adjustmentType = window.prompt('Tipe penyesuaian', 'Penambahan') ?? 'Penambahan';
-            const quantity = window.prompt('Kuantitas', '1');
-
-            if (quantity === null) {
-                return;
-            }
-
-            const unit = window.prompt('Satuan', 'PCS');
-
-            if (unit === null) {
-                return;
-            }
-
-            const unitCost = window.prompt('Harga satuan', '0');
-
-            if (unitCost === null) {
-                return;
-            }
-
-            const quantityAmount = parseNumericInput(quantity);
-            const unitCostAmount = parseNumericInput(unitCost);
-            const nextItem = {
-                id: `draft-item-${Date.now()}`,
-                name: name.trim(),
-                code: code.trim(),
-                adjustmentType: adjustmentType.trim() || 'Penambahan',
-                quantity: String(quantityAmount || 0),
-                unit: unit.trim() || 'PCS',
-                unitLookup: [unit.trim() || 'PCS'],
-                unitCost: formatCurrencyValue(unitCostAmount),
-                totalCost: formatCurrencyValue(quantityAmount * unitCostAmount),
-                warehouse: [],
-                department: [],
-                notes: '',
-            };
-
-            setValues((current) => buildTotals(current, [...(current.items ?? []), nextItem]));
-            setStatus({ tone: 'success', message: 'Item ditambahkan.' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: error.message });
-        }
+        applyInventoryPromptItemUpdate(null, setValues, setStatus);
     }
 
     function handleEditItem(item) {
-        try {
-            const name = window.prompt('Nama barang', item.name ?? '');
-
-            if (name === null) {
-                return;
-            }
-
-            if (!name.trim()) {
-                throw new Error('Nama barang wajib diisi.');
-            }
-
-            const code = window.prompt('Kode barang', item.code ?? '') ?? '';
-            const adjustmentType = window.prompt('Tipe penyesuaian', item.adjustmentType ?? 'Penambahan') ?? item.adjustmentType ?? 'Penambahan';
-            const quantity = window.prompt('Kuantitas', item.quantity ?? '1');
-
-            if (quantity === null) {
-                return;
-            }
-
-            const unit = window.prompt('Satuan', item.unit ?? 'PCS');
-
-            if (unit === null) {
-                return;
-            }
-
-            const unitCost = window.prompt('Harga satuan', item.unitCost ?? '0');
-
-            if (unitCost === null) {
-                return;
-            }
-
-            const quantityAmount = parseNumericInput(quantity);
-            const unitCostAmount = parseNumericInput(unitCost);
-            const nextItem = {
-                ...item,
-                name: name.trim(),
-                code: code.trim(),
-                adjustmentType: adjustmentType.trim() || 'Penambahan',
-                quantity: String(quantityAmount || 0),
-                unit: unit.trim() || 'PCS',
-                unitLookup: [unit.trim() || 'PCS'],
-                unitCost: formatCurrencyValue(unitCostAmount),
-                totalCost: formatCurrencyValue(quantityAmount * unitCostAmount),
-            };
-
-            setValues((current) =>
-                buildTotals(
-                    current,
-                    (current.items ?? []).map((entry) => (entry.id === item.id ? nextItem : entry)),
-                ),
-            );
-            setStatus({ tone: 'success', message: 'Item diperbarui.' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: error.message });
-        }
+        applyInventoryPromptItemUpdate(item, setValues, setStatus);
     }
 
     async function handleSave() {
@@ -689,55 +618,47 @@ export function InventoryAdjustmentFormView({
         }
 
         if (validationMessage) {
-            setStatus({ tone: 'error', message: validationMessage });
-            showCrudValidationToast(validationMessage);
+            rejectCrudFormAction(validationMessage, { setStatus });
             return;
         }
 
-        const resolvedDocumentNumber =
-            values.autoNumber || !String(values.documentNumber ?? '').trim()
-                ? `${pageId === 'price-adjustment' ? 'PA' : 'IA'}.${new Date().toISOString().slice(0, 10).replaceAll('-', '.')}.${Date.now()}`
-                : values.documentNumber;
-
-        const loadingToastId = showCrudLoadingToast(isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.');
-        setSaving(true);
-        setStatus({ tone: '', message: '' });
-
-        try {
-            const payload = buildInventoryAdjustmentPayload({
-                ...values,
-                documentNumber: resolvedDocumentNumber,
-            });
-            const response =
-                isDetail && values.__backendRecordId
-                    ? await updateBackendResource(backendConfig.resource, values.__backendRecordId, payload)
-                    : await createBackendResource(backendConfig.resource, payload);
-            const record = response?.data ?? null;
-
-            await onRefresh?.();
-            const successMessage = isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.';
-            setStatus({
-                tone: 'success',
-                message: successMessage,
-            });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
-
-            if (!isDetail && record?.id) {
-                onOpenDetail?.({
-                    recordId: String(record.id),
-                    label: record.document_number ?? resolvedDocumentNumber,
-                    tabLabel: record.document_number ?? resolvedDocumentNumber,
+        await executeCrudFormAction({
+            loadingMessage: isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.',
+            successMessage: isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.',
+            setSaving,
+            setStatus,
+            getErrorMessage: getBackendErrorMessage,
+            execute: async () => {
+                const resolvedDocumentNumber =
+                    values.autoNumber || !String(values.documentNumber ?? '').trim()
+                        ? buildInventoryDocumentNumber(pageId)
+                        : values.documentNumber;
+                const payload = buildInventoryAdjustmentPayload({
+                    ...values,
+                    documentNumber: resolvedDocumentNumber,
                 });
-            }
-        } catch (error) {
-            const errorMessage = getBackendErrorMessage(error);
-            setStatus({ tone: 'error', message: errorMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudErrorToast(errorMessage);
-        } finally {
-            setSaving(false);
-        }
+                const response =
+                    isDetail && values.__backendRecordId
+                        ? await updateBackendResource(backendConfig.resource, values.__backendRecordId, payload)
+                        : await createBackendResource(backendConfig.resource, payload);
+
+                return {
+                    record: response?.data ?? null,
+                    resolvedDocumentNumber,
+                };
+            },
+            onSuccess: async ({ record, resolvedDocumentNumber }) => {
+                await onRefresh?.();
+
+                if (!isDetail && record?.id) {
+                    onOpenDetail?.({
+                        recordId: String(record.id),
+                        label: record.document_number ?? resolvedDocumentNumber,
+                        tabLabel: record.document_number ?? resolvedDocumentNumber,
+                    });
+                }
+            },
+        });
     }
 
     function requestDelete() {
@@ -753,28 +674,20 @@ export function InventoryAdjustmentFormView({
             return;
         }
 
-        const loadingToastId = showCrudLoadingToast('Sedang menghapus dokumen.');
-        setSaving(true);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
-
-        try {
-            await deleteBackendResource(backendConfig.resource, values.__backendRecordId);
-            await onRefresh?.();
-            const successMessage = 'Dokumen berhasil dihapus.';
-            setStatus({ tone: 'success', message: successMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
-            onCloseDetail?.(values.__backendRecordId);
-            onOpenContent?.();
-        } catch (error) {
-            const errorMessage = getBackendErrorMessage(error);
-            setStatus({ tone: 'error', message: errorMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudErrorToast(errorMessage);
-        } finally {
-            setSaving(false);
-        }
+        await executeCrudFormAction({
+            loadingMessage: 'Sedang menghapus dokumen.',
+            successMessage: 'Dokumen berhasil dihapus.',
+            setSaving,
+            setStatus,
+            getErrorMessage: getBackendErrorMessage,
+            onStart: () => setDeleteConfirmationOpen(false),
+            execute: () => deleteBackendResource(backendConfig.resource, values.__backendRecordId),
+            onSuccess: async () => {
+                await onRefresh?.();
+                onCloseDetail?.(values.__backendRecordId);
+                onOpenContent?.();
+            },
+        });
     }
 
     const dockActions = useMemo(
@@ -829,7 +742,7 @@ export function InventoryAdjustmentFormView({
             <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
                 <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                     <InventoryAdjustmentHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />
-                    <StatusMessage status={status} />
+                    <CrudStatusMessage status={status} className="mx-4 mt-3" />
 
                     <div className="flex min-h-0 flex-col gap-4 px-4 py-4 lg:flex-row">
                         <TransactionSectionRail

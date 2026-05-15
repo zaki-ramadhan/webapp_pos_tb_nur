@@ -38,7 +38,7 @@ export default function Button({
             disabled={Component === 'button' ? isDisabled : undefined}
             aria-disabled={isDisabled}
             aria-busy={loading}
-            className={`inline-flex items-center justify-center gap-3 rounded-md font-medium transition disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className}`.trim()}
+            className={`inline-flex items-center justify-center gap-3 rounded-md font-medium transition disabled:cursor-default disabled:opacity-55 disabled:shadow-none ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className}`.trim()}
             {...props}
         >
             {loading ? (

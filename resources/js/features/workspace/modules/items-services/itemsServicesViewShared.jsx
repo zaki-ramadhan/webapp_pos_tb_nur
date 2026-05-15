@@ -1,4 +1,5 @@
 import TextInput from '@/components/ui/TextInput';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import {
     CloseIcon,
@@ -7,7 +8,7 @@ import {
     TrashIcon,
 } from '@/features/workspace/shared/Icons';
 import { TransactionSwitch } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { buildItemsServicesRecord } from '@/features/workspace/modules/itemsServicesConfig';
+import { buildItemsServicesRecord } from '@/features/workspace/modules/items-services/itemsServicesConfig';
 
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -131,9 +132,12 @@ export function SimpleTextField({
     prefix = null,
     trailing = null,
     inputClassName = '',
+    formatAsAmount = false,
 }) {
+    const InputComponent = formatAsAmount ? FormattedAmountInput : TextInput;
+
     return (
-        <TextInput
+        <InputComponent
             value={value}
             onChange={onChange}
             placeholder={placeholder}

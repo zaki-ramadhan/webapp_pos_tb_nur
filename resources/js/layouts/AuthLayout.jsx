@@ -13,7 +13,7 @@ export default function AuthLayout({ children, title }) {
 
     return (
         <>
-            <Head title={title ? `${title} - ${appName}` : appName} />
+            <Head title={title || appName} />
 
             <div className="auth-screen relative min-h-screen overflow-x-hidden bg-[#9ab8ea] text-slate-700">
                 <GlobalBackgroundArt />

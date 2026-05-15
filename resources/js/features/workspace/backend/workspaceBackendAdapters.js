@@ -227,26 +227,34 @@ function mapActivityActionLabel(action) {
 }
 
 export function mapActivityLogRows(records) {
-    return records.map((record) => ({
-        id: record.id,
-        dateValue: normalizeDisplayDate(record.occurred_at),
-        transactionDateValue: normalizeDisplayDate(record.metadata?.transaction_date) || 'empty',
-        transactionDateLabel: formatIsoDate(record.metadata?.transaction_date),
-        referenceName: record.subject_label ?? record.document_number ?? '-',
-        actionTypeValue: record.action ?? '',
-        actionLabel: mapActivityActionLabel(record.action),
-        transactionTypeValue: record.resource_key ?? '',
-        transactionTypeLabel: record.resource_label ?? titleizeKey(record.permission_key ?? record.resource_key),
-        loggedAt: formatDateTimeVerbose(record.occurred_at),
-        userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
-        userName: record.actor_name ?? record.actor_user?.name ?? '-',
-        email: record.actor_email ?? record.actor_user?.email ?? '-',
-        ipAddress: record.ip_address ?? '-',
-    }));
+    return records.map((record) => {
+        const transactionDate = normalizeDisplayDate(record.metadata?.transaction_date) || normalizeDisplayDate(record.occurred_at);
+
+        return {
+            id: record.id,
+            dateValue: normalizeDisplayDate(record.occurred_at),
+            transactionDateValue: transactionDate || 'empty',
+            transactionDateLabel: formatIsoDate(transactionDate),
+            referenceName: record.subject_label ?? record.document_number ?? '-',
+            actionTypeValue: record.action ?? '',
+            actionLabel: mapActivityActionLabel(record.action),
+            transactionTypeValue: record.resource_key ?? '',
+            transactionTypeLabel: record.resource_label ?? titleizeKey(record.permission_key ?? record.resource_key),
+            loggedAt: formatDateTimeVerbose(record.occurred_at),
+            userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
+            userName: record.actor_name ?? record.actor_user?.name ?? '-',
+            email: record.actor_email ?? record.actor_user?.email ?? '-',
+            ipAddress: record.ip_address ?? '-',
+        };
+    });
 }
 
 export function buildActivityLogFilters(rows) {
     const uniqueDateValues = [...new Set(rows.map((row) => row.dateValue).filter(Boolean))].map((value) => ({
+        value,
+        label: formatIsoDate(value),
+    }));
+    const uniqueTransactionDateValues = [...new Set(rows.map((row) => row.transactionDateValue).filter((value) => value && value !== 'empty'))].map((value) => ({
         value,
         label: formatIsoDate(value),
     }));
@@ -272,7 +280,7 @@ export function buildActivityLogFilters(rows) {
         {
             id: 'transactionDate',
             rowKey: 'transactionDateValue',
-            options: buildSelectOptions([], 'Tgl Transaksi', '-'),
+            options: buildSelectOptions(uniqueTransactionDateValues, 'Tgl Transaksi', '-'),
         },
         {
             id: 'transactionType',

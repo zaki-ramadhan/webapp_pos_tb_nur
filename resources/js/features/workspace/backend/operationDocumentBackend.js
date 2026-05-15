@@ -1,4 +1,5 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 const DOCUMENT_PREFIXES = {
     'sales-quote': 'SQ',
@@ -189,20 +190,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
 }
 
 export function parseNumericInput(value) {
-    const normalizedValue = String(value ?? '')
-        .replace(/Rp/gi, '')
-        .replace(/[^\d,.-]/g, '')
-        .replace(/\./g, '')
-        .replace(',', '.')
-        .trim();
-
-    if (!normalizedValue) {
-        return 0;
-    }
-
-    const parsedValue = Number(normalizedValue);
-
-    return Number.isFinite(parsedValue) ? parsedValue : 0;
+    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
 }
 
 export function buildGeneratedDocumentNumber(pageId) {

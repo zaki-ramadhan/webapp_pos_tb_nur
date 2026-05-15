@@ -11,6 +11,7 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import TextInput from '@/components/ui/TextInput';
+import TextareaField from '@/components/ui/TextareaField';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -20,27 +21,32 @@ import {
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import {
-    finishCrudLoadingToast,
-    showCrudErrorToast,
-    showCrudLoadingToast,
-    showCrudSuccessToast,
-    showCrudValidationToast,
-} from '@/features/workspace/shared/crudFeedback';
 import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
+import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { SortIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 
 function buildDefaultValues(form, detailRow = null) {
+    const detailUsers = detailRow?.users ?? [];
+
     return {
         name: detailRow?.name ?? form.defaults?.name ?? '',
         description: detailRow?.notes ?? form.defaults?.description ?? '',
-        isSubDepartment: false,
+        isSubDepartment: Boolean(detailRow?.parentDepartmentId),
+        parentDepartmentId: detailRow?.parentDepartmentId ?? null,
+        parentDepartmentName: detailRow?.parentDepartmentName ?? '',
         openingDate: form.defaults?.openingDate ?? '',
         openingBalanceKeyword: '',
         allUsers: !(detailRow?.userIds?.length),
+        userScopeBranchId: null,
+        userScopeBranchLabel: '',
+        selectedUserIds: detailUsers.map((user) => user.id),
+        selectedUserLabels: detailUsers.map((user) => user.name ?? user.email ?? `User #${user.id}`),
         __backendRecordId: detailRow?.id ?? null,
         __code: detailRow?.code ?? '',
     };
@@ -51,7 +57,9 @@ function buildDepartmentSnapshot(values) {
         name: values.name,
         description: values.description,
         isSubDepartment: values.isSubDepartment,
+        parentDepartmentId: values.parentDepartmentId,
         allUsers: values.allUsers,
+        selectedUserIds: [...(values.selectedUserIds ?? [])].sort((left, right) => Number(left) - Number(right)),
     };
 }
 
@@ -79,12 +87,12 @@ function validateDepartmentValues(values, form) {
         return requiredMessage;
     }
 
-    if (values.isSubDepartment) {
-        return 'Sub departemen belum bisa disimpan karena parent departemen belum tersedia di form ini.';
+    if (values.isSubDepartment && !values.parentDepartmentId) {
+        return 'Parent departemen wajib dipilih saat Sub Dept. aktif.';
     }
 
-    if (!values.allUsers) {
-        return 'Pembatasan pengguna departemen belum bisa disimpan karena pemilihan user belum tersedia di form ini.';
+    if (!values.allUsers && !(values.selectedUserIds ?? []).length) {
+        return 'Pilih minimal satu pengguna saat Semua Pengguna tidak aktif.';
     }
 
     return '';
@@ -102,24 +110,18 @@ function DepartmentFieldRow({ label, required = false, children }) {
     );
 }
 
-function StatusMessage({ status }) {
-    if (!status?.message) {
-        return null;
-    }
-
-    const toneClassName =
-        status.tone === 'error'
-            ? 'border-[#f0c4c4] bg-[#fff6f6] text-[#a33939]'
-            : 'border-[#c8dfc9] bg-[#f3fff4] text-[#2e6b34]';
-
+function renderReferenceOptionPrimary(item, secondaryText = '') {
     return (
-        <div className={`mb-4 rounded-[6px] border px-3 py-2 text-[14px] ${toneClassName}`.trim()}>
-            {status.message}
+        <div className="min-w-0">
+            <div className="truncate text-[15px] text-[#131a28]">{item.label}</div>
+            {secondaryText ? (
+                <div className="mt-1 truncate text-[13px] text-[#7d879a]">{secondaryText}</div>
+            ) : null}
         </div>
     );
 }
 
-function DepartmentGeneralTab({ form, values, onChange }) {
+function DepartmentGeneralTab({ form, values, onChange, parentDepartmentOptions }) {
     return (
         <div className="space-y-6">
             <DepartmentFieldRow label={form.labels.name} required>
@@ -132,11 +134,12 @@ function DepartmentGeneralTab({ form, values, onChange }) {
             </DepartmentFieldRow>
 
             <DepartmentFieldRow label={form.labels.description}>
-                <textarea
+                <TextareaField
                     value={values.description}
                     onChange={(event) => onChange('description', event.target.value)}
                     rows={4}
-                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="rounded-[4px] border-[#cfd6e2]"
+                    textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
                 />
             </DepartmentFieldRow>
 
@@ -152,6 +155,23 @@ function DepartmentGeneralTab({ form, values, onChange }) {
                     containerClassName="w-auto"
                 />
             </div>
+
+            {values.isSubDepartment ? (
+                <DepartmentFieldRow label={form.labels.subDepartment}>
+                    <ReferenceLookupInput
+                        value={values.parentDepartmentName}
+                        items={parentDepartmentOptions}
+                        placeholder="Cari/Pilih..."
+                        searchLabel="Cari parent departemen"
+                        className="max-w-[710px]"
+                        getOptionLabel={(option) => option.label}
+                        getOptionSearchText={(option) => option.searchText}
+                        renderOption={(option) => renderReferenceOptionPrimary(option, option.code)}
+                        onSelect={(option) => onChange('parentDepartment', option)}
+                        onClear={() => onChange('parentDepartment', null)}
+                    />
+                </DepartmentFieldRow>
+            ) : null}
         </div>
     );
 }
@@ -271,7 +291,15 @@ function DepartmentOpeningBalanceTab({ form, values, onChange }) {
     );
 }
 
-function DepartmentUsersTab({ form, values, onChange }) {
+function DepartmentUsersTab({ form, values, onChange, branchOptions, userOptions }) {
+    const filteredUserOptions = useMemo(() => {
+        if (!values.userScopeBranchId) {
+            return userOptions;
+        }
+
+        return userOptions.filter((option) => option.branchIds.includes(values.userScopeBranchId));
+    }, [userOptions, values.userScopeBranchId]);
+
     return (
         <div className="space-y-5">
             <div className="border-b border-[#d9dee8] pb-2.5">
@@ -288,11 +316,59 @@ function DepartmentUsersTab({ form, values, onChange }) {
                 inputClassName="mt-0 h-[18px] w-[18px]"
                 containerClassName="w-auto"
             />
+
+            {!values.allUsers ? (
+                <div className="space-y-4">
+                    <div className="pt-1">
+                        <h3 className="text-[18px] font-medium text-[#1f2436]">
+                            {form.userAccess.limitedTitle ?? 'Tentukan pengguna yang dapat memilih departemen ini'}
+                        </h3>
+                    </div>
+
+                    <DepartmentFieldRow label={form.userAccess.groupBranchLabel ?? 'Grup/Cabang'}>
+                        <ReferenceLookupInput
+                            value={values.userScopeBranchLabel}
+                            items={branchOptions}
+                            placeholder={form.userAccess.groupBranchPlaceholder ?? 'Cari/Pilih...'}
+                            searchLabel="Cari grup atau cabang"
+                            className="max-w-[1220px]"
+                            getOptionLabel={(option) => option.label}
+                            getOptionSearchText={(option) => option.searchText}
+                            renderOption={(option) => renderReferenceOptionPrimary(option, option.code)}
+                            onSelect={(option) => onChange('userScopeBranch', option)}
+                            onClear={() => onChange('userScopeBranch', null)}
+                        />
+                    </DepartmentFieldRow>
+
+                    <DepartmentFieldRow label={form.userAccess.userLabel ?? 'Pengguna'}>
+                        <div className="space-y-2">
+                            <ReferenceLookupInput
+                                values={values.selectedUserLabels}
+                                items={filteredUserOptions}
+                                placeholder={form.userAccess.userPlaceholder ?? 'Cari/Pilih...'}
+                                searchLabel="Cari pengguna"
+                                className="max-w-[1220px]"
+                                getOptionLabel={(option) => option.label}
+                                getOptionSearchText={(option) => option.searchText}
+                                renderOption={(option) => renderReferenceOptionPrimary(option, option.email || option.branchLabels.join(', '))}
+                                onSelect={(option) => onChange('selectedUser', option)}
+                                onRemove={(label) => onChange('removeSelectedUser', label)}
+                            />
+                            {!values.selectedUserLabels.length ? (
+                                <p className="text-[13px] text-[#7d879a]">
+                                    Pilih pengguna yang diizinkan memakai departemen ini.
+                                </p>
+                            ) : null}
+                        </div>
+                    </DepartmentFieldRow>
+                </div>
+            ) : null}
         </div>
     );
 }
 
 export default function DepartmentFormView({
+    pageId,
     form,
     tableRows = [],
     activeLevel2Tab,
@@ -317,6 +393,31 @@ export default function DepartmentFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const isDetailMode = Boolean(detailRow);
+    const parentDepartmentOptions = useMemo(
+        () => (form.lookupOptions?.parentDepartments ?? [])
+            .filter((row) => String(row.id) !== String(values.__backendRecordId ?? ''))
+            .map((row) => ({
+                id: row.id,
+                label: row.name,
+                code: row.code,
+                searchText: [row.name, row.code].filter(Boolean).join(' '),
+            })),
+        [form.lookupOptions, values.__backendRecordId],
+    );
+    const branchOptions = useMemo(
+        () => (form.lookupOptions?.branches ?? []).map((option) => ({
+            ...option,
+            branchIds: [option.id],
+        })),
+        [form.lookupOptions],
+    );
+    const userOptions = useMemo(
+        () => (form.lookupOptions?.users ?? []).map((option) => ({
+            ...option,
+            branchIds: option.branchIds ?? [],
+        })),
+        [form.lookupOptions],
+    );
 
     useEffect(() => {
         setActiveTabId(form.tabs?.[0]?.id ?? 'department-general');
@@ -326,10 +427,74 @@ export default function DepartmentFormView({
     }, [form, initialValues]);
 
     function handleChange(field, nextValue) {
-        setValues((currentValues) => ({
-            ...currentValues,
-            [field]: nextValue,
-        }));
+        setValues((currentValues) => {
+            if (field === 'isSubDepartment') {
+                return {
+                    ...currentValues,
+                    isSubDepartment: Boolean(nextValue),
+                    parentDepartmentId: nextValue ? currentValues.parentDepartmentId : null,
+                    parentDepartmentName: nextValue ? currentValues.parentDepartmentName : '',
+                };
+            }
+
+            if (field === 'parentDepartment') {
+                return {
+                    ...currentValues,
+                    parentDepartmentId: nextValue?.id ?? null,
+                    parentDepartmentName: nextValue?.label ?? '',
+                };
+            }
+
+            if (field === 'allUsers') {
+                return {
+                    ...currentValues,
+                    allUsers: Boolean(nextValue),
+                    userScopeBranchId: nextValue ? null : currentValues.userScopeBranchId,
+                    userScopeBranchLabel: nextValue ? '' : currentValues.userScopeBranchLabel,
+                    selectedUserIds: nextValue ? [] : currentValues.selectedUserIds,
+                    selectedUserLabels: nextValue ? [] : currentValues.selectedUserLabels,
+                };
+            }
+
+            if (field === 'userScopeBranch') {
+                return {
+                    ...currentValues,
+                    userScopeBranchId: nextValue?.id ?? null,
+                    userScopeBranchLabel: nextValue?.label ?? '',
+                };
+            }
+
+            if (field === 'selectedUser') {
+                if (!nextValue?.id || currentValues.selectedUserIds.includes(nextValue.id)) {
+                    return currentValues;
+                }
+
+                return {
+                    ...currentValues,
+                    selectedUserIds: [...currentValues.selectedUserIds, nextValue.id],
+                    selectedUserLabels: [...currentValues.selectedUserLabels, nextValue.label],
+                };
+            }
+
+            if (field === 'removeSelectedUser') {
+                const removeIndex = currentValues.selectedUserLabels.findIndex((label) => label === nextValue);
+
+                if (removeIndex < 0) {
+                    return currentValues;
+                }
+
+                return {
+                    ...currentValues,
+                    selectedUserIds: currentValues.selectedUserIds.filter((_, index) => index !== removeIndex),
+                    selectedUserLabels: currentValues.selectedUserLabels.filter((_, index) => index !== removeIndex),
+                };
+            }
+
+            return {
+                ...currentValues,
+                [field]: nextValue,
+            };
+        });
     }
 
     const validationMessage = useMemo(() => validateDepartmentValues(values, form), [form, values]);
@@ -339,53 +504,52 @@ export default function DepartmentFormView({
     );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
+    useWorkspaceDirtyRegistration({
+        pageId,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(pageId && activeLevel2Tab?.id),
+    });
+
     async function handleSave() {
         if (validationMessage) {
-            setStatus({ tone: 'error', message: validationMessage });
-            showCrudValidationToast(validationMessage);
+            rejectCrudFormAction(validationMessage, { setStatus });
             return;
         }
 
-        const loadingToastId = showCrudLoadingToast(isDetailMode ? 'Sedang memperbarui departemen.' : 'Sedang menyimpan departemen.');
-        setSaving(true);
-        setStatus({ tone: '', message: '' });
+        await executeCrudFormAction({
+            loadingMessage: isDetailMode ? 'Sedang memperbarui departemen.' : 'Sedang menyimpan departemen.',
+            successMessage: isDetailMode ? 'Departemen berhasil diperbarui.' : 'Departemen berhasil dibuat.',
+            setSaving,
+            setStatus,
+            execute: async () => {
+                const payload = {
+                    code: buildDepartmentCode(values.name, values.__code),
+                    name: values.name.trim(),
+                    notes: values.description.trim() || null,
+                    parent_department_id: values.isSubDepartment ? values.parentDepartmentId : null,
+                    is_active: true,
+                    user_ids: values.allUsers ? [] : values.selectedUserIds,
+                };
+                const response = isDetailMode && values.__backendRecordId
+                    ? await updateBackendResource('departments', values.__backendRecordId, payload)
+                    : await createBackendResource('departments', payload);
 
-        try {
-            const payload = {
-                code: buildDepartmentCode(values.name, values.__code),
-                name: values.name.trim(),
-                notes: values.description.trim() || null,
-                is_active: true,
-            };
-            const response = isDetailMode && values.__backendRecordId
-                ? await updateBackendResource('departments', values.__backendRecordId, payload)
-                : await createBackendResource('departments', payload);
-            const record = response?.data ?? null;
+                return response?.data ?? null;
+            },
+            getErrorMessage: (error) => getBackendErrorMessage(error),
+            onSuccess: async (record) => {
+                await onRefresh?.();
 
-            await onRefresh?.();
-            const successMessage = isDetailMode ? 'Departemen berhasil diperbarui.' : 'Departemen berhasil dibuat.';
-            setStatus({
-                tone: 'success',
-                message: successMessage,
-            });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
-
-            if (!isDetailMode && record?.id) {
-                onOpenDetail?.({
-                    recordId: String(record.id),
-                    label: record.name ?? values.name.trim(),
-                    tabLabel: record.name ?? values.name.trim(),
-                });
-            }
-        } catch (error) {
-            const errorMessage = getBackendErrorMessage(error);
-            setStatus({ tone: 'error', message: errorMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudErrorToast(errorMessage);
-        } finally {
-            setSaving(false);
-        }
+                if (!isDetailMode && record?.id) {
+                    onOpenDetail?.({
+                        recordId: String(record.id),
+                        label: record.name ?? values.name.trim(),
+                        tabLabel: record.name ?? values.name.trim(),
+                    });
+                }
+            },
+        });
     }
 
     function requestDelete() {
@@ -401,28 +565,20 @@ export default function DepartmentFormView({
             return;
         }
 
-        const loadingToastId = showCrudLoadingToast('Sedang menghapus departemen.');
-        setSaving(true);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
-
-        try {
-            await deleteBackendResource('departments', values.__backendRecordId);
-            await onRefresh?.();
-            const successMessage = 'Departemen berhasil dihapus.';
-            setStatus({ tone: 'success', message: successMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
-            onCloseDetail?.(values.__backendRecordId);
-            onOpenContent?.();
-        } catch (error) {
-            const errorMessage = getBackendErrorMessage(error);
-            setStatus({ tone: 'error', message: errorMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudErrorToast(errorMessage);
-        } finally {
-            setSaving(false);
-        }
+        await executeCrudFormAction({
+            loadingMessage: 'Sedang menghapus departemen.',
+            successMessage: 'Departemen berhasil dihapus.',
+            setSaving,
+            setStatus,
+            onStart: () => setDeleteConfirmationOpen(false),
+            execute: () => deleteBackendResource('departments', values.__backendRecordId),
+            getErrorMessage: (error) => getBackendErrorMessage(error),
+            onSuccess: async () => {
+                await onRefresh?.();
+                onCloseDetail?.(values.__backendRecordId);
+                onOpenContent?.();
+            },
+        });
     }
 
     return (
@@ -435,14 +591,25 @@ export default function DepartmentFormView({
 
             <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 xl:flex-row xl:items-start">
                 <div className="order-2 min-w-0 flex-1 xl:order-1">
-                    <StatusMessage status={status} />
+                    <CrudStatusMessage status={status} />
 
                     {activeTabId === 'department-opening-balance' ? (
                         <DepartmentOpeningBalanceTab form={form} values={values} onChange={handleChange} />
                     ) : activeTabId === 'department-users' ? (
-                        <DepartmentUsersTab form={form} values={values} onChange={handleChange} />
+                        <DepartmentUsersTab
+                            form={form}
+                            values={values}
+                            onChange={handleChange}
+                            branchOptions={branchOptions}
+                            userOptions={userOptions}
+                        />
                     ) : (
-                        <DepartmentGeneralTab form={form} values={values} onChange={handleChange} />
+                        <DepartmentGeneralTab
+                            form={form}
+                            values={values}
+                            onChange={handleChange}
+                            parentDepartmentOptions={parentDepartmentOptions}
+                        />
                     )}
                 </div>
 

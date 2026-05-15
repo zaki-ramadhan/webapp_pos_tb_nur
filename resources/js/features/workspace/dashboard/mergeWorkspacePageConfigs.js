@@ -1,8 +1,8 @@
-import { buildAssetChangeConfig } from '@/features/workspace/modules/assetChangeConfig';
-import { assetLocationConfig } from '@/features/workspace/modules/assetLocationConfig';
-import { buildReportListConfig } from '@/features/workspace/modules/reportListConfig';
-import { buildSalesReturnConfig } from '@/features/workspace/modules/salesReturnConfig';
-import { supplierTransferConfig } from '@/features/workspace/modules/supplierTransferConfig';
+import { buildAssetChangeConfig } from '@/features/workspace/modules/asset-change/assetChangeConfig';
+import { assetLocationConfig } from '@/features/workspace/modules/asset-location/assetLocationConfig';
+import { buildReportListConfig } from '@/features/workspace/modules/report-list/reportListConfig';
+import { buildSalesReturnConfig } from '@/features/workspace/modules/sales-document/salesReturnConfig';
+import { supplierTransferConfig } from '@/features/workspace/modules/supplier-transfer/supplierTransferConfig';
 
 const TRANSACTION_TOP_ACTIONS = [
     {
