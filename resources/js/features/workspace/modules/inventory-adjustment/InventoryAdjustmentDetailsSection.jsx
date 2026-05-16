@@ -14,7 +14,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 
-import { resolveCellAlignClassName } from './InventoryAdjustmentShared';
+import { resolveCellAlignClassName } from './inventoryAdjustmentShared';
 
 function InventoryAdjustmentTableSection({ columns, items, emptyLabel, isDetail, onOpenItem, minWidthClassName }) {
     return (

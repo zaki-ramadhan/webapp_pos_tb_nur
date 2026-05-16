@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import PurchasePaymentInvoiceModal from '@/features/workspace/modules/shared/PurchasePaymentInvoiceModal';
+import PurchasePaymentInvoiceModal from '@/features/workspace/modules/purchase-payment/PurchasePaymentInvoiceModal';
 import {
     TransactionDualTotalCard,
     TransactionFormLayout,

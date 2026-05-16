@@ -11,7 +11,7 @@ import {
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import TableListView from '@/features/workspace/modules/TableListView';
-import InventoryAdjustmentItemModal from '@/features/workspace/modules/shared/InventoryAdjustmentItemModal';
+import InventoryAdjustmentItemModal from '@/features/workspace/modules/inventory-adjustment/InventoryAdjustmentItemModal';
 import {
     TransactionDock,
     TransactionSectionRail,

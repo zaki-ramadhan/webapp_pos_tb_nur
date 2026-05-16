@@ -4,6 +4,18 @@ import { areComparableValuesEqual, validateRequiredChecks } from '@/features/wor
 
 export const buildLookupLabel = buildAccountLookupLabel;
 
+export function resolveCellAlignClassName(align) {
+    if (align === 'right') {
+        return 'text-right';
+    }
+
+    if (align === 'center') {
+        return 'text-center';
+    }
+
+    return 'text-left';
+}
+
 export function formatCurrencyValue(value) {
     const numericValue = Number(value ?? 0);
 

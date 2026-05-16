@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import StockOpnameResultItemModal from '@/features/workspace/modules/shared/StockOpnameResultItemModal';
+import StockOpnameResultItemModal from '@/features/workspace/modules/stock-opname-result/StockOpnameResultItemModal';
 import { TransactionDock, TransactionSectionRail } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     buildStockOpnameResultRecord,

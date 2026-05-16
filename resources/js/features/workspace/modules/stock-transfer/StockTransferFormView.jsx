@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import StockTransferItemModal from '@/features/workspace/modules/shared/StockTransferItemModal';
+import StockTransferItemModal from '@/features/workspace/modules/stock-transfer/StockTransferItemModal';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     resolveDocumentRequirementValue,

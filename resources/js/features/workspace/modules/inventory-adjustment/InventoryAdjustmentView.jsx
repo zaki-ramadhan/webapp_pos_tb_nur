@@ -13,7 +13,7 @@ import {
 import {
     InventoryAdjustmentFormView,
     InventoryAdjustmentTableView,
-} from '@/features/workspace/modules/shared/InventoryAdjustmentWorkspace';
+} from '@/features/workspace/modules/inventory-adjustment/InventoryAdjustmentWorkspace';
 
 export default function InventoryAdjustmentView({
     page,

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { buildItemRequestRecord } from './itemRequestConfig';
-import ItemRequestItemModal from '@/features/workspace/modules/shared/ItemRequestItemModal';
+import ItemRequestItemModal from '@/features/workspace/modules/item-request/ItemRequestItemModal';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     resolveDocumentRequirementValue,

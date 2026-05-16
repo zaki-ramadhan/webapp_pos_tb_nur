@@ -11,7 +11,7 @@ import {
     buildGeneratedDocumentNumber,
     buildOperationDocumentPayload,
 } from '@/features/workspace/backend/operationDocumentBackend';
-import SalesDocumentItemModal from '@/features/workspace/modules/shared/SalesDocumentItemModal';
+import SalesDocumentItemModal from '@/features/workspace/modules/sales-document/SalesDocumentItemModal';
 import {
     buildSalesDocumentFormState,
     DocumentStamp,

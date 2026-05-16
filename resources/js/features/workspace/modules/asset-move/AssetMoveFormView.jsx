@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import AssetMoveItemModal from '@/features/workspace/modules/shared/AssetMoveItemModal';
+import AssetMoveItemModal from '@/features/workspace/modules/asset-move/AssetMoveItemModal';
 import {
     TransactionDock,
     TransactionSectionRail,

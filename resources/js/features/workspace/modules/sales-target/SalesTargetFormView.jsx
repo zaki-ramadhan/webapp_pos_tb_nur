@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import TargetDetailEntryModal from '@/features/workspace/modules/shared/TargetDetailEntryModal';
+import TargetDetailEntryModal from '@/features/workspace/modules/sales-target/TargetDetailEntryModal';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { resolveSaveDisabledState } from '@/features/workspace/shared/formValidation';
 import { SalesTargetAdditionalInfoSection, SalesTargetDetailsSection, SalesTargetHeader } from './SalesTargetSections';

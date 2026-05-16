@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { buildStockOpnameOrderRecord } from '@/features/workspace/modules/stock-opname-order/stockOpnameOrderConfig';
-import StockOpnameOrderItemModal from '@/features/workspace/modules/shared/StockOpnameOrderItemModal';
+import StockOpnameOrderItemModal from '@/features/workspace/modules/stock-opname-order/StockOpnameOrderItemModal';
 import { TransactionDock, TransactionSectionRail } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     StockOpnameOrderHeader,
