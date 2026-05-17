@@ -14,6 +14,64 @@ import {
 } from '@/features/workspace/shared/workspaceAvailability';
 import { DownloadIcon, SaveIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
+function buildResolvedReportConfig(rows, fallbackConfig) {
+    if (rows.length) {
+        return buildBackendReportListConfig(rows, fallbackConfig);
+    }
+
+    return {
+        ...fallbackConfig,
+        reports: [],
+    };
+}
+
+function buildReportContentState({ loading, error, reportsCount, visibleSectionsCount, keyword, config, onRetry }) {
+    if (loading) {
+        return {
+            title: 'Memuat daftar laporan',
+            description: 'Daftar laporan sedang diambil dari server.',
+            iconName: 'reports',
+        };
+    }
+
+    if (error) {
+        return {
+            title: 'Gagal memuat daftar laporan',
+            description: error,
+            iconName: 'document',
+            action: (
+                <button
+                    type="button"
+                    onClick={onRetry}
+                    className="inline-flex h-[36px] items-center justify-center rounded-[8px] border border-[#7aa2d5] bg-white px-4 text-[14px] font-medium text-[#2353a0]"
+                >
+                    Muat Ulang
+                </button>
+            ),
+        };
+    }
+
+    if (reportsCount === 0) {
+        return {
+            title: 'Belum ada laporan',
+            description: 'Data daftar laporan belum tersedia dari backend.',
+            iconName: 'reports',
+        };
+    }
+
+    if (visibleSectionsCount === 0) {
+        return {
+            title: config.emptyState.title,
+            description: keyword
+                ? config.emptyState.description
+                : 'Belum ada laporan pada kategori yang dipilih.',
+            iconName: keyword ? 'search' : 'reports',
+        };
+    }
+
+    return null;
+}
+
 function SidebarCategoryButton({ category, active, count, onSelect }) {
     const isInactive = isReportCategoryInactive(category.id);
 
@@ -162,18 +220,13 @@ function buildVisibleSections(reports, activeCategoryId, keyword) {
 
 export default function ReportListView({ page }) {
     const fallbackConfig = page.reportList ?? buildReportListConfig();
-    const { rows } = useBackendIndexResource({
+    const { rows, loading, error, reload } = useBackendIndexResource({
         resource: 'report-lists',
         filters: {
             per_page: 100,
         },
     });
-    const config = rows.length
-        ? buildBackendReportListConfig(rows, fallbackConfig)
-        : {
-              ...fallbackConfig,
-              reports: [],
-          };
+    const config = buildResolvedReportConfig(rows, fallbackConfig);
     const firstActiveCategoryId = config.categories.find((category) => !isReportCategoryInactive(category.id))?.id ?? config.categories[0]?.id ?? '';
     const [activeCategoryId, setActiveCategoryId] = useState(firstActiveCategoryId);
     const [searchValue, setSearchValue] = useState('');
@@ -183,6 +236,15 @@ export default function ReportListView({ page }) {
         config.categories.find((category) => !isReportCategoryInactive(category.id)) ??
         config.categories[0];
     const visibleSections = buildVisibleSections(config.reports, activeCategory?.id ?? '', deferredKeyword);
+    const contentState = buildReportContentState({
+        loading,
+        error,
+        reportsCount: config.reports.length,
+        visibleSectionsCount: visibleSections.length,
+        keyword: deferredKeyword,
+        config,
+        onRetry: reload,
+    });
 
     return (
         <div className="flex min-h-full flex-col">
@@ -230,11 +292,13 @@ export default function ReportListView({ page }) {
                                     {activeCategory?.label ?? config.title}
                                 </h1>
                                 <p className="text-[14px] leading-6 text-[#8892a7]">
-                                    {visibleSections.reduce((total, section) => total + section.items.length, 0)} laporan tersedia
+                                    {loading
+                                        ? 'Memuat data laporan...'
+                                        : `${visibleSections.reduce((total, section) => total + section.items.length, 0)} laporan tersedia`}
                                 </p>
                             </div>
 
-                            {visibleSections.length ? (
+                            {!contentState ? (
                                 <div className="space-y-7">
                                     {visibleSections.map((section) => (
                                         <section key={section.title}>
@@ -255,9 +319,10 @@ export default function ReportListView({ page }) {
                                     bordered
                                     align="left"
                                     tone="subtle"
-                                    title={config.emptyState.title}
-                                    description={config.emptyState.description}
-                                    iconName="reports"
+                                    title={contentState.title}
+                                    description={contentState.description}
+                                    action={contentState.action}
+                                    iconName={contentState.iconName}
                                     className="min-h-[280px] border-[#d8e1ef] bg-[#fbfcfe]"
                                 />
                             )}
