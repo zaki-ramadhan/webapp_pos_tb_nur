@@ -10,9 +10,10 @@ import {
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 
-export default function SalaryAllowanceTableView({ config, rows, filters, setFilters, onCreate, onOpenDetail }) {
+export default function SalaryAllowanceTableView({ config, rows, filters, setFilters, onCreate, onOpenDetail, loading = false, error = '', onRefresh = null }) {
     const [keyword, setKeyword] = useState('');
 
     const filteredRows = useMemo(() => {
@@ -70,7 +71,7 @@ export default function SalaryAllowanceTableView({ config, rows, filters, setFil
                     label: config.table.createLabel,
                     onClick: onCreate,
                 }}
-                refreshButton={{ label: config.table.refreshLabel }}
+                refreshButton={{ label: loading ? 'Memuat...' : config.table.refreshLabel, onClick: onRefresh }}
                 printButton={{ label: config.table.printLabel }}
                 search={{
                     value: keyword,
@@ -81,6 +82,7 @@ export default function SalaryAllowanceTableView({ config, rows, filters, setFil
             />
 
             <div className="mt-4">
+                <CrudStatusMessage status={error ? { tone: 'error', message: error } : null} className="mb-3" />
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
@@ -93,17 +95,25 @@ export default function SalaryAllowanceTableView({ config, rows, filters, setFil
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f1f1f2]' : 'bg-white'}`.trim()}
-                                onClick={() => onOpenDetail(row.id)}
-                            >
-                                <DataTableCell className="py-3 text-[17px]">{formatTableTextValue(row.name)}</DataTableCell>
-                                <DataTableCell className="py-3 text-[17px]">{formatTableTextValue(row.type)}</DataTableCell>
-                                <DataTableCell className="py-3 text-[17px]">{formatTableTextValue(row.inactiveLabel)}</DataTableCell>
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f1f1f2]' : 'bg-white'}`.trim()}
+                                    onClick={() => onOpenDetail(row.id)}
+                                >
+                                    <DataTableCell className="py-3 text-[17px]">{formatTableTextValue(row.name)}</DataTableCell>
+                                    <DataTableCell className="py-3 text-[17px]">{formatTableTextValue(row.type)}</DataTableCell>
+                                    <DataTableCell className="py-3 text-[17px]">{formatTableTextValue(row.inactiveLabel)}</DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow>
+                                <DataTableCell colSpan={config.table.columns.length} className="py-6 text-center text-[15px] text-[#6b7280]">
+                                    {loading ? 'Memuat data...' : config.table.emptyLabel ?? 'Belum ada data'}
+                                </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>

@@ -17,7 +17,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export function PaymentLineItemsSection({ config, values, setValues }) {
+export function PaymentLineItemsSection({ config, values, setValues, handlers = {} }) {
     const detailTitle = values.lineItems.length
         ? `${values.lineItems.length} ${config.lineSectionTitle}`
         : config.lineSectionTitle;
@@ -34,18 +34,19 @@ export function PaymentLineItemsSection({ config, values, setValues }) {
                     placeholder={config.lineSearchPlaceholder}
                     searchLabel="Cari akun pembayaran"
                     dialogTitle="Pilih Akun Pembayaran"
-                    onSelectAccount={(_, label) =>
-                        setValues((current) => ({
-                            ...current,
-                            lineLookup: label,
-                        }))
-                    }
+                    onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
                 />
             }
             title={detailTitle}
             columns={config.lineTable.columns}
             rows={values.lineItems}
             emptyLabel={config.lineTable.emptyLabel}
+            onRowClick={handlers.onEditLineItem}
+            getRowClassName={
+                handlers.onEditLineItem
+                    ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
+                    : undefined
+            }
             spacerCellContent={
                 <span className="inline-flex items-center justify-center text-[#a8afbe]">
                     <TableActionIcon className="h-4 w-4" />
@@ -60,7 +61,7 @@ export function PaymentLineItemsSection({ config, values, setValues }) {
     );
 }
 
-export function PaymentInfoSection({ config, values, isDetail }) {
+export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) {
     return (
         <div className="min-h-[540px]">
             <div className={`grid gap-8 ${isDetail ? 'xl:grid-cols-2' : ''}`.trim()}>
@@ -100,8 +101,9 @@ export function PaymentInfoSection({ config, values, isDetail }) {
                         <ChipLookupField
                             values={values.branches}
                             placeholder={config.branchPlaceholder}
-                            onRemove={() => {}}
+                            onRemove={(value) => handlers.onRemoveBranch?.(value)}
                             searchLabel="Cari cabang"
+                            onSearch={handlers.onSelectBranch}
                         />
 
                         <TransactionFieldLabel label={config.labels.notes} />
@@ -160,7 +162,7 @@ export function PaymentInfoSection({ config, values, isDetail }) {
     );
 }
 
-export function CashPaymentHeader({ config, values, setValues, activeRecordId }) {
+export function CashPaymentHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
             <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
@@ -168,8 +170,9 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId })
                 <ChipLookupField
                     values={values.bankAccounts}
                     placeholder={config.cashBankPlaceholder}
-                    onRemove={() => {}}
+                    onRemove={(value) => handlers.onRemoveBankAccount?.(value)}
                     searchLabel="Cari kas atau bank"
+                    onSearch={handlers.onSelectBankAccount}
                 />
 
                 <TransactionFieldLabel label={config.labels.entryDate} required />

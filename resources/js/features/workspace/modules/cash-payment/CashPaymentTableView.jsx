@@ -17,7 +17,14 @@ import {
 } from '@/features/workspace/shared/Icons';
 import { PaymentTableFilterBar } from './CashPaymentSections';
 
-export default function CashPaymentTableView({ config, onCreate, onOpenDetail }) {
+export default function CashPaymentTableView({
+    config,
+    onCreate,
+    onOpenDetail,
+    loading = false,
+    error = '',
+    onRefresh = null,
+}) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -68,8 +75,10 @@ export default function CashPaymentTableView({ config, onCreate, onOpenDetail })
                     icon: <PlusIcon className="h-6 w-6" />,
                 }}
                 refreshButton={{
-                    label: config.table.refreshLabel,
+                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    onClick: onRefresh,
+                    loading,
                 }}
                 rightControls={
                     <>
@@ -102,7 +111,7 @@ export default function CashPaymentTableView({ config, onCreate, onOpenDetail })
                 <TransactionDataTable
                     columns={config.table.columns}
                     rows={filteredRows}
-                    emptyLabel="Belum ada data"
+                    emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
                     minWidthClassName="min-w-[1380px]"
                     onRowClick={(row) =>
                         onOpenDetail?.({

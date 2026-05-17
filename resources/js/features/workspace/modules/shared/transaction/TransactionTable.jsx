@@ -119,6 +119,8 @@ export function TransactionLineItemsSection({
     spacerHeaderContent = null,
     spacerCellContent = null,
     emptyLeadingCellContent = null,
+    onRowClick = null,
+    getRowClassName = null,
 }) {
     const hasRows = rows.length > 0;
 
@@ -163,6 +165,8 @@ export function TransactionLineItemsSection({
                     emptyLabel={emptyLabel}
                     minWidthClassName={minWidthClassName}
                     emptyLeadingCellContent={emptyLeadingCellContent}
+                    onRowClick={onRowClick}
+                    getRowClassName={getRowClassName}
                     renderHeaderCell={(column) => (column.kind === 'spacer' ? spacerHeaderContent : column.label)}
                     renderCell={({ row, column }) =>
                         column.kind === 'spacer' ? spacerCellContent : formatTableTextValue(row[column.id])

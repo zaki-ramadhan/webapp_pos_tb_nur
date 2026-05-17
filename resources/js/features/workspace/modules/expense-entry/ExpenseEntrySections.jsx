@@ -12,7 +12,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export function ExpenseLineItemsSection({ config, values, setValues }) {
+export function ExpenseLineItemsSection({ config, values, setValues, handlers = {} }) {
     const detailTitle = values.lineItems.length
         ? `${values.lineItems.length} ${config.lineSectionTitle}`
         : config.lineSectionTitle;
@@ -33,18 +33,19 @@ export function ExpenseLineItemsSection({ config, values, setValues }) {
                     placeholder={config.lineSearchPlaceholder}
                     searchLabel="Cari akun rincian beban"
                     dialogTitle="Pilih Akun Rincian Beban"
-                    onSelectAccount={(_, label) =>
-                        setValues((current) => ({
-                            ...current,
-                            lineLookup: label,
-                        }))
-                    }
+                    onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
                 />
             }
             title={detailTitle}
             columns={config.lineTable.columns}
             rows={values.lineItems}
             emptyLabel={config.lineTable.emptyLabel}
+            onRowClick={handlers.onEditLineItem}
+            getRowClassName={
+                handlers.onEditLineItem
+                    ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
+                    : undefined
+            }
             spacerHeaderContent={
                 <span className="flex justify-center">
                     <SortIcon className="h-3 w-3 text-white/55" />
@@ -54,7 +55,7 @@ export function ExpenseLineItemsSection({ config, values, setValues }) {
     );
 }
 
-export function ExpenseAdditionalInfoSection({ config, values, setValues }) {
+export function ExpenseAdditionalInfoSection({ config, values, setValues, handlers = {} }) {
     return (
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
@@ -72,12 +73,15 @@ export function ExpenseAdditionalInfoSection({ config, values, setValues }) {
                     values={values.branches}
                     placeholder={config.branchPlaceholder}
                     onRemove={(value) =>
-                        setValues((current) => ({
-                            ...current,
-                            branches: current.branches.filter((item) => item !== value),
-                        }))
+                        handlers.onRemoveBranch
+                            ? handlers.onRemoveBranch(value)
+                            : setValues((current) => ({
+                                  ...current,
+                                  branches: current.branches.filter((item) => item !== value),
+                              }))
                     }
                     searchLabel="Cari cabang"
+                    onSearch={handlers.onSelectBranch}
                 />
 
                 <TransactionFieldLabel label={config.labels.notes} />
@@ -116,7 +120,7 @@ export function ExpenseSummarySection({ config, values }) {
     );
 }
 
-export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch }) {
+export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch, handlers = {} }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
             <div className="grid gap-y-3 sm:grid-cols-[250px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
@@ -126,18 +130,15 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                     placeholder={config.liabilityAccountPlaceholder}
                     dialogTitle="Pilih Akun Hutang Beban"
                     onRemove={(value) =>
-                        setValues((current) => ({
-                            ...current,
-                            liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
-                        }))
+                        handlers.onRemoveLiabilityAccount
+                            ? handlers.onRemoveLiabilityAccount(value)
+                            : setValues((current) => ({
+                                  ...current,
+                                  liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
+                              }))
                     }
                     searchLabel="Cari akun hutang beban"
-                    onSelectAccount={(_, label) =>
-                        setValues((current) => ({
-                            ...current,
-                            liabilityAccounts: label ? [label] : [],
-                        }))
-                    }
+                    onSelectAccount={(record) => handlers.onSelectLiabilityAccount?.(record)}
                 />
 
                 <TransactionFieldLabel label={config.labels.entryDate} required />

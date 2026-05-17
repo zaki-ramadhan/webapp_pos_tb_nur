@@ -16,7 +16,14 @@ import {
     cashReceiptToolbarConfig,
 } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
 
-export default function CashReceiptTableView({ config, onCreate, onOpenDetail }) {
+export default function CashReceiptTableView({
+    config,
+    onCreate,
+    onOpenDetail,
+    loading = false,
+    error = '',
+    onRefresh = null,
+}) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -59,6 +66,12 @@ export default function CashReceiptTableView({ config, onCreate, onOpenDetail })
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
                 {...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField)}
+                refreshButton={{
+                    ...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField).refreshButton,
+                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
+                    onClick: onRefresh,
+                    loading,
+                }}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -79,7 +92,7 @@ export default function CashReceiptTableView({ config, onCreate, onOpenDetail })
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
+                        {filteredRows.length ? filteredRows.map((row, index) => (
                             <DataTableRow
                                 key={row.id}
                                 className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
@@ -96,7 +109,13 @@ export default function CashReceiptTableView({ config, onCreate, onOpenDetail })
                                     </DataTableCell>
                                 ))}
                             </DataTableRow>
-                        ))}
+                        )) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={config.table.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                    {loading ? 'Memuat data...' : (error || 'Belum ada data')}
+                                </DataTableCell>
+                            </DataTableRow>
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>

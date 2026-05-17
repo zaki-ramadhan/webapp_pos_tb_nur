@@ -17,7 +17,14 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { JournalTableFilters } from './GeneralJournalSections';
 
-export default function GeneralJournalTableView({ config, onCreate, onOpenDetail }) {
+export default function GeneralJournalTableView({
+    config,
+    onCreate,
+    onOpenDetail,
+    loading = false,
+    error = '',
+    onRefresh = null,
+}) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -69,8 +76,10 @@ export default function GeneralJournalTableView({ config, onCreate, onOpenDetail
                         icon: <PlusIcon className="h-6 w-6" />,
                     }}
                     refreshButton={{
-                        label: config.table.refreshLabel,
+                        label: loading ? 'Memuat data...' : config.table.refreshLabel,
                         icon: <RefreshIcon className="h-5 w-5" />,
+                        onClick: onRefresh,
+                        loading,
                     }}
                     rightControls={
                         <>
@@ -102,7 +111,7 @@ export default function GeneralJournalTableView({ config, onCreate, onOpenDetail
                     <TransactionDataTable
                         columns={config.table.columns}
                         rows={filteredRows}
-                        emptyLabel="Belum ada data"
+                        emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
                         minWidthClassName="min-w-[1320px]"
                         onRowClick={(row) =>
                             onOpenDetail?.({

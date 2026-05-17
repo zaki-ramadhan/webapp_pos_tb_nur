@@ -17,7 +17,14 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { PurchasePaymentTableFilterBar } from './PurchasePaymentSections';
 
-export default function PurchasePaymentTableView({ config, onCreate, onOpenDetail }) {
+export default function PurchasePaymentTableView({
+    config,
+    onCreate,
+    onOpenDetail,
+    loading = false,
+    error = '',
+    onRefresh = null,
+}) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -77,8 +84,10 @@ export default function PurchasePaymentTableView({ config, onCreate, onOpenDetai
                     icon: <PlusIcon className="h-6 w-6" />,
                 }}
                 refreshButton={{
-                    label: config.table.refreshLabel,
+                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    onClick: onRefresh,
+                    loading,
                 }}
                 rightControls={
                     <>
@@ -111,7 +120,7 @@ export default function PurchasePaymentTableView({ config, onCreate, onOpenDetai
                 <TransactionDataTable
                     columns={config.table.columns}
                     rows={filteredRows}
-                    emptyLabel="Belum ada data"
+                    emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
                     minWidthClassName="min-w-[1440px]"
                     onRowClick={(row) =>
                         onOpenDetail?.({

@@ -1,12 +1,34 @@
 import { useMemo, useState } from 'react';
 
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import PanelActions from '@/features/workspace/shared/PanelActions';
 import SecondaryTabs from '@/features/workspace/shared/SecondaryTabs';
 import SalaryAllowanceFormView from './SalaryAllowanceFormView';
 import SalaryAllowanceTableView from './SalaryAllowanceTableView';
+import { buildSalaryAllowanceEntry, buildSalaryAllowanceRow } from './salaryAllowanceShared';
 
 export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
     const config = page.salaryAllowance;
+    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+        resource: 'salary-allowances',
+        filters: {
+            per_page: 100,
+        },
+    });
+    const mappedBackendRows = useMemo(() => backendRows.map(buildSalaryAllowanceRow), [backendRows]);
+    const [optimisticRows, setOptimisticRows] = useState({});
+    const resolvedRows = useMemo(() => {
+        const mergedMap = {};
+
+        mappedBackendRows.forEach((row) => {
+            mergedMap[row.id] = row;
+        });
+        Object.values(optimisticRows).forEach((row) => {
+            mergedMap[row.id] = row;
+        });
+
+        return Object.values(mergedMap);
+    }, [mappedBackendRows, optimisticRows]);
     const [isNewTabOpen, setIsNewTabOpen] = useState(true);
     const [activeInnerTabId, setActiveInnerTabId] = useState('new');
     const [openDetailTabIds, setOpenDetailTabIds] = useState([]);
@@ -19,11 +41,11 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
 
     const rowMap = useMemo(
         () =>
-            config.rows.reduce((result, row) => {
+            resolvedRows.reduce((result, row) => {
                 result[row.id] = row;
                 return result;
             }, {}),
-        [config.rows],
+        [resolvedRows],
     );
 
     const detailTabs = openDetailTabIds.map((id) => rowMap[id]).filter(Boolean);
@@ -62,8 +84,47 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
         }
     }
 
-    const activeEntry = activeInnerTabId === 'new' ? config.newEntry : rowMap[activeInnerTabId] ?? config.newEntry;
+    const activeEntry = activeInnerTabId === 'new'
+        ? buildSalaryAllowanceEntry(null, config.newEntry)
+        : buildSalaryAllowanceEntry(rowMap[activeInnerTabId] ?? null, config.newEntry);
     const isViewMode = activeInnerTabId === 'view';
+    const resolvedConfig = useMemo(
+        () => ({
+            ...config,
+            rows: resolvedRows,
+            table: {
+                ...config.table,
+                pageValue: total.toLocaleString('id-ID'),
+                loading,
+                emptyLabel: error || 'Belum ada data',
+                onRefresh: reload,
+            },
+        }),
+        [config, error, loading, reload, resolvedRows, total],
+    );
+
+    function handlePersist(record) {
+        const nextRow = buildSalaryAllowanceRow(record);
+
+        setOptimisticRows((current) => ({
+            ...current,
+            [nextRow.id]: nextRow,
+        }));
+        setOpenDetailTabIds((current) => (current.includes(nextRow.id) ? current : [...current, nextRow.id]));
+        setIsNewTabOpen(false);
+        setActiveInnerTabId(nextRow.id);
+    }
+
+    function handleDelete(recordId) {
+        setOptimisticRows((current) => {
+            const nextState = { ...current };
+            delete nextState[String(recordId)];
+
+            return nextState;
+        });
+        setOpenDetailTabIds((current) => current.filter((id) => id !== String(recordId)));
+        setActiveInnerTabId('view');
+    }
 
     return (
         <div className="flex min-h-full flex-col">
@@ -84,21 +145,27 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
             <div className="min-h-0 flex-1">
                 {isViewMode ? (
                     <SalaryAllowanceTableView
-                        config={config}
-                        rows={config.rows}
+                        config={resolvedConfig}
+                        rows={resolvedRows}
                         filters={filters}
                         setFilters={setFilters}
                         onCreate={handleOpenNewTab}
                         onOpenDetail={handleOpenDetail}
+                        loading={loading}
+                        error={error}
+                        onRefresh={reload}
                     />
                 ) : (
                     <SalaryAllowanceFormView
                         key={activeInnerTabId}
                         pageId={page.id}
                         activeLevel2Tab={activeLevel2Tab}
-                        config={config}
+                        config={resolvedConfig}
                         entry={activeEntry}
                         actions={activeInnerTabId === 'new' ? config.formActions : config.editActions}
+                        onPersist={handlePersist}
+                        onDelete={handleDelete}
+                        onRefresh={reload}
                     />
                 )}
             </div>

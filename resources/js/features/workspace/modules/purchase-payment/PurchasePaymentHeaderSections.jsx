@@ -25,12 +25,13 @@ export function PurchasePaymentAmountField({ values }) {
     );
 }
 
-export function PurchasePaymentHeaderIconButton({ label, icon }) {
+export function PurchasePaymentHeaderIconButton({ label, icon, onClick = null }) {
     return (
         <button
             type="button"
             aria-label={label}
             title={label}
+            onClick={onClick}
             className="inline-flex h-[36px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
         >
             {icon}
@@ -38,15 +39,27 @@ export function PurchasePaymentHeaderIconButton({ label, icon }) {
     );
 }
 
-export function PurchasePaymentHeader({ config, values, setValues, isDetail }) {
+export function PurchasePaymentHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
             <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.payee} required />
-                <ChipLookupField values={values.payee} placeholder={config.payeePlaceholder} onRemove={() => {}} searchLabel="Cari pemasok" />
+                <ChipLookupField
+                    values={values.payee}
+                    placeholder={config.payeePlaceholder}
+                    onRemove={(value) => handlers.onRemovePayee?.(value)}
+                    searchLabel="Cari pemasok"
+                    onSearch={handlers.onSelectPayee}
+                />
 
                 <TransactionFieldLabel label={config.labels.bank} required />
-                <ChipLookupField values={values.bankAccounts} placeholder={config.bankPlaceholder} onRemove={() => {}} searchLabel="Cari bank" />
+                <ChipLookupField
+                    values={values.bankAccounts}
+                    placeholder={config.bankPlaceholder}
+                    onRemove={(value) => handlers.onRemoveBankAccount?.(value)}
+                    searchLabel="Cari bank"
+                    onSearch={handlers.onSelectBankAccount}
+                />
 
                 <TransactionFieldLabel label={config.labels.paymentAmount} />
                 <div className="flex max-w-[390px] items-center gap-3">

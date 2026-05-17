@@ -12,7 +12,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export function JournalLinesSection({ config, values, setValues }) {
+export function JournalLinesSection({ config, values, setValues, handlers = {} }) {
     const detailTitle = values.lineItems.length
         ? `${values.lineItems.length} ${config.lineSectionTitle}`
         : config.lineSectionTitle;
@@ -33,12 +33,7 @@ export function JournalLinesSection({ config, values, setValues }) {
                     placeholder={config.lineSearchPlaceholder}
                     searchLabel="Cari akun jurnal"
                     dialogTitle="Pilih Akun Jurnal"
-                    onSelectAccount={(_, label) =>
-                        setValues((current) => ({
-                            ...current,
-                            lineLookup: label,
-                        }))
-                    }
+                    onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
                 />
             }
             title={detailTitle}
@@ -47,6 +42,12 @@ export function JournalLinesSection({ config, values, setValues }) {
             emptyLabel={config.lineTable.emptyLabel}
             minWidthClassName="min-w-[820px]"
             showTitleSearchButton
+            onRowClick={handlers.onEditLineItem}
+            getRowClassName={
+                handlers.onEditLineItem
+                    ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
+                    : undefined
+            }
             spacerHeaderContent={
                 <span className="flex justify-center">
                     <SortIcon className="h-3 w-3 text-white/55" />
@@ -56,7 +57,7 @@ export function JournalLinesSection({ config, values, setValues }) {
     );
 }
 
-export function JournalAdditionalInfoSection({ config, values, setValues }) {
+export function JournalAdditionalInfoSection({ config, values, setValues, handlers = {} }) {
     return (
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
@@ -69,10 +70,12 @@ export function JournalAdditionalInfoSection({ config, values, setValues }) {
                     onRemove={(value) =>
                         setValues((current) => ({
                             ...current,
+                            __branchId: current.branches.length <= 1 ? null : current.__branchId,
                             branches: current.branches.filter((item) => item !== value),
                         }))
                     }
                     searchLabel="Cari cabang"
+                    onSearch={handlers.onSelectBranch}
                 />
 
                 <TransactionFieldLabel label={config.labels.notes} />

@@ -20,7 +20,14 @@ import {
     SalesDepositTableHeaderCell,
 } from './SalesDepositSections';
 
-export default function SalesDepositTableView({ config, onCreate, onOpenDetail }) {
+export default function SalesDepositTableView({
+    config,
+    onCreate,
+    onOpenDetail,
+    loading = false,
+    error = '',
+    onRefresh = null,
+}) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -64,7 +71,9 @@ export default function SalesDepositTableView({ config, onCreate, onOpenDetail }
                     icon: <PlusIcon className="h-6 w-6" />,
                 }}
                 refreshButton={{
-                    label: config.table.refreshLabel,
+                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
+                    onClick: onRefresh,
+                    loading,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
                 }}
                 rightControls={
@@ -85,10 +94,10 @@ export default function SalesDepositTableView({ config, onCreate, onOpenDetail }
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <TransactionDataTable
-                    columns={config.table.columns}
-                    rows={filteredRows}
-                    emptyLabel="Belum ada data"
+                    <TransactionDataTable
+                        columns={config.table.columns}
+                        rows={filteredRows}
+                        emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
                     minWidthClassName="min-w-[1480px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                     getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}

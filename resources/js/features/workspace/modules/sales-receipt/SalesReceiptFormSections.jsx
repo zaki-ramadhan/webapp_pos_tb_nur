@@ -28,7 +28,7 @@ import {
     ReadonlyTextarea,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 
-export function SalesReceiptInvoicesSection({ config, values, setValues, isDetail, onOpenInvoiceModal }) {
+export function SalesReceiptInvoicesSection({ config, values, setValues, isDetail, onOpenInvoiceModal, handlers = {} }) {
     const [keyword, setKeyword] = useState(values.invoiceSearch ?? '');
 
     useEffect(() => {
@@ -84,6 +84,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                         <button
                             type="button"
                             className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            onClick={handlers.onSelectInvoice}
                         >
                             Ambil
                         </button>
@@ -91,7 +92,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
-                    <TransactionToolbarIconButton label="Cari faktur" className="h-[40px] w-[40px]">
+                    <TransactionToolbarIconButton label="Cari faktur" className="h-[40px] w-[40px]" onClick={handlers.onSelectInvoice}>
                         <SearchIcon className="h-5 w-5 text-[#2353a0]" />
                     </TransactionToolbarIconButton>
                     <div className="text-right text-[24px] font-normal text-[#1f2436]">
@@ -182,7 +183,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
     );
 }
 
-export function SalesReceiptAdditionalInfoSection({ config, values, setValues, isDetail }) {
+export function SalesReceiptAdditionalInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
     const isCheckPayment = values.paymentMethod === 'Cek/Giro';
 
     return (
@@ -256,15 +257,28 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                     </>
                 ) : null}
 
-                {isDetail ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.branch} required />
-                        <ChipLookupField values={values.branches} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari cabang" heightClassName="h-[34px]" />
-                    </>
-                ) : null}
+                <TransactionFieldLabel label={config.labels.branch} required />
+                <ChipLookupField
+                    values={values.branches}
+                    placeholder="Cari/Pilih..."
+                    onRemove={(value) => handlers.onRemoveBranch?.(value)}
+                    searchLabel="Cari cabang"
+                    onSearch={handlers.onSelectBranch}
+                    heightClassName="h-[34px]"
+                />
 
                 <TransactionFieldLabel label={config.labels.notes} />
-                <ReadonlyTextarea value={values.notes} rows={4} className="min-h-[72px]" />
+                <textarea
+                    value={values.notes}
+                    onChange={(event) =>
+                        setValues((current) => ({
+                            ...current,
+                            notes: event.target.value,
+                        }))
+                    }
+                    rows={4}
+                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                />
 
                 {isDetail ? (
                     <>

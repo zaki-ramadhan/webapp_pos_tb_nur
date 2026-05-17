@@ -16,7 +16,7 @@ import {
 
 import { PurchasePaymentHeaderIconButton } from './PurchasePaymentHeaderSections';
 
-export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice }) {
+export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice, handlers = {} }) {
     return (
         <div className="flex min-h-[540px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 xl:flex-row xl:items-center xl:justify-between">
@@ -29,6 +29,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                             inputClassName="text-[15px] text-[#1f2436]"
+                            onClick={handlers.onSelectInvoice}
                         />
                     </div>
 
@@ -36,6 +37,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                         <button
                             type="button"
                             className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[15px] text-[#21539b]"
+                            onClick={handlers.onSelectInvoice}
                         >
                             {config.takeButtonLabel}
                         </button>
@@ -43,7 +45,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
-                    <PurchasePaymentHeaderIconButton label="Cari faktur" icon={<SearchIcon className="h-5 w-5" />} />
+                    <PurchasePaymentHeaderIconButton label="Cari faktur" icon={<SearchIcon className="h-5 w-5" />} onClick={handlers.onSelectInvoice} />
                     <div className="text-right text-[24px] font-normal text-[#1f2436]">
                         {values.invoiceTitle} <span className="text-[#ED3969]">*</span>
                     </div>
@@ -79,7 +81,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
     );
 }
 
-export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail }) {
+export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail, handlers = {} }) {
     return (
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.infoTitle} icon="document" />
@@ -118,7 +120,14 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail 
                 ) : null}
 
                 <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField values={values.branches} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari cabang" heightClassName="h-[34px]" />
+                <ChipLookupField
+                    values={values.branches}
+                    placeholder="Cari/Pilih..."
+                    onRemove={(value) => handlers.onRemoveBranch?.(value)}
+                    searchLabel="Cari cabang"
+                    heightClassName="h-[34px]"
+                    onSearch={handlers.onSelectBranch}
+                />
 
                 {isDetail ? (
                     <>

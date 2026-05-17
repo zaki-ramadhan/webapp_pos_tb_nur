@@ -31,14 +31,21 @@ export function DepositFooter({ values }) {
     );
 }
 
-export function DepositInfoSection({ config, values, isDetail }) {
+export function DepositInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <section>
             <TransactionSectionHeading title={config.infoTitle} icon="info" />
 
             <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.paymentTerms} />
-                <ChipLookupField values={values.paymentTerms} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari syarat pembayaran" heightClassName="h-[34px]" />
+                <ChipLookupField
+                    values={values.paymentTerms}
+                    placeholder="Cari/Pilih..."
+                    onRemove={(value) => handlers.onRemovePaymentTerm?.(value)}
+                    searchLabel="Cari syarat pembayaran"
+                    onSearch={handlers.onSelectPaymentTerm}
+                    heightClassName="h-[34px]"
+                />
 
                 <TransactionFieldLabel label={config.labels.address} />
                 {isDetail ? (
@@ -57,10 +64,27 @@ export function DepositInfoSection({ config, values, isDetail }) {
                 )}
 
                 <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField values={values.branches} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari cabang" heightClassName="h-[34px]" />
+                <ChipLookupField
+                    values={values.branches}
+                    placeholder="Cari/Pilih..."
+                    onRemove={(value) => handlers.onRemoveBranch?.(value)}
+                    searchLabel="Cari cabang"
+                    onSearch={handlers.onSelectBranch}
+                    heightClassName="h-[34px]"
+                />
 
                 <TransactionFieldLabel label={config.labels.notes} />
-                <ReadonlyTransactionTextarea value={values.notes} className="min-h-[72px]" />
+                <textarea
+                    value={values.notes}
+                    onChange={(event) =>
+                        setValues((current) => ({
+                            ...current,
+                            notes: event.target.value,
+                        }))
+                    }
+                    rows={4}
+                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                />
             </div>
         </section>
     );
@@ -119,12 +143,18 @@ export function DepositSummarySection({ config, values }) {
     );
 }
 
-export function SalesDepositHeader({ config, values, setValues, isDetail }) {
+export function SalesDepositHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
             <div className={`grid gap-y-3 ${isDetail ? 'sm:grid-cols-[170px_minmax(0,1fr)_180px]' : 'sm:grid-cols-[170px_minmax(0,1fr)]'} sm:items-center sm:gap-x-4`.trim()}>
                 <TransactionFieldLabel label={config.labels.customer} required />
-                <ChipLookupField values={values.customer} placeholder="Cari/Pilih Pelanggan..." onRemove={() => {}} searchLabel="Cari pelanggan" />
+                <ChipLookupField
+                    values={values.customer}
+                    placeholder="Cari/Pilih Pelanggan..."
+                    onRemove={handlers.onRemoveCustomer}
+                    searchLabel="Cari pelanggan"
+                    onSearch={handlers.onSelectCustomer}
+                />
                 {isDetail ? (
                     <div className="max-w-[180px]">
                         <TextInput value={values.currency} readOnly className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
@@ -157,7 +187,13 @@ export function SalesDepositHeader({ config, values, setValues, isDetail }) {
                 ) : (
                     <TextInput
                         value={values.documentNumber}
-                        readOnly
+                        onChange={(event) =>
+                            setValues((current) => ({
+                                ...current,
+                                documentNumber: event.target.value,
+                            }))
+                        }
+                        readOnly={Boolean(isDetail)}
                         trailing={<span className="text-[18px] font-semibold text-[#1f2436]">x</span>}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-[15px] text-[#1f2436]"

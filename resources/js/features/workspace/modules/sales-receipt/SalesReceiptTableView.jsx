@@ -55,7 +55,14 @@ function SalesReceiptFilterBar({ config, filters, setFilters }) {
     );
 }
 
-export default function SalesReceiptTableView({ config, onCreate, onOpenDetail }) {
+export default function SalesReceiptTableView({
+    config,
+    onCreate,
+    onOpenDetail,
+    loading = false,
+    error = '',
+    onRefresh = null,
+}) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -111,7 +118,9 @@ export default function SalesReceiptTableView({ config, onCreate, onOpenDetail }
                     icon: <PlusIcon className="h-6 w-6" />,
                 }}
                 refreshButton={{
-                    label: config.table.refreshLabel,
+                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
+                    onClick: onRefresh,
+                    loading,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
                 }}
                 rightControls={
@@ -178,7 +187,7 @@ export default function SalesReceiptTableView({ config, onCreate, onOpenDetail }
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
                                 <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-6 text-center text-[15px] text-[#7d879a]">
-                                    Belum ada data
+                                    {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}
