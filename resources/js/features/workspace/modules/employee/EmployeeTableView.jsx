@@ -26,7 +26,7 @@ import {
     ToolbarSquareButton,
 } from '@/features/workspace/modules/employee/employeeViewShared';
 
-export default function EmployeeTableView({ table, onCreate }) {
+export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         table.filters.reduce((result, filter) => {
@@ -105,7 +105,7 @@ export default function EmployeeTableView({ table, onCreate }) {
                         <PlusIcon className="h-6 w-6" />
                     </button>
 
-                    <ToolbarSquareButton label={table.refreshLabel}>
+                    <ToolbarSquareButton label={table.refreshLabel} onClick={table.onRefresh}>
                         <RefreshIcon className="h-5 w-5" />
                     </ToolbarSquareButton>
                 </div>
@@ -156,23 +156,32 @@ export default function EmployeeTableView({ table, onCreate }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                            >
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.name)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.position)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.email)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.mobilePhone)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                    <span className="block max-w-[112px] truncate">{formatTableTextValue(row.employeeId)}</span>
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer' : ''}`.trim()}
+                                    onClick={onOpenDetail ? () => onOpenDetail({ recordId: String(row.id), label: row.tabLabel ?? row.name, tabLabel: row.tabLabel ?? row.name }) : undefined}
+                                >
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.name)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.position)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.email)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.mobilePhone)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                        <span className="block max-w-[112px] truncate">{formatTableTextValue(row.employeeId)}</span>
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.taxStatus)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.employmentStatus)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-right text-[15px] text-[#131a28]">{formatTableTextValue(row.payable)}</DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={table.columns.length} className="px-2.5 py-4 text-center text-[15px] text-[#6b7280]">
+                                    {table.loading ? 'Memuat data...' : table.emptyLabel}
                                 </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.taxStatus)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.employmentStatus)}</DataTableCell>
-                                <DataTableCell className="px-2.5 text-right text-[15px] text-[#131a28]">{formatTableTextValue(row.payable)}</DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>

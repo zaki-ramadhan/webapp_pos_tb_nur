@@ -1,23 +1,38 @@
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableHead,
+    DataTableHeader,
+    DataTableRow,
+} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import TextareaField from '@/components/ui/TextareaField';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { FunnelIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import {
-    TransactionDataTable,
     TransactionDateInput,
     TransactionFieldLabel,
-    TransactionReadonlyTextarea,
     TransactionSectionHeading,
     TransactionSwitch,
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export function TransferValueInput({ prefix, value, maxWidthClassName = 'max-w-[276px]' }) {
+export function TransferValueInput({
+    prefix,
+    value,
+    onChange = null,
+    readOnly = false,
+    maxWidthClassName = 'max-w-[276px]',
+}) {
     return (
         <div className={maxWidthClassName}>
             <TextInput
                 value={value}
-                readOnly
+                onChange={onChange}
+                readOnly={readOnly}
                 prefix={prefix}
                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
                 prefixClassName="min-w-[42px] justify-center border-r-[#d8dde7] bg-[#fbfcfe] px-2 text-[15px] text-[#9097aa]"
@@ -27,7 +42,7 @@ export function TransferValueInput({ prefix, value, maxWidthClassName = 'max-w-[
     );
 }
 
-export function TransferMoneySection({ config, values, isDetail }) {
+export function TransferMoneySection({ config, values, setValues, handlers = {}, isDetail }) {
     return (
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.transferTitle} icon="document" />
@@ -35,27 +50,46 @@ export function TransferMoneySection({ config, values, isDetail }) {
             <div className="mt-4 grid gap-10 xl:grid-cols-2">
                 <section className="grid gap-y-4 sm:grid-cols-[280px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.fromBank} required />
-                    <ChipLookupField values={values.fromBankAccounts} placeholder={config.bankPlaceholder} onRemove={() => {}} searchLabel="Cari kas bank asal" />
+                    <ChipLookupField
+                        values={values.fromBankAccounts}
+                        placeholder={config.bankPlaceholder}
+                        onRemove={handlers.onRemoveFromBankAccount}
+                        onSearch={handlers.onSelectFromBankAccount}
+                        searchLabel="Cari kas bank asal"
+                    />
 
                     <TransactionFieldLabel label={config.labels.fromBranch} required />
-                    <ChipLookupField values={values.fromBranches} placeholder={config.branchPlaceholder} onRemove={() => {}} searchLabel="Cari cabang asal" />
+                    <ChipLookupField
+                        values={values.fromBranches}
+                        placeholder={config.branchPlaceholder}
+                        onRemove={handlers.onRemoveFromBranch}
+                        onSearch={handlers.onSelectFromBranch}
+                        searchLabel="Cari cabang asal"
+                    />
 
-                    {isDetail ? (
-                        <>
-                            <TransactionFieldLabel label={config.labels.exchangeRate} />
-                            <div className="max-w-[276px]">
-                                <div className="mb-1 text-[15px] text-[#1f2436]">{values.exchangeRateLabel}</div>
-                                <TransferValueInput prefix="Rp" value={values.exchangeRate} />
-                            </div>
-                        </>
-                    ) : null}
+                    <TransactionFieldLabel label={config.labels.exchangeRate} />
+                    <div className="max-w-[276px]">
+                        {values.exchangeRateLabel ? (
+                            <div className="mb-1 text-[15px] text-[#1f2436]">{values.exchangeRateLabel}</div>
+                        ) : null}
+                        <TransferValueInput
+                            prefix="Rp"
+                            value={values.exchangeRate}
+                            onChange={(event) => setValues((current) => ({ ...current, exchangeRate: event.target.value }))}
+                        />
+                    </div>
 
                     <TransactionFieldLabel label={config.labels.transferValue} required />
                     <div className="max-w-[276px]">
-                        <TransferValueInput prefix={values.transferPrefix} value={values.transferValue} maxWidthClassName="" />
+                        <TransferValueInput
+                            prefix={values.transferPrefix}
+                            value={values.transferValue}
+                            maxWidthClassName=""
+                            onChange={(event) => setValues((current) => ({ ...current, transferValue: event.target.value }))}
+                        />
                     </div>
 
-                    {isDetail ? (
+                    {isDetail || values.transferWords ? (
                         <>
                             <div />
                             <div className="text-[17px] italic text-[#1f2436]">{values.transferWords}</div>
@@ -65,16 +99,32 @@ export function TransferMoneySection({ config, values, isDetail }) {
 
                 <section className="grid gap-y-4 sm:grid-cols-[280px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.toBank} required />
-                    <ChipLookupField values={values.toBankAccounts} placeholder={config.bankPlaceholder} onRemove={() => {}} searchLabel="Cari kas bank tujuan" />
+                    <ChipLookupField
+                        values={values.toBankAccounts}
+                        placeholder={config.bankPlaceholder}
+                        onRemove={handlers.onRemoveToBankAccount}
+                        onSearch={handlers.onSelectToBankAccount}
+                        searchLabel="Cari kas bank tujuan"
+                    />
 
                     <TransactionFieldLabel label={config.labels.toBranch} required />
-                    <ChipLookupField values={values.toBranches} placeholder={config.branchPlaceholder} onRemove={() => {}} searchLabel="Cari cabang tujuan" />
+                    <ChipLookupField
+                        values={values.toBranches}
+                        placeholder={config.branchPlaceholder}
+                        onRemove={handlers.onRemoveToBranch}
+                        onSearch={handlers.onSelectToBranch}
+                        searchLabel="Cari cabang tujuan"
+                    />
 
-                    {isDetail ? (
+                    <TransactionFieldLabel label={config.labels.resultValue} required />
+                    <TransferValueInput
+                        prefix={values.resultPrefix}
+                        value={values.resultValue}
+                        readOnly
+                    />
+
+                    {isDetail || values.resultWords ? (
                         <>
-                            <TransactionFieldLabel label={config.labels.resultValue} required />
-                            <TransferValueInput prefix={values.resultPrefix} value={values.resultValue} />
-
                             <div />
                             <div className="text-[17px] italic text-[#1f2436]">{values.resultWords}</div>
                         </>
@@ -85,7 +135,7 @@ export function TransferMoneySection({ config, values, isDetail }) {
     );
 }
 
-export function TransferFeeSection({ config, values }) {
+export function TransferFeeSection({ config, values, handlers = {} }) {
     return (
         <div className="flex min-h-[540px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
@@ -97,6 +147,7 @@ export function TransferFeeSection({ config, values }) {
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-[15px] text-[#1f2436]"
+                        onClick={handlers.onSelectFeeAccount}
                     />
                 </div>
 
@@ -104,25 +155,68 @@ export function TransferFeeSection({ config, values }) {
             </div>
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
-                <TransactionDataTable
-                    columns={config.feeTable.columns}
-                    rows={values.feeRows}
-                    emptyLabel={config.feeTable.emptyLabel}
-                    minWidthClassName="min-w-[880px]"
-                />
+                <div className="min-w-[880px]">
+                    <DataTable wrapperClassName="border-[#d1d8e4]">
+                        <DataTableHeader className="bg-[#5f7690]">
+                            <tr>
+                                {config.feeTable.columns.map((column) => (
+                                    <DataTableHead
+                                        key={column.id}
+                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
+                                    >
+                                        {column.label}
+                                    </DataTableHead>
+                                ))}
+                            </tr>
+                        </DataTableHeader>
+
+                        <DataTableBody>
+                            {values.feeRows.length ? (
+                                values.feeRows.map((row, index) => (
+                                    <DataTableRow
+                                        key={row.id}
+                                        className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${handlers.onEditFeeItem ? 'cursor-pointer' : ''}`.trim()}
+                                        onClick={handlers.onEditFeeItem ? () => handlers.onEditFeeItem(row) : undefined}
+                                    >
+                                        {config.feeTable.columns.map((column) => (
+                                            <DataTableCell
+                                                key={column.id}
+                                                className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-[15px] text-[#131a28]`.trim()}
+                                            >
+                                                {formatTableTextValue(row[column.id])}
+                                            </DataTableCell>
+                                        ))}
+                                    </DataTableRow>
+                                ))
+                            ) : (
+                                <DataTableRow className="bg-white">
+                                    <DataTableCell colSpan={config.feeTable.columns.length} className="px-3 py-3 text-center text-[15px] text-[#6b7280]">
+                                        {config.feeTable.emptyLabel}
+                                    </DataTableCell>
+                                </DataTableRow>
+                            )}
+                        </DataTableBody>
+                    </DataTable>
+                </div>
             </div>
         </div>
     );
 }
 
-export function TransferInfoSection({ config, values, isDetail }) {
+export function TransferInfoSection({ config, values, setValues, isDetail }) {
     return (
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.infoTitle} icon="receipt" />
 
             <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.notes} />
-                <TransactionReadonlyTextarea value={values.notes} rows={4} className="min-h-[70px]" />
+                <TextareaField
+                    value={values.notes}
+                    onChange={(event) => setValues((current) => ({ ...current, notes: event.target.value }))}
+                    rows={4}
+                    className="rounded-[4px] border-[#cfd6e2]"
+                    textareaClassName="min-h-[70px] px-4 py-3 text-[15px] text-[#1f2436]"
+                />
 
                 {isDetail ? (
                     <>
@@ -193,7 +287,7 @@ export function BankTransferHeader({ config, values, setValues, activeRecordId }
                 ) : (
                     <TextInput
                         value={values.documentNumber}
-                        readOnly
+                        onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-[15px] text-[#1f2436]"
                     />

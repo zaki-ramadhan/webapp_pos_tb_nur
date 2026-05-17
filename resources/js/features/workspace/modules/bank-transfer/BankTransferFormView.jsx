@@ -1,101 +1,112 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import {
+    createBackendResource,
+    deleteBackendResource,
+    getBackendErrorMessage,
+    updateBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
+import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
-    resolveDocumentRequirementValue,
-    resolveSaveDisabledState,
-} from '@/features/workspace/shared/formValidation';
-import { BankTransferHeader, TransferFeeSection, TransferInfoSection, TransferMoneySection, TransferSummaryCards } from './BankTransferSections';
-import { buildDetailRecordFromRow, buildFormState } from './bankTransferShared';
+    BankTransferHeader,
+    TransferFeeSection,
+    TransferInfoSection,
+    TransferMoneySection,
+    TransferSummaryCards,
+} from './BankTransferSections';
+import {
+    applyBankTransferComputedValues,
+    buildBankTransferPayload,
+    buildBankTransferSnapshot,
+    buildDetailRecordFromRow,
+    buildFormState,
+    buildGeneratedBankTransferNumber,
+    buildLookupLabel,
+    promptBankTransferFeeItem,
+    validateBankTransferValues,
+} from './bankTransferShared';
 
-export default function BankTransferFormView({ pageId, config, activeLevel2Tab }) {
+export default function BankTransferFormView({
+    pageId,
+    config,
+    activeLevel2Tab,
+    onOpenContent,
+    onOpenDetail,
+    onCloseDetail,
+    onRefresh,
+}) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
+    const [status, setStatus] = useState({ tone: '', message: '' });
+    const [saving, setSaving] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(() => {
         if (!activeRecordId) {
             return config.draft;
         }
 
-        return config.detailRecords?.[activeRecordId] ?? buildDetailRecordFromRow(config.rowMap?.[activeRecordId], config);
+        return config.rowMap?.[activeRecordId]
+            ? buildDetailRecordFromRow(config.rowMap[activeRecordId], config)
+            : config.detailRecords?.[activeRecordId] ?? config.draft;
     }, [activeRecordId, config]);
     const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
+    const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
+    const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormState(sourceRecord, config));
+        setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
     }, [config, sourceRecord]);
 
-    const initialComparable = useMemo(
-        () => ({
-            entryDate: sourceRecord.entryDate ?? config.draft?.entryDate ?? '',
-            autoNumber: sourceRecord.autoNumber ?? config.draft?.autoNumber ?? true,
-            numberingType: sourceRecord.numberingType ?? config.draft?.numberingType ?? '',
-            documentNumber: sourceRecord.documentNumber ?? config.draft?.documentNumber ?? '',
-            fromBankAccounts: sourceRecord.fromBankAccounts ?? config.draft?.fromBankAccounts ?? [],
-            fromBranches: sourceRecord.fromBranches ?? config.draft?.fromBranches ?? [],
-            transferValue: sourceRecord.transferValue ?? config.draft?.transferValue ?? '',
-            toBankAccounts: sourceRecord.toBankAccounts ?? config.draft?.toBankAccounts ?? [],
-            toBranches: sourceRecord.toBranches ?? config.draft?.toBranches ?? [],
-            notes: sourceRecord.notes ?? config.draft?.notes ?? '',
-        }),
-        [config.draft, sourceRecord],
+    const validationMessage = useMemo(() => validateBankTransferValues(values, config), [config, values]);
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(buildBankTransferSnapshot(initialComparable), buildBankTransferSnapshot(values)),
+        [initialComparable, values],
     );
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
-    const currentComparable = useMemo(
-        () => ({
-            entryDate: values.entryDate,
-            autoNumber: values.autoNumber,
-            numberingType: values.numberingType,
-            documentNumber: values.documentNumber,
-            fromBankAccounts: values.fromBankAccounts,
-            fromBranches: values.fromBranches,
-            transferValue: values.transferValue,
-            toBankAccounts: values.toBankAccounts,
-            toBranches: values.toBranches,
-            notes: values.notes,
-        }),
-        [values],
-    );
+    function updateValues(nextValues) {
+        setValues((currentValues) =>
+            applyBankTransferComputedValues(
+                typeof nextValues === 'function' ? nextValues(currentValues) : nextValues,
+            ),
+        );
+    }
 
-    const { isDirty, saveDisabled } = useMemo(
+    const dockActions = useMemo(
         () =>
-            resolveSaveDisabledState({
-                checks: [
-                    { label: config.labels.entryDate, value: values.entryDate },
-                    {
-                        label: config.labels.documentNumber,
-                        value: resolveDocumentRequirementValue(values.autoNumber, values.numberingType, values.documentNumber),
-                    },
-                    { label: config.labels.fromBank, type: 'array', value: values.fromBankAccounts },
-                    { label: config.labels.fromBranch, type: 'array', value: values.fromBranches },
-                    { label: config.labels.transferValue, value: values.transferValue },
-                    { label: config.labels.toBank, type: 'array', value: values.toBankAccounts },
-                    { label: config.labels.toBranch, type: 'array', value: values.toBranches },
-                ],
-                initialComparable,
-                currentComparable,
-            }),
-        [
-            config.labels.documentNumber,
-            config.labels.entryDate,
-            config.labels.fromBank,
-            config.labels.fromBranch,
-            config.labels.toBank,
-            config.labels.toBranch,
-            config.labels.transferValue,
-            currentComparable,
-            initialComparable,
-            values.autoNumber,
-            values.documentNumber,
-            values.entryDate,
-            values.fromBankAccounts,
-            values.fromBranches,
-            values.numberingType,
-            values.toBankAccounts,
-            values.toBranches,
-            values.transferValue,
-        ],
+            (config.dockActions ?? [])
+                .filter((action) => (isDetail ? true : action.id !== 'delete'))
+                .map((action) => {
+                    if (action.id === 'save') {
+                        return {
+                            ...action,
+                            tone: values.saveTone,
+                            disabled: saveDisabled,
+                            label: saving ? 'Memproses...' : action.label,
+                            onClick: handleSave,
+                        };
+                    }
+
+                    if (action.id === 'delete') {
+                        return {
+                            ...action,
+                            label: saving ? 'Memproses...' : action.label,
+                            onClick: requestDelete,
+                        };
+                    }
+
+                    return action;
+                }),
+        [config.dockActions, isDetail, saveDisabled, saving, values.saveTone],
     );
 
     useWorkspaceDirtyRegistration({
@@ -105,34 +116,222 @@ export default function BankTransferFormView({ pageId, config, activeLevel2Tab }
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    const dockActions = useMemo(
-        () =>
-            (config.dockActions ?? [])
-                .filter((action) => (activeRecordId ? true : !['delete', 'more'].includes(action.id)))
-                .map((action) =>
-                    action.id === 'save'
-                        ? { ...action, tone: values.saveTone, disabled: saveDisabled }
-                        : action,
+    async function selectLookup(resource, title, onApply) {
+        try {
+            const record = await promptSelectBackendRecord(resource, title, buildLookupLabel);
+
+            if (!record) {
+                return;
+            }
+
+            onApply(record);
+            setStatus({ tone: '', message: '' });
+        } catch (error) {
+            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
+        }
+    }
+
+    function applyFeeUpdate(record, currentItem = null) {
+        try {
+            const nextItem = promptBankTransferFeeItem(record, currentItem);
+
+            if (!nextItem) {
+                return;
+            }
+
+            updateValues((current) => ({
+                ...current,
+                feeLookup: '',
+                feeRows: currentItem
+                    ? (current.feeRows ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
+                    : [...(current.feeRows ?? []), nextItem],
+            }));
+            setStatus({
+                tone: 'success',
+                message: currentItem ? 'Biaya transfer diperbarui.' : 'Biaya transfer ditambahkan.',
+            });
+        } catch (error) {
+            setStatus({
+                tone: 'error',
+                message: error?.message ?? 'Biaya transfer tidak valid.',
+            });
+        }
+    }
+
+    async function handleSave() {
+        if (validationMessage) {
+            rejectCrudFormAction(validationMessage, { setStatus });
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: isDetail ? 'Sedang memperbarui transfer bank.' : 'Sedang menyimpan transfer bank.',
+            successMessage: isDetail ? 'Transfer bank berhasil diperbarui.' : 'Transfer bank berhasil dibuat.',
+            setSaving,
+            setStatus,
+            getErrorMessage: getBackendErrorMessage,
+            execute: async () => {
+                const resolvedDocumentNumber =
+                    values.autoNumber || !String(values.documentNumber ?? '').trim()
+                        ? buildGeneratedBankTransferNumber()
+                        : values.documentNumber;
+                const payload = buildBankTransferPayload({
+                    ...values,
+                    documentNumber: resolvedDocumentNumber,
+                });
+                const response = isDetail && values.__backendRecordId
+                    ? await updateBackendResource('bank-transfers', values.__backendRecordId, payload)
+                    : await createBackendResource('bank-transfers', payload);
+
+                return {
+                    record: response?.data ?? null,
+                    resolvedDocumentNumber,
+                };
+            },
+            onSuccess: async ({ record, resolvedDocumentNumber }) => {
+                await onRefresh?.();
+
+                if (!isDetail && record?.id) {
+                    onOpenDetail?.({
+                        recordId: String(record.id),
+                        label: record.document_number ?? resolvedDocumentNumber,
+                        tabLabel: record.document_number ?? resolvedDocumentNumber,
+                    });
+                }
+            },
+        });
+    }
+
+    function requestDelete() {
+        if (!values.__backendRecordId || saving) {
+            return;
+        }
+
+        setDeleteConfirmationOpen(true);
+    }
+
+    async function handleDelete() {
+        if (!values.__backendRecordId) {
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: 'Sedang menghapus transfer bank.',
+            successMessage: 'Transfer bank berhasil dihapus.',
+            setSaving,
+            setStatus,
+            getErrorMessage: getBackendErrorMessage,
+            onStart: () => setDeleteConfirmationOpen(false),
+            execute: () => deleteBackendResource('bank-transfers', values.__backendRecordId),
+            onSuccess: async () => {
+                await onRefresh?.();
+                onCloseDetail?.(values.__backendRecordId);
+                onOpenContent?.();
+            },
+        });
+    }
+
+    const handlers = useMemo(
+        () => ({
+            onSelectFromBankAccount: () =>
+                selectLookup('accounts', 'kas atau bank asal', (record) =>
+                    updateValues((current) => ({
+                        ...current,
+                        __fromAccountId: record.id,
+                        fromBankAccounts: [buildLookupLabel(record)],
+                    })),
                 ),
-        [activeRecordId, config.dockActions, saveDisabled, values.saveTone],
+            onRemoveFromBankAccount: () =>
+                updateValues((current) => ({
+                    ...current,
+                    __fromAccountId: null,
+                    fromBankAccounts: [],
+                })),
+            onSelectToBankAccount: () =>
+                selectLookup('accounts', 'kas atau bank tujuan', (record) =>
+                    updateValues((current) => ({
+                        ...current,
+                        __toAccountId: record.id,
+                        toBankAccounts: [buildLookupLabel(record)],
+                    })),
+                ),
+            onRemoveToBankAccount: () =>
+                updateValues((current) => ({
+                    ...current,
+                    __toAccountId: null,
+                    toBankAccounts: [],
+                })),
+            onSelectFromBranch: () =>
+                selectLookup('branches', 'cabang asal', (record) =>
+                    updateValues((current) => ({
+                        ...current,
+                        __fromBranchId: record.id,
+                        fromBranches: [record.name ?? record.code ?? `Cabang #${record.id}`],
+                    })),
+                ),
+            onRemoveFromBranch: (value) =>
+                updateValues((current) => ({
+                    ...current,
+                    __fromBranchId: null,
+                    fromBranches: (current.fromBranches ?? []).filter((item) => item !== value),
+                })),
+            onSelectToBranch: () =>
+                selectLookup('branches', 'cabang tujuan', (record) =>
+                    updateValues((current) => ({
+                        ...current,
+                        __toBranchId: record.id,
+                        toBranches: [record.name ?? record.code ?? `Cabang #${record.id}`],
+                    })),
+                ),
+            onRemoveToBranch: (value) =>
+                updateValues((current) => ({
+                    ...current,
+                    __toBranchId: null,
+                    toBranches: (current.toBranches ?? []).filter((item) => item !== value),
+                })),
+            onSelectFeeAccount: () =>
+                selectLookup('accounts', 'akun biaya transfer', (record) => applyFeeUpdate(record)),
+            onEditFeeItem: (item) => applyFeeUpdate(null, item),
+        }),
+        [],
     );
 
     return (
-        <TransactionFormLayout
-            header={<BankTransferHeader config={config} values={values} setValues={setValues} activeRecordId={activeRecordId} />}
-            sectionTabs={config.sectionTabs}
-            activeSectionId={activeSectionId}
-            onSectionChange={setActiveSectionId}
-            footer={<TransferSummaryCards values={values} />}
-            dockActions={dockActions}
-        >
-            {activeSectionId === 'fee' ? (
-                <TransferFeeSection config={config} values={values} />
-            ) : activeSectionId === 'additional-info' ? (
-                <TransferInfoSection config={config} values={values} isDetail={Boolean(activeRecordId)} />
-            ) : (
-                <TransferMoneySection config={config} values={values} isDetail={Boolean(activeRecordId)} />
-            )}
-        </TransactionFormLayout>
+        <>
+            <TransactionFormLayout
+                header={<BankTransferHeader config={config} values={values} setValues={updateValues} activeRecordId={activeRecordId} />}
+                sectionTabs={config.sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                footer={<TransferSummaryCards values={values} />}
+                dockActions={dockActions}
+            >
+                <CrudStatusMessage status={status} className="mb-4" />
+                {activeSectionId === 'fee' ? (
+                    <TransferFeeSection config={config} values={values} handlers={handlers} />
+                ) : activeSectionId === 'additional-info' ? (
+                    <TransferInfoSection config={config} values={values} setValues={updateValues} isDetail={Boolean(activeRecordId)} />
+                ) : (
+                    <TransferMoneySection
+                        config={config}
+                        values={values}
+                        setValues={updateValues}
+                        handlers={handlers}
+                        isDetail={Boolean(activeRecordId)}
+                    />
+                )}
+            </TransactionFormLayout>
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Transfer Bank"
+                message="Transfer bank ini akan dihapus permanen. Lanjutkan?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                confirmLoading={saving}
+            />
+        </>
     );
 }
