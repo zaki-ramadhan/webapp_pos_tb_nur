@@ -17,7 +17,7 @@ import {
     SearchIcon,
 } from '@/features/workspace/shared/Icons';
 
-export function MaterialAdditionHeader({ config, values, setValues, isDetail }) {
+export function MaterialAdditionHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="border-b border-[#d8dde7] px-4 py-4">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] xl:items-start">
@@ -62,6 +62,7 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail }) 
                                     workOrderNumber: event.target.value,
                                 }))
                             }
+                            onClick={handlers.onSelectWorkOrder}
                             placeholder={config.workOrderPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] max-w-[506px] rounded-[4px] border-[#cfd6e2]"
@@ -75,13 +76,13 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail }) 
                         <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                             <TextInput
-                                value={values.numberingType}
+                                value={values.documentNumber}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                                 inputClassName="text-[15px] text-[#1f2436]"
                             />
                         </div>
-                    ) : (
+                    ) : values.autoNumber ? (
                         <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
                                 <TransactionFieldLabel label={config.labels.documentNumber} required />
@@ -114,6 +115,21 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail }) 
                                 ))}
                             </SelectField>
                         </div>
+                    ) : (
+                        <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                            <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
+                            <TextInput
+                                value={values.documentNumber}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value,
+                                    }))
+                                }
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-[15px] text-[#1f2436]"
+                            />
+                        </div>
                     )}
 
                     <div className="flex flex-wrap justify-end gap-3">
@@ -137,7 +153,7 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail }) 
     );
 }
 
-function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholder, title }) {
+function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholder, title, onAction }) {
     const isAccountLookup = placeholder === 'Cari/Pilih Akun Perkiraan...';
 
     return (
@@ -166,7 +182,7 @@ function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholde
             </div>
 
             <div className="flex items-center gap-3 self-end sm:self-auto">
-                <TransactionToolbarIconButton label={`Cari ${title}`}>
+                <TransactionToolbarIconButton label={`Cari ${title}`} onClick={onAction}>
                     <SearchIcon className="h-4.5 w-4.5" />
                 </TransactionToolbarIconButton>
                 <div className="text-right text-[22px] font-normal text-[#1f2436]">
@@ -193,7 +209,7 @@ function MaterialAdditionSectionTable({ columns, rows, emptyLabel, onRowClick, c
     );
 }
 
-export function MaterialAdditionItemsSection({ config, values, setValues, isDetail, onOpenItem }) {
+export function MaterialAdditionItemsSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="flex min-h-[520px] flex-col">
             <MaterialAdditionSectionHeader
@@ -206,20 +222,21 @@ export function MaterialAdditionItemsSection({ config, values, setValues, isDeta
                 }
                 placeholder={config.itemSearchPlaceholder}
                 title={values.itemCountLabel ?? config.itemSectionTitle}
+                onAction={handlers.onSelectItem}
             />
 
             <MaterialAdditionSectionTable
                 columns={config.itemTable.columns}
                 rows={values.items}
                 emptyLabel={config.itemTable.emptyLabel}
-                onRowClick={onOpenItem}
-                clickable={isDetail}
+                onRowClick={handlers.onEditItem}
+                clickable
             />
         </div>
     );
 }
 
-export function MaterialAdditionChargesSection({ config, values, setValues }) {
+export function MaterialAdditionChargesSection({ config, values, setValues, handlers = {} }) {
     return (
         <div className="flex min-h-[520px] flex-col">
             <MaterialAdditionSectionHeader
@@ -232,18 +249,21 @@ export function MaterialAdditionChargesSection({ config, values, setValues }) {
                 }
                 placeholder={config.chargeSearchPlaceholder}
                 title={config.chargeSectionTitle}
+                onAction={handlers.onSelectCharge}
             />
 
             <MaterialAdditionSectionTable
                 columns={config.chargeTable.columns}
                 rows={values.additionalCosts}
                 emptyLabel={config.chargeTable.emptyLabel}
+                onRowClick={handlers.onEditCharge}
+                clickable
             />
         </div>
     );
 }
 
-export function MaterialAdditionAdditionalInfoSection({ config, values, setValues }) {
+export function MaterialAdditionAdditionalInfoSection({ config, values, setValues, handlers = {} }) {
     return (
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
@@ -255,12 +275,8 @@ export function MaterialAdditionAdditionalInfoSection({ config, values, setValue
                         values={values.branches}
                         placeholder="Cari/Pilih..."
                         searchLabel="Cari cabang"
-                        onRemove={(branchValue) =>
-                            setValues((current) => ({
-                                ...current,
-                                branches: current.branches.filter((item) => item !== branchValue),
-                            }))
-                        }
+                        onRemove={(branchValue) => handlers.onRemoveBranch?.(branchValue)}
+                        onSearch={handlers.onSelectBranch}
                         heightClassName="h-[36px]"
                     />
                 </div>

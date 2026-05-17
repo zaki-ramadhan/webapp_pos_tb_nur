@@ -1,32 +1,43 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import SystemErrorModal from '@/components/ui/SystemErrorModal';
 import TextInput from '@/components/ui/TextInput';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import {
+    createBackendResource,
+    deleteBackendResource,
+    getBackendErrorMessage,
+    updateBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
+import {
+    buildGroupAccessComparableState,
+    buildGroupAccessPayload,
     buildGeneralState,
     buildInitialPermissionCategories,
+    normalizeSelectedUsers,
     resolveDeleteConfirmationMessage,
 } from './groupAccessUtils';
 import GroupAccessRightsView from '@/features/workspace/modules/group-access/GroupAccessRightsView';
-import {
-    GroupAccessActionDock,
-    GroupAccessGeneralSection,
-} from '@/features/workspace/modules/group-access/groupAccessViewShared';
+import { GroupAccessActionDock, GroupAccessGeneralSection } from '@/features/workspace/modules/group-access/groupAccessViewShared';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 
-export default function GroupAccessFormView({ pageId, activeLevel2Tab, form }) {
+export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onOpenDetail, onCloseDetail, onRefresh }) {
     const [activeTabId, setActiveTabId] = useState(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
     const [generalValues, setGeneralValues] = useState(() => buildGeneralState(form.general));
     const [permissionCategories, setPermissionCategories] = useState(() =>
         buildInitialPermissionCategories(form.permissions, form.permissionPreset),
     );
-    const [isSystemErrorOpen, setIsSystemErrorOpen] = useState(false);
+    const [status, setStatus] = useState({ tone: '', message: '' });
+    const [saving, setSaving] = useState(false);
     const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
-    const initialGeneralSnapshot = useMemo(() => JSON.stringify(buildGeneralState(form.general)), [form.general]);
+    const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const isDetail = Boolean(recordId);
+    const initialGeneralSnapshot = useMemo(() => buildGeneralState(form.general), [form.general]);
     const initialPermissionSnapshot = useMemo(
-        () => JSON.stringify(buildInitialPermissionCategories(form.permissions, form.permissionPreset)),
+        () => buildInitialPermissionCategories(form.permissions, form.permissionPreset),
         [form.permissionPreset, form.permissions],
     );
 
@@ -34,13 +45,24 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form }) {
         setActiveTabId(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
         setGeneralValues(buildGeneralState(form.general));
         setPermissionCategories(buildInitialPermissionCategories(form.permissions, form.permissionPreset));
-        setIsSystemErrorOpen(false);
+        setStatus({ tone: '', message: '' });
         setIsDeleteConfirmationOpen(false);
     }, [form]);
 
-    const isDirty =
-        JSON.stringify(generalValues) !== initialGeneralSnapshot ||
-        JSON.stringify(permissionCategories) !== initialPermissionSnapshot;
+    const isDirty = useMemo(
+        () =>
+            JSON.stringify(buildGroupAccessComparableState(generalValues, permissionCategories)) !==
+            JSON.stringify(buildGroupAccessComparableState(initialGeneralSnapshot, initialPermissionSnapshot)),
+        [generalValues, initialGeneralSnapshot, initialPermissionSnapshot, permissionCategories],
+    );
+    const validationMessage = useMemo(() => {
+        if (!String(generalValues.groupName ?? '').trim()) {
+            return 'Nama Grup wajib diisi.';
+        }
+
+        return '';
+    }, [generalValues.groupName]);
+
     useWorkspaceDirtyRegistration({
         pageId,
         tabId: activeLevel2Tab?.id,
@@ -53,6 +75,115 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form }) {
         generalValues.groupName,
     );
 
+    async function handleSearchUser() {
+        try {
+            const record = await promptSelectBackendRecord(
+                'users',
+                'pengguna',
+                (user) => `${user.name ?? '-'}${user.email ? ` (${user.email})` : ''}`,
+            );
+
+            if (!record) {
+                return;
+            }
+
+            const nextUser = {
+                id: record.id ?? null,
+                label: record.name ?? record.email ?? `Pengguna #${record.id ?? ''}`,
+            };
+
+            setGeneralValues((currentValues) => {
+                const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
+
+                if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
+                    return currentValues;
+                }
+
+                setStatus({
+                    tone: 'success',
+                    message: 'Pengguna berhasil ditambahkan ke grup.',
+                });
+
+                return {
+                    ...currentValues,
+                    selectedUsers: [...currentUsers, nextUser],
+                };
+            });
+        } catch (error) {
+            setStatus({
+                tone: 'error',
+                message: getBackendErrorMessage(error, error?.message ?? 'Pengguna tidak dapat dipilih.'),
+            });
+        }
+    }
+
+    async function handleSave() {
+        if (validationMessage) {
+            rejectCrudFormAction(validationMessage, { setStatus });
+            return;
+        }
+
+        if (!isDirty) {
+            rejectCrudFormAction('Belum ada perubahan untuk disimpan.', { setStatus });
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: isDetail ? 'Menyimpan akses grup...' : 'Membuat akses grup...',
+            successMessage: isDetail ? 'Akses grup berhasil diperbarui.' : 'Akses grup berhasil dibuat.',
+            setSaving,
+            setStatus,
+            getErrorMessage: (error) => getBackendErrorMessage(error, 'Akses grup gagal disimpan.'),
+            execute: async () => {
+                const payload = buildGroupAccessPayload(generalValues, permissionCategories);
+                const response = isDetail
+                    ? await updateBackendResource('access-groups', recordId, payload)
+                    : await createBackendResource('access-groups', payload);
+
+                return response?.data ?? null;
+            },
+            onSuccess: async (record) => {
+                await onRefresh?.();
+
+                if (!isDetail && record?.id) {
+                    onOpenDetail?.({
+                        recordId: String(record.id),
+                        label: record.name ?? generalValues.groupName,
+                        tabLabel: record.name ?? generalValues.groupName,
+                    });
+                }
+            },
+        });
+    }
+
+    function requestDelete() {
+        if (!isDetail || saving) {
+            return;
+        }
+
+        setIsDeleteConfirmationOpen(true);
+    }
+
+    async function handleDelete() {
+        if (!isDetail) {
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: 'Menghapus akses grup...',
+            successMessage: 'Akses grup berhasil dihapus.',
+            setSaving,
+            setStatus,
+            getErrorMessage: (error) => getBackendErrorMessage(error, 'Akses grup gagal dihapus.'),
+            onStart: () => setIsDeleteConfirmationOpen(false),
+            execute: () => deleteBackendResource('access-groups', recordId),
+            onSuccess: async () => {
+                await onRefresh?.();
+                onCloseDetail?.(recordId);
+            },
+        });
+    }
+
     return (
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_110px] xl:items-start">
             <div className="rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
@@ -63,6 +194,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form }) {
                 />
 
                 <div className="p-4 md:p-5">
+                    <CrudStatusMessage status={status} className="mb-4" />
                     {activeTabId === 'general' ? (
                         <GroupAccessGeneralSection
                             general={form.general}
@@ -79,12 +211,17 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form }) {
                                     accessLimitationId: nextValue,
                                 }))
                             }
-                            onRemoveUser={(userName) =>
+                            onRemoveUser={(selectedUser) =>
                                 setGeneralValues((currentValues) => ({
                                     ...currentValues,
-                                    selectedUsers: currentValues.selectedUsers.filter((item) => item !== userName),
+                                    selectedUsers: normalizeSelectedUsers(currentValues.selectedUsers).filter((item) =>
+                                        selectedUser?.id != null
+                                            ? String(item.id ?? '') !== String(selectedUser.id)
+                                            : item.label !== selectedUser?.label,
+                                    ),
                                 }))
                             }
+                            onSearchUser={handleSearchUser}
                             textInput={TextInput}
                         />
                     ) : (
@@ -98,31 +235,31 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form }) {
             </div>
 
             <GroupAccessActionDock
-                actions={form.actions}
-                isDirty={isDirty}
-                onSave={() => setIsSystemErrorOpen(true)}
-                onDelete={() => setIsDeleteConfirmationOpen(true)}
-            />
-
-            <SystemErrorModal
-                open={isSystemErrorOpen}
-                onClose={() => setIsSystemErrorOpen(false)}
-                title={form.systemErrorDemo?.title}
-                description={form.systemErrorDemo?.description}
-                messages={form.systemErrorDemo?.messages}
-                copyLabel={form.systemErrorDemo?.copyLabel}
-                confirmLabel={form.systemErrorDemo?.confirmLabel}
+                actions={form.actions.map((action) => ({
+                    ...action,
+                    disabled:
+                        action.id === 'save'
+                            ? saving || Boolean(validationMessage)
+                            : action.id === 'delete'
+                              ? !isDetail || saving
+                              : Boolean(action.disabled) || saving,
+                }))}
+                isDirty={isDirty && !validationMessage}
+                onSave={handleSave}
+                onDelete={requestDelete}
             />
 
             <ConfirmationModal
                 open={isDeleteConfirmationOpen}
                 onClose={() => setIsDeleteConfirmationOpen(false)}
-                onConfirm={() => setIsDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
                 title={deleteConfirmation.title}
                 message={deleteConfirmationMessage}
                 confirmLabel={deleteConfirmation.confirmLabel}
                 cancelLabel={deleteConfirmation.cancelLabel}
                 closeLabel={deleteConfirmation.closeLabel}
+                confirmVariant="danger"
+                confirmLoading={saving}
             />
         </div>
     );

@@ -9,6 +9,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { buildAccountDetailRecord } from './accountsConfig';
@@ -42,6 +43,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
         [backendRecord, config, isDetail, recordId],
     );
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
+    const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const initialValues = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
@@ -49,6 +51,8 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
     useEffect(() => {
         setActiveTabId((isDetail ? config.detailTabs : config.createTabs)[0]?.id ?? 'general');
         setValues(initialValues);
+        setStatus({ tone: '', message: '' });
+        setDeleteModalOpen(false);
     }, [config.createTabs, config.detailTabs, initialValues, isDetail]);
 
     function handleChange(field, nextValue) {
@@ -83,12 +87,12 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
 
     async function handleSave() {
         if (validationMessage) {
-            rejectCrudFormAction(validationMessage);
+            rejectCrudFormAction(validationMessage, { setStatus });
             return;
         }
 
         if (!hasChanges) {
-            rejectCrudFormAction('Belum ada perubahan untuk disimpan.');
+            rejectCrudFormAction('Belum ada perubahan untuk disimpan.', { setStatus });
             return;
         }
 
@@ -96,6 +100,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
             loadingMessage: isDetail ? 'Menyimpan akun perkiraan...' : 'Membuat akun perkiraan...',
             successMessage: isDetail ? 'Akun perkiraan berhasil diperbarui.' : 'Akun perkiraan berhasil dibuat.',
             setSaving,
+            setStatus,
             execute: async () => {
                 const payload = buildAccountPayload(values);
                 const response = isDetail
@@ -131,6 +136,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
             loadingMessage: 'Menghapus akun perkiraan...',
             successMessage: 'Akun perkiraan berhasil dihapus.',
             setSaving,
+            setStatus,
             onStart: () => setDeleteModalOpen(false),
             execute: () => deleteBackendResource('accounts', recordId),
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akun perkiraan gagal dihapus.'),
@@ -153,6 +159,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                 <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 lg:flex-row lg:items-start">
                     <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-3 py-4 sm:px-4 lg:order-1">
                         <div className="max-w-[1260px]">
+                            <CrudStatusMessage status={status} className="mb-4" />
                             {activeTabId === 'opening-balance' ? (
                                 <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
                             ) : activeTabId === 'others' ? (

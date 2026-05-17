@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import {
+    buildGroupAccessRow,
     mergeGroupAccessForm,
 } from './groupAccessUtils';
 import {
@@ -14,24 +16,59 @@ export default function GroupAccessView({
     activeLevel2Tab,
     onOpenContent,
     onOpenDetail,
+    onCloseDetail,
 }) {
+    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+        resource: 'access-groups',
+        filters: {
+            per_page: 100,
+        },
+    });
+    const resolvedRows = useMemo(
+        () => backendRows.map((record) => buildGroupAccessRow(record, page.form)),
+        [backendRows, page.form],
+    );
     const rowMap = useMemo(
         () =>
-            (page.table?.rows ?? []).reduce((result, row) => {
+            resolvedRows.reduce((result, row) => {
                 result[row.id] = row;
                 return result;
             }, {}),
-        [page.table?.rows],
+        [resolvedRows],
     );
     const activeRow = activeLevel2Tab?.recordId ? rowMap[activeLevel2Tab.recordId] : null;
     const resolvedForm = useMemo(
         () => mergeGroupAccessForm(page.form, activeRow?.detailForm ?? {}),
         [activeRow?.detailForm, page.form],
     );
+    const resolvedTable = useMemo(
+        () => ({
+            ...page.table,
+            rows: resolvedRows,
+            pageValue: total.toLocaleString('id-ID'),
+            emptyLabel: error || page.table?.emptyLabel || 'Belum ada data',
+            refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
+        }),
+        [error, loading, page.table, resolvedRows, total],
+    );
 
     return mode === 'table' ? (
-        <GroupAccessTableView table={page.table} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
+        <GroupAccessTableView
+            table={resolvedTable}
+            onCreate={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            loading={loading}
+            error={error}
+            onRefresh={reload}
+        />
     ) : (
-        <GroupAccessFormView pageId={page.id} activeLevel2Tab={activeLevel2Tab} form={resolvedForm} />
+        <GroupAccessFormView
+            pageId={page.id}
+            activeLevel2Tab={activeLevel2Tab}
+            form={resolvedForm}
+            onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
+            onRefresh={reload}
+        />
     );
 }

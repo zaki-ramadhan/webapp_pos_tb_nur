@@ -40,7 +40,7 @@ function ItemRequestHeaderActions({ config }) {
     );
 }
 
-export function ItemRequestFormHeader({ config, values, setValues, isDetail }) {
+export function ItemRequestFormHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="border-b border-[#d8dde7] px-4 py-4">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] xl:items-start">
@@ -86,7 +86,7 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail }) {
                                 trailingClassName="px-3"
                             />
                         </FormFieldRow>
-                    ) : (
+                    ) : values.autoNumber ? (
                         <div className="grid gap-3 sm:grid-cols-[190px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
                                 <TransactionFieldLabel label={config.labels.documentNumber} required />
@@ -119,6 +119,20 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail }) {
                                 ))}
                             </SelectField>
                         </div>
+                    ) : (
+                        <FormFieldRow label={config.labels.documentNumber} required labelClassName="sm:text-right">
+                            <TextInput
+                                value={values.documentNumber}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value,
+                                    }))
+                                }
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-[15px] text-[#1f2436]"
+                            />
+                        </FormFieldRow>
                     )}
 
                     <div className="flex justify-end">
@@ -130,7 +144,7 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail }) {
     );
 }
 
-export function ItemRequestDetailsSection({ config, values, setValues, isDetail, onOpenItem }) {
+export function ItemRequestDetailsSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="flex min-h-[520px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
@@ -151,7 +165,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <TransactionToolbarIconButton label="Buka rincian barang">
+                    <TransactionToolbarIconButton label="Cari barang" onClick={handlers.onSelectItem}>
                         <LinkIcon className="h-4.5 w-4.5" />
                     </TransactionToolbarIconButton>
 
@@ -167,7 +181,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
                 <div className="flex items-center justify-end gap-3 pb-3">
-                    <TransactionToolbarIconButton label={`Cari ${config.itemSectionTitle}`}>
+                    <TransactionToolbarIconButton label={`Cari ${config.itemSectionTitle}`} onClick={handlers.onSelectItem}>
                         <SearchIcon className="h-4.5 w-4.5" />
                     </TransactionToolbarIconButton>
 
@@ -186,7 +200,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
                             <TableActionIcon className="h-4 w-4" />
                         </span>
                     }
-                    onRowClick={onOpenItem}
+                    onRowClick={handlers.onEditItem}
                     getRowClassName={() => 'cursor-pointer hover:bg-[#eef3fb]'}
                     renderHeaderCell={(column) =>
                         column.kind === 'spacer' ? (
@@ -212,7 +226,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
     );
 }
 
-export function ItemRequestAdditionalInfoSection({ config, values, setValues, isDetail }) {
+export function ItemRequestAdditionalInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
@@ -260,12 +274,8 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                         values={values.branches}
                         placeholder="Cari/Pilih..."
                         searchLabel="Cari cabang"
-                        onRemove={(branchValue) =>
-                            setValues((current) => ({
-                                ...current,
-                                branches: current.branches.filter((item) => item !== branchValue),
-                            }))
-                        }
+                        onRemove={(branchValue) => handlers.onRemoveBranch?.(branchValue)}
+                        onSearch={handlers.onSelectBranch}
                     />
                 </div>
             </div>

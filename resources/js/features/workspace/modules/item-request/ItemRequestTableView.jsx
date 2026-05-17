@@ -34,7 +34,14 @@ function TableFilterField({ filter, value, onChange }) {
     );
 }
 
-export default function ItemRequestTableView({ config, onCreate, onOpenDetail }) {
+export default function ItemRequestTableView({
+    config,
+    onCreate,
+    onOpenDetail,
+    loading = false,
+    error = '',
+    onRefresh = null,
+}) {
     const [filters, setFilters] = useState(() =>
         (config.table.filters ?? []).reduce(
             (result, filter) => ({
@@ -132,8 +139,9 @@ export default function ItemRequestTableView({ config, onCreate, onOpenDetail })
                     onClick: onCreate,
                 }}
                 refreshButton={{
-                    label: config.table.refreshLabel,
-                    onClick: () => setSearchValue(''),
+                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
+                    onClick: onRefresh ?? (() => setSearchValue('')),
+                    loading,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
                 }}
                 rightControls={
@@ -166,7 +174,7 @@ export default function ItemRequestTableView({ config, onCreate, onOpenDetail })
                 <TransactionDataTable
                     columns={config.table.columns}
                     rows={rows}
-                    emptyLabel="Belum ada data"
+                    emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
                     minWidthClassName="min-w-[1060px]"
                     onRowClick={(row) =>
                         onOpenDetail({

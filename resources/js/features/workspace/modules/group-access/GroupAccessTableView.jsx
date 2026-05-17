@@ -10,9 +10,9 @@ import {
 } from '@/components/ui/DataTable';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { SearchIcon } from '@/features/workspace/shared/Icons';
+import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
-export default function GroupAccessTableView({ table, onCreate, onOpenDetail }) {
+export default function GroupAccessTableView({ table, onCreate, onOpenDetail, loading = false, error = '', onRefresh = null }) {
     const [keyword, setKeyword] = useState('');
 
     const filteredRows = useMemo(() => {
@@ -34,7 +34,12 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail }) 
             <TableToolbar
                 size="compact"
                 createButton={{ label: table.createLabel, onClick: onCreate }}
-                refreshButton={{ label: table.refreshLabel }}
+                refreshButton={{
+                    label: loading ? 'Memuat data...' : table.refreshLabel,
+                    onClick: onRefresh,
+                    loading,
+                    icon: <RefreshIcon className="h-4.5 w-4.5" />,
+                }}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -60,27 +65,36 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail }) 
                         </tr>
                     </DataTableHeader>
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                onClick={() =>
-                                    onOpenDetail?.({
-                                        recordId: row.id,
-                                        label: row.tabLabel ?? row.groupName,
-                                    })
-                                }
-                                className={`cursor-pointer transition hover:bg-[#eef3fb] ${
-                                    index % 2 === 1 ? 'bg-[#f6f7f9]' : 'bg-white'
-                                }`.trim()}
-                            >
-                                <DataTableCell className="text-left text-[15px] font-normal text-[#131a28]">
-                                    {formatTableTextValue(row.groupName)}
-                                </DataTableCell>
-                                <DataTableCell className="text-left text-[15px] font-normal text-[#131a28]">
-                                    {formatTableTextValue(row.userList)}
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    onClick={() =>
+                                        onOpenDetail?.({
+                                            recordId: row.id,
+                                            label: row.tabLabel ?? row.groupName,
+                                            tabLabel: row.tabLabel ?? row.groupName,
+                                        })
+                                    }
+                                    className={`cursor-pointer transition hover:bg-[#eef3fb] ${
+                                        index % 2 === 1 ? 'bg-[#f6f7f9]' : 'bg-white'
+                                    }`.trim()}
+                                >
+                                    <DataTableCell className="text-left text-[15px] font-normal text-[#131a28]">
+                                        {formatTableTextValue(row.groupName)}
+                                    </DataTableCell>
+                                    <DataTableCell className="text-left text-[15px] font-normal text-[#131a28]">
+                                        {formatTableTextValue(row.userList)}
+                                    </DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={table.columns.length} className="px-3 py-8 text-center text-[15px] text-[#131a28]">
+                                    {loading ? 'Memuat data...' : (error || table.emptyLabel || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>

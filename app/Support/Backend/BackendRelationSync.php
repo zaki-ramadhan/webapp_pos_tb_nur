@@ -68,9 +68,13 @@ class BackendRelationSync
             ]);
         }
 
-        $relationQuery
-            ->when($keptIds !== [], fn (HasMany $query) => $query->whereNotIn('id', $keptIds), fn (HasMany $query) => $query)
-            ->delete();
+        $deleteQuery = clone $relationQuery;
+
+        if ($keptIds !== []) {
+            $deleteQuery->whereNotIn('id', $keptIds);
+        }
+
+        $deleteQuery->delete();
 
         foreach ($normalizedRows as $row) {
             $attributes = Arr::only($row, $fillableColumns);

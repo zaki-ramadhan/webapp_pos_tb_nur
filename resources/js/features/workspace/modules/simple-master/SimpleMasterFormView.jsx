@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -41,11 +42,13 @@ export default function SimpleMasterFormView({
     const [values, setValues] = useState(() => buildSimpleMasterFormValues(form, detailRow));
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const initialValues = useMemo(() => buildSimpleMasterFormValues(form, detailRow), [detailRow, form]);
 
     useEffect(() => {
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
     }, [initialValues]);
 
     function handleChange(fieldId, nextValue) {
@@ -91,26 +94,7 @@ export default function SimpleMasterFormView({
                 return;
             }
 
-            const loadingToastId = showCrudLoadingToast('Sedang menghapus data.');
-            setSaving(true);
-
-            try {
-                await deleteBackendResource(backendConfig.resource, detailRow.id);
-                await onRefresh?.();
-                const successMessage = 'Data berhasil dihapus.';
-                setStatus({ tone: 'success', message: successMessage });
-                finishCrudLoadingToast(loadingToastId);
-                showCrudSuccessToast(successMessage);
-                onCloseDetail?.(detailRow.id);
-                onOpenContent?.();
-            } catch (error) {
-                const errorMessage = getBackendErrorMessage(error);
-                setStatus({ tone: 'error', message: errorMessage });
-                finishCrudLoadingToast(loadingToastId);
-                showCrudErrorToast(errorMessage);
-            } finally {
-                setSaving(false);
-            }
+            setDeleteConfirmationOpen(true);
 
             return;
         }
@@ -156,51 +140,92 @@ export default function SimpleMasterFormView({
         }
     }
 
+    async function handleDelete() {
+        if (!backendConfig || !detailRow?.id) {
+            return;
+        }
+
+        const loadingToastId = showCrudLoadingToast('Sedang menghapus data.');
+        setSaving(true);
+
+        try {
+            await deleteBackendResource(backendConfig.resource, detailRow.id);
+            await onRefresh?.();
+            const successMessage = 'Data berhasil dihapus.';
+            setStatus({ tone: 'success', message: successMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(successMessage);
+            setDeleteConfirmationOpen(false);
+            onCloseDetail?.(detailRow.id);
+            onOpenContent?.();
+        } catch (error) {
+            const errorMessage = getBackendErrorMessage(error);
+            setStatus({ tone: 'error', message: errorMessage });
+            finishCrudLoadingToast(loadingToastId);
+            showCrudErrorToast(errorMessage);
+        } finally {
+            setSaving(false);
+        }
+    }
+
     return (
-        <div className="relative flex min-h-full flex-col">
-            <div className="px-1 pt-0.5">
-                <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
-            </div>
+        <>
+            <div className="relative flex min-h-full flex-col">
+                <div className="px-1 pt-0.5">
+                    <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
+                </div>
 
-            <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
-                    <CrudStatusMessage status={status} />
+                <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
+                    <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+                        <CrudStatusMessage status={status} />
 
-                    <div className="space-y-4">
-                        {(form.fields ?? []).map((field) => (
-                            field.standalone ? (
-                                <StandaloneCheckboxField
-                                    key={field.id}
-                                    field={field}
-                                    value={values[field.id]}
-                                    onChange={handleChange}
-                                />
-                            ) : (
-                                <MasterFieldRow
-                                    key={field.id}
-                                    field={field}
-                                    value={values[field.id] ?? ''}
-                                    onChange={handleChange}
-                                />
-                            )
+                        <div className="space-y-4">
+                            {(form.fields ?? []).map((field) => (
+                                field.standalone ? (
+                                    <StandaloneCheckboxField
+                                        key={field.id}
+                                        field={field}
+                                        value={values[field.id]}
+                                        onChange={handleChange}
+                                    />
+                                ) : (
+                                    <MasterFieldRow
+                                        key={field.id}
+                                        field={field}
+                                        value={values[field.id] ?? ''}
+                                        onChange={handleChange}
+                                    />
+                                )
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col">
+                        {buildSimpleMasterDockActions(form, isDetailMode).map((action) => (
+                            <DockActionButton
+                                key={action.id}
+                                label={saving ? 'Memproses...' : action.label}
+                                tone={action.tone}
+                                icon={renderSimpleMasterDockIcon(action.icon)}
+                                onClick={saving ? undefined : () => handleAction(action.id)}
+                                disabled={action.id === 'save' ? saveDisabled : saving}
+                                className={saving ? 'pointer-events-none opacity-70' : ''}
+                            />
                         ))}
                     </div>
                 </div>
-
-                <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col">
-                    {buildSimpleMasterDockActions(form, isDetailMode).map((action) => (
-                        <DockActionButton
-                            key={action.id}
-                            label={saving ? 'Memproses...' : action.label}
-                            tone={action.tone}
-                            icon={renderSimpleMasterDockIcon(action.icon)}
-                            onClick={saving ? undefined : () => handleAction(action.id)}
-                            disabled={action.id === 'save' ? saveDisabled : saving}
-                            className={saving ? 'pointer-events-none opacity-70' : ''}
-                        />
-                    ))}
-                </div>
             </div>
-        </div>
+
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                title={`Hapus ${form.sectionLabel ?? 'data'}`}
+                message={`Data "${detailRow?.name ?? detailRow?.tabLabel ?? detailRow?.id ?? 'ini'}" akan dihapus. Lanjutkan?`}
+                confirmLabel="Hapus"
+                confirmVariant="danger"
+                confirmLoading={saving}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
+            />
+        </>
     );
 }

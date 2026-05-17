@@ -11,6 +11,28 @@ export function clonePermissionCategories(categories = []) {
     }));
 }
 
+export function normalizeSelectedUsers(users = []) {
+    return (users ?? [])
+        .map((user) => {
+            if (!user) {
+                return null;
+            }
+
+            if (typeof user === 'string') {
+                return {
+                    id: null,
+                    label: user,
+                };
+            }
+
+            return {
+                id: user.id ?? null,
+                label: user.label ?? user.name ?? user.email ?? '',
+            };
+        })
+        .filter((user) => user && user.label);
+}
+
 export function buildGeneralState(general = {}) {
     const selectedOption =
         general.accessLimitations?.options?.find((option) => option.checked) ??
@@ -20,7 +42,7 @@ export function buildGeneralState(general = {}) {
     return {
         groupName: general.nameField?.value ?? '',
         accessLimitationId: selectedOption?.id ?? '',
-        selectedUsers: [...(general.userSelection?.selected ?? [])],
+        selectedUsers: normalizeSelectedUsers(general.userSelection?.selected),
     };
 }
 
@@ -146,4 +168,143 @@ export function filterSections(sections, keyword) {
 
 export function resolveDeleteConfirmationMessage(template, groupName) {
     return String(template ?? '').replace('{name}', groupName || '-');
+}
+
+function buildPermissionMap(permissions = []) {
+    return (permissions ?? []).reduce((result, permission) => {
+        const menuKey = String(permission.menu_key ?? '').trim();
+
+        if (!menuKey) {
+            return result;
+        }
+
+        result[menuKey] = {
+            active: Boolean(permission.can_access),
+            create: Boolean(permission.can_create),
+            update: Boolean(permission.can_update),
+            delete: Boolean(permission.can_delete),
+            view: Boolean(permission.can_view),
+        };
+
+        return result;
+    }, {});
+}
+
+export function applyBackendPermissions(categories = [], permissions = []) {
+    const permissionMap = buildPermissionMap(permissions);
+
+    return clonePermissionCategories(categories).map((category) => ({
+        ...category,
+        sections: (category.sections ?? []).map((section) => ({
+            ...section,
+            rows: (section.rows ?? []).map((row) => ({
+                ...row,
+                permissions: permissionMap[row.id]
+                    ? {
+                          ...row.permissions,
+                          ...permissionMap[row.id],
+                      }
+                    : { ...(row.permissions ?? {}) },
+            })),
+        })),
+    }));
+}
+
+export function buildGroupAccessDetailForm(baseForm = {}, record = null) {
+    if (!record) {
+        return {};
+    }
+
+    const selectedUsers = normalizeSelectedUsers(
+        Array.isArray(record.users)
+            ? record.users.map((user) => ({
+                  id: user.id ?? null,
+                  label: user.name ?? user.email ?? `Pengguna #${user.id ?? ''}`,
+              }))
+            : [],
+    );
+
+    return {
+        defaultTabId: 'general',
+        permissionPreset: null,
+        general: {
+            ...(baseForm.general ?? {}),
+            nameField: {
+                ...(baseForm.general?.nameField ?? {}),
+                value: record.name ?? '',
+            },
+            accessLimitations: {
+                ...(baseForm.general?.accessLimitations ?? {}),
+                options: (baseForm.general?.accessLimitations?.options ?? []).map((option, index) => ({
+                    ...option,
+                    checked: index === 0,
+                })),
+            },
+            userSelection: {
+                ...(baseForm.general?.userSelection ?? {}),
+                selected: selectedUsers,
+            },
+        },
+        permissions: {
+            ...(baseForm.permissions ?? {}),
+            categories: applyBackendPermissions(baseForm.permissions?.categories ?? [], record.permissions ?? []),
+        },
+    };
+}
+
+export function buildGroupAccessRow(record, baseForm = {}) {
+    const users = Array.isArray(record.users) ? record.users : [];
+
+    return {
+        id: String(record.id),
+        groupName: record.name ?? '',
+        userList: users.length
+            ? users
+                  .map((user) => user.name ?? user.email ?? `Pengguna #${user.id ?? ''}`)
+                  .filter(Boolean)
+                  .join(', ')
+            : 'Belum ada pengguna',
+        tabLabel: record.name ?? `Akses Grup #${record.id}`,
+        detailForm: buildGroupAccessDetailForm(baseForm, record),
+        __backendRecord: record,
+    };
+}
+
+export function buildGroupAccessPermissionsPayload(categories = []) {
+    return clonePermissionCategories(categories).flatMap((category) =>
+        (category.sections ?? []).flatMap((section) =>
+            (section.rows ?? []).map((row) => ({
+                menu_key: row.id,
+                can_access: Boolean(row.permissions?.active),
+                can_create: Boolean(row.permissions?.create),
+                can_update: Boolean(row.permissions?.update),
+                can_delete: Boolean(row.permissions?.delete),
+                can_view: Boolean(row.permissions?.view),
+            })),
+        ),
+    );
+}
+
+export function buildGroupAccessPayload(generalValues, permissionCategories) {
+    return {
+        name: String(generalValues.groupName ?? '').trim(),
+        description: null,
+        is_active: true,
+        user_ids: normalizeSelectedUsers(generalValues.selectedUsers)
+            .map((user) => user.id)
+            .filter((id) => id !== null && id !== undefined && id !== '' && Number.isInteger(Number(id))),
+        permissions: buildGroupAccessPermissionsPayload(permissionCategories),
+    };
+}
+
+export function buildGroupAccessComparableState(generalValues, permissionCategories) {
+    return {
+        groupName: String(generalValues.groupName ?? '').trim(),
+        accessLimitationId: String(generalValues.accessLimitationId ?? '').trim(),
+        selectedUsers: normalizeSelectedUsers(generalValues.selectedUsers).map((user) => ({
+            id: user.id ?? null,
+            label: user.label,
+        })),
+        permissions: buildGroupAccessPermissionsPayload(permissionCategories),
+    };
 }

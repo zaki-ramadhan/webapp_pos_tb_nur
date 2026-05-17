@@ -169,7 +169,7 @@ export function GroupAccessActionDock({ actions = [], isDirty, onSave, onDelete 
                     <GroupAccessActionButton
                         key={action.id}
                         action={action}
-                        disabled={action.id === 'save' ? !isDirty : Boolean(action.disabled)}
+                        disabled={action.id === 'save' ? (!isDirty || Boolean(action.disabled)) : Boolean(action.disabled)}
                         onClick={
                             action.id === 'save'
                                 ? onSave
@@ -202,20 +202,36 @@ function GroupAccessAccessOption({ option, checked, onChange }) {
     );
 }
 
-function GroupAccessUserLookupField({ field, selectedUsers, onRemoveUser }) {
+function resolveSelectedUserKey(user, index) {
+    if (user && typeof user === 'object') {
+        return user.id ?? user.label ?? index;
+    }
+
+    return user ?? index;
+}
+
+function resolveSelectedUserLabel(user) {
+    if (user && typeof user === 'object') {
+        return user.label ?? user.name ?? '';
+    }
+
+    return String(user ?? '');
+}
+
+function GroupAccessUserLookupField({ field, selectedUsers, onRemoveUser, onSearchUser = null }) {
     return (
         <div className="flex min-h-[66px] w-full max-w-[880px] overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
             <div className="flex min-w-0 flex-1 flex-col gap-2 px-3 py-2.5">
                 {selectedUsers.length ? (
                     <div className="flex flex-wrap items-center gap-2">
-                        {selectedUsers.map((user) => (
+                        {selectedUsers.map((user, index) => (
                             <button
-                                key={user}
+                                key={resolveSelectedUserKey(user, index)}
                                 type="button"
                                 onClick={() => onRemoveUser(user)}
                                 className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#7ea8e6] bg-[#eaf3ff] px-2 py-1 text-[14px] text-[#24324a]"
                             >
-                                <span className="truncate">{user}</span>
+                                <span className="truncate">{resolveSelectedUserLabel(user)}</span>
                                 <CloseIcon className="h-3.5 w-3.5 shrink-0" />
                             </button>
                         ))}
@@ -227,6 +243,7 @@ function GroupAccessUserLookupField({ field, selectedUsers, onRemoveUser }) {
 
             <button
                 type="button"
+                onClick={onSearchUser}
                 className="inline-flex w-12 items-center justify-center border-l border-[#d8dee8] text-[#1f2436]"
                 aria-label={`Cari ${field.label}`}
                 title={`Cari ${field.label}`}
@@ -243,6 +260,7 @@ export function GroupAccessGeneralSection({
     onChangeName,
     onChangeAccessLimitation,
     onRemoveUser,
+    onSearchUser,
     textInput: TextInputComponent,
 }) {
     return (
@@ -281,6 +299,7 @@ export function GroupAccessGeneralSection({
                     field={general.userSelection}
                     selectedUsers={values.selectedUsers}
                     onRemoveUser={onRemoveUser}
+                    onSearchUser={onSearchUser}
                 />
             </div>
         </div>
