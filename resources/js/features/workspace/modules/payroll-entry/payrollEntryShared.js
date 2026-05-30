@@ -13,3 +13,25 @@ export function buildDefaultValues(config) {
         notes: config.defaults?.notes ?? '',
     };
 }
+
+export function mapPayrollEntryRow(record) {
+    const totalAmount = parseFloat(record.total_amount ?? 0);
+    const month = record.metadata?.period_month ?? '';
+    const year = record.metadata?.period_year ?? '';
+
+    return {
+        id: record.id,
+        number: record.document_number,
+        date: record.entry_date,
+        dueDate: record.due_date,
+        total: totalAmount.toLocaleString('id-ID'),
+        paymentType: record.metadata?.payment_type ?? 'Bulanan',
+        status: record.status ?? 'Draft',
+        statusValue: (record.status ?? 'draft').toLowerCase(),
+        period: `${month} ${year}`.trim() || '-',
+        description: record.notes ?? '',
+        dateFilter: record.entry_date ? new Date(record.entry_date).getFullYear().toString() : 'all',
+        monthValue: (month || 'all').toLowerCase(),
+        yearValue: (year || 'all').toLowerCase(),
+    };
+}

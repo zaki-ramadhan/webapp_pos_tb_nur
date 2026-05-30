@@ -154,15 +154,6 @@ export default function renderWorkspaceActivePage({
                     onCloseDetail={closeDetail}
                 />
             );
-        case 'journal-activity-log':
-            return (
-                <JournalActivityLogView
-                    page={activePage}
-                    activeLevel2Tab={activeLevel2Tab}
-                    onOpenDetail={detailTabOpeners['journal-activity-log']}
-                    onCloseDetail={closeDetail}
-                />
-            );
         default:
             return <ModulePageView page={activePage} />;
     }

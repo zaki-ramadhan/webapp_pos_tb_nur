@@ -68,6 +68,8 @@ import TransactionApprovalView from '@/features/workspace/modules/transaction-ap
 import UsersManagementView from '@/features/workspace/modules/users-management/UsersManagementView';
 import WarehouseView from '@/features/workspace/modules/warehouse/WarehouseView';
 import WorkOrderView from '@/features/workspace/modules/work-order/WorkOrderView';
+import BusinessPartnerView from '@/features/workspace/modules/business-partner/BusinessPartnerView';
+import JournalActivityLogView from '@/features/workspace/modules/journal-activity-log/JournalActivityLogView';
 
 export const STATIC_PAGE_RENDERERS = {
     preferences: (page) => <PreferencesView page={page} />,
@@ -84,7 +86,6 @@ export const STATIC_PAGE_RENDERERS = {
     'asset-location': (page) => <AssetLocationView page={page} />,
     'supplier-transfer': (page) => <SupplierTransferView page={page} />,
     'salary-allowance': (page) => <SalaryAllowanceView page={page} />,
-    users: (page, mode) => <UsersManagementView page={page} mode={mode} />,
 };
 
 export const CONTENT_PAGE_COMPONENTS = {
@@ -101,6 +102,8 @@ export const CONTENT_PAGE_COMPONENTS = {
     'payroll-entry': PayrollEntryView,
     'print-design': PrintDesignView,
     'transaction-approval': TransactionApprovalView,
+    users: UsersManagementView,
+    'journal-activity-log': JournalActivityLogView,
 };
 
 export const LEVEL2_CONTENT_PAGE_COMPONENTS = {
@@ -127,7 +130,7 @@ export const LEVEL2_DETAIL_PAGE_COMPONENTS = {
     'items-services': ItemsServicesView,
     'item-unit': SimpleMasterView,
     'item-category': ItemCategoryView,
-    'payment-terms': PaymentTermsView,
+    'payment-terms': SimpleMasterView,
     'customer-category': SimpleMasterView,
     'supplier-category': SimpleMasterView,
     'sales-category': SimpleMasterView,
@@ -154,6 +157,8 @@ export const LEVEL2_DETAIL_PAGE_COMPONENTS = {
     'asset-disposal': AssetDisposalView,
     'asset-move': AssetMoveView,
     'general-journal': GeneralJournalView,
+    customers: (props) => <BusinessPartnerView {...props} partnerType="customer" />,
+    suppliers: (props) => <BusinessPartnerView {...props} partnerType="supplier" />,
 };
 
 export const BANK_INQUIRY_PAGE_IDS = new Set([

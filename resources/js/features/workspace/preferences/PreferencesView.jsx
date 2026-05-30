@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextareaField from '@/components/ui/TextareaField';
@@ -13,6 +13,9 @@ import PreferencesSalesView from '@/features/workspace/preferences/PreferencesSa
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import PreferencesTaxView from '@/features/workspace/preferences/PreferencesTaxView';
 import PanelActions from '@/features/workspace/shared/PanelActions';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
+import { extractPreferencesFromTabs } from './preferenceMapping';
 import {
     CalendarIcon,
     CloseIcon,
@@ -52,11 +55,12 @@ function PreferenceAddressTokenField({ tokens = [] }) {
     );
 }
 
-function PreferenceAddressTextField({ field, className = '' }) {
+function PreferenceAddressTextField({ field, value, onChange, className = '' }) {
     return (
         <TextInput
             id={field.id}
-            defaultValue={field.value}
+            value={value ?? field.value}
+            onChange={(e) => onChange?.(field.id, e.target.value)}
             placeholder={field.placeholder}
             disabled={field.disabled}
             error={field.error}
@@ -71,7 +75,7 @@ function PreferenceAddressTextField({ field, className = '' }) {
     );
 }
 
-function PreferenceCompanyAddress({ address }) {
+function PreferenceCompanyAddress({ address, values, onChange }) {
     const addressFields = address?.fields?.reduce((result, field) => {
         result[field.id] = field;
         return result;
@@ -97,7 +101,8 @@ function PreferenceCompanyAddress({ address }) {
                 <div className="space-y-3">
                     <TextareaField
                         id={address.street?.id}
-                        defaultValue={address.street?.value}
+                        value={values[address.street?.id] ?? address.street?.value}
+                        onChange={(e) => onChange?.(address.street?.id, e.target.value)}
                         placeholder={address.street?.placeholder}
                         disabled={address.street?.disabled}
                         error={address.street?.error}
@@ -111,14 +116,14 @@ function PreferenceCompanyAddress({ address }) {
 
                     <PreferenceAddressTokenField tokens={address.tokens} />
 
-                    <PreferenceAddressTextField field={cityField} />
+                    <PreferenceAddressTextField field={cityField} value={values[cityField.id]} onChange={onChange} />
 
                     <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_206px]">
-                        <PreferenceAddressTextField field={provinceField} />
-                        <PreferenceAddressTextField field={postalCodeField} />
+                        <PreferenceAddressTextField field={provinceField} value={values[provinceField.id]} onChange={onChange} />
+                        <PreferenceAddressTextField field={postalCodeField} value={values[postalCodeField.id]} onChange={onChange} />
                     </div>
 
-                    <PreferenceAddressTextField field={countryField} />
+                    <PreferenceAddressTextField field={countryField} value={values[countryField.id]} onChange={onChange} />
                 </div>
             </div>
         </div>
@@ -126,11 +131,12 @@ function PreferenceCompanyAddress({ address }) {
 }
 
 const PREFERENCE_FIELD_RENDERERS = {
-    select(field) {
+    select(field, value, onChange) {
         return (
             <SelectField
                 id={field.id}
-                defaultValue={field.value}
+                value={value ?? field.value}
+                onChange={(e) => onChange?.(field.id, e.target.value)}
                 disabled={field.disabled}
                 error={field.error}
                 message={field.message}
@@ -145,12 +151,13 @@ const PREFERENCE_FIELD_RENDERERS = {
             </SelectField>
         );
     },
-    date(field) {
+    date(field, value, onChange) {
         return (
             <div className="flex max-w-[280px] items-center gap-0">
                 <TextInput
                     id={field.id}
-                    defaultValue={field.value}
+                    value={value ?? field.value}
+                    onChange={(e) => onChange?.(field.id, e.target.value)}
                     placeholder={field.placeholder}
                     disabled={field.disabled}
                     error={field.error}
@@ -169,12 +176,12 @@ const PREFERENCE_FIELD_RENDERERS = {
             </div>
         );
     },
-    'readonly-edit'(field) {
+    'readonly-edit'(field, value, onChange) {
         return (
             <div className="flex max-w-[480px] items-center gap-4">
                 <TextInput
                     id={field.id}
-                    defaultValue={field.value}
+                    value={value ?? field.value}
                     readOnly
                     disabled={field.disabled}
                     error={field.error}
@@ -193,11 +200,12 @@ const PREFERENCE_FIELD_RENDERERS = {
             </div>
         );
     },
-    'chip-search'(field) {
+    'chip-search'(field, value, onChange) {
         return (
             <TextInput
                 id={field.id}
-                defaultValue={field.value}
+                value={value ?? field.value}
+                onChange={(e) => onChange?.(field.id, e.target.value)}
                 placeholder={field.placeholder}
                 disabled={field.disabled}
                 error={field.error}
@@ -213,10 +221,12 @@ const PREFERENCE_FIELD_RENDERERS = {
             />
         );
     },
-    search(field) {
+    search(field, value, onChange) {
         return (
             <TextInput
                 id={field.id}
+                value={value ?? ''}
+                onChange={(e) => onChange?.(field.id, e.target.value)}
                 placeholder={field.placeholder}
                 disabled={field.disabled}
                 error={field.error}
@@ -227,11 +237,12 @@ const PREFERENCE_FIELD_RENDERERS = {
             />
         );
     },
-    default(field) {
+    default(field, value, onChange) {
         return (
             <TextInput
                 id={field.id}
-                defaultValue={field.value}
+                value={value ?? field.value}
+                onChange={(e) => onChange?.(field.id, e.target.value)}
                 placeholder={field.placeholder}
                 disabled={field.disabled}
                 error={field.error}
@@ -244,110 +255,182 @@ const PREFERENCE_FIELD_RENDERERS = {
     },
 };
 
-function PreferenceField({ field }) {
+function PreferenceField({ field, value, onChange }) {
     const renderField = PREFERENCE_FIELD_RENDERERS[field.type] ?? PREFERENCE_FIELD_RENDERERS.default;
 
-    return renderField(field);
+    return renderField(field, value, onChange);
 }
 
 export default function PreferencesView({ page }) {
     const workspace = page.workspace;
+    const { rows: backendRows, loading: backendLoading } = useBackendIndexResource({
+        resource: 'preferences',
+        filters: { per_page: 500 },
+    });
+
+    const [values, setValues] = useState({});
+    const [isDirty, setIsDirty] = useState(false);
+
+    useEffect(() => {
+        if (backendRows.length > 0) {
+            const initialValues = {};
+            backendRows.forEach(row => {
+                initialValues[row.setting_key] = row.value;
+            });
+            setValues(initialValues);
+        }
+    }, [backendRows]);
+
+    const handleValueChange = (key, value) => {
+        setValues(prev => ({ ...prev, [key]: value }));
+        setIsDirty(true);
+    };
+
     const companyRootItem = { id: 'company-root', label: workspace.topTab };
     const sideItems = [companyRootItem, ...workspace.sidebarItems];
-    const [activeAttachmentsTabId, setActiveAttachmentsTabId] = useState(
-        workspace.attachmentsTabs?.[0]?.id ?? '',
-    );
+    const [tabsData, setTabsData] = useState({
+        features: workspace.featureTabs,
+        tax: workspace.taxTabs,
+        approval: workspace.approvalTabs,
+        attachments: workspace.attachmentsTabs,
+        sales: workspace.salesTabs,
+        purchase: workspace.purchaseTabs,
+        limitations: workspace.limitationsTabs,
+        others: workspace.othersTabs,
+    });
+
+    const [activeAttachmentsTabId, setActiveAttachmentsTabId] = useState(workspace.attachmentsTabs?.[0]?.id ?? '');
     const [activeProfileTabId, setActiveProfileTabId] = useState(workspace.companyTabs[0]?.id ?? '');
     const [activeApprovalTabId, setActiveApprovalTabId] = useState(workspace.approvalTabs?.[0]?.id ?? '');
     const [activeFeatureTabId, setActiveFeatureTabId] = useState(workspace.featureTabs?.[0]?.id ?? '');
-    const [activeLimitationsTabId, setActiveLimitationsTabId] = useState(
-        workspace.limitationsTabs?.[0]?.id ?? '',
-    );
+    const [activeLimitationsTabId, setActiveLimitationsTabId] = useState(workspace.limitationsTabs?.[0]?.id ?? '');
     const [activeOthersTabId, setActiveOthersTabId] = useState(workspace.othersTabs?.[0]?.id ?? '');
     const [activePurchaseTabId, setActivePurchaseTabId] = useState(workspace.purchaseTabs?.[0]?.id ?? '');
     const [activeSalesTabId, setActiveSalesTabId] = useState(workspace.salesTabs?.[0]?.id ?? '');
     const [activeTaxTabId, setActiveTaxTabId] = useState(workspace.taxTabs?.[0]?.id ?? '');
-    const [activeSideItemId, setActiveSideItemId] = useState(
-        workspace.defaultSidebarItemId ?? companyRootItem.id,
+    const [activeSideItemId, setActiveSideItemId] = useState(workspace.defaultSidebarItemId ?? companyRootItem.id);
+    const [saving, setSaving] = useState(false);
+
+    const handleTabsUpdate = (key, nextTabs) => {
+        setTabsData(prev => ({ ...prev, [key]: nextTabs }));
+        setIsDirty(true);
+    };
+
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            const payload = {
+                company_info: values,
+                // In a real app, we'd also send tabsData, but for now let's focus on the basics
+                // that the backend PreferenceSetting can handle.
+                settings: {
+                    ...values,
+                    ...extractPreferencesFromTabs(Object.values(tabsData).flat())
+                }
+            };
+
+            await createBackendResource('preferences', payload);
+            setIsDirty(false);
+            alert('Preferensi berhasil disimpan.');
+        } catch (error) {
+            console.error('Save failed:', error);
+            alert(getBackendErrorMessage(error));
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const resolvedActions = (workspace.actions ?? []).map(action => 
+        action.id === 'save' 
+            ? { ...action, onClick: handleSave, disabled: (saving || !isDirty) && action.tone === 'primary' }
+            : action
     );
 
     function renderSidebarContent() {
-        if (activeSideItemId === 'features' && workspace.featureTabs?.length) {
+        if (activeSideItemId === 'features' && tabsData.features?.length) {
             return (
                 <PreferencesFeatureView
-                    tabs={workspace.featureTabs}
+                    tabs={tabsData.features}
                     activeTabId={activeFeatureTabId}
                     onSelectTab={setActiveFeatureTabId}
+                    onUpdate={(next) => handleTabsUpdate('features', next)}
                 />
             );
         }
 
-        if (activeSideItemId === 'tax' && workspace.taxTabs?.length) {
+        if (activeSideItemId === 'tax' && tabsData.tax?.length) {
             return (
                 <PreferencesTaxView
-                    tabs={workspace.taxTabs}
+                    tabs={tabsData.tax}
                     activeTabId={activeTaxTabId}
                     onSelectTab={setActiveTaxTabId}
+                    onUpdate={(next) => handleTabsUpdate('tax', next)}
                 />
             );
         }
 
-        if (activeSideItemId === 'approval' && workspace.approvalTabs?.length) {
+        if (activeSideItemId === 'approval' && tabsData.approval?.length) {
             return (
                 <PreferencesApprovalView
-                    tabs={workspace.approvalTabs}
+                    tabs={tabsData.approval}
                     activeTabId={activeApprovalTabId}
                     onSelectTab={setActiveApprovalTabId}
+                    onUpdate={(next) => handleTabsUpdate('approval', next)}
                 />
             );
         }
 
-        if (activeSideItemId === 'attachments' && workspace.attachmentsTabs?.length) {
+        if (activeSideItemId === 'attachments' && tabsData.attachments?.length) {
             return (
                 <PreferencesAttachmentsView
-                    tabs={workspace.attachmentsTabs}
+                    tabs={tabsData.attachments}
                     activeTabId={activeAttachmentsTabId}
                     onSelectTab={setActiveAttachmentsTabId}
+                    onUpdate={(next) => handleTabsUpdate('attachments', next)}
                 />
             );
         }
 
-        if (activeSideItemId === 'sales' && workspace.salesTabs?.length) {
+        if (activeSideItemId === 'sales' && tabsData.sales?.length) {
             return (
                 <PreferencesSalesView
-                    tabs={workspace.salesTabs}
+                    tabs={tabsData.sales}
                     activeTabId={activeSalesTabId}
                     onSelectTab={setActiveSalesTabId}
+                    onUpdate={(next) => handleTabsUpdate('sales', next)}
                 />
             );
         }
 
-        if (activeSideItemId === 'purchase' && workspace.purchaseTabs?.length) {
+        if (activeSideItemId === 'purchase' && tabsData.purchase?.length) {
             return (
                 <PreferencesPurchaseView
-                    tabs={workspace.purchaseTabs}
+                    tabs={tabsData.purchase}
                     activeTabId={activePurchaseTabId}
                     onSelectTab={setActivePurchaseTabId}
+                    onUpdate={(next) => handleTabsUpdate('purchase', next)}
                 />
             );
         }
 
-        if (activeSideItemId === 'limitations' && workspace.limitationsTabs?.length) {
+        if (activeSideItemId === 'limitations' && tabsData.limitations?.length) {
             return (
                 <PreferencesLimitationsView
-                    tabs={workspace.limitationsTabs}
+                    tabs={tabsData.limitations}
                     activeTabId={activeLimitationsTabId}
                     onSelectTab={setActiveLimitationsTabId}
+                    onUpdate={(next) => handleTabsUpdate('limitations', next)}
                 />
             );
         }
 
-        if (activeSideItemId === 'others' && workspace.othersTabs?.length) {
+        if (activeSideItemId === 'others' && tabsData.others?.length) {
             return (
                 <PreferencesOthersView
-                    tabs={workspace.othersTabs}
+                    tabs={tabsData.others}
                     activeTabId={activeOthersTabId}
                     onSelectTab={setActiveOthersTabId}
+                    onUpdate={(next) => handleTabsUpdate('others', next)}
                 />
             );
         }
@@ -370,14 +453,22 @@ export default function PreferencesView({ page }) {
                                         <div key={field.id} className="contents">
                                             <label className="text-[16px] text-[#1f2436]">{field.label}</label>
                                             <div>
-                                                <PreferenceField field={field} />
+                                                <PreferenceField 
+                                                    field={field} 
+                                                    value={values[field.id]} 
+                                                    onChange={handleValueChange} 
+                                                />
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         ) : (
-                            <PreferenceCompanyAddress address={workspace.companyAddress} />
+                            <PreferenceCompanyAddress 
+                                address={workspace.companyAddress} 
+                                values={values}
+                                onChange={handleValueChange}
+                            />
                         )}
                     </div>
                 </div>
@@ -424,7 +515,7 @@ export default function PreferencesView({ page }) {
             </div>
 
             <div className="flex items-center justify-end gap-3 border-t border-[#d5dbe6] bg-white px-4 py-4">
-                <PanelActions actions={workspace.actions} />
+                <PanelActions actions={resolvedActions} />
             </div>
         </div>
     );

@@ -14,19 +14,49 @@ import PanelActions from '@/features/workspace/shared/PanelActions';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CrossStatusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useBackendResource from '@/features/workspace/backend/useBackendResource';
+import { mapUserRow, toUserPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
+import SelectField from '@/components/ui/SelectField';
 
-function UserFormView({ form }) {
-    const [accessType, setAccessType] = useState(form.accessOptions[0]?.value ?? 'operator');
-    const activeAccess = form.accessOptions.find((option) => option.value === accessType);
-    const actions =
-        form.actions ?? [
-            {
-                id: 'save',
-                label: form.saveLabel,
-                icon: 'save',
-                tone: 'muted',
-            },
-        ];
+function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
+    const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const isDetail = Boolean(recordId);
+
+    const [values, setValues] = useState({
+        name: activeLevel2Tab?.record?.name ?? '',
+        email: activeLevel2Tab?.record?.email ?? '',
+        phone: activeLevel2Tab?.record?.phone ?? '',
+        password: '',
+        isActive: activeLevel2Tab?.record?.isActive ?? true,
+        accessGroupIds: activeLevel2Tab?.record?.accessGroupIds ?? [],
+    });
+
+    const { processing, store, update } = useBackendResource({
+        resource: 'users',
+        onResolved: () => onRefresh?.(),
+    });
+
+    const handleSave = async () => {
+        const payload = toUserPayload(values);
+        if (isDetail) {
+            await update(recordId, payload);
+        } else {
+            await store(payload);
+        }
+    };
+
+    const actions = [
+        {
+            id: 'save',
+            label: processing ? 'Menyimpan...' : form.saveLabel,
+            icon: 'save',
+            tone: 'primary',
+            onClick: handleSave,
+            disabled: processing,
+            showLabel: true,
+        },
+    ];
 
     return (
         <div className="relative flex min-h-full flex-col">
@@ -40,61 +70,116 @@ function UserFormView({ form }) {
 
             <div className="flex-1 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-5 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                 <div className="flex flex-wrap items-start justify-between gap-6">
-                    <h2 className="max-w-[1100px] text-[20px] font-medium leading-8 text-[#111827]">
-                        {form.title}
-                    </h2>
+                    <div className="space-y-1">
+                        <h2 className="max-w-[1100px] text-[20px] font-medium leading-8 text-[#111827]">
+                            {isDetail ? `Ubah Pengguna: ${values.name}` : form.title}
+                        </h2>
+                        {isDetail && (
+                            <p className="text-[14px] text-slate-500">ID Pengguna: {recordId}</p>
+                        )}
+                    </div>
                     <PanelActions actions={actions} />
                 </div>
 
                 <div className="mt-8 grid gap-x-8 gap-y-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
                     <label className="pt-3 text-[16px] text-[#20273b]">
-                        {form.identifierLabel} <span className="text-[#ED3969]">*</span>
+                        Nama Lengkap <span className="text-[#ED3969]">*</span>
                     </label>
                     <TextInput
-                        placeholder={form.identifierPlaceholder}
+                        value={values.name}
+                        onChange={(e) => setValues({ ...values, name: e.target.value })}
+                        placeholder="Masukkan nama lengkap"
                         className="h-[42px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-[15px]"
                     />
 
-                    <div className="pt-1 text-[16px] text-[#20273b]">{form.accessLabel}</div>
-                    <div className="space-y-3">
-                        <div className="flex flex-wrap gap-10 text-[16px] text-[#20273b]">
-                            {form.accessOptions.map((option) => (
-                                <label key={option.value} className="inline-flex items-center gap-3">
-                                    <input
-                                        type="radio"
-                                        name="access-type"
-                                        value={option.value}
-                                        checked={accessType === option.value}
-                                        onChange={(event) => setAccessType(event.target.value)}
-                                        className="h-5 w-5 border-slate-300 text-[#2f62ab] focus:ring-[#2f62ab]"
-                                    />
-                                    <span>{option.label}</span>
-                                </label>
+                    <label className="pt-3 text-[16px] text-[#20273b]">
+                        Email <span className="text-[#ED3969]">*</span>
+                    </label>
+                    <TextInput
+                        value={values.email}
+                        onChange={(e) => setValues({ ...values, email: e.target.value })}
+                        placeholder="email@contoh.com"
+                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-[15px]"
+                        disabled={isDetail}
+                    />
+
+                    <label className="pt-3 text-[16px] text-[#20273b]">
+                        No. Telepon
+                    </label>
+                    <TextInput
+                        value={values.phone}
+                        onChange={(e) => setValues({ ...values, phone: e.target.value })}
+                        placeholder="Contoh: 08123456789"
+                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-[15px]"
+                    />
+
+                    <label className="pt-3 text-[16px] text-[#20273b]">
+                        Kata Sandi {isDetail && '(Kosongkan jika tidak diubah)'}
+                    </label>
+                    <TextInput
+                        type="password"
+                        value={values.password}
+                        onChange={(e) => setValues({ ...values, password: e.target.value })}
+                        placeholder="Min. 8 karakter"
+                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-[15px]"
+                    />
+
+                    <label className="pt-3 text-[16px] text-[#20273b]">
+                        Grup Akses
+                    </label>
+                    <div className="grid gap-3">
+                        <SelectField
+                            value={values.accessGroupIds[0] ?? ''}
+                            onChange={(e) => setValues({ ...values, accessGroupIds: e.target.value ? [parseInt(e.target.value)] : [] })}
+                            className="h-[42px] rounded-[4px] border-[#cfd6e2]"
+                            selectClassName="text-[15px]"
+                        >
+                            <option value="">Pilih Grup Akses...</option>
+                            {lookupData.groups.map((group) => (
+                                <option key={group.id} value={group.id}>
+                                    {group.name}
+                                </option>
                             ))}
-                        </div>
-                        {activeAccess?.note ? (
-                            <div className="inline-flex items-start gap-3 rounded-[4px] border-l-[4px] border-[#7a7a7a] bg-[#fff7f8] px-3 py-2 text-[13px] italic leading-5 text-[#ff4a4a]">
-                                <span className="mt-0.5 inline-flex h-3.5 w-3.5 rounded-sm bg-[#666]" />
-                                <span>{activeAccess.note}</span>
-                            </div>
-                        ) : null}
+                        </SelectField>
+                        <p className="text-[13px] italic text-slate-500">
+                            Pengguna akan mendapatkan hak akses sesuai dengan grup yang dipilih.
+                        </p>
                     </div>
 
-                    <div className="pt-2 text-[16px] text-[#20273b]">{form.groupLabel}</div>
-                    <TextInput
-                        placeholder={form.groupPlaceholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
-                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px]"
-                    />
+                    <label className="pt-3 text-[16px] text-[#20273b]">
+                        Status Akun
+                    </label>
+                    <div className="flex items-center gap-6 pt-3">
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="radio"
+                                checked={values.isActive}
+                                onChange={() => setValues({ ...values, isActive: true })}
+                                className="h-5 w-5 text-[#2f62ab]"
+                            />
+                            <span>Aktif</span>
+                        </label>
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
+                            <input
+                                type="radio"
+                                checked={!values.isActive}
+                                onChange={() => setValues({ ...values, isActive: false })}
+                                className="h-5 w-5 text-[#2f62ab]"
+                            />
+                            <span>Nonaktif</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
 
-function UserTableView({ table }) {
+function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -105,7 +190,7 @@ function UserTableView({ table }) {
 
         return table.rows.filter((row) =>
             [row.name, row.phone, row.email, row.accessType].some((value) =>
-                value.toLowerCase().includes(normalizedKeyword),
+                String(value ?? '').toLowerCase().includes(normalizedKeyword),
             ),
         );
     }, [keyword, table.rows]);
@@ -114,19 +199,13 @@ function UserTableView({ table }) {
         <div className="min-h-full rounded-[4px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
                 size="compact"
-                createButton={{ label: table.createLabel }}
-                refreshButton={{ label: table.refreshLabel }}
+                createButton={{ label: table.createLabel, onClick: onCreate }}
+                refreshButton={{ label: table.refreshLabel, onClick: onRefresh }}
                 menuButton={{
                     label: table.actionsLabel,
                     items: [
-                        {
-                            id: 'export',
-                            label: 'Ekspor Data',
-                        },
-                        {
-                            id: 'reload',
-                            label: 'Muat Ulang',
-                        },
+                        { id: 'export', label: 'Ekspor Data' },
+                        { id: 'reload', label: 'Muat Ulang', onClick: onRefresh },
                     ],
                 }}
                 search={{
@@ -151,17 +230,15 @@ function UserTableView({ table }) {
 
                     <DataTableBody>
                         {filteredRows.map((row) => (
-                            <DataTableRow key={row.email}>
+                            <DataTableRow key={row.id} onClick={() => onOpenDetail?.(row)}>
                                 <DataTableCell>{formatTableTextValue(row.name)}</DataTableCell>
                                 <DataTableCell>{formatTableTextValue(row.phone)}</DataTableCell>
                                 <DataTableCell>{formatTableTextValue(row.email)}</DataTableCell>
                                 <DataTableCell className="text-center">
-                                    {row.twoFactor ? (
-                                        <span className="text-[#1f9d55]">Aktif</span>
+                                    {row.isActive ? (
+                                        <span className="text-[#1f9d55] font-medium">Aktif</span>
                                     ) : (
-                                        <span className="inline-flex items-center justify-center">
-                                            <CrossStatusIcon />
-                                        </span>
+                                        <span className="text-slate-400">Nonaktif</span>
                                     )}
                                 </DataTableCell>
                                 <DataTableCell>{formatTableTextValue(row.accessType)}</DataTableCell>
@@ -174,6 +251,45 @@ function UserTableView({ table }) {
     );
 }
 
-export default function UsersManagementView({ page, mode }) {
-    return mode === 'table' ? <UserTableView table={page.table} /> : <UserFormView form={page.form} />;
+export default function UsersManagementView({
+    page,
+    mode,
+    onOpenContent,
+    onOpenDetail,
+    onCloseDetail,
+}) {
+    const { rows, total, loading, reload } = useBackendIndexResource({
+        resource: 'users',
+        filters: { per_page: 100 },
+    });
+
+    const groupsResource = useBackendIndexResource({
+        resource: 'access-groups',
+        filters: { per_page: 100 },
+    });
+
+    const resolvedTable = useMemo(() => ({
+        ...page.table,
+        rows: rows.map(mapUserRow),
+        pageValue: total.toLocaleString('id-ID'),
+        refreshLabel: loading ? 'Memuat...' : page.table.refreshLabel,
+    }), [loading, page.table, rows, total]);
+
+    return mode === 'table' ? (
+        <UserTableView
+            table={resolvedTable}
+            onRefresh={reload}
+            onCreate={onOpenContent}
+            onOpenDetail={onOpenDetail}
+        />
+    ) : (
+        <UserFormView
+            form={page.form}
+            activeLevel2Tab={onOpenDetail?.record ? { record: onOpenDetail.record } : undefined}
+            onRefresh={reload}
+            lookupData={{
+                groups: groupsResource.rows,
+            }}
+        />
+    );
 }

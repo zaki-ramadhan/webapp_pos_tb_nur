@@ -22,6 +22,8 @@ import {
     SearchIcon,
     TableActionIcon,
 } from '@/features/workspace/shared/Icons';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import { mapApprovalRuleRow } from '@/features/workspace/backend/workspaceBackendAdapters';
 
 function ApprovalHeading({ title }) {
     return (
@@ -162,7 +164,7 @@ function TransactionApprovalFormView({ form }) {
     );
 }
 
-function TransactionApprovalTableView({ table, onCreate }) {
+function TransactionApprovalTableView({ table, onCreate, onRefresh, onOpenDetail }) {
     const [filters, setFilters] = useState(() =>
         table.filters.reduce((result, filter) => {
             result[filter.id] = filter.options?.[0]?.value ?? '';
@@ -216,6 +218,7 @@ function TransactionApprovalTableView({ table, onCreate }) {
                 }}
                 refreshButton={{
                     label: table.refreshLabel,
+                    onClick: onRefresh,
                     icon: <RefreshIcon className="h-5 w-5" />,
                 }}
                 menuButton={{
@@ -246,6 +249,7 @@ function TransactionApprovalTableView({ table, onCreate }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
+                                    onClick={() => onOpenDetail?.(row)}
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                 >
                                     <DataTableCell className="px-3 text-[15px] text-[#131a28]">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
@@ -269,10 +273,38 @@ function TransactionApprovalTableView({ table, onCreate }) {
     );
 }
 
-export default function TransactionApprovalView({ page, mode, onOpenContent }) {
+export default function TransactionApprovalView({
+    page,
+    mode,
+    onOpenContent,
+    onOpenDetail,
+    onCloseDetail,
+}) {
+    const { rows, total, loading, error, reload } = useBackendIndexResource({
+        resource: 'transaction-approval-rules',
+        filters: {
+            per_page: 100,
+        },
+    });
+
+    const resolvedTable = useMemo(() => ({
+        ...page.table,
+        rows: rows.map(mapApprovalRuleRow),
+        pageValue: total.toLocaleString('id-ID'),
+        refreshLabel: loading ? 'Memuat...' : page.table.refreshLabel,
+    }), [loading, page.table, rows, total]);
+
     return mode === 'table' ? (
-        <TransactionApprovalTableView table={page.table} onCreate={onOpenContent} />
+        <TransactionApprovalTableView
+            table={resolvedTable}
+            onCreate={onOpenContent}
+            onRefresh={reload}
+            onOpenDetail={onOpenDetail}
+        />
     ) : (
-        <TransactionApprovalFormView form={page.form} />
+        <TransactionApprovalFormView
+            form={page.form}
+            onRefresh={reload}
+        />
     );
 }

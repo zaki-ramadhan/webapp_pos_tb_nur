@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -8,14 +8,18 @@ import {
 } from '@/features/workspace/shared/formValidation';
 import { PayrollAdditionalInfoSection, PayrollEmployeeSection, PayrollHeader } from './PayrollEntrySections';
 import { buildDefaultValues } from './payrollEntryShared';
+import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 
-export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config }) {
+export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, onOpenContent }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'employees');
     const [values, setValues] = useState(() => buildDefaultValues(config));
+    const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'employees');
         setValues(buildDefaultValues(config));
+        setErrors({});
     }, [config]);
 
     const initialComparable = useMemo(() => {
@@ -90,13 +94,57 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config }
         ],
     );
 
+    const handleSave = useCallback(async () => {
+        setSaving(true);
+        setErrors({});
+
+        try {
+            const payload = {
+                entry_date: values.entryDate,
+                due_date: values.dueDate,
+                notes: values.notes,
+                document_number: values.autoNumber ? null : 'MANUAL', // Handle auto-numbering on backend
+                status: 'Draft',
+                metadata: {
+                    payment_type: values.paymentType,
+                    period_month: values.month,
+                    period_year: values.year,
+                    branches: values.branches,
+                    liability_accounts: values.liabilityAccounts,
+                }
+            };
+
+            await createBackendResource('payroll-entries', payload);
+            
+            // Redirect back to table and refresh
+            if (onOpenContent) {
+                onOpenContent(null);
+            }
+        } catch (error) {
+            const message = getBackendErrorMessage(error);
+            setErrors({ _form: message });
+            
+            // Map validation errors if any
+            if (error?.response?.data?.errors) {
+                setErrors(prev => ({ ...prev, ...error.response.data.errors }));
+            }
+        } finally {
+            setSaving(false);
+        }
+    }, [onOpenContent, values]);
+
     const dockActions = useMemo(
         () =>
             (config.dockActions ?? []).map((action) =>
                 action.id === 'save'
                     ? {
                           ...action,
-                          disabled: saveDisabled,
+                          disabled: saveDisabled || saving,
+                          items: action.items?.map(item => ({
+                              ...item,
+                              onClick: handleSave
+                          })) ?? [],
+                          onClick: handleSave
                       }
                     : action.id === 'document'
                     ? {
@@ -105,7 +153,7 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config }
                       }
                     : action,
             ),
-        [config.dockActions, saveDisabled],
+        [config.dockActions, handleSave, saveDisabled, saving],
     );
 
     useWorkspaceDirtyRegistration({
@@ -117,14 +165,14 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config }
 
     return (
         <TransactionFormLayout
-            header={<PayrollHeader config={config} values={values} setValues={setValues} />}
+            header={<PayrollHeader config={{ ...config, errors }} values={values} setValues={setValues} />}
             sectionTabs={config.sectionTabs}
             activeSectionId={activeSectionId}
             onSectionChange={setActiveSectionId}
             dockActions={dockActions}
         >
             {activeSectionId === 'additional-info' ? (
-                <PayrollAdditionalInfoSection config={config} values={values} setValues={setValues} />
+                <PayrollAdditionalInfoSection config={{ ...config, errors }} values={values} setValues={setValues} />
             ) : (
                 <PayrollEmployeeSection config={config} values={values} />
             )}

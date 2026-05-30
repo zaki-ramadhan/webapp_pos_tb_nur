@@ -9,8 +9,11 @@ import {
 import { renderPartnerTab } from '@/features/workspace/modules/business-partner/BusinessPartnerFormSections';
 import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useBackendResource from '@/features/workspace/backend/useBackendResource';
+import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
 
-function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType }) {
+function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     const sourceRow = config.table.rows.find((row) => row.id === recordId) ?? {};
@@ -24,7 +27,28 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType }) {
     useEffect(() => {
         setActiveTabId(config.tabs[0]?.id ?? 'general');
         setValues(buildFormState(sourceRecord));
-    }, [config.tabs, sourceRecord]);
+    }, [sourceRecord]);
+
+    const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
+    const { processing, store, update, remove } = useBackendResource({
+        resource: resourceName,
+        onResolved: () => onRefresh?.(),
+    });
+
+    const handleSave = async () => {
+        const payload = toPartnerPayload(values);
+        if (isDetail) {
+            await update(recordId, payload);
+        } else {
+            await store(payload);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+            await remove(recordId);
+        }
+    };
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -35,12 +59,33 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType }) {
 
     const dockActions = isDetail
         ? [
-              { id: 'save', label: 'Simpan', tone: 'muted', icon: 'save' },
+              {
+                  id: 'save',
+                  label: processing ? 'Menyimpan...' : 'Simpan',
+                  tone: 'primary',
+                  icon: 'save',
+                  onClick: handleSave,
+                  disabled: processing,
+              },
               { id: 'attachment', label: 'Lampiran', tone: 'primary', icon: 'attachment' },
-              { id: 'delete', label: 'Hapus', tone: 'danger', icon: 'trash' },
+              {
+                  id: 'delete',
+                  label: 'Hapus',
+                  tone: 'danger',
+                  icon: 'trash',
+                  onClick: handleDelete,
+                  disabled: processing,
+              },
           ]
         : [
-              { id: 'save', label: 'Simpan', tone: 'muted', icon: 'save' },
+              {
+                  id: 'save',
+                  label: processing ? 'Menyimpan...' : 'Simpan',
+                  tone: 'primary',
+                  icon: 'save',
+                  onClick: handleSave,
+                  disabled: processing,
+              },
               { id: 'attachment', label: 'Lampiran', tone: 'primary', icon: 'attachment' },
           ];
 
@@ -71,6 +116,8 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType }) {
                                 label={action.label}
                                 tone={action.tone}
                                 icon={<DockIcon icon={action.icon} />}
+                                onClick={action.onClick}
+                                disabled={action.disabled}
                             />
                         ))}
                     </div>
@@ -88,12 +135,41 @@ export default function BusinessPartnerView({
     onOpenDetail,
     partnerType = 'customer',
 }) {
+    const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
+    const { rows, total, loading, error, reload } = useBackendIndexResource({
+        resource: resourceName,
+        filters: {
+            per_page: 100,
+        },
+    });
+
     const pageConfig = partnerType === 'supplier' ? page.suppliers ?? {} : page.customers ?? {};
-    const config = useMemo(() => buildBusinessPartnerConfig(partnerType, pageConfig), [pageConfig, partnerType]);
+    const config = useMemo(() => {
+        const baseConfig = buildBusinessPartnerConfig(partnerType, pageConfig);
+        return {
+            ...baseConfig,
+            table: {
+                ...baseConfig.table,
+                rows: rows.map(mapPartnerRow),
+                pageValue: total.toLocaleString('id-ID'),
+                refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
+            },
+        };
+    }, [loading, pageConfig, partnerType, rows, total]);
 
     return mode === 'table' ? (
-        <BusinessPartnerTableView config={config} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
+        <BusinessPartnerTableView
+            config={config}
+            onCreate={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            onRefresh={reload}
+        />
     ) : (
-        <BusinessPartnerFormView config={config} activeLevel2Tab={activeLevel2Tab} partnerType={partnerType} />
+        <BusinessPartnerFormView
+            config={config}
+            activeLevel2Tab={activeLevel2Tab}
+            partnerType={partnerType}
+            onRefresh={reload}
+        />
     );
 }

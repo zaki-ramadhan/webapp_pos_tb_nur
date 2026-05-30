@@ -124,9 +124,17 @@ export default function PreferencesChecklistView({
     tabs,
     activeTabId,
     onSelectTab,
+    onUpdate,
     contentClassName = '',
 }) {
-    const { activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+
+    useEffect(() => {
+        if (onUpdate && tabState !== tabs) {
+            onUpdate(tabState);
+        }
+    }, [onUpdate, tabState, tabs]);
+
     const columns = activeTab ? buildColumns(activeTab.sections ?? []) : [];
     const bodyClassName = activeTab?.bodyClassName ?? activeTab?.contentClassName ?? contentClassName;
     const resolvedContentClassName = activeTab?.contentClassName ?? contentClassName;
