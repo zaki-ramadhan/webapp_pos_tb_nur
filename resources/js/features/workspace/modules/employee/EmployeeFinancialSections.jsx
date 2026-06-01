@@ -1,7 +1,8 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import { EmployeeFieldRow, SuggestionTextInput } from '@/features/workspace/modules/employee/employeeViewShared';
+import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employeeViewShared';
+import { SuggestionTextInput } from '@/features/workspace/modules/employee/employeeControls';
 
 export function EmployeeTaxTab({ form, values, onChange }) {
     return (

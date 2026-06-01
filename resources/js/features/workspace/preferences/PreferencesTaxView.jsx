@@ -2,6 +2,7 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import RadioField from '@/components/ui/RadioField';
 import TextareaField from '@/components/ui/TextareaField';
 import TextInput from '@/components/ui/TextInput';
+import TransactionDateInput from '@/features/workspace/modules/shared/transaction/TransactionDateInput';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
 import {
@@ -59,27 +60,13 @@ function TaxInputControl({ control, onChange }) {
 
     if (control.type === 'date') {
         return (
-            <div className="flex w-full items-start">
-                <TextInput
-                    id={control.id}
-                    value={control.value ?? ''}
-                    placeholder={control.placeholder}
-                    disabled={control.disabled}
-                    error={control.error}
-                    message={control.message}
-                    className={`h-[44px] rounded-r-none rounded-l-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
-                    inputClassName={`text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
-                    onChange={(event) => onChange(event.target.value)}
-                />
-                <button
-                    type="button"
-                    disabled={control.disabled}
-                    aria-label={control.calendarLabel ?? 'Pilih tanggal'}
-                    className="inline-flex h-[44px] w-[42px] shrink-0 items-center justify-center rounded-r-[6px] border border-l-0 border-[#cfd6e2] bg-white text-[#1f2937] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
-                >
-                    <CalendarIcon />
-                </button>
-            </div>
+            <TransactionDateInput
+                value={control.value ?? ''}
+                disabled={control.disabled}
+                onChange={(displayValue) => onChange(displayValue)}
+                className={`w-full max-w-[424px] ${control.fieldClassName ?? ''}`.trim()}
+                inputClassName={`text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+            />
         );
     }
 

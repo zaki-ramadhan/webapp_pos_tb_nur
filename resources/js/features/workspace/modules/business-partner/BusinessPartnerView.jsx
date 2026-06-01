@@ -12,6 +12,8 @@ import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 
 function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -23,10 +25,12 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     );
     const [activeTabId, setActiveTabId] = useState(config.tabs[0]?.id ?? 'general');
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
+    const [status, setStatus] = useState({ tone: '', message: '' });
 
     useEffect(() => {
         setActiveTabId(config.tabs[0]?.id ?? 'general');
         setValues(buildFormState(sourceRecord));
+        setStatus({ tone: '', message: '' });
     }, [sourceRecord]);
 
     const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
@@ -36,11 +40,30 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     });
 
     const handleSave = async () => {
+        if (!values.name?.trim()) {
+            setStatus({ tone: 'error', message: 'Nama wajib diisi.' });
+            return;
+        }
+
+        if (values.email?.trim()) {
+            const emailStr = values.email.trim();
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(emailStr)) {
+                setStatus({ tone: 'error', message: 'Format email tidak valid. Pastikan domain DNS lengkap (contoh: nama@domain.com).' });
+                return;
+            }
+        }
+
+        setStatus({ tone: '', message: '' });
         const payload = toPartnerPayload(values);
-        if (isDetail) {
-            await update(recordId, payload);
-        } else {
-            await store(payload);
+        try {
+            if (isDetail) {
+                await update(recordId, payload);
+            } else {
+                await store(payload);
+            }
+        } catch (err) {
+            setStatus({ tone: 'error', message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.') });
         }
     };
 
@@ -99,6 +122,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
 
             <div className="flex min-h-[700px] flex-col gap-5 px-4 py-4 lg:flex-row lg:items-start">
                 <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-3 py-4 sm:px-4 lg:order-1">
+                    <CrudStatusMessage status={status} className="mb-4" />
                     {renderPartnerTab({
                         config,
                         values,

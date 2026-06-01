@@ -18,6 +18,8 @@ import useBackendIndexResource from '@/features/workspace/backend/useBackendInde
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { mapUserRow, toUserPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
 import SelectField from '@/components/ui/SelectField';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 
 function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -32,17 +34,41 @@ function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
         accessGroupIds: activeLevel2Tab?.record?.accessGroupIds ?? [],
     });
 
+    const [status, setStatus] = useState({ tone: '', message: '' });
+
     const { processing, store, update } = useBackendResource({
         resource: 'users',
         onResolved: () => onRefresh?.(),
     });
 
     const handleSave = async () => {
+        if (!values.name.trim()) {
+            setStatus({ tone: 'error', message: 'Nama Lengkap wajib diisi.' });
+            return;
+        }
+        if (!values.email.trim()) {
+            setStatus({ tone: 'error', message: 'Email wajib diisi.' });
+            return;
+        }
+
+        // Email DNS format validation
+        const emailStr = values.email.trim();
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(emailStr)) {
+            setStatus({ tone: 'error', message: 'Format email tidak valid. Pastikan menggunakan domain DNS lengkap (contoh: nama@domain.com).' });
+            return;
+        }
+
+        setStatus({ tone: '', message: '' });
         const payload = toUserPayload(values);
-        if (isDetail) {
-            await update(recordId, payload);
-        } else {
-            await store(payload);
+        try {
+            if (isDetail) {
+                await update(recordId, payload);
+            } else {
+                await store(payload);
+            }
+        } catch (err) {
+            setStatus({ tone: 'error', message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.') });
         }
     };
 
@@ -80,6 +106,8 @@ function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
                     </div>
                     <PanelActions actions={actions} />
                 </div>
+
+                <CrudStatusMessage status={status} className="mb-6 mt-4" />
 
                 <div className="mt-8 grid gap-x-8 gap-y-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
                     <label className="pt-3 text-[16px] text-[#20273b]">

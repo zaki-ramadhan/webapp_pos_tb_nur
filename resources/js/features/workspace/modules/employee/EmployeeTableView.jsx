@@ -20,11 +20,8 @@ import {
     RefreshIcon,
     SearchIcon,
 } from '@/features/workspace/shared/Icons';
-import {
-    matchesEmployeeFilter,
-    TableActionMenu,
-    ToolbarSquareButton,
-} from '@/features/workspace/modules/employee/employeeViewShared';
+import { matchesEmployeeFilter } from '@/features/workspace/modules/employee/employeeViewShared';
+import { TableActionMenu, ToolbarSquareButton } from '@/features/workspace/modules/employee/employeeControls';
 
 export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');

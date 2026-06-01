@@ -91,7 +91,7 @@ final class PosBlueprint
         ];
     }
 
-    public static function forDashboard(?string $sample = null): array
+    public static function forDashboard(?string $sample = null, ?array $abc = null, ?array $apriori = null): array
     {
         $selectedSample = self::resolveSample(self::dashboardSamples(), $sample ?? 'retail');
 
@@ -107,7 +107,7 @@ final class PosBlueprint
                     'avatarUrl' => null,
                 ],
                 'sample' => $selectedSample,
-                'sampleDashboard' => self::sampleDashboard(),
+                'sampleDashboard' => self::sampleDashboard($abc, $apriori),
             ],
         ];
     }
@@ -134,23 +134,23 @@ final class PosBlueprint
         return [
             [
                 'id' => 'retail',
-                'label' => 'Retail Sample',
+                'label' => 'TB Nur Pusat',
                 'icon' => 'retail',
             ],
             [
                 'id' => 'trade-portal',
-                'label' => 'Trade Portal',
+                'label' => 'TB Nur Cabang Jakarta',
                 'icon' => 'trade',
             ],
             [
                 'id' => 'manufacture',
-                'label' => 'Manufacture',
+                'label' => 'TB Nur Cabang Surabaya',
                 'icon' => 'manufacture',
             ],
         ];
     }
 
-    private static function sampleDashboard(): array
+    private static function sampleDashboard(?array $abc = null, ?array $apriori = null): array
     {
         $navigationModules = self::navigationModules();
         $navigationPages = self::buildNavigationPages($navigationModules);
@@ -162,7 +162,7 @@ final class PosBlueprint
             ],
         ];
 
-        return [
+        $data = [
             'toolbar' => [
                 'widgetLabel' => 'Widget',
                 'dashboards' => [
@@ -926,11 +926,12 @@ final class PosBlueprint
                                 ['id' => 'symbol', 'label' => 'Simbol', 'widthClassName' => 'w-[100px]'],
                                 ['id' => 'code', 'label' => 'Kode', 'widthClassName' => 'w-[120px]'],
                                 ['id' => 'countryName', 'label' => 'Negara/Nama'],
+                                ['id' => 'exchange_rate', 'label' => 'Kurs (ke IDR)', 'widthClassName' => 'w-[180px]', 'align' => 'right'],
                             ],
                             'rows' => [
-                                ['id' => 'currency-idr', 'symbol' => 'Rp', 'code' => 'IDR', 'countryName' => 'Indonesian Rupiah'],
-                                ['id' => 'currency-usd', 'symbol' => '$', 'code' => 'USD', 'countryName' => 'US Dollar'],
-                                ['id' => 'currency-sgd', 'symbol' => '$', 'code' => 'SGD', 'countryName' => 'Singapore Dollar'],
+                                ['id' => 'currency-idr', 'symbol' => 'Rp', 'code' => 'IDR', 'countryName' => 'Indonesian Rupiah', 'exchange_rate' => '1.0000'],
+                                ['id' => 'currency-usd', 'symbol' => '$', 'code' => 'USD', 'countryName' => 'US Dollar', 'exchange_rate' => '16350.0000'],
+                                ['id' => 'currency-sgd', 'symbol' => '$', 'code' => 'SGD', 'countryName' => 'Singapore Dollar', 'exchange_rate' => '12111.0000'],
                             ],
                         ],
                     ],
@@ -1726,8 +1727,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-adam',
                                 'name' => 'Adam',
-                                'position' => 'Junior Szeto Consultant',
-                                'email' => 'onsite_jkt@szetoaccurate.com',
+                                'position' => 'Junior Staf TB Nur',
+                                'email' => 'onsite_jkt@tbnur.com',
                                 'mobilePhone' => '081315778xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1741,8 +1742,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-ahmad',
                                 'name' => 'Ahmad',
-                                'position' => 'Supervisor Szeto Consultant',
-                                'email' => 'ahmadyani@szetoaccurate.com',
+                                'position' => 'Supervisor Staf TB Nur',
+                                'email' => 'ahmadyani@tbnur.com',
                                 'mobilePhone' => '081288087xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1756,8 +1757,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-ari',
                                 'name' => 'Ari',
-                                'position' => 'Junior Szeto Consultant',
-                                'email' => 'onsite_sby@szetoaccurate.com',
+                                'position' => 'Junior Staf TB Nur',
+                                'email' => 'onsite_sby@tbnur.com',
                                 'mobilePhone' => '08115222xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1772,7 +1773,7 @@ final class PosBlueprint
                                 'id' => 'employee-cynthia',
                                 'name' => 'Cynthia',
                                 'position' => 'Accounting',
-                                'email' => 'onsite_jkt@szetoaccurate.com',
+                                'email' => 'onsite_jkt@tbnur.com',
                                 'mobilePhone' => '08511294xxxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1785,9 +1786,9 @@ final class PosBlueprint
                             ],
                             [
                                 'id' => 'employee-darwin',
-                                'name' => 'Darwin Szeto',
+                                'name' => 'Darwin Nur',
                                 'position' => 'Direktur',
-                                'email' => 'onsite_jkt@szetoaccurate.com',
+                                'email' => 'onsite_jkt@tbnur.com',
                                 'mobilePhone' => '081287773xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'K1',
@@ -1801,8 +1802,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-eko',
                                 'name' => 'Eko',
-                                'position' => 'Junior Szeto Consultant',
-                                'email' => 'onsite_sby@szetoaccurate.com',
+                                'position' => 'Junior Staf TB Nur',
+                                'email' => 'onsite_sby@tbnur.com',
                                 'mobilePhone' => '085646779xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'K1',
@@ -1816,8 +1817,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-erick',
                                 'name' => 'Erick',
-                                'position' => 'Asst. Supervisor Szeto Consultant',
-                                'email' => 'erick@szetoaccurate.cim',
+                                'position' => 'Asst. Supervisor Staf TB Nur',
+                                'email' => 'erick@tbnur.com',
                                 'mobilePhone' => '081293274xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1831,8 +1832,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-fandy',
                                 'name' => 'Fandy',
-                                'position' => 'Junior Szeto Consultant',
-                                'email' => 'onsite_jkt@szetoaccurate.com',
+                                'position' => 'Junior Staf TB Nur',
+                                'email' => 'onsite_jkt@tbnur.com',
                                 'mobilePhone' => '08999294xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1846,8 +1847,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-jhonni',
                                 'name' => 'Jhonni Haris',
-                                'position' => 'Asst. Supervisor Szeto Consultant',
-                                'email' => 'jhonni@szetoaccurate.com',
+                                'position' => 'Asst. Supervisor Staf TB Nur',
+                                'email' => 'jhonni@tbnur.com',
                                 'mobilePhone' => '081297584xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1861,8 +1862,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-roni',
                                 'name' => 'Roni',
-                                'position' => 'Junior Szeto Consultant',
-                                'email' => 'onsite_jkt@szetoaccurate.com',
+                                'position' => 'Junior Staf TB Nur',
+                                'email' => 'onsite_jkt@tbnur.com',
                                 'mobilePhone' => '081285612xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -1876,8 +1877,8 @@ final class PosBlueprint
                             [
                                 'id' => 'employee-vando',
                                 'name' => 'Vando',
-                                'position' => 'Asst. Manager Szeto Consultant',
-                                'email' => 'vando@szetoaccurate.com',
+                                'position' => 'Asst. Manager Staf TB Nur',
+                                'email' => 'vando@tbnur.com',
                                 'mobilePhone' => '081317805xxx',
                                 'employeeId' => '0426201200...',
                                 'taxStatus' => 'TK0',
@@ -2196,7 +2197,7 @@ final class PosBlueprint
                             ['id' => 'contact-018', 'fullName' => 'PT Emas Sentosa', 'typeValue' => 'customer', 'typeLabel' => 'Pelanggan', 'company' => 'PT Emas Sentosa', 'mobilePhone' => '', 'email' => ''],
                             ['id' => 'contact-019', 'fullName' => 'Miss Winny', 'typeValue' => 'customer', 'typeLabel' => 'Pelanggan', 'company' => 'PT. Emas Sentosa', 'mobilePhone' => '', 'email' => ''],
                             ['id' => 'contact-020', 'fullName' => 'CV Surya Teknik', 'typeValue' => 'supplier', 'typeLabel' => 'Pemasok', 'company' => 'CV Surya Teknik', 'mobilePhone' => '0812-1111-2233', 'email' => 'procurement@suryateknik.id'],
-                            ['id' => 'contact-021', 'fullName' => 'Budi Santoso', 'typeValue' => 'employee', 'typeLabel' => 'Karyawan', 'company' => 'Retail Sample', 'mobilePhone' => '0813-8899-1122', 'email' => 'budi.santoso@retailsample.id'],
+                            ['id' => 'contact-021', 'fullName' => 'Budi Santoso', 'typeValue' => 'employee', 'typeLabel' => 'Karyawan', 'company' => 'TB Nur Pusat', 'mobilePhone' => '0813-8899-1122', 'email' => 'budi.santoso@tbnur.com'],
                         ],
                     ],
                 ],
@@ -2799,7 +2800,7 @@ final class PosBlueprint
                                 'rowKey' => 'userValue',
                                 'options' => [
                                     ['value' => 'all', 'label' => 'Pengguna: Semua'],
-                                    ['value' => 'accurate-system', 'label' => 'Pengguna: TB Nur POS System'],
+                                    ['value' => 'tbnur-pos', 'label' => 'Pengguna: TB Nur POS System'],
                                 ],
                             ],
                             [
@@ -2877,7 +2878,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'print-design',
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -2893,7 +2894,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -2909,7 +2910,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'print-design',
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -2925,7 +2926,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -2941,7 +2942,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'print-design',
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -2957,7 +2958,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'print-design',
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -2973,7 +2974,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -2989,7 +2990,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3005,7 +3006,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3021,7 +3022,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3037,7 +3038,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'preferences',
                                 'transactionTypeLabel' => 'Preferensi',
                                 'loggedAt' => '18 Apr 2026 21:42:59',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3053,7 +3054,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3069,7 +3070,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3085,7 +3086,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3101,7 +3102,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'print-design',
                                 'transactionTypeLabel' => 'Desain Cetakan',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3117,7 +3118,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3133,7 +3134,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3149,7 +3150,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -3165,7 +3166,7 @@ final class PosBlueprint
                                 'transactionTypeValue' => 'numbering',
                                 'transactionTypeLabel' => 'Penomoran',
                                 'loggedAt' => '18 Apr 2026 21:42:58',
-                                'userValue' => 'accurate-system',
+                                'userValue' => 'tbnur-pos',
                                 'userName' => 'TB Nur POS System',
                                 'email' => 'system@tbnurpos.local',
                                 'ipAddress' => '127.0.0.1',
@@ -4453,10 +4454,10 @@ final class PosBlueprint
                                     [
                                         'id' => 'others-email-provider-row',
                                         'type' => 'radio',
-                                        'value' => 'default-accurate',
+                                        'value' => 'default-tbnur',
                                         'options' => [
                                             [
-                                                'value' => 'default-accurate',
+                                                'value' => 'default-tbnur',
                                                 'label' => 'Default TB Nur POS (info@tbnurpos.local)',
                                             ],
                                             [
@@ -4491,14 +4492,27 @@ final class PosBlueprint
                             ],
                         ],
                         'companyInfo' => [
-                            ['id' => 'company-name', 'label' => 'Nama', 'type' => 'text', 'value' => 'PT Automotive Shop', 'clearable' => true],
+                            ['id' => 'company-name', 'label' => 'Nama', 'type' => 'text', 'value' => 'UD. TB Nur', 'clearable' => true],
                             ['id' => 'business-category', 'label' => 'Kategori Usaha', 'type' => 'chip-search', 'value' => 'GROSIR / WHOLESALER'],
                             ['id' => 'business-field', 'label' => 'Bidang Usaha', 'type' => 'search', 'placeholder' => 'Cari Bidang Usaha..'],
                             ['id' => 'phone', 'label' => 'Telepon', 'type' => 'text', 'value' => '021-56693463', 'clearable' => true],
                             ['id' => 'fax', 'label' => 'Faksimili', 'type' => 'text', 'value' => '021-56693463', 'clearable' => true],
-                            ['id' => 'email', 'label' => 'Email', 'type' => 'text', 'value' => 'info@automotive.com', 'clearable' => true],
+                            ['id' => 'email', 'label' => 'Email', 'type' => 'text', 'value' => 'admin@tbnur.com', 'clearable' => true],
                             ['id' => 'start-date', 'label' => 'Tgl Mulai Data', 'type' => 'date', 'value' => '01/06/2025'],
-                            ['id' => 'accounting-period', 'label' => 'Periode Akuntansi', 'type' => 'select', 'value' => 'Januari - Desember', 'options' => ['Januari - Desember', 'April - Maret']],
+                            ['id' => 'accounting-period', 'label' => 'Periode Akuntansi', 'type' => 'select', 'value' => 'Januari - Desember', 'options' => [
+                                'Januari - Desember',
+                                'Februari - Januari',
+                                'Maret - Februari',
+                                'April - Maret',
+                                'Mei - April',
+                                'Juni - Mei',
+                                'Juli - Juni',
+                                'Agustus - Juli',
+                                'September - Agustus',
+                                'Oktober - September',
+                                'November - Oktober',
+                                'Desember - November'
+                            ]],
                             ['id' => 'currency', 'label' => 'Mata Uang', 'type' => 'readonly-edit', 'value' => 'Indonesian Rupiah'],
                         ],
                         'companyAddress' => [
@@ -5573,6 +5587,44 @@ final class PosBlueprint
                 ],
             ],
         ];
+
+        if ($abc !== null) {
+            foreach ($data['widgets'] as &$w) {
+                if ($w['id'] === 'abc-analysis') {
+                    $w['metrics'] = $abc['metrics'];
+                    $w['distribution'] = $abc['distribution'];
+                    $w['topItems'] = $abc['topItems'];
+                    $w['insight'] = $abc['insight'];
+                }
+            }
+        }
+
+        if ($apriori !== null) {
+            foreach ($data['widgets'] as &$w) {
+                if ($w['id'] === 'apriori-analysis') {
+                    $w['metrics'] = $apriori['metrics'];
+                    // Format rules properly for frontend display
+                    $formattedRules = [];
+                    foreach ($apriori['rules'] as $rule) {
+                        $formattedRules[] = [
+                            'id' => $rule['id'],
+                            'segment' => 'Top Rule',
+                            'transactionBase' => 'Rule Valid',
+                            'antecedent' => $rule['antecedent'],
+                            'consequent' => $rule['consequent'],
+                            'support' => $rule['support'],
+                            'confidence' => $rule['confidence'],
+                            'lift' => $rule['lift'],
+                            'insight' => "Pembelian {$rule['antecedent']} sering diikuti {$rule['consequent']}.",
+                        ];
+                    }
+                    $w['rules'] = $formattedRules;
+                    $w['insight'] = $apriori['insight'];
+                }
+            }
+        }
+
+        return $data;
     }
 
     private static function navigationModules(): array
@@ -5600,7 +5652,7 @@ final class PosBlueprint
                 self::navItem('period-end', 'Proses Akhir Bulan', 'calendar', 'green'),
                 self::navItem('contacts', 'Kontak', 'contact', 'purple'),
                 self::navItem('favorite-transactions', 'Transaksi Favorit', 'favorite', 'purple'),
-                self::navItem('calendar-master', 'Kalender', 'calendar', 'purple'),
+                // self::navItem('calendar-master', 'Kalender', 'calendar', 'purple'),
                 self::navItem('activity-log', 'Log Aktifitas', 'activity', 'purple'),
             ]),
             self::navModule('general-ledger', 'Buku Besar', 'ledger', [
@@ -5618,12 +5670,12 @@ final class PosBlueprint
                 self::navItem('cash-payment', 'Pembayaran', 'payment', 'green'),
                 self::navItem('cash-receipt', 'Penerimaan', 'receipt', 'green'),
                 self::navItem('bank-transfer', 'Transfer Bank', 'transfer', 'green'),
-                self::navItem('smartlink-banking', 'SmartLink e-Banking', 'smartlink', 'blue'),
+                // self::navItem('smartlink-banking', 'SmartLink e-Banking', 'smartlink', 'blue'),
                 self::navItem('bank-statement', 'Rekening Koran', 'bank', 'purple'),
                 self::navItem('bank-history', 'Histori Bank', 'history', 'purple'),
                 self::navItem('bank-reconciliation', 'Rekonsiliasi Bank', 'invoice', 'purple'),
-                self::navItem('smartlink-virtual-account', 'SmartLink Virtual Account', 'smartlink', 'purple'),
-                self::navItem('smartlink-payment', 'SmartLink e-Payment', 'invoice', 'purple'),
+                // self::navItem('smartlink-virtual-account', 'SmartLink Virtual Account', 'smartlink', 'purple'),
+                // self::navItem('smartlink-payment', 'SmartLink e-Payment', 'invoice', 'purple'),
             ]),
             self::navModule('sales', 'Penjualan', 'sales', [
                 self::navItem('sales-quote', 'Penawaran Penjualan', 'receipt', 'green'),
@@ -5639,7 +5691,7 @@ final class PosBlueprint
                 self::navItem('price-adjustment', 'Penyesuaian Harga/Diskon', 'category', 'amber'),
                 self::navItem('sales-commission', 'Komisi Penjual', 'employee', 'amber'),
                 self::navItem('sales-target', 'Target Penjualan', 'budget', 'amber'),
-                self::navItem('smartlink-commerce', 'SmartLink e-Commerce', 'store', 'amber'),
+                // self::navItem('smartlink-commerce', 'SmartLink e-Commerce', 'store', 'amber'),
                 self::navItem('sales-checkin', 'Check In', 'checkin', 'purple'),
             ]),
             self::navModule('purchases', 'Pembelian', 'purchase', [
@@ -5681,17 +5733,17 @@ final class PosBlueprint
                 self::navItem('asset-move', 'Pindah Aset', 'transfer', 'green'),
                 self::navItem('asset-location', 'Aset per Lokasi', 'location', 'purple'),
             ]),
-            self::navModule('tax-center', 'SmartLink Tax', 'tax', [
-                self::navItem('efaktur-ctas', 'e-Faktur CTAS', 'tax', 'purple'),
-                self::navItem('tax-invoice-email', 'Email Faktur Pajak', 'invoice', 'purple'),
-                self::navItem('efaktur-legacy', 'e-Faktur Legacy', 'tax', 'purple'),
-            ]),
+            // self::navModule('tax-center', 'SmartLink Tax', 'tax', [
+            //     self::navItem('efaktur-ctas', 'e-Faktur CTAS', 'tax', 'purple'),
+            //     self::navItem('tax-invoice-email', 'Email Faktur Pajak', 'invoice', 'purple'),
+            //     self::navItem('efaktur-legacy', 'e-Faktur Legacy', 'tax', 'purple'),
+            // ]),
             self::navModule('report-center', 'Daftar Laporan', 'reports', [
                 self::navItem('report-list', 'Daftar Laporan', 'reports', 'purple'),
-                self::navItem('vat-report', 'SPT PPN / PPNBM', 'form', 'purple'),
-                self::navItem('analysis-ai', 'Analisa AI', 'ai', 'purple'),
-                self::navItem('income-tax-report', 'SPT PPh Ps.21', 'form', 'purple'),
-                self::navItem('withholding-slip', 'Bukti Potong PPh Ps.21', 'form', 'purple'),
+                // self::navItem('vat-report', 'SPT PPN / PPNBM', 'form', 'purple'),
+                // self::navItem('analysis-ai', 'Analisa AI', 'ai', 'purple'),
+                // self::navItem('income-tax-report', 'SPT PPh Ps.21', 'form', 'purple'),
+                // self::navItem('withholding-slip', 'Bukti Potong PPh Ps.21', 'form', 'purple'),
             ]),
         ];
     }

@@ -23,6 +23,11 @@ export const OPERATION_DOCUMENT_BACKEND_CONFIG = {
     'goods-receipt': { resource: 'goods-receipts', partnerResource: 'suppliers', partnerField: 'supplier_id' },
     'purchase-invoice': { resource: 'purchase-invoices', partnerResource: 'suppliers', partnerField: 'supplier_id' },
     'purchase-return': { resource: 'purchase-returns', partnerResource: 'suppliers', partnerField: 'supplier_id' },
+    'budget': { resource: 'budgets', partnerResource: 'accounts', partnerField: 'primary_account_id' },
+    'payroll-entry': { resource: 'payroll-entries', partnerResource: 'accounts', partnerField: 'primary_account_id' },
+    'asset-change': { resource: 'asset-changes', partnerResource: 'fixed-assets', partnerField: 'fixed_asset_id' },
+    'asset-disposal': { resource: 'asset-disposals', partnerResource: 'fixed-assets', partnerField: 'fixed_asset_id' },
+    'asset-move': { resource: 'asset-moves', partnerResource: 'fixed-assets', partnerField: 'fixed_asset_id' },
 };
 
 function truncateText(value, limit = 20) {

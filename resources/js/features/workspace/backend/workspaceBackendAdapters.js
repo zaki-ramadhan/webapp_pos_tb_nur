@@ -1,3 +1,5 @@
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+
 function padNumber(value) {
     return String(value).padStart(2, '0');
 }
@@ -364,10 +366,11 @@ export function buildReportListConfig(records, fallbackConfig) {
             const categoryLabel = metadata.category_label ?? titleizeKey(categoryId);
 
             if (!categoryMap.has(categoryId)) {
+                const fallbackCategory = (fallbackConfig.categories ?? []).find((c) => c.id === categoryId);
                 categoryMap.set(categoryId, {
                     id: categoryId,
-                    label: categoryLabel,
-                    icon: metadata.category_icon ?? record.icon ?? 'reports',
+                    label: fallbackCategory?.label ?? categoryLabel,
+                    icon: fallbackCategory?.icon ?? metadata.category_icon ?? record.icon ?? 'reports',
                 });
             }
 
@@ -568,6 +571,68 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
             };
         },
     },
+    'asset-category': {
+        resource: 'asset-categories',
+        labelField: 'name',
+        toRow(record) {
+            return {
+                id: record.id,
+                name: record.name ?? '',
+                code: record.code ?? '',
+                depreciationMethod: record.depreciation_method ?? '',
+                assetLifeMonths: record.asset_life_months ?? 0,
+                tabLabel: record.name ?? '',
+            };
+        },
+        toForm(record) {
+            return {
+                name: record.name ?? '',
+                code: record.code ?? '',
+                depreciationMethod: record.depreciation_method ?? '',
+                assetLifeMonths: record.asset_life_months ?? 0,
+            };
+        },
+        toPayload(values) {
+            return {
+                name: values.name?.trim() ?? '',
+                code: values.code?.trim() ?? '',
+                depreciation_method: values.depreciationMethod ?? 'Metode Garis Lurus',
+                asset_life_months: Number(values.assetLifeMonths ?? 48),
+                is_active: true,
+            };
+        },
+    },
+    'asset-tax-category': {
+        resource: 'asset-tax-categories',
+        labelField: 'name',
+        toRow(record) {
+            return {
+                id: record.id,
+                name: record.name ?? '',
+                code: record.code ?? '',
+                depreciationMethod: record.depreciation_method ?? '',
+                assetLifeMonths: record.asset_life_months ?? 0,
+                tabLabel: record.name ?? '',
+            };
+        },
+        toForm(record) {
+            return {
+                name: record.name ?? '',
+                code: record.code ?? '',
+                depreciationMethod: record.depreciation_method ?? '',
+                assetLifeMonths: record.asset_life_months ?? 0,
+            };
+        },
+        toPayload(values) {
+            return {
+                name: values.name?.trim() ?? '',
+                code: values.code?.trim() ?? '',
+                depreciation_method: values.depreciationMethod ?? 'Metode Garis Lurus',
+                asset_life_months: Number(values.assetLifeMonths ?? 48),
+                is_active: true,
+            };
+        },
+    },
 };
 
 export function mapUserRow(record) {
@@ -718,5 +783,64 @@ export function toPartnerPayload(values) {
         credit_limit: values.creditLimit ?? 0,
         is_active: values.isActive !== false,
         branch_ids: values.branchIds ?? [],
+    };
+}
+
+export function mapFixedAssetRows(records) {
+    return records.map((record) => {
+        return {
+            id: String(record.id),
+            number: record.code ?? '',
+            name: record.name ?? '',
+            purchaseDate: formatIsoDate(record.purchase_date),
+            quantity: String(record.quantity ?? 1),
+            totalAsset: record.acquisition_cost ? Number(record.acquisition_cost).toLocaleString('id-ID') : '0',
+            categoryFilter: record.asset_category_id ? String(record.asset_category_id) : 'all',
+        };
+    });
+}
+
+export function buildFixedAssetsFilters(rows) {
+    const uniqueCategories = [...new Set(rows.map((row) => row.categoryFilter).filter((val) => val && val !== 'all'))];
+    return [
+        {
+            id: 'category',
+            rowKey: 'categoryFilter',
+            options: [
+                { value: 'all', label: 'Kategori Aset: Semua' },
+                ...uniqueCategories.map((catId) => ({
+                    value: catId,
+                    label: `Kategori Aset: ${catId}`
+                }))
+            ]
+        }
+    ];
+}
+
+export function toFixedAssetPayload(values) {
+    return {
+        asset_category_id: values.asset_category_id ?? null,
+        asset_tax_category_id: values.asset_tax_category_id ?? null,
+        branch_id: values.branch_id ?? null,
+        department_id: values.department_id ?? null,
+        asset_account_id: values.asset_account_id ?? null,
+        accumulated_depreciation_account_id: values.accumulated_depreciation_account_id ?? null,
+        depreciation_expense_account_id: values.depreciation_expense_account_id ?? null,
+        code: values.code?.trim() ?? '',
+        name: values.name?.trim() ?? '',
+        purchase_date: normalizeDisplayDate(values.purchaseDate) || null,
+        usage_date: normalizeDisplayDate(values.usageDate) || null,
+        is_intangible: Boolean(values.intangibleAsset),
+        depreciation_method: values.depreciationMethod ?? 'Metode Garis Lurus',
+        quantity: Number(values.quantity ?? 1),
+        asset_life_years: Number(values.assetLifeYears ?? 0),
+        asset_life_months: Number(values.assetLifeMonths ?? 0),
+        depreciation_ratio: Number(values.ratio ?? 0),
+        residual_value: parseAmountInput(values.residualValue, { emptyValue: 0 }) ?? 0,
+        acquisition_cost: parseAmountInput(values.totalAssetValue, { emptyValue: 0 }) ?? 0,
+        book_value: parseAmountInput(values.bookValue, { emptyValue: 0 }) ?? 0,
+        tax_enabled: Boolean(values.taxEnabled),
+        notes: values.notes?.trim() ?? '',
+        is_active: true,
     };
 }

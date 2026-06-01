@@ -168,9 +168,9 @@ export default function DashboardPageTabs({
                             <ViewModeIcon />
                         </div>
 
-                        {level2Actions.length ? (
+                        {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').length ? (
                             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pt-0.5">
-                                {level2Actions.map((action) => (
+                                {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').map((action) => (
                                     <HeaderActionButton key={action.id} action={action} />
                                 ))}
                             </div>
@@ -190,9 +190,9 @@ export default function DashboardPageTabs({
                             className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                         />
 
-                        {level2Actions.length ? (
+                        {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').length ? (
                             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pt-0.5">
-                                {level2Actions.map((action) => (
+                                {level2Actions.filter(action => action.id !== 'tips' && action.icon !== 'idea' && action.id !== 'settings' && action.icon !== 'settings').map((action) => (
                                     <HeaderActionButton key={action.id} action={action} />
                                 ))}
                             </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import {
     TransactionDock,
@@ -11,8 +11,22 @@ import {
     SectionCard,
 } from './AssetDisposalSections';
 import { buildFormValues } from './assetDisposalShared';
+import {
+    createBackendResource,
+    updateBackendResource,
+    listBackendResource,
+    getBackendErrorMessage,
+} from '@/features/workspace/backend/workspaceBackendApi';
+import {
+    finishCrudLoadingToast,
+    showCrudErrorToast,
+    showCrudLoadingToast,
+    showCrudSuccessToast,
+} from '@/features/workspace/shared/crudFeedback';
+import { normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 
-export default function AssetDisposalFormView({ page, activeLevel2Tab }) {
+export default function AssetDisposalFormView({ page, activeLevel2Tab, onOpenContent, onCloseDetail, onRefresh }) {
     const config = useMemo(
         () => buildAssetDisposalConfig(page.assetDisposal ?? {}),
         [page.assetDisposal],
@@ -26,19 +40,119 @@ export default function AssetDisposalFormView({ page, activeLevel2Tab }) {
 
         return config.table.rows.find((row) => row.id === recordId) ?? null;
     }, [activeLevel2Tab, config.table.rows]);
+    
+    const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(detailRow);
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs[0]?.id ?? 'general');
     const [values, setValues] = useState(() => buildFormValues(config, detailRow));
+    const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [fixedAssets, setFixedAssets] = useState([]);
+    const [accounts, setAccounts] = useState([]);
+
+    // Fetch lists for lookup
+    useEffect(() => {
+        listBackendResource('fixed-assets', { per_page: 200 }).then(res => {
+            setFixedAssets(res?.data ?? res ?? []);
+        }).catch(err => console.error('Gagal mengambil aset tetap:', err));
+
+        listBackendResource('accounts', { per_page: 200 }).then(res => {
+            setAccounts(res?.data ?? res ?? []);
+        }).catch(err => console.error('Gagal mengambil akun perkiraan:', err));
+    }, []);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs[0]?.id ?? 'general');
         setValues(buildFormValues(config, detailRow));
+        setErrors({});
     }, [config, detailRow]);
+
+    const handleSave = useCallback(async () => {
+        setSaving(true);
+        setErrors({});
+        const loadingToastId = showCrudLoadingToast(isDetail ? 'Sedang memperbarui data.' : 'Sedang menyimpan data baru.');
+
+        try {
+            const selectedAssetObj = fixedAssets.find(fa => fa.name === values.asset?.[0]) ?? null;
+            const fixedAssetId = selectedAssetObj?.id ?? 1;
+
+            const selectedAccountObj = accounts.find(acc => acc.name === values.profitLossAccount?.[0]) ?? null;
+            const accountId = selectedAccountObj?.id ?? null;
+
+            const lines = [
+                {
+                    fixed_asset_id: fixedAssetId,
+                    quantity: Number(values.quantity || 1),
+                    account_id: accountId,
+                    description: values.notes || 'Disposisi Aset Tetap',
+                    total_amount: parseFloat(values.bookValue || 0),
+                    sort_order: 0
+                }
+            ];
+
+            const payload = {
+                document_number: values.documentNumber || `DSP.${Date.now()}`,
+                entry_date: normalizeDisplayDate(values.transactionDate) || new Date().toISOString().slice(0, 10),
+                notes: values.notes || '',
+                status: 'Posted',
+                branch_id: 1,
+                primary_account_id: accountId,
+                lines
+            };
+
+            if (isDetail) {
+                await updateBackendResource('asset-disposals', activeRecordId, payload);
+            } else {
+                await createBackendResource('asset-disposals', payload);
+            }
+
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast(isDetail ? 'Data berhasil diperbarui.' : 'Data berhasil disimpan.');
+
+            await onRefresh?.();
+            
+            if (onOpenContent) {
+                onOpenContent(null);
+            }
+        } catch (error) {
+            finishCrudLoadingToast(loadingToastId);
+            const message = getBackendErrorMessage(error);
+            showCrudErrorToast(message);
+            setErrors({ _form: message });
+            
+            if (error?.response?.data?.errors) {
+                setErrors(prev => ({ ...prev, ...error.response.data.errors }));
+            }
+        } finally {
+            setSaving(false);
+        }
+    }, [isDetail, activeRecordId, values, fixedAssets, accounts, onRefresh, onOpenContent]);
+
+    const dockActions = useMemo(
+        () =>
+            (values.dockActions ?? []).map((action) =>
+                action.id === 'save'
+                    ? {
+                          ...action,
+                          disabled: saving,
+                          onClick: handleSave,
+                      }
+                    : action,
+            ),
+        [saving, values.dockActions, handleSave],
+    );
+
+    useWorkspaceDirtyRegistration({
+        pageId: page.id,
+        tabId: activeLevel2Tab?.id,
+        dirty: false,
+        enabled: Boolean(page.id && activeLevel2Tab?.id),
+    });
 
     return (
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
             <div className="space-y-4">
-                <AssetDisposalHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />
+                <AssetDisposalHeader config={{ ...config, errors }} values={values} setValues={setValues} isDetail={isDetail} />
 
                 <div className="flex flex-col gap-4 xl:flex-row">
                     <TransactionSectionRail
@@ -48,12 +162,12 @@ export default function AssetDisposalFormView({ page, activeLevel2Tab }) {
                     />
 
                     <SectionCard className="min-h-[642px] flex-1">
-                        <AssetDisposalGeneralSection config={config} values={values} setValues={setValues} />
+                        <AssetDisposalGeneralSection config={{ ...config, errors }} values={values} setValues={setValues} />
                     </SectionCard>
                 </div>
             </div>
 
-            <TransactionDock actions={values.dockActions} />
+            <TransactionDock actions={dockActions} />
         </div>
     );
 }

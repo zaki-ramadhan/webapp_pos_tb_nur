@@ -1,16 +1,21 @@
 import ModalBase from '@/components/ui/ModalBase';
+import Spinner from '@/components/ui/Spinner';
 
 export default function LoadingOverlay({ open, loading }) {
     return (
         <ModalBase
             open={open}
-            className="bg-[rgba(71,88,123,0.36)] backdrop-blur-[1px]"
-            panelClassName="max-w-[340px] rounded-[10px] px-8 py-7 text-center shadow-[0_8px_20px_rgba(15,23,42,0.12)]"
+            className="bg-slate-950/10 backdrop-blur-[1.5px]"
+            panelClassName="max-w-[280px] rounded-lg border border-slate-200 bg-white p-6 shadow-sm text-center"
         >
-            <div className="flex flex-col items-center">
-                <span className="inline-flex h-12 w-12 animate-spin rounded-full border-[3px] border-[#f7c5d4] border-t-[#f2356d]" />
-                <h2 className="mt-5 text-[22px] font-semibold text-[#4f5678]">{loading.title}</h2>
-                <p className="mt-2 text-[15px] leading-6 text-[#6a7390]">{loading.description}</p>
+            <div className="flex flex-col items-center py-1">
+                <Spinner className="h-12 w-12 text-[#ED3969] animate-spin" />
+                <h2 className="mt-4 text-sm font-semibold text-slate-900 tracking-tight">
+                    {loading.title}
+                </h2>
+                <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                    {loading.description}
+                </p>
             </div>
         </ModalBase>
     );

@@ -210,7 +210,7 @@ export default function TableListView({
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell colSpan={table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
-                                    {table.emptyLabel ?? 'Belum ada data'}
+                                    {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

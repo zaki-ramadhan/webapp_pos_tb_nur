@@ -1,5 +1,84 @@
 import { useRef } from 'react';
 
+function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
+    const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
+    
+    // Check if it's a phone number or contact number
+    const isPhone = searchStr.includes('phone') || 
+                    searchStr.includes('telp') || 
+                    searchStr.includes('telepon') ||
+                    searchStr.includes('whatsapp') || 
+                    searchStr.includes('wa') || 
+                    searchStr.includes('fax') || 
+                    searchStr.includes('hp') || 
+                    searchStr.includes('kontak') || 
+                    searchStr.includes('contact');
+                    
+    // Check if it is a digit-only field like account number, tax number, postal code
+    const isDigitOnly = (
+                            searchStr.includes('rekening') || 
+                            searchStr.includes('account_number') || 
+                            searchStr.includes('bank_number') || 
+                            searchStr.includes('tax_number') || 
+                            searchStr.includes('npwp') || 
+                            searchStr.includes('postal') || 
+                            searchStr.includes('kodepos') ||
+                            searchStr.includes('zip') ||
+                            /\bno\.?\b/.test(searchStr)
+                        ) && !searchStr.includes('note') && !searchStr.includes('document');
+
+    if (isPhone) {
+        // Allow digits, spaces, plus sign, and hyphens
+        return val.replace(/[^0-9+\s-]/g, '');
+    }
+
+    if (isDigitOnly) {
+        // Strip out everything except digits (0-9)
+        return val.replace(/[^0-9]/g, '');
+    }
+
+    // Check if it's a numeric field
+    const isNumeric = type === 'number' || 
+                      searchStr.includes('price') || 
+                      searchStr.includes('amount') || 
+                      searchStr.includes('percentage') || 
+                      searchStr.includes('rate') || 
+                      searchStr.includes('limit') || 
+                      searchStr.includes('age') || 
+                      searchStr.includes('days') || 
+                      searchStr.includes('qty') || 
+                      searchStr.includes('quantity') || 
+                      searchStr.includes('value') ||
+                      searchStr.includes('kurs') ||
+                      searchStr.includes('jumlah') ||
+                      searchStr.includes('persen') ||
+                      searchStr.includes('nominal') ||
+                      searchStr.includes('cost') ||
+                      searchStr.includes('piutang') ||
+                      searchStr.includes('utang');
+
+    if (isNumeric) {
+        // Allow only digits, a single decimal point, and optional single minus sign
+        let clean = val.replace(/[^0-9.-]/g, '');
+        // Ensure only one minus sign at the start
+        if (clean.includes('-')) {
+            const hasMinus = clean.startsWith('-');
+            clean = clean.replace(/-/g, '');
+            if (hasMinus) {
+                clean = '-' + clean;
+            }
+        }
+        // Ensure only one decimal point
+        const parts = clean.split('.');
+        if (parts.length > 2) {
+            clean = parts[0] + '.' + parts.slice(1).join('');
+        }
+        return clean;
+    }
+
+    return val;
+}
+
 export default function TextInput({
     id,
     type = 'text',
@@ -18,6 +97,7 @@ export default function TextInput({
     readOnly = false,
     interactiveReadOnly = false,
     tabIndex,
+    onChange,
     ...props
 }) {
     const inputRef = useRef(null);
@@ -31,6 +111,23 @@ export default function TextInput({
             ? 'border-slate-300'
             : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
     const disabledClassName = isNonInteractive ? 'bg-slate-100 text-slate-400' : 'bg-white';
+
+    const resolvedType = type === 'number' ? 'text' : type;
+    const resolvedInputMode = props.inputMode ?? (type === 'number' ? 'decimal' : undefined);
+
+    function handleWrappedChange(event) {
+        if (!onChange) {
+            return;
+        }
+        const originalValue = event.target.value;
+        const name = props.name ?? '';
+        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder);
+        
+        if (originalValue !== sanitizedValue) {
+            event.target.value = sanitizedValue;
+        }
+        onChange(event);
+    }
 
     function focusInputFromWrapper(event) {
         if (isNonInteractive) {
@@ -66,13 +163,15 @@ export default function TextInput({
                 <input
                     ref={inputRef}
                     id={id}
-                    type={type}
+                    type={resolvedType}
+                    inputMode={resolvedInputMode}
                     placeholder={placeholder}
                     disabled={disabled}
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(error)}
                     className={`h-full flex-1 px-4 text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    onChange={handleWrappedChange}
                     {...props}
                 />
 

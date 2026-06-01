@@ -49,12 +49,56 @@ class BackendResourceWriter
         });
     }
 
-    /**
-     * @param  array<string, mixed>  $payload
-     */
     protected function persist(BackendResourceBlueprint $blueprint, Model $record, array $payload): Model
     {
         return DB::transaction(function () use ($blueprint, $record, $payload): Model {
+            // Custom Business Logic Integrity Checks
+            if ($blueprint->key === 'general-journals') {
+                $lines = $payload['lines'] ?? [];
+                $totalDebit = 0;
+                $totalCredit = 0;
+                foreach ($lines as $line) {
+                    $totalDebit += (float) ($line['debit_amount'] ?? 0);
+                    $totalCredit += (float) ($line['credit_amount'] ?? 0);
+                }
+                if (abs($totalDebit - $totalCredit) > 0.001) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'lines' => ['Total Debet harus sama dengan Total Kredit (Jurnal Umum harus seimbang / balance).']
+                    ]);
+                }
+            }
+
+            if ($blueprint->key === 'sales-invoices') {
+                $warehouseId = $payload['warehouse_id'] ?? null;
+                if ($warehouseId) {
+                    $lines = $payload['lines'] ?? [];
+                    foreach ($lines as $index => $line) {
+                        $productId = $line['product_id'] ?? null;
+                        $qtyRequested = (float) ($line['quantity'] ?? 0);
+                        if ($productId && $qtyRequested > 0) {
+                            $stockMap = app(\App\Support\Backend\Queries\InventoryInquiryQueryService::class)->paginateItemLocations([
+                                'product_id' => $productId,
+                                'warehouse_id' => $warehouseId,
+                                'per_page' => 1,
+                            ]);
+                            
+                            $qtyAvailable = 0.0;
+                            if (count($stockMap->items()) > 0) {
+                                $item = $stockMap->items()[0];
+                                $qtyAvailable = (float) ($item['saleable_stock'] ?? 0.0);
+                            }
+                            
+                            if ($qtyRequested > $qtyAvailable) {
+                                $productName = DB::table('products')->where('id', $productId)->value('name') ?? 'Barang';
+                                throw \Illuminate\Validation\ValidationException::withMessages([
+                                    "lines.{$index}.quantity" => ["Stok tidak mencukupi untuk {$productName}. Stok tersedia: {$qtyAvailable}, diminta: {$qtyRequested}."]
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
             $before = $record->exists ? $this->activityLogger->snapshot($record) : null;
             $record->fill(Arr::only($payload, $record->getFillable()));
             $record->save();

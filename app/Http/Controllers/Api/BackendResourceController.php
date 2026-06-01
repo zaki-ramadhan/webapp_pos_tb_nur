@@ -12,6 +12,8 @@ use App\Support\Backend\BackendResourceIndexQuery;
 use App\Support\Backend\BackendResourcePayloadSanitizer;
 use App\Support\Backend\BackendResourceRegistry;
 use App\Support\Backend\BackendResourceWriter;
+use App\Domain\Finance\Models\Currency;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,6 +49,45 @@ class BackendResourceController extends Controller
     public function store(BackendResourceStoreRequest $request, string $resource): JsonResponse
     {
         $blueprint = $request->blueprint();
+
+        if ($resource === 'preferences') {
+            $this->access->authorize($request->user(), $blueprint, 'create');
+            $settings = $request->input('settings', []);
+            
+            \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {
+                foreach ($settings as $key => $val) {
+                    $group = 'features';
+                    $companyKeys = [
+                        'company-name', 'business-category', 'business-field', 
+                        'phone', 'fax', 'email', 'start-date', 'accounting-period', 
+                        'currency', 'street', 'city', 'province', 'postal-code', 'country'
+                    ];
+                    if (in_array($key, $companyKeys)) {
+                        $group = 'company_info';
+                    }
+
+                    \App\Domain\Support\Models\PreferenceSetting::updateOrCreate(
+                        [
+                            'group_key' => $group,
+                            'setting_key' => $key,
+                            'scope_type' => 'company',
+                            'scope_key' => 'default',
+                        ],
+                        [
+                            'label' => ucwords(str_replace('-', ' ', $key)),
+                            'data_type' => 'string',
+                            'value' => $val,
+                            'is_active' => true,
+                        ]
+                    );
+                }
+            });
+
+            return response()->json([
+                'message' => 'Preferensi berhasil disimpan.',
+            ]);
+        }
+
         $payload = $this->payloadSanitizer->sanitize($request->validated());
         $record = $this->writer->create($blueprint, $payload);
 
@@ -70,6 +111,45 @@ class BackendResourceController extends Controller
     public function update(BackendResourceUpdateRequest $request, string $resource, int $record): JsonResponse
     {
         $blueprint = $request->blueprint();
+
+        if ($resource === 'preferences') {
+            $this->access->authorize($request->user(), $blueprint, 'update');
+            $settings = $request->input('settings', []);
+            
+            \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {
+                foreach ($settings as $key => $val) {
+                    $group = 'features';
+                    $companyKeys = [
+                        'company-name', 'business-category', 'business-field', 
+                        'phone', 'fax', 'email', 'start-date', 'accounting-period', 
+                        'currency', 'street', 'city', 'province', 'postal-code', 'country'
+                    ];
+                    if (in_array($key, $companyKeys)) {
+                        $group = 'company_info';
+                    }
+
+                    \App\Domain\Support\Models\PreferenceSetting::updateOrCreate(
+                        [
+                            'group_key' => $group,
+                            'setting_key' => $key,
+                            'scope_type' => 'company',
+                            'scope_key' => 'default',
+                        ],
+                        [
+                            'label' => ucwords(str_replace('-', ' ', $key)),
+                            'data_type' => 'string',
+                            'value' => $val,
+                            'is_active' => true,
+                        ]
+                    );
+                }
+            });
+
+            return response()->json([
+                'message' => 'Preferensi berhasil disimpan.',
+            ]);
+        }
+
         $entity = $this->findRecord($blueprint, $record);
         $payload = $this->payloadSanitizer->sanitize($request->validated());
         $entity = $this->writer->update($blueprint, $entity, $payload);
@@ -111,5 +191,61 @@ class BackendResourceController extends Controller
         return $modelClass::query()
             ->with($blueprint->with)
             ->findOrFail($record);
+    }
+
+    public function syncCurrencies(Request $request): JsonResponse
+    {
+        try {
+            $response = Http::timeout(10)->get('https://open.er-api.com/v6/latest/USD');
+
+            if (!$response->successful()) {
+                return response()->json([
+                    'message' => 'Gagal mengambil data dari API ExchangeRate.',
+                ], 500);
+            }
+
+            $data = $response->json();
+            $rates = $data['rates'] ?? [];
+
+            if (empty($rates) || !isset($rates['IDR'])) {
+                return response()->json([
+                    'message' => 'Format data API tidak valid.',
+                ], 500);
+            }
+
+            $idrRate = (float) $rates['IDR'];
+            $currencies = Currency::all();
+            $syncedCount = 0;
+
+            foreach ($currencies as $currency) {
+                $code = strtoupper($currency->code);
+
+                if ($code === 'IDR') {
+                    $currency->exchange_rate = 1.0;
+                    $currency->save();
+                    $syncedCount++;
+                    continue;
+                }
+
+                if (isset($rates[$code])) {
+                    $foreignRateInUsd = (float) $rates[$code];
+                    if ($foreignRateInUsd > 0) {
+                        $rateInIdr = $idrRate / $foreignRateInUsd;
+                        $currency->exchange_rate = $rateInIdr;
+                        $currency->save();
+                        $syncedCount++;
+                    }
+                }
+            }
+
+            return response()->json([
+                'message' => "Berhasil sinkronisasi {$syncedCount} mata uang dengan kurs real-time.",
+                'rates' => $rates,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan sistem saat sinkronisasi: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

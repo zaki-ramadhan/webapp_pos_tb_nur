@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
 import { AlertTriangleIcon } from '@/features/workspace/shared/Icons';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';

@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OperationDocument extends DomainModel
 {
+    protected $table = 'operation_documents';
+
     protected $fillable = [
         'document_type',
         'branch_id',
@@ -155,11 +157,11 @@ class OperationDocument extends DomainModel
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'operation_document_user');
+        return $this->belongsToMany(User::class, 'operation_document_user', 'operation_document_id', 'user_id');
     }
 
     public function lines(): HasMany
     {
-        return $this->hasMany(OperationDocumentLine::class);
+        return $this->hasMany(OperationDocumentLine::class, 'operation_document_id');
     }
 }

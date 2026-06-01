@@ -151,7 +151,11 @@ function useAccountLookupController({ value, values, disabled = false }) {
         setDraftValue('');
     }
 
-    function handleInputFocus() {}
+    function handleInputFocus() {
+        if (!disabled) {
+            openLookup(draftValue);
+        }
+    }
 
     function handleInputChange(nextValue) {
         setDraftValue(nextValue);

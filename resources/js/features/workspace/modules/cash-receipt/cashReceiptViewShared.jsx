@@ -1,5 +1,5 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
-import { buildCurrencyValue, TransactionToolbarIconButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { buildCurrencyValue, TransactionToolbarIconButton, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import {
     CogIcon,

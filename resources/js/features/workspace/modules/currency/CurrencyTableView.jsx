@@ -15,6 +15,26 @@ import { PlusIcon, RefreshIcon, SearchIcon, SortIcon } from '@/features/workspac
 export default function CurrencyTableView({ page, rows, total, loading, error, onCreate, onOpenDetail, onRefresh }) {
     const table = page.currency.table;
     const [keyword, setKeyword] = useState('');
+    const [syncing, setSyncing] = useState(false);
+
+    async function handleSync() {
+        if (syncing) {
+            return;
+        }
+
+        setSyncing(true);
+        try {
+            const response = await window.axios.post('/api/backend/currencies/sync');
+            const message = response?.data?.message || 'Berhasil mensinkronisasi kurs mata uang.';
+            window.alert(message);
+            await onRefresh?.();
+        } catch (syncError) {
+            const errorMsg = syncError?.response?.data?.message || 'Gagal mensinkronisasi kurs mata uang.';
+            window.alert(errorMsg);
+        } finally {
+            setSyncing(false);
+        }
+    }
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -47,6 +67,21 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                     loading,
                     icon: <RefreshIcon className="h-5 w-5" />,
                 }}
+                leftControls={
+                    <button
+                        type="button"
+                        onClick={handleSync}
+                        disabled={syncing}
+                        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-slate-200 bg-white px-3 h-[34px] text-[15px] font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60 disabled:pointer-events-none"
+                    >
+                        {syncing ? (
+                            <RefreshIcon className="h-4.5 w-4.5 animate-spin text-[#ED3969]" />
+                        ) : (
+                            <RefreshIcon className="h-4.5 w-4.5 text-slate-500" />
+                        )}
+                        <span>{syncing ? 'Menyingkronkan...' : 'Sinkronisasi Kurs API'}</span>
+                    </button>
+                }
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -102,7 +137,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell colSpan={table.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
-                                    {error || 'Belum ada data'}
+                                    {error || (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

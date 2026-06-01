@@ -83,25 +83,6 @@ const STATE_BY_STATUS = {
     },
 };
 
-const TONE_STYLES = {
-    warning: {
-        glow: 'rgba(184, 93, 32, 0.22)',
-        code: '#b85d20',
-        badge: 'from-[#fff2df] via-[#f9ddba] to-[#f3c695]',
-        icon: 'text-[#b85d20]',
-        chip: 'bg-[#fff4e7] text-[#8f4d18] border-[#efcfac]',
-        shadow: 'shadow-[0_40px_120px_rgba(184,93,32,0.16)]',
-    },
-    danger: {
-        glow: 'rgba(198, 73, 57, 0.18)',
-        code: '#c64939',
-        badge: 'from-[#fff0ed] via-[#ffd8cf] to-[#f8b5a5]',
-        icon: 'text-[#c64939]',
-        chip: 'bg-[#fff1ef] text-[#9f3c31] border-[#efb9b0]',
-        shadow: 'shadow-[0_40px_120px_rgba(150,56,45,0.18)]',
-    },
-};
-
 function resolveState(status, isClientCrash) {
     if (isClientCrash) {
         return {
@@ -131,17 +112,17 @@ function resolveState(status, isClientCrash) {
 
 function ActionButton({ action }) {
     const baseClassName =
-        'inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#b85d20]/30 focus:ring-offset-2 focus:ring-offset-[#f7f0e5]';
+        'inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:ring-offset-2 w-full';
 
     const variantClassName =
         action.variant === 'secondary'
-            ? 'border border-[rgba(110,72,43,0.18)] bg-white/88 text-[var(--color-ink)] hover:bg-white'
-            : 'border border-transparent bg-[var(--color-accent)] text-white shadow-[0_18px_40px_rgba(184,93,32,0.28)] hover:bg-[#9f4f1a]';
+            ? 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 shadow-sm'
+            : 'border border-[#2f2419] bg-[#2f2419] text-white hover:bg-slate-800 shadow-sm';
 
     if (action.href) {
         return (
             <a href={action.href} className={`${baseClassName} ${variantClassName}`}>
-                <action.icon className="h-4 w-4" strokeWidth={2.1} />
+                <action.icon className="h-3.5 w-3.5" strokeWidth={2} />
                 <span>{action.label}</span>
             </a>
         );
@@ -149,7 +130,7 @@ function ActionButton({ action }) {
 
     return (
         <button type="button" onClick={action.onClick} className={`${baseClassName} ${variantClassName}`}>
-            <action.icon className="h-4 w-4" strokeWidth={2.1} />
+            <action.icon className="h-3.5 w-3.5" strokeWidth={2} />
             <span>{action.label}</span>
         </button>
     );
@@ -194,76 +175,62 @@ export default function ErrorExperience({
     isClientCrash = false,
 }) {
     const state = resolveState(status, isClientCrash);
-    const toneStyle = TONE_STYLES[state.tone];
     const Icon = state.icon;
     const code = isClientCrash ? 'ERR' : String(status);
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-[#ebe6de] text-[var(--color-ink)]">
-            <div
-                className="absolute inset-0 opacity-90"
-                style={{
-                    background:
-                        'radial-gradient(circle at 18% 22%, rgba(255,255,255,0.95), transparent 28%), radial-gradient(circle at 82% 78%, rgba(255,255,255,0.82), transparent 25%), linear-gradient(180deg, #f0ebe4 0%, #e5ddd1 100%)',
-                }}
-            />
-            <div
-                className="absolute left-[-12%] top-[14%] h-44 w-44 rounded-full blur-3xl sm:h-60 sm:w-60"
-                style={{ backgroundColor: toneStyle.glow }}
-            />
-            <div
-                className="absolute bottom-[8%] right-[-10%] h-48 w-48 rounded-full blur-3xl sm:h-64 sm:w-64"
-                style={{ backgroundColor: toneStyle.glow }}
-            />
-
-            <div className="relative mx-auto flex min-h-screen w-full max-w-[1680px] items-center justify-center p-4 sm:p-6 md:p-8 xl:p-10">
-                <section
-                    className={`w-full max-w-[980px] rounded-[28px] border border-white/70 bg-[rgba(255,250,243,0.88)] px-5 py-8 backdrop-blur-xl sm:px-8 sm:py-10 md:px-12 md:py-12 xl:px-16 xl:py-14 ${toneStyle.shadow}`}
-                >
-                    <div className="mx-auto flex max-w-[760px] flex-col items-center text-center">
-                        <div className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.26em] sm:text-xs ${toneStyle.chip}`}>
-                            {appName}
-                        </div>
-
-                        <div className="relative mt-8 sm:mt-10">
-                            <div
-                                className="text-[84px] font-black leading-none tracking-[-0.08em] sm:text-[122px] lg:text-[170px]"
-                                style={{ color: toneStyle.code }}
-                            >
-                                {code}
-                            </div>
-
-                            <div
-                                className={`absolute left-1/2 top-1/2 flex h-18 w-18 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[22px] bg-gradient-to-br ${toneStyle.badge} shadow-[0_16px_45px_rgba(47,36,25,0.14)] sm:h-22 sm:w-22 lg:h-24 lg:w-24`}
-                            >
-                                <Icon className={`h-8 w-8 sm:h-10 sm:w-10 ${toneStyle.icon}`} strokeWidth={2.2} />
-                            </div>
-                        </div>
-
-                        <h1 className="mt-6 text-[28px] font-extrabold tracking-[-0.03em] text-[var(--color-ink)] sm:text-[34px] lg:text-[42px]">
-                            {state.title}
-                        </h1>
-
-                        <p className="mt-3 max-w-[640px] text-sm leading-7 text-[var(--color-muted)] sm:text-base">
-                            {state.description}
-                        </p>
-
-                        <div className="mt-4 inline-flex items-center rounded-full border border-[rgba(110,72,43,0.12)] bg-white/70 px-4 py-2 text-xs font-medium tracking-[0.18em] text-[var(--color-muted)] uppercase">
-                            {subtitle ?? state.label}
-                        </div>
-
-                        <div className="mt-8 grid w-full gap-3 sm:mt-10 sm:grid-cols-2">
-                            {actions.map((action) => (
-                                <ActionButton key={action.label} action={action} />
-                            ))}
-                        </div>
-
-                        <p className="mt-6 text-xs leading-6 text-[var(--color-muted)] sm:text-sm">
-                            Jika masalah terus berulang, kembali ke navigasi utama lalu ulangi proses secara bertahap.
-                        </p>
-                    </div>
-                </section>
+        <div className="relative flex min-h-screen items-center justify-center bg-[#faf9f6] p-4 text-[#2f2419]">
+            {/* Minimal Background Subtle Accent Lines */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+                <div className="absolute -left-1/4 -top-1/4 h-[800px] w-[800px] rounded-full border border-slate-200/40" />
+                <div className="absolute -right-1/4 -bottom-1/4 h-[800px] w-[800px] rounded-full border border-slate-200/40" />
             </div>
+
+            <section className="relative w-full max-w-md rounded-lg border border-slate-200/80 bg-white p-8 shadow-sm">
+                <div className="flex flex-col items-center text-center">
+                    <span className="font-mono text-xs font-bold tracking-[0.24em] text-slate-400 uppercase">
+                        {appName}
+                    </span>
+
+                    {/* Minimal status circle and badge */}
+                    <div className="mt-6 flex flex-col items-center">
+                        <div className={`flex h-12 w-12 items-center justify-center rounded-lg border ${
+                            state.tone === 'danger'
+                                ? 'bg-red-50/50 border-red-100 text-red-600'
+                                : 'bg-amber-50/50 border-amber-100 text-amber-600'
+                        }`}>
+                            <Icon className="h-5 w-5" strokeWidth={2} />
+                        </div>
+                        <code className="mt-4 font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-500 border border-slate-200/60">
+                            HTTP {code}
+                        </code>
+                    </div>
+
+                    <h1 className="mt-5 text-xl font-bold tracking-tight text-slate-900">
+                        {state.title}
+                    </h1>
+
+                    <p className="mt-2 text-sm text-slate-500 leading-relaxed">
+                        {state.description}
+                    </p>
+
+                    {subtitle && (
+                        <div className="mt-4 inline-flex font-mono text-xs tracking-wider text-slate-400 uppercase border border-slate-100 bg-slate-50/30 px-2 py-0.5 rounded">
+                            {subtitle}
+                        </div>
+                    )}
+
+                    <div className="mt-8 flex w-full flex-col gap-2">
+                        {actions.map((action) => (
+                            <ActionButton key={action.label} action={action} />
+                        ))}
+                    </div>
+
+                    <p className="mt-6 text-xs text-slate-400 leading-relaxed">
+                        Jika masalah berlanjut, hubungi administrator atau muat ulang halaman ini secara bertahap.
+                    </p>
+                </div>
+            </section>
         </div>
     );
 }

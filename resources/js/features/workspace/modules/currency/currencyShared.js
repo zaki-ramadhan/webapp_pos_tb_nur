@@ -82,6 +82,7 @@ export function buildCurrencyValuesFromRecord(record = null, config = null) {
         countryCode: referenceMatch?.countryCode ?? '',
         defaultAccounts,
         defaultAccountIds,
+        exchangeRate: record.exchange_rate ?? '',
         __backendRecordId: record.id ?? null,
     };
 }

@@ -7,11 +7,11 @@ export default function LoadingState({
 }) {
     return (
         <div
-            className={`flex flex-col items-center justify-center rounded-[10px] border border-slate-200 bg-white px-6 py-10 text-center shadow-[0_8px_20px_rgba(15,23,42,0.08)] ${className}`.trim()}
+            className={`flex flex-col items-center justify-center rounded-lg border border-slate-200/80 bg-white px-6 py-8 text-center shadow-sm ${className}`.trim()}
         >
-            <Spinner />
-            <h3 className="mt-4 text-[18px] font-medium text-[#4f5678]">{title}</h3>
-            <p className="mt-2 max-w-md text-[14px] leading-6 text-[#6a7390]">{description}</p>
+            <Spinner className="h-8 w-8 text-[#ED3969] animate-spin" />
+            <h3 className="mt-3 text-sm font-semibold text-slate-900 tracking-tight">{title}</h3>
+            <p className="mt-1 max-w-xs text-xs text-slate-500 leading-relaxed">{description}</p>
         </div>
     );
 }

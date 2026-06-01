@@ -13,7 +13,11 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request, ?string $sample = null): Response
     {
-        $props = PosBlueprint::forDashboard($sample);
+        $analytics = new \App\Support\Analytics\AnalyticsService();
+        $abc = $analytics->getAbcAnalysis();
+        $apriori = $analytics->getAprioriAnalysis(0.05, 0.40);
+
+        $props = PosBlueprint::forDashboard($sample, $abc, $apriori);
         $user = $request->user();
 
         if ($user !== null) {

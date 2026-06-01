@@ -6,6 +6,13 @@ class BackendResourceUpdateRequest extends BackendResourceRequest
 {
     public function rules(): array
     {
+        if ($this->route('resource') === 'preferences') {
+            return [
+                'company_info' => ['sometimes', 'array'],
+                'settings' => ['sometimes', 'array'],
+            ];
+        }
+
         return $this->blueprint()->updateRules($this->record());
     }
 

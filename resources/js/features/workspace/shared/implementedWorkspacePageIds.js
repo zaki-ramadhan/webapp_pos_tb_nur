@@ -41,6 +41,24 @@ const implementedWorkspacePageIds = new Set([
     'minimum-stock',
     'delivery-order',
     'report-list',
+    // Newly integrated Active modules
+    'fixed-assets',
+    'asset-category',
+    'asset-tax-category',
+    'asset-change',
+    'asset-disposal',
+    'asset-move',
+    'budget',
+    'payroll-entry',
+    'items-services',
+    'warehouse-master',
+    'item-category',
+    'supplier-price',
+    'suppliers',
+    'customers',
+    'users',
+    'branch',
+    'preferences',
 ]);
 
 export default implementedWorkspacePageIds;

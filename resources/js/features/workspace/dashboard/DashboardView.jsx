@@ -144,7 +144,7 @@ const DashboardView = forwardRef(function DashboardView(
         widgetTemplateMap,
     });
 
-    function openPageById(pageId) {
+    const openPageById = useCallback((pageId) => {
         if (pageId !== dashboardPage.id && isWorkspacePageInactive(pageId)) {
             setActivePanelId(null);
             onCloseMobileWorkspaceMenu?.();
@@ -173,7 +173,7 @@ const DashboardView = forwardRef(function DashboardView(
         setActivePageId(nextPage.id);
         setActivePanelId(null);
         onCloseMobileWorkspaceMenu?.();
-    }
+    }, [dashboardPage.id, pages, openPages, onCloseMobileWorkspaceMenu]);
 
     function handleSelectPanelItem(item) {
         openPageById(item.id);
@@ -317,7 +317,7 @@ const DashboardView = forwardRef(function DashboardView(
         });
     }
 
-    function handleOpenContentTab(pageId, tab) {
+    const handleOpenContentTab = useCallback((pageId, tab) => {
         if (!pages[pageId]?.subtab && !pages[pageId]?.detailTabsOnly) {
             return;
         }
@@ -338,7 +338,7 @@ const DashboardView = forwardRef(function DashboardView(
             ...currentTabs,
             [pageId]: tab.id,
         }));
-    }
+    }, [pages, initialLevel2ContentTabs]);
 
     function handleOpenDefaultContentTab(pageId) {
         const page = pages[pageId];
@@ -375,6 +375,29 @@ const DashboardView = forwardRef(function DashboardView(
             ),
         [detailTabBuilders],
     );
+
+    useEffect(() => {
+        function handleOpenPage(e) {
+            const { pageId, recordId, tabLabel, label } = e.detail || {};
+            if (!pageId) return;
+
+            openPageById(pageId);
+
+            if (recordId != null) {
+                const buildTab = detailTabBuilders[pageId];
+                if (buildTab) {
+                    const tabItem = buildTab({
+                        recordId,
+                        tabLabel: tabLabel ?? label,
+                        label: label,
+                    });
+                    handleOpenContentTab(pageId, tabItem);
+                }
+            }
+        }
+        window.addEventListener('workspace:open-page', handleOpenPage);
+        return () => window.removeEventListener('workspace:open-page', handleOpenPage);
+    }, [openPageById, detailTabBuilders, handleOpenContentTab]);
 
     function handleSelectLevel2Tab(tabId) {
         if (!activePage.subtab && !activePage.detailTabsOnly) {

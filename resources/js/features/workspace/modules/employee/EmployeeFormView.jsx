@@ -15,8 +15,8 @@ import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
+import { AttachmentSelectButton } from './employeeControls';
 import {
-    AttachmentSelectButton,
     buildEmployeeFormValues,
     buildEmployeePayload,
     buildEmployeeSnapshot,

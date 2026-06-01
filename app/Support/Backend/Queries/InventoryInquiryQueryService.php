@@ -153,6 +153,7 @@ class InventoryInquiryQueryService
         $inventoryDocuments = InventoryDocument::query()
             ->with(['lines'])
             ->whereDate('document_date', '<=', $asOfDate->toDateString())
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->get();
 
         foreach ($inventoryDocuments as $document) {
@@ -178,6 +179,7 @@ class InventoryInquiryQueryService
             ->with(['lines'])
             ->whereDate('entry_date', '<=', $asOfDate->toDateString())
             ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_return', 'purchase_return'])
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->get();
 
         foreach ($operationDocuments as $document) {

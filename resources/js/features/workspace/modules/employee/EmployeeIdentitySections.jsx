@@ -3,13 +3,13 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employeeViewShared';
 import {
-    EmployeeFieldRow,
     PrefixedInput,
     PrefixedTextArea,
     SuggestionTextInput,
     ToggleSwitch,
-} from '@/features/workspace/modules/employee/employeeViewShared';
+} from '@/features/workspace/modules/employee/employeeControls';
 
 export function EmployeeGeneralTab({ form, values, errors, onChange }) {
     return (

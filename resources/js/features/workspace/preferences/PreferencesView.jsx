@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
 import TextareaField from '@/components/ui/TextareaField';
 import TextInput from '@/components/ui/TextInput';
+import TransactionDateInput from '@/features/workspace/modules/shared/transaction/TransactionDateInput';
 import PreferencesAttachmentsView from '@/features/workspace/preferences/PreferencesAttachmentsView';
 import PreferencesApprovalView from '@/features/workspace/preferences/PreferencesApprovalView';
 import PreferencesFeatureView from '@/features/workspace/preferences/PreferencesFeatureView';
@@ -39,6 +40,101 @@ function PreferenceSideItem({ item, active, onClick }) {
     );
 }
 
+function PreferenceLookupAutocomplete({ field, value, onChange, options = [] }) {
+    const [query, setQuery] = useState('');
+    const [open, setOpen] = useState(false);
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        function handleOutsideClick(e) {
+            if (containerRef.current && !containerRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => document.removeEventListener('mousedown', handleOutsideClick);
+    }, []);
+
+    const filteredOptions = useMemo(() => {
+        const normalized = query.trim().toLowerCase();
+        if (!normalized) {
+            return options;
+        }
+        return options.filter(option => option.toLowerCase().includes(normalized));
+    }, [query, options]);
+
+    const handleSelect = (option) => {
+        onChange?.(field.id, option);
+        setQuery('');
+        setOpen(false);
+    };
+
+    const handleClear = () => {
+        onChange?.(field.id, '');
+        setQuery('');
+        setOpen(false);
+    };
+
+    if (value) {
+        return (
+            <div className="flex h-[36px] w-full max-w-[480px] items-center gap-2 rounded-[3px] border border-[#d8dde7] bg-[#f8f8f8] px-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
+                <span className="inline-flex items-center gap-2 rounded-[4px] border border-[#7ea8e6] bg-[#eaf3ff] px-2.5 py-1 text-[14px] font-medium text-[#2f5388]">
+                    <span>{value}</span>
+                    <button
+                        type="button"
+                        onClick={handleClear}
+                        className="inline-flex h-4 w-4 items-center justify-center text-[#2f5388] hover:text-[#1a345c]"
+                        aria-label={`Hapus ${value}`}
+                    >
+                        <CloseIcon className="h-3 w-3" />
+                    </button>
+                </span>
+            </div>
+        );
+    }
+
+    return (
+        <div ref={containerRef} className="relative w-full max-w-[480px]">
+            <TextInput
+                id={field.id}
+                value={query}
+                onChange={(e) => {
+                    setQuery(e.target.value);
+                    setOpen(true);
+                }}
+                onFocus={() => setOpen(true)}
+                placeholder={field.placeholder ?? `Cari/Pilih ${field.label}...`}
+                disabled={field.disabled}
+                error={field.error}
+                message={field.message}
+                trailing={<SearchIcon className="h-5 w-5 text-[#1f2d42]" />}
+                className="h-[34px] rounded-[3px] border-[#cfd6e2]"
+                inputClassName="text-[15px]"
+            />
+            {open && (
+                <div className="absolute left-0 right-0 z-50 mt-1 max-h-[220px] overflow-y-auto rounded-md border border-[#cad1dd] bg-white shadow-lg">
+                    {filteredOptions.length > 0 ? (
+                        filteredOptions.map((option) => (
+                            <button
+                                key={option}
+                                type="button"
+                                onClick={() => handleSelect(option)}
+                                className="flex w-full items-start px-3 py-2.5 text-left text-[15px] text-[#131a28] hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
+                            >
+                                {option}
+                            </button>
+                        ))
+                    ) : (
+                        <div className="px-4 py-4 text-center text-[14px] text-slate-400">
+                            Tidak ada hasil yang cocok.
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
 function PreferenceAddressTokenField({ tokens = [] }) {
     return (
         <div className="flex min-h-[36px] w-full flex-wrap items-center gap-2 rounded-[3px] border border-[#d8dde7] bg-white px-1.5 py-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]">
@@ -55,7 +151,121 @@ function PreferenceAddressTokenField({ tokens = [] }) {
     );
 }
 
-function PreferenceAddressTextField({ field, value, onChange, className = '' }) {
+const INDONESIAN_CITIES = [
+    { city: 'Kab. Badung', province: 'Bali', postalCode: '80361', country: 'Indonesia' },
+    { city: 'Kab. Bangli', province: 'Bali', postalCode: '80611', country: 'Indonesia' },
+    { city: 'Kab. Tabanan', province: 'Bali', postalCode: '82111', country: 'Indonesia' },
+    { city: 'Kab. Bangka', province: 'Bangka Belitung', postalCode: '33211', country: 'Indonesia' },
+    { city: 'Kab. Bandung', province: 'Jawa Barat', postalCode: '40391', country: 'Indonesia' },
+    { city: 'Kota Bandung', province: 'Jawa Barat', postalCode: '40111', country: 'Indonesia' },
+    { city: 'Kota Jakarta Selatan', province: 'DKI Jakarta', postalCode: '12110', country: 'Indonesia' },
+    { city: 'Kota Surabaya', province: 'Jawa Timur', postalCode: '60111', country: 'Indonesia' },
+    { city: 'Kota Denpasar', province: 'Bali', postalCode: '80111', country: 'Indonesia' },
+];
+
+function PreferenceCityAutocomplete({ field, value, onChange, onSelectCity }) {
+    const [query, setQuery] = useState(value ?? '');
+    const [open, setOpen] = useState(false);
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        setQuery(value ?? '');
+    }, [value]);
+
+    useEffect(() => {
+        function handleOutsideClick(e) {
+            if (containerRef.current && !containerRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => document.removeEventListener('mousedown', handleOutsideClick);
+    }, []);
+
+    const filteredOptions = useMemo(() => {
+        const normalized = query.trim().toLowerCase();
+        if (!normalized) {
+            return INDONESIAN_CITIES;
+        }
+        return INDONESIAN_CITIES.filter(
+            item =>
+                item.city.toLowerCase().includes(normalized) ||
+                item.province.toLowerCase().includes(normalized)
+        );
+    }, [query]);
+
+    const handleSelect = (item) => {
+        onSelectCity(item);
+        setOpen(false);
+    };
+
+    const highlightText = (text, highlight) => {
+        if (!highlight.trim()) return <span>{text}</span>;
+        const regex = new RegExp(`(${highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+        const parts = text.split(regex);
+        return (
+            <span>
+                {parts.map((part, i) =>
+                    regex.test(part) ? (
+                        <mark key={i} className="bg-yellow-200 text-black p-0">{part}</mark>
+                    ) : (
+                        part
+                    )
+                )}
+            </span>
+        );
+    };
+
+    return (
+        <div ref={containerRef} className="relative w-full">
+            <TextInput
+                id={field.id}
+                value={query}
+                onChange={(e) => {
+                    setQuery(e.target.value);
+                    onChange?.(field.id, e.target.value);
+                    setOpen(true);
+                }}
+                onFocus={() => setOpen(true)}
+                placeholder={field.placeholder ?? "Cari Kota / Kabupaten..."}
+                disabled={field.disabled}
+                error={field.error}
+                message={field.message}
+                prefix={field.label}
+                prefixClassName="min-w-[62px] border-[#d8dde7] px-3 text-[15px] text-[#7b8597]"
+                className="h-[34px] rounded-[3px] border-[#d8dde7] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]"
+                inputClassName="text-[15px] text-[#1f2436]"
+            />
+            {open && (
+                <div className="absolute left-[62px] right-0 z-50 mt-1 max-h-[220px] overflow-y-auto rounded-md border border-[#cad1dd] bg-white shadow-lg">
+                    {filteredOptions.length > 0 ? (
+                        filteredOptions.map((item, idx) => (
+                            <button
+                                key={idx}
+                                type="button"
+                                onClick={() => handleSelect(item)}
+                                className="flex w-full flex-col px-4 py-2.5 text-left hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
+                            >
+                                <span className="text-[15px] font-medium text-[#131a28]">
+                                    {highlightText(item.city, query)}
+                                </span>
+                                <span className="text-[12px] text-[#7b8597]">
+                                    {highlightText(item.province, query)}
+                                </span>
+                            </button>
+                        ))
+                    ) : (
+                        <div className="px-4 py-4 text-center text-[14px] text-slate-400">
+                            Tidak ada hasil yang cocok.
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function PreferenceAddressTextField({ field, value, onChange, className = '', readOnly = false }) {
     return (
         <TextInput
             id={field.id}
@@ -63,14 +273,17 @@ function PreferenceAddressTextField({ field, value, onChange, className = '' }) 
             onChange={(e) => onChange?.(field.id, e.target.value)}
             placeholder={field.placeholder}
             disabled={field.disabled}
+            readOnly={readOnly}
             error={field.error}
             message={field.message}
             prefix={field.label}
             prefixClassName="min-w-[62px] border-[#d8dde7] px-3 text-[15px] text-[#7b8597]"
-            trailing={field.clearable ? <CloseIcon /> : null}
+            trailing={field.clearable && !readOnly ? <CloseIcon /> : null}
             trailingClassName="px-2.5 text-[#1f2d42]"
-            className={`h-[34px] rounded-[3px] border-[#d8dde7] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] ${className}`.trim()}
-            inputClassName="text-[15px] text-[#1f2436]"
+            className={`h-[34px] rounded-[3px] border-[#d8dde7] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] ${
+                readOnly ? 'bg-[#f8f8f8]' : ''
+            } ${className}`.trim()}
+            inputClassName={`text-[15px] text-[#1f2436] ${readOnly ? 'text-[#6a7388]' : ''}`}
         />
     );
 }
@@ -92,6 +305,13 @@ function PreferenceCompanyAddress({ address, values, onChange }) {
             </div>
         );
     }
+
+    const handleSelectCity = (item) => {
+        onChange?.(cityField.id, item.city);
+        onChange?.(provinceField.id, item.province);
+        onChange?.(postalCodeField.id, item.postalCode);
+        onChange?.(countryField.id, item.country);
+    };
 
     return (
         <div className="max-w-[980px]">
@@ -116,14 +336,34 @@ function PreferenceCompanyAddress({ address, values, onChange }) {
 
                     <PreferenceAddressTokenField tokens={address.tokens} />
 
-                    <PreferenceAddressTextField field={cityField} value={values[cityField.id]} onChange={onChange} />
+                    <PreferenceCityAutocomplete
+                        field={cityField}
+                        value={values[cityField.id]}
+                        onChange={onChange}
+                        onSelectCity={handleSelectCity}
+                    />
 
                     <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_206px]">
-                        <PreferenceAddressTextField field={provinceField} value={values[provinceField.id]} onChange={onChange} />
-                        <PreferenceAddressTextField field={postalCodeField} value={values[postalCodeField.id]} onChange={onChange} />
+                        <PreferenceAddressTextField
+                            field={provinceField}
+                            value={values[provinceField.id]}
+                            onChange={onChange}
+                            readOnly
+                        />
+                        <PreferenceAddressTextField
+                            field={postalCodeField}
+                            value={values[postalCodeField.id]}
+                            onChange={onChange}
+                            readOnly
+                        />
                     </div>
 
-                    <PreferenceAddressTextField field={countryField} value={values[countryField.id]} onChange={onChange} />
+                    <PreferenceAddressTextField
+                        field={countryField}
+                        value={values[countryField.id]}
+                        onChange={onChange}
+                        readOnly
+                    />
                 </div>
             </div>
         </div>
@@ -153,30 +393,44 @@ const PREFERENCE_FIELD_RENDERERS = {
     },
     date(field, value, onChange) {
         return (
-            <div className="flex max-w-[280px] items-center gap-0">
-                <TextInput
-                    id={field.id}
-                    value={value ?? field.value}
-                    onChange={(e) => onChange?.(field.id, e.target.value)}
-                    placeholder={field.placeholder}
-                    disabled={field.disabled}
-                    error={field.error}
-                    message={field.message}
-                    className="h-[34px] rounded-r-none rounded-l-[3px] border-[#cfd6e2]"
-                    inputClassName="text-[15px]"
-                />
-                <button
-                    type="button"
-                    disabled={field.disabled}
-                    className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-r-[3px] border border-l-0 border-[#cfd6e2] bg-white text-[#2f394f] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
-                    aria-label={`Pilih ${field.label}`}
-                >
-                    <CalendarIcon />
-                </button>
-            </div>
+            <TransactionDateInput
+                value={value ?? field.value ?? ''}
+                disabled={field.disabled}
+                onChange={(displayValue) => onChange?.(field.id, displayValue)}
+                className="w-full max-w-[280px]"
+                inputClassName="text-[15px]"
+            />
         );
     },
     'readonly-edit'(field, value, onChange) {
+        const handleCurrencyEdit = async () => {
+            if (field.disabled) return;
+            try {
+                const response = await window.axios.get('/api/backend/currencies');
+                const currencies = response?.data?.data ?? [];
+                const idr = currencies.find(c => c.code === 'IDR');
+                if (idr) {
+                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
+                        detail: {
+                            pageId: 'currency-master',
+                            recordId: idr.id,
+                            tabLabel: idr.name || 'Rupiah',
+                            label: idr.name || 'Rupiah'
+                        }
+                    }));
+                } else {
+                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
+                        detail: { pageId: 'currency-master' }
+                    }));
+                }
+            } catch (e) {
+                console.error(e);
+                window.dispatchEvent(new CustomEvent('workspace:open-page', {
+                    detail: { pageId: 'currency-master' }
+                }));
+            }
+        };
+
         return (
             <div className="flex max-w-[480px] items-center gap-4">
                 <TextInput
@@ -192,7 +446,8 @@ const PREFERENCE_FIELD_RENDERERS = {
                 <button
                     type="button"
                     disabled={field.disabled}
-                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-[#e8e4dd] text-[#2a3349] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+                    onClick={handleCurrencyEdit}
+                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-[#e8e4dd] text-[#2a3349] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 hover:bg-[#dcd6cc] transition"
                     aria-label={`Edit ${field.label}`}
                 >
                     <PencilIcon />
@@ -201,39 +456,24 @@ const PREFERENCE_FIELD_RENDERERS = {
         );
     },
     'chip-search'(field, value, onChange) {
+        const options = ['GROSIR / WHOLESALER', 'RETAIL / ECERAN', 'MANUFAKTUR / PABRIKASI', 'JASA / SERVICE', 'KONTRAKTOR'];
         return (
-            <TextInput
-                id={field.id}
-                value={value ?? field.value}
-                onChange={(e) => onChange?.(field.id, e.target.value)}
-                placeholder={field.placeholder}
-                disabled={field.disabled}
-                error={field.error}
-                message={field.message}
-                trailing={
-                    <span className="inline-flex items-center gap-3 text-[#1f2d42]">
-                        <CloseIcon />
-                        <SearchIcon className="h-5 w-5 text-[#1f2d42]" />
-                    </span>
-                }
-                className="h-[34px] rounded-[3px] border-[#cfd6e2]"
-                inputClassName="text-[15px]"
+            <PreferenceLookupAutocomplete
+                field={field}
+                value={value}
+                onChange={onChange}
+                options={options}
             />
         );
     },
     search(field, value, onChange) {
+        const options = ['Bahan Bangunan', 'Alat Teknik', 'Cat & Perlengkapan', 'Pipa & Plumbling', 'Kelistrikan', 'Kayu & Kusen', 'Baja & Besi', 'Keramik & Sanitari'];
         return (
-            <TextInput
-                id={field.id}
-                value={value ?? ''}
-                onChange={(e) => onChange?.(field.id, e.target.value)}
-                placeholder={field.placeholder}
-                disabled={field.disabled}
-                error={field.error}
-                message={field.message}
-                trailing={<SearchIcon className="h-5 w-5 text-[#1f2d42]" />}
-                className="h-[34px] rounded-[3px] border-[#cfd6e2]"
-                inputClassName="text-[15px]"
+            <PreferenceLookupAutocomplete
+                field={field}
+                value={value}
+                onChange={onChange}
+                options={options}
             />
         );
     },

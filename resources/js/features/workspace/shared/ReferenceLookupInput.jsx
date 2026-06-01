@@ -66,7 +66,15 @@ export default function ReferenceLookupInput({
         const normalizedQuery = buildNormalizedSearchValue(query);
 
         if (!normalizedQuery) {
-            return [];
+            return items.filter((item) => {
+                const optionLabel = String(getOptionLabel(item) ?? '').trim();
+
+                if (multiValueMode && optionLabel && selectedLabelSet.has(optionLabel)) {
+                    return false;
+                }
+
+                return true;
+            });
         }
 
         return items.filter((item) => {
@@ -80,7 +88,7 @@ export default function ReferenceLookupInput({
         });
     }, [getOptionLabel, getOptionSearchText, items, multiValueMode, query, selectedLabelSet]);
 
-    const showMenu = !disabled && open && buildNormalizedSearchValue(query) !== '';
+    const showMenu = !disabled && open;
 
     function focusInput(event) {
         if (disabled) {
@@ -165,9 +173,7 @@ export default function ReferenceLookupInput({
                         disabled={disabled}
                         placeholder={selectedLabel ? '' : placeholder}
                         onFocus={() => {
-                            if (buildNormalizedSearchValue(query) !== '') {
-                                setOpen(true);
-                            }
+                            setOpen(true);
                         }}
                         onChange={handleChange}
                         aria-label={searchLabel}

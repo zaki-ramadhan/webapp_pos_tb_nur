@@ -13,7 +13,11 @@ import {
 const DISABLED_SIDEBAR_GROUP_IDS = new Set(['fixed-assets', 'tax-center']);
 
 function getVisiblePanelItems(item) {
-    return (item.panel?.items ?? []).filter((panelItem) => !isWorkspacePageInactive(panelItem.id));
+    return (item.panel?.items ?? []).filter((panelItem) => {
+        const isInactive = isWorkspacePageInactive(panelItem.id);
+        const isImplemented = panelItem.implemented !== false || implementedWorkspacePageIds.has(panelItem.id);
+        return !isInactive && isImplemented;
+    });
 }
 
 function normalizeSidebarItem(item) {
@@ -161,7 +165,7 @@ export default function DashboardSidebar({
 }) {
     const railRef = useRef(null);
     const buttonRefs = useRef({});
-    const sidebarItems = sidebar.items.map(normalizeSidebarItem);
+    const sidebarItems = sidebar.items.map(normalizeSidebarItem).filter((item) => !item.disabled);
     const activeItem = sidebarItems.find((item) => item.id === activePanelId && !item.disabled) ?? null;
     const activeButtonElement = activePanelId ? buttonRefs.current[activePanelId] ?? null : null;
 

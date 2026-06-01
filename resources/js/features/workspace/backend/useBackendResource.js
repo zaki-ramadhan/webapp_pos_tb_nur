@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
+    createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
-    storeBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 
@@ -15,7 +15,7 @@ export default function useBackendResource({ resource, onResolved }) {
         setError('');
 
         try {
-            const data = await storeBackendResource(resource, payload);
+            const data = await createBackendResource(resource, payload);
             onResolved?.('store', data);
             return data;
         } catch (requestError) {

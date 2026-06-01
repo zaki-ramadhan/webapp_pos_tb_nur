@@ -120,6 +120,12 @@ export function CurrencyGeneralSection({ config, values, setValues, isDetailMode
                     <CurrencyFieldRow label={config.labels.symbol}>
                         <div className="pt-2 text-[17px] font-semibold text-[#131a28]">{values.symbol}</div>
                     </CurrencyFieldRow>
+
+                    <CurrencyFieldRow label="Kurs (ke IDR)">
+                        <div className="pt-2 text-[17px] font-semibold text-[#131a28]">
+                            {values.exchangeRate ? `Rp ${Number(values.exchangeRate).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}` : '1.0000'}
+                        </div>
+                    </CurrencyFieldRow>
                 </>
             ) : null}
         </div>

@@ -11,7 +11,6 @@ const inactiveWorkspacePageIds = new Set([
     'calendar-master',
     'budget-monitor',
     'budget-transfer',
-    'budget',
     'account-history',
     'smartlink-virtual-account',
     'smartlink-payment',
@@ -32,12 +31,6 @@ const inactiveWorkspacePageIds = new Set([
     'stock-opname-order',
     'stock-opname-result',
     'order-fulfillment',
-    'fixed-assets',
-    'asset-category',
-    'asset-tax-category',
-    'asset-change',
-    'asset-disposal',
-    'asset-move',
     'asset-location',
 ]);
 

@@ -20,7 +20,7 @@ class BackendResourceIndexQuery
 
         $modelClass = $blueprint->modelClass();
         $search = trim((string) ($filters['search'] ?? ''));
-        $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 100));
+        $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 1000));
         $query = $modelClass::query()->with($blueprint->with);
 
         if ($search !== '') {
