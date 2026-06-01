@@ -13,7 +13,7 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { PlusIcon, PrintIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
-export default function BranchTableView({ table, onCreate }) {
+export default function BranchTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const [inactiveFilter, setInactiveFilter] = useState(table.filters?.[0]?.options?.[0]?.value ?? 'all');
 
@@ -66,6 +66,8 @@ export default function BranchTableView({ table, onCreate }) {
                 refreshButton={{
                     label: table.refreshLabel,
                     icon: <RefreshIcon className="h-5 w-5" />,
+                    onClick: table.onRefresh,
+                    loading: table.loading,
                 }}
                 printButton={{
                     label: table.printLabel,
@@ -97,25 +99,40 @@ export default function BranchTableView({ table, onCreate }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                            >
-                                <DataTableCell className="px-3 text-[15px] text-[#131a28]">
-                                    <span className="block truncate">{formatTableTextValue(row.phone)}</span>
-                                </DataTableCell>
-                                <DataTableCell className="px-3 text-[15px] text-[#131a28]">
-                                    <span className="block truncate">{formatTableTextValue(row.inactiveLabel)}</span>
-                                </DataTableCell>
-                                <DataTableCell className="px-3 text-[15px] text-[#131a28]">
-                                    <span className="block truncate">{formatTableTextValue(row.name)}</span>
-                                </DataTableCell>
-                                <DataTableCell className="px-3 text-[15px] text-[#131a28]">
-                                    <span className="block truncate">{formatTableTextValue(row.userList)}</span>
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    onClick={() =>
+                                        onOpenDetail?.({
+                                            recordId: String(row.id),
+                                            label: row.name,
+                                            tabLabel: row.name,
+                                        })
+                                    }
+                                    className={`border-[#dde1e8] cursor-pointer transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                >
+                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">
+                                        <span className="block truncate">{formatTableTextValue(row.phone)}</span>
+                                    </DataTableCell>
+                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">
+                                        <span className="block truncate">{formatTableTextValue(row.inactiveLabel)}</span>
+                                    </DataTableCell>
+                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">
+                                        <span className="block truncate">{formatTableTextValue(row.name)}</span>
+                                    </DataTableCell>
+                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">
+                                        <span className="block truncate">{formatTableTextValue(row.userList)}</span>
+                                    </DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="border-[#dde1e8] bg-white">
+                                <DataTableCell colSpan={4} className="px-3 py-8 text-center text-[15px] text-[#131a28]">
+                                    {table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
