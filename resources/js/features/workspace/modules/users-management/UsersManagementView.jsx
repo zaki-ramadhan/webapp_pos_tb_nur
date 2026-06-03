@@ -278,7 +278,7 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
                                 <DataTableCell>{formatTableTextValue(row.phone)}</DataTableCell>
                                 <DataTableCell>{formatTableTextValue(row.email)}</DataTableCell>
                                 <DataTableCell className="text-center">
-                                    {row.twoFactor ? (
+                                    {row.isActive ? (
                                         <span className="text-[#1f9d55] font-medium">Aktif</span>
                                     ) : (
                                         <span className="text-slate-400">Nonaktif</span>

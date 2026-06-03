@@ -739,7 +739,7 @@ final class PosBlueprint
                             'Nama',
                             'No Handphone',
                             'Email',
-                            '2FA Auth',
+                            'Status',
                             'Jenis Akses',
                         ],
                         'rows' => [
