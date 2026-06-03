@@ -26,6 +26,11 @@ createInertiaApp({
         },
     },
     setup({ el, App, props }) {
+        const loader = document.getElementById('initial-loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 300);
+        }
         createRoot(el).render(
             <StrictMode>
                 <AppErrorBoundary pageProps={props.initialPage?.props}>
