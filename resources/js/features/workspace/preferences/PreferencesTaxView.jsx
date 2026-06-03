@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import CheckboxField from '@/components/ui/CheckboxField';
 import RadioField from '@/components/ui/RadioField';
 import TextareaField from '@/components/ui/TextareaField';
@@ -202,8 +204,14 @@ function TaxRow({ row, onChangeControl, onChangeRadio, onToggleOption, onToggleS
     return <TaxFieldRow row={row} onChangeControl={onChangeControl} />;
 }
 
-export default function PreferencesTaxView({ tabs, activeTabId, onSelectTab }) {
-    const { activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+export default function PreferencesTaxView({ tabs, activeTabId, onSelectTab, onUpdate }) {
+    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+
+    useEffect(() => {
+        if (onUpdate && tabState !== tabs) {
+            onUpdate(tabState);
+        }
+    }, [onUpdate, tabState, tabs]);
 
     function updateActiveTabRows(updater) {
         updateActiveTab((tab) => ({

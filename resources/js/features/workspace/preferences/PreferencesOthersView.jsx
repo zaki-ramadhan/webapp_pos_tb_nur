@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
@@ -211,8 +213,14 @@ function EmailTabContent({ tab, onChangeRadio }) {
     );
 }
 
-export default function PreferencesOthersView({ tabs, activeTabId, onSelectTab }) {
-    const { activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+export default function PreferencesOthersView({ tabs, activeTabId, onSelectTab, onUpdate }) {
+    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+
+    useEffect(() => {
+        if (onUpdate && tabState !== tabs) {
+            onUpdate(tabState);
+        }
+    }, [onUpdate, tabState, tabs]);
 
     function handleChangeControl(rowId, controlId, value) {
         updateActiveTab((tab) => ({

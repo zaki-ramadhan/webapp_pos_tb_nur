@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import CheckboxField from '@/components/ui/CheckboxField';
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
@@ -212,8 +214,15 @@ export default function PreferencesPurchaseView({
     tabs,
     activeTabId,
     onSelectTab,
+    onUpdate,
 }) {
-    const { activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
+
+    useEffect(() => {
+        if (onUpdate && tabState !== tabs) {
+            onUpdate(tabState);
+        }
+    }, [onUpdate, tabState, tabs]);
 
     function updateActiveTabSections(updater) {
         updateActiveTab((tab) => ({
