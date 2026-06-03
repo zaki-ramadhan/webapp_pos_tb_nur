@@ -204,12 +204,12 @@ export default function SimpleMasterFormView({
                         {buildSimpleMasterDockActions(form, isDetailMode).map((action) => (
                             <DockActionButton
                                 key={action.id}
-                                label={saving ? 'Memproses...' : action.label}
+                                label={action.label}
                                 tone={action.tone}
                                 icon={renderSimpleMasterDockIcon(action.icon)}
-                                onClick={saving ? undefined : () => handleAction(action.id)}
+                                onClick={() => handleAction(action.id)}
+                                loading={saving && (action.id === 'save' || action.id === 'delete')}
                                 disabled={action.id === 'save' ? saveDisabled : saving}
-                                className={saving ? 'pointer-events-none opacity-70' : ''}
                             />
                         ))}
                     </div>

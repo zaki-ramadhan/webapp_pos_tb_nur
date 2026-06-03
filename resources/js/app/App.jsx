@@ -12,7 +12,7 @@ import AppErrorBoundary from '@/components/error/AppErrorBoundary';
 const applicationName = typeof document !== 'undefined' ? document.title || 'TB Nur POS' : 'TB Nur POS';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} | ${applicationName}` : applicationName),
+    title: () => 'TB Nur POS',
     resolve: (name) =>
         resolvePageComponent(`../pages/${name}.jsx`, import.meta.glob('../pages/**/*.jsx')),
     progress: {

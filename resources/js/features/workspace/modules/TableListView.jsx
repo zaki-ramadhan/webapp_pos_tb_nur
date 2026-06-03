@@ -48,7 +48,7 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                     {filter.disabled && filter.hint ? (
                         <div className="flex flex-wrap items-center gap-1.5 pl-1 text-[11px] text-[#9a7b35]">
                             {filter.badgeLabel ? (
-                                <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                                <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
                                     {filter.badgeLabel}
                                 </span>
                             ) : null}

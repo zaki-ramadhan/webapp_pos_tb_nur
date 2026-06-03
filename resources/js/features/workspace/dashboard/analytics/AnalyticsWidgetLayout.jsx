@@ -10,10 +10,10 @@ export function DetailToggleButton({ expanded, onToggle, summary }) {
             aria-expanded={expanded}
         >
             <div className="min-w-0">
-                <p className="text-[12px] font-medium text-[#1f2536] md:text-[13px]">
+                <p className="text-sm font-medium text-[#1f2536]">
                     {expanded ? 'Sembunyikan detail tambahan' : 'Tampilkan detail tambahan'}
                 </p>
-                <p className="mt-1 text-[11px] leading-5 text-[#68728c] md:text-[12px]">{summary}</p>
+                <p className="mt-1 text-sm leading-5 text-[#68728c]">{summary}</p>
             </div>
             <ChevronDownIcon
                 className={`ml-3 h-4 w-4 shrink-0 text-[#61718f] transition ${expanded ? 'rotate-180' : ''}`.trim()}

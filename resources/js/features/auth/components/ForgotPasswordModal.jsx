@@ -1,30 +1,27 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
-import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
 import Notice from '@/components/ui/Notice';
 import { dismissToast, showErrorToast, showLoadingToast } from '@/components/feedback/toast';
 import { applyClientErrors, getAuthFormMessage, getFirstInlineError, validateForgotPasswordForm } from '@/features/auth/authFormFeedback';
 import AuthInput from '@/features/auth/components/AuthInput';
 
-function CloseButton({ onClose, label }) {
-    return (
-        <button
-            type="button"
-            onClick={onClose}
-            aria-label={label}
-            className="absolute -right-3 -top-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#efe5d6] bg-white text-[#5b4a3a] shadow-[0_12px_25px_rgba(47,36,25,0.14)] transition hover:bg-[#fffaf3]"
-        >
-            <span className="text-[22px] leading-none">&times;</span>
-        </button>
-    );
-}
-
 export default function ForgotPasswordModal({ open, onClose, modal }) {
-    const { props } = usePage();
+    const [step, setStep] = useState('input');
+    const [submittedEmail, setSubmittedEmail] = useState('');
     const form = useForm({
-        identifier: '',
+        email: '',
     });
+
+    useEffect(() => {
+        if (!open) {
+            setStep('input');
+            setSubmittedEmail('');
+            form.reset('email');
+            form.clearErrors();
+        }
+    }, [open]);
 
     function submit(event) {
         event.preventDefault();
@@ -33,7 +30,6 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
 
         if (Object.keys(clientErrors).length > 0) {
             applyClientErrors(form, clientErrors);
-
             return;
         }
 
@@ -60,7 +56,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
 
                 showErrorToast({
                     title: 'Permintaan gagal',
-                    message: getAuthFormMessage(errors) || getFirstInlineError(errors, ['identifier']) || 'Periksa kembali data akun yang Anda masukkan.',
+                    message: getAuthFormMessage(errors) || getFirstInlineError(errors, ['email']) || 'Periksa kembali data akun yang Anda masukkan.',
                 });
             },
             onFinish: () => {
@@ -68,6 +64,10 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                     dismissToast(loadingToastId);
                 }
             },
+            onSuccess: () => {
+                setSubmittedEmail(form.data.email);
+                setStep('success');
+            }
         });
     }
 
@@ -76,47 +76,74 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
     return (
         <ModalBase
             open={open}
-            onBackdropClick={onClose}
-            className="bg-[rgba(63,89,129,0.42)] px-4 py-5 backdrop-blur-[2px] sm:px-6 sm:py-8"
-            panelClassName="max-w-[520px] overflow-visible rounded-[20px] border border-white/70 bg-white px-0 py-0 shadow-[0_40px_90px_rgba(47,36,25,0.18)]"
+            onBackdropClick={step === 'input' ? onClose : undefined}
+            className="bg-slate-950/55 px-4 py-5 sm:px-6 sm:py-8"
+            panelClassName="w-full max-w-[460px] overflow-visible rounded-[12px] bg-white px-0 py-0 shadow-[0_15px_35px_rgba(0,0,0,0.15)]"
         >
-            <div className="relative px-5 py-5 sm:px-7 sm:py-7">
-                <CloseButton onClose={onClose} label={modal.closeLabel} />
+            {step === 'input' ? (
+                <div className="relative px-6 py-6">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label={modal.closeLabel || 'Tutup'}
+                        className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-slate-600 shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-colors"
+                    >
+                        <span className="text-sm font-semibold leading-none">&times;</span>
+                    </button>
 
-                <div className="text-center">
-                    <h2 className="text-[28px] font-semibold tracking-[-0.03em] text-[#5c5776]">{modal.title}</h2>
+                    <h2 className="text-center text-[18px] font-semibold text-[#1e293b]">{modal.title || 'Lupa Password'}</h2>
+
+                    <form className="mt-6 space-y-5" onSubmit={submit}>
+                        <AuthInput
+                            label="Email Akun Anda"
+                            name="email"
+                            placeholder="Masukkan alamat email Anda"
+                            type="email"
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            spellCheck={false}
+                            value={form.data.email}
+                            onChange={(event) => form.setData('email', event.target.value)}
+                            error={authMessage ? '' : form.errors.email}
+                        />
+
+                        {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
+
+                        <div className="flex justify-end pt-1">
+                            <button
+                                type="submit"
+                                disabled={form.processing}
+                                className="h-9 px-5 rounded-[4px] bg-[#ef3968] hover:bg-[#d6305a] text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50"
+                            >
+                                {form.processing ? 'Memproses...' : 'Reset Password'}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <form className="mt-6 space-y-4" onSubmit={submit}>
-                    <AuthInput
-                        label={modal.identifierLabel}
-                        name="identifier"
-                        placeholder={modal.identifierPlaceholder}
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        value={form.data.identifier}
-                        onChange={(event) => form.setData('identifier', event.target.value)}
-                        error={authMessage ? '' : form.errors.identifier}
-                    />
-
-                    {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
-                    {props.flash?.status ? <Notice tone="success">{props.flash.status}</Notice> : null}
-                    {props.flash?.error ? <Notice tone="danger">{props.flash.error}</Notice> : null}
-
-                    <div className="flex justify-end pt-2">
-                        <Button
-                            type="submit"
-                            className="min-w-[160px] rounded-[10px] bg-[#f2356d] hover:bg-[#e02d63]"
-                            disabled={form.processing}
-                            loading={form.processing}
-                            loadingLabel="Memproses..."
-                        >
-                            {modal.submitLabel}
-                        </Button>
+            ) : (
+                <div className="px-6 py-6 space-y-4">
+                    <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                        <svg className="h-5 w-5 text-blue-500 shrink-0 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 className="text-[16px] font-semibold text-[#2563eb]">Informasi reset password</h3>
                     </div>
-                </form>
-            </div>
+
+                    <p className="text-[14px] leading-6 text-[#475569]">
+                        Link verifikasi telah dikirim ke email <strong className="text-slate-800 font-bold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam. Apabila Anda masih belum menerima email verifikasi, silakan hubungi tim support kami di <a href="mailto:support@cpssoft.com" className="text-blue-500 hover:underline">support@cpssoft.com</a>
+                    </p>
+
+                    <div className="flex justify-center pt-2">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="h-9 min-w-[70px] px-5 rounded-[4px] bg-[#ef3968] hover:bg-[#d6305a] text-sm font-semibold text-white shadow-sm transition-colors"
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+            )}
         </ModalBase>
     );
 }

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
@@ -14,6 +15,7 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     ChevronDownIcon,
+    LinkIcon,
     SearchIcon,
 } from '@/features/workspace/shared/Icons';
 
@@ -158,7 +160,7 @@ function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholde
 
     return (
         <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 flex-1 items-center gap-3 sm:max-w-[720px]">
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-[720px]">
                 <div className="min-w-0 flex-1">
                     {isAccountLookup ? (
                         <AccountLookupTextInput
@@ -179,12 +181,15 @@ function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholde
                         />
                     )}
                 </div>
+
+                {!isAccountLookup && onAction ? (
+                    <TransactionToolbarIconButton label={`Pilih ${title}`} onClick={onAction}>
+                        <LinkIcon className="h-4.5 w-4.5" />
+                    </TransactionToolbarIconButton>
+                ) : null}
             </div>
 
             <div className="flex items-center gap-3 self-end sm:self-auto">
-                <TransactionToolbarIconButton label={`Cari ${title}`} onClick={onAction}>
-                    <SearchIcon className="h-4.5 w-4.5" />
-                </TransactionToolbarIconButton>
                 <div className="text-right text-[22px] font-normal text-[#1f2436]">
                     {title} <span className="text-[#ED3969]">*</span>
                 </div>
@@ -210,6 +215,21 @@ function MaterialAdditionSectionTable({ columns, rows, emptyLabel, onRowClick, c
 }
 
 export function MaterialAdditionItemsSection({ config, values, setValues, isDetail, handlers = {} }) {
+    const filteredItems = useMemo(() => {
+        const keyword = (values.itemSearch ?? '').trim().toLowerCase();
+
+        if (!keyword) {
+            return values.items ?? [];
+        }
+
+        return (values.items ?? []).filter((item) =>
+            [item.code, item.name, item.quantity, item.unit]
+                .join(' ')
+                .toLowerCase()
+                .includes(keyword),
+        );
+    }, [values.itemSearch, values.items]);
+
     return (
         <div className="flex min-h-[520px] flex-col">
             <MaterialAdditionSectionHeader
@@ -227,7 +247,7 @@ export function MaterialAdditionItemsSection({ config, values, setValues, isDeta
 
             <MaterialAdditionSectionTable
                 columns={config.itemTable.columns}
-                rows={values.items}
+                rows={filteredItems}
                 emptyLabel={config.itemTable.emptyLabel}
                 onRowClick={handlers.onEditItem}
                 clickable
@@ -237,6 +257,21 @@ export function MaterialAdditionItemsSection({ config, values, setValues, isDeta
 }
 
 export function MaterialAdditionChargesSection({ config, values, setValues, handlers = {} }) {
+    const filteredCosts = useMemo(() => {
+        const keyword = (values.chargeSearch ?? '').trim().toLowerCase();
+
+        if (!keyword) {
+            return values.additionalCosts ?? [];
+        }
+
+        return (values.additionalCosts ?? []).filter((charge) =>
+            [charge.code, charge.name, charge.amount]
+                .join(' ')
+                .toLowerCase()
+                .includes(keyword),
+        );
+    }, [values.chargeSearch, values.additionalCosts]);
+
     return (
         <div className="flex min-h-[520px] flex-col">
             <MaterialAdditionSectionHeader
@@ -254,7 +289,7 @@ export function MaterialAdditionChargesSection({ config, values, setValues, hand
 
             <MaterialAdditionSectionTable
                 columns={config.chargeTable.columns}
-                rows={values.additionalCosts}
+                rows={filteredCosts}
                 emptyLabel={config.chargeTable.emptyLabel}
                 onRowClick={handlers.onEditCharge}
                 clickable

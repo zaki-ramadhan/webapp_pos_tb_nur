@@ -20,42 +20,49 @@ class ForgotPasswordLinkController extends Controller
         $this->ensureIsNotRateLimited($request);
 
         $payload = $request->validate([
-            'identifier' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
         ], [
-            'identifier.required' => 'Email atau nomor handphone wajib diisi.',
-            'identifier.max' => 'Email atau nomor handphone terlalu panjang.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email terlalu panjang.',
         ]);
 
-        $identifier = trim($payload['identifier']);
-        $userQuery = User::query()->whereRaw('LOWER(email) = ?', [Str::lower($identifier)]);
+        $email = trim($payload['email']);
+        $user = User::query()->whereRaw('LOWER(email) = ?', [Str::lower($email)])->first();
 
-        if ($this->supportsUserPhone()) {
-            $phoneCandidates = PhoneNumber::candidates($identifier);
+        if ($user === null || ! filled($user->email)) {
+            RateLimiter::hit($this->throttleKey($request));
 
-            if ($phoneCandidates !== []) {
-                $userQuery->orWhereIn('phone', $phoneCandidates);
-            }
+            throw ValidationException::withMessages([
+                'email' => 'Email tidak terdaftar. Periksa kembali penulisan atau daftar akun baru jika belum memiliki akun.',
+            ]);
         }
 
-        $user = $userQuery->first();
-
-        if ($user !== null && filled($user->email)) {
+        try {
             $status = Password::sendResetLink([
                 'email' => $user->email,
             ]);
+        } catch (\Throwable $e) {
+            logger()->error('Password reset mail sending failed: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
 
-            if ($status !== Password::RESET_LINK_SENT && $status !== Password::INVALID_USER) {
-                RateLimiter::hit($this->throttleKey($request));
+            throw ValidationException::withMessages([
+                'email' => 'Gagal mengirim email verifikasi karena gangguan koneksi server. Silakan coba lagi beberapa saat lagi.',
+            ]);
+        }
 
-                throw ValidationException::withMessages([
-                    'auth' => 'Permintaan reset password belum dapat diproses. Coba lagi beberapa saat lagi.',
-                ]);
-            }
+        if ($status !== Password::RESET_LINK_SENT && $status !== Password::INVALID_USER) {
+            RateLimiter::hit($this->throttleKey($request));
+
+            throw ValidationException::withMessages([
+                'email' => 'Permintaan reset password belum dapat diproses. Coba lagi beberapa saat lagi.',
+            ]);
         }
 
         RateLimiter::clear($this->throttleKey($request));
 
-        return back()->with('status', 'Jika akun ditemukan, tautan reset password akan dikirim ke email terdaftar.');
+        return back()->with('status', 'Link verifikasi reset password telah dikirim ke email Anda.');
     }
 
     protected function ensureIsNotRateLimited(Request $request): void
@@ -73,7 +80,7 @@ class ForgotPasswordLinkController extends Controller
 
     protected function throttleKey(Request $request): string
     {
-        return 'password-reset|'.Str::lower((string) $request->input('identifier')).'|'.$request->ip();
+        return 'password-reset|'.Str::lower((string) $request->input('email', $request->input('identifier'))).'|'.$request->ip();
     }
 
     protected function supportsUserPhone(): bool

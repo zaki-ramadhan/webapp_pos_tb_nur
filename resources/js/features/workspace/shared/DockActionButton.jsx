@@ -1,3 +1,5 @@
+import Spinner from '@/components/ui/Spinner';
+
 export default function DockActionButton({
     label,
     icon,
@@ -5,6 +7,7 @@ export default function DockActionButton({
     className = '',
     onClick,
     disabled = false,
+    loading = false,
 }) {
     const toneClassName =
         tone === 'danger'
@@ -13,17 +16,23 @@ export default function DockActionButton({
               ? 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] hover:bg-[#e3e3e3]'
               : 'border-[#214d8d] bg-[#2d61ab] text-white hover:bg-[#27579c]';
 
+    const isDisabled = disabled || loading;
+
     return (
         <button
             type="button"
-            onClick={disabled ? undefined : onClick}
-            disabled={disabled}
-            aria-disabled={disabled}
+            onClick={isDisabled ? undefined : onClick}
+            disabled={isDisabled}
+            aria-disabled={isDisabled}
             aria-label={label}
             title={label}
-            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border shadow-[0_5px_10px_rgba(24,53,97,0.18)] transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] ${toneClassName} ${disabled ? 'cursor-default opacity-55' : ''} ${className}`.trim()}
+            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border shadow-[0_5px_10px_rgba(24,53,97,0.18)] transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] ${toneClassName} ${isDisabled ? 'cursor-not-allowed opacity-55 shadow-none' : ''} ${className}`.trim()}
         >
-            {icon}
+            {loading ? (
+                <Spinner className="h-8 w-8 text-current animate-spin" />
+            ) : (
+                icon
+            )}
         </button>
     );
 }

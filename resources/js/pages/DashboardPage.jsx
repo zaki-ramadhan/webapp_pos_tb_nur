@@ -4,7 +4,7 @@ import DashboardTopBar from '@/features/workspace/dashboard/DashboardTopBar';
 import DashboardView from '@/features/workspace/dashboard/DashboardView';
 import WorkspaceLayout from '@/layouts/WorkspaceLayout';
 
-export default function DashboardPage({ dashboard }) {
+export default function DashboardPage({ dashboard, widgets }) {
     const topBarRef = useRef(null);
     const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
     const [topbarHeight, setTopbarHeight] = useState(0);
@@ -51,6 +51,7 @@ export default function DashboardPage({ dashboard }) {
                 >
                     <DashboardView
                         dashboard={dashboard.sampleDashboard}
+                        widgets={widgets}
                         topbarHeight={topbarHeight}
                         mobileWorkspaceMenuOpen={isWorkspaceMenuOpen}
                         onCloseMobileWorkspaceMenu={() => setIsWorkspaceMenuOpen(false)}

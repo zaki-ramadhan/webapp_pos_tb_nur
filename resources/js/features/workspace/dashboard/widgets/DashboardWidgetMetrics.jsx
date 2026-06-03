@@ -4,20 +4,20 @@ import {
     TrendLineChart,
 } from '@/features/workspace/dashboard/widgets/DashboardWidgetCharts';
 
-const compactHeadlineLabelClassName = 'text-[11px] text-[#6c748e] md:text-[12px]';
+const compactHeadlineLabelClassName = 'text-sm text-[#6c748e]';
 const compactHeadlineValueClassName =
     'text-[18px] font-semibold leading-none text-[#1f2536] md:text-[21px] xl:text-[23px] 2xl:text-[28px]';
 
 function MetricLegendItem({ item }) {
     return (
-        <div className="flex items-start gap-2 text-[12px] text-[#4f5678] md:text-[13px]">
+        <div className="flex items-start gap-2 text-sm text-[#4f5678]">
             <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full md:h-3 md:w-3" style={{ backgroundColor: item.color }} />
             <span className="min-w-0 flex-1 break-words leading-5">{item.label}</span>
             <span className="shrink-0">
                 <span className="flex items-center gap-2 text-right text-[#5e6884]">
                     <span>{item.value}</span>
                     {item.percent ? (
-                        <span className="inline-flex rounded-full bg-[#eef2f8] px-2 py-0.5 text-[11px] text-[#7b8299]">
+                        <span className="inline-flex rounded-full bg-[#eef2f8] px-2 py-0.5 text-sm text-[#7b8299]">
                             {item.percent}
                         </span>
                     ) : null}
@@ -42,7 +42,7 @@ export function LineTrendMetric({ widget }) {
     return (
         <div className="h-[228px] min-w-0 overflow-hidden">
             {widget.period ? (
-                <div className="mb-6 flex justify-start text-[12px] text-[#5d637d] sm:justify-end md:text-[13px]">{widget.period}</div>
+                <div className="mb-6 flex justify-start text-sm text-[#5d637d] sm:justify-end">{widget.period}</div>
             ) : null}
             <TrendLineChart
                 labels={widget.labels ?? []}
@@ -65,7 +65,7 @@ export function RingBreakdownMetric({
         <div className="grid gap-4 lg:grid-cols-[156px_minmax(0,1fr)] lg:items-start lg:gap-4">
             <div className="flex flex-col justify-between gap-3">
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
-                {compare ? <p className="text-[12px] leading-5 text-[#6b738f] md:text-[13px]">{compare}</p> : null}
+                {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
             </div>
 
             <div className="flex h-full flex-col">
@@ -87,7 +87,7 @@ export function ExpenseBreakdownMetric({ percentage = '0%', compare, legend = []
         <div className="grid gap-4 lg:grid-cols-[156px_minmax(0,1fr)] lg:items-start lg:gap-4">
             <div className="flex flex-col justify-between gap-3">
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
-                {compare ? <p className="text-[12px] leading-5 text-[#6b738f] md:text-[13px]">{compare}</p> : null}
+                {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
             </div>
 
             <div>
@@ -123,7 +123,7 @@ export function SummaryMetric({ sections = [], headline }) {
                             <h4 className="text-[14px] font-semibold text-[#1f2536] md:text-[15px] xl:text-[16px]">{section.title}</h4>
                             <div className="mt-2.5 space-y-1.5">
                                 {section.items.map((item) => (
-                                    <div key={item.label} className="flex items-center justify-between gap-2.5 text-[11px] md:text-[12px] xl:text-[13px]">
+                                    <div key={item.label} className="flex items-center justify-between gap-2.5 text-sm">
                                         <span className="text-[#747c95]">{item.label}</span>
                                         <span className="font-medium" style={{ color: item.color ?? '#1f2536' }}>
                                             {item.value}
@@ -142,7 +142,7 @@ export function SummaryMetric({ sections = [], headline }) {
                             <p className={compactHeadlineValueClassName}>{resolvedHeadline.value}</p>
                         </div>
                         <div className="flex items-end justify-between gap-2.5 border-t border-[#eef2f7] pt-2.5 2xl:flex-col 2xl:items-end 2xl:gap-1">
-                            <p className="text-[11px] text-[#6c748e] md:text-[12px]">{resolvedHeadline.secondaryLabel}</p>
+                            <p className="text-sm text-[#6c748e]">{resolvedHeadline.secondaryLabel}</p>
                             <p className="text-[16px] font-semibold leading-none text-[#1f2536] md:text-[18px] xl:text-[20px] 2xl:text-[22px]">
                                 {resolvedHeadline.secondaryValue}
                             </p>

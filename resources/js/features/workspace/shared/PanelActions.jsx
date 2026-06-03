@@ -1,3 +1,4 @@
+import Spinner from '@/components/ui/Spinner';
 import { IdeaIcon, SaveIcon } from '@/features/workspace/shared/Icons';
 
 function resolveActionIcon(icon) {
@@ -14,26 +15,33 @@ function resolveActionIcon(icon) {
 function resolveToneClassName(tone) {
     switch (tone) {
         case 'primary':
-            return 'border-[#2d61ab] bg-[#2d61ab] text-white shadow-[0_4px_10px_rgba(15,23,42,0.12)]';
+            return 'border-[#2d61ab] bg-[#2d61ab] text-white shadow-[0_4px_10px_rgba(15,23,42,0.12)] hover:bg-[#27579c]';
         case 'warning':
-            return 'border-[#ffb11e] bg-[#ffb11e] text-white shadow-[0_4px_10px_rgba(15,23,42,0.1)]';
+            return 'border-[#ffb11e] bg-[#ffb11e] text-white shadow-[0_4px_10px_rgba(15,23,42,0.1)] hover:bg-[#ea9f13]';
         case 'muted':
         default:
-            return 'border-[#c9cdd5] bg-[#e6e6e7] text-[#9a9ea7] shadow-[0_4px_10px_rgba(15,23,42,0.08)]';
+            return 'border-[#c9cdd5] bg-[#e6e6e7] text-[#9a9ea7] shadow-[0_4px_10px_rgba(15,23,42,0.08)] hover:bg-[#dbdbdc]';
     }
 }
 
 function PanelActionButton({ action }) {
     const showLabel = action.showLabel ?? false;
+    const isDisabled = action.disabled || action.loading;
 
     return (
         <button
             type="button"
-            className={`inline-flex h-12 shrink-0 items-center justify-center rounded-[4px] border sm:h-14 ${showLabel ? 'min-w-[110px] gap-2 px-3.5 sm:min-w-[126px] sm:gap-2.5 sm:px-4' : 'w-12 sm:w-14'} ${resolveToneClassName(action.tone)}`.trim()}
+            className={`inline-flex h-12 shrink-0 items-center justify-center rounded-[4px] border sm:h-14 transition ${showLabel ? 'min-w-[110px] gap-2 px-3.5 sm:min-w-[126px] sm:gap-2.5 sm:px-4' : 'w-12 sm:w-14'} ${resolveToneClassName(action.tone)} ${isDisabled ? 'opacity-55 shadow-none cursor-not-allowed' : ''}`.trim()}
             aria-label={action.label}
             title={action.label}
+            onClick={isDisabled ? undefined : action.onClick}
+            disabled={isDisabled}
         >
-            {resolveActionIcon(action.icon)}
+            {action.loading ? (
+                <Spinner className="h-6 w-6 text-current" />
+            ) : (
+                resolveActionIcon(action.icon)
+            )}
             {showLabel ? <span className="text-[15px] font-medium">{action.label}</span> : null}
         </button>
     );

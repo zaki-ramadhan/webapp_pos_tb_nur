@@ -11,7 +11,7 @@ createServer((page) =>
     createInertiaApp({
         page,
         render: renderToString,
-        title: (title) => (title ? `${title} | ${applicationName}` : applicationName),
+        title: () => 'TB Nur POS',
         resolve: (name) =>
             resolvePageComponent(`../pages/${name}.jsx`, import.meta.glob('../pages/**/*.jsx')),
         setup: ({ App, props }) => <App {...props} />,

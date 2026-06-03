@@ -242,9 +242,10 @@ export default function SalaryAllowanceFormView({
                         {actions.map((action) => (
                             <DockActionButton
                                 key={action.id}
-                                label={saving && action.id === 'save' ? 'Memproses...' : action.label}
+                                label={action.label}
                                 tone={action.tone === 'danger' ? 'danger' : 'primary'}
                                 disabled={action.id === 'save' ? resolvedSaveDisabled : saving}
+                                loading={saving && (action.id === 'save' || action.id === 'delete')}
                                 onClick={action.id === 'save' ? handleSave : action.id === 'delete' ? requestDelete : undefined}
                                 icon={action.icon === 'trash' ? <TrashIcon className="h-7 w-7 sm:h-8 sm:w-8" /> : <SaveIcon className="h-7 w-7 sm:h-8 sm:w-8" />}
                             />

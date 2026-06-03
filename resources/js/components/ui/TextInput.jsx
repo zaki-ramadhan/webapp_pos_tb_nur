@@ -3,6 +3,15 @@ import { useRef } from 'react';
 function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
     const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
     
+    // Bypass sanitization for email, username, and general login identifier fields
+    if (
+        searchStr.includes('email') || 
+        searchStr.includes('username') || 
+        searchStr.includes('identifier')
+    ) {
+        return val;
+    }
+    
     // Check if it's a phone number or contact number
     const isPhone = searchStr.includes('phone') || 
                     searchStr.includes('telp') || 

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
@@ -7,7 +9,6 @@ import {
     TransactionFieldLabel,
     TransactionSectionHeading,
     TransactionSwitch,
-    TransactionToolbarIconButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
@@ -173,6 +174,16 @@ export function StockTransferHeader({ config, values, setValues, isDetail }) {
 }
 
 export function StockTransferDetailsSection({ config, values, setValues, isDetail, onOpenItem }) {
+    const filteredItems = useMemo(() => {
+        const query = (values.itemSearch || '').toLowerCase().trim();
+        if (!query) return values.items || [];
+        return (values.items || []).filter(
+            (item) =>
+                (item.name || '').toLowerCase().includes(query) ||
+                (item.code || '').toLowerCase().includes(query)
+        );
+    }, [values.items, values.itemSearch]);
+
     return (
         <div className="flex min-h-[520px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
@@ -202,9 +213,6 @@ export function StockTransferDetailsSection({ config, values, setValues, isDetai
                 </div>
 
                 <div className="flex items-center gap-3 self-end sm:self-auto">
-                    <TransactionToolbarIconButton label={`Cari ${config.itemSectionTitle}`}>
-                        <SearchIcon className="h-4.5 w-4.5" />
-                    </TransactionToolbarIconButton>
                     <div className="text-right text-[22px] font-normal text-[#1f2436]">
                         {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
                     </div>
@@ -214,7 +222,7 @@ export function StockTransferDetailsSection({ config, values, setValues, isDetai
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
                 <TransactionDataTable
                     columns={config.itemTable.columns}
-                    rows={values.items}
+                    rows={filteredItems}
                     emptyLabel={config.itemTable.emptyLabel}
                     minWidthClassName="min-w-[980px]"
                     onRowClick={isDetail ? onOpenItem : null}

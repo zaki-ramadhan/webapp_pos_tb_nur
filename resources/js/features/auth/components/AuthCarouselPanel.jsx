@@ -7,7 +7,7 @@ export default function AuthCarouselPanel({ carousel }) {
                     alt={carousel.imageAlt}
                     className="absolute inset-0 h-full w-full object-cover"
                 />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,39,68,0.04)_0%,rgba(26,39,68,0.16)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.32)_50%,rgba(0,0,0,0.58)_100%)]" />
             </div>
         </div>
     );

@@ -34,14 +34,7 @@ const inactiveWorkspacePageIds = new Set([
     'asset-location',
 ]);
 
-const inactiveReportCategoryIds = new Set([
-    'work-order',
-    'manufacture',
-    'fixed-assets',
-    'tax',
-    'inspection',
-    'others',
-]);
+const inactiveReportCategoryIds = new Set([]);
 
 const inactivePreferenceChecklistItemIds = new Set([
     'invoice-swap',

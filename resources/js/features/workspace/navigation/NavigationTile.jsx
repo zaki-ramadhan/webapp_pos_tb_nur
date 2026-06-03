@@ -64,7 +64,7 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
             </span>
             {hintLabel ? (
                 <span
-                    className={`rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] ${
+                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] ${
                         isInactive ? 'bg-[#f8e6b4] text-[#8b6511]' : 'bg-[#dde2ea] text-[#7d8698]'
                     }`.trim()}
                 >

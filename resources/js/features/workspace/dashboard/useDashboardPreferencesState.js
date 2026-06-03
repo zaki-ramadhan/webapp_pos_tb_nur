@@ -7,7 +7,7 @@ import {
     saveDashboardPreferences,
 } from '@/features/workspace/dashboard/dashboardPersistence';
 
-export default function useDashboardPreferencesState({ dashboard, widgetTemplateMap }) {
+export default function useDashboardPreferencesState({ dashboard, widgets, widgetTemplateMap }) {
     const [isWidgetLibraryLoading, setIsWidgetLibraryLoading] = useState(false);
     const [isWidgetLibraryOpen, setIsWidgetLibraryOpen] = useState(false);
     const [dashboardPreferences, setDashboardPreferences] = useState(() =>
@@ -19,6 +19,37 @@ export default function useDashboardPreferencesState({ dashboard, widgetTemplate
     );
     const [isDashboardActionsOpen, setIsDashboardActionsOpen] = useState(false);
     const [activeDashboardModal, setActiveDashboardModal] = useState(null);
+
+    useEffect(() => {
+        if (widgets && widgets.length > 0) {
+            setDashboardPreferences((currentValue) => {
+                const nextWidgetsByDashboard = { ...currentValue.widgetsByDashboard };
+                Object.keys(nextWidgetsByDashboard).forEach((dashboardId) => {
+                    nextWidgetsByDashboard[dashboardId] = nextWidgetsByDashboard[dashboardId].map((widget) => {
+                        const computed = widgets.find(
+                            (w) => w.type === widget.type || w.id === widget.id || w.id === widget.sourceWidgetId
+                        );
+                        if (computed) {
+                            return {
+                                ...widget,
+                                ...computed,
+                                id: widget.id,
+                                title: widget.title,
+                                gridClass: widget.gridClass,
+                                heightClass: widget.heightClass,
+                                sourceWidgetId: widget.sourceWidgetId || widget.id,
+                            };
+                        }
+                        return widget;
+                    });
+                });
+                return {
+                    ...currentValue,
+                    widgetsByDashboard: nextWidgetsByDashboard,
+                };
+            });
+        }
+    }, [widgets]);
 
     useEffect(() => {
         if (!isWidgetLibraryLoading) {
@@ -49,6 +80,15 @@ export default function useDashboardPreferencesState({ dashboard, widgetTemplate
         () => dashboardItems.find((item) => item.id === selectedDashboardId) ?? dashboardItems[0] ?? null,
         [dashboardItems, selectedDashboardId],
     );
+
+    const filteredLibraryItems = useMemo(() => {
+        const activeIds = new Set(
+            activeDashboardWidgets.map((w) => w.sourceWidgetId || w.id || w.type)
+        );
+        return (dashboard.toolbar.widgetLibraryModal.items ?? []).filter(
+            (item) => !activeIds.has(item.id)
+        );
+    }, [activeDashboardWidgets, dashboard.toolbar.widgetLibraryModal.items]);
 
     function handleOpenWidgetLibrary() {
         setIsWidgetLibraryOpen(false);
@@ -158,18 +198,52 @@ export default function useDashboardPreferencesState({ dashboard, widgetTemplate
             return;
         }
 
+        setDashboardPreferences((currentValue) => {
+            const newWidget = createWidgetFromLibraryItem(widgetLibraryItem, widgetTemplateMap);
+            const computed = widgets?.find(
+                (w) => w.type === newWidget.type || w.id === newWidget.id || w.id === newWidget.sourceWidgetId
+            );
+            const syncedWidget = computed
+                ? {
+                      ...newWidget,
+                      ...computed,
+                      id: newWidget.id,
+                      title: newWidget.title,
+                      gridClass: newWidget.gridClass,
+                      heightClass: newWidget.heightClass,
+                      sourceWidgetId: newWidget.sourceWidgetId || newWidget.id,
+                  }
+                : newWidget;
+
+            return {
+                ...currentValue,
+                widgetsByDashboard: {
+                    ...currentValue.widgetsByDashboard,
+                    [currentValue.selectedDashboardId]: [
+                        ...(currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? []),
+                        syncedWidget,
+                    ],
+                },
+            };
+        });
+        setIsWidgetLibraryOpen(false);
+        setIsWidgetLibraryLoading(false);
+    }
+
+    function handleRemoveWidget(widgetId) {
+        if (!widgetId) {
+            return;
+        }
+
         setDashboardPreferences((currentValue) => ({
             ...currentValue,
             widgetsByDashboard: {
                 ...currentValue.widgetsByDashboard,
-                [currentValue.selectedDashboardId]: [
-                    ...(currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? []),
-                    createWidgetFromLibraryItem(widgetLibraryItem, widgetTemplateMap),
-                ],
+                [currentValue.selectedDashboardId]: (currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? []).filter(
+                    (widget) => widget.id !== widgetId
+                ),
             },
         }));
-        setIsWidgetLibraryOpen(false);
-        setIsWidgetLibraryLoading(false);
     }
 
     return {
@@ -192,5 +266,7 @@ export default function useDashboardPreferencesState({ dashboard, widgetTemplate
         handleSelectDashboard,
         handleRenameWidget,
         handleAddWidget,
+        handleRemoveWidget,
+        filteredLibraryItems,
     };
 }

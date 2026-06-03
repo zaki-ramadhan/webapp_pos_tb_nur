@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildItemRequestConfig, buildItemRequestRecord as buildStaticItemRequestRecord } from './itemRequestConfig';
@@ -37,6 +37,14 @@ export default function ItemRequestView({ page, mode, activeLevel2Tab, onOpenCon
         };
     }, [loading, page.itemRequest, rows, total]);
 
+    const buildRecord = useCallback((row) => {
+        if (row?.__backendRecord) {
+            return buildItemRequestRecord(row.__backendRecord, config);
+        }
+
+        return buildStaticItemRequestRecord(row ?? {}, config);
+    }, [config]);
+
     if (mode === 'table') {
         return (
             <ItemRequestTableView
@@ -59,13 +67,7 @@ export default function ItemRequestView({ page, mode, activeLevel2Tab, onOpenCon
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
-            buildRecord={(row) => {
-                if (row?.__backendRecord) {
-                    return buildItemRequestRecord(row.__backendRecord, config);
-                }
-
-                return buildStaticItemRequestRecord(row ?? {}, config);
-            }}
+            buildRecord={buildRecord}
         />
     );
 }

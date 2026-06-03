@@ -14,6 +14,7 @@ export default function DashboardWidgetGrid({
     widgets = [],
     onRefreshWidget = null,
     onRenameWidget = null,
+    onRemoveWidget = null,
 }) {
     const [analyticsDetailsExpanded, setAnalyticsDetailsExpanded] = useState(false);
     const [refreshingByWidgetId, setRefreshingByWidgetId] = useState({});
@@ -76,23 +77,30 @@ export default function DashboardWidgetGrid({
     return (
         <>
             <div className="grid min-w-0 grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {widgets.map((widget) => (
-                    <div key={widget.id} className="min-w-0">
-                        <DashboardWidgetCard
-                            widget={widget}
-                            onRefresh={handleRefreshWidget}
-                            onRename={handleRenameWidget}
-                            isRefreshing={Boolean(refreshingByWidgetId[widget.id])}
-                            refreshError={refreshErrorByWidgetId[widget.id] ?? null}
-                        >
-                            <DashboardWidgetBody
+                {widgets.map((widget) => {
+                    const isWide = widget.id === 'integrated-analysis' || 
+                                   widget.type === 'integrated-analysis';
+                    const spanClass = isWide ? "min-w-0 md:col-span-2" : "min-w-0";
+
+                    return (
+                        <div key={widget.id} className={spanClass}>
+                            <DashboardWidgetCard
                                 widget={widget}
-                                analyticsDetailsExpanded={analyticsDetailsExpanded}
-                                onToggleAnalyticsDetails={handleToggleAnalyticsDetails}
-                            />
-                        </DashboardWidgetCard>
-                    </div>
-                ))}
+                                onRefresh={handleRefreshWidget}
+                                onRename={handleRenameWidget}
+                                onRemove={onRemoveWidget}
+                                isRefreshing={Boolean(refreshingByWidgetId[widget.id])}
+                                refreshError={refreshErrorByWidgetId[widget.id] ?? null}
+                            >
+                                <DashboardWidgetBody
+                                    widget={widget}
+                                    analyticsDetailsExpanded={analyticsDetailsExpanded}
+                                    onToggleAnalyticsDetails={handleToggleAnalyticsDetails}
+                                />
+                            </DashboardWidgetCard>
+                        </div>
+                    );
+                })}
             </div>
 
             <DashboardFormModal

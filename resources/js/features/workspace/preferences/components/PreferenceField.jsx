@@ -1,0 +1,136 @@
+import SelectField from '@/components/ui/SelectField';
+import TextInput from '@/components/ui/TextInput';
+import TransactionDateInput from '@/features/workspace/modules/shared/transaction/TransactionDateInput';
+import PreferenceLookupAutocomplete from './PreferenceLookupAutocomplete';
+import { CloseIcon, PencilIcon } from '@/features/workspace/shared/Icons';
+
+const PREFERENCE_FIELD_RENDERERS = {
+    select(field, value, onChange) {
+        return (
+            <SelectField
+                id={field.id}
+                value={value ?? field.value}
+                onChange={(e) => onChange?.(field.id, e.target.value)}
+                disabled={field.disabled}
+                error={field.error}
+                message={field.message}
+                className="h-[34px] rounded-[3px] border-[#cfd6e2]"
+                selectClassName="text-[15px]"
+            >
+                {field.options.map((option) => (
+                    <option key={option} value={option}>
+                        {option}
+                    </option>
+                ))}
+            </SelectField>
+        );
+    },
+    date(field, value, onChange) {
+        return (
+            <TransactionDateInput
+                value={value ?? field.value ?? ''}
+                disabled={field.disabled}
+                onChange={(displayValue) => onChange?.(field.id, displayValue)}
+                className="w-full max-w-[280px]"
+                inputClassName="text-[15px]"
+            />
+        );
+    },
+    'readonly-edit'(field, value, onChange) {
+        const handleCurrencyEdit = async () => {
+            if (field.disabled) return;
+            try {
+                const response = await window.axios.get('/api/backend/currencies');
+                const currencies = response?.data?.data ?? [];
+                const idr = currencies.find(c => c.code === 'IDR');
+                if (idr) {
+                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
+                        detail: {
+                            pageId: 'currency-master',
+                            recordId: idr.id,
+                            tabLabel: idr.name || 'Rupiah',
+                            label: idr.name || 'Rupiah'
+                        }
+                    }));
+                } else {
+                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
+                        detail: { pageId: 'currency-master' }
+                    }));
+                }
+            } catch (e) {
+                console.error(e);
+                window.dispatchEvent(new CustomEvent('workspace:open-page', {
+                    detail: { pageId: 'currency-master' }
+                }));
+            }
+        };
+
+        return (
+            <div className="flex max-w-[480px] items-center gap-4">
+                <TextInput
+                    id={field.id}
+                    value={value ?? field.value}
+                    readOnly
+                    disabled={field.disabled}
+                    error={field.error}
+                    message={field.message}
+                    className="h-[34px] flex-1 rounded-[3px] border-[#cfd6e2] bg-[#f8f8f8]"
+                    inputClassName="text-[15px] text-[#6a7388]"
+                />
+                <button
+                    type="button"
+                    disabled={field.disabled}
+                    onClick={handleCurrencyEdit}
+                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-[#e8e4dd] text-[#2a3349] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 hover:bg-[#dcd6cc] transition"
+                    aria-label={`Edit ${field.label}`}
+                >
+                    <PencilIcon />
+                </button>
+            </div>
+        );
+    },
+    'chip-search'(field, value, onChange) {
+        const options = ['GROSIR / WHOLESALER', 'RETAIL / ECERAN', 'MANUFAKTUR / PABRIKASI', 'JASA / SERVICE', 'KONTRAKTOR'];
+        return (
+            <PreferenceLookupAutocomplete
+                field={field}
+                value={value}
+                onChange={onChange}
+                options={options}
+            />
+        );
+    },
+    search(field, value, onChange) {
+        const options = ['Bahan Bangunan', 'Alat Teknik', 'Cat & Perlengkapan', 'Pipa & Plumbling', 'Kelistrikan', 'Kayu & Kusen', 'Baja & Besi', 'Keramik & Sanitari'];
+        return (
+            <PreferenceLookupAutocomplete
+                field={field}
+                value={value}
+                onChange={onChange}
+                options={options}
+            />
+        );
+    },
+    default(field, value, onChange) {
+        return (
+            <TextInput
+                id={field.id}
+                value={value ?? field.value}
+                onChange={(e) => onChange?.(field.id, e.target.value)}
+                placeholder={field.placeholder}
+                disabled={field.disabled}
+                error={field.error}
+                message={field.message}
+                trailing={field.clearable ? <CloseIcon /> : null}
+                className="h-[34px] rounded-[3px] border-[#cfd6e2]"
+                inputClassName="text-[15px]"
+            />
+        );
+    },
+};
+
+export default function PreferenceField({ field, value, onChange }) {
+    const renderField = PREFERENCE_FIELD_RENDERERS[field.type] ?? PREFERENCE_FIELD_RENDERERS.default;
+
+    return renderField(field, value, onChange);
+}

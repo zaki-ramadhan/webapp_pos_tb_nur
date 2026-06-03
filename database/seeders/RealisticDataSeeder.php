@@ -472,6 +472,30 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        $emp6Id = DB::table('employees')->insertGetId([
+            'branch_id' => $branchId,
+            'department_id' => $deptSlsId,
+            'employee_code' => 'EMP-006',
+            'employee_id_type' => 'KTP',
+            'salutation' => 'Bpk',
+            'full_name' => 'Rudi Hermawan',
+            'position' => 'Junior Sales Executive',
+            'email' => 'rudi.hermawan@tbnur.com',
+            'mobile_phone' => '081234567895',
+            'street' => 'Jl. Bubutan No. 12',
+            'city' => 'Surabaya',
+            'province' => 'Jawa Timur',
+            'country' => 'Indonesia',
+            'employment_status' => 'Contract',
+            'joined_at' => '2023-01-10',
+            'tax_status' => 'TK/0',
+            'subject_to_income_tax' => true,
+            'is_salesperson' => true,
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         // Seed Employee Bank Accounts
         DB::table('employee_bank_accounts')->insert([
             [
@@ -792,9 +816,18 @@ class RealisticDataSeeder extends Seeder
                 ]);
             }
 
+            $isPaid = ($i % 2 === 0);
+            $paidAmount = $isPaid ? $totalAmount : 0;
+            $outstandingAmount = $isPaid ? 0 : $totalAmount;
+            $entryDate = now()->subDays(15 - $i)->format('Y-m-d');
+            $dueDate = $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days'));
+
             DB::table('operation_documents')->where('id', $docId)->update([
                 'subtotal' => $totalAmount,
                 'total_amount' => $totalAmount,
+                'paid_amount' => $paidAmount,
+                'outstanding_amount' => $outstandingAmount,
+                'due_date' => $dueDate,
             ]);
         }
 
@@ -1184,6 +1217,22 @@ class RealisticDataSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'name' => 'Andi Pratama',
+                'email' => 'andi@tbnur.com',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Rudi Hermawan',
+                'email' => 'rudi@tbnur.com',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ];
 
@@ -1205,6 +1254,12 @@ class RealisticDataSeeder extends Seeder
 
         DB::table('role_user')->insert(['role_id' => $cashierRoleId, 'user_id' => $usersMap['siti@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti@tbnur.com']]);
+
+        DB::table('role_user')->insert(['role_id' => $cashierRoleId, 'user_id' => $usersMap['andi@tbnur.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['andi@tbnur.com']]);
+
+        DB::table('role_user')->insert(['role_id' => $cashierRoleId, 'user_id' => $usersMap['rudi@tbnur.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['rudi@tbnur.com']]);
 
         DB::table('role_user')->insert(['role_id' => $warehouseRoleId, 'user_id' => $usersMap['joko@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $warehouseGroupId, 'user_id' => $usersMap['joko@tbnur.com']]);
@@ -1817,6 +1872,102 @@ class RealisticDataSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ];
+
+        $salesInvoices = DB::table('operation_documents')
+            ->where('document_type', 'sales_invoice')
+            ->get();
+
+        foreach ($salesInvoices as $index => $si) {
+            $userEmail = ($index % 2 === 0) ? 'andi@tbnur.com' : 'rudi@tbnur.com';
+            DB::table('operation_documents')
+                ->where('id', $si->id)
+                ->update(['responsible_user_id' => $usersMap[$userEmail]]);
+        }
+
+        for ($i = 1; $i <= 10; $i++) {
+            $totalVal = rand(5000000, 25000000);
+            $isPaid = ($i % 2 === 0);
+            $paidAmount = $isPaid ? $totalVal : 0;
+            $outstandingAmount = $isPaid ? 0 : $totalVal;
+            $entryDate = now()->subDays(15 - $i)->format('Y-m-d');
+            $dueDate = $isPaid ? null : date('Y-m-d', strtotime($entryDate . ' + 30 days'));
+
+            DB::table('operation_documents')->insert([
+                'document_type' => 'purchase_invoice',
+                'branch_id' => $branchId,
+                'warehouse_id' => $warehouseId,
+                'supplier_id' => $supplierId,
+                'currency_id' => $currencyId,
+                'payment_term_id' => $paymentTermId,
+                'document_number' => 'PI.' . date('Y.m.d') . '.' . str_pad($i, 5, '0', STR_PAD_LEFT),
+                'status' => 'Posted',
+                'entry_date' => $entryDate,
+                'due_date' => $dueDate,
+                'subtotal' => $totalVal,
+                'discount_total' => 0,
+                'tax_total' => 0,
+                'total_amount' => $totalVal,
+                'paid_amount' => $paidAmount,
+                'outstanding_amount' => $outstandingAmount,
+                'is_closed' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        for ($i = 1; $i <= 8; $i++) {
+            $totalVal = rand(1000000, 5000000);
+            $entryDate = now()->subDays(10 - $i)->format('Y-m-d');
+
+            DB::table('operation_documents')->insert([
+                'document_type' => 'expense_entry',
+                'branch_id' => $branchId,
+                'warehouse_id' => $warehouseId,
+                'currency_id' => $currencyId,
+                'payment_term_id' => $paymentTermId,
+                'document_number' => 'EXP.' . date('Y.m.d') . '.' . str_pad($i, 5, '0', STR_PAD_LEFT),
+                'status' => 'Posted',
+                'entry_date' => $entryDate,
+                'subtotal' => $totalVal,
+                'discount_total' => 0,
+                'tax_total' => 0,
+                'total_amount' => $totalVal,
+                'paid_amount' => $totalVal,
+                'outstanding_amount' => 0,
+                'is_closed' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        for ($i = 1; $i <= 6; $i++) {
+            $totalVal = rand(3000000, 15000000);
+            $status = ($i <= 3) ? 'Draft' : 'Posted';
+            $entryDate = now()->subDays(10 - $i)->format('Y-m-d');
+            $dueDate = date('Y-m-d', strtotime($entryDate . ' + ' . ($i * 2 - 5) . ' days'));
+
+            DB::table('operation_documents')->insert([
+                'document_type' => 'sales_order',
+                'branch_id' => $branchId,
+                'warehouse_id' => $warehouseId,
+                'customer_id' => $customerId,
+                'currency_id' => $currencyId,
+                'payment_term_id' => $paymentTermId,
+                'document_number' => 'SO.' . date('Y.m.d') . '.' . str_pad($i, 5, '0', STR_PAD_LEFT),
+                'status' => $status,
+                'entry_date' => $entryDate,
+                'due_date' => $dueDate,
+                'subtotal' => $totalVal,
+                'discount_total' => 0,
+                'tax_total' => 0,
+                'total_amount' => $totalVal,
+                'paid_amount' => 0,
+                'outstanding_amount' => $totalVal,
+                'is_closed' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         DB::table('report_catalogs')->insert($reportCatalogs);
     }

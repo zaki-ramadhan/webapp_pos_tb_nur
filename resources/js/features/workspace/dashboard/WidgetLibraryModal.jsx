@@ -5,7 +5,7 @@ import TextInput from '@/components/ui/TextInput';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
 
 function LibraryIcon({ type }) {
-    const className = 'h-9 w-9';
+    const className = 'h-9 w-9 shrink-0';
 
     switch (type) {
         case 'activity':

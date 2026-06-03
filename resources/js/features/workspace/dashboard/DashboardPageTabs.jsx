@@ -21,15 +21,15 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
                     onSelect(tab.id);
                 }
             }}
-            className={`relative -mb-px inline-flex h-8.5 items-center rounded-t-[5px] border text-[12px] leading-none transition sm:h-9 sm:text-[13px] md:h-9.75 md:text-[15px] ${spacingClassName} ${
+            className={`relative -mb-px inline-flex h-8.5 items-center rounded-t-[5px] border text-[12px] leading-normal transition sm:h-9 sm:text-[13px] md:h-9.75 md:text-[15px] max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
                     ? 'z-10 border-[2px] border-[#ED3969] bg-[#ED3969] font-medium text-white'
                     : 'border-[#bcc3cf] bg-[#d9dcdf] font-normal text-[#596076] hover:bg-[#d1d5da]'
             } shrink-0 whitespace-nowrap`.trim()}
             aria-label={tab.label}
         >
-            <span className="inline-flex h-full items-center">
-                <span>{tab.label}</span>
+            <span className="inline-flex h-full items-center min-w-0 max-w-[90px] sm:max-w-[120px] md:max-w-[150px]">
+                <span className="block truncate py-1">{tab.label}</span>
             </span>
             {tab.closable ? (
                 <button
@@ -163,7 +163,7 @@ export default function DashboardPageTabs({
                         <div
                             aria-disabled="true"
                             title="Mode daftar tidak dapat diubah pada halaman ini"
-                            className="relative -mb-px inline-flex h-9 cursor-not-allowed items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-[#58bc32] border-r-[#58bc32] border-t-[#90e66a] bg-[#59c62e] px-3 text-white opacity-60 saturate-[0.85] sm:h-9.5 sm:px-4"
+                            className="relative -mb-px inline-flex h-9 cursor-not-allowed items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-[#c5c9d2] border-r-[#c5c9d2] border-t-[#9ca3af] bg-[#e5e7eb] px-3 text-[#9ca3af] sm:h-9.5 sm:px-4"
                         >
                             <ViewModeIcon />
                         </div>

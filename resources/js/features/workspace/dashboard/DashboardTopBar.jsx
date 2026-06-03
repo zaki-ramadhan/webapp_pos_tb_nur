@@ -8,6 +8,7 @@ import BrandMark from '@/features/auth/components/BrandMark';
 import { clearWorkspaceClientState } from '@/features/workspace/dashboard/workspaceClientState';
 import { ChevronDownIcon, LogoutIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import UserAvatar from '@/features/workspace/shared/UserAvatar';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 function TopBarIcon({ children, label, onClick, buttonRef }) {
     return (
@@ -31,14 +32,20 @@ export default function DashboardTopBar({
 }) {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
     const userMenuButtonRef = useRef(null);
 
     function handleLogout() {
+        setIsUserMenuOpen(false);
+        setIsLogoutConfirmOpen(true);
+    }
+
+    function executeLogout() {
         if (isLoggingOut) {
             return;
         }
 
-        setIsUserMenuOpen(false);
+        setIsLogoutConfirmOpen(false);
         setIsLoggingOut(true);
         clearWorkspaceClientState();
         router.post('/logout', {}, {
@@ -119,6 +126,17 @@ export default function DashboardTopBar({
                 </div>
             </div>
 
+            <ConfirmationModal
+                open={isLogoutConfirmOpen}
+                onClose={() => setIsLogoutConfirmOpen(false)}
+                onConfirm={executeLogout}
+                title="Konfirmasi Keluar"
+                message="Apakah Anda yakin ingin keluar dari aplikasi?"
+                confirmLabel="Keluar"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                confirmLoading={isLoggingOut}
+            />
         </header>
     );
 }

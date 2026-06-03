@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
@@ -145,6 +146,21 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
 }
 
 export function ItemRequestDetailsSection({ config, values, setValues, isDetail, handlers = {} }) {
+    const filteredItems = useMemo(() => {
+        const keyword = (values.itemSearch ?? '').trim().toLowerCase();
+
+        if (!keyword) {
+            return values.items ?? [];
+        }
+
+        return (values.items ?? []).filter((item) =>
+            [item.code, item.name, item.quantity, item.unit, item.notes]
+                .join(' ')
+                .toLowerCase()
+                .includes(keyword),
+        );
+    }, [values.itemSearch, values.items]);
+
     return (
         <div className="flex min-h-[520px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
@@ -181,18 +197,14 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
                 <div className="flex items-center justify-end gap-3 pb-3">
-                    <TransactionToolbarIconButton label={`Cari ${config.itemSectionTitle}`} onClick={handlers.onSelectItem}>
-                        <SearchIcon className="h-4.5 w-4.5" />
-                    </TransactionToolbarIconButton>
-
-                    <button type="button" className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <span className="text-right text-[22px] font-normal text-[#1f2436]">
                         {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
-                    </button>
+                    </span>
                 </div>
 
                 <TransactionDataTable
                     columns={config.itemTable.columns}
-                    rows={values.items}
+                    rows={filteredItems}
                     emptyLabel={config.itemTable.emptyLabel}
                     minWidthClassName="min-w-[940px]"
                     emptyLeadingCellContent={

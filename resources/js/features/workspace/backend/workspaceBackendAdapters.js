@@ -384,9 +384,18 @@ export function buildReportListConfig(records, fallbackConfig) {
             };
         });
 
+    const fallbackOrder = (fallbackConfig.categories ?? []).map((c) => c.id);
+    const sortedCategories = [...categoryMap.values()].sort((a, b) => {
+        const indexA = fallbackOrder.indexOf(a.id);
+        const indexB = fallbackOrder.indexOf(b.id);
+        const rankA = indexA === -1 ? fallbackOrder.length : indexA;
+        const rankB = indexB === -1 ? fallbackOrder.length : indexB;
+        return rankA - rankB;
+    });
+
     return {
         ...fallbackConfig,
-        categories: categoryMap.size ? [...categoryMap.values()] : fallbackConfig.categories,
+        categories: categoryMap.size ? sortedCategories : fallbackConfig.categories,
         reports,
     };
 }

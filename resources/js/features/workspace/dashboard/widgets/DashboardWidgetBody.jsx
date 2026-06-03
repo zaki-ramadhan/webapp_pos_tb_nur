@@ -1,6 +1,7 @@
 import {
     AbcAnalysisWidget,
     AprioriAnalysisWidget,
+    IntegratedAnalysisWidget,
 } from '@/features/workspace/dashboard/DashboardAnalyticsWidgets';
 import DashboardWidgetEmptyState from '@/features/workspace/dashboard/widgets/DashboardWidgetEmptyState';
 import {
@@ -12,6 +13,7 @@ import {
 import {
     CashAvailabilityWidget,
     OrderStatusWidget,
+    RecentActivityWidget,
     SalesTeamWidget,
     TopProductsWidget,
 } from '@/features/workspace/dashboard/widgets/DashboardSupplementaryWidgets';
@@ -96,12 +98,20 @@ export default function DashboardWidgetBody({
         return <OrderStatusWidget widget={widget} />;
     }
 
+    if (widget.type === 'recent-activity') {
+        return <RecentActivityWidget widget={widget} />;
+    }
+
     if (widget.type === 'abc-analysis') {
         return <AbcAnalysisWidget widget={widget} expanded={analyticsDetailsExpanded} onToggle={onToggleAnalyticsDetails} />;
     }
 
     if (widget.type === 'apriori-analysis') {
         return <AprioriAnalysisWidget widget={widget} expanded={analyticsDetailsExpanded} onToggle={onToggleAnalyticsDetails} />;
+    }
+
+    if (widget.type === 'integrated-analysis') {
+        return <IntegratedAnalysisWidget widget={widget} expanded={analyticsDetailsExpanded} onToggle={onToggleAnalyticsDetails} />;
     }
 
     return null;

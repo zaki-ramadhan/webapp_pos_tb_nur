@@ -74,7 +74,7 @@ function SearchMenuCard({ item, onSelect }) {
             <span className={`text-[14px] font-medium leading-5 ${labelClassName}`.trim()}>{item.label}</span>
             {statusLabel ? (
                 <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${
+                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] ${
                         isInactive ? 'bg-[#f6dfab] text-[#8b6511]' : 'bg-[#dde2ea] text-[#7d8698]'
                     }`.trim()}
                 >

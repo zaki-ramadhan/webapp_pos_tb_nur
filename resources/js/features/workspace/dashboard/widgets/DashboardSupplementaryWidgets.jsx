@@ -11,14 +11,14 @@ function WidgetPeriod({ value, align = 'right' }) {
     }
 
     return (
-        <div className={`text-[12px] text-[#4f5678] md:text-[13px] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+        <div className={`text-sm text-[#4f5678] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
             {value}
         </div>
     );
 }
 
 function MetricCaption({ children }) {
-    return <p className="text-[12px] text-[#7b8398] md:text-[13px]">{children}</p>;
+    return <p className="text-sm text-[#7b8398]">{children}</p>;
 }
 
 function SalesTeamRow({ row }) {
@@ -32,20 +32,20 @@ function SalesTeamRow({ row }) {
 
     return (
         <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-[#edf1f6] py-3 first:border-t-0 first:pt-0 last:pb-0 lg:grid-cols-[auto_minmax(0,1fr)_120px_56px] lg:items-center">
-            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eef2f7] text-[11px] font-semibold text-[#6b738f]">
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eef2f7] text-sm font-semibold text-[#6b738f]">
                 {initials}
             </span>
             <div className="min-w-0">
-                <p className="truncate text-[13px] font-medium text-[#1f2536] md:text-[14px]">{row.name}</p>
-                <p className="mt-1 text-[11px] text-[#7b8398] md:text-[12px]">{row.role}</p>
+                <p className="truncate text-sm font-medium text-[#1f2536]">{row.name}</p>
+                <p className="mt-1 text-sm text-[#7b8398]">{row.role}</p>
             </div>
             <div className="col-start-2 flex items-center gap-2 lg:col-start-auto lg:justify-end">
-                <span className="text-[12px] text-[#6d7590] md:text-[13px]">{row.totalValue}</span>
-                <span className="inline-flex rounded-full bg-[#dff3ff] px-2 py-0.5 text-[11px] text-[#1e7ec1]">
+                <span className="text-sm text-[#6d7590]">{row.totalValue}</span>
+                <span className="inline-flex rounded-full bg-[#dff3ff] px-2 py-0.5 text-sm text-[#1e7ec1]">
                     {row.targetPercent}
                 </span>
             </div>
-            <div className="col-start-2 text-left text-[12px] font-medium text-[#1f2536] lg:col-start-auto lg:text-right md:text-[13px]">
+            <div className="col-start-2 text-left text-sm font-medium text-[#1f2536] lg:col-start-auto lg:text-right">
                 {row.targetValue}
             </div>
         </div>
@@ -61,7 +61,7 @@ export function SalesTeamWidget({ widget }) {
         <div className="flex h-full flex-col gap-4">
             <WidgetPeriod value={widget.period} />
 
-            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,auto)] gap-4 border-b border-[#edf1f6] pb-2 text-[12px] font-semibold text-[#1f2536] md:grid-cols-[minmax(0,1fr)_120px_56px] md:text-[13px]">
+            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,auto)] gap-4 border-b border-[#edf1f6] pb-2 text-sm font-semibold text-[#1f2536] md:grid-cols-[minmax(0,1fr)_120px_56px]">
                 <span>Penjual</span>
                 <span className="text-right">Total Penjualan</span>
                 <span className="hidden text-right md:block">Target</span>
@@ -79,16 +79,16 @@ export function SalesTeamWidget({ widget }) {
 function TopProductRow({ item, index }) {
     return (
         <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-[8px] border border-[#e6ebf3] bg-[#fbfcfe] px-3 py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
-            <span className="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full bg-[#e7eef9] px-2 text-[11px] font-semibold text-[#456293]">
+            <span className="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full bg-[#e7eef9] px-2 text-sm font-semibold text-[#456293]">
                 {index + 1}
             </span>
             <div className="min-w-0">
-                <p className="truncate text-[13px] font-medium text-[#1f2536] md:text-[14px]">{item.name}</p>
-                <p className="mt-1 text-[11px] text-[#7b8398] md:text-[12px]">
+                <p className="truncate text-sm font-medium text-[#1f2536]">{item.name}</p>
+                <p className="mt-1 text-sm text-[#7b8398]">
                     {item.units} • {item.share}
                 </p>
             </div>
-            <p className="col-start-2 text-left text-[12px] font-semibold text-[#1f2536] lg:col-start-auto lg:text-right md:text-[13px]">
+            <p className="col-start-2 text-left text-sm font-semibold text-[#1f2536] lg:col-start-auto lg:text-right">
                 {item.revenue}
             </p>
         </div>
@@ -138,7 +138,7 @@ export function CashAvailabilityWidget({ widget }) {
 
 function OrderLegendItem({ item }) {
     return (
-        <div className="flex items-center gap-2 text-[12px] text-[#374151] md:text-[13px]">
+        <div className="flex items-center gap-2 text-sm text-[#374151]">
             <span className="h-4 w-10 rounded-[2px]" style={{ backgroundColor: item.color }} />
             <span>{item.label}</span>
         </div>
@@ -171,6 +171,40 @@ export function OrderStatusWidget({ widget }) {
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-1">
                 {segments.map((segment) => (
                     <OrderLegendItem key={segment.label} item={segment} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export function RecentActivityWidget({ widget }) {
+    const items = widget.items ?? [];
+
+    if (!items.length) {
+        return <DashboardWidgetEmptyState description="Belum ada riwayat aktifitas." />;
+    }
+
+    return (
+        <div className="flex h-full flex-col gap-4">
+            <div className="space-y-0">
+                {items.map((item, index) => (
+                    <div key={item.id ?? index} className="flex gap-6 py-4 border-b border-[#edf1f6] last:border-b-0 first:pt-0">
+                        <div className="flex flex-col items-center justify-center text-center min-w-[56px] shrink-0">
+                            <span className="text-xs font-normal text-[#7c839b]">{item.dayName}</span>
+                            <span className="text-[32px] font-bold text-[#434a65] leading-none my-1">{item.dayNum}</span>
+                            <span className="text-xs font-normal text-[#7c839b]">{item.monthName}</span>
+                        </div>
+
+                        <div className="flex-1 flex flex-col justify-center gap-1.5">
+                            <div className="flex items-center gap-2">
+                                <span className="h-[10px] w-[10px] rounded-full border-2 border-[#2563eb] bg-white shrink-0" />
+                                <span className="text-base font-bold text-[#1f2536] leading-none">{item.time}</span>
+                            </div>
+                            <div className="pl-[18px] text-sm text-[#4b5563]">
+                                {item.title}
+                            </div>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>

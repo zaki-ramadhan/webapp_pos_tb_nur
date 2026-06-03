@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import {
     DataTable,
     DataTableBody,
@@ -9,7 +11,6 @@ import {
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import {
-    TransactionToolbarIconButton,
     TransactionToolbarSplitButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { SearchIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
@@ -74,6 +75,16 @@ export default function InventoryAdjustmentDetailsSection({
     onOpenItem,
     onCreateItem,
 }) {
+    const filteredItems = useMemo(() => {
+        const query = (values.itemSearch || '').toLowerCase().trim();
+        if (!query) return values.items || [];
+        return (values.items || []).filter(
+            (item) =>
+                (item.name || '').toLowerCase().includes(query) ||
+                (item.code || '').toLowerCase().includes(query)
+        );
+    }, [values.items, values.itemSearch]);
+
     return (
         <div className="flex min-h-[520px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
@@ -131,9 +142,6 @@ export default function InventoryAdjustmentDetailsSection({
                 </div>
 
                 <div className="flex items-center gap-3 self-end sm:self-auto">
-                    <TransactionToolbarIconButton label={`Cari ${config.itemSectionTitle}`}>
-                        <SearchIcon className="h-5 w-5 text-[#1f2436]" />
-                    </TransactionToolbarIconButton>
                     <div className="text-right text-[22px] font-normal text-[#1f2436]">
                         {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
                     </div>
@@ -142,7 +150,7 @@ export default function InventoryAdjustmentDetailsSection({
 
             <InventoryAdjustmentTableSection
                 columns={config.itemTable.columns}
-                items={values.items}
+                items={filteredItems}
                 emptyLabel={config.itemTable.emptyLabel}
                 isDetail={isDetail}
                 onOpenItem={onOpenItem}

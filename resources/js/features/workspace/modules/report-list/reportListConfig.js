@@ -7,24 +7,23 @@ function createReport(id, categoryId, section, title, description, icon = 'repor
 }
 
 const categories = [
-    createCategory('memorize', 'Laporan Tersimpan', 'save'),
-    createCategory('finance', 'Keuangan', 'budget'),
-    createCategory('profit-center', 'Pusat Laba & Biaya', 'building'),
+    createCategory('fixed-assets', 'Aset Tetap', 'asset'),
     createCategory('ledger', 'Buku Besar', 'ledger'),
+    createCategory('warehouse', 'Gudang', 'warehouse'),
     createCategory('cash-bank', 'Kas & Bank', 'bank'),
-    createCategory('receivable', 'Piutang', 'customer'),
+    createCategory('finance', 'Keuangan', 'budget'),
+    createCategory('others', 'Lain-lain', 'info'),
+    createCategory('manufacture', 'Manufaktur', 'manufacture'),
+    createCategory('memorize', 'Memorize', 'save'),
+    createCategory('tax', 'Pajak', 'tax'),
+    createCategory('work-order', 'Pekerjaan Pesanan', 'box'),
+    createCategory('purchase', 'Pembelian', 'purchase'),
+    createCategory('inspection', 'Pemeriksaan', 'activity'),
     createCategory('sales', 'Penjualan', 'sales'),
+    createCategory('inventory', 'Persediaan', 'inventory'),
+    createCategory('receivable', 'Piutang', 'customer'),
     createCategory('salesperson', 'Tenaga Penjual', 'employee'),
     createCategory('payable', 'Utang', 'payment'),
-    createCategory('purchase', 'Pembelian', 'purchase'),
-    createCategory('inventory', 'Persediaan', 'inventory'),
-    createCategory('warehouse', 'Gudang', 'warehouse'),
-    createCategory('work-order', 'Pekerjaan Pesanan', 'box'),
-    createCategory('manufacture', 'Manufaktur', 'manufacture'),
-    createCategory('fixed-assets', 'Aset Tetap', 'asset'),
-    createCategory('tax', 'Pajak', 'tax'),
-    createCategory('inspection', 'Pemeriksaan', 'activity'),
-    createCategory('others', 'Lain-lain', 'info'),
 ];
 
 const reports = [

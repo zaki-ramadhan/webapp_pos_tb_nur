@@ -14,6 +14,7 @@ export default function DashboardActivePageContent({
     activeDashboardWidgets,
     handleRefreshWidget,
     handleRenameWidget,
+    handleRemoveWidget,
     activePage,
     activePageMode,
     activeLevel2Tab,
@@ -52,6 +53,7 @@ export default function DashboardActivePageContent({
                         widgets={activeDashboardWidgets}
                         onRefreshWidget={handleRefreshWidget}
                         onRenameWidget={handleRenameWidget}
+                        onRemoveWidget={handleRemoveWidget}
                     />
                 </div>
             </>

@@ -1,4 +1,4 @@
-const DASHBOARD_PREFERENCES_STORAGE_KEY = 'pos-workspace-dashboard-preferences:v1';
+const DASHBOARD_PREFERENCES_STORAGE_KEY = 'pos-workspace-dashboard-preferences:v6';
 
 const WIDGET_LIBRARY_TEMPLATE_IDS = {
     'recent-activity': 'recent-activity',

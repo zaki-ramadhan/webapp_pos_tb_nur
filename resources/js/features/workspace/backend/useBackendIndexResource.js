@@ -74,10 +74,13 @@ export default function useBackendIndexResource({
         };
     }, [enabled, requestFilters, resource]);
 
+    const rows = useMemo(() => extractBackendRows(payload), [payload]);
+    const total = useMemo(() => extractBackendTotal(payload), [payload]);
+
     return {
         payload,
-        rows: extractBackendRows(payload),
-        total: extractBackendTotal(payload),
+        rows,
+        total,
         loading,
         error,
         reload: () => setReloadVersion((currentValue) => currentValue + 1),

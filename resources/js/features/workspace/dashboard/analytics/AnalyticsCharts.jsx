@@ -83,7 +83,7 @@ export function AbcContributionChart({ items }) {
                 ticks: {
                     color: '#6f7f99',
                     font: {
-                        size: 12,
+                        size: 14,
                     },
                 },
             },
@@ -99,7 +99,7 @@ export function AbcContributionChart({ items }) {
                 ticks: {
                     color: '#6f7f99',
                     font: {
-                        size: 12,
+                        size: 14,
                     },
                     callback(value) {
                         return `${value}%`;
@@ -110,7 +110,7 @@ export function AbcContributionChart({ items }) {
     };
 
     return (
-        <div className="space-y-3 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
+        <div className="space-y-5 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="h-[200px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px] lg:h-[232px]">
                 <ReactChart type="bar" data={data} options={options} />
             </div>
@@ -122,13 +122,13 @@ export function AbcContributionChart({ items }) {
                         className="rounded-[7px] border border-[#dce3ed] bg-white px-3 py-2.5 shadow-[0_6px_14px_rgba(15,23,42,0.04)]"
                     >
                         <div className="flex items-center justify-between gap-2">
-                            <span className="inline-flex min-w-0 items-center gap-2 text-[12px] font-medium text-[#2b3650]">
+                            <span className="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-[#2b3650]">
                                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
                                 <span className="truncate">{item.label}</span>
                             </span>
-                            <span className="text-[12px] font-semibold text-[#1f2536]">{item.share}%</span>
+                            <span className="text-sm font-semibold text-[#1f2536]">{item.share}%</span>
                         </div>
-                        <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-[#75809b]">
+                        <div className="mt-1 flex items-center justify-between gap-2 text-sm text-[#75809b]">
                             <span className="truncate">{item.itemCount}</span>
                             <span>Akumulasi {Math.round(item.cumulative)}%</span>
                         </div>
@@ -217,7 +217,7 @@ export function AprioriRuleChart({ rules }) {
                 ticks: {
                     color: '#75809b',
                     font: {
-                        size: 12,
+                        size: 14,
                     },
                     callback(value) {
                         return `${value}%`;
@@ -234,7 +234,7 @@ export function AprioriRuleChart({ rules }) {
                 ticks: {
                     color: '#5f6a85',
                     font: {
-                        size: 12,
+                        size: 14,
                     },
                 },
             },
@@ -245,6 +245,172 @@ export function AprioriRuleChart({ rules }) {
         <div className="rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="h-[200px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px] lg:h-[232px]">
                 <Bar data={data} options={options} />
+            </div>
+        </div>
+    );
+}
+
+export function IntegratedMatrixChart({ rules }) {
+    const chartData = rules.map((rule) => {
+        const ant = rule.antecedentAbc ?? 'C';
+        const cons = rule.consequentAbc ?? 'C';
+        let color = 'rgba(29, 78, 216, 0.18)';
+        let hoverColor = 'rgba(29, 78, 216, 0.45)';
+        let labelTactic = 'Penataan Rak';
+
+        if (ant === 'A' && cons === 'C') {
+            color = 'rgba(29, 78, 216, 1.0)';
+            hoverColor = 'rgba(30, 64, 175, 1.0)';
+            labelTactic = 'A → C Cross-Sell';
+        } else if (ant === 'A' && cons === 'A') {
+            color = 'rgba(29, 78, 216, 0.65)';
+            hoverColor = 'rgba(29, 78, 216, 0.90)';
+            labelTactic = 'A → A Bundling Proyek';
+        } else if (ant === 'B' && cons === 'B') {
+            color = 'rgba(29, 78, 216, 0.40)';
+            hoverColor = 'rgba(29, 78, 216, 0.70)';
+            labelTactic = 'B → B Kombo Pelengkap';
+        }
+
+        return {
+            id: rule.id,
+            label: `${formatCompactLabel(rule.antecedent)} → ${formatCompactLabel(rule.consequent)}`,
+            fullLabel: `${rule.antecedent} [Kat ${ant}] → ${rule.consequent} [Kat ${cons}]`,
+            confidence: parsePercentValue(rule.confidence),
+            support: rule.support,
+            focusColor: color,
+            hoverColor,
+            labelTactic
+        };
+    });
+
+    const confidenceValues = chartData.map((item) => item.confidence);
+    const backgroundColors = chartData.map((item) => item.focusColor);
+    const hoverBackgroundColors = chartData.map((item) => item.hoverColor);
+
+    const data = {
+        labels: chartData.map((item) => item.label),
+        datasets: [
+            {
+                label: 'Confidence',
+                data: confidenceValues,
+                backgroundColor: backgroundColors,
+                hoverBackgroundColor: hoverBackgroundColors,
+                borderColor: backgroundColors,
+                hoverBorderColor: hoverBackgroundColors,
+                borderWidth: 0.5,
+                borderRadius: 4,
+                barThickness: 16,
+                maxBarThickness: 20,
+            },
+        ],
+    };
+
+    const options = {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                backgroundColor: '#ffffff',
+                titleColor: '#1f2536',
+                bodyColor: '#62708c',
+                borderColor: '#d7ddea',
+                borderWidth: 1,
+                padding: 10,
+                displayColors: false,
+                callbacks: {
+                    title(items) {
+                        if (!items.length) return '';
+                        return chartData[items[0].dataIndex]?.fullLabel ?? '';
+                    },
+                    label(context) {
+                        const item = chartData[context.dataIndex];
+                        return [
+                            `Taktik: ${item?.labelTactic ?? '-'}`,
+                            `Confidence (Peluang): ${context.parsed.x}%`,
+                            `Support (Kekerapan): ${item?.support ?? '-'}`,
+                            `Lift Ratio: ${item?.lift ?? '-'}`,
+                        ];
+                    },
+                },
+            },
+        },
+        scales: {
+            x: {
+                min: 0,
+                max: 100,
+                grid: {
+                    color: '#edf0f6',
+                },
+                border: {
+                    display: false,
+                },
+                ticks: {
+                    color: '#75809b',
+                    font: {
+                        size: 14,
+                    },
+                    callback(value) {
+                        return `${value}%`;
+                    },
+                },
+            },
+            y: {
+                grid: {
+                    display: false,
+                },
+                border: {
+                    display: false,
+                },
+                ticks: {
+                    color: '#1f2536',
+                    font: {
+                        size: 13,
+                    },
+                },
+            },
+        },
+    };
+
+    return (
+        <div className="space-y-5 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
+            <div className="h-[210px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px]">
+                <Bar data={data} options={options} />
+            </div>
+
+            <div className="grid gap-3 border border-slate-100 bg-white rounded-lg p-3 shadow-[0_2px_6px_rgba(0,0,0,0.02)] grid-cols-2 lg:grid-cols-4">
+                <div className="flex items-start gap-2">
+                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,1.0)]" />
+                    <div>
+                        <p className="text-sm font-bold text-[#1e40af] leading-4">A → C Cross-Sell (Fokus 100%)</p>
+                        <p className="text-sm text-slate-500 mt-1">Barang aksesoris (C) dipicu produk inti (A).</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2">
+                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.65)]" />
+                    <div>
+                        <p className="text-sm font-bold text-[#1e40af]/80 leading-4">A → A Paket Proyek (65%)</p>
+                        <p className="text-sm text-slate-500 mt-1">Bundling diskon produk inti omzet terbesar.</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2">
+                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.40)]" />
+                    <div>
+                        <p className="text-sm font-bold text-[#1e40af]/60 leading-4">B → B Kombo Rutin (40%)</p>
+                        <p className="text-sm text-slate-500 mt-1">Produk pendukung rutin yang stabil.</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-2">
+                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.18)]" />
+                    <div>
+                        <p className="text-sm font-bold text-[#1e40af]/40 leading-4">Display Rak Rakit (18%)</p>
+                        <p className="text-sm text-slate-500 mt-1">Penataan letak rak berdampingan.</p>
+                    </div>
+                </div>
             </div>
         </div>
     );

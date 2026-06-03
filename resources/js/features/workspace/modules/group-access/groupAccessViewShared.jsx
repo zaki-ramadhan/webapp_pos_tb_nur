@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
+import Spinner from '@/components/ui/Spinner';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import {
     ChevronDownIcon,
@@ -76,10 +77,10 @@ export function GroupAccessCategoryList({
 }) {
     return (
         <div
-            className={`min-h-0 rounded-[8px] border border-[#d8dde7] bg-white p-3 shadow-[0_2px_12px_rgba(15,23,42,0.1)] ${className}`.trim()}
+            className={`min-h-0 rounded-[8px] border border-[#d8dde7] bg-white p-2 shadow-[0_2px_12px_rgba(15,23,42,0.1)] ${className}`.trim()}
         >
             <div className={`h-full overflow-y-auto pr-1 ${scrollClassName}`.trim()}>
-                <div className="space-y-2">
+                <div className="space-y-1">
                     {categories.map((category) => {
                         const isActive = category.id === activeCategoryId;
 
@@ -88,15 +89,15 @@ export function GroupAccessCategoryList({
                                 key={category.id}
                                 type="button"
                                 onClick={() => onSelectCategory(category.id)}
-                                className={`flex w-full items-center gap-3.5 rounded-[8px] px-4 py-3 text-left text-[17px] transition ${
+                                className={`flex w-full items-center gap-2.5 rounded-[6px] px-3.5 py-2.5 text-left text-sm transition ${
                                     isActive
-                                        ? 'bg-[#ED3969] text-white shadow-[0_2px_10px_rgba(237,57,105,0.18)]'
+                                        ? 'bg-[#ED3969] text-white shadow-[0_2px_8px_rgba(237,57,105,0.18)]'
                                         : 'text-[#5e667d] hover:bg-[#f6f7fb]'
-                                }`.trim()}
+                                    }`.trim()}
                             >
                                 <NavigationIcon
                                     type={category.icon}
-                                    className={`h-7 w-7 ${isActive ? 'text-white' : 'text-[#7f889f]'}`.trim()}
+                                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#7f889f]'}`.trim()}
                                 />
                                 <span className={`${isActive ? 'font-medium' : 'font-normal'}`.trim()}>
                                     {category.label}
@@ -129,19 +130,23 @@ function resolveActionToneClass(action, disabled) {
 }
 
 function GroupAccessActionButton({ action, disabled = false, onClick }) {
+    const isLoading = Boolean(action.loading);
+
     return (
         <button
             type="button"
             aria-label={action.label}
             title={action.label}
-            disabled={disabled}
+            disabled={disabled || isLoading}
             onClick={onClick}
             className={`inline-flex h-[56px] w-[104px] items-center justify-center rounded-[8px] border transition ${resolveActionToneClass(
                 action,
-                disabled,
+                disabled || isLoading,
             )}`.trim()}
         >
-            {action.icon === 'trash' ? (
+            {isLoading ? (
+                <Spinner className="h-8 w-8 text-current" />
+            ) : action.icon === 'trash' ? (
                 <TrashIcon className="h-9 w-9" />
             ) : action.icon === 'kebab' ? (
                 <div className="inline-flex items-center gap-2">
@@ -163,8 +168,8 @@ export function GroupAccessActionDock({ actions = [], isDirty, onSave, onDelete 
     }
 
     return (
-        <div className="flex justify-start xl:justify-center">
-            <div className="flex flex-col gap-3">
+        <div className="flex justify-start lg:justify-center">
+            <div className="flex flex-row gap-3 lg:flex-col">
                 {actions.map((action) => (
                     <GroupAccessActionButton
                         key={action.id}

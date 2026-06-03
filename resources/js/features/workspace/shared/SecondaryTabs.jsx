@@ -27,12 +27,12 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
                     onSelect(tab.id);
                 }
             }}
-            className={`relative -mb-px inline-flex h-8.5 shrink-0 items-center rounded-t-[5px] border-x border-t-2 border-b-0 text-[13px] leading-none whitespace-nowrap transition sm:h-9 sm:text-[14px] md:h-9.75 md:text-[16px] ${spacingClassName} ${className}`.trim()}
+            className={`relative -mb-px inline-flex h-8.5 shrink-0 items-center rounded-t-[5px] border-x border-t-2 border-b-0 text-[13px] leading-normal whitespace-nowrap transition sm:h-9 sm:text-[14px] md:h-9.75 md:text-[16px] max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
             title={tab.title ?? tab.label}
         >
-            <span className="inline-flex h-full items-center">
-                {isViewTab ? <ViewModeIcon /> : <span>{tab.label}</span>}
+            <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">
+                {isViewTab ? <ViewModeIcon /> : <span className="block truncate py-1">{tab.label}</span>}
             </span>
 
             {tab.closable ? (

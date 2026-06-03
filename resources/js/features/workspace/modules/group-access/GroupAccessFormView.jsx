@@ -185,7 +185,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
     }
 
     return (
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_110px] xl:items-start">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_110px] lg:items-start">
             <div className="rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                 <PreferencesTabs
                     tabs={form.tabs}
@@ -237,6 +237,12 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
             <GroupAccessActionDock
                 actions={form.actions.map((action) => ({
                     ...action,
+                    loading:
+                        action.id === 'save'
+                            ? saving
+                            : action.id === 'delete'
+                              ? saving
+                              : false,
                     disabled:
                         action.id === 'save'
                             ? saving || Boolean(validationMessage)

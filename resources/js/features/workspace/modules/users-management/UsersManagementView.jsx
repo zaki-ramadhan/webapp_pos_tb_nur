@@ -20,6 +20,7 @@ import { mapUserRow, toUserPayload } from '@/features/workspace/backend/workspac
 import SelectField from '@/components/ui/SelectField';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
+import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 
 function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -51,7 +52,6 @@ function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
             return;
         }
 
-        // Email DNS format validation
         const emailStr = values.email.trim();
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(emailStr)) {
@@ -61,13 +61,27 @@ function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
 
         setStatus({ tone: '', message: '' });
         const payload = toUserPayload(values);
+        const loadingToastId = showLoadingToast({
+            title: 'Memproses',
+            message: isDetail ? 'Sedang memperbarui pengguna.' : 'Sedang menyimpan pengguna baru.',
+        });
         try {
             if (isDetail) {
                 await update(recordId, payload);
             } else {
                 await store(payload);
             }
+            dismissToast(loadingToastId);
+            showSuccessToast({
+                title: 'Berhasil',
+                message: isDetail ? 'Pengguna berhasil diperbarui.' : 'Pengguna berhasil disimpan.',
+            });
         } catch (err) {
+            dismissToast(loadingToastId);
+            showErrorToast({
+                title: 'Gagal menyimpan',
+                message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.'),
+            });
             setStatus({ tone: 'error', message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.') });
         }
     };
@@ -75,10 +89,11 @@ function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
     const actions = [
         {
             id: 'save',
-            label: processing ? 'Menyimpan...' : form.saveLabel,
+            label: form.saveLabel,
             icon: 'save',
             tone: 'primary',
             onClick: handleSave,
+            loading: processing,
             disabled: processing,
             showLabel: true,
         },

@@ -17,14 +17,14 @@ final class PosBlueprint
                 'title' => 'Selamat datang kembali',
                 'subtitle' => 'Masukkan data akun Anda untuk melanjutkan.',
                 'identifierLabel' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
-                'identifierPlaceholder' => self::supportsUserPhone() ? 'contoh@domain.com atau 081234567890' : 'contoh@domain.com',
+                'identifierPlaceholder' => self::supportsUserPhone() ? 'contoh@gmail.com atau 081234567890' : 'contoh@gmail.com',
                 'passwordLabel' => 'Password',
                 'passwordPlaceholder' => 'Masukkan password Anda',
                 'forgotPassword' => 'Lupa Password?',
                 'forgotPasswordModal' => [
                     'title' => 'Lupa Password',
                     'identifierLabel' => self::supportsUserPhone() ? 'Email atau No Handphone' : 'Email',
-                    'identifierPlaceholder' => self::supportsUserPhone() ? 'contoh@domain.com atau 081234567890' : 'contoh@domain.com',
+                    'identifierPlaceholder' => self::supportsUserPhone() ? 'contoh@gmail.com atau 081234567890' : 'contoh@gmail.com',
                     'submitLabel' => 'Reset Password',
                     'closeLabel' => 'Tutup modal lupa password',
                     'successMessage' => 'Jika akun ditemukan, tautan reset password akan dikirim ke email terdaftar.',
@@ -51,9 +51,9 @@ final class PosBlueprint
                 'subtitle' => 'Lengkapi data berikut untuk melanjutkan.',
                 'nameLabel' => 'Nama Lengkap',
                 'namePrefix' => 'Bpk',
-                'namePlaceholder' => 'Zaki Ramadhan',
+                'namePlaceholder' => 'John Doe',
                 'emailLabel' => 'Email',
-                'emailPlaceholder' => 'contoh@domain.com',
+                'emailPlaceholder' => 'contoh@gmail.com',
                 'phoneLabel' => 'No Handphone',
                 'phonePlaceholder' => '081234567890',
                 'showPhoneField' => self::supportsUserPhone(),
@@ -76,7 +76,7 @@ final class PosBlueprint
                 'title' => 'Buat Password Baru',
                 'subtitle' => 'Masukkan password baru untuk mengaktifkan kembali akses akun Anda.',
                 'emailLabel' => 'Email',
-                'emailPlaceholder' => 'contoh@domain.com',
+                'emailPlaceholder' => 'contoh@gmail.com',
                 'passwordLabel' => 'Password Baru',
                 'passwordPlaceholder' => 'Minimal 8 karakter',
                 'passwordConfirmationLabel' => 'Konfirmasi Password Baru',
@@ -91,7 +91,7 @@ final class PosBlueprint
         ];
     }
 
-    public static function forDashboard(?string $sample = null, ?array $abc = null, ?array $apriori = null): array
+    public static function forDashboard(?string $sample = null, ?array $abc = null, ?array $apriori = null, bool $loadData = true): array
     {
         $selectedSample = self::resolveSample(self::dashboardSamples(), $sample ?? 'retail');
 
@@ -107,7 +107,7 @@ final class PosBlueprint
                     'avatarUrl' => null,
                 ],
                 'sample' => $selectedSample,
-                'sampleDashboard' => self::sampleDashboard($abc, $apriori),
+                'sampleDashboard' => self::sampleDashboard($abc, $apriori, $loadData),
             ],
         ];
     }
@@ -123,8 +123,8 @@ final class PosBlueprint
                 'eyebrow' => 'TB Nur POS',
                 'title' => 'Satu workspace operasional untuk transaksi, stok, dan administrasi TB Nur.',
                 'caption' => 'Dirancang untuk membantu operasional harian toko berjalan lebih rapi, cepat, dan terkontrol.',
-                'imageSrc' => 'https://images.unsplash.com/photo-1726065235239-b20b88d43eea?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=80&w=1600',
-                'imageAlt' => 'Meja kasir toko dengan perangkat point of sale.',
+                'imageSrc' => '/auth_bg.jpg',
+                'imageAlt' => 'Foto Toko TB Nur.',
             ],
         ];
     }
@@ -150,7 +150,7 @@ final class PosBlueprint
         ];
     }
 
-    private static function sampleDashboard(?array $abc = null, ?array $apriori = null): array
+    private static function sampleDashboard(?array $abc = null, ?array $apriori = null, bool $loadData = true): array
     {
         $navigationModules = self::navigationModules();
         $navigationPages = self::buildNavigationPages($navigationModules);
@@ -161,6 +161,357 @@ final class PosBlueprint
                 ['text' => ' pengguna menyertakan lampiran saat menyimpan transaksi.'],
             ],
         ];
+
+        $formatCurrencyShort = function ($value) {
+            $abs = abs($value);
+            $sign = $value < 0 ? '-' : '';
+            if ($abs >= 1000000000) {
+                return $sign . 'Rp ' . number_format($abs / 1000000000, 2, ',', '.') . ' M';
+            }
+            if ($abs >= 1000000) {
+                return $sign . 'Rp ' . number_format($abs / 1000000, 1, ',', '.') . ' jt';
+            }
+            if ($abs >= 1000) {
+                return $sign . 'Rp ' . number_format($abs / 1000, 0, ',', '.') . ' rb';
+            }
+            return $sign . 'Rp ' . number_format($abs, 0, ',', '.');
+        };
+
+        $userActivities = [];
+        if ($loadData) {
+            $user = auth()->user() ?? request()->user();
+            if ($user !== null) {
+                $logs = \Illuminate\Support\Facades\DB::table('activity_logs')
+                    ->where('actor_user_id', $user->id)
+                    ->orderBy('occurred_at', 'desc')
+                    ->limit(4)
+                    ->get();
+
+                $daysIndo = [
+                    'Sunday' => 'Minggu',
+                    'Monday' => 'Senin',
+                    'Tuesday' => 'Selasa',
+                    'Wednesday' => 'Rabu',
+                    'Thursday' => 'Kamis',
+                    'Friday' => 'Jumat',
+                    'Saturday' => 'Sabtu',
+                ];
+
+                $monthsIndo = [
+                    'Jan' => 'Jan',
+                    'Feb' => 'Feb',
+                    'Mar' => 'Mar',
+                    'Apr' => 'Apr',
+                    'May' => 'Mei',
+                    'Jun' => 'Jun',
+                    'Jul' => 'Jul',
+                    'Aug' => 'Agt',
+                    'Sep' => 'Sep',
+                    'Oct' => 'Okt',
+                    'Nov' => 'Nov',
+                    'Dec' => 'Des',
+                ];
+
+                $actionMap = [
+                    'create' => 'Buat',
+                    'update' => 'Ubah',
+                    'delete' => 'Hapus',
+                ];
+
+                $resourceMap = [
+                    'budget' => 'Anggaran',
+                    'general-journal' => 'Jurnal Umum',
+                    'employee' => 'Karyawan',
+                    'product' => 'Produk',
+                    'preference' => 'Preferensi',
+                    'user' => 'Pengguna',
+                ];
+
+                foreach ($logs as $log) {
+                    $occurredAt = $log->occurred_at ? new \Illuminate\Support\Carbon($log->occurred_at) : null;
+                    $dayName = 'Senin';
+                    $dayNum = '01';
+                    $monthName = 'Jun';
+                    $timeStr = '00:00';
+                    if ($occurredAt !== null) {
+                        $dayNameEng = $occurredAt->format('l');
+                        $dayName = $daysIndo[$dayNameEng] ?? $dayNameEng;
+                        $dayNum = $occurredAt->format('d');
+                        $monthEng = $occurredAt->format('M');
+                        $monthName = $monthsIndo[$monthEng] ?? $monthEng;
+                        $timeStr = $occurredAt->format('H:i');
+                    }
+
+                    $actionStr = $actionMap[$log->action] ?? ucfirst($log->action);
+                    $resourceStr = $resourceMap[$log->permission_key] ?? ($log->resource_label ?? ucfirst($log->resource_key));
+                    $activityTitle = "{$actionStr} {$resourceStr}";
+
+                    $userActivities[] = [
+                        'id' => $log->id,
+                        'dayName' => $dayName,
+                        'dayNum' => $dayNum,
+                        'monthName' => $monthName,
+                        'time' => $timeStr,
+                        'title' => $activityTitle,
+                    ];
+                }
+            }
+
+            $latestSalesInvoiceDate = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'sales_invoice')
+                ->where('status', 'Posted')
+                ->max('entry_date') ?? date('Y-m-d');
+
+            $salesTrendLabels = [];
+            $salesTrendData = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
+                $dayName = date('D', strtotime($date));
+                $dayNameIndo = [
+                    'Sun' => 'Min', 'Mon' => 'Sen', 'Tue' => 'Sel', 'Wed' => 'Rab',
+                    'Thu' => 'Kam', 'Fri' => 'Jum', 'Sat' => 'Sab'
+                ][$dayName] ?? $dayName;
+                $salesTrendLabels[] = $dayNameIndo;
+                $totalSales = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('document_type', 'sales_invoice')
+                    ->where('status', 'Posted')
+                    ->where('entry_date', $date)
+                    ->sum('total_amount');
+                $salesTrendData[] = (float) $totalSales;
+            }
+
+            $totalSalesVal = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'sales_invoice')
+                ->where('status', 'Posted')
+                ->sum('total_amount');
+
+            $totalHppVal = \Illuminate\Support\Facades\DB::table('operation_document_lines')
+                ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+                ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
+                ->where('operation_documents.document_type', 'sales_invoice')
+                ->where('operation_documents.status', 'Posted')
+                ->sum(\Illuminate\Support\Facades\DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
+
+            $totalExpensesVal = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->whereIn('document_type', ['payroll_entry', 'expense_entry'])
+                ->where('status', 'Posted')
+                ->sum('total_amount');
+
+            $netProfitVal = $totalSalesVal - $totalHppVal - $totalExpensesVal;
+            $profitMargin = $totalSalesVal > 0 ? (int) (($netProfitVal / $totalSalesVal) * 100) : 0;
+            $profitPercentage = $profitMargin . '%';
+            $legendSum = $totalSalesVal + $totalHppVal + $totalExpensesVal;
+            $pctRev = $legendSum > 0 ? round(($totalSalesVal / $legendSum) * 100) : 0;
+            $pctHpp = $legendSum > 0 ? round(($totalHppVal / $legendSum) * 100) : 0;
+            $pctExp = $legendSum > 0 ? round(($totalExpensesVal / $legendSum) * 100) : 0;
+
+            $cashFlowLabels = [];
+            $cashInSeries = [];
+            $cashOutSeries = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
+                $formattedDate = date('j M', strtotime($date));
+                $cashFlowLabels[] = $formattedDate;
+                $inflow = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('document_type', 'sales_invoice')
+                    ->where('status', 'Posted')
+                    ->where('entry_date', $date)
+                    ->sum('total_amount');
+                $outflow = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->whereIn('document_type', ['payroll_entry', 'expense_entry'])
+                    ->where('status', 'Posted')
+                    ->where('entry_date', $date)
+                    ->sum('total_amount');
+                $cashInSeries[] = (float) $inflow;
+                $cashOutSeries[] = (float) $outflow;
+            }
+
+            $totalGaji = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'payroll_entry')
+                ->where('status', 'Posted')
+                ->sum('total_amount');
+            $totalOperasional = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'expense_entry')
+                ->where('status', 'Posted')
+                ->sum('total_amount');
+            $totalExpense = $totalGaji + $totalOperasional;
+            $pctGaji = $totalExpense > 0 ? round(($totalGaji / $totalExpense) * 100) : 0;
+            $pctOpr = $totalExpense > 0 ? round(($totalOperasional / $totalExpense) * 100) : 0;
+
+            $salesInvoiceQuery = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'sales_invoice')
+                ->where('status', 'Posted');
+            $fakturLunasSales = (float) (clone $salesInvoiceQuery)->sum('paid_amount');
+            $fakturBelumLunasSales = (float) (clone $salesInvoiceQuery)->sum('outstanding_amount');
+            $belumJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
+            $lewatJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->sum('outstanding_amount');
+            $hariIniSales = (float) (clone $salesInvoiceQuery)->where('entry_date', $latestSalesInvoiceDate)->sum('total_amount');
+
+            $purchaseInvoiceQuery = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'purchase_invoice')
+                ->where('status', 'Posted');
+            $fakturLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('paid_amount');
+            $fakturBelumLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('outstanding_amount');
+            $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
+            $lewatJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->sum('outstanding_amount');
+            $hariIniPurchase = (float) (clone $purchaseInvoiceQuery)->where('entry_date', $latestSalesInvoiceDate)->sum('total_amount');
+
+            $dbSalespeople = \Illuminate\Support\Facades\DB::table('employees')
+                ->where('is_active', 1)
+                ->where('is_salesperson', 1)
+                ->select('id', 'full_name', 'position')
+                ->get();
+            $salesTeamRows = [];
+            foreach ($dbSalespeople as $sp) {
+                $totalVal = 0;
+                $user = \Illuminate\Support\Facades\DB::table('users')->where('name', 'like', "%{$sp->full_name}%")->first();
+                if ($user) {
+                    $totalVal = \Illuminate\Support\Facades\DB::table('operation_documents')
+                        ->where('document_type', 'sales_invoice')
+                        ->where('status', 'Posted')
+                        ->where('responsible_user_id', $user->id)
+                        ->sum('total_amount');
+                }
+                $salesTeamRows[] = [
+                    'name' => $sp->full_name,
+                    'role' => $sp->position ?? 'Salesperson',
+                    'totalValue' => $totalVal > 0 ? $formatCurrencyShort($totalVal) : 'Rp -',
+                    'targetPercent' => '0%',
+                    'targetValue' => '-',
+                ];
+            }
+            if (empty($salesTeamRows)) {
+                $salesTeamRows = [
+                    [
+                        'name' => 'Belum ada data',
+                        'role' => 'Sales Toko',
+                        'totalValue' => 'Rp -',
+                        'targetPercent' => '0%',
+                        'targetValue' => '-',
+                    ]
+                ];
+            }
+
+            $dbTopProducts = \Illuminate\Support\Facades\DB::table('operation_document_lines')
+                ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+                ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
+                ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
+                ->where('operation_documents.document_type', 'sales_invoice')
+                ->where('operation_documents.status', 'Posted')
+                ->select(
+                    'products.name',
+                    \Illuminate\Support\Facades\DB::raw('SUM(operation_document_lines.quantity) as units_sold'),
+                    \Illuminate\Support\Facades\DB::raw('SUM(operation_document_lines.total_amount) as revenue'),
+                    'units.name as unit_name'
+                )
+                ->groupBy('products.id', 'products.name', 'units.name')
+                ->orderByDesc('revenue')
+                ->limit(5)
+                ->get();
+            $topProductsItems = [];
+            foreach ($dbTopProducts as $tp) {
+                $pctShare = $totalSalesVal > 0 ? ($tp->revenue / $totalSalesVal) * 100 : 0;
+                $topProductsItems[] = [
+                    'name' => $tp->name,
+                    'units' => number_format($tp->units_sold, 0, ',', '.') . ' ' . ($tp->unit_name ?? 'pcs'),
+                    'share' => number_format($pctShare, 1, ',', '.') . '%',
+                    'revenue' => $formatCurrencyShort($tp->revenue),
+                ];
+            }
+            if (empty($topProductsItems)) {
+                $topProductsItems = [
+                    [
+                        'name' => 'Belum ada data',
+                        'units' => '0 pcs',
+                        'share' => '0%',
+                        'revenue' => 'Rp -',
+                    ]
+                ];
+            }
+
+            $cashAvailabilityLabels = [];
+            $cashAvailabilitySeries = [];
+            for ($i = 7; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - " . ($i * 4) . " days"));
+                $formattedDate = date('j M', strtotime($date));
+                $cashAvailabilityLabels[] = $formattedDate;
+                $inUpToDate = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->where('document_type', 'sales_invoice')
+                    ->where('status', 'Posted')
+                    ->where('entry_date', '<=', $date)
+                    ->sum('total_amount');
+                $outUpToDate = \Illuminate\Support\Facades\DB::table('operation_documents')
+                    ->whereIn('document_type', ['payroll_entry', 'expense_entry'])
+                    ->where('status', 'Posted')
+                    ->where('entry_date', '<=', $date)
+                    ->sum('total_amount');
+                $cashAvailabilitySeries[] = 28000000000 + ($inUpToDate - $outUpToDate);
+            }
+
+            $totalSalesOrders = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'sales_order')
+                ->count();
+            $pendingSalesOrders = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'sales_order')
+                ->where('status', 'Draft')
+                ->count();
+            $overdueSalesOrders = \Illuminate\Support\Facades\DB::table('operation_documents')
+                ->where('document_type', 'sales_order')
+                ->where('due_date', '<', date('Y-m-d'))
+                ->count();
+        } else {
+            $latestSalesInvoiceDate = date('Y-m-d');
+            $salesTrendLabels = [];
+            $salesTrendData = [];
+            $totalSalesVal = 0.0;
+            $totalHppVal = 0.0;
+            $totalExpensesVal = 0.0;
+            $profitPercentage = '0%';
+            $netProfitVal = 0.0;
+            $pctRev = 0;
+            $pctHpp = 0;
+            $pctExp = 0;
+            $cashFlowLabels = [];
+            $cashInSeries = [];
+            $cashOutSeries = [];
+            $totalGaji = 0.0;
+            $totalOperasional = 0.0;
+            $totalExpense = 0.0;
+            $pctGaji = 0;
+            $pctOpr = 0;
+            $fakturLunasSales = 0.0;
+            $fakturBelumLunasSales = 0.0;
+            $belumJatuhTempoSales = 0.0;
+            $lewatJatuhTempoSales = 0.0;
+            $hariIniSales = 0.0;
+            $fakturLunasPurchase = 0.0;
+            $fakturBelumLunasPurchase = 0.0;
+            $belumJatuhTempoPurchase = 0.0;
+            $lewatJatuhTempoPurchase = 0.0;
+            $hariIniPurchase = 0.0;
+            $salesTeamRows = [
+                [
+                    'name' => 'Memuat data...',
+                    'role' => 'Sales Toko',
+                    'totalValue' => 'Rp -',
+                    'targetPercent' => '0%',
+                    'targetValue' => '-',
+                ]
+            ];
+            $topProductsItems = [
+                [
+                    'name' => 'Memuat data...',
+                    'units' => '0 pcs',
+                    'share' => '0%',
+                    'revenue' => 'Rp -',
+                ]
+            ];
+            $cashAvailabilityLabels = [];
+            $cashAvailabilitySeries = [];
+            $totalSalesOrders = 0;
+            $pendingSalesOrders = 0;
+            $overdueSalesOrders = 0;
+        }
 
         $data = [
             'toolbar' => [
@@ -221,34 +572,88 @@ final class PosBlueprint
                     'emptyLabel' => 'Tidak ada widget yang cocok dengan kata kunci tersebut.',
                     'items' => [
                         [
+                            'id' => 'integrated-analysis',
+                            'title' => 'Matrix Analisis Penjualan (Apriori & ABC)',
+                            'description' => 'Integrasi pola belanja bersama (Apriori) dan prioritas nilai penjualan (ABC).',
+                            'icon' => 'asset',
+                        ],
+                        [
                             'id' => 'recent-activity',
                             'title' => 'Aktifitas Terakhir Anda',
-                            'description' => 'Menampilkan 30 aktifitas terakhir dari pengguna',
+                            'description' => 'Menampilkan riwayat aktivitas terakhir pengguna.',
                             'icon' => 'activity',
+                        ],
+                        [
+                            'id' => 'upcoming-activity',
+                            'title' => 'Kegiatan Mendatang',
+                            'description' => 'Daftar jadwal kegiatan mendatang.',
+                            'icon' => 'activity',
+                        ],
+                        [
+                            'id' => 'sales-trend',
+                            'title' => 'Tren Penjualan',
+                            'description' => 'Grafik garis tren transaksi penjualan toko seminggu terakhir.',
+                            'icon' => 'cash-flow',
+                        ],
+                        [
+                            'id' => 'profit-loss',
+                            'title' => 'Laba/Rugi Tahun Ini',
+                            'description' => 'Analisa breakdown laba bersih, HPP, dan pengeluaran operasional.',
+                            'icon' => 'asset',
                         ],
                         [
                             'id' => 'cash-flow',
                             'title' => 'Arus Kas',
-                            'description' => 'Menampilkan arus kas',
+                            'description' => 'Grafik perbandingan kas masuk dan kas keluar harian.',
                             'icon' => 'cash-flow',
-                        ],
-                        [
-                            'id' => 'current-assets',
-                            'title' => 'Aset saat ini',
-                            'description' => 'Menampilkan pertumbuhan nilai aset dan perbandingan dengan bulan dan tahun lalu',
-                            'icon' => 'asset',
-                        ],
-                        [
-                            'id' => 'minimum-stock',
-                            'title' => 'Barang Stok Minimum',
-                            'description' => 'Menampilkan barang-barang yang perlu dipesan bagian pembelian',
-                            'icon' => 'stock',
                         ],
                         [
                             'id' => 'company-expense',
                             'title' => 'Beban Perusahaan',
-                            'description' => 'Menampilkan beban-beban tertinggi dalam perusahaan',
+                            'description' => 'Distribusi pengeluaran kas operasional dan gaji.',
                             'icon' => 'expense',
+                        ],
+                        [
+                            'id' => 'sales-summary',
+                            'title' => 'Penjualan',
+                            'description' => 'Ringkasan faktur lunas, belum lunas, dan jatuh tempo penjualan.',
+                            'icon' => 'cash-flow',
+                        ],
+                        [
+                            'id' => 'purchase-summary',
+                            'title' => 'Pembelian',
+                            'description' => 'Ringkasan faktur lunas, belum lunas, dan jatuh tempo pembelian.',
+                            'icon' => 'expense',
+                        ],
+                        [
+                            'id' => 'sales-team-performance',
+                            'title' => 'Penjualan Penjual',
+                            'description' => 'Peringkat pencapaian omzet penjualan per salesperson.',
+                            'icon' => 'stock',
+                        ],
+                        [
+                            'id' => 'top-products',
+                            'title' => 'Barang Paling Laku',
+                            'description' => 'Daftar barang terlaris berdasarkan omzet dan kuantitas.',
+                            'icon' => 'stock',
+                        ],
+                        [
+                            'id' => 'overdue-activity',
+                            'title' => 'Kegiatan Terlewat',
+                            'description' => 'Daftar jadwal kegiatan yang sudah lewat jatuh tempo.',
+                            'icon' => 'activity',
+                        ],
+                        [
+                            'id' => 'cash-availability',
+                            'title' => 'Ketersediaan Kas',
+                            'description' => 'Histori saldo kas berjalan dikalkulasi dari inflow dan outflow.',
+                            'icon' => 'cash-flow',
+                        ],
+                        [
+                            'id' => 'sales-order-status',
+                            'title' => 'Pesanan Penjualan',
+                            'description' => 'Status pesanan menunggu proses dan pending.',
+                            'icon' => 'stock',
                         ],
                     ],
                 ],
@@ -4478,8 +4883,6 @@ final class PosBlueprint
                             ['id' => 'limitations', 'label' => 'Pembatasan'],
                             ['id' => 'approval', 'label' => 'Persetujuan'],
                             ['id' => 'attachments', 'label' => 'Lampiran'],
-                            ['id' => 'extra-attributes', 'label' => 'Atribut Tambahan'],
-                            ['id' => 'accounts', 'label' => 'Akun Perkiraan'],
                             ['id' => 'others', 'label' => 'Lain-lain'],
                         ],
                         'actions' => [
@@ -5168,33 +5571,33 @@ final class PosBlueprint
             ),
             'widgets' => [
                 [
-                    'id' => 'abc-analysis',
-                    'title' => 'Analisis ABC Persediaan',
-                    'subtitle' => 'Kontribusi nilai penjualan material bangunan periode April 2026',
-                    'type' => 'abc-analysis',
+                    'id' => 'integrated-analysis',
+                    'title' => 'Matrix Analisis Penjualan (Apriori & ABC)',
+                    'subtitle' => 'Integrasi pola belanja bersama (Apriori) dan prioritas nilai penjualan (ABC)',
+                    'type' => 'integrated-analysis',
                     'metrics' => [
                         [
-                            'label' => 'Item A',
+                            'label' => 'Transaksi',
+                            'value' => '2.184',
+                            'helper' => 'Periode April 2026',
+                            'tone' => 'blue',
+                        ],
+                        [
+                            'label' => 'Rule Siap Pakai',
+                            'value' => '7',
+                            'helper' => 'Pola asosiasi kuat',
+                            'tone' => 'rose',
+                        ],
+                        [
+                            'label' => 'Fokus Stok (Kat A)',
                             'value' => '14',
                             'helper' => '76% kontribusi omzet',
                             'tone' => 'blue',
                         ],
                         [
-                            'label' => 'Item B',
-                            'value' => '26',
-                            'helper' => '17% kontribusi omzet',
-                            'tone' => 'green',
-                        ],
-                        [
-                            'label' => 'Item C',
-                            'value' => '61',
-                            'helper' => '7% kontribusi omzet',
-                            'tone' => 'amber',
-                        ],
-                        [
-                            'label' => 'Nilai Analisis',
+                            'label' => 'Nilai Penjualan',
                             'value' => 'Rp 812,4 jt',
-                            'helper' => 'Berdasarkan penjualan material dan perlengkapan bangunan',
+                            'helper' => 'Berdasarkan material utama',
                             'tone' => 'rose',
                         ],
                     ],
@@ -5255,41 +5658,6 @@ final class PosBlueprint
                             'categoryColor' => '#2d77d1',
                         ],
                     ],
-                    'insight' => 'Stok semen, besi, dan cat sebaiknya lebih diprioritaskan. Tiga jenis barang ini memberi porsi omzet paling besar.',
-                    'gridClass' => 'md:col-span-2 lg:col-span-3 xl:col-span-6',
-                    'heightClass' => 'min-h-[438px]',
-                ],
-                [
-                    'id' => 'apriori-analysis',
-                    'title' => 'Apriori Keranjang Belanja',
-                    'subtitle' => 'Pola pembelian bersama dari transaksi toko bangunan',
-                    'type' => 'apriori-analysis',
-                    'metrics' => [
-                        [
-                            'label' => 'Transaksi',
-                            'value' => '2.184',
-                            'helper' => 'Periode April 2026',
-                            'tone' => 'blue',
-                        ],
-                        [
-                            'label' => 'Min Support',
-                            'value' => '9%',
-                            'helper' => 'Batas rule yang diproses',
-                            'tone' => 'green',
-                        ],
-                        [
-                            'label' => 'Min Confidence',
-                            'value' => '40%',
-                            'helper' => 'Rule valid untuk dashboard',
-                            'tone' => 'amber',
-                        ],
-                        [
-                            'label' => 'Rule Valid',
-                            'value' => '7',
-                            'helper' => 'Siap dipakai sebagai insight',
-                            'tone' => 'rose',
-                        ],
-                    ],
                     'rulesCaption' => 'Rule diurutkan berdasarkan confidence dan lift tertinggi dari pola belanja material bangunan.',
                     'rules' => [
                         [
@@ -5314,26 +5682,16 @@ final class PosBlueprint
                             'lift' => '2,21',
                             'insight' => 'Pipa PVC sangat cocok dipasangkan dengan lem PVC karena sering dibeli untuk pekerjaan instalasi yang sama.',
                         ],
-                        [
-                            'id' => 'apr-3',
-                            'segment' => 'Restock Signal',
-                            'transactionBase' => 'Basis 268 transaksi',
-                            'antecedent' => 'Cat tembok interior 25 Kg',
-                            'consequent' => 'Kuas roll 9 inch',
-                            'support' => '10,8%',
-                            'confidence' => '57,1%',
-                            'lift' => '1,89',
-                            'insight' => 'Pembelian cat tembok sering diikuti kuas roll, sehingga cocok untuk bundling proyek pengecatan rumah.',
-                        ],
                     ],
-                    'insight' => 'Hasil ini paling cocok dipakai untuk bundling barang, menyusun rak, dan memberi saran barang pelengkap saat transaksi.',
+                    'insight' => 'Hasil integrasi ini menggabungkan penentuan prioritas stok barang (ABC) dengan penempatan dan promosi barang pelengkap (Apriori).',
                     'gridClass' => 'md:col-span-2 lg:col-span-3 xl:col-span-6',
-                    'heightClass' => 'min-h-[438px]',
+                    'heightClass' => 'min-h-[500px]',
                 ],
                 [
                     'id' => 'recent-activity',
-                    'title' => 'Aktifitas Terakhir Anda (Zaki Ramadhan)',
-                    'type' => 'blank',
+                    'title' => 'Aktifitas Terakhir Anda (' . (auth()->user()?->name ?? 'Zaki Ramadhan') . ')',
+                    'type' => 'recent-activity',
+                    'items' => $userActivities,
                     'gridClass' => 'md:col-span-1 lg:col-span-2 xl:col-span-4',
                     'heightClass' => 'min-h-[318px]',
                 ],
@@ -5350,11 +5708,11 @@ final class PosBlueprint
                     'title' => 'Tren Penjualan',
                     'type' => 'line',
                     'period' => '(Seminggu terakhir)',
-                    'labels' => ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Kemarin', 'Hari ini'],
+                    'labels' => $salesTrendLabels,
                     'series' => [
                         [
                             'label' => 'Penjualan',
-                            'data' => [12400000, 17150000, 16300000, 19800000, 21450000, 23800000, 22600000],
+                            'data' => $salesTrendData,
                             'color' => '#7bbaf0',
                             'fillColor' => 'rgba(123, 186, 240, 0.18)',
                         ],
@@ -5368,15 +5726,15 @@ final class PosBlueprint
                     'id' => 'profit-loss',
                     'title' => 'Laba/Rugi Tahun Ini',
                     'type' => 'ring-breakdown',
-                    'percentage' => '31%',
-                    'compare' => 'Dibanding 1 Jan - 18 Apr 2025',
+                    'percentage' => $profitPercentage,
+                    'compare' => 'Dibanding periode lalu',
                     'legend' => [
-                        ['label' => 'Pendapatan', 'value' => 'Rp 1,42 M', 'percent' => '59%', 'color' => '#4fd0c5'],
-                        ['label' => 'Nilai HPP', 'value' => 'Rp 621 jt', 'percent' => '26%', 'color' => '#ffc54d'],
-                        ['label' => 'Pengeluaran', 'value' => 'Rp 358 jt', 'percent' => '15%', 'color' => '#f26b8d'],
+                        ['label' => 'Pendapatan', 'value' => $formatCurrencyShort($totalSalesVal), 'percent' => $pctRev . '%', 'color' => '#4fd0c5'],
+                        ['label' => 'Nilai HPP', 'value' => $formatCurrencyShort($totalHppVal), 'percent' => $pctHpp . '%', 'color' => '#ffc54d'],
+                        ['label' => 'Pengeluaran', 'value' => $formatCurrencyShort($totalExpensesVal), 'percent' => $pctExp . '%', 'color' => '#f26b8d'],
                     ],
                     'totalLabel' => 'Laba bersih',
-                    'totalValue' => 'Rp 441 jt',
+                    'totalValue' => $formatCurrencyShort($netProfitVal),
                     'gridClass' => 'md:col-span-1 lg:col-span-2 xl:col-span-4',
                     'heightClass' => 'min-h-[318px]',
                 ],
@@ -5384,17 +5742,17 @@ final class PosBlueprint
                     'id' => 'cash-flow',
                     'title' => 'Arus Kas',
                     'type' => 'line',
-                    'labels' => ['12 Apr', '13 Apr', '14 Apr', '15 Apr', '16 Apr', '17 Apr', '18 Apr'],
+                    'labels' => $cashFlowLabels,
                     'series' => [
                         [
                             'label' => 'Kas Masuk',
-                            'data' => [8500000, 9100000, 10400000, 9800000, 11200000, 12600000, 11800000],
+                            'data' => $cashInSeries,
                             'color' => '#1ba7e5',
                             'fillColor' => 'rgba(27, 167, 229, 0.14)',
                         ],
                         [
                             'label' => 'Kas Keluar',
-                            'data' => [4300000, 3900000, 5100000, 4700000, 5600000, 6200000, 5800000],
+                            'data' => $cashOutSeries,
                             'color' => '#f26b8d',
                             'fillColor' => 'rgba(242, 107, 141, 0.08)',
                         ],
@@ -5408,15 +5766,13 @@ final class PosBlueprint
                     'id' => 'company-expense',
                     'title' => 'Beban Perusahaan',
                     'type' => 'expense',
-                    'percentage' => '12%',
-                    'compare' => 'Dibanding 1 Mar - 31 Mar 2026',
+                    'percentage' => $pctExp . '%',
+                    'compare' => 'Berdasarkan pengeluaran kas',
                     'legend' => [
-                        ['label' => 'Gaji', 'value' => 'Rp 39,8 jt', 'percent' => '42%', 'color' => '#5c8fd8'],
-                        ['label' => 'Operasional', 'value' => 'Rp 29,4 jt', 'percent' => '31%', 'color' => '#4fd0c5'],
-                        ['label' => 'Distribusi', 'value' => 'Rp 16,1 jt', 'percent' => '17%', 'color' => '#ffc54d'],
-                        ['label' => 'Lainnya', 'value' => 'Rp 9,5 jt', 'percent' => '10%', 'color' => '#f26b8d'],
+                        ['label' => 'Gaji', 'value' => $formatCurrencyShort($totalGaji), 'percent' => $pctGaji . '%', 'color' => '#5c8fd8'],
+                        ['label' => 'Operasional', 'value' => $formatCurrencyShort($totalOperasional), 'percent' => $pctOpr . '%', 'color' => '#4fd0c5'],
                     ],
-                    'totalValue' => 'Rp 94,8 jt',
+                    'totalValue' => $formatCurrencyShort($totalExpense),
                     'gridClass' => 'md:col-span-1 lg:col-span-2 xl:col-span-4',
                     'heightClass' => 'min-h-[318px]',
                 ],
@@ -5428,23 +5784,23 @@ final class PosBlueprint
                         [
                             'title' => 'Pendapatan',
                             'items' => [
-                                ['label' => 'Faktur Lunas', 'value' => 'Rp 184 jt', 'color' => '#66b327'],
-                                ['label' => 'Faktur Belum Lunas', 'value' => 'Rp 46 jt', 'color' => '#ff9f1a'],
+                                ['label' => 'Faktur Lunas', 'value' => $formatCurrencyShort($fakturLunasSales), 'color' => '#66b327'],
+                                ['label' => 'Faktur Belum Lunas', 'value' => $formatCurrencyShort($fakturBelumLunasSales), 'color' => '#ff9f1a'],
                             ],
                         ],
                         [
                             'title' => 'Belum Lunas',
                             'items' => [
-                                ['label' => 'Belum Jatuh Tempo', 'value' => 'Rp 31 jt', 'color' => '#ff9f1a'],
-                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp 15 jt', 'color' => '#ff3b30'],
+                                ['label' => 'Belum Jatuh Tempo', 'value' => $formatCurrencyShort($belumJatuhTempoSales), 'color' => '#ff9f1a'],
+                                ['label' => 'Lewat Jatuh Tempo', 'value' => $formatCurrencyShort($lewatJatuhTempoSales), 'color' => '#ff3b30'],
                             ],
                         ],
                     ],
                     'headline' => [
                         'label' => 'Hari ini',
-                        'value' => 'Rp 18,4 jt',
+                        'value' => $formatCurrencyShort($hariIniSales),
                         'secondaryLabel' => 'Belum Lunas',
-                        'secondaryValue' => 'Rp 46 jt',
+                        'secondaryValue' => $formatCurrencyShort($fakturBelumLunasSales),
                     ],
                     'gridClass' => 'md:col-span-2 lg:col-span-3 xl:col-span-6',
                     'heightClass' => 'min-h-[246px]',
@@ -5457,23 +5813,23 @@ final class PosBlueprint
                         [
                             'title' => 'Pembelian',
                             'items' => [
-                                ['label' => 'Faktur Lunas', 'value' => 'Rp 132 jt', 'color' => '#66b327'],
-                                ['label' => 'Faktur Belum Lunas', 'value' => 'Rp 54 jt', 'color' => '#ff9f1a'],
+                                ['label' => 'Faktur Lunas', 'value' => $formatCurrencyShort($fakturLunasPurchase), 'color' => '#66b327'],
+                                ['label' => 'Faktur Belum Lunas', 'value' => $formatCurrencyShort($fakturBelumLunasPurchase), 'color' => '#ff9f1a'],
                             ],
                         ],
                         [
                             'title' => 'Belum Lunas',
                             'items' => [
-                                ['label' => 'Belum Jatuh Tempo', 'value' => 'Rp 37 jt', 'color' => '#ff9f1a'],
-                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp 17 jt', 'color' => '#ff3b30'],
+                                ['label' => 'Belum Jatuh Tempo', 'value' => $formatCurrencyShort($belumJatuhTempoPurchase), 'color' => '#ff9f1a'],
+                                ['label' => 'Lewat Jatuh Tempo', 'value' => $formatCurrencyShort($lewatJatuhTempoPurchase), 'color' => '#ff3b30'],
                             ],
                         ],
                     ],
                     'headline' => [
                         'label' => 'Hari ini',
-                        'value' => 'Rp 11,2 jt',
+                        'value' => $formatCurrencyShort($hariIniPurchase),
                         'secondaryLabel' => 'Belum Lunas',
-                        'secondaryValue' => 'Rp 54 jt',
+                        'secondaryValue' => $formatCurrencyShort($fakturBelumLunasPurchase),
                     ],
                     'gridClass' => 'md:col-span-2 lg:col-span-3 xl:col-span-6',
                     'heightClass' => 'min-h-[246px]',
@@ -5482,57 +5838,16 @@ final class PosBlueprint
                     'id' => 'sales-team-performance',
                     'title' => 'Penjualan Penjual (Semua Cabang)',
                     'type' => 'sales-team',
-                    'period' => '1 Mei - 4 Mei 2026',
-                    'rows' => [
-                        [
-                            'name' => 'Adam',
-                            'role' => 'Sales toko',
-                            'totalValue' => 'Rp -',
-                            'targetPercent' => '0%',
-                            'targetValue' => '-',
-                        ],
-                        [
-                            'name' => 'Jhonni Haris',
-                            'role' => 'Sales proyek',
-                            'totalValue' => 'Rp -',
-                            'targetPercent' => '0%',
-                            'targetValue' => '-',
-                        ],
-                        [
-                            'name' => 'Susi Marlina',
-                            'role' => 'Sales retail',
-                            'totalValue' => 'Rp 8,4 jt',
-                            'targetPercent' => '36%',
-                            'targetValue' => '36%',
-                        ],
-                    ],
+                    'period' => 'Periode Aktif',
+                    'rows' => $salesTeamRows,
                     'heightClass' => 'min-h-[280px]',
                 ],
                 [
                     'id' => 'top-products',
                     'title' => 'Barang Paling Laku (Semua Cabang)',
                     'type' => 'top-products',
-                    'period' => '1 Apr - 4 Mei 2026',
-                    'items' => [
-                        [
-                            'name' => 'Semen Portland 50 Kg',
-                            'units' => '1.284 zak',
-                            'share' => '20,8%',
-                            'revenue' => 'Rp 168,6 jt',
-                        ],
-                        [
-                            'name' => 'Pasir cor per m3',
-                            'units' => '462 m3',
-                            'share' => '14,2%',
-                            'revenue' => 'Rp 115,4 jt',
-                        ],
-                        [
-                            'name' => 'Lem PVC 400 gr',
-                            'units' => '381 pcs',
-                            'share' => '9,6%',
-                            'revenue' => 'Rp 74,8 jt',
-                        ],
-                    ],
+                    'period' => 'Periode Aktif',
+                    'items' => $topProductsItems,
                     'heightClass' => 'min-h-[280px]',
                 ],
                 [
@@ -5546,14 +5861,14 @@ final class PosBlueprint
                     'id' => 'cash-availability',
                     'title' => 'Ketersediaan Kas',
                     'type' => 'cash-availability',
-                    'period' => '4 Mei - 1 Jun 2026',
+                    'period' => 'Periode Aktif',
                     'balanceLabel' => 'Saldo kas tersedia',
-                    'balanceValue' => 'Rp 28,09 M',
-                    'labels' => ['4 Mei', '8 Mei', '12 Mei', '16 Mei', '20 Mei', '24 Mei', '28 Mei', '1 Jun'],
+                    'balanceValue' => $formatCurrencyShort(28000000000 + ($totalSalesVal - $totalExpensesVal)),
+                    'labels' => $cashAvailabilityLabels,
                     'series' => [
                         [
                             'label' => 'Saldo Kas',
-                            'data' => [28086825446.8, 28110250000, 28120540000, 28142000000, 28168000000, 28159250000, 28174400000, 28193000000],
+                            'data' => $cashAvailabilitySeries,
                             'color' => '#7bbaf0',
                             'fillColor' => 'rgba(123, 186, 240, 0.12)',
                         ],
@@ -5567,19 +5882,19 @@ final class PosBlueprint
                     'title' => 'Pesanan Penjualan (Semua Cabang)',
                     'type' => 'order-status',
                     'primaryLabel' => 'Menunggu diproses',
-                    'primaryValue' => '4',
-                    'statusTitle' => 'Pengiriman Hari Ini dan Terlewat',
+                    'primaryValue' => (string) $pendingSalesOrders,
+                    'statusTitle' => 'Status Pesanan Aktif',
                     'segments' => [
                         [
-                            'label' => 'Hari ini',
-                            'value' => '0 Pesanan',
-                            'numericValue' => 0,
+                            'label' => 'Aktif',
+                            'value' => $totalSalesOrders . ' Pesanan',
+                            'numericValue' => $totalSalesOrders,
                             'color' => '#ffd15d',
                         ],
                         [
-                            'label' => 'Terlewat',
-                            'value' => '4 Pesanan',
-                            'numericValue' => 4,
+                            'label' => 'Terlewat / Pending',
+                            'value' => $pendingSalesOrders . ' Pesanan',
+                            'numericValue' => $pendingSalesOrders,
                             'color' => '#ff4a17',
                         ],
                     ],
@@ -5588,22 +5903,39 @@ final class PosBlueprint
             ],
         ];
 
-        if ($abc !== null) {
-            foreach ($data['widgets'] as &$w) {
-                if ($w['id'] === 'abc-analysis') {
-                    $w['metrics'] = $abc['metrics'];
+        // Merge ABC and Apriori data into the respective analytics widgets
+        foreach ($data['widgets'] as &$w) {
+            if ($w['id'] === 'integrated-analysis' || str_starts_with($w['id'], 'integrated-analysis')) {
+                // Combine metrics
+                $combinedMetrics = [];
+                if ($apriori !== null && isset($apriori['metrics'])) {
+                    foreach ($apriori['metrics'] as $m) {
+                        if ($m['label'] === 'Transaksi' || $m['label'] === 'Rule Valid') {
+                            $combinedMetrics[] = $m;
+                        }
+                    }
+                }
+                if ($abc !== null && isset($abc['metrics'])) {
+                    foreach ($abc['metrics'] as $m) {
+                        if ($m['label'] === 'Item A' || $m['label'] === 'Nilai Analisis') {
+                            if ($m['label'] === 'Item A') {
+                                $m['label'] = 'Fokus Stok (Kat A)';
+                            }
+                            $combinedMetrics[] = $m;
+                        }
+                    }
+                }
+                
+                if (!empty($combinedMetrics)) {
+                    $w['metrics'] = $combinedMetrics;
+                }
+
+                if ($abc !== null) {
                     $w['distribution'] = $abc['distribution'];
                     $w['topItems'] = $abc['topItems'];
-                    $w['insight'] = $abc['insight'];
                 }
-            }
-        }
 
-        if ($apriori !== null) {
-            foreach ($data['widgets'] as &$w) {
-                if ($w['id'] === 'apriori-analysis') {
-                    $w['metrics'] = $apriori['metrics'];
-                    // Format rules properly for frontend display
+                if ($apriori !== null) {
                     $formattedRules = [];
                     foreach ($apriori['rules'] as $rule) {
                         $formattedRules[] = [
@@ -5612,13 +5944,40 @@ final class PosBlueprint
                             'transactionBase' => 'Rule Valid',
                             'antecedent' => $rule['antecedent'],
                             'consequent' => $rule['consequent'],
+                            'antecedentAbc' => $rule['antecedentAbc'] ?? null,
+                            'antecedentColor' => $rule['antecedentColor'] ?? null,
+                            'consequentAbc' => $rule['consequentAbc'] ?? null,
+                            'consequentColor' => $rule['consequentColor'] ?? null,
                             'support' => $rule['support'],
                             'confidence' => $rule['confidence'],
                             'lift' => $rule['lift'],
-                            'insight' => "Pembelian {$rule['antecedent']} sering diikuti {$rule['consequent']}.",
+                            'insight' => "Pembelian {$rule['antecedent']} [" . ($rule['antecedentAbc'] ?? 'C') . "] sering diikuti {$rule['consequent']} [" . ($rule['consequentAbc'] ?? 'C') . "].",
                         ];
                     }
                     $w['rules'] = $formattedRules;
+                }
+
+                // Make a rich unified insight
+                if ($abc !== null && $apriori !== null && !empty($apriori['rules']) && !empty($abc['topItems'])) {
+                    $topRule = $apriori['rules'][0];
+                    $topItem = $abc['topItems'][0];
+                    $w['insight'] = "Rekomendasi Utama: Pelanggan yang membeli {$topRule['antecedent']} [Kat {$topRule['antecedentAbc']}] memiliki peluang {$topRule['confidence']} untuk membeli {$topRule['consequent']} [Kat {$topRule['consequentAbc']}]. Kombinasikan dengan prioritas stok {$topItem['name']} [Kat A] yang menyumbang {$topItem['share']} omzet toko.";
+                } else if ($apriori !== null && !empty($apriori['rules'])) {
+                    $w['insight'] = $apriori['insight'];
+                } else if ($abc !== null) {
+                    $w['insight'] = $abc['insight'];
+                }
+            } else if ($w['id'] === 'abc-analysis' || str_starts_with($w['id'], 'abc-analysis')) {
+                if ($abc !== null) {
+                    $w['metrics'] = $abc['metrics'];
+                    $w['distribution'] = $abc['distribution'];
+                    $w['topItems'] = $abc['topItems'];
+                    $w['insight'] = $abc['insight'];
+                }
+            } else if ($w['id'] === 'apriori-analysis' || str_starts_with($w['id'], 'apriori-analysis')) {
+                if ($apriori !== null) {
+                    $w['metrics'] = $apriori['metrics'];
+                    $w['rules'] = $apriori['rules'];
                     $w['insight'] = $apriori['insight'];
                 }
             }

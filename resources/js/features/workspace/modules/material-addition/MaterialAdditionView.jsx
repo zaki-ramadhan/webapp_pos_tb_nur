@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildMaterialAdditionConfig, buildMaterialAdditionRecord as buildStaticMaterialAdditionRecord } from './materialAdditionConfig';
@@ -37,6 +37,14 @@ export default function MaterialAdditionView({ page, mode, activeLevel2Tab, onOp
         };
     }, [loading, page.materialAddition, rows, total]);
 
+    const buildRecord = useCallback((row) => {
+        if (row?.__backendRecord) {
+            return buildMaterialAdditionRecord(row.__backendRecord, config);
+        }
+
+        return buildStaticMaterialAdditionRecord(row ?? {}, config);
+    }, [config]);
+
     if (mode === 'table') {
         return (
             <MaterialAdditionTableView
@@ -59,13 +67,7 @@ export default function MaterialAdditionView({ page, mode, activeLevel2Tab, onOp
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
-            buildRecord={(row) => {
-                if (row?.__backendRecord) {
-                    return buildMaterialAdditionRecord(row.__backendRecord, config);
-                }
-
-                return buildStaticMaterialAdditionRecord(row ?? {}, config);
-            }}
+            buildRecord={buildRecord}
         />
     );
 }

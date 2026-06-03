@@ -13,8 +13,7 @@ import {
 import TableListView from '@/features/workspace/modules/TableListView';
 import InventoryAdjustmentItemModal from '@/features/workspace/modules/inventory-adjustment/InventoryAdjustmentItemModal';
 import {
-    TransactionDock,
-    TransactionSectionRail,
+    TransactionFormLayout,
     TransactionToolbarIconButton,
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -230,41 +229,33 @@ export function InventoryAdjustmentFormView({
     );
 
     return (
-        <div className="flex min-h-full flex-col gap-3">
-            <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-                    <InventoryAdjustmentHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />
-                    <CrudStatusMessage status={status} className="mx-4 mt-3" />
-
-                    <div className="flex min-h-0 flex-col gap-4 px-4 py-4 lg:flex-row">
-                        <TransactionSectionRail
-                            tabs={config.sectionTabs}
-                            activeTabId={activeSectionId}
-                            onSelectTab={setActiveSectionId}
-                        />
-                        <div className="min-w-0 flex-1">
-                            {activeSectionId === 'additional-info' ? (
-                                <InventoryAdjustmentInfoSection config={config} values={values} setValues={setValues} handlers={handlers} />
-                            ) : (
-                                <InventoryAdjustmentDetailsSection
-                                    config={config}
-                                    values={values}
-                                    setValues={setValues}
-                                    isDetail={isDetail}
-                                    onOpenItem={isDetail ? setSelectedItem : handleEditItem}
-                                    onCreateItem={handleCreateItem}
-                                />
-                            )}
-                        </div>
+        <>
+            <TransactionFormLayout
+                header={<InventoryAdjustmentHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />}
+                sectionTabs={config.sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                dockActions={dockActions}
+                footer={
+                    <div className="flex justify-end">
+                        <TransactionTotalCard label="Total" value={values.totalValue} />
                     </div>
-                </div>
-
-                <TransactionDock actions={dockActions} />
-            </div>
-
-            <div className="flex justify-end">
-                <TransactionTotalCard label="Total" value={values.totalValue} />
-            </div>
+                }
+            >
+                <CrudStatusMessage status={status} className="mb-3" />
+                {activeSectionId === 'additional-info' ? (
+                    <InventoryAdjustmentInfoSection config={config} values={values} setValues={setValues} handlers={handlers} />
+                ) : (
+                    <InventoryAdjustmentDetailsSection
+                        config={config}
+                        values={values}
+                        setValues={setValues}
+                        isDetail={isDetail}
+                        onOpenItem={isDetail ? setSelectedItem : handleEditItem}
+                        onCreateItem={handleCreateItem}
+                    />
+                )}
+            </TransactionFormLayout>
 
             <InventoryAdjustmentItemModal
                 open={Boolean(selectedItem)}
@@ -286,7 +277,7 @@ export function InventoryAdjustmentFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
+        </>
     );
 }
 

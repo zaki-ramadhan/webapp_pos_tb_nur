@@ -14,6 +14,8 @@ import useBackendResource from '@/features/workspace/backend/useBackendResource'
 import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
+import Spinner from '@/components/ui/Spinner';
+import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 
 function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -56,20 +58,51 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
 
         setStatus({ tone: '', message: '' });
         const payload = toPartnerPayload(values);
+        const loadingToastId = showLoadingToast({
+            title: 'Memproses',
+            message: isDetail ? 'Sedang memperbarui mitra bisnis.' : 'Sedang menyimpan mitra bisnis baru.',
+        });
         try {
             if (isDetail) {
                 await update(recordId, payload);
             } else {
                 await store(payload);
             }
+            dismissToast(loadingToastId);
+            showSuccessToast({
+                title: 'Berhasil',
+                message: isDetail ? 'Mitra bisnis berhasil diperbarui.' : 'Mitra bisnis berhasil disimpan.',
+            });
         } catch (err) {
+            dismissToast(loadingToastId);
+            showErrorToast({
+                title: 'Gagal menyimpan',
+                message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.'),
+            });
             setStatus({ tone: 'error', message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.') });
         }
     };
 
     const handleDelete = async () => {
         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-            await remove(recordId);
+            const loadingToastId = showLoadingToast({
+                title: 'Memproses',
+                message: 'Sedang menghapus mitra bisnis.',
+            });
+            try {
+                await remove(recordId);
+                dismissToast(loadingToastId);
+                showSuccessToast({
+                    title: 'Berhasil',
+                    message: 'Mitra bisnis berhasil dihapus.',
+                });
+            } catch (err) {
+                dismissToast(loadingToastId);
+                showErrorToast({
+                    title: 'Gagal menghapus',
+                    message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menghapus data.'),
+                });
+            }
         }
     };
 
@@ -84,7 +117,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         ? [
               {
                   id: 'save',
-                  label: processing ? 'Menyimpan...' : 'Simpan',
+                  label: 'Simpan',
                   tone: 'primary',
                   icon: 'save',
                   onClick: handleSave,
@@ -103,7 +136,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         : [
               {
                   id: 'save',
-                  label: processing ? 'Menyimpan...' : 'Simpan',
+                  label: 'Simpan',
                   tone: 'primary',
                   icon: 'save',
                   onClick: handleSave,
@@ -142,6 +175,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
                                 icon={<DockIcon icon={action.icon} />}
                                 onClick={action.onClick}
                                 disabled={action.disabled}
+                                loading={processing && (action.id === 'save' || action.id === 'delete')}
                             />
                         ))}
                     </div>

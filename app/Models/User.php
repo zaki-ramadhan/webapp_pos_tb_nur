@@ -112,4 +112,15 @@ class User extends Authenticatable
             ->filter(fn (Role $role): bool => (bool) $role->is_active)
             ->contains(fn (Role $role): bool => in_array($role->code, $codes, true));
     }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPasswordNotification($token));
+    }
 }

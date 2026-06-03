@@ -25,7 +25,7 @@ export default function DropdownMenuItem({
             ) : null}
             <span className={`block flex-1 whitespace-normal ${contentClassName}`.trim()}>{children}</span>
             {badge ? (
-                <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-[#f25759] px-1.5 text-[10px] font-semibold text-white">
+                <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-[#f25759] px-1.5 text-[11px] font-semibold text-white">
                     {badge}
                 </span>
             ) : null}

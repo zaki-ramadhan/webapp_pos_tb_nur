@@ -96,7 +96,7 @@ function MobileModuleButton({ item, active, onSelect }) {
                 <span className="block truncate text-[12px] font-medium">{item.label}</span>
             </span>
             {item.disabled ? (
-                <span className="shrink-0 rounded-full bg-[#e6e9f0] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#7b8496]">
+                <span className="shrink-0 rounded-full bg-[#e6e9f0] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7b8496]">
                     Nonaktif
                 </span>
             ) : null}
@@ -140,12 +140,12 @@ function MobilePanelItemButton({ item, onSelect }) {
                 <span className={`block text-[12px] font-medium leading-4.5 ${isInactive ? 'text-[#7d6220]' : 'text-[#22304a]'}`.trim()}>
                     {item.label}
                 </span>
-                <span className={`mt-0.5 block text-[10px] leading-4 ${isInactive ? 'text-[#9a7b35]' : 'text-[#7b849c]'}`.trim()}>
+                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-[#9a7b35]' : 'text-[#7b849c]'}`.trim()}>
                     {statusLabel}
                 </span>
             </span>
             {isInactive ? (
-                <span className="shrink-0 rounded-full bg-[#f6dfab] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                <span className="shrink-0 rounded-full bg-[#f6dfab] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
                     {WORKSPACE_INACTIVE_BADGE_LABEL}
                 </span>
             ) : null}

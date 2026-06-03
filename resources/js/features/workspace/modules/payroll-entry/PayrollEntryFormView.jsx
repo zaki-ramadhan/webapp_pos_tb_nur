@@ -9,6 +9,12 @@ import {
 import { PayrollAdditionalInfoSection, PayrollEmployeeSection, PayrollHeader } from './PayrollEntrySections';
 import { buildDefaultValues } from './payrollEntryShared';
 import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
+import {
+    finishCrudLoadingToast,
+    showCrudErrorToast,
+    showCrudLoadingToast,
+    showCrudSuccessToast,
+} from '@/features/workspace/shared/crudFeedback';
 
 export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, onOpenContent }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'employees');
@@ -97,13 +103,14 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
     const handleSave = useCallback(async () => {
         setSaving(true);
         setErrors({});
+        const loadingToastId = showCrudLoadingToast('Sedang menyimpan pencatatan gaji.');
 
         try {
             const payload = {
                 entry_date: values.entryDate,
                 due_date: values.dueDate,
                 notes: values.notes,
-                document_number: values.autoNumber ? null : 'MANUAL', // Handle auto-numbering on backend
+                document_number: values.autoNumber ? null : 'MANUAL',
                 status: 'Draft',
                 metadata: {
                     payment_type: values.paymentType,
@@ -116,15 +123,18 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
 
             await createBackendResource('payroll-entries', payload);
             
-            // Redirect back to table and refresh
+            finishCrudLoadingToast(loadingToastId);
+            showCrudSuccessToast('Pencatatan gaji berhasil disimpan.');
+
             if (onOpenContent) {
                 onOpenContent(null);
             }
         } catch (error) {
+            finishCrudLoadingToast(loadingToastId);
             const message = getBackendErrorMessage(error);
+            showCrudErrorToast(message);
             setErrors({ _form: message });
             
-            // Map validation errors if any
             if (error?.response?.data?.errors) {
                 setErrors(prev => ({ ...prev, ...error.response.data.errors }));
             }

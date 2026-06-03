@@ -19,6 +19,7 @@ export default function DashboardViewModals({
     unsavedChangesModalOpen,
     onCloseUnsavedChangesModal,
     onConfirmUnsavedChangesModal,
+    filteredLibraryItems,
 }) {
     return (
         <>
@@ -39,7 +40,10 @@ export default function DashboardViewModals({
 
             <WidgetLibraryModal
                 open={isWidgetLibraryOpen}
-                modal={dashboard.toolbar.widgetLibraryModal}
+                modal={{
+                    ...dashboard.toolbar.widgetLibraryModal,
+                    items: filteredLibraryItems || dashboard.toolbar.widgetLibraryModal.items,
+                }}
                 onClose={() => setIsWidgetLibraryOpen(false)}
                 onSelectItem={handleAddWidget}
             />

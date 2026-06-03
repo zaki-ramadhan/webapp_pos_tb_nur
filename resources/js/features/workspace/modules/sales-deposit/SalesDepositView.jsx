@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildSalesDepositConfig, buildSalesDepositRecord } from '@/features/workspace/modules/sales-deposit/salesDepositConfig';
@@ -37,6 +37,14 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
         };
     }, [loading, page.salesDeposit, rows, total]);
 
+    const buildRecord = useCallback((row) => {
+        if (row?.__backendRecord) {
+            return buildSalesDepositRecordFromBackend(row.__backendRecord, config);
+        }
+
+        return buildSalesDepositRecord(row);
+    }, [config]);
+
     return mode === 'table' ? (
         <SalesDepositTableView
             config={config}
@@ -50,13 +58,7 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
         <SalesDepositFormView
             pageId={page.id}
             config={config}
-            buildRecord={(row) => {
-                if (row?.__backendRecord) {
-                    return buildSalesDepositRecordFromBackend(row.__backendRecord, config);
-                }
-
-                return buildSalesDepositRecord(row);
-            }}
+            buildRecord={buildRecord}
             activeLevel2Tab={activeLevel2Tab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}

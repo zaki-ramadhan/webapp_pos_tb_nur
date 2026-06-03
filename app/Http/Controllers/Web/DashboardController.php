@@ -13,17 +13,22 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request, ?string $sample = null): Response
     {
-        $analytics = new \App\Support\Analytics\AnalyticsService();
-        $abc = $analytics->getAbcAnalysis();
-        $apriori = $analytics->getAprioriAnalysis(0.05, 0.40);
-
-        $props = PosBlueprint::forDashboard($sample, $abc, $apriori);
+        $analytics = app(\App\Support\Analytics\AnalyticsService::class);
+        $props = PosBlueprint::forDashboard($sample, null, null, false);
         $user = $request->user();
 
         if ($user !== null) {
             $props['dashboard']['user'] = AuthenticatedUserPresenter::present($user);
         }
 
-        return Inertia::render('DashboardPage', $props);
+        return Inertia::render('DashboardPage', [
+            ...$props,
+            'widgets' => Inertia::defer(function () use ($sample, $analytics) {
+                $abc = $analytics->getAbcAnalysis();
+                $apriori = $analytics->getAprioriAnalysis(0.05, 0.40);
+                $fullProps = PosBlueprint::forDashboard($sample, $abc, $apriori, true);
+                return $fullProps['dashboard']['sampleDashboard']['widgets'];
+            }),
+        ]);
     }
 }

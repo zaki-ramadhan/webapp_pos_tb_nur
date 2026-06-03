@@ -158,7 +158,7 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
                     />
                     {isBrandFieldInactive ? (
                         <div className="flex flex-wrap items-center gap-2 text-[13px] text-[#9a7b35]">
-                            <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                            <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
                                 {WORKSPACE_INACTIVE_BADGE_LABEL}
                             </span>
                             <span>{WORKSPACE_INACTIVE_HINT}</span>

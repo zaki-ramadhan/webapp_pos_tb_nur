@@ -19,7 +19,7 @@ function FragmentSection({ section, columns, onTogglePermission }) {
             <tr className="border-t border-[#edf1f6] bg-white">
                 <td
                     colSpan={columns.length + 1}
-                    className="px-6 py-2.5 text-[18px] font-semibold text-[#141c2c]"
+                    className="px-4 py-1.5 text-[15px] font-semibold text-[#141c2c]"
                 >
                     {section.label}
                 </td>
@@ -32,14 +32,14 @@ function FragmentSection({ section, columns, onTogglePermission }) {
                         index % 2 === 0 ? 'bg-[#f5f5f6]' : 'bg-white'
                     }`.trim()}
                 >
-                    <td className="px-8 py-2.5 text-[17px] text-[#222a3c]">
+                    <td className="px-5 py-1.5 text-sm text-[#222a3c]">
                         <div className="inline-flex items-start gap-2">
                             <span>{row.label}</span>
-                            {row.info ? <InfoIcon className="mt-1 h-[18px] w-[18px] text-[#2f374d]" /> : null}
+                            {row.info ? <InfoIcon className="mt-0.5 h-[16px] w-[16px] text-[#2f374d]" /> : null}
                         </div>
                     </td>
                     {columns.map((column) => (
-                        <td key={column.id} className="px-4 py-2">
+                        <td key={column.id} className="px-4 py-1.5">
                             <PermissionCell
                                 checked={Boolean(row.permissions?.[column.id])}
                                 onChange={() => onTogglePermission(section.id, row.id, column.id)}
@@ -67,15 +67,15 @@ function PermissionMatrix({
                 <table className="w-full min-w-[860px] border-collapse">
                     <thead className="sticky top-0 z-10">
                         <tr className="bg-[#66677b] text-white">
-                            <th className="px-8 py-2.5 text-center text-[17px] font-medium">Hak Akses</th>
+                            <th className="px-5 py-2 text-center text-sm font-semibold">Hak Akses</th>
                             {columns.map((column) => (
-                                <th key={column.id} className="px-4 py-2.5 text-center text-[17px] font-medium">
+                                <th key={column.id} className="px-4 py-2 text-center text-sm font-semibold">
                                     {column.label}
                                 </th>
                             ))}
                         </tr>
                         <tr className="bg-[#d9d9dc]">
-                            <th className="px-8 py-2" />
+                            <th className="px-5 py-1.5" />
                             {columns.map((column) => {
                                 const enabledRows = rowItems.filter((row) => row.permissions?.[column.id] !== undefined);
                                 const checked = enabledRows.length
@@ -83,7 +83,7 @@ function PermissionMatrix({
                                     : false;
 
                                 return (
-                                    <th key={column.id} className="px-4 py-3">
+                                    <th key={column.id} className="px-4 py-2">
                                         <PermissionCell
                                             checked={checked}
                                             onChange={() => onToggleColumn(column.id, !checked)}
@@ -108,7 +108,7 @@ function PermissionMatrix({
                             <tr className="border-t border-[#edf1f6] bg-white">
                                 <td
                                     colSpan={columns.length + 1}
-                                    className="px-6 py-10 text-center text-[16px] text-[#6a738a]"
+                                    className="px-6 py-10 text-center text-sm text-[#6a738a]"
                                 >
                                     Tidak ada hak akses yang cocok dengan kata kunci pencarian.
                                 </td>
@@ -209,15 +209,15 @@ export default function GroupAccessRightsView({
 
     return (
         <div className="space-y-5">
-            <div className="grid gap-5 xl:grid-cols-[370px_minmax(0,1fr)] xl:items-start">
+            <div className="grid gap-5 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
                 <GroupAccessCategoryList
                     categories={categories}
                     activeCategoryId={activeCategory?.id ?? ''}
                     onSelectCategory={setActiveCategoryId}
-                    className="h-[calc(100vh-320px)] max-h-[720px]"
+                    className="h-[calc(100vh-260px)]"
                 />
 
-                <div className="flex h-[calc(100vh-320px)] min-h-[460px] max-h-[720px] min-w-0 flex-col overflow-hidden rounded-[8px] border border-[#d8dde7] bg-white shadow-[0_2px_12px_rgba(15,23,42,0.08)]">
+                <div className="flex h-[calc(100vh-260px)] min-h-[460px] min-w-0 flex-col overflow-hidden rounded-[8px] border border-[#d8dde7] bg-white shadow-[0_2px_12px_rgba(15,23,42,0.08)]">
                     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e2e6ee] px-4 py-4">
                         <div className="w-full max-w-[386px]">
                             <TextInput

@@ -25,6 +25,7 @@ export default function DashboardWidgetCard({
     children,
     onRefresh,
     onRename,
+    onRemove,
     isRefreshing = false,
     refreshError = null,
 }) {
@@ -35,11 +36,11 @@ export default function DashboardWidgetCard({
         <Panel className={`flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-[#d7ddea] bg-white/98 ${widget.heightClass}`.trim()}>
             <div className="flex flex-wrap items-start justify-between gap-2 border-b border-[#edf0f6] px-3 py-3 sm:flex-nowrap sm:items-center sm:px-4">
                 <div className="min-w-0 flex-1">
-                    <h3 className="break-words text-[13px] font-medium text-[#434a65] sm:text-[14px] md:text-[15px]">{widget.title}</h3>
+                    <h3 className="break-words text-sm font-medium text-[#434a65]">{widget.title}</h3>
                     {widget.subtitle ? (
-                        <p className="mt-1 break-words text-[12px] text-[#7c839b] md:text-[13px]">{widget.subtitle}</p>
+                        <p className="mt-1 break-words text-sm text-[#7c839b]">{widget.subtitle}</p>
                     ) : null}
-                    {refreshError ? <p className="mt-1 text-[11px] text-[#b45309] md:text-[12px]">{refreshError}</p> : null}
+                    {refreshError ? <p className="mt-1 text-sm text-[#b45309]">{refreshError}</p> : null}
                 </div>
                 <div className="flex shrink-0 items-center gap-1 self-end sm:self-auto">
                     <WidgetHeaderAction
@@ -70,9 +71,23 @@ export default function DashboardWidgetCard({
                                     onRename?.(widget);
                                 }}
                                 icon={<PencilIcon />}
-                                className="text-[12px] font-medium text-[#1f2536] md:text-[13px]"
+                                className="text-sm font-medium text-[#1f2536]"
                             >
                                 Ubah judul widget
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    setActionsOpen(false);
+                                    onRemove?.(widget);
+                                }}
+                                icon={
+                                    <svg viewBox="0 0 24 24" className="h-5 w-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                                    </svg>
+                                }
+                                className="text-sm font-medium text-red-600 animate-fade-in"
+                            >
+                                Hapus widget
                             </DropdownMenuItem>
                         </DropdownMenu>
                     </div>

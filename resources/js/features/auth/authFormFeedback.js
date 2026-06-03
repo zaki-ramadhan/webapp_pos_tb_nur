@@ -66,9 +66,12 @@ export function validateRegisterForm(data, { showPhoneField = false } = {}) {
 
 export function validateForgotPasswordForm(data) {
     const errors = {};
+    const email = (data.email ?? '').trim();
 
-    if (!data.identifier.trim()) {
-        errors.identifier = 'Email atau nomor handphone wajib diisi.';
+    if (!email) {
+        errors.email = 'Email wajib diisi.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.email = 'Format email tidak valid.';
     }
 
     return errors;

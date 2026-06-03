@@ -5,7 +5,7 @@ export function WidgetSection({ title, caption = null, children }) {
                 <div className="min-w-0 border-l-[3px] border-l-[#5f8fd5] pl-3">
                     <h4 className="text-[15px] font-semibold leading-tight text-[#1f2536] md:text-[16px]">{title}</h4>
                     {caption ? (
-                        <p className="mt-1.5 break-words text-[11px] leading-5 text-[#7c839b] md:text-[12px]">{caption}</p>
+                        <p className="mt-1.5 break-words text-sm leading-5 text-[#7c839b]">{caption}</p>
                     ) : null}
                 </div>
             </div>
@@ -41,8 +41,8 @@ export function InsightCallout({ children, tone = 'blue' }) {
                 </span>
 
                 <div className="min-w-0">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.08em] opacity-80 md:text-[11px]">{toneConfig.label}</p>
-                    <p className="mt-1.5 text-[12px] leading-5 md:text-[13px]">{children}</p>
+                    <p className="text-sm font-semibold uppercase tracking-[0.08em] opacity-80">{toneConfig.label}</p>
+                    <p className="mt-1.5 text-sm leading-5">{children}</p>
                 </div>
             </div>
         </div>
@@ -76,14 +76,14 @@ export function SummaryStrip({ items }) {
             <div className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
                 {items.map((item) => (
                     <div key={item.label} className="rounded-[7px] border border-[#dce3ed] bg-white px-3 py-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)]">
-                        <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#7d88a2] md:text-[12px]">
+                        <p className="text-sm font-medium uppercase tracking-[0.08em] text-[#7d88a2]">
                             {item.label}
                         </p>
                         <p className="mt-2 text-[20px] font-semibold leading-none text-[#1f2536] md:text-[22px] 2xl:text-[25px]">
                             {item.value}
                         </p>
                         {item.helper ? (
-                            <p className="mt-2 text-[11px] leading-5 text-[#66718c] md:text-[12px]">
+                            <p className="mt-2 text-sm leading-5 text-[#66718c]">
                                 {item.helper}
                             </p>
                         ) : null}
@@ -105,8 +105,8 @@ export function ActionList({ items }) {
                     <div className="flex items-start gap-3">
                         <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#4f80c4]" />
                         <div className="min-w-0">
-                            <p className="text-[12px] font-medium text-[#1f2536] md:text-[13px]">{item.title}</p>
-                            <p className="mt-1 text-[11px] leading-5 text-[#68728c] md:text-[12px]">{item.detail}</p>
+                            <p className="text-sm font-medium text-[#1f2536]">{item.title}</p>
+                            <p className="mt-1 text-sm leading-5 text-[#68728c]">{item.detail}</p>
                         </div>
                     </div>
                 </div>
