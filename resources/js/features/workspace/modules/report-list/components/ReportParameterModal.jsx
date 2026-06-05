@@ -11,7 +11,7 @@ import {
     getTodayString,
     getFirstDayOfMonthString
 } from './ReportParameterFields';
-import { resolveReportParams } from '@/features/workspace/modules/report-list/utils/reportHelpers';
+import { resolveReportParams, resolveReportColumns } from '@/features/workspace/modules/report-list/utils/reportHelpers';
 
 export default function ReportParameterModal({ report, open, onClose, onSubmit }) {
     const [activeTab, setActiveTab] = useState('umum');
@@ -26,7 +26,17 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
         checkboxes: {}
     });
 
+    // States for columns management
+    const [visibleColumns, setVisibleColumns] = useState([]);
+    const [selectedColumnId, setSelectedColumnId] = useState(null);
+    const [showAddMenu, setShowAddMenu] = useState(false);
+
     const reportSchema = report ? resolveReportParams(report.id, report.categoryId) : null;
+    const colSchema = report ? resolveReportColumns(report.id, report.categoryId) : { mandatory: [], optional: [] };
+    
+    const availableOptionalColumns = colSchema.optional.filter(
+        opt => !visibleColumns.some(vc => vc.id === opt.id)
+    );
 
     useEffect(() => {
         if (!report || !open) return;
@@ -50,6 +60,14 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
             checkboxes: initialCheckboxes
         });
         setActiveTab('umum');
+
+        // Initialize report specific columns
+        const cols = resolveReportColumns(report.id, report.categoryId);
+        setVisibleColumns(
+            cols.mandatory.map(c => ({ ...c, isMandatory: true, checked: true }))
+        );
+        setSelectedColumnId(null);
+        setShowAddMenu(false);
     }, [report, open]);
 
     if (!report) return null;
@@ -68,6 +86,42 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
         }));
     };
 
+    const handleToggleColumn = (id, checked) => {
+        setVisibleColumns(prev => prev.map(c => c.id === id ? { ...c, checked } : c));
+    };
+
+    const handleSelectColumn = (id) => {
+        setSelectedColumnId(id);
+    };
+
+    const handleAddColumn = (column) => {
+        setVisibleColumns(prev => [
+            ...prev,
+            { ...column, isMandatory: false, checked: true }
+        ]);
+        setShowAddMenu(false);
+    };
+
+    const handleDeleteColumn = () => {
+        if (!selectedColumnId) return;
+        const col = visibleColumns.find(c => c.id === selectedColumnId);
+        if (col && col.isMandatory) return; // Cannot delete mandatory columns
+
+        setVisibleColumns(prev => prev.filter(c => c.id !== selectedColumnId));
+        setSelectedColumnId(null);
+    };
+
+    const handleEditColumn = () => {
+        if (!selectedColumnId) return;
+        const col = visibleColumns.find(c => c.id === selectedColumnId);
+        if (col && col.isMandatory) return; // Cannot edit mandatory columns
+
+        const newLabel = window.prompt("Ubah nama kolom:", col.label);
+        if (newLabel && newLabel.trim()) {
+            setVisibleColumns(prev => prev.map(c => c.id === selectedColumnId ? { ...c, label: newLabel.trim() } : c));
+        }
+    };
+
     const handleTampilkan = (e) => {
         e.preventDefault();
 
@@ -78,7 +132,10 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
         });
 
         if (onSubmit) {
-            onSubmit(params);
+            onSubmit({
+                ...params,
+                columns: visibleColumns.filter(c => c.checked).map(c => c.id)
+            });
         }
 
         onClose();
@@ -158,40 +215,81 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                         <div className="space-y-4">
                             <ReportSectionHeading title="Parameter Kolom" />
                             
-                            <div className="border border-slate-300 rounded-[4px] bg-white h-[200px] overflow-y-auto p-3.5 space-y-2 mt-2 select-none shadow-inner">
-                                <CheckboxField id="col-default-1" label="Tanggal / Periode" checked disabled />
-                                <CheckboxField id="col-default-2" label="Nomor Dokumen" checked disabled />
-                                <CheckboxField id="col-default-3" label="Keterangan" checked disabled />
-                                <CheckboxField id="col-default-4" label="Nominal / Nilai" checked disabled />
-                                <CheckboxField id="col-default-5" label="Cabang" checked disabled />
-                                <CheckboxField id="col-default-6" label="Akun Terkait" checked disabled />
+                            <div className="border border-slate-300 rounded-[4px] bg-white h-[200px] overflow-y-auto mt-2 select-none shadow-inner divide-y divide-slate-100">
+                                {visibleColumns.map((col) => {
+                                    const isSelected = selectedColumnId === col.id;
+                                    return (
+                                        <div
+                                            key={col.id}
+                                            onClick={() => handleSelectColumn(col.id)}
+                                            className={`flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors ${
+                                                isSelected ? 'bg-blue-50/70 text-blue-900' : 'hover:bg-slate-50 text-slate-800'
+                                            }`}
+                                        >
+                                            <CheckboxField
+                                                id={`col-chk-${col.id}`}
+                                                label={col.label}
+                                                checked={col.checked}
+                                                disabled={col.isMandatory}
+                                                onChange={(e) => handleToggleColumn(col.id, e.target.checked)}
+                                                containerClassName="w-full"
+                                                labelClassName={isSelected ? 'text-blue-900 font-medium' : 'text-slate-800'}
+                                            />
+                                        </div>
+                                    );
+                                })}
                             </div>
 
                             {/* Action Buttons below listbox */}
-                            <div className="flex items-center gap-1.5 pt-1">
+                            <div className="relative flex items-center gap-1.5 pt-1">
                                 <button
                                     type="button"
-                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-[#5cb85c] hover:bg-[#4cae4c] text-white shadow-sm transition-colors"
+                                    onClick={() => setShowAddMenu(prev => !prev)}
+                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-[#5cb85c] hover:bg-[#4cae4c] text-white shadow-sm transition-colors active:bg-[#449d44]"
                                     title="Tambah Kolom"
                                 >
                                     <Plus className="h-5 w-5" strokeWidth={2.5} />
                                 </button>
                                 <button
                                     type="button"
-                                    disabled
-                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-[#f4f4f4] border border-slate-200 text-slate-400 cursor-not-allowed"
+                                    disabled={!selectedColumnId || visibleColumns.find(c => c.id === selectedColumnId)?.isMandatory}
+                                    onClick={handleEditColumn}
+                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-white border border-slate-300 text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:bg-[#f4f4f4] disabled:border-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
                                     title="Ubah Kolom"
                                 >
                                     <Pencil className="h-4 w-4" />
                                 </button>
                                 <button
                                     type="button"
-                                    disabled
-                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-[#f4f4f4] border border-slate-200 text-slate-400 cursor-not-allowed"
+                                    disabled={!selectedColumnId || visibleColumns.find(c => c.id === selectedColumnId)?.isMandatory}
+                                    onClick={handleDeleteColumn}
+                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-white border border-slate-300 text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:bg-[#f4f4f4] disabled:border-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
                                     title="Hapus Kolom"
                                 >
                                     <Minus className="h-5 w-5" strokeWidth={2.5} />
                                 </button>
+
+                                {/* Dropdown menu for adding optional columns */}
+                                {showAddMenu && (
+                                    <div className="absolute left-0 bottom-[40px] z-20 w-[240px] bg-white border border-slate-200 rounded-md shadow-lg py-1 max-h-[160px] overflow-y-auto">
+                                        {availableOptionalColumns.length > 0 ? (
+                                            availableOptionalColumns.map(opt => (
+                                                <button
+                                                    key={opt.id}
+                                                    type="button"
+                                                    onClick={() => handleAddColumn(opt)}
+                                                    className="w-full text-left px-3 py-1.5 text-[14px] text-slate-700 hover:bg-slate-100 transition-colors"
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <div className="px-3 py-2 text-[13px] text-slate-400 italic">
+                                                Semua kolom sudah ditambahkan
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

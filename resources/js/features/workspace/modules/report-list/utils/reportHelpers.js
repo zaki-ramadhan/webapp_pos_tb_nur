@@ -196,3 +196,130 @@ export function resolveReportParams(reportId, categoryId) {
     };
 }
 
+export function resolveReportColumns(reportId, categoryId) {
+    const id = String(reportId || '').toLowerCase();
+    const cat = String(categoryId || '').toLowerCase();
+
+    if (cat === 'sales') {
+        return {
+            mandatory: [
+                { id: 'date', label: 'Tanggal Penjualan' },
+                { id: 'docNo', label: 'Nomor Penjualan' },
+                { id: 'customer', label: 'Pelanggan' },
+                { id: 'item', label: 'Nama Barang' },
+                { id: 'qty', label: 'Kuantitas' },
+                { id: 'price', label: 'Harga Satuan' },
+                { id: 'total', label: 'Total Penjualan' }
+            ],
+            optional: [
+                { id: 'brand', label: 'Merek Barang' },
+                { id: 'warehouse', label: 'Gudang Penyimpanan' },
+                { id: 'salesperson', label: 'Tenaga Penjual (Sales)' },
+                { id: 'discount', label: 'Diskon per Barang' },
+                { id: 'currency', label: 'Mata Uang' },
+                { id: 'rate', label: 'Kurs Konversi' },
+                { id: 'notes', label: 'Catatan Transaksi' }
+            ]
+        };
+    }
+
+    if (cat === 'ledger' || id.includes('journal')) {
+        return {
+            mandatory: [
+                { id: 'date', label: 'Tanggal Transaksi' },
+                { id: 'docNo', label: 'Nomor Jurnal' },
+                { id: 'notes', label: 'Keterangan Transaksi' },
+                { id: 'debit', label: 'Mutasi Debit' },
+                { id: 'credit', label: 'Mutasi Kredit' },
+                { id: 'balance', label: 'Saldo Berjalan' }
+            ],
+            optional: [
+                { id: 'accountNo', label: 'Nomor Akun Perkiraan' },
+                { id: 'accountName', label: 'Nama Akun Perkiraan' },
+                { id: 'branch', label: 'Cabang Transaksi' },
+                { id: 'partner', label: 'Kontak / Partner Bisnis' },
+                { id: 'status', label: 'Status Verifikasi (Approval)' }
+            ]
+        };
+    }
+
+    if (cat === 'cash-bank') {
+        return {
+            mandatory: [
+                { id: 'date', label: 'Tanggal Mutasi' },
+                { id: 'docNo', label: 'Nomor Referensi Bank' },
+                { id: 'payee', label: 'Penerima / Pembayar' },
+                { id: 'debit', label: 'Kas Masuk' },
+                { id: 'credit', label: 'Kas Keluar' },
+                { id: 'balance', label: 'Saldo Kas & Bank' }
+            ],
+            optional: [
+                { id: 'paymentMethod', label: 'Metode Pembayaran' },
+                { id: 'branch', label: 'Cabang Operasional' },
+                { id: 'notes', label: 'Keterangan Tambahan' },
+                { id: 'currency', label: 'Mata Uang Asing' },
+                { id: 'rate', label: 'Nilai Kurs' }
+            ]
+        };
+    }
+
+    if (cat === 'finance' || id.includes('profit-loss') || id.includes('balance-sheet')) {
+        return {
+            mandatory: [
+                { id: 'accountNo', label: 'Nomor Akun' },
+                { id: 'accountName', label: 'Nama Akun Keuangan' },
+                { id: 'opening', label: 'Saldo Awal' },
+                { id: 'debit', label: 'Mutasi Debit' },
+                { id: 'credit', label: 'Mutasi Kredit' },
+                { id: 'closing', label: 'Saldo Akhir' }
+            ],
+            optional: [
+                { id: 'department', label: 'Departemen Terkait' },
+                { id: 'project', label: 'Proyek Bisnis' },
+                { id: 'branch', label: 'Cabang Laporan' },
+                { id: 'currency', label: 'Mata Uang Transaksi' }
+            ]
+        };
+    }
+
+    if (cat === 'inventory' || cat === 'warehouse') {
+        return {
+            mandatory: [
+                { id: 'itemCode', label: 'Kode Barang / SKU' },
+                { id: 'itemName', label: 'Nama Barang' },
+                { id: 'unit', label: 'Satuan Pengukuran' },
+                { id: 'qtyOpening', label: 'Stok Awal' },
+                { id: 'qtyIn', label: 'Stok Masuk' },
+                { id: 'qtyOut', label: 'Stok Keluar' },
+                { id: 'qtyClosing', label: 'Stok Akhir' }
+            ],
+            optional: [
+                { id: 'warehouse', label: 'Gudang Lokasi' },
+                { id: 'brand', label: 'Merek' },
+                { id: 'category', label: 'Kategori Barang' },
+                { id: 'stockValue', label: 'Nilai Stok Rata-rata' },
+                { id: 'cogs', label: 'Harga Pokok Penjualan (HPP)' }
+            ]
+        };
+    }
+
+    // Default Fallback
+    return {
+        mandatory: [
+            { id: 'date', label: 'Tanggal / Periode' },
+            { id: 'docNo', label: 'Nomor Dokumen' },
+            { id: 'notes', label: 'Keterangan' },
+            { id: 'amount', label: 'Nominal / Nilai' },
+            { id: 'branch', label: 'Cabang' },
+            { id: 'account', label: 'Akun Terkait' }
+        ],
+        optional: [
+            { id: 'currency', label: 'Mata Uang' },
+            { id: 'creator', label: 'User Pembuat' },
+            { id: 'dept', label: 'Departemen' },
+            { id: 'status', label: 'Status Verifikasi' },
+            { id: 'extra', label: 'Catatan Tambahan' }
+        ]
+    };
+}
+
