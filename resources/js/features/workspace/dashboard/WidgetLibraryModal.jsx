@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ModalBase from '@/components/ui/ModalBase';
 import TextInput from '@/components/ui/TextInput';
+import EmptyState from '@/components/ui/EmptyState';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
 
 function LibraryIcon({ type }) {
@@ -134,8 +135,30 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                     ))}
 
                     {!filteredItems.length ? (
-                        <div className="flex h-full min-h-[400px] items-center justify-center px-6 text-center text-[14px] text-[#7a8198]">
-                            {modal.emptyLabel}
+                        <div className="flex h-full min-h-[400px] items-center justify-center">
+                            {keyword.trim() ? (
+                                <EmptyState
+                                    title="Tidak ada hasil"
+                                    description={modal.emptyLabel}
+                                    iconName="search"
+                                    size="sm"
+                                    tone="subtle"
+                                    className="bg-transparent px-0 py-0"
+                                    titleClassName="text-[16px] font-medium text-[#6b738f]"
+                                    descriptionClassName="mt-2 text-[13px] leading-5 text-[#8a91a8]"
+                                />
+                            ) : (
+                                <EmptyState
+                                    title="Semua Widget Aktif"
+                                    description="Semua pilihan widget sudah Anda tambahkan ke dashboard."
+                                    iconName="document"
+                                    size="sm"
+                                    tone="subtle"
+                                    className="bg-transparent px-0 py-0"
+                                    titleClassName="text-[16px] font-medium text-[#6b738f]"
+                                    descriptionClassName="mt-2 text-[13px] leading-5 text-[#8a91a8]"
+                                />
+                            )}
                         </div>
                     ) : null}
                 </div>

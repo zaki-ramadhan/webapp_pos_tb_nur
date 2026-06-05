@@ -1,6 +1,7 @@
 import TextInput from '@/components/ui/TextInput';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import Tooltip from '@/components/ui/Tooltip';
 import {
     CloseIcon,
     InfoIcon,
@@ -9,6 +10,7 @@ import {
 } from '@/features/workspace/shared/Icons';
 import { TransactionSwitch } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { buildItemsServicesRecord } from '@/features/workspace/modules/items-services/itemsServicesConfig';
+
 
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -42,6 +44,7 @@ export function buildItemsServicesFormValues(config, detailRow = null) {
         })),
         openingStockRows: [...(source.openingStockRows ?? [])],
         images: [...(source.images ?? [])],
+        attachments: [...(source.attachments ?? [])],
     };
 }
 
@@ -51,6 +54,16 @@ export function renderItemsServicesDockIcon(icon) {
     }
 
     return <SaveIcon className="h-9 w-9" />;
+}
+
+function getFormRowTooltip(label) {
+    const cleanLabel = String(label || '').trim().replace(/:$/, '');
+    const map = {
+        'Pemasok Utama': 'Pemasok utama untuk memesan barang/jasa ini.',
+        'Harga Beli': 'Harga beli default/terakhir dari pemasok.',
+        'Ref Kode Pajak': 'Referensi kode perpajakan yang digunakan untuk barang/jasa ini.',
+    };
+    return map[cleanLabel] || `Informasi tentang ${cleanLabel}`;
 }
 
 export function FormRow({
@@ -66,12 +79,17 @@ export function FormRow({
             <label className="pt-2 text-[17px] leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
-                {info ? <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157]" /> : null}
+                {info ? (
+                    <Tooltip content={typeof info === 'string' ? info : getFormRowTooltip(label)} portal>
+                        <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157] cursor-help" />
+                    </Tooltip>
+                ) : null}
             </label>
             <div className={contentClassName}>{children}</div>
         </div>
     );
 }
+
 
 export function SectionHeading({ title }) {
     return (

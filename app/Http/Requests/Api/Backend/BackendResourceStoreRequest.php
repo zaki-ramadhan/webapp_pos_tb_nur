@@ -13,7 +13,10 @@ class BackendResourceStoreRequest extends BackendResourceRequest
             ];
         }
 
-        return $this->blueprint()->storeRules();
+        $rules = $this->blueprint()->storeRules();
+        $rules['attachment_ids'] = ['sometimes', 'array'];
+        $rules['attachment_ids.*'] = ['integer', 'exists:attachments,id'];
+        return $rules;
     }
 
     protected function ability(): string

@@ -42,8 +42,11 @@ export default function ItemsServicesView({
         />
     ) : (
         <ItemsServicesFormView
+            pageId={page.id}
             config={config}
             activeLevel2Tab={activeLevel2Tab}
+            onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
             onRefresh={reload}
         />
     );

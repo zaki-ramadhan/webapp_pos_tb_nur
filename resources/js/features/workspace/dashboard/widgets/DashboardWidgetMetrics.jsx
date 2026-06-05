@@ -4,6 +4,24 @@ import {
     TrendLineChart,
 } from '@/features/workspace/dashboard/widgets/DashboardWidgetCharts';
 
+export function TrendIndicator({ trend, growth, className = '' }) {
+    if (!trend) {
+        return null;
+    }
+
+    const isUp = trend === 'up' || trend === 'rising' || trend === 'positive';
+    const arrow = isUp ? '▲' : '▼';
+    const textClass = isUp ? 'text-emerald-600' : 'text-rose-600';
+    const bgClass = isUp ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100';
+
+    return (
+        <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold ${bgClass} ${textClass} ${className}`.trim()}>
+            <span>{arrow}</span>
+            {growth ? <span>{growth}</span> : null}
+        </span>
+    );
+}
+
 const compactHeadlineLabelClassName = 'text-sm text-[#6c748e]';
 const compactHeadlineValueClassName =
     'text-[18px] font-semibold leading-none text-[#1f2536] md:text-[21px] xl:text-[23px] 2xl:text-[28px]';
@@ -60,12 +78,17 @@ export function RingBreakdownMetric({
     legend = [],
     totalLabel = '-',
     totalValue = 'Rp 0',
+    trend,
+    growth,
 }) {
     return (
         <div className="grid gap-4 lg:grid-cols-[156px_minmax(0,1fr)] lg:items-start lg:gap-4">
             <div className="flex flex-col justify-between gap-3">
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
-                {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                    {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                    <TrendIndicator trend={trend} growth={growth} />
+                </div>
             </div>
 
             <div className="flex h-full flex-col">
@@ -74,7 +97,10 @@ export function RingBreakdownMetric({
                 <div className="mt-auto border-t border-[#e6ebf4] pt-4 text-[#1e2437]">
                     <div className="text-left sm:text-right">
                         <p className={compactHeadlineLabelClassName}>{totalLabel}</p>
-                        <p className={`mt-1 ${compactHeadlineValueClassName}`.trim()}>{totalValue}</p>
+                        <div className="mt-1 flex items-baseline justify-start gap-2 sm:justify-end flex-wrap">
+                            <p className={compactHeadlineValueClassName}>{totalValue}</p>
+                            <TrendIndicator trend={trend} growth={growth} />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,12 +108,22 @@ export function RingBreakdownMetric({
     );
 }
 
-export function ExpenseBreakdownMetric({ percentage = '0%', compare, legend = [], totalValue = 'Rp 0' }) {
+export function ExpenseBreakdownMetric({
+    percentage = '0%',
+    compare,
+    legend = [],
+    totalValue = 'Rp 0',
+    trend,
+    growth,
+}) {
     return (
         <div className="grid gap-4 lg:grid-cols-[156px_minmax(0,1fr)] lg:items-start lg:gap-4">
             <div className="flex flex-col justify-between gap-3">
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
-                {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                    {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                    <TrendIndicator trend={trend} growth={growth} />
+                </div>
             </div>
 
             <div>
@@ -95,7 +131,10 @@ export function ExpenseBreakdownMetric({ percentage = '0%', compare, legend = []
                     <div>
                         <h4 className="text-[15px] font-semibold text-[#1f2536] md:text-[17px]">Beban</h4>
                     </div>
-                    <p className={compactHeadlineValueClassName}>{totalValue}</p>
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                        <p className={compactHeadlineValueClassName}>{totalValue}</p>
+                        <TrendIndicator trend={trend} growth={growth} />
+                    </div>
                 </div>
 
                 <div className="mt-4">
@@ -112,6 +151,10 @@ export function SummaryMetric({ sections = [], headline }) {
         value: headline?.value ?? 'Rp 0',
         secondaryLabel: headline?.secondaryLabel ?? '-',
         secondaryValue: headline?.secondaryValue ?? 'Rp 0',
+        trend: headline?.trend,
+        growth: headline?.growth,
+        secondaryTrend: headline?.secondaryTrend,
+        secondaryGrowth: headline?.secondaryGrowth,
     };
 
     return (
@@ -139,13 +182,19 @@ export function SummaryMetric({ sections = [], headline }) {
                     <div className="space-y-2.5">
                         <div className="flex items-end justify-between gap-2.5 2xl:flex-col 2xl:items-end 2xl:gap-1">
                             <p className={compactHeadlineLabelClassName}>{resolvedHeadline.label}</p>
-                            <p className={compactHeadlineValueClassName}>{resolvedHeadline.value}</p>
+                            <div className="flex items-baseline gap-2 flex-wrap justify-end">
+                                <p className={compactHeadlineValueClassName}>{resolvedHeadline.value}</p>
+                                <TrendIndicator trend={resolvedHeadline.trend} growth={resolvedHeadline.growth} />
+                            </div>
                         </div>
                         <div className="flex items-end justify-between gap-2.5 border-t border-[#eef2f7] pt-2.5 2xl:flex-col 2xl:items-end 2xl:gap-1">
                             <p className="text-sm text-[#6c748e]">{resolvedHeadline.secondaryLabel}</p>
-                            <p className="text-[16px] font-semibold leading-none text-[#1f2536] md:text-[18px] xl:text-[20px] 2xl:text-[22px]">
-                                {resolvedHeadline.secondaryValue}
-                            </p>
+                            <div className="flex items-baseline gap-2 flex-wrap justify-end">
+                                <p className="text-[16px] font-semibold leading-none text-[#1f2536] md:text-[18px] xl:text-[20px] 2xl:text-[22px]">
+                                    {resolvedHeadline.secondaryValue}
+                                </p>
+                                <TrendIndicator trend={resolvedHeadline.secondaryTrend} growth={resolvedHeadline.secondaryGrowth} />
+                            </div>
                         </div>
                     </div>
                 </div>

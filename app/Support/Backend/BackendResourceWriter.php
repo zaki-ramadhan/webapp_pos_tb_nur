@@ -105,6 +105,26 @@ class BackendResourceWriter
 
             $blueprint->sync($record, $payload);
 
+            if (array_key_exists('attachment_ids', $payload) && method_exists($record, 'attachments')) {
+                $attachmentIds = $payload['attachment_ids'] ?? [];
+
+                \App\Domain\Support\Models\Attachment::whereIn('id', $attachmentIds)
+                    ->update([
+                        'attachable_type' => get_class($record),
+                        'attachable_id' => $record->getKey(),
+                    ]);
+
+                $record->attachments()
+                    ->whereNotIn('id', $attachmentIds)
+                    ->get()
+                    ->each(function ($attachment): void {
+                        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($attachment->file_path)) {
+                            \Illuminate\Support\Facades\Storage::disk('public')->delete($attachment->file_path);
+                        }
+                        $attachment->delete();
+                    });
+            }
+
             $freshRecord = $record->fresh($blueprint->with) ?? $record;
 
             $this->activityLogger->logMutation(

@@ -163,8 +163,8 @@ export function AprioriRuleChart({ rules }) {
                 hoverBorderColor: confidencePalette.hoverBorderColor,
                 borderWidth: 0.5,
                 borderRadius: 4,
-                barThickness: 26,
-                maxBarThickness: 30,
+                barThickness: 32,
+                maxBarThickness: 36,
             },
         ],
     };
@@ -197,8 +197,8 @@ export function AprioriRuleChart({ rules }) {
 
                         return [
                             `Confidence: ${context.parsed.x}%`,
-                            `Support: ${item?.support ?? '-'}`,
-                            `Lift: ${item?.lift ?? '-'}`,
+                            `Support: ${item?.support ?? '0'}`,
+                            `Lift: ${item?.lift ?? '0'}`,
                         ];
                     },
                 },
@@ -243,7 +243,7 @@ export function AprioriRuleChart({ rules }) {
 
     return (
         <div className="rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
-            <div className="h-[200px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px] lg:h-[232px]">
+            <div className="h-[250px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[270px] lg:h-[280px]">
                 <Bar data={data} options={options} />
             </div>
         </div>
@@ -261,15 +261,15 @@ export function IntegratedMatrixChart({ rules }) {
         if (ant === 'A' && cons === 'C') {
             color = 'rgba(29, 78, 216, 1.0)';
             hoverColor = 'rgba(30, 64, 175, 1.0)';
-            labelTactic = 'A → C Cross-Sell';
+            labelTactic = 'A → C Jual Silang';
         } else if (ant === 'A' && cons === 'A') {
             color = 'rgba(29, 78, 216, 0.65)';
             hoverColor = 'rgba(29, 78, 216, 0.90)';
-            labelTactic = 'A → A Bundling Proyek';
+            labelTactic = 'A → A Paket Bundling';
         } else if (ant === 'B' && cons === 'B') {
             color = 'rgba(29, 78, 216, 0.40)';
             hoverColor = 'rgba(29, 78, 216, 0.70)';
-            labelTactic = 'B → B Kombo Pelengkap';
+            labelTactic = 'B → B Paket Pelengkap';
         }
 
         return {
@@ -300,8 +300,8 @@ export function IntegratedMatrixChart({ rules }) {
                 hoverBorderColor: hoverBackgroundColors,
                 borderWidth: 0.5,
                 borderRadius: 4,
-                barThickness: 16,
-                maxBarThickness: 20,
+                barThickness: 22,
+                maxBarThickness: 26,
             },
         ],
     };
@@ -332,8 +332,8 @@ export function IntegratedMatrixChart({ rules }) {
                         return [
                             `Taktik: ${item?.labelTactic ?? '-'}`,
                             `Confidence (Peluang): ${context.parsed.x}%`,
-                            `Support (Kekerapan): ${item?.support ?? '-'}`,
-                            `Lift Ratio: ${item?.lift ?? '-'}`,
+                            `Support (Kekerapan): ${item?.support ?? '0'}`,
+                            `Lift Ratio: ${item?.lift ?? '0'}`,
                         ];
                     },
                 },
@@ -378,7 +378,7 @@ export function IntegratedMatrixChart({ rules }) {
 
     return (
         <div className="space-y-5 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
-            <div className="h-[210px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px]">
+            <div className="h-[260px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[280px]">
                 <Bar data={data} options={options} />
             </div>
 
@@ -386,21 +386,21 @@ export function IntegratedMatrixChart({ rules }) {
                 <div className="flex items-start gap-2">
                     <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,1.0)]" />
                     <div>
-                        <p className="text-sm font-bold text-[#1e40af] leading-4">A → C Cross-Sell (Fokus 100%)</p>
+                        <p className="text-sm font-bold text-[#1e40af] leading-4">A → C Jual Silang (Fokus 100%)</p>
                         <p className="text-sm text-slate-500 mt-1">Barang aksesoris (C) dipicu produk inti (A).</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
                     <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.65)]" />
                     <div>
-                        <p className="text-sm font-bold text-[#1e40af]/80 leading-4">A → A Paket Proyek (65%)</p>
+                        <p className="text-sm font-bold text-[#1e40af]/80 leading-4">A → A Paket Bundling (65%)</p>
                         <p className="text-sm text-slate-500 mt-1">Bundling diskon produk inti omzet terbesar.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
                     <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.40)]" />
                     <div>
-                        <p className="text-sm font-bold text-[#1e40af]/60 leading-4">B → B Kombo Rutin (40%)</p>
+                        <p className="text-sm font-bold text-[#1e40af]/60 leading-4">B → B Paket Pelengkap (40%)</p>
                         <p className="text-sm text-slate-500 mt-1">Produk pendukung rutin yang stabil.</p>
                     </div>
                 </div>

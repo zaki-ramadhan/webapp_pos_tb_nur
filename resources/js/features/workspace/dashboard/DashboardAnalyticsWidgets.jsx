@@ -62,17 +62,17 @@ export function AbcAnalysisWidget({ widget, expanded = false, onToggle }) {
             summaryItems={[
                 {
                     label: 'Fokus utama',
-                    value: itemAMetric?.value ?? '-',
+                    value: itemAMetric?.value ?? '0',
                     helper: itemAMetric?.helper ?? 'Kategori dengan kontribusi omzet terbesar.',
                 },
                 {
                     label: 'Nilai penjualan',
-                    value: totalMetric?.value ?? '-',
+                    value: totalMetric?.value ?? '0',
                     helper: totalMetric?.helper ?? 'Nilai transaksi yang dianalisis pada periode aktif.',
                 },
                 {
                     label: 'Perlu evaluasi',
-                    value: itemCMetric?.value ?? '-',
+                    value: itemCMetric?.value ?? '0',
                     helper: itemCMetric?.helper ?? 'Item lambat gerak yang cukup dipantau berkala.',
                 },
             ]}
@@ -134,22 +134,22 @@ export function AprioriAnalysisWidget({ widget, expanded = false, onToggle }) {
             summaryItems={[
                 {
                     label: 'Transaksi',
-                    value: transactionMetric?.value ?? '-',
+                    value: transactionMetric?.value ?? '0',
                     helper: transactionMetric?.helper ?? 'Jumlah transaksi yang dianalisis.',
                 },
                 {
                     label: 'Rule siap pakai',
-                    value: validRulesMetric?.value ?? '-',
+                    value: validRulesMetric?.value ?? '0',
                     helper: validRulesMetric?.helper ?? 'Rule yang sudah cukup kuat untuk dipakai sebagai insight.',
                 },
                 {
                     label: 'Ambang analisis',
-                    value: `${supportMetric?.value ?? '-'} / ${confidenceMetric?.value ?? '-'}`,
+                    value: `${supportMetric?.value ?? '0'} / ${confidenceMetric?.value ?? '0'}`,
                     helper: 'Support / confidence minimum yang dipakai dalam analisis.',
                 },
             ]}
             chartTitle="Pola belanja pelanggan"
-            chartCaption="Chart ini menunjukkan rule yang paling kuat untuk pairing atau cross-sell."
+            chartCaption="Chart ini menunjukkan rule yang paling kuat untuk pemasangan produk atau penjualan silang."
             chartContent={<AprioriRuleChart rules={widget.rules ?? []} />}
             expanded={expanded}
             onToggle={onToggle}
@@ -229,22 +229,22 @@ export function IntegratedAnalysisWidget({ widget, expanded = false, onToggle })
     const summaryItems = [
         {
             label: 'Transaksi',
-            value: transactionMetric?.value ?? '-',
+            value: transactionMetric?.value ?? '0',
             helper: transactionMetric?.helper ?? 'Total transaksi dianalisis.',
         },
         {
             label: 'Rule Terintegrasi',
-            value: validRulesMetric?.value ?? '-',
+            value: validRulesMetric?.value ?? '0',
             helper: 'Pola asosiasi yang kuat.',
         },
         {
             label: 'Fokus Stok (Kat A)',
-            value: itemAMetric?.value ?? '-',
+            value: itemAMetric?.value ?? '0',
             helper: itemAMetric?.helper ?? 'Omzet kontribusi terbesar.',
         },
         {
             label: 'Nilai Omzet Toko',
-            value: totalMetric?.value ?? '-',
+            value: totalMetric?.value ?? '0',
             helper: totalMetric?.helper ?? 'Total penjualan.',
         },
     ];
@@ -252,7 +252,7 @@ export function IntegratedAnalysisWidget({ widget, expanded = false, onToggle })
     const getStrategyTactic = (antecedentAbc, consequentAbc) => {
         if (antecedentAbc === 'A' && consequentAbc === 'C') {
             return {
-                title: 'Taktik Cross-Sell (Utama → Tambahan)',
+                title: 'Taktik Jual Silang (Utama → Tambahan)',
                 desc: 'Tempatkan aksesoris di dekat produk inti atau tawarkan langsung sebagai pelengkap saat transaksi untuk memicu pembelian impulsif.',
                 actionDisplay: 'Pajang produk aksesoris (Kategori C) ini di rak khusus tepat di sebelah produk utama (Kategori A).',
                 actionCashier: 'Latih kasir untuk menawarkan produk aksesoris ini sebagai pelengkap opsional saat pelanggan membayar produk utama.',
@@ -265,7 +265,7 @@ export function IntegratedAnalysisWidget({ widget, expanded = false, onToggle })
         if (antecedentAbc === 'A' && consequentAbc === 'A') {
             return {
                 title: 'Taktik Paket Bundling (Utama → Utama)',
-                desc: 'Tawarkan paket bundling dengan potongan harga tipis untuk meningkatkan kuantitas pembelian proyek skala besar.',
+                desc: 'Tawarkan paket bundling dengan potongan harga tipis untuk meningkatkan kuantitas pembelian dalam jumlah besar.',
                 actionDisplay: 'Buat area display khusus paket bundling "Paket Komplit" yang memajang kedua produk utama ini dalam satu kemasan.',
                 actionCashier: 'Berikan penawaran diskon potongan langsung Rp 5.000 jika kedua barang ini dibeli secara bersamaan.',
                 tone: 'blue',
@@ -276,10 +276,10 @@ export function IntegratedAnalysisWidget({ widget, expanded = false, onToggle })
         }
         if (antecedentAbc === 'B' && consequentAbc === 'B') {
             return {
-                title: 'Taktik Kombo Produk (Stabil → Stabil)',
-                desc: 'Buat paket kombo harian di area kasir untuk mempercepat perputaran produk pelengkap yang stabil.',
+                title: 'Taktik Paket Produk (Stabil → Stabil)',
+                desc: 'Buat paket bundling harian di area kasir untuk mempercepat perputaran produk pelengkap yang stabil.',
                 actionDisplay: 'Kelompokkan produk penunjang ini di rak tengah agar mudah dijangkau pelanggan yang sedang mencari kebutuhan rutin.',
-                actionCashier: 'Ingatkan pelanggan mengenai ketersediaan kombo belanja hemat untuk kedua produk rutin ini.',
+                actionCashier: 'Ingatkan pelanggan mengenai ketersediaan paket belanja hemat untuk kedua produk rutin ini.',
                 tone: 'blue',
                 bg: 'bg-sky-50 border-sky-200 text-sky-800',
                 badgeBg: 'rgba(29, 78, 216, 0.40)',

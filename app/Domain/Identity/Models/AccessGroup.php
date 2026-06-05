@@ -14,6 +14,10 @@ class AccessGroup extends DomainModel
         'name',
         'description',
         'is_active',
+        'access_limit_type',
+        'access_limit_days',
+        'access_limit_start_hour',
+        'access_limit_end_hour',
     ];
 
     protected array $searchable = ['code', 'name', 'description'];

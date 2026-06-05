@@ -2,10 +2,19 @@ import { useEffect } from 'react';
 
 import CheckboxField from '@/components/ui/CheckboxField';
 import RadioField from '@/components/ui/RadioField';
+import Tooltip from '@/components/ui/Tooltip';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
 import { InfoIcon } from '@/features/workspace/shared/Icons';
+
+
+function getSalesInfo(id, label) {
+    const map = {
+        'sales-order-auto-close': 'Menutup pesanan penjualan secara otomatis ketika semua barang telah dikirimkan ke pelanggan.',
+    };
+    return map[id] || `Informasi tentang ${label}`;
+}
 
 function SalesInlineCheckboxRow({ row, onToggle }) {
     return (
@@ -13,9 +22,12 @@ function SalesInlineCheckboxRow({ row, onToggle }) {
             <div className="text-[16px] leading-8 text-[#0f172a]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
-                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" />
+                    <Tooltip content={getSalesInfo(row.id, row.label)} portal>
+                        <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                    </Tooltip>
                 ) : null}
             </div>
+
 
             <div className="max-w-[180px]">
                 <CheckboxField

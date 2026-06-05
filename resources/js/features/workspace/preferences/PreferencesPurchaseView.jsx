@@ -4,11 +4,21 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import Tooltip from '@/components/ui/Tooltip';
 import PreferencesLookupField from '@/features/workspace/preferences/PreferencesLookupField';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
 import { InfoIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+
+
+function getPurchaseInfo(id, label) {
+    const map = {
+        'purchase-order-auto-close': 'Menutup pesanan pembelian secara otomatis ketika kuantitas barang yang diterima telah terpenuhi.',
+        'purchase-payment-temporary-account': 'Akun perantara untuk membukukan transaksi pembayaran sebelum rekonsiliasi bank selesai.',
+    };
+    return map[id] || `Informasi tentang ${label}`;
+}
 
 function PurchaseInlineCheckboxRow({ row, onToggle }) {
     return (
@@ -16,9 +26,12 @@ function PurchaseInlineCheckboxRow({ row, onToggle }) {
             <div className="text-[16px] leading-8 text-[#0f172a]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
-                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" />
+                    <Tooltip content={getPurchaseInfo(row.id, row.label)} portal>
+                        <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                    </Tooltip>
                 ) : null}
             </div>
+
 
             <div className="max-w-[180px]">
                 <CheckboxField
@@ -82,7 +95,9 @@ function PurchaseStandaloneLookupRow({ row }) {
             <div className="text-[16px] leading-8 text-[#111827]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
-                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" />
+                    <Tooltip content={getPurchaseInfo(row.id, row.label)} portal>
+                        <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                    </Tooltip>
                 ) : null}
             </div>
 
@@ -148,7 +163,9 @@ function PurchaseGridFieldRow({ row, onChangeControl }) {
             <div className="text-[16px] leading-8 text-[#111827]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
-                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" />
+                    <Tooltip content={getPurchaseInfo(row.id, row.label)} portal>
+                        <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                    </Tooltip>
                 ) : null}
             </div>
 

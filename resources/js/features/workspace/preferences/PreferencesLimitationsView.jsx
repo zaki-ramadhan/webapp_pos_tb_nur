@@ -4,6 +4,7 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import Tooltip from '@/components/ui/Tooltip';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
@@ -243,6 +244,14 @@ function LimitationsAdvancedRadioGroup({
     );
 }
 
+function getLimitationInfo(id, label) {
+    const map = {
+        'process-draft-transaction': 'Mengizinkan pemrosesan dokumen/transaksi yang saat ini masih dalam status rancangan atau pengajuan persetujuan.',
+        'print-draft-transaction': 'Mengizinkan pencetakan atau pengiriman email untuk transaksi yang belum disetujui (Draf/Pengajuan/Ditolak).',
+    };
+    return map[id] || `Informasi tentang ${label}`;
+}
+
 function LimitationsCheckboxList({ row, onToggleItem }) {
     return (
         <div className="space-y-3 pt-1">
@@ -258,7 +267,9 @@ function LimitationsCheckboxList({ row, onToggleItem }) {
                         <span className="text-[17px] leading-8 text-[#111827]">
                             {item.label}
                             {item.showInfo ? (
-                                <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" />
+                                <Tooltip content={getLimitationInfo(item.id, item.label)} portal>
+                                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                                </Tooltip>
                             ) : null}
                         </span>
                     }
@@ -270,6 +281,7 @@ function LimitationsCheckboxList({ row, onToggleItem }) {
         </div>
     );
 }
+
 
 function LimitationsSection({
     section,

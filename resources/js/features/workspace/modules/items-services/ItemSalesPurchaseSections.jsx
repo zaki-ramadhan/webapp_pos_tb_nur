@@ -1,4 +1,5 @@
 import { TransactionSwitch } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import Tooltip from '@/components/ui/Tooltip';
 import { InfoIcon } from '@/features/workspace/shared/Icons';
 import {
     FormRow,
@@ -47,7 +48,9 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                     />
                     <span className="text-[17px] text-[#1f2436]">
                         Menerapkan Harga / Diskon Grosir{' '}
-                        <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157]" />
+                        <Tooltip content="Mengaktifkan aturan tingkat harga grosir berdasarkan kuantitas pembelian." portal>
+                            <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157] cursor-help" />
+                        </Tooltip>
                     </span>
                 </div>
                 <div className="flex items-center gap-10">

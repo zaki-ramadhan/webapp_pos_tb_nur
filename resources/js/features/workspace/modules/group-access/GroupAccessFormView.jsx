@@ -11,7 +11,6 @@ import {
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
     buildGroupAccessComparableState,
     buildGroupAccessPayload,
@@ -33,6 +32,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
+
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     const initialGeneralSnapshot = useMemo(() => buildGeneralState(form.general), [form.general]);
@@ -75,47 +75,8 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         generalValues.groupName,
     );
 
-    async function handleSearchUser() {
-        try {
-            const record = await promptSelectBackendRecord(
-                'users',
-                'pengguna',
-                (user) => `${user.name ?? '-'}${user.email ? ` (${user.email})` : ''}`,
-            );
 
-            if (!record) {
-                return;
-            }
 
-            const nextUser = {
-                id: record.id ?? null,
-                label: record.name ?? record.email ?? `Pengguna #${record.id ?? ''}`,
-            };
-
-            setGeneralValues((currentValues) => {
-                const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
-
-                if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
-                    return currentValues;
-                }
-
-                setStatus({
-                    tone: 'success',
-                    message: 'Pengguna berhasil ditambahkan ke grup.',
-                });
-
-                return {
-                    ...currentValues,
-                    selectedUsers: [...currentUsers, nextUser],
-                };
-            });
-        } catch (error) {
-            setStatus({
-                tone: 'error',
-                message: getBackendErrorMessage(error, error?.message ?? 'Pengguna tidak dapat dipilih.'),
-            });
-        }
-    }
 
     async function handleSave() {
         if (validationMessage) {
@@ -211,6 +172,38 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                                     accessLimitationId: nextValue,
                                 }))
                             }
+                            onChangeAccessLimitDays={(nextValue) =>
+                                setGeneralValues((currentValues) => ({
+                                    ...currentValues,
+                                    accessLimitDays: nextValue,
+                                }))
+                            }
+                            onChangeAccessLimitStartHour={(nextValue) =>
+                                setGeneralValues((currentValues) => ({
+                                    ...currentValues,
+                                    accessLimitStartHour: nextValue,
+                                }))
+                            }
+                            onChangeAccessLimitEndHour={(nextValue) =>
+                                setGeneralValues((currentValues) => ({
+                                    ...currentValues,
+                                    accessLimitEndHour: nextValue,
+                                }))
+                            }
+                            onAddUser={(nextUser) =>
+                                setGeneralValues((currentValues) => {
+                                    const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
+
+                                    if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
+                                        return currentValues;
+                                    }
+
+                                    return {
+                                        ...currentValues,
+                                        selectedUsers: [...currentUsers, nextUser],
+                                    };
+                                })
+                            }
                             onRemoveUser={(selectedUser) =>
                                 setGeneralValues((currentValues) => ({
                                     ...currentValues,
@@ -221,7 +214,6 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                                     ),
                                 }))
                             }
-                            onSearchUser={handleSearchUser}
                             textInput={TextInput}
                         />
                     ) : (

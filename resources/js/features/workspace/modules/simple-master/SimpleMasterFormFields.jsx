@@ -1,17 +1,31 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import Tooltip from '@/components/ui/Tooltip';
 import { CloseIcon, InfoIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+
+function getFieldInfoTooltip(label) {
+    const cleanLabel = String(label || '').trim().replace(/:$/, '');
+    const map = {
+        'Ref Kode Pajak': 'Referensi kode perpajakan yang digunakan untuk satuan barang ini.',
+    };
+    return map[cleanLabel] || `Informasi tentang ${cleanLabel}`;
+}
 
 export function FieldLabel({ field, className = '' }) {
     return (
         <label className={`text-[17px] text-[#1f2436] ${className}`.trim()}>
             {field.label}
             {field.required ? <span className="text-[#ED3969]"> *</span> : null}
-            {field.info ? <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157]" /> : null}
+            {field.info ? (
+                <Tooltip content={typeof field.info === 'string' ? field.info : getFieldInfoTooltip(field.label)} portal>
+                    <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157] cursor-help" />
+                </Tooltip>
+            ) : null}
         </label>
     );
 }
+
 
 export function MasterFieldRow({ field, value, onChange }) {
     if (field.type === 'heading') {

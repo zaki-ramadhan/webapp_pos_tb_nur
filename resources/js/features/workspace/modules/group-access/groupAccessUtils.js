@@ -43,6 +43,9 @@ export function buildGeneralState(general = {}) {
         groupName: general.nameField?.value ?? '',
         accessLimitationId: selectedOption?.id ?? '',
         selectedUsers: normalizeSelectedUsers(general.userSelection?.selected),
+        accessLimitDays: general.accessLimitDays ?? 'Senin-Jumat',
+        accessLimitStartHour: general.accessLimitStartHour ?? '00',
+        accessLimitEndHour: general.accessLimitEndHour ?? '12',
     };
 }
 
@@ -235,15 +238,18 @@ export function buildGroupAccessDetailForm(baseForm = {}, record = null) {
             },
             accessLimitations: {
                 ...(baseForm.general?.accessLimitations ?? {}),
-                options: (baseForm.general?.accessLimitations?.options ?? []).map((option, index) => ({
+                options: (baseForm.general?.accessLimitations?.options ?? []).map((option) => ({
                     ...option,
-                    checked: index === 0,
+                    checked: option.id === (record.access_limit_type ?? 'follow-preference'),
                 })),
             },
             userSelection: {
                 ...(baseForm.general?.userSelection ?? {}),
                 selected: selectedUsers,
             },
+            accessLimitDays: record.access_limit_days ?? 'Senin-Jumat',
+            accessLimitStartHour: record.access_limit_start_hour ?? '00',
+            accessLimitEndHour: record.access_limit_end_hour ?? '12',
         },
         permissions: {
             ...(baseForm.permissions ?? {}),
@@ -290,6 +296,10 @@ export function buildGroupAccessPayload(generalValues, permissionCategories) {
         name: String(generalValues.groupName ?? '').trim(),
         description: null,
         is_active: true,
+        access_limit_type: String(generalValues.accessLimitationId ?? 'follow-preference'),
+        access_limit_days: generalValues.accessLimitationId === 'limited-time' ? String(generalValues.accessLimitDays ?? 'Senin-Jumat') : null,
+        access_limit_start_hour: generalValues.accessLimitationId === 'limited-time' ? String(generalValues.accessLimitStartHour ?? '00') : null,
+        access_limit_end_hour: generalValues.accessLimitationId === 'limited-time' ? String(generalValues.accessLimitEndHour ?? '12') : null,
         user_ids: normalizeSelectedUsers(generalValues.selectedUsers)
             .map((user) => user.id)
             .filter((id) => id !== null && id !== undefined && id !== '' && Number.isInteger(Number(id))),
@@ -301,6 +311,9 @@ export function buildGroupAccessComparableState(generalValues, permissionCategor
     return {
         groupName: String(generalValues.groupName ?? '').trim(),
         accessLimitationId: String(generalValues.accessLimitationId ?? '').trim(),
+        accessLimitDays: String(generalValues.accessLimitDays ?? 'Senin-Jumat'),
+        accessLimitStartHour: String(generalValues.accessLimitStartHour ?? '00'),
+        accessLimitEndHour: String(generalValues.accessLimitEndHour ?? '12'),
         selectedUsers: normalizeSelectedUsers(generalValues.selectedUsers).map((user) => ({
             id: user.id ?? null,
             label: user.label,

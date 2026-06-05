@@ -22,6 +22,7 @@ import {
     SearchIcon,
     TableActionIcon,
 } from '@/features/workspace/shared/Icons';
+import Tooltip from '@/components/ui/Tooltip';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { mapApprovalRuleRow } from '@/features/workspace/backend/workspaceBackendAdapters';
 
@@ -33,6 +34,17 @@ function ApprovalHeading({ title }) {
     );
 }
 
+function getApprovalFieldTooltip(label) {
+    const cleanLabel = String(label || '').trim();
+    if (cleanLabel.includes('Syarat min.')) {
+        return 'Syarat minimum nilai nominal transaksi atau persentase diskon yang memerlukan penyetujuan.';
+    }
+    if (cleanLabel.includes('Pembuat Transaksi')) {
+        return 'Pengguna pembuat transaksi yang pengajuannya akan disaring oleh aturan ini.';
+    }
+    return `Informasi tentang ${cleanLabel}`;
+}
+
 function ApprovalFieldLabel({ label, required = false, info = false }) {
     return (
         <div className="flex items-center gap-2 pt-1 text-[16px] text-[#1f2436]">
@@ -40,10 +52,15 @@ function ApprovalFieldLabel({ label, required = false, info = false }) {
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </span>
-            {info ? <InfoIcon className="h-5 w-5 text-[#1f2436]" /> : null}
+            {info ? (
+                <Tooltip content={getApprovalFieldTooltip(label)} portal>
+                    <InfoIcon className="h-5 w-5 text-[#1f2436] cursor-help" />
+                </Tooltip>
+            ) : null}
         </div>
     );
 }
+
 
 function ThresholdField({ valueLabel }) {
     return (

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BackendResourceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('backend')->middleware(['web', 'auth'])->group(function (): void {
+    Route::post('/attachments/upload', [\App\Http\Controllers\Api\AttachmentUploadController::class, 'upload']);
     Route::post('/currencies/sync', [BackendResourceController::class, 'syncCurrencies']);
     Route::get('/resources', [BackendResourceController::class, 'resources']);
     Route::get('/{resource}', [BackendResourceController::class, 'index']);

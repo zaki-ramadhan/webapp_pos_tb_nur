@@ -96,6 +96,7 @@ const createDefaults = {
     stockCostOfGoods: '0',
     accounts: defaultAccountValues,
     images: [],
+    attachments: [],
     branchesUsage: '[Semua Cabang]',
     notes: '',
     length: '',
@@ -291,6 +292,7 @@ function buildFallbackDetailRecord(row, config) {
         stockCostOfGoods: '0',
         minimumStock: row.saleableStock ?? '0',
         accounts: cloneAccounts(config.createDefaults.accounts),
+        attachments: row.attachments ?? [],
     };
 }
 

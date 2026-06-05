@@ -130,7 +130,7 @@ class AbcAnalysisService
         $distribution = [
             [
                 'label' => 'A',
-                'title' => 'Material inti proyek dan renovasi',
+                'title' => 'Bahan bangunan utama dan kebutuhan renovasi',
                 'share' => number_format($pctA, 0) . '%',
                 'itemCount' => $itemsA . ' item',
                 'barWidth' => number_format($pctA, 0) . '%',

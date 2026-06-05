@@ -89,3 +89,16 @@ export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan back
 
     return fallbackMessage;
 }
+
+export async function uploadBackendAttachment(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await getBackendClient().post('/api/backend/attachments/upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+
+    return response.data?.data ?? null;
+}

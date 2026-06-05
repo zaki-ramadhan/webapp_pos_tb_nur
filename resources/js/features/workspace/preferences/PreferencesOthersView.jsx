@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import Tooltip from '@/components/ui/Tooltip';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
@@ -110,6 +111,13 @@ function OthersFieldRow({ row, onChangeControl }) {
     );
 }
 
+function getOthersInfo(value, label) {
+    const map = {
+        'company-smtp': 'Menggunakan server SMTP milik perusahaan sendiri untuk pengiriman email transaksi.',
+    };
+    return map[value] || `Informasi tentang ${label}`;
+}
+
 function OthersRadioRow({ row, onChange }) {
     return (
         <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
@@ -130,7 +138,9 @@ function OthersRadioRow({ row, onChange }) {
                                 <span className="text-[17px] leading-8">
                                     {option.label}
                                     {option.showInfo ? (
-                                        <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" />
+                                        <Tooltip content={getOthersInfo(option.value, option.label)} portal>
+                                            <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                                        </Tooltip>
                                     ) : null}
                                 </span>
                             }
@@ -198,7 +208,9 @@ function EmailTabContent({ tab, onChangeRadio }) {
                                     <span className="text-[17px] leading-8">
                                         {option.label}
                                         {option.showInfo ? (
-                                            <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" />
+                                            <Tooltip content={getOthersInfo(option.value, option.label)} portal>
+                                                <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                                            </Tooltip>
                                         ) : null}
                                     </span>
                                 }

@@ -13,7 +13,10 @@ class BackendResourceUpdateRequest extends BackendResourceRequest
             ];
         }
 
-        return $this->blueprint()->updateRules($this->record());
+        $rules = $this->blueprint()->updateRules($this->record());
+        $rules['attachment_ids'] = ['sometimes', 'array'];
+        $rules['attachment_ids.*'] = ['integer', 'exists:attachments,id'];
+        return $rules;
     }
 
     protected function ability(): string

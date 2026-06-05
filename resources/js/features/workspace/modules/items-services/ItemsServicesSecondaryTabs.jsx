@@ -16,6 +16,7 @@ import {
     SectionHeading,
     SimpleTextField,
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
+import AttachmentUploadField from '@/features/workspace/shared/AttachmentUploadField';
 
 export function ItemStockTab({ config, values }) {
     return (
@@ -158,16 +159,17 @@ export function ItemAccountsTab({ config, values, onChange }) {
     );
 }
 
-export function ItemImagesTab() {
+export function ItemImagesTab({ values, onChange }) {
     return (
-        <div className="min-h-[620px]">
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] bg-[#2353a0] text-white"
-                aria-label="Tambah gambar"
-            >
-                <PlusIcon className="h-7 w-7" />
-            </button>
+        <div className="min-h-[620px] max-w-[800px] space-y-4">
+            <SectionHeading title="Gambar / Foto Produk" />
+            <AttachmentUploadField
+                value={values.attachments ?? []}
+                onChange={(newList) => onChange('attachments', newList)}
+                accept="image/*"
+                multiple={true}
+                label=""
+            />
         </div>
     );
 }

@@ -17,8 +17,25 @@ import {
     DetailActionButton,
     renderItemsServicesDockIcon,
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import {
+    createBackendResource,
+    deleteBackendResource,
+    getBackendErrorMessage,
+    updateBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 
-export default function ItemsServicesFormView({ config, activeLevel2Tab }) {
+export default function ItemsServicesFormView({
+    pageId,
+    config,
+    activeLevel2Tab,
+    onOpenContent,
+    onOpenDetail,
+    onRefresh,
+}) {
     const detailRow = useMemo(() => {
         const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
 
@@ -26,22 +43,126 @@ export default function ItemsServicesFormView({ config, activeLevel2Tab }) {
             return null;
         }
 
-        return config.table.rows.find((row) => row.id === recordId) ?? null;
+        return config.table.rows.find((row) => String(row.id) === String(recordId)) ?? null;
     }, [activeLevel2Tab, config.table.rows]);
+
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'general');
-    const [values, setValues] = useState(() => buildItemsServicesFormValues(config, detailRow));
+    const initialValues = useMemo(() => buildItemsServicesFormValues(config, detailRow), [detailRow, config]);
+    const [values, setValues] = useState(() => initialValues);
+    const [status, setStatus] = useState({ tone: '', message: '' });
+    const [saving, setSaving] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     useEffect(() => {
         setActiveTabId(config.tabs?.[0]?.id ?? 'general');
-        setValues(buildItemsServicesFormValues(config, detailRow));
-    }, [config, detailRow]);
+        setValues(initialValues);
+        setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
+    }, [config, initialValues]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
             ...currentValues,
             [field]: nextValue,
         }));
+    }
+
+    const isDirty = useMemo(
+        () => JSON.stringify(values) !== JSON.stringify(initialValues),
+        [initialValues, values]
+    );
+
+    useWorkspaceDirtyRegistration({
+        pageId,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(pageId && activeLevel2Tab?.id),
+    });
+
+    async function handleSave() {
+        if (!values.name?.trim()) {
+            rejectCrudFormAction('Nama Barang wajib diisi.', { setStatus });
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: isDetail ? 'Sedang memperbarui barang/jasa.' : 'Sedang menyimpan barang/jasa.',
+            successMessage: isDetail ? 'Barang/jasa berhasil diperbarui.' : 'Barang/jasa berhasil dibuat.',
+            setSaving,
+            setStatus,
+            execute: async () => {
+                const payload = {
+                    code: values.code?.trim() || null,
+                    barcode: values.barcode?.trim() || null,
+                    name: values.name?.trim(),
+                    product_type: values.kind || 'Persediaan',
+                    category_id: values.category?.[0]?.id ?? values.categoryId ?? null,
+                    brand_id: values.brand?.[0]?.id ?? values.brandId ?? null,
+                    base_unit_id: values.primaryUnit?.[0]?.id ?? values.baseUnitId ?? null,
+                    purchase_unit_id: values.purchaseUnit?.[0]?.id ?? values.purchaseUnitId ?? null,
+                    sales_unit_id: values.salesUnit?.[0]?.id ?? values.salesUnitId ?? null,
+                    minimum_stock: values.minimumStock ? parseFloat(values.minimumStock) : null,
+                    default_purchase_price: values.purchasePrice ? parseFloat(values.purchasePrice) : null,
+                    default_sale_price: values.sellPriceLevel1 ? parseFloat(values.sellPriceLevel1) : null,
+                    notes: values.notes?.trim() || null,
+                    is_active: values.isActive !== false,
+                    attachment_ids: (values.attachments ?? []).map((att) => att.id),
+                    unit_conversions: (values.unitConversions ?? [])
+                        .map((conv) => ({
+                            id: String(conv.id).startsWith('conversion-') ? undefined : conv.id,
+                            unit_id: conv.unit?.[0]?.id ?? conv.unitId ?? null,
+                            quantity: conv.quantity ? parseFloat(conv.quantity) : 0,
+                        }))
+                        .filter((conv) => conv.unit_id && conv.quantity > 0),
+                };
+
+                const response = isDetail && detailRow?.id
+                    ? await updateBackendResource('products', detailRow.id, payload)
+                    : await createBackendResource('products', payload);
+
+                return response?.data ?? null;
+            },
+            getErrorMessage: (error) => getBackendErrorMessage(error),
+            onSuccess: async (record) => {
+                await onRefresh?.();
+
+                if (!isDetail && record?.id) {
+                    onOpenDetail?.({
+                        recordId: String(record.id),
+                        label: record.name ?? values.name.trim(),
+                        tabLabel: record.name ?? values.name.trim(),
+                    });
+                }
+            },
+        });
+    }
+
+    function requestDelete() {
+        if (!detailRow?.id || saving) {
+            return;
+        }
+        setDeleteConfirmationOpen(true);
+    }
+
+    async function handleDelete() {
+        if (!detailRow?.id) {
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: 'Sedang menghapus barang/jasa.',
+            successMessage: 'Barang/jasa berhasil dihapus.',
+            setSaving,
+            setStatus,
+            onStart: () => setDeleteConfirmationOpen(false),
+            execute: () => deleteBackendResource('products', detailRow.id),
+            getErrorMessage: (error) => getBackendErrorMessage(error),
+            onSuccess: async () => {
+                await onRefresh?.();
+                onOpenContent?.();
+            },
+        });
     }
 
     return (
@@ -65,6 +186,8 @@ export default function ItemsServicesFormView({ config, activeLevel2Tab }) {
 
             <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 xl:flex-row xl:items-start">
                 <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4 xl:order-1">
+                    <CrudStatusMessage status={status} className="mb-4" />
+
                     {activeTabId === 'sales-purchase' ? (
                         <ItemSalesPurchaseTab config={config} values={values} onChange={handleChange} />
                     ) : activeTabId === 'stock' ? (
@@ -72,7 +195,7 @@ export default function ItemsServicesFormView({ config, activeLevel2Tab }) {
                     ) : activeTabId === 'accounts' ? (
                         <ItemAccountsTab config={config} values={values} onChange={handleChange} />
                     ) : activeTabId === 'images' ? (
-                        <ItemImagesTab />
+                        <ItemImagesTab values={values} onChange={handleChange} />
                     ) : activeTabId === 'other' ? (
                         <ItemOtherTab config={config} values={values} onChange={handleChange} />
                     ) : (
@@ -93,11 +216,31 @@ export default function ItemsServicesFormView({ config, activeLevel2Tab }) {
                                 label={action.label}
                                 tone={action.tone}
                                 icon={renderItemsServicesDockIcon(action.icon)}
+                                loading={saving && action.id === 'save'}
+                                onClick={() => {
+                                    if (action.id === 'save') {
+                                        handleSave();
+                                    } else if (action.id === 'delete') {
+                                        requestDelete();
+                                    }
+                                }}
                             />
                         ))}
                     </div>
                 </div>
             </div>
+
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Barang/Jasa"
+                message="Barang/jasa ini akan dihapus permanen. Lanjutkan?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                confirmLoading={saving}
+            />
         </div>
     );
 }

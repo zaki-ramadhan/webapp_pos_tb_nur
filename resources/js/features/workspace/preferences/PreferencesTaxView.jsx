@@ -7,12 +7,24 @@ import TextInput from '@/components/ui/TextInput';
 import TransactionDateInput from '@/features/workspace/modules/shared/transaction/TransactionDateInput';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
+import Tooltip from '@/components/ui/Tooltip';
 import {
     CalendarIcon,
     CloseIcon,
     InfoIcon,
     LinkIcon,
 } from '@/features/workspace/shared/Icons';
+
+function getTaxTooltip(label) {
+    const cleanLabel = String(label || '').trim();
+    if (cleanLabel.includes('Tampilkan Kuantitas')) {
+        return 'Mengisi nilai kuantitas default = 1 dan mengambil harga jual terbaru saat memilih item barang/jasa.';
+    }
+    if (cleanLabel.includes('Default DPP')) {
+        return 'Menetapkan perhitungan DPP Pajak secara otomatis sebesar 11/12 dari nilai transaksi bruto.';
+    }
+    return `Informasi tentang ${cleanLabel}`;
+}
 
 function TaxRowLabel({ label, showInfo = false }) {
     if (!label) {
@@ -22,10 +34,15 @@ function TaxRowLabel({ label, showInfo = false }) {
     return (
         <div className="pt-2 text-[16px] leading-8 text-[#0f172a]">
             <span className="whitespace-pre-line">{label}</span>
-            {showInfo ? <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827]" /> : null}
+            {showInfo ? (
+                <Tooltip content={getTaxTooltip(label)} portal>
+                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                </Tooltip>
+            ) : null}
         </div>
     );
 }
+
 
 function TaxActionButton({ control }) {
     return (

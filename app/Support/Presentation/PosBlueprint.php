@@ -5605,7 +5605,7 @@ final class PosBlueprint
                     'distribution' => [
                         [
                             'label' => 'A',
-                            'title' => 'Material inti proyek dan renovasi',
+                            'title' => 'Bahan bangunan utama dan kebutuhan renovasi',
                             'share' => '76%',
                             'itemCount' => '14 item',
                             'barWidth' => '76%',
@@ -5673,7 +5673,7 @@ final class PosBlueprint
                         ],
                         [
                             'id' => 'apr-2',
-                            'segment' => 'Cross-sell',
+                            'segment' => 'Jual Silang',
                             'transactionBase' => 'Basis 312 transaksi',
                             'antecedent' => 'Pipa PVC 3/4 inch',
                             'consequent' => 'Lem PVC 400 gr',
@@ -5728,6 +5728,8 @@ final class PosBlueprint
                     'type' => 'ring-breakdown',
                     'percentage' => $profitPercentage,
                     'compare' => 'Dibanding periode lalu',
+                    'trend' => 'up',
+                    'growth' => '+12,4%',
                     'legend' => [
                         ['label' => 'Pendapatan', 'value' => $formatCurrencyShort($totalSalesVal), 'percent' => $pctRev . '%', 'color' => '#4fd0c5'],
                         ['label' => 'Nilai HPP', 'value' => $formatCurrencyShort($totalHppVal), 'percent' => $pctHpp . '%', 'color' => '#ffc54d'],
@@ -5768,6 +5770,8 @@ final class PosBlueprint
                     'type' => 'expense',
                     'percentage' => $pctExp . '%',
                     'compare' => 'Berdasarkan pengeluaran kas',
+                    'trend' => 'up',
+                    'growth' => '+8,7%',
                     'legend' => [
                         ['label' => 'Gaji', 'value' => $formatCurrencyShort($totalGaji), 'percent' => $pctGaji . '%', 'color' => '#5c8fd8'],
                         ['label' => 'Operasional', 'value' => $formatCurrencyShort($totalOperasional), 'percent' => $pctOpr . '%', 'color' => '#4fd0c5'],
@@ -5801,6 +5805,10 @@ final class PosBlueprint
                         'value' => $formatCurrencyShort($hariIniSales),
                         'secondaryLabel' => 'Belum Lunas',
                         'secondaryValue' => $formatCurrencyShort($fakturBelumLunasSales),
+                        'trend' => 'up',
+                        'growth' => '+15,3%',
+                        'secondaryTrend' => 'down',
+                        'secondaryGrowth' => '-2,5%',
                     ],
                     'gridClass' => 'md:col-span-2 lg:col-span-3 xl:col-span-6',
                     'heightClass' => 'min-h-[246px]',
@@ -5830,6 +5838,10 @@ final class PosBlueprint
                         'value' => $formatCurrencyShort($hariIniPurchase),
                         'secondaryLabel' => 'Belum Lunas',
                         'secondaryValue' => $formatCurrencyShort($fakturBelumLunasPurchase),
+                        'trend' => 'down',
+                        'growth' => '-4,2%',
+                        'secondaryTrend' => 'up',
+                        'secondaryGrowth' => '+1,8%',
                     ],
                     'gridClass' => 'md:col-span-2 lg:col-span-3 xl:col-span-6',
                     'heightClass' => 'min-h-[246px]',
@@ -5864,6 +5876,8 @@ final class PosBlueprint
                     'period' => 'Periode Aktif',
                     'balanceLabel' => 'Saldo kas tersedia',
                     'balanceValue' => $formatCurrencyShort(28000000000 + ($totalSalesVal - $totalExpensesVal)),
+                    'trend' => 'up',
+                    'growth' => '+18,6%',
                     'labels' => $cashAvailabilityLabels,
                     'series' => [
                         [
@@ -5925,7 +5939,7 @@ final class PosBlueprint
                         }
                     }
                 }
-                
+
                 if (!empty($combinedMetrics)) {
                     $w['metrics'] = $combinedMetrics;
                 }

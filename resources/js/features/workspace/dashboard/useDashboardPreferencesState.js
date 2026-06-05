@@ -230,8 +230,9 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
         setIsWidgetLibraryLoading(false);
     }
 
-    function handleRemoveWidget(widgetId) {
-        if (!widgetId) {
+    function handleRemoveWidget(widgetOrId) {
+        const id = widgetOrId && typeof widgetOrId === 'object' ? widgetOrId.id : widgetOrId;
+        if (!id) {
             return;
         }
 
@@ -240,7 +241,7 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
             widgetsByDashboard: {
                 ...currentValue.widgetsByDashboard,
                 [currentValue.selectedDashboardId]: (currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? []).filter(
-                    (widget) => widget.id !== widgetId
+                    (widget) => widget.id !== id
                 ),
             },
         }));

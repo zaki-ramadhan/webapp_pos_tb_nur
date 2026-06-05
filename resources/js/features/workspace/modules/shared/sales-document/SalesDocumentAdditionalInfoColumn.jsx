@@ -1,10 +1,20 @@
 import { Fragment } from 'react';
 
 import TextInput from '@/components/ui/TextInput';
+import Tooltip from '@/components/ui/Tooltip';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { InfoIcon, PinIcon } from '@/features/workspace/shared/Icons';
 import { TransactionFieldLabel, TransactionSectionHeading } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { ReadonlyDocumentTextarea } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
+
+function getSalesReturnInfo(value, label) {
+    const map = {
+        'returned': 'Semua barang yang diretur akan masuk kembali ke persediaan gudang.',
+        'not-returned': 'Barang tidak dikembalikan fisik ke gudang (misalnya barang rusak/dibuang), namun nilai piutang tetap disesuaikan.',
+        'partial-returned': 'Hanya sebagian barang yang diretur masuk kembali ke gudang fisik.',
+    };
+    return map[value] || `Informasi tentang ${label}`;
+}
 
 export default function SalesDocumentAdditionalInfoColumn({ config, values, setValues, isDetail, handlers }) {
     const additionalInfoLeadingFields = config.additionalInfoLeadingFields ?? [];
@@ -34,7 +44,11 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                                         {checked ? <span className="h-[10px] w-[10px] rounded-full bg-[#a7a7a8]" /> : null}
                                     </span>
                                     <span>{option.label}</span>
-                                    {option.showInfoIcon ? <InfoIcon className="h-4.5 w-4.5 text-[#1f2436]" /> : null}
+                                    {option.showInfoIcon ? (
+                                        <Tooltip content={getSalesReturnInfo(option.value, option.label)} portal>
+                                            <InfoIcon className="h-4.5 w-4.5 text-[#1f2436] cursor-help" />
+                                        </Tooltip>
+                                    ) : null}
                                 </label>
                             );
                         })}
@@ -42,6 +56,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                 </Fragment>
             );
         }
+
 
         if (field.type === 'lookup') {
             return (

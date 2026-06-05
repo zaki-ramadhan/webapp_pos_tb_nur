@@ -3,6 +3,8 @@ import { useRef, useState } from 'react';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import Spinner from '@/components/ui/Spinner';
+import Tooltip from '@/components/ui/Tooltip';
+import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import {
     ChevronDownIcon,
@@ -13,6 +15,7 @@ import {
     SearchIcon,
     TrashIcon,
 } from '@/features/workspace/shared/Icons';
+
 
 export function CopyPermissionsButton({ label, options, onSelect }) {
     const [open, setOpen] = useState(false);
@@ -189,23 +192,31 @@ export function GroupAccessActionDock({ actions = [], isDirty, onSave, onDelete 
     );
 }
 
-function GroupAccessAccessOption({ option, checked, onChange }) {
+function GroupAccessAccessOption({ option, checked, onChange, children }) {
     return (
-        <label className="inline-flex items-center gap-3 text-[17px] text-[#20273b]">
-            <input
-                type="radio"
-                name="group-access-limitation"
-                checked={checked}
-                onChange={() => onChange(option.id)}
-                className="h-5 w-5 border-[#c7d0df] text-[#0f65c9] focus:ring-[#5a84e5]/30"
-            />
-            <span className="inline-flex items-center gap-2">
-                <span>{option.label}</span>
-                {option.info ? <InfoIcon className="h-[18px] w-[18px] text-[#2f374d]" /> : null}
-            </span>
-        </label>
+        <div className="flex flex-col gap-2">
+            <label className="inline-flex items-center gap-3 text-[17px] text-[#20273b] cursor-pointer">
+                <input
+                    type="radio"
+                    name="group-access-limitation"
+                    checked={checked}
+                    onChange={() => onChange(option.id)}
+                    className="h-5 w-5 border-[#c7d0df] text-[#0f65c9] focus:ring-[#5a84e5]/30"
+                />
+                <span className="inline-flex items-center gap-2">
+                    <span>{option.label}</span>
+                    {option.info ? (
+                        <Tooltip content="Membatasi waktu akses login pengguna ke sistem." portal>
+                            <InfoIcon className="h-[18px] w-[18px] text-[#2f374d] cursor-help" />
+                        </Tooltip>
+                    ) : null}
+                </span>
+            </label>
+            {checked && children}
+        </div>
     );
 }
+
 
 function resolveSelectedUserKey(user, index) {
     if (user && typeof user === 'object') {
@@ -223,49 +234,39 @@ function resolveSelectedUserLabel(user) {
     return String(user ?? '');
 }
 
-function GroupAccessUserLookupField({ field, selectedUsers, onRemoveUser, onSearchUser = null }) {
+export function GroupAccessUserLookupField({ field, selectedUsers, onAddUser, onRemoveUser }) {
     return (
-        <div className="flex min-h-[66px] w-full max-w-[880px] overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-            <div className="flex min-w-0 flex-1 flex-col gap-2 px-3 py-2.5">
-                {selectedUsers.length ? (
-                    <div className="flex flex-wrap items-center gap-2">
-                        {selectedUsers.map((user, index) => (
-                            <button
-                                key={resolveSelectedUserKey(user, index)}
-                                type="button"
-                                onClick={() => onRemoveUser(user)}
-                                className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#7ea8e6] bg-[#eaf3ff] px-2 py-1 text-[14px] text-[#24324a]"
-                            >
-                                <span className="truncate">{resolveSelectedUserLabel(user)}</span>
-                                <CloseIcon className="h-3.5 w-3.5 shrink-0" />
-                            </button>
-                        ))}
-                    </div>
-                ) : null}
-
-                <span className="text-[15px] text-[#a0a7b8]">{field.placeholder}</span>
-            </div>
-
-            <button
-                type="button"
-                onClick={onSearchUser}
-                className="inline-flex w-12 items-center justify-center border-l border-[#d8dee8] text-[#1f2436]"
-                aria-label={`Cari ${field.label}`}
-                title={`Cari ${field.label}`}
-            >
-                <SearchIcon className="h-6 w-6 text-[#1f2436]" />
-            </button>
+        <div className="w-full max-w-[880px]">
+            <BackendLookupField
+                resource="users"
+                values={selectedUsers}
+                placeholder={field.placeholder}
+                searchLabel={`Cari ${field.label}`}
+                getOptionLabel={(option) => option.label ?? option.name ?? ''}
+                onSelect={(user) => {
+                    onAddUser({
+                        id: user.id,
+                        label: user.name ?? user.email ?? `Pengguna #${user.id}`,
+                    });
+                }}
+                onRemove={onRemoveUser}
+            />
         </div>
     );
 }
+
+
 
 export function GroupAccessGeneralSection({
     general,
     values,
     onChangeName,
     onChangeAccessLimitation,
+    onChangeAccessLimitDays,
+    onChangeAccessLimitStartHour,
+    onChangeAccessLimitEndHour,
+    onAddUser,
     onRemoveUser,
-    onSearchUser,
     textInput: TextInputComponent,
 }) {
     return (
@@ -289,24 +290,73 @@ export function GroupAccessGeneralSection({
 
                 <div className="pt-2 text-[17px] text-[#20273b]">{general.accessLimitations?.label}</div>
                 <div className="flex flex-col gap-4 pt-1">
-                    {(general.accessLimitations?.options ?? []).map((option) => (
-                        <GroupAccessAccessOption
-                            key={option.id}
-                            option={option}
-                            checked={values.accessLimitationId === option.id}
-                            onChange={onChangeAccessLimitation}
-                        />
-                    ))}
+                    {(general.accessLimitations?.options ?? []).map((option) => {
+                        const isChecked = values.accessLimitationId === option.id;
+                        return (
+                            <GroupAccessAccessOption
+                                key={option.id}
+                                option={option}
+                                checked={isChecked}
+                                onChange={onChangeAccessLimitation}
+                            >
+                                {option.id === 'limited-time' && (
+                                    <div className="pl-[32px] flex flex-col gap-2 mt-1">
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <select
+                                                value={values.accessLimitDays}
+                                                onChange={(e) => onChangeAccessLimitDays(e.target.value)}
+                                                className="h-[38px] rounded-[5px] border border-[#cfd6e2] bg-white px-3 text-[16px] text-[#1f2436] outline-none focus:border-[#5a84e5] cursor-pointer"
+                                            >
+                                                <option value="Senin-Jumat">Senin-Jumat</option>
+                                                <option value="Senin-Sabtu">Senin-Sabtu</option>
+                                                <option value="Setiap Hari">Setiap Hari</option>
+                                            </select>
+
+                                            <span className="text-[17px] text-[#20273b]">Jam</span>
+
+                                            <select
+                                                value={values.accessLimitStartHour}
+                                                onChange={(e) => onChangeAccessLimitStartHour(e.target.value)}
+                                                className="h-[38px] w-[70px] rounded-[5px] border border-[#cfd6e2] bg-white px-2 text-[16px] text-[#1f2436] outline-none focus:border-[#5a84e5] cursor-pointer"
+                                            >
+                                                {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
+                                                    <option key={hour} value={hour}>{hour}</option>
+                                                ))}
+                                            </select>
+
+                                            <span className="text-[17px] text-[#20273b]">-</span>
+
+                                            <select
+                                                value={values.accessLimitEndHour}
+                                                onChange={(e) => onChangeAccessLimitEndHour(e.target.value)}
+                                                className="h-[38px] w-[70px] rounded-[5px] border border-[#cfd6e2] bg-white px-2 text-[16px] text-[#1f2436] outline-none focus:border-[#5a84e5] cursor-pointer"
+                                            >
+                                                {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
+                                                    <option key={hour} value={hour}>{hour}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 text-[14px] italic text-[#e15263] border-l-2 border-[#cfd6e2] pl-2.5 py-0.5 leading-none">
+                                            Waktu Jakarta - Indonesia
+                                        </div>
+                                    </div>
+                                )}
+                            </GroupAccessAccessOption>
+                        );
+                    })}
                 </div>
 
                 <div className="pt-2 text-[17px] text-[#20273b]">{general.userSelection?.label}</div>
                 <GroupAccessUserLookupField
                     field={general.userSelection}
                     selectedUsers={values.selectedUsers}
+                    onAddUser={onAddUser}
                     onRemoveUser={onRemoveUser}
-                    onSearchUser={onSearchUser}
                 />
             </div>
         </div>
     );
 }
+
+

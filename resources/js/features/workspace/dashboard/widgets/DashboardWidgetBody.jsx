@@ -63,6 +63,8 @@ export default function DashboardWidgetBody({
                 legend={widget.legend}
                 totalLabel={widget.totalLabel}
                 totalValue={widget.totalValue}
+                trend={widget.trend}
+                growth={widget.growth}
             />
         );
     }
@@ -74,6 +76,8 @@ export default function DashboardWidgetBody({
                 compare={widget.compare}
                 legend={widget.legend}
                 totalValue={widget.totalValue}
+                trend={widget.trend}
+                growth={widget.growth}
             />
         );
     }

@@ -107,7 +107,7 @@ class CatalogBackendResources
                 label: 'Products',
                 searchColumns: ['code', 'barcode', 'name', 'product_type'],
                 modelClass: Product::class,
-                with: ['category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices'],
+                with: ['category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices', 'attachments'],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:product_categories,id'],
                     'brand_id' => ['nullable', 'integer', 'exists:brands,id'],

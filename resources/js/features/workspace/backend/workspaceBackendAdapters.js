@@ -712,6 +712,7 @@ export function mapProductRow(record) {
         baseUnitId: record.base_unit_id ?? record.base_unit?.id ?? null,
         purchaseUnitId: record.purchase_unit_id ?? record.purchase_unit?.id ?? null,
         salesUnitId: record.sales_unit_id ?? record.sales_unit?.id ?? null,
+        attachments: record.attachments ?? [],
     };
 }
 

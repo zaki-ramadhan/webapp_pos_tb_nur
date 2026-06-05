@@ -4,6 +4,7 @@ import {
 } from '@/features/workspace/dashboard/widgets/DashboardWidgetCharts';
 import DashboardWidgetEmptyState from '@/features/workspace/dashboard/widgets/DashboardWidgetEmptyState';
 import { InfoIcon } from '@/features/workspace/shared/Icons';
+import { TrendIndicator } from './DashboardWidgetMetrics';
 
 function WidgetPeriod({ value, align = 'right' }) {
     if (!value) {
@@ -119,9 +120,12 @@ export function CashAvailabilityWidget({ widget }) {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div className="min-w-0">
                     <MetricCaption>{widget.balanceLabel}</MetricCaption>
-                    <p className="mt-2 text-[18px] font-semibold leading-none text-[#1f2536] sm:text-[20px] md:text-[22px] xl:text-[24px]">
-                        {widget.balanceValue}
-                    </p>
+                    <div className="mt-2 flex items-baseline gap-2 flex-wrap">
+                        <p className="text-[18px] font-semibold leading-none text-[#1f2536] sm:text-[20px] md:text-[22px] xl:text-[24px]">
+                            {widget.balanceValue}
+                        </p>
+                        <TrendIndicator trend={widget.trend} growth={widget.growth} />
+                    </div>
                 </div>
                 <WidgetPeriod value={widget.period} />
             </div>
@@ -163,7 +167,9 @@ export function OrderStatusWidget({ widget }) {
 
             <div className="flex items-center gap-2">
                 <p className="text-[14px] font-medium text-[#ff4f1f] sm:text-[15px] md:text-[16px]">{widget.statusTitle}</p>
-                <InfoIcon className="h-4 w-4 shrink-0 text-[#1f2536]" />
+                {/* <Tooltip content="Menampilkan jumlah dokumen pesanan yang belum selesai diproses." portal>
+                    <InfoIcon className="h-4 w-4 shrink-0 text-[#1f2536] cursor-help" />
+                </Tooltip> */}
             </div>
 
             <OrderStatusStackChart segments={segments} />

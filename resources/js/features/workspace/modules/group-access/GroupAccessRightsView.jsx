@@ -11,7 +11,20 @@ import {
     GroupAccessCategoryList,
     PermissionCell,
 } from '@/features/workspace/modules/group-access/groupAccessViewShared';
+import Tooltip from '@/components/ui/Tooltip';
 import { InfoIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+
+function getAccessRightTooltip(rowId, label) {
+    const map = {
+        'manual-number': 'Memungkinkan pengguna mengedit atau mengisi nomor dokumen transaksi secara manual.',
+        'form-designer': 'Akses untuk mendesain tata letak dan cetakan dokumen formulir.',
+        'smartlink-upload-all-branches': 'Pengguna dapat mengunggah file e-Faktur Pajak dari seluruh cabang perusahaan.',
+        'report-export': 'Mengizinkan ekspor data laporan ke format eksternal seperti Excel atau PDF.',
+        'edit-efaktur-transactions': 'Memungkinkan perubahan atau penghapusan transaksi yang faktur pajaknya sudah diunggah.',
+        'ai-analysis': 'Akses ke fitur analisis data menggunakan kecerdasan buatan.',
+    };
+    return map[rowId] || `Informasi detail mengenai hak akses ${label}`;
+}
 
 function FragmentSection({ section, columns, onTogglePermission }) {
     return (
@@ -35,9 +48,14 @@ function FragmentSection({ section, columns, onTogglePermission }) {
                     <td className="px-5 py-1.5 text-sm text-[#222a3c]">
                         <div className="inline-flex items-start gap-2">
                             <span>{row.label}</span>
-                            {row.info ? <InfoIcon className="mt-0.5 h-[16px] w-[16px] text-[#2f374d]" /> : null}
+                            {row.info ? (
+                                <Tooltip content={getAccessRightTooltip(row.id, row.label)} portal>
+                                    <InfoIcon className="mt-0.5 h-[16px] w-[16px] text-[#2f374d] cursor-help" />
+                                </Tooltip>
+                            ) : null}
                         </div>
                     </td>
+
                     {columns.map((column) => (
                         <td key={column.id} className="px-4 py-1.5">
                             <PermissionCell
