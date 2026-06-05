@@ -15,10 +15,21 @@ export default function TextareaField({
     messageClassName = '',
     readOnly = false,
     tabIndex,
+    onChange,
     ...props
 }) {
-    const feedbackMessage = error || message;
+    const feedbackMessage = typeof error === 'string' ? (error || message) : message;
     const isNonInteractive = disabled || readOnly;
+
+    function handleChange(event) {
+        if (!onChange) return;
+        // Strip HTML tags to prevent XSS-like input in plain-text fields
+        const sanitized = event.target.value.replace(/<[^>]*>/g, '');
+        if (sanitized !== event.target.value) {
+            event.target.value = sanitized;
+        }
+        onChange(event);
+    }
     const toneClassName = error
         ? isNonInteractive
             ? 'border-[#e39191]'
@@ -49,6 +60,7 @@ export default function TextareaField({
                     tabIndex={readOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(error)}
                     className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default text-slate-400 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
+                    onChange={handleChange}
                     {...props}
                 />
 

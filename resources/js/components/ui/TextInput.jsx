@@ -110,7 +110,7 @@ export default function TextInput({
     ...props
 }) {
     const inputRef = useRef(null);
-    const feedbackMessage = error || message;
+    const feedbackMessage = typeof error === 'string' ? (error || message) : message;
     const isNonInteractive = disabled || (readOnly && !interactiveReadOnly);
     const toneClassName = error
         ? isNonInteractive

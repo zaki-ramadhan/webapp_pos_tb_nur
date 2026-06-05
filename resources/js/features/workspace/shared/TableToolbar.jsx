@@ -42,6 +42,7 @@ function ToolbarIconButton({ label, onClick, className, children }) {
             onClick={onClick}
             className={className}
             aria-label={label}
+            title={label}
         >
             {children}
         </button>
@@ -176,6 +177,7 @@ export default function TableToolbar({
                             onChange={search.onChange}
                             placeholder={search.placeholder}
                             trailing={searchTrailing}
+                            aria-label={search.placeholder ?? 'Cari data'}
                             className={`${sizeStyle.searchInput} w-full rounded-[4px] border-[#cfd6e2] ${search.widthClassName ?? 'sm:max-w-[248px]'}`.trim()}
                             inputClassName={search.inputClassName ?? `${sizeStyle.searchText} text-[#1f2436]`}
                             trailingClassName={search.trailingClassName ?? 'px-3'}

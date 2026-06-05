@@ -4,6 +4,7 @@ import {
     showLoadingToast,
     showSuccessToast,
     showWarningToast,
+    updateToastToSuccess,
 } from '@/components/feedback/toast';
 
 export function showCrudLoadingToast(message) {
@@ -34,6 +35,10 @@ export function showCrudValidationToast(message) {
     });
 }
 
-export function finishCrudLoadingToast(toastId) {
-    dismissToast(toastId);
+export function finishCrudLoadingToast(toastId, message = 'Data berhasil disimpan.') {
+    if (toastId) {
+        updateToastToSuccess(toastId, { message });
+    } else {
+        dismissToast(toastId);
+    }
 }

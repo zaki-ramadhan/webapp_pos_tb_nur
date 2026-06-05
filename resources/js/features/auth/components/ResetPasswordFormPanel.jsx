@@ -64,7 +64,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
     const authMessage = getAuthFormMessage(form.errors);
 
     return (
-        <div className="flex h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
+        <div className="flex min-h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
                 <AuthHeading title={resetPassword.title} subtitle={resetPassword.subtitle} />
 
@@ -83,7 +83,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
                         spellCheck={false}
                         value={form.data.email}
                         onChange={(event) => form.setData('email', event.target.value)}
-                        error={authMessage ? '' : form.errors.email}
+                        error={form.errors.email || Boolean(authMessage)}
                     />
                     <PasswordField
                         label={resetPassword.passwordLabel}

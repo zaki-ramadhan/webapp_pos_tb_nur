@@ -67,7 +67,7 @@ export default function LoginFormPanel({ login }) {
     const authMessage = getAuthFormMessage(form.errors);
 
     return (
-        <div className="flex h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
+        <div className="flex min-h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
                 <AuthHeading title={login.title} subtitle={login.subtitle} />
 
@@ -84,7 +84,7 @@ export default function LoginFormPanel({ login }) {
                         spellCheck={false}
                         value={form.data.identifier}
                         onChange={(event) => form.setData('identifier', event.target.value)}
-                        error={authMessage ? '' : form.errors.identifier}
+                        error={form.errors.identifier || Boolean(authMessage)}
                     />
                     <PasswordField
                         label={login.passwordLabel}
@@ -93,7 +93,7 @@ export default function LoginFormPanel({ login }) {
                         autoComplete="current-password"
                         value={form.data.password}
                         onChange={(event) => form.setData('password', event.target.value)}
-                        error={authMessage ? '' : form.errors.password}
+                        error={form.errors.password || Boolean(authMessage)}
                     />
 
                     <div className="text-right">

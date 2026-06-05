@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -86,23 +86,31 @@ export default function TableListView({
             return result;
         }, {}),
     );
+    const [sortKey, setSortKey] = useState(null);
+    const [sortDir, setSortDir] = useState('asc');
+
+    const handleSort = useCallback((columnId) => {
+        setSortKey((prev) => {
+            if (prev === columnId) {
+                setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+                return columnId;
+            }
+            setSortDir('asc');
+            return columnId;
+        });
+    }, []);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
         const searchKeys = table.searchKeys?.length ? table.searchKeys : table.columns.map((column) => column.id);
 
-        return table.rows.filter((row) => {
+        const filtered = table.rows.filter((row) => {
             const passesFilters = (table.filters ?? []).every((filter) =>
                 matchesFilter(row, filter, filters[filter.id] ?? 'all'),
             );
 
-            if (!passesFilters) {
-                return false;
-            }
-
-            if (!normalizedKeyword) {
-                return true;
-            }
+            if (!passesFilters) return false;
+            if (!normalizedKeyword) return true;
 
             return searchKeys.some((key) =>
                 String(row[key] ?? '')
@@ -110,7 +118,19 @@ export default function TableListView({
                     .includes(normalizedKeyword),
             );
         });
-    }, [filters, keyword, table.columns, table.filters, table.rows, table.searchKeys]);
+
+        if (!sortKey) return filtered;
+
+        return [...filtered].sort((a, b) => {
+            const aVal = a[sortKey] ?? '';
+            const bVal = b[sortKey] ?? '';
+            const aNum = Number(aVal);
+            const bNum = Number(bVal);
+            const isNumeric = !Number.isNaN(aNum) && !Number.isNaN(bNum);
+            const cmp = isNumeric ? aNum - bNum : String(aVal).localeCompare(String(bVal), 'id');
+            return sortDir === 'asc' ? cmp : -cmp;
+        });
+    }, [filters, keyword, sortDir, sortKey, table.columns, table.filters, table.rows, table.searchKeys]);
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-2 py-2 shadow-[0_2px_10px_rgba(15,23,42,0.08)] sm:px-3 sm:py-3">
@@ -180,6 +200,8 @@ export default function TableListView({
                                     widthClassName={column.widthClassName}
                                     sortable={column.sortable !== false}
                                     noWrap={column.noWrap === true}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={column.sortable !== false ? () => handleSort(column.id) : null}
                                 />
                             ))}
                         </tr>

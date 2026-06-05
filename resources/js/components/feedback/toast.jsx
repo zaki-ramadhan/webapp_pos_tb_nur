@@ -39,6 +39,13 @@ export function showWarningToast({ title = 'Perhatian', message }) {
     }));
 }
 
+export function updateToastToSuccess(id, { title = 'Berhasil', message }) {
+    return toast.success(title, buildToastOptions({
+        id,
+        description: message,
+    }));
+}
+
 export function updateToastToError(id, { title = 'Terjadi masalah', message }) {
     return toast.error(title, buildToastOptions({
         id,

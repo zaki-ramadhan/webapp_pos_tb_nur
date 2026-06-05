@@ -15,7 +15,7 @@ export default function SelectField({
     children,
     ...props
 }) {
-    const feedbackMessage = error || message;
+    const feedbackMessage = typeof error === 'string' ? (error || message) : message;
     const resolvedContainerClassName = containerClassName || 'w-full';
     const toneClassName = error
         ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
@@ -23,7 +23,7 @@ export default function SelectField({
 
     return (
         <div className={resolvedContainerClassName}>
-            <span
+            <div
                 className={`group flex h-11 w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''} ${className}`.trim()}
             >
                 <select
@@ -43,7 +43,7 @@ export default function SelectField({
                 >
                     <ChevronDown aria-hidden="true" className="h-4 w-4" strokeWidth={2.2} absoluteStrokeWidth />
                 </span>
-            </span>
+            </div>
 
             {feedbackMessage ? (
                 <p className={`mt-1.5 text-[13px] leading-5 ${error ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>

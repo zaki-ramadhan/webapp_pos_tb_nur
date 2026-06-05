@@ -9,16 +9,25 @@ export default function AuthLayout({ children, title }) {
 
     useEffect(() => {
         clearWorkspaceClientState();
+
+        // Lock html and body scrolling to ensure only inner panels handle overflow
+        document.documentElement.classList.add('overflow-hidden');
+        document.body.classList.add('overflow-hidden');
+
+        return () => {
+            document.documentElement.classList.remove('overflow-hidden');
+            document.body.classList.remove('overflow-hidden');
+        };
     }, []);
 
     return (
         <>
             <Head title={title || appName} />
 
-            <div className="auth-screen relative min-h-screen overflow-x-hidden bg-[#9ab8ea] text-slate-700">
+        <div className="auth-screen relative h-screen overflow-hidden bg-[#9ab8ea] text-slate-700">
                 <GlobalBackgroundArt />
 
-                <div className="relative flex min-h-screen items-center justify-center px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+                <div className="relative flex h-full items-center justify-center px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
                     {children}
                 </div>
             </div>

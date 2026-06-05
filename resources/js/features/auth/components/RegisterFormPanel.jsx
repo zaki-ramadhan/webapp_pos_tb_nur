@@ -72,7 +72,7 @@ export default function RegisterFormPanel({ register }) {
     }
 
     return (
-        <div className="flex h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
+        <div className="flex min-h-full flex-col px-5 py-5 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
                 <AuthHeading title={register.title} subtitle={register.subtitle} />
 

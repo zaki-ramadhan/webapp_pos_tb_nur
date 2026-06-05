@@ -47,7 +47,17 @@ export default function ConfirmationModal({
             closeLabel={closeLabel}
             maxWidthClassName={maxWidthClassName}
             footer={(
-                <div className="flex items-center justify-end gap-2.5">
+            <div className="flex items-center justify-end gap-2.5">
+                    <Button
+                        variant="secondary"
+                        size="md"
+                        onClick={onClose}
+                        disabled={cancelDisabled || confirmLoading}
+                        className="h-10 min-w-[60px] rounded-[4px] border-[#8ec1ef] px-4 text-[15px] text-[#1a63b3] shadow-none"
+                    >
+                        {cancelLabel}
+                    </Button>
+
                     <Button
                         variant={confirmVariant}
                         size="md"
@@ -58,16 +68,6 @@ export default function ConfirmationModal({
                         className="h-10 min-w-[60px] rounded-[4px] px-5 text-[15px] shadow-none"
                     >
                         {confirmLabel}
-                    </Button>
-
-                    <Button
-                        variant="secondary"
-                        size="md"
-                        onClick={onClose}
-                        disabled={cancelDisabled || confirmLoading}
-                        className="h-10 min-w-[60px] rounded-[4px] border-[#8ec1ef] px-4 text-[15px] text-[#1a63b3] shadow-none"
-                    >
-                        {cancelLabel}
                     </Button>
                 </div>
             )}
