@@ -9,7 +9,7 @@ import {
     getTodayString,
     getFirstDayOfMonthString
 } from './ReportParameterFields';
-import { resolveReportParams } from '../utils/reportHelpers';
+import { resolveReportParams } from '@/features/workspace/modules/report-list/utils/reportHelpers';
 import CheckboxField from '@/components/ui/CheckboxField';
 
 export default function ReportParameterModal({ report, open, onClose, onSubmit }) {

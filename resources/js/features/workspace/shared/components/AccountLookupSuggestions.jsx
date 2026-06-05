@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
-import { buildAccountLookupLabel, buildAccountLookupMeta } from '../hooks/useAccountLookupController';
+import { buildAccountLookupLabel, buildAccountLookupMeta } from '@/features/workspace/shared/hooks/useAccountLookupController';
 
 export default function AccountLookupSuggestions({
     open,

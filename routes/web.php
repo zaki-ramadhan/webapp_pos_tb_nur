@@ -12,8 +12,14 @@ use App\Http\Controllers\Web\ResetPasswordController;
 use App\Http\Controllers\Web\UpdatePasswordController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
+})->name('home');
+
 Route::middleware('guest')->group(function (): void {
-    Route::get('/', HomeController::class)->name('home');
+    Route::get('/login', HomeController::class)->name('login');
     Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
     Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
     Route::post('/login', LoginController::class)->name('login.store');

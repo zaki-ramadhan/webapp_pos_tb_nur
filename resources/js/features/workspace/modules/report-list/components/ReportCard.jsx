@@ -1,5 +1,5 @@
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
-import { getIconStyles } from '../utils/reportHelpers';
+import { getIconStyles } from '@/features/workspace/modules/report-list/utils/reportHelpers';
 
 export default function ReportCard({ report, onClick }) {
     const styles = getIconStyles(report.icon);

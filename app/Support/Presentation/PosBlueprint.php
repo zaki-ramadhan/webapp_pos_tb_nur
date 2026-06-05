@@ -62,7 +62,7 @@ final class PosBlueprint
                 'submitLabel' => 'Daftar',
                 'loginPrompt' => 'Sudah memiliki akun?',
                 'loginCta' => 'Masuk Sekarang',
-                'loginHref' => '/',
+                'loginHref' => '/login',
             ],
         ];
     }
@@ -84,7 +84,7 @@ final class PosBlueprint
                 'submitLabel' => 'Simpan Password',
                 'loginPrompt' => 'Sudah ingat password lama?',
                 'loginCta' => 'Kembali ke Login',
-                'loginHref' => '/',
+                'loginHref' => '/login',
                 'token' => $token,
                 'email' => $email,
             ],

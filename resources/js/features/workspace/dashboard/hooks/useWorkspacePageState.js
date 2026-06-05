@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     hasAnyDirtyTabs,
     hasDirtyTabsForPage,
@@ -86,6 +86,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
         setActivePageId(dashboardPage.id);
     }, [activePageId, dashboardPage.id, openPages]);
+
 
     function handleTogglePanel(panelId) {
         setActivePanelId((currentPanelId) => (currentPanelId === panelId ? null : panelId));
@@ -496,6 +497,32 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
         setPendingCloseRequest(null);
     }
+
+    // Sync browser URL with the active page to support bookmarking/sharing links
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        if (activePageId && activePageId !== dashboardPage.id) {
+            url.searchParams.set('page', activePageId);
+        } else {
+            url.searchParams.delete('page');
+        }
+        window.history.replaceState({}, '', url.toString());
+    }, [activePageId, dashboardPage.id]);
+
+    // Initialize the active page from the URL query parameter on mount
+    const hasInitializedFromUrl = useRef(false);
+    useEffect(() => {
+        if (hasInitializedFromUrl.current) {
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const urlPageId = params.get('page');
+        if (urlPageId && pages[urlPageId]) {
+            hasInitializedFromUrl.current = true;
+            openPageById(urlPageId);
+        }
+    }, [pages, openPageById]);
 
     return {
         activePanelId,
