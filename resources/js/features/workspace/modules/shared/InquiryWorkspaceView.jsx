@@ -175,7 +175,7 @@ export default function InquiryWorkspaceView({
     const hasRows = filteredRows.length > 0;
 
     return (
-        <div className="flex min-h-full flex-col gap-3">
+        <div className="flex min-h-full flex-col gap-3 pt-3">
             <div className="flex flex-col gap-3 2xl:flex-row 2xl:items-start 2xl:justify-between">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
                     {controls.map((control, index) => (
