@@ -92,12 +92,43 @@ class BackendResourceAccessService
         $user->loadMissing('accessGroups.permissions');
 
         return $user->accessGroups
-            ->filter(fn ($group) => (bool) $group->is_active)
+            ->filter(fn ($group) => (bool) $group->is_active && $this->isGroupWithinTimeLimits($group))
             ->flatMap(fn ($group) => $group->permissions)
             ->filter(function (AccessGroupPermission $permission) use ($permissionKey): bool {
                 return in_array($permission->menu_key, [$permissionKey, '*'], true);
             })
             ->values();
+    }
+
+    protected function isGroupWithinTimeLimits($group): bool
+    {
+        if ($group->access_limit_type !== 'limited-time') {
+            return true;
+        }
+
+        $now = \Illuminate\Support\Carbon::now('Asia/Jakarta');
+        $dayOfWeek = $now->dayOfWeek;
+
+        $daysLimit = $group->access_limit_days;
+        if ($daysLimit === 'Senin-Jumat') {
+            if ($dayOfWeek < 1 || $dayOfWeek > 5) {
+                return false;
+            }
+        } elseif ($daysLimit === 'Senin-Sabtu') {
+            if ($dayOfWeek < 1 || $dayOfWeek > 6) {
+                return false;
+            }
+        }
+
+        $startHour = (int) $group->access_limit_start_hour;
+        $endHour = (int) $group->access_limit_end_hour;
+        $currentTimeDecimal = $now->hour + ($now->minute / 60.0) + ($now->second / 3600.0);
+
+        if ($startHour <= $endHour) {
+            return ($currentTimeDecimal >= $startHour && $currentTimeDecimal < $endHour);
+        } else {
+            return ($currentTimeDecimal >= $startHour || $currentTimeDecimal < $endHour);
+        }
     }
 
     protected function canView(AccessGroupPermission $permission): bool
