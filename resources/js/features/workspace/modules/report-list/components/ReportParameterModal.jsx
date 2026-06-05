@@ -85,8 +85,8 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
     };
 
     return (
-        <ModalBase open={open} onBackdropClick={onClose} panelClassName="max-w-xl">
-            <div className="flex flex-col h-full bg-white rounded-lg overflow-hidden border border-[#0d386c]/20 shadow-2xl">
+        <ModalBase open={open} onBackdropClick={onClose} panelClassName="max-w-xl !overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] border border-[#0d386c]/20">
+            <div className="flex flex-col h-full bg-white">
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 bg-[#0d386c] text-white">
                     <h2 className="text-[17px] font-bold tracking-wide">
