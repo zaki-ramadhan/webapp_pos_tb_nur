@@ -56,7 +56,7 @@ export function buildYearOptions() {
 export function ReportFormRow({ label, required = false, children }) {
     return (
         <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[140px_minmax(0,1fr)] py-1">
-            <label className="text-[15px] font-semibold text-[#1f2436] flex items-center select-none">
+            <label className="text-[14px] font-medium text-[#1f2436] flex items-center select-none">
                 <span>{label}</span>
                 {required && <span className="ml-1 text-[#e31a1a]">*</span>}
             </label>
@@ -70,7 +70,7 @@ export function ReportFormRow({ label, required = false, children }) {
 export function ReportSectionHeading({ title }) {
     return (
         <div className="space-y-1 pb-1 pt-1.5 border-b border-slate-200">
-            <h3 className="text-[19px] font-semibold text-[#1f2436] leading-7">
+            <h3 className="text-[15px] font-medium text-[#1f2436] leading-6">
                 {title}
             </h3>
         </div>

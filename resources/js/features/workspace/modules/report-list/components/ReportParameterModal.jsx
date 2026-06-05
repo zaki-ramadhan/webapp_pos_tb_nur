@@ -89,7 +89,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
             <div className="flex flex-col h-full bg-white rounded-[16px] sm:rounded-[12px] overflow-hidden border border-[#0d386c]/20 shadow-2xl">
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 bg-[#0d386c] text-white">
-                    <h2 className="text-[17px] font-semibold tracking-wide">
+                    <h2 className="text-[16px] font-medium tracking-wide">
                         Parameter Laporan
                     </h2>
                     <button
@@ -106,7 +106,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="button"
                         onClick={() => setActiveTab('umum')}
-                        className={`flex-1 py-2.5 text-center text-[15px] font-semibold border-b-2 transition-colors ${
+                        className={`flex-1 py-2.5 text-center text-[14px] font-medium border-b-2 transition-colors ${
                             activeTab === 'umum'
                                 ? 'border-[#e31a1a] text-[#e31a1a]'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
@@ -117,7 +117,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="button"
                         onClick={() => setActiveTab('kolom')}
-                        className={`flex-1 py-2.5 text-center text-[15px] font-semibold border-b-2 transition-colors ${
+                        className={`flex-1 py-2.5 text-center text-[14px] font-medium border-b-2 transition-colors ${
                             activeTab === 'kolom'
                                 ? 'border-[#e31a1a] text-[#e31a1a]'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
