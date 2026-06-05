@@ -196,18 +196,21 @@ class BackendResourceController extends Controller
     public function syncCurrencies(Request $request): JsonResponse
     {
         try {
-            $response = Http::timeout(10)->get('https://open.er-api.com/v6/latest/USD');
+            // Cache the rates for 12 hours (43200 seconds) to prevent API rate limit exhaustion.
+            // Since the free API updates daily, hitting it more frequently is unnecessary.
+            $rates = \Illuminate\Support\Facades\Cache::remember('currency_rates_usd', 43200, function () {
+                $response = Http::timeout(10)->get('https://open.er-api.com/v6/latest/USD');
 
-            if (!$response->successful()) {
-                return response()->json([
-                    'message' => 'Gagal mengambil data dari API ExchangeRate.',
-                ], 500);
-            }
+                if (!$response->successful()) {
+                    throw new \Exception('Gagal mengambil data dari API ExchangeRate.');
+                }
 
-            $data = $response->json();
-            $rates = $data['rates'] ?? [];
+                $data = $response->json();
+                return $data['rates'] ?? [];
+            });
 
             if (empty($rates) || !isset($rates['IDR'])) {
+                \Illuminate\Support\Facades\Cache::forget('currency_rates_usd');
                 return response()->json([
                     'message' => 'Format data API tidak valid.',
                 ], 500);
@@ -239,7 +242,7 @@ class BackendResourceController extends Controller
             }
 
             return response()->json([
-                'message' => "Berhasil sinkronisasi {$syncedCount} mata uang dengan kurs real-time.",
+                'message' => "Berhasil sinkronisasi {$syncedCount} mata uang dengan kurs real-time (cached).",
                 'rates' => $rates,
             ]);
         } catch (\Throwable $e) {
