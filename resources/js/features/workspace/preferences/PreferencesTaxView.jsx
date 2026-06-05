@@ -222,13 +222,7 @@ function TaxRow({ row, onChangeControl, onChangeRadio, onToggleOption, onToggleS
 }
 
 export default function PreferencesTaxView({ tabs, activeTabId, onSelectTab, onUpdate }) {
-    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
-
-    useEffect(() => {
-        if (onUpdate && tabState !== tabs) {
-            onUpdate(tabState);
-        }
-    }, [onUpdate, tabState, tabs]);
+    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId, onUpdate);
 
     function updateActiveTabRows(updater) {
         updateActiveTab((tab) => ({

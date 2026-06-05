@@ -1,39 +1,23 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
-export function clonePreferenceValue(value) {
-    if (typeof globalThis.structuredClone === 'function') {
-        return globalThis.structuredClone(value);
-    }
-
-    return JSON.parse(JSON.stringify(value));
-}
-
-export default function usePreferencesTabsState(tabs, activeTabId) {
-    const [tabState, setTabState] = useState(() => clonePreferenceValue(tabs ?? []));
-
-    useEffect(() => {
-        setTabState(clonePreferenceValue(tabs ?? []));
-    }, [tabs]);
-
+export default function usePreferencesTabsState(tabs, activeTabId, onUpdate) {
     const activeTab = useMemo(() => {
-        return tabState.find((tab) => tab.id === activeTabId) ?? tabState[0] ?? null;
-    }, [activeTabId, tabState]);
+        return tabs.find((tab) => tab.id === activeTabId) ?? tabs[0] ?? null;
+    }, [activeTabId, tabs]);
 
     const updateActiveTab = useCallback(
         (updater) => {
-            setTabState((currentTabs) => {
-                const targetTabId = currentTabs.some((tab) => tab.id === activeTabId) ? activeTabId : currentTabs[0]?.id;
-
-                return currentTabs.map((tab) => (tab.id === targetTabId ? updater(tab) : tab));
-            });
+            if (!tabs) return;
+            const targetTabId = tabs.some((tab) => tab.id === activeTabId) ? activeTabId : tabs[0]?.id;
+            const nextTabs = tabs.map((tab) => (tab.id === targetTabId ? updater(tab) : tab));
+            onUpdate?.(nextTabs);
         },
-        [activeTabId],
+        [activeTabId, tabs, onUpdate],
     );
 
     return {
-        tabState,
+        tabState: tabs,
         activeTab,
         updateActiveTab,
-        setTabState,
     };
 }

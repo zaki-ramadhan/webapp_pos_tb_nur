@@ -226,13 +226,7 @@ function EmailTabContent({ tab, onChangeRadio }) {
 }
 
 export default function PreferencesOthersView({ tabs, activeTabId, onSelectTab, onUpdate }) {
-    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
-
-    useEffect(() => {
-        if (onUpdate && tabState !== tabs) {
-            onUpdate(tabState);
-        }
-    }, [onUpdate, tabState, tabs]);
+    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId, onUpdate);
 
     function handleChangeControl(rowId, controlId, value) {
         updateActiveTab((tab) => ({

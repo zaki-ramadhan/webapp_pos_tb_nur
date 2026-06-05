@@ -10,13 +10,7 @@ export default function PreferencesLimitationsView({
     onSelectTab,
     onUpdate,
 }) {
-    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId);
-
-    useEffect(() => {
-        if (onUpdate && tabState !== tabs) {
-            onUpdate(tabState);
-        }
-    }, [onUpdate, tabState, tabs]);
+    const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId, onUpdate);
 
     function updateActiveTabSections(updater) {
         updateActiveTab((tab) => ({
