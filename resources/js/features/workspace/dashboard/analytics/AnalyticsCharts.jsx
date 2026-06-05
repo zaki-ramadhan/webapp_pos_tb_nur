@@ -1,9 +1,77 @@
+import { useState, useEffect, useRef } from 'react';
 import '@/features/workspace/dashboard/analytics/chartSetup';
 
 import { Bar, Chart as ReactChart } from 'react-chartjs-2';
 
 import { formatCompactLabel, parsePercentValue } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { buildSingleHueEmphasisPalette, toRgba } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
+
+function usePersistentTooltip() {
+    const chartRef = useRef(null);
+    const [lockedElement, setLockedElement] = useState(null);
+
+    useEffect(() => {
+        const handleDocumentClick = (e) => {
+            const chart = chartRef.current;
+            if (chart && chart.canvas && !chart.canvas.contains(e.target)) {
+                setLockedElement(null);
+                chart.setActiveElements([]);
+                chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+                chart.update();
+            }
+        };
+
+        document.addEventListener('click', handleDocumentClick);
+        return () => {
+            document.removeEventListener('click', handleDocumentClick);
+        };
+    }, [lockedElement]);
+
+    const handleChartClick = (event, elements, chart) => {
+        if (elements.length > 0) {
+            const element = elements[0];
+            const isSame =
+                lockedElement &&
+                lockedElement.index === element.index &&
+                lockedElement.datasetIndex === element.datasetIndex;
+
+            if (isSame) {
+                setLockedElement(null);
+                chart.setActiveElements([]);
+                chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+            } else {
+                const newLock = {
+                    datasetIndex: element.datasetIndex,
+                    index: element.index,
+                    x: event.x,
+                    y: event.y,
+                };
+                setLockedElement(newLock);
+                chart.setActiveElements([element]);
+                chart.tooltip.setActiveElements([element], { x: event.x, y: event.y });
+            }
+            chart.update();
+        } else {
+            setLockedElement(null);
+            chart.setActiveElements([]);
+            chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+            chart.update();
+        }
+    };
+
+    const handleChartHover = (event, elements, chart) => {
+        if (lockedElement) {
+            chart.setActiveElements([lockedElement]);
+            chart.tooltip.setActiveElements([lockedElement], { x: lockedElement.x, y: lockedElement.y });
+        }
+    };
+
+    return {
+        chartRef,
+        handleChartClick,
+        handleChartHover,
+    };
+}
 
 const analyticsBarPaletteOptions = {
     mutedAlpha: 0.28,
@@ -13,6 +81,7 @@ const analyticsBarPaletteOptions = {
 };
 
 export function AbcContributionChart({ items }) {
+    const { chartRef, handleChartClick, handleChartHover } = usePersistentTooltip();
     let cumulativeShare = 0;
     const chartData = items.map((item) => {
         cumulativeShare += parsePercentValue(item.share);
@@ -48,6 +117,8 @@ export function AbcContributionChart({ items }) {
     const options = {
         responsive: true,
         maintainAspectRatio: false,
+        onClick: handleChartClick,
+        onHover: handleChartHover,
         interaction: {
             mode: 'index',
             intersect: false,
@@ -112,7 +183,7 @@ export function AbcContributionChart({ items }) {
     return (
         <div className="space-y-5 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="h-[200px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px] lg:h-[232px]">
-                <ReactChart type="bar" data={data} options={options} />
+                <ReactChart ref={chartRef} type="bar" data={data} options={options} />
             </div>
 
             <div className="grid gap-2 sm:grid-cols-3">
@@ -140,6 +211,7 @@ export function AbcContributionChart({ items }) {
 }
 
 export function AprioriRuleChart({ rules }) {
+    const { chartRef, handleChartClick, handleChartHover } = usePersistentTooltip();
     const chartData = rules.map((rule) => ({
         id: rule.id,
         label: formatCompactLabel(rule.consequent),
@@ -172,6 +244,8 @@ export function AprioriRuleChart({ rules }) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+        onClick: handleChartClick,
+        onHover: handleChartHover,
         plugins: {
             legend: {
                 display: false,
@@ -237,6 +311,9 @@ export function AprioriRuleChart({ rules }) {
                         size: 14,
                     },
                 },
+                afterFit(scale) {
+                    scale.width = 220;
+                },
             },
         },
     };
@@ -244,49 +321,40 @@ export function AprioriRuleChart({ rules }) {
     return (
         <div className="rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="h-[250px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[270px] lg:h-[280px]">
-                <Bar data={data} options={options} />
+                <Bar ref={chartRef} data={data} options={options} />
             </div>
         </div>
     );
 }
 
 export function IntegratedMatrixChart({ rules }) {
+    const { chartRef, handleChartClick, handleChartHover } = usePersistentTooltip();
     const chartData = rules.map((rule) => {
         const ant = rule.antecedentAbc ?? 'C';
         const cons = rule.consequentAbc ?? 'C';
-        let color = 'rgba(29, 78, 216, 0.18)';
-        let hoverColor = 'rgba(29, 78, 216, 0.45)';
         let labelTactic = 'Penataan Rak';
 
         if (ant === 'A' && cons === 'C') {
-            color = 'rgba(29, 78, 216, 1.0)';
-            hoverColor = 'rgba(30, 64, 175, 1.0)';
             labelTactic = 'A → C Jual Silang';
         } else if (ant === 'A' && cons === 'A') {
-            color = 'rgba(29, 78, 216, 0.65)';
-            hoverColor = 'rgba(29, 78, 216, 0.90)';
             labelTactic = 'A → A Paket Bundling';
         } else if (ant === 'B' && cons === 'B') {
-            color = 'rgba(29, 78, 216, 0.40)';
-            hoverColor = 'rgba(29, 78, 216, 0.70)';
             labelTactic = 'B → B Paket Pelengkap';
         }
 
         return {
             id: rule.id,
-            label: `${formatCompactLabel(rule.antecedent)} → ${formatCompactLabel(rule.consequent)}`,
+            label: `[${ant}] ${formatCompactLabel(rule.antecedent)} → [${cons}] ${formatCompactLabel(rule.consequent)}`,
             fullLabel: `${rule.antecedent} [Kat ${ant}] → ${rule.consequent} [Kat ${cons}]`,
             confidence: parsePercentValue(rule.confidence),
             support: rule.support,
-            focusColor: color,
-            hoverColor,
-            labelTactic
+            lift: rule.lift,
+            labelTactic,
         };
     });
 
     const confidenceValues = chartData.map((item) => item.confidence);
-    const backgroundColors = chartData.map((item) => item.focusColor);
-    const hoverBackgroundColors = chartData.map((item) => item.hoverColor);
+    const confidencePalette = buildSingleHueEmphasisPalette(confidenceValues, '#2d77d1', analyticsBarPaletteOptions);
 
     const data = {
         labels: chartData.map((item) => item.label),
@@ -294,10 +362,10 @@ export function IntegratedMatrixChart({ rules }) {
             {
                 label: 'Confidence',
                 data: confidenceValues,
-                backgroundColor: backgroundColors,
-                hoverBackgroundColor: hoverBackgroundColors,
-                borderColor: backgroundColors,
-                hoverBorderColor: hoverBackgroundColors,
+                backgroundColor: confidencePalette.backgroundColor,
+                hoverBackgroundColor: confidencePalette.hoverBackgroundColor,
+                borderColor: confidencePalette.borderColor,
+                hoverBorderColor: confidencePalette.hoverBorderColor,
                 borderWidth: 0.5,
                 borderRadius: 4,
                 barThickness: 22,
@@ -310,6 +378,8 @@ export function IntegratedMatrixChart({ rules }) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+        onClick: handleChartClick,
+        onHover: handleChartHover,
         plugins: {
             legend: {
                 display: false,
@@ -332,7 +402,7 @@ export function IntegratedMatrixChart({ rules }) {
                         return [
                             `Taktik: ${item?.labelTactic ?? '-'}`,
                             `Confidence (Peluang): ${context.parsed.x}%`,
-                            `Support (Kekerapan): ${item?.support ?? '0'}`,
+                            `Support (Tingkat Kemunculan): ${item?.support ?? '0'}`,
                             `Lift Ratio: ${item?.lift ?? '0'}`,
                         ];
                     },
@@ -372,6 +442,9 @@ export function IntegratedMatrixChart({ rules }) {
                         size: 13,
                     },
                 },
+                afterFit(scale) {
+                    scale.width = 340;
+                },
             },
         },
     };
@@ -379,35 +452,35 @@ export function IntegratedMatrixChart({ rules }) {
     return (
         <div className="space-y-5 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="h-[260px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[280px]">
-                <Bar data={data} options={options} />
+                <Bar ref={chartRef} data={data} options={options} />
             </div>
 
             <div className="grid gap-3 border border-slate-100 bg-white rounded-lg p-3 shadow-[0_2px_6px_rgba(0,0,0,0.02)] grid-cols-2 lg:grid-cols-4">
                 <div className="flex items-start gap-2">
-                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,1.0)]" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#2d77d1]" />
                     <div>
-                        <p className="text-sm font-bold text-[#1e40af] leading-4">A → C Jual Silang (Fokus 100%)</p>
+                        <p className="text-sm font-bold text-[#1f2536] leading-4">A → C Jual Silang (Fokus 100%)</p>
                         <p className="text-sm text-slate-500 mt-1">Barang aksesoris (C) dipicu produk inti (A).</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.65)]" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#2d77d1]/75" />
                     <div>
-                        <p className="text-sm font-bold text-[#1e40af]/80 leading-4">A → A Paket Bundling (65%)</p>
+                        <p className="text-sm font-bold text-[#1f2536] leading-4">A → A Paket Bundling (65%)</p>
                         <p className="text-sm text-slate-500 mt-1">Bundling diskon produk inti omzet terbesar.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.40)]" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#2d77d1]/50" />
                     <div>
-                        <p className="text-sm font-bold text-[#1e40af]/60 leading-4">B → B Paket Pelengkap (40%)</p>
+                        <p className="text-sm font-bold text-[#1f2536] leading-4">B → B Paket Pelengkap (40%)</p>
                         <p className="text-sm text-slate-500 mt-1">Produk pendukung rutin yang stabil.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1 h-3 w-3 shrink-0 rounded bg-[rgba(29,78,216,0.18)]" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#2d77d1]/25" />
                     <div>
-                        <p className="text-sm font-bold text-[#1e40af]/40 leading-4">Display Rak Rakit (18%)</p>
+                        <p className="text-sm font-bold text-[#1f2536] leading-4">Display Rak Rakit (18%)</p>
                         <p className="text-sm text-slate-500 mt-1">Penataan letak rak berdampingan.</p>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 import { forwardRef, useCallback, useImperativeHandle, useMemo } from 'react';
+import { router } from '@inertiajs/react';
 
 import DashboardActivePageContent from '@/features/workspace/dashboard/DashboardActivePageContent';
 import DashboardSidebar from '@/features/workspace/dashboard/DashboardSidebar';
@@ -60,7 +61,16 @@ const DashboardView = forwardRef(function DashboardView(
     const handleRefreshWidget = useCallback(
         async () =>
             new Promise((resolve) => {
-                setTimeout(resolve, dashboard.toolbar.loadingOverlay.durationMs ?? 900);
+                const startTime = Date.now();
+                router.reload({
+                    only: ['widgets', 'dashboard'],
+                    onFinish: () => {
+                        const elapsed = Date.now() - startTime;
+                        const duration = dashboard.toolbar.loadingOverlay.durationMs ?? 900;
+                        const remaining = Math.max(0, duration - elapsed);
+                        setTimeout(resolve, remaining);
+                    },
+                });
             }),
         [dashboard.toolbar.loadingOverlay.durationMs],
     );

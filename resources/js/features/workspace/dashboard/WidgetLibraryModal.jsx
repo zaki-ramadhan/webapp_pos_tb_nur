@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Activity, TrendingUp, Layers, Package, Landmark } from 'lucide-react';
 
 import ModalBase from '@/components/ui/ModalBase';
 import TextInput from '@/components/ui/TextInput';
@@ -6,62 +7,43 @@ import EmptyState from '@/components/ui/EmptyState';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
 
 function LibraryIcon({ type }) {
-    const className = 'h-9 w-9 shrink-0';
+    let iconElement;
+    let containerClass = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border ';
 
     switch (type) {
         case 'activity':
-            return (
-                <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-                    <rect x="4" y="4" width="40" height="40" rx="8" fill="#d7f0fb" stroke="#52b9e9" strokeWidth="2" />
-                    <rect x="13" y="12" width="18" height="4" rx="2" fill="#52b9e9" />
-                    <rect x="13" y="20" width="10" height="4" rx="2" fill="#7dcdf0" />
-                    <rect x="13" y="28" width="14" height="4" rx="2" fill="#7dcdf0" />
-                    <rect x="13" y="36" width="8" height="4" rx="2" fill="#7dcdf0" />
-                    <rect x="33" y="12" width="3" height="28" rx="1.5" fill="#52b9e9" />
-                </svg>
-            );
+            iconElement = <Activity className="h-5 w-5 text-sky-500" strokeWidth={2} />;
+            containerClass += 'border-sky-200 bg-[linear-gradient(180deg,#f0f9ff_0%,#e0f2fe_100%)]';
+            break;
         case 'cash-flow':
-            return (
-                <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-                    <rect x="4" y="4" width="40" height="40" rx="8" fill="#ffe7d6" stroke="#ff883d" strokeWidth="2" />
-                    <rect x="13" y="16" width="5" height="18" rx="2" fill="#ff883d" />
-                    <rect x="21.5" y="11" width="5" height="23" rx="2" fill="#ffb57a" />
-                    <rect x="30" y="20" width="5" height="14" rx="2" fill="#ff883d" />
-                    <path fill="#ff883d" d="M11 37.5h26v2H11z" />
-                </svg>
-            );
+            iconElement = <TrendingUp className="h-5 w-5 text-amber-500" strokeWidth={2} />;
+            containerClass += 'border-amber-200 bg-[linear-gradient(180deg,#fffbeb_0%,#fef3c7_100%)]';
+            break;
         case 'asset':
-            return (
-                <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-                    <rect x="4" y="4" width="40" height="40" rx="8" fill="#eef9d5" stroke="#8bc72f" strokeWidth="2" />
-                    <circle cx="24" cy="24" r="10.5" fill="none" stroke="#8bc72f" strokeWidth="3" />
-                    <circle cx="24" cy="24" r="3.5" fill="#8bc72f" />
-                    <path fill="#8bc72f" d="M24 10h2v6h-2zm0 22h2v6h-2zM10 23h6v2h-6zm22 0h6v2h-6z" />
-                </svg>
-            );
+            iconElement = <Layers className="h-5 w-5 text-indigo-500" strokeWidth={2} />;
+            containerClass += 'border-indigo-200 bg-[linear-gradient(180deg,#eef2ff_0%,#e0e7ff_100%)]';
+            break;
         case 'stock':
-            return (
-                <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-                    <rect x="4" y="4" width="40" height="40" rx="8" fill="#d7f0fb" stroke="#52b9e9" strokeWidth="2" />
-                    <rect x="12" y="10" width="24" height="28" rx="4" fill="none" stroke="#52b9e9" strokeWidth="3" />
-                    <rect x="17" y="16" width="14" height="3.5" rx="1.75" fill="#7dcdf0" />
-                    <rect x="17" y="23" width="14" height="3.5" rx="1.75" fill="#7dcdf0" />
-                    <rect x="17" y="30" width="10" height="3.5" rx="1.75" fill="#7dcdf0" />
-                </svg>
-            );
+            iconElement = <Package className="h-5 w-5 text-teal-500" strokeWidth={2} />;
+            containerClass += 'border-teal-200 bg-[linear-gradient(180deg,#f0fdf4_0%,#dcfce7_100%)]';
+            break;
         case 'expense':
-            return (
-                <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-                    <rect x="4" y="4" width="40" height="40" rx="8" fill="#ffe7d6" stroke="#ff883d" strokeWidth="2" />
-                    <rect x="12" y="26" width="6" height="10" rx="2" fill="#ff883d" />
-                    <rect x="21" y="18" width="6" height="18" rx="2" fill="#ffb57a" />
-                    <rect x="30" y="12" width="6" height="24" rx="2" fill="#ff883d" />
-                </svg>
-            );
+            iconElement = <Landmark className="h-5 w-5 text-rose-500" strokeWidth={2} />;
+            containerClass += 'border-rose-200 bg-[linear-gradient(180deg,#fff1f2_0%,#ffe4e6_100%)]';
+            break;
         default:
-            return null;
+            iconElement = null;
     }
+
+    if (!iconElement) return null;
+
+    return (
+        <div className={containerClass} aria-hidden="true">
+            {iconElement}
+        </div>
+    );
 }
+
 
 export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem }) {
     const [keyword, setKeyword] = useState('');

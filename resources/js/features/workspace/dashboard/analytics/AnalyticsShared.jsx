@@ -59,11 +59,11 @@ export function parsePercentValue(value = '0%') {
 export function formatCompactLabel(value = '') {
     const normalizedValue = String(value).trim();
 
-    if (normalizedValue.length <= 18) {
+    if (normalizedValue.length <= 36) {
         return normalizedValue;
     }
 
-    return `${normalizedValue.slice(0, 18)}...`;
+    return `${normalizedValue.slice(0, 36)}...`;
 }
 
 export function getMetric(metrics, label) {
