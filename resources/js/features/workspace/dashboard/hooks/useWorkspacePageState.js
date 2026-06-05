@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-    hasAnyDirtyTabs,
     hasDirtyTabsForPage,
     withDirtyLabel,
 } from '@/features/workspace/dashboard/WorkspaceDraftState';
@@ -19,6 +18,8 @@ import {
 } from '@/features/workspace/dashboard/workspacePagePersistence';
 import mergeWorkspacePageConfigs from '@/features/workspace/dashboard/mergeWorkspacePageConfigs';
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
+import useWorkspaceDirtyState from './useWorkspaceDirtyState';
+import useWorkspaceURLSync from './useWorkspaceURLSync';
 
 export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspaceMenu }) {
     const pages = useMemo(() => mergeWorkspacePageConfigs(dashboard.pages), [dashboard.pages]);
@@ -43,7 +44,15 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
     const [activeLevel2Tabs, setActiveLevel2Tabs] = useState(initialWorkspacePageState.activeLevel2Tabs);
     const [pageLevel2ContentTabs, setPageLevel2ContentTabs] = useState(initialWorkspacePageState.pageLevel2ContentTabs);
     const [pageOpeningLoading, setPageOpeningLoading] = useState(null);
-    const [dirtyTabs, setDirtyTabs] = useState({});
+    
+    // Delegate dirty tab state management to custom hook
+    const {
+        dirtyTabs,
+        clearPageDirty,
+        clearTabDirty,
+        draftStateValue,
+    } = useWorkspaceDirtyState();
+
     const [pendingCloseRequest, setPendingCloseRequest] = useState(null);
 
     useEffect(() => {
@@ -137,77 +146,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         activePageMode,
     } = resolveLevel2State(activePage, activePageContentTabs, activeLevel2Tabs);
 
-    const setTabDirty = useCallback((pageId, tabId) => {
-        if (!pageId || !tabId) {
-            return;
-        }
 
-        setDirtyTabs((currentTabs) => {
-            if (currentTabs?.[pageId]?.[tabId]) {
-                return currentTabs;
-            }
-
-            return {
-                ...currentTabs,
-                [pageId]: {
-                    ...(currentTabs[pageId] ?? {}),
-                    [tabId]: true,
-                },
-            };
-        });
-    }, []);
-
-    const clearTabDirty = useCallback((pageId, tabId) => {
-        if (!pageId || !tabId) {
-            return;
-        }
-
-        setDirtyTabs((currentTabs) => {
-            if (!currentTabs?.[pageId]?.[tabId]) {
-                return currentTabs;
-            }
-
-            const nextPageTabs = { ...(currentTabs[pageId] ?? {}) };
-            delete nextPageTabs[tabId];
-
-            if (Object.keys(nextPageTabs).length) {
-                return {
-                    ...currentTabs,
-                    [pageId]: nextPageTabs,
-                };
-            }
-
-            const nextTabs = { ...currentTabs };
-            delete nextTabs[pageId];
-            return nextTabs;
-        });
-    }, []);
-
-    const clearPageDirty = useCallback((pageId) => {
-        if (!pageId) {
-            return;
-        }
-
-        setDirtyTabs((currentTabs) => {
-            if (!currentTabs?.[pageId]) {
-                return currentTabs;
-            }
-
-            const nextTabs = { ...currentTabs };
-            delete nextTabs[pageId];
-            return nextTabs;
-        });
-    }, []);
-
-    const draftStateValue = useMemo(
-        () => ({
-            dirtyTabs,
-            setTabDirty,
-            clearTabDirty,
-            clearPageDirty,
-        }),
-        [clearPageDirty, clearTabDirty, dirtyTabs, setTabDirty],
-    );
 
     const tabItems = useMemo(
         () =>
@@ -468,20 +407,6 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         return () => clearTimeout(timeoutId);
     }, [pageOpeningLoading, pages]);
 
-    useEffect(() => {
-        if (!hasAnyDirtyTabs(dirtyTabs)) {
-            return undefined;
-        }
-
-        function handleBeforeUnload(event) {
-            event.preventDefault();
-            event.returnValue = '';
-        }
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-    }, [dirtyTabs]);
-
     function handleConfirmPendingClose() {
         if (!pendingCloseRequest) {
             return;
@@ -498,31 +423,12 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         setPendingCloseRequest(null);
     }
 
-    // Sync browser URL with the active page to support bookmarking/sharing links
-    useEffect(() => {
-        const url = new URL(window.location.href);
-        if (activePageId && activePageId !== dashboardPage.id) {
-            url.searchParams.set('page', activePageId);
-        } else {
-            url.searchParams.delete('page');
-        }
-        window.history.replaceState({}, '', url.toString());
-    }, [activePageId, dashboardPage.id]);
-
-    // Initialize the active page from the URL query parameter on mount
-    const hasInitializedFromUrl = useRef(false);
-    useEffect(() => {
-        if (hasInitializedFromUrl.current) {
-            return;
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        const urlPageId = params.get('page');
-        if (urlPageId && pages[urlPageId]) {
-            hasInitializedFromUrl.current = true;
-            openPageById(urlPageId);
-        }
-    }, [pages, openPageById]);
+    useWorkspaceURLSync({
+        activePageId,
+        dashboardPageId: dashboardPage.id,
+        pages,
+        openPageById,
+    });
 
     return {
         activePanelId,
