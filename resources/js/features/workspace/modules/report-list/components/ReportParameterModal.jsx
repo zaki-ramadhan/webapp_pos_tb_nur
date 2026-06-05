@@ -209,3 +209,5 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                 </div>
             </div>
         </ModalBase>
+    );
+}
