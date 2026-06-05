@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus, Minus, Pencil } from 'lucide-react';
 import ModalBase from '@/components/ui/ModalBase';
+import CheckboxField from '@/components/ui/CheckboxField';
 import { showInfoToast } from '@/components/feedback/toast';
 import {
     ReportDateField,
     ReportBranchField,
     ReportCheckboxList,
+    ReportSectionHeading,
     getTodayString,
     getFirstDayOfMonthString
 } from './ReportParameterFields';
 import { resolveReportParams } from '@/features/workspace/modules/report-list/utils/reportHelpers';
-import CheckboxField from '@/components/ui/CheckboxField';
 
 export default function ReportParameterModal({ report, open, onClose, onSubmit }) {
     const [activeTab, setActiveTab] = useState('umum');
@@ -85,29 +86,29 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
 
     return (
         <ModalBase open={open} onBackdropClick={onClose} panelClassName="max-w-xl">
-            <div className="flex flex-col h-full bg-white rounded-lg overflow-hidden">
+            <div className="flex flex-col h-full bg-white rounded-lg overflow-hidden border border-[#0d386c]/20 shadow-2xl">
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-                    <h2 className="text-lg font-semibold text-slate-800 line-clamp-1">
-                        Parameter Laporan — {report.title}
+                <div className="flex items-center justify-between px-5 py-3.5 bg-[#0d386c] text-white">
+                    <h2 className="text-[17px] font-bold tracking-wide">
+                        Parameter Laporan
                     </h2>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-md hover:bg-slate-100"
+                        className="text-white/80 hover:text-white transition-colors p-1 rounded hover:bg-white/10"
                     >
                         <X className="h-5 w-5" />
                     </button>
                 </div>
 
                 {/* Tab Navigation */}
-                <div className="flex border-b border-slate-200">
+                <div className="flex border-b border-slate-200 bg-white">
                     <button
                         type="button"
                         onClick={() => setActiveTab('umum')}
-                        className={`flex-1 py-3 text-center text-sm font-semibold border-b-2 transition-colors ${
+                        className={`flex-1 py-2.5 text-center text-[15px] font-bold border-b-2 transition-colors ${
                             activeTab === 'umum'
-                                ? 'border-[#ef3968] text-[#ef3968]'
+                                ? 'border-[#e31a1a] text-[#e31a1a]'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
@@ -116,9 +117,9 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="button"
                         onClick={() => setActiveTab('kolom')}
-                        className={`flex-1 py-3 text-center text-sm font-semibold border-b-2 transition-colors ${
+                        className={`flex-1 py-2.5 text-center text-[15px] font-bold border-b-2 transition-colors ${
                             activeTab === 'kolom'
-                                ? 'border-[#ef3968] text-[#ef3968]'
+                                ? 'border-[#e31a1a] text-[#e31a1a]'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
@@ -127,10 +128,11 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                 </div>
 
                 {/* Content */}
-                <form onSubmit={handleTampilkan} className="flex-1 overflow-y-auto p-5 space-y-4">
+                <form onSubmit={handleTampilkan} className="flex-1 overflow-y-auto p-5 space-y-4 bg-white">
                     {activeTab === 'umum' ? (
                         <div className="space-y-4">
                             {/* Date Field */}
+                            <ReportSectionHeading title="Tanggal" />
                             {reportSchema && (
                                 <ReportDateField
                                     type={reportSchema.dateType}
@@ -139,7 +141,8 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                 />
                             )}
 
-                            {/* Branch Field */}
+                            {/* Parameter Tambahan */}
+                            <ReportSectionHeading title="Parameter Tambahan" />
                             {reportSchema?.hasBranch && <ReportBranchField />}
 
                             {/* Checkbox Parameters */}
@@ -152,11 +155,10 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                             )}
                         </div>
                     ) : (
-                        <div className="space-y-4 py-2">
-                            <p className="text-sm text-slate-500">
-                                Kolom default laporan ini akan ditampilkan secara otomatis. Anda dapat menyesuaikan tampilan kolom di bawah ini:
-                            </p>
-                            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                        <div className="space-y-4">
+                            <ReportSectionHeading title="Parameter Kolom" />
+                            
+                            <div className="border border-slate-300 rounded-[4px] bg-white h-[200px] overflow-y-auto p-3.5 space-y-2 mt-2 select-none shadow-inner">
                                 <CheckboxField id="col-default-1" label="Tanggal / Periode" checked disabled />
                                 <CheckboxField id="col-default-2" label="Nomor Dokumen" checked disabled />
                                 <CheckboxField id="col-default-3" label="Keterangan" checked disabled />
@@ -164,28 +166,46 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                 <CheckboxField id="col-default-5" label="Cabang" checked disabled />
                                 <CheckboxField id="col-default-6" label="Akun Terkait" checked disabled />
                             </div>
+
+                            {/* Action Buttons below listbox */}
+                            <div className="flex items-center gap-1.5 pt-1">
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-[#5cb85c] hover:bg-[#4cae4c] text-white shadow-sm transition-colors"
+                                    title="Tambah Kolom"
+                                >
+                                    <Plus className="h-5 w-5" strokeWidth={2.5} />
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-[#f4f4f4] border border-slate-200 text-slate-400 cursor-not-allowed"
+                                    title="Ubah Kolom"
+                                >
+                                    <Pencil className="h-4 w-4" />
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-[#f4f4f4] border border-slate-200 text-slate-400 cursor-not-allowed"
+                                    title="Hapus Kolom"
+                                >
+                                    <Minus className="h-5 w-5" strokeWidth={2.5} />
+                                </button>
+                            </div>
                         </div>
                     )}
                 </form>
 
                 {/* Footer */}
-                <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-slate-100 bg-slate-50">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="h-10 px-4 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-md hover:bg-slate-100 transition-colors"
-                    >
-                        Batal
-                    </button>
+                <div className="flex items-center justify-end px-5 py-3.5 border-t border-slate-200 bg-white">
                     <button
                         type="submit"
                         onClick={handleTampilkan}
-                        className="h-10 px-5 text-sm font-medium text-white bg-[#ef3968] hover:bg-[#d6305a] rounded-md shadow-sm transition-colors"
+                        className="h-10 px-6 text-[15px] font-semibold text-white bg-[#154c9f] hover:bg-[#0d386c] rounded-[4px] shadow-sm transition-colors active:bg-[#0b2d5a]"
                     >
                         Tampilkan
                     </button>
                 </div>
             </div>
         </ModalBase>
-    );
-}
