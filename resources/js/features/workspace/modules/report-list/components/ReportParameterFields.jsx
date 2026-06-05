@@ -171,20 +171,29 @@ export function ReportDateField({ type, value, onChange }) {
     );
 }
 
-export function ReportBranchField() {
+import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
+
+export function ReportBranchField({ value, onSelect, onRemove }) {
+    const buildLookupLabel = (record) => {
+        const code = String(record?.code ?? '').trim();
+        const name = String(record?.name ?? '').trim();
+        if (code && name) {
+            return `[${code}] ${name}`;
+        }
+        return name || code;
+    };
+
     return (
-        <ReportFormRow label="Cabang" required>
-            <div className="relative flex h-11 w-full items-center rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-700 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]">
-                <div className="flex flex-1 items-center gap-1.5">
-                    <span className="inline-flex items-center gap-1 rounded bg-slate-100 border border-slate-200 pl-2 pr-1 py-0.5 text-xs font-semibold text-slate-600 select-none">
-                        [Semua Cabang]
-                        <button type="button" className="text-slate-400 hover:text-slate-600 ml-1 p-0.5 rounded-full hover:bg-slate-200">
-                            <X className="h-3 w-3" />
-                        </button>
-                    </span>
-                </div>
-                <Search className="h-4.5 w-4.5 text-slate-400 select-none pointer-events-none" />
-            </div>
+        <ReportFormRow label="Cabang">
+            <BackendLookupField
+                resource="branches"
+                values={value ? [value] : []}
+                placeholder="Semua Cabang"
+                getOptionLabel={buildLookupLabel}
+                onSelect={onSelect}
+                onRemove={onRemove}
+                className="w-full"
+            />
         </ReportFormRow>
     );
 }

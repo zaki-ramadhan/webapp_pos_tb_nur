@@ -72,7 +72,7 @@ export default function ModalBase({
     return (
         <div
             onClick={onBackdropClick ?? undefined}
-            className={`fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-slate-950/55 px-3 py-3 sm:items-center sm:px-4 sm:py-6 ${className}`.trim()}
+            className={`fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/50 px-3 py-3 sm:items-center sm:px-4 sm:py-6 ${className}`.trim()}
         >
             <div
                 ref={panelRef}

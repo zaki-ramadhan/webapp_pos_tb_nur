@@ -12,7 +12,6 @@ import {
     getFirstDayOfMonthString
 } from './ReportParameterFields';
 import { resolveReportParams, resolveReportColumns } from '@/features/workspace/modules/report-list/utils/reportHelpers';
-
 export default function ReportParameterModal({ report, open, onClose, onSubmit }) {
     const [activeTab, setActiveTab] = useState('umum');
     const [params, setParams] = useState({
@@ -23,6 +22,8 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
         startPeriodYear: String(new Date().getFullYear()),
         endPeriodMonth: String(new Date().getMonth() + 1),
         endPeriodYear: String(new Date().getFullYear()),
+        branch: null,
+        branchId: null,
         checkboxes: {}
     });
 
@@ -57,6 +58,8 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
             startPeriodYear: String(new Date().getFullYear()),
             endPeriodMonth: String(new Date().getMonth() + 1),
             endPeriodYear: String(new Date().getFullYear()),
+            branch: null,
+            branchId: null,
             checkboxes: initialCheckboxes
         });
         setActiveTab('umum');
@@ -71,6 +74,22 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
     }, [report, open]);
 
     if (!report) return null;
+
+    const handleSelectBranch = (record) => {
+        setParams(prev => ({
+            ...prev,
+            branch: record,
+            branchId: record?.id ?? null
+        }));
+    };
+
+    const handleRemoveBranch = () => {
+        setParams(prev => ({
+            ...prev,
+            branch: null,
+            branchId: null
+        }));
+    };
 
     const handleCheckboxChange = (nextCheckboxes) => {
         setParams(prev => ({
@@ -200,7 +219,13 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
 
                             {/* Parameter Tambahan */}
                             <ReportSectionHeading title="Parameter Tambahan" />
-                            {reportSchema?.hasBranch && <ReportBranchField />}
+                            {reportSchema?.hasBranch && (
+                                <ReportBranchField
+                                    value={params.branch}
+                                    onSelect={handleSelectBranch}
+                                    onRemove={handleRemoveBranch}
+                                />
+                            )}
 
                             {/* Checkbox Parameters */}
                             {reportSchema?.checkboxes && reportSchema.checkboxes.length > 0 && (
