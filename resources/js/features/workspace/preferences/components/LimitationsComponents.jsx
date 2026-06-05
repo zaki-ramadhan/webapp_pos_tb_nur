@@ -2,9 +2,8 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import Tooltip from '@/components/ui/Tooltip';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
-import { InfoIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { SearchIcon } from '@/features/workspace/shared/Icons';
 
 export function LimitationsSimpleRadioGroup({ row, onChange }) {
     return (
@@ -262,11 +261,6 @@ export function LimitationsCheckboxList({ row, onToggleItem }) {
                     label={
                         <span className="text-[17px] leading-8 text-[#111827]">
                             {item.label}
-                            {item.showInfo ? (
-                                <Tooltip content={getLimitationInfo(item.id, item.label)} portal>
-                                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
-                                </Tooltip>
-                            ) : null}
                         </span>
                     }
                     className="gap-3"

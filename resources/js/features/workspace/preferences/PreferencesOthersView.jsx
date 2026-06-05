@@ -1,13 +1,9 @@
-import { useEffect } from 'react';
-
 import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import Tooltip from '@/components/ui/Tooltip';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
-import { InfoIcon } from '@/features/workspace/shared/Icons';
 
 function OthersRowLabel({ label }) {
     return <div className="pt-2 text-[16px] leading-8 text-[#111827]">{label}</div>;
@@ -137,11 +133,6 @@ function OthersRadioRow({ row, onChange }) {
                             label={
                                 <span className="text-[17px] leading-8">
                                     {option.label}
-                                    {option.showInfo ? (
-                                        <Tooltip content={getOthersInfo(option.value, option.label)} portal>
-                                            <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
-                                        </Tooltip>
-                                    ) : null}
                                 </span>
                             }
                             className="gap-3"
@@ -207,11 +198,6 @@ function EmailTabContent({ tab, onChangeRadio }) {
                                 label={
                                     <span className="text-[17px] leading-8">
                                         {option.label}
-                                        {option.showInfo ? (
-                                            <Tooltip content={getOthersInfo(option.value, option.label)} portal>
-                                                <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
-                                            </Tooltip>
-                                        ) : null}
                                     </span>
                                 }
                                 className="gap-3"
