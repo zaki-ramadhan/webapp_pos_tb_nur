@@ -1,0 +1,236 @@
+<?php
+
+namespace App\Support\Presentation\Blueprints\Pages;
+
+class CashPaymentPage
+{
+    public static function get(array $navigationPages): array
+    {
+        return array_replace($navigationPages['cash-payment'], [
+            'subtab' => [
+                'id' => 'cash-payment-create',
+                'label' => 'Data Baru',
+            ],
+            'viewModes' => [
+                'form' => 'Form',
+                'table' => 'Tabel',
+            ],
+            'cashPayment' => [
+                'topActions' => [
+                    [
+                        'id' => 'settings',
+                        'label' => 'Pengaturan',
+                        'icon' => 'settings',
+                        'tone' => 'outline',
+                    ],
+                ],
+                'labels' => [
+                    'cashBank' => 'Kas/Bank',
+                    'documentNumber' => 'No Bukti #',
+                    'entryDate' => 'Tanggal',
+                    'checkNumber' => 'No Cek #',
+                    'recipient' => 'Penerima',
+                    'voided' => 'V O I D',
+                    'branch' => 'Cabang',
+                    'notes' => 'Catatan',
+                    'reconcileStatus' => 'Terekonsiliasi',
+                    'printStatus' => 'Dicetak/email',
+                    'kapKjs' => 'No KAP - No KJS',
+                    'ntpn' => 'NTPN',
+                ],
+                'cashBankPlaceholder' => 'Cari/Pilih...',
+                'branchPlaceholder' => 'Cari/Pilih...',
+                'numberingOptions' => [
+                    'Bank BCA IDR Jakarta (069-773-3993)',
+                    'Bank Mandiri IDR Surabaya',
+                    'Kas Besar Kantor Jakarta',
+                ],
+                'takeButtonLabel' => 'Ambil',
+                'lineSearchPlaceholder' => 'Cari/Pilih Akun Perkiraan...',
+                'lineSectionTitle' => 'Rincian Pembayaran',
+                'infoTitle' => 'Info lainnya',
+                'additionalInfoTitle' => 'Info Tambahan',
+                'totalCardLabel' => 'Nilai',
+                'sectionTabs' => [
+                    ['id' => 'details', 'label' => 'Rincian Pembayaran', 'icon' => 'document'],
+                    ['id' => 'additional-info', 'label' => 'Info lainnya', 'icon' => 'info'],
+                ],
+                'dockActions' => [
+                    [
+                        'id' => 'save',
+                        'label' => 'Simpan',
+                        'icon' => 'save',
+                        'tone' => 'primary',
+                        'items' => [
+                            ['id' => 'save-now', 'label' => 'Simpan'],
+                            ['id' => 'save-new', 'label' => 'Simpan dan buat baru'],
+                        ],
+                    ],
+                    [
+                        'id' => 'document',
+                        'label' => 'Form lain',
+                        'icon' => 'document',
+                        'tone' => 'secondary',
+                        'items' => [
+                            ['id' => 'open-document', 'label' => 'Buka dokumen terkait'],
+                            ['id' => 'preview-document', 'label' => 'Preview dokumen'],
+                        ],
+                    ],
+                    [
+                        'id' => 'attachment',
+                        'label' => 'Lampiran',
+                        'icon' => 'paperclip',
+                        'tone' => 'secondary',
+                        'items' => [
+                            ['id' => 'add-attachment', 'label' => 'Tambah lampiran'],
+                            ['id' => 'manage-attachment', 'label' => 'Kelola lampiran'],
+                        ],
+                    ],
+                    [
+                        'id' => 'more',
+                        'label' => 'Lainnya',
+                        'icon' => 'kebab',
+                        'tone' => 'success',
+                        'items' => [
+                            ['id' => 'duplicate-transaction', 'label' => 'Duplikasi transaksi'],
+                            ['id' => 'mark-review', 'label' => 'Tandai untuk review'],
+                        ],
+                    ],
+                    [
+                        'id' => 'delete',
+                        'label' => 'Hapus',
+                        'icon' => 'trash',
+                        'tone' => 'danger',
+                    ],
+                ],
+                'draft' => [
+                    'bankAccounts' => [],
+                    'entryDate' => '25/04/2026',
+                    'autoNumber' => true,
+                    'numberingType' => 'Bank BCA IDR Jakarta (069-773-3993)',
+                    'documentNumber' => '',
+                    'checkNumber' => '',
+                    'recipient' => '',
+                    'voided' => false,
+                    'branches' => ['JAKARTA'],
+                    'notes' => '',
+                    'lineItems' => [],
+                    'totalValue' => '0',
+                    'saveTone' => 'primary',
+                    'kapNumber' => '',
+                    'kjsNumber' => '',
+                    'ntpn' => '',
+                    'reconcileStatus' => '',
+                    'printStatus' => '',
+                ],
+                'lineTable' => [
+                    'columns' => [
+                        ['id' => 'spacer', 'label' => '', 'kind' => 'spacer', 'widthClassName' => 'w-[40px]', 'align' => 'center'],
+                        ['id' => 'accountCode', 'label' => 'Akun', 'widthClassName' => 'w-[130px]', 'align' => 'left'],
+                        ['id' => 'accountName', 'label' => 'Nama Akun', 'align' => 'left'],
+                        ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[150px]', 'align' => 'right'],
+                    ],
+                    'emptyLabel' => 'Belum ada data',
+                ],
+                'table' => [
+                    'createLabel' => 'Tambah Pembayaran',
+                    'refreshLabel' => 'Sinkron pembayaran',
+                    'downloadLabel' => 'Unduh data pembayaran',
+                    'printLabel' => 'Cetak pembayaran',
+                    'settingsLabel' => 'Pengaturan tabel pembayaran',
+                    'filterButtonLabel' => 'Filter lanjutan',
+                    'searchPlaceholder' => 'Cari...',
+                    'pageValue' => '32',
+                    'downloadItems' => [
+                        ['id' => 'download-excel', 'label' => 'Unduh Excel'],
+                        ['id' => 'download-pdf', 'label' => 'Unduh PDF'],
+                    ],
+                    'settingsItems' => [
+                        ['id' => 'arrange-columns', 'label' => 'Atur kolom'],
+                        ['id' => 'export-payment', 'label' => 'Ekspor pembayaran'],
+                    ],
+                    'filters' => [
+                        [
+                            'id' => 'date',
+                            'rowKey' => 'dateFilter',
+                            'options' => [
+                                ['value' => 'all', 'label' => 'Tanggal: Semua'],
+                                ['value' => '2017', 'label' => 'Tanggal: 2017'],
+                                ['value' => '2016', 'label' => 'Tanggal: 2016'],
+                            ],
+                        ],
+                        [
+                            'id' => 'bank',
+                            'rowKey' => 'bankFilter',
+                            'options' => [
+                                ['value' => 'all', 'label' => 'Kas/Bank: Semua'],
+                                ['value' => 'cash-jkt', 'label' => 'Kas/Bank: Kas Jakarta'],
+                                ['value' => 'cash-sby', 'label' => 'Kas/Bank: Kas Surabaya'],
+                                ['value' => 'bank-bca', 'label' => 'Kas/Bank: Bank BCA'],
+                                ['value' => 'bank-mandiri', 'label' => 'Kas/Bank: Bank Mandiri'],
+                            ],
+                        ],
+                    ],
+                    'columns' => [
+                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[210px]'],
+                        ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[120px]'],
+                        ['id' => 'cashBank', 'label' => 'Kas/Bank', 'widthClassName' => 'w-[200px]'],
+                        ['id' => 'checkNumber', 'label' => 'No Cek #', 'widthClassName' => 'w-[150px]'],
+                        ['id' => 'description', 'label' => 'Keterangan'],
+                        ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[160px]', 'align' => 'right'],
+                    ],
+                    'rows' => [
+                        ['id' => '111.201-02.2017.02.00001', 'number' => '111.201-02.2017.02.00001', 'date' => '10/02/2017', 'cashBank' => 'Kas Besar Kantor Surab...', 'cashBankFull' => 'Kas Besar Kantor Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran Hutang Pajak PPh Ps 21', 'amount' => '1,447,298', 'dateFilter' => '2017', 'bankFilter' => 'cash-sby', 'branch' => 'SURABAYA', 'accountCode' => '215.000-02', 'accountName' => 'Hutang Pajak PPh Ps 21', 'voided' => true, 'reconcileStatus' => 'Belum', 'printStatus' => 'Belum cetak/email'],
+                        ['id' => '111.101-02.2017.02.00002', 'number' => '111.101-02.2017.02.00002', 'date' => '10/02/2017', 'cashBank' => 'Kas Besar Kantor Jakarta', 'cashBankFull' => 'Kas Besar Kantor Jakarta', 'checkNumber' => '', 'description' => 'Pembayaran atas hutang Pajak PPh Ps 21', 'amount' => '1,897,540', 'dateFilter' => '2017', 'bankFilter' => 'cash-jkt', 'branch' => 'JAKARTA'],
+                        ['id' => '111.202-04.2017.01.00008', 'number' => '111.202-04.2017.01.00008', 'date' => '26/01/2017', 'cashBank' => 'Bank Mandiri IDR Surab...', 'cashBankFull' => 'Bank Mandiri IDR Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran Beban Gaji', 'amount' => '35,059,002', 'dateFilter' => '2017', 'bankFilter' => 'bank-mandiri', 'branch' => 'SURABAYA'],
+                        ['id' => '111.102-01.2017.01.00009', 'number' => '111.102-01.2017.01.00009', 'date' => '26/01/2017', 'cashBank' => 'Bank BCA IDR Jakarta (0...', 'cashBankFull' => 'Bank BCA IDR Jakarta (069-773-3993)', 'checkNumber' => '', 'description' => 'Pembayaran Gaji Bulan', 'amount' => '49,136,660', 'dateFilter' => '2017', 'bankFilter' => 'bank-bca', 'branch' => 'JAKARTA'],
+                        ['id' => '111.202-04.2017.01.00007', 'number' => '111.202-04.2017.01.00007', 'date' => '11/01/2017', 'cashBank' => 'Bank Mandiri IDR Surab...', 'cashBankFull' => 'Bank Mandiri IDR Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran beban Iklan dan Komisi Penjualan', 'amount' => '117,814,000', 'dateFilter' => '2017', 'bankFilter' => 'bank-mandiri', 'branch' => 'SURABAYA'],
+                        ['id' => '111.202-04.2017.01.00006', 'number' => '111.202-04.2017.01.00006', 'date' => '11/01/2017', 'cashBank' => 'Bank Mandiri IDR Surab...', 'cashBankFull' => 'Bank Mandiri IDR Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran BPJS Ketenaga Kerjaan dan Kesehatan - Surabaya', 'amount' => '3,706,824', 'dateFilter' => '2017', 'bankFilter' => 'bank-mandiri', 'branch' => 'SURABAYA'],
+                        ['id' => '111.102-04.2017.01.00005', 'number' => '111.102-04.2017.01.00005', 'date' => '10/01/2017', 'cashBank' => 'Bank Mandiri IDR Jakart...', 'cashBankFull' => 'Bank Mandiri IDR Jakarta', 'checkNumber' => '', 'description' => 'Pembayaran BPJS Ketenaga Kerjaan dan Kesehatan - Jakarta', 'amount' => '4,984,096', 'dateFilter' => '2017', 'bankFilter' => 'bank-mandiri', 'branch' => 'JAKARTA'],
+                        ['id' => '111.202-01.2016.12.00007', 'number' => '111.202-01.2016.12.00007', 'date' => '26/12/2016', 'cashBank' => 'Bank BCA IDR Surabaya...', 'cashBankFull' => 'Bank BCA IDR Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran Gaji - Surabaya', 'amount' => '36,506,300', 'dateFilter' => '2016', 'bankFilter' => 'bank-bca', 'branch' => 'SURABAYA'],
+                        ['id' => '111.102-01.2016.12.00006', 'number' => '111.102-01.2016.12.00006', 'date' => '26/12/2016', 'cashBank' => 'Bank BCA IDR Jakarta (0...', 'cashBankFull' => 'Bank BCA IDR Jakarta (069-773-3993)', 'checkNumber' => '', 'description' => 'Pembayaran Gaji - Jakarta', 'amount' => '51,034,200', 'dateFilter' => '2016', 'bankFilter' => 'bank-bca', 'branch' => 'JAKARTA'],
+                        ['id' => '111.101-01.2016.12.00005', 'number' => '111.101-01.2016.12.00005', 'date' => '21/12/2016', 'cashBank' => 'Kas Kecil Kantor Jakarta', 'cashBankFull' => 'Kas Kecil Kantor Jakarta', 'checkNumber' => '', 'description' => 'Pembayaran Sumbangan', 'amount' => '20,000,000', 'dateFilter' => '2016', 'bankFilter' => 'cash-jkt', 'branch' => 'JAKARTA'],
+                        ['id' => '111.201-01.2016.12.00004', 'number' => '111.201-01.2016.12.00004', 'date' => '16/12/2016', 'cashBank' => 'Kas Kecil Kantor Suraba...', 'cashBankFull' => 'Kas Kecil Kantor Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran Biaya Iklan - (Banner)', 'amount' => '345,000', 'dateFilter' => '2016', 'bankFilter' => 'cash-sby', 'branch' => 'SURABAYA'],
+                        ['id' => '111.101-01.2016.12.00004', 'number' => '111.101-01.2016.12.00004', 'date' => '16/12/2016', 'cashBank' => 'Kas Kecil Kantor Jakarta', 'cashBankFull' => 'Kas Kecil Kantor Jakarta', 'checkNumber' => '', 'description' => 'Pembelian Alat Tulis Kantor', 'amount' => '550,000', 'dateFilter' => '2016', 'bankFilter' => 'cash-jkt', 'branch' => 'JAKARTA'],
+                        ['id' => '111.201-02.2016.12.00003', 'number' => '111.201-02.2016.12.00003', 'date' => '16/12/2016', 'cashBank' => 'Kas Besar Kantor Surab...', 'cashBankFull' => 'Kas Besar Kantor Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran Biaya Asuran - Surabaya', 'amount' => '3,700,000', 'dateFilter' => '2016', 'bankFilter' => 'cash-sby', 'branch' => 'SURABAYA'],
+                        ['id' => '111.101-02.2016.12.00003', 'number' => '111.101-02.2016.12.00003', 'date' => '16/12/2016', 'cashBank' => 'Kas Besar Kantor Jakarta', 'cashBankFull' => 'Kas Besar Kantor Jakarta', 'checkNumber' => '', 'description' => 'Pembayaran Biaya sewa Kantor - Jakarta', 'amount' => '25,000,000', 'dateFilter' => '2016', 'bankFilter' => 'cash-jkt', 'branch' => 'JAKARTA'],
+                        ['id' => '111.101-01.2016.12.00002', 'number' => '111.101-01.2016.12.00002', 'date' => '16/12/2016', 'cashBank' => 'Kas Kecil Kantor Jakarta', 'cashBankFull' => 'Kas Kecil Kantor Jakarta', 'checkNumber' => '', 'description' => 'Pembayaran Listrik dan Air - Jakarta', 'amount' => '3,350,000', 'dateFilter' => '2016', 'bankFilter' => 'cash-jkt', 'branch' => 'JAKARTA'],
+                        ['id' => '111.102-01.2016.12.00002', 'number' => '111.102-01.2016.12.00002', 'date' => '09/12/2016', 'cashBank' => 'Bank BCA IDR Jakarta (0...', 'cashBankFull' => 'Bank BCA IDR Jakarta (069-773-3993)', 'checkNumber' => '', 'description' => 'Pembayaran Hutang Bunga', 'amount' => '86,250,000', 'dateFilter' => '2016', 'bankFilter' => 'bank-bca', 'branch' => 'JAKARTA'],
+                        ['id' => '111.102-01.2016.12.00001', 'number' => '111.102-01.2016.12.00001', 'date' => '08/12/2016', 'cashBank' => 'Bank BCA IDR Jakarta (0...', 'cashBankFull' => 'Bank BCA IDR Jakarta (069-773-3993)', 'checkNumber' => '', 'description' => 'Pembayaran Hutang Bunga - Surabaya', 'amount' => '52,500,000', 'dateFilter' => '2016', 'bankFilter' => 'bank-bca', 'branch' => 'SURABAYA'],
+                        ['id' => '111.201-01.2016.12.00001', 'number' => '111.201-01.2016.12.00001', 'date' => '01/12/2016', 'cashBank' => 'Kas Kecil Kantor Suraba...', 'cashBankFull' => 'Kas Kecil Kantor Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran Beban Listrik dan Air - Surabaya', 'amount' => '2,750,000', 'dateFilter' => '2016', 'bankFilter' => 'cash-sby', 'branch' => 'SURABAYA'],
+                        ['id' => '111.101-02.2016.11.00002', 'number' => '111.101-02.2016.11.00002', 'date' => '25/11/2016', 'cashBank' => 'Kas Besar Kantor Jakarta', 'cashBankFull' => 'Kas Besar Kantor Jakarta', 'checkNumber' => '', 'description' => 'Pembayaran BPJS Ketenaga Kerjaan dan Kesehatan - Jakarta', 'amount' => '4,984,096', 'dateFilter' => '2016', 'bankFilter' => 'cash-jkt', 'branch' => 'JAKARTA'],
+                    ],
+                ],
+                'detailRecords' => [
+                    '111.201-02.2017.02.00001' => [
+                        'bankAccounts' => ['Kas Besar Kantor Surabaya'],
+                        'entryDate' => '10/02/2017',
+                        'autoNumber' => false,
+                        'numberingType' => 'Bank BCA IDR Jakarta (069-773-3993)',
+                        'documentNumber' => '111.201-02.2017.02.00001',
+                        'checkNumber' => '',
+                        'recipient' => '',
+                        'voided' => true,
+                        'branches' => ['SURABAYA'],
+                        'notes' => 'Pembayaran Hutang Pajak PPh Ps 21',
+                        'lineItems' => [
+                            [
+                                'id' => 'cash-payment-line-1',
+                                'accountCode' => '215.000-02',
+                                'accountName' => 'Hutang Pajak PPh Ps 21',
+                                'amount' => '1,447,298',
+                            ],
+                        ],
+                        'totalValue' => 'Rp 1,447,298',
+                        'saveTone' => 'muted',
+                        'kapNumber' => '',
+                        'kjsNumber' => '',
+                        'ntpn' => '',
+                        'reconcileStatus' => 'Belum',
+                        'printStatus' => 'Belum cetak/email',
+                    ],
+                ],
+            ],
+        ]);
+    }
+}
