@@ -1,0 +1,78 @@
+import { normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import {
+    buildLookupLabel,
+    formatCurrencyValue,
+    parseNumericInput,
+} from '@/features/workspace/shared/transactionFormatters';
+import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNumberUtils';
+import { buildPaymentTotalAmount } from './cashPaymentCalculations';
+
+export function buildGeneratedCashPaymentNumber() {
+    return buildGeneratedDocNumber('CP');
+}
+
+export function buildCashPaymentPayload(values) {
+    const lineItems = (values.lineItems ?? []).map((item, index) => ({
+        id: item.__lineId ?? undefined,
+        account_id: item.__accountId ?? null,
+        description: item.accountName?.trim() || null,
+        reference_code: item.accountCode?.trim() || null,
+        total_amount: parseNumericInput(item.amount),
+        sort_order: index,
+    }));
+    const totalAmount = buildPaymentTotalAmount(values.lineItems ?? []);
+
+    return {
+        branch_id: values.__branchId ?? null,
+        primary_account_id: values.__primaryAccountId ?? null,
+        document_number: values.documentNumber?.trim() || buildGeneratedCashPaymentNumber(),
+        numbering_type: values.numberingType?.trim() || null,
+        payment_method: values.bankAccounts?.[0] ?? values.numberingType?.trim() ?? null,
+        status: values.voided ? 'Void' : 'Draft',
+        entry_date: normalizeDisplayDate(values.entryDate) || new Date().toISOString().slice(0, 10),
+        notes: values.notes?.trim() || null,
+        paid_amount: totalAmount,
+        total_amount: totalAmount,
+        flags: {
+            voided: Boolean(values.voided),
+        },
+        metadata: {
+            cash_bank_label: values.bankAccounts?.[0] ?? null,
+            branch_label: values.branches?.[0] ?? null,
+            check_number: values.checkNumber?.trim() || null,
+            recipient: values.recipient?.trim() || null,
+            kap_number: values.kapNumber?.trim() || null,
+            kjs_number: values.kjsNumber?.trim() || null,
+            ntpn: values.ntpn?.trim() || null,
+            reconcile_status: values.reconcileStatus?.trim() || null,
+            print_status: values.printStatus?.trim() || null,
+        },
+        lines: lineItems.filter(
+            (item) => item.account_id || item.description || item.reference_code || item.total_amount > 0,
+        ),
+    };
+}
+
+export function promptCashPaymentLineItem(record, currentItem = null) {
+    const label = buildLookupLabel(record ?? currentItem ?? {});
+    const amountValue = window.prompt(`Nilai pembayaran untuk ${label}`, currentItem?.amount ?? '0');
+
+    if (amountValue === null) {
+        return null;
+    }
+
+    const amount = parseNumericInput(amountValue);
+
+    if (amount <= 0) {
+        throw new Error('Nilai pembayaran harus lebih dari 0.');
+    }
+
+    return {
+        id: currentItem?.id ?? `draft-line-${Date.now()}`,
+        __lineId: currentItem?.__lineId ?? null,
+        __accountId: record?.id ?? currentItem?.__accountId ?? null,
+        accountCode: record?.code ?? currentItem?.accountCode ?? '',
+        accountName: record?.name ?? currentItem?.accountName ?? '',
+        amount: formatCurrencyValue(amount),
+    };
+}

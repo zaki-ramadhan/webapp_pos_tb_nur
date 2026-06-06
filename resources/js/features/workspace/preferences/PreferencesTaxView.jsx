@@ -7,6 +7,7 @@ import TextInput from '@/components/ui/TextInput';
 import TransactionDateInput from '@/features/workspace/modules/shared/transaction/TransactionDateInput';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
+import usePreferencesSectionHandlers from './hooks/usePreferencesSectionHandlers';
 import Tooltip from '@/components/ui/Tooltip';
 import {
     CalendarIcon,
@@ -240,64 +241,12 @@ function TaxRow({ row, onChangeControl, onChangeRadio, onToggleOption, onToggleS
 export default function PreferencesTaxView({ tabs, activeTabId, onSelectTab, onUpdate }) {
     const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId, onUpdate);
 
-    function updateActiveTabRows(updater) {
-        updateActiveTab((tab) => ({
-            ...tab,
-            rows: updater(tab.rows ?? []),
-        }));
-    }
-
-    function handleChangeControl(rowId, controlId, value) {
-        updateActiveTabRows((rows) =>
-            rows.map((row) =>
-                row.id === rowId
-                    ? {
-                          ...row,
-                          controls: (row.controls ?? []).map((control) =>
-                              control.id === controlId ? { ...control, value } : control,
-                          ),
-                      }
-                    : row,
-            ),
-        );
-    }
-
-    function handleChangeRadio(rowId, value) {
-        updateActiveTabRows((rows) =>
-            rows.map((row) => (row.id === rowId ? { ...row, value } : row)),
-        );
-    }
-
-    function handleToggleOption(rowId, optionId, checked) {
-        updateActiveTabRows((rows) =>
-            rows.map((row) =>
-                row.id === rowId
-                    ? {
-                          ...row,
-                          options: (row.options ?? []).map((option) =>
-                              option.id === optionId ? { ...option, checked } : option,
-                          ),
-                      }
-                    : row,
-            ),
-        );
-    }
-
-    function handleToggleSingle(rowId, checked) {
-        updateActiveTabRows((rows) =>
-            rows.map((row) =>
-                row.id === rowId && row.option
-                    ? {
-                          ...row,
-                          option: {
-                              ...row.option,
-                              checked,
-                          },
-                      }
-                    : row,
-            ),
-        );
-    }
+    const {
+        handleChangeRadio,
+        handleToggleSingle,
+        handleChangeNestedControl: handleChangeControl,
+        handleToggleOption,
+    } = usePreferencesSectionHandlers(updateActiveTab, false);
 
     if (!activeTab) {
         return null;

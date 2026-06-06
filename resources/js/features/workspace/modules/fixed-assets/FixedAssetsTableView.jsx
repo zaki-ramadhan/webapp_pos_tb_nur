@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import TableListView from '@/features/workspace/modules/TableListView';
 import {
     TransactionToolbarIconButton,
@@ -8,12 +9,26 @@ import {
     DownloadIcon,
     ExternalLinkIcon,
     PrintIcon,
+    CircleCheckIcon,
 } from '@/features/workspace/shared/Icons';
 
 export default function FixedAssetsTableView({ config, onCreate, onOpenDetail }) {
+    const tableWithRenderedStatus = useMemo(() => {
+        if (!config?.table?.rows) return config?.table;
+        return {
+            ...config.table,
+            rows: config.table.rows.map((row) => ({
+                ...row,
+                status: row.status === 'checked' ? (
+                    <CircleCheckIcon className="mx-auto h-5.5 w-5.5 text-[#28b463]" />
+                ) : row.status,
+            })),
+        };
+    }, [config?.table]);
+
     return (
         <TableListView
-            table={config.table}
+            table={tableWithRenderedStatus}
             createButton={{
                 label: config.table.createLabel,
                 onClick: onCreate,

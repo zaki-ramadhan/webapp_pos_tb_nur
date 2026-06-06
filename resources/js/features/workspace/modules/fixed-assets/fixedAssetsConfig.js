@@ -1,6 +1,4 @@
-import { createElement } from 'react';
-
-import { CircleCheckIcon } from '@/features/workspace/shared/Icons';
+import { cloneList } from '@/features/workspace/modules/shared/configCloneUtils';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 
 const todayDisplayDate = buildTodayDisplayDate();
@@ -89,7 +87,7 @@ const fixedAssetRows = [
 
 const tableRows = fixedAssetRows.map(([id, number, name, purchaseDate, quantity, totalAsset]) => ({
     id,
-    status: createElement(CircleCheckIcon, { className: 'mx-auto h-5.5 w-5.5 text-[#28b463]' }),
+    status: 'checked',
     number,
     name,
     purchaseDate,
@@ -246,10 +244,6 @@ const defaultConfig = {
     draft: draftRecord,
     detailRecords,
 };
-
-function cloneList(values) {
-    return Array.isArray(values) ? [...values] : values ? [values] : [];
-}
 
 function cloneRows(rows = []) {
     return rows.map((row) => ({ ...row }));

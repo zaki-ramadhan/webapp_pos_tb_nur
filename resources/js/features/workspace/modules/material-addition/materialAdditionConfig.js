@@ -1,3 +1,4 @@
+import { cloneList, buildItemCountLabel } from '@/features/workspace/modules/shared/configCloneUtils';
 import {
     createAttachmentDockAction,
     createDeleteDockAction,
@@ -124,10 +125,6 @@ const defaultConfig = {
     detailRecords,
 };
 
-function cloneList(values) {
-    return Array.isArray(values) ? [...values] : values ? [values] : [];
-}
-
 function cloneItems(items = []) {
     return items.map((item) => ({
         ...item,
@@ -140,22 +137,6 @@ function cloneItems(items = []) {
 
 function cloneAdditionalCosts(rows = []) {
     return rows.map((row) => ({ ...row }));
-}
-
-function toNumericValue(value) {
-    const normalizedValue = Number.parseFloat(String(value ?? '0').replace(/[^\d.-]/g, ''));
-
-    return Number.isFinite(normalizedValue) ? normalizedValue : 0;
-}
-
-function buildItemCountLabel(items = []) {
-    if (!items.length) {
-        return 'Rincian Barang';
-    }
-
-    const totalQuantity = items.reduce((sum, item) => sum + toNumericValue(item.quantity), 0);
-
-    return `${items.length} Barang (${totalQuantity})`;
 }
 
 export function buildMaterialAdditionConfig(pageConfig = {}) {

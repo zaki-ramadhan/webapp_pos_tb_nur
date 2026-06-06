@@ -1,3 +1,4 @@
+import { cloneList, buildItemCountLabel } from '@/features/workspace/modules/shared/configCloneUtils';
 import {
     createAttachmentDockAction,
     createDeleteDockAction,
@@ -234,32 +235,12 @@ const defaultItemRequestConfig = {
     },
 };
 
-function cloneList(values) {
-    return Array.isArray(values) ? [...values] : values ? [values] : [];
-}
-
 function cloneItems(items) {
     return (items ?? []).map((item) => ({
         ...item,
         unit: cloneList(item.unit ?? item.unitLabel ?? []),
         department: cloneList(item.department),
     }));
-}
-
-function toNumericValue(value) {
-    const normalizedValue = Number.parseFloat(String(value ?? '0').replace(/[^\d.-]/g, ''));
-
-    return Number.isFinite(normalizedValue) ? normalizedValue : 0;
-}
-
-function buildItemCountLabel(items = []) {
-    if (!items.length) {
-        return 'Rincian Barang';
-    }
-
-    const totalQuantity = items.reduce((sum, item) => sum + toNumericValue(item.quantity), 0);
-
-    return `${items.length} Barang (${totalQuantity})`;
 }
 
 function buildRecord(record = {}, draft = defaultItemRequestDraft, fallbackRow = null) {

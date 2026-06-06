@@ -1,23 +1,10 @@
-import { useEffect, useState } from 'react';
-
-import PreferencesAttachmentsView from '@/features/workspace/preferences/PreferencesAttachmentsView';
-import PreferencesApprovalView from '@/features/workspace/preferences/PreferencesApprovalView';
-import PreferencesFeatureView from '@/features/workspace/preferences/PreferencesFeatureView';
-import PreferencesLimitationsView from '@/features/workspace/preferences/PreferencesLimitationsView';
-import PreferencesOthersView from '@/features/workspace/preferences/PreferencesOthersView';
-import PreferencesPurchaseView from '@/features/workspace/preferences/PreferencesPurchaseView';
-import PreferencesSalesView from '@/features/workspace/preferences/PreferencesSalesView';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
-import PreferencesTaxView from '@/features/workspace/preferences/PreferencesTaxView';
+import React from 'react';
 import PanelActions from '@/features/workspace/shared/PanelActions';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
-import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
-import { extractPreferencesFromTabs, mergeValuesIntoTabs } from './preferenceMapping';
-import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
-
 import PreferenceSideItem from './components/PreferenceSideItem';
-import PreferenceField from './components/PreferenceField';
-import PreferenceCompanyAddress from './components/PreferenceCompanyAddress';
+import usePreferencesState from './hooks/usePreferencesState';
+import usePreferencesSave from './hooks/usePreferencesSave';
+import PreferencesSidebarContent from './PreferencesSidebarContent';
 
 export default function PreferencesView({ page }) {
     const workspace = page.workspace;
@@ -26,271 +13,25 @@ export default function PreferencesView({ page }) {
         filters: { per_page: 500 },
     });
 
-    const [values, setValues] = useState({});
-    const [isDirty, setIsDirty] = useState(false);
+    const state = usePreferencesState(workspace, backendRows);
 
-    useEffect(() => {
-        if (backendRows.length > 0) {
-            const initialValues = {};
-            backendRows.forEach(row => {
-                initialValues[row.setting_key] = row.value;
-            });
-            setValues(initialValues);
-        }
-    }, [backendRows]);
-
-    const handleValueChange = (key, value) => {
-        setValues(prev => ({ ...prev, [key]: value }));
-        setIsDirty(true);
-    };
+    const handleSave = usePreferencesSave(
+        state.values,
+        state.tabsData,
+        state.setIsDirty,
+        state.saving,
+        state.setSaving,
+        reload
+    );
 
     const companyRootItem = { id: 'company-root', label: workspace.topTab };
     const sideItems = [companyRootItem, ...workspace.sidebarItems];
-    const [tabsData, setTabsData] = useState({
-        features: workspace.featureTabs,
-        tax: workspace.taxTabs,
-        approval: workspace.approvalTabs,
-        attachments: workspace.attachmentsTabs,
-        sales: workspace.salesTabs,
-        purchase: workspace.purchaseTabs,
-        limitations: workspace.limitationsTabs,
-        others: workspace.othersTabs,
-    });
-
-    const [activeAttachmentsTabId, setActiveAttachmentsTabId] = useState(workspace.attachmentsTabs?.[0]?.id ?? '');
-    const [activeProfileTabId, setActiveProfileTabId] = useState(workspace.companyTabs[0]?.id ?? '');
-    const [activeApprovalTabId, setActiveApprovalTabId] = useState(workspace.approvalTabs?.[0]?.id ?? '');
-    const [activeFeatureTabId, setActiveFeatureTabId] = useState(workspace.featureTabs?.[0]?.id ?? '');
-    const [activeLimitationsTabId, setActiveLimitationsTabId] = useState(workspace.limitationsTabs?.[0]?.id ?? '');
-    const [activeOthersTabId, setActiveOthersTabId] = useState(workspace.othersTabs?.[0]?.id ?? '');
-    const [activePurchaseTabId, setActivePurchaseTabId] = useState(workspace.purchaseTabs?.[0]?.id ?? '');
-    const [activeSalesTabId, setActiveSalesTabId] = useState(workspace.salesTabs?.[0]?.id ?? '');
-    const [activeTaxTabId, setActiveTaxTabId] = useState(workspace.taxTabs?.[0]?.id ?? '');
-    const [activeSideItemId, setActiveSideItemId] = useState(workspace.defaultSidebarItemId ?? companyRootItem.id);
-    const [saving, setSaving] = useState(false);
-
-    const handleTabsUpdate = (key, nextTabs) => {
-        setTabsData(prev => ({ ...prev, [key]: nextTabs }));
-        setIsDirty(true);
-    };
-
-    useEffect(() => {
-        if (Object.keys(values).length > 0) {
-            setTabsData(prev => mergeValuesIntoTabs(prev, values));
-        }
-    }, [values]);
-
-    const handleSave = async () => {
-        if (values['company-name'] !== undefined && !String(values['company-name'] ?? '').trim()) {
-            showErrorToast({
-                title: 'Data tidak valid',
-                message: 'Nama Perusahaan wajib diisi.',
-            });
-            return;
-        }
-        if (values['email'] !== undefined && !String(values['email'] ?? '').trim()) {
-            showErrorToast({
-                title: 'Data tidak valid',
-                message: 'Email Perusahaan wajib diisi.',
-            });
-            return;
-        }
-        if (values['email'] !== undefined) {
-            const emailStr = String(values['email'] ?? '').trim();
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (emailStr && !emailRegex.test(emailStr)) {
-                showErrorToast({
-                    title: 'Data tidak valid',
-                    message: 'Format email perusahaan tidak valid.',
-                });
-                return;
-            }
-        }
-
-        setSaving(true);
-        const loadingToastId = showLoadingToast({
-            title: 'Memproses',
-            message: 'Sedang menyimpan preferensi.',
-        });
-        try {
-            const payload = {
-                company_info: values,
-                settings: {
-                    ...values,
-                    ...extractPreferencesFromTabs(Object.values(tabsData).flat())
-                }
-            };
-
-            await createBackendResource('preferences', payload);
-            setIsDirty(false);
-            dismissToast(loadingToastId);
-            showSuccessToast({
-                title: 'Berhasil',
-                message: 'Preferensi berhasil disimpan.',
-            });
-            reload();
-        } catch (error) {
-            console.error('Save failed:', error);
-            dismissToast(loadingToastId);
-            showErrorToast({
-                title: 'Gagal menyimpan',
-                message: getBackendErrorMessage(error),
-            });
-        } finally {
-            setSaving(false);
-        }
-    };
 
     const resolvedActions = (workspace.actions ?? []).map(action => 
         action.id === 'save' 
-            ? { ...action, onClick: handleSave, loading: saving, disabled: (saving || !isDirty) && action.tone === 'primary' }
+            ? { ...action, onClick: handleSave, loading: state.saving, disabled: (state.saving || !state.isDirty) && action.tone === 'primary' }
             : action
     );
-
-    function renderSidebarContent() {
-        if (activeSideItemId === 'features' && tabsData.features?.length) {
-            return (
-                <PreferencesFeatureView
-                    tabs={tabsData.features}
-                    activeTabId={activeFeatureTabId}
-                    onSelectTab={setActiveFeatureTabId}
-                    onUpdate={(next) => handleTabsUpdate('features', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === 'tax' && tabsData.tax?.length) {
-            return (
-                <PreferencesTaxView
-                    tabs={tabsData.tax}
-                    activeTabId={activeTaxTabId}
-                    onSelectTab={setActiveTaxTabId}
-                    onUpdate={(next) => handleTabsUpdate('tax', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === 'approval' && tabsData.approval?.length) {
-            return (
-                <PreferencesApprovalView
-                    tabs={tabsData.approval}
-                    activeTabId={activeApprovalTabId}
-                    onSelectTab={setActiveApprovalTabId}
-                    onUpdate={(next) => handleTabsUpdate('approval', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === 'attachments' && tabsData.attachments?.length) {
-            return (
-                <PreferencesAttachmentsView
-                    tabs={tabsData.attachments}
-                    activeTabId={activeAttachmentsTabId}
-                    onSelectTab={setActiveAttachmentsTabId}
-                    onUpdate={(next) => handleTabsUpdate('attachments', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === 'sales' && tabsData.sales?.length) {
-            return (
-                <PreferencesSalesView
-                    tabs={tabsData.sales}
-                    activeTabId={activeSalesTabId}
-                    onSelectTab={setActiveSalesTabId}
-                    onUpdate={(next) => handleTabsUpdate('sales', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === 'purchase' && tabsData.purchase?.length) {
-            return (
-                <PreferencesPurchaseView
-                    tabs={tabsData.purchase}
-                    activeTabId={activePurchaseTabId}
-                    onSelectTab={setActivePurchaseTabId}
-                    onUpdate={(next) => handleTabsUpdate('purchase', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === 'limitations' && tabsData.limitations?.length) {
-            return (
-                <PreferencesLimitationsView
-                    tabs={tabsData.limitations}
-                    activeTabId={activeLimitationsTabId}
-                    onSelectTab={setActiveLimitationsTabId}
-                    onUpdate={(next) => handleTabsUpdate('limitations', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === 'others' && tabsData.others?.length) {
-            return (
-                <PreferencesOthersView
-                    tabs={tabsData.others}
-                    activeTabId={activeOthersTabId}
-                    onSelectTab={setActiveOthersTabId}
-                    onUpdate={(next) => handleTabsUpdate('others', next)}
-                />
-            );
-        }
-
-        if (activeSideItemId === companyRootItem.id) {
-            return (
-                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                    <PreferencesTabs
-                        tabs={workspace.companyTabs}
-                        activeTabId={activeProfileTabId}
-                        onSelectTab={setActiveProfileTabId}
-                        activeTabClassName="font-medium text-[#374056]"
-                    />
-
-                    <div className="mx-2 mb-2 min-h-0 flex-1 overflow-y-auto rounded-[4px] border border-[#d3d9e5] bg-white px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] sm:mx-3 sm:mb-3 sm:px-4">
-                        {activeProfileTabId === 'company-info' ? (
-                            <div className="max-w-[980px] space-y-6">
-                                <div className="grid gap-x-6 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-                                    {workspace.companyInfo.map((field) => (
-                                        <div key={field.id} className="contents">
-                                            <label className="text-[14px] md:text-[15px] text-[#1f2436]">{field.label}</label>
-                                            <div>
-                                                <PreferenceField 
-                                                    field={field} 
-                                                    value={values[field.id]} 
-                                                    onChange={handleValueChange} 
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <PreferenceCompanyAddress 
-                                address={workspace.companyAddress} 
-                                values={values}
-                                onChange={handleValueChange}
-                            />
-                        )}
-                    </div>
-                </div>
-            );
-        }
-
-        const currentItem = sideItems.find((item) => item.id === activeSideItemId);
-
-        return (
-            <div className="mx-2 mb-2 flex min-h-[320px] items-center justify-center rounded-[4px] border border-[#d3d9e5] bg-white px-6 py-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] sm:mx-3 sm:mb-3">
-                <div className="max-w-[560px] space-y-3">
-                    <h3 className="text-[22px] font-medium text-[#2b3449]">{currentItem?.label}</h3>
-                    <p className="text-[14px] md:text-[15px] leading-6 text-[#687389]">
-                        Halaman preferensi untuk {currentItem?.label?.toLowerCase()} belum dirender pada iterasi
-                        ini. Struktur `Fitur` sudah dibuat reusable agar sub-halaman berikutnya bisa mengikuti pola
-                        yang sama.
-                    </p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="flex h-full flex-col overflow-hidden rounded-[4px] border border-[#cad1dd] bg-[#f7f7f8] shadow-[0_2px_10px_rgba(15,23,42,0.06)]">
@@ -302,8 +43,8 @@ export default function PreferencesView({ page }) {
                                 <PreferenceSideItem
                                     key={item.id}
                                     item={item}
-                                    active={activeSideItemId === item.id}
-                                    onClick={setActiveSideItemId}
+                                    active={state.activeSideItemId === item.id}
+                                    onClick={state.setActiveSideItemId}
                                 />
                             ))}
                         </div>
@@ -311,7 +52,12 @@ export default function PreferencesView({ page }) {
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-b-sm border border-[#d3d9e5] bg-[#fbfbfc] md:rounded-r-[4px] md:rounded-bl-none md:border-t md:border-l-0">
-                    {renderSidebarContent()}
+                    <PreferencesSidebarContent
+                        {...state}
+                        workspace={workspace}
+                        companyRootItem={companyRootItem}
+                        sideItems={sideItems}
+                    />
                 </div>
             </div>
 

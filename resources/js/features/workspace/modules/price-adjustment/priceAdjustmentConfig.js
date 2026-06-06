@@ -1,3 +1,4 @@
+import { cloneList, buildItemCountLabel } from '@/features/workspace/modules/shared/configCloneUtils';
 import {
     createAttachmentDockAction,
     createDeleteDockAction,
@@ -6,6 +7,7 @@ import {
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+import { tableRows, detailRecords as sampleDetailRecords } from './priceAdjustmentSampleData';
 
 const todayDisplayDate = buildTodayDisplayDate();
 
@@ -43,121 +45,6 @@ const detailDockActions = [
     createDeleteDockAction(),
 ];
 
-const tableRows = [
-    {
-        id: 'IA.2016.12.00002',
-        number: 'IA.2016.12.00002',
-        date: '18/12/2016',
-        notes: 'Penyesuaian Kuantitas Barang dari Perintah Stok Opname "OPO.00001"',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.12.00001',
-        number: 'IA.2016.12.00001',
-        date: '06/12/2016',
-        notes: 'Kehilangan Barang',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00208',
-        number: 'IA.2016.09.00208',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Note Pro',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00207',
-        number: 'IA.2016.09.00207',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Note Pro',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00206',
-        number: 'IA.2016.09.00206',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Redmi Note 3',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00205',
-        number: 'IA.2016.09.00205',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Redmi Note 3',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00204',
-        number: 'IA.2016.09.00204',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Mi4s',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00203',
-        number: 'IA.2016.09.00203',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Mi4s',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00202',
-        number: 'IA.2016.09.00202',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Mi5',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00201',
-        number: 'IA.2016.09.00201',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Mi5',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00200',
-        number: 'IA.2016.09.00200',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Redmi 3',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00199',
-        number: 'IA.2016.09.00199',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Xiaomi Redmi 3',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00198',
-        number: 'IA.2016.09.00198',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Oppo R7S',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00197',
-        number: 'IA.2016.09.00197',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Oppo R7S',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00196',
-        number: 'IA.2016.09.00196',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Oppo R7 Plus',
-        dateFilter: 'all',
-    },
-    {
-        id: 'IA.2016.09.00195',
-        number: 'IA.2016.09.00195',
-        date: '30/09/2016',
-        notes: 'Saldo Awal barang Oppo R7 Plus',
-        dateFilter: 'all',
-    },
-];
-
 const draftRecord = {
     date: todayDisplayDate,
     autoNumber: true,
@@ -184,51 +71,12 @@ const draftRecord = {
     },
 };
 
-const detailRecords = {
-    'IA.2016.12.00002': {
-        date: '18/12/2016',
-        autoNumber: false,
-        numberingType: 'Penyesuaian Persediaan',
-        documentNumber: 'IA.2016.12.00002',
-        itemSearch: '',
-        detailMode: 'Rincian',
-        items: [
-            {
-                id: 'IA.2016.12.00002-item-1',
-                name: 'Headset',
-                code: '9900001',
-                adjustmentType: 'Penambahan',
-                quantity: '12',
-                unit: 'PCS',
-                unitLookup: ['PCS'],
-                unitCost: '142,500',
-                totalCost: '1,710,000',
-                warehouse: ['GD. JAKARTA'],
-                department: [],
-                notes: '',
-            },
-            {
-                id: 'IA.2016.12.00002-item-2',
-                name: 'Hard Case',
-                code: '9900002',
-                adjustmentType: 'Penambahan',
-                quantity: '3',
-                unit: 'PCS',
-                unitLookup: ['PCS'],
-                unitCost: '114,000',
-                totalCost: '342,000',
-                warehouse: ['GD. JAKARTA'],
-                department: [],
-                notes: '',
-            },
-        ],
-        adjustmentAccount: ['[300001] Equitas Saldo Awal'],
-        notes: 'Penyesuaian Kuantitas Barang dari Perintah Stok Opname "OPO.00001"',
-        branches: ['JAKARTA'],
-        totalValue: 'Rp 2,052,000',
-        dockActions: detailDockActions,
-    },
-};
+const detailRecords = Object.fromEntries(
+    Object.entries(sampleDetailRecords).map(([key, record]) => [
+        key,
+        { ...record, dockActions: detailDockActions },
+    ])
+);
 
 const defaultConfig = {
     labels: {
@@ -273,10 +121,6 @@ const defaultConfig = {
     detailRecords,
 };
 
-function cloneList(values) {
-    return Array.isArray(values) ? [...values] : values ? [values] : [];
-}
-
 function cloneItems(items = []) {
     return items.map((item) => ({
         ...item,
@@ -284,22 +128,6 @@ function cloneItems(items = []) {
         warehouse: cloneList(item.warehouse),
         department: cloneList(item.department),
     }));
-}
-
-function toNumericValue(value) {
-    const normalizedValue = Number.parseFloat(String(value ?? '0').replace(/[^\d.-]/g, ''));
-
-    return Number.isFinite(normalizedValue) ? normalizedValue : 0;
-}
-
-function buildItemCountLabel(items = []) {
-    if (!items.length) {
-        return 'Rincian Barang';
-    }
-
-    const totalQuantity = items.reduce((sum, item) => sum + toNumericValue(item.quantity), 0);
-
-    return `${items.length} Barang (${totalQuantity})`;
 }
 
 function mergeTableConfig(baseTable, pageTable = {}) {
