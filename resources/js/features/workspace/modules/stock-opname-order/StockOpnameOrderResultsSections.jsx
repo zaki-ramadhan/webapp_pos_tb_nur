@@ -45,13 +45,6 @@ export function StockOpnameOrderResultsSection({ config, values, onOpenItem }) {
         <SectionCard className="min-h-[620px]">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
-                    <button
-                        type="button"
-                        className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
-                        aria-label="Tautkan hasil stok opname"
-                    >
-                        <LinkIcon className="h-4.5 w-4.5" />
-                    </button>
                     <div className="text-[24px] font-normal text-[#1f2436]">{values.resultCountLabel}</div>
                 </div>
 

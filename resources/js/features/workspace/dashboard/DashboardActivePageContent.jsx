@@ -48,7 +48,7 @@ export default function DashboardActivePageContent({
                     }}
                 />
 
-                <div className="min-h-0 min-w-0 flex-1 bg-[rgba(243,246,251,0.82)] px-2 py-2 sm:px-3 sm:py-3">
+                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[rgba(243,246,251,0.82)] px-2 py-2 sm:px-3 sm:py-3">
                     <DashboardWidgetGrid
                         widgets={activeDashboardWidgets}
                         onRefreshWidget={handleRefreshWidget}
@@ -61,7 +61,7 @@ export default function DashboardActivePageContent({
     }
 
     return (
-        <div className="min-h-0 flex-1 overflow-visible bg-[rgba(243,246,251,0.82)] px-2 pb-2 pt-0 sm:px-2.5 sm:pb-2.5 lg:px-3 lg:pb-3">
+        <div className="min-h-0 flex-1 overflow-y-auto flex flex-col bg-[rgba(243,246,251,0.82)] px-2 pb-2 pt-0 sm:px-2.5 sm:pb-2.5 lg:px-3 lg:pb-3">
             {renderWorkspaceActivePage({
                 activePage,
                 activePageMode,

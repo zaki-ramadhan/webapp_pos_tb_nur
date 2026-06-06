@@ -12,7 +12,7 @@ import PreferencesTaxView from '@/features/workspace/preferences/PreferencesTaxV
 import PanelActions from '@/features/workspace/shared/PanelActions';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
-import { extractPreferencesFromTabs } from './preferenceMapping';
+import { extractPreferencesFromTabs, mergeValuesIntoTabs } from './preferenceMapping';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 
 import PreferenceSideItem from './components/PreferenceSideItem';
@@ -21,7 +21,7 @@ import PreferenceCompanyAddress from './components/PreferenceCompanyAddress';
 
 export default function PreferencesView({ page }) {
     const workspace = page.workspace;
-    const { rows: backendRows } = useBackendIndexResource({
+    const { rows: backendRows, reload } = useBackendIndexResource({
         resource: 'preferences',
         filters: { per_page: 500 },
     });
@@ -74,6 +74,12 @@ export default function PreferencesView({ page }) {
         setIsDirty(true);
     };
 
+    useEffect(() => {
+        if (Object.keys(values).length > 0) {
+            setTabsData(prev => mergeValuesIntoTabs(prev, values));
+        }
+    }, [values]);
+
     const handleSave = async () => {
         if (values['company-name'] !== undefined && !String(values['company-name'] ?? '').trim()) {
             showErrorToast({
@@ -122,6 +128,7 @@ export default function PreferencesView({ page }) {
                 title: 'Berhasil',
                 message: 'Preferensi berhasil disimpan.',
             });
+            reload();
         } catch (error) {
             console.error('Save failed:', error);
             dismissToast(loadingToastId);
@@ -241,11 +248,11 @@ export default function PreferencesView({ page }) {
 
                     <div className="mx-2 mb-2 min-h-0 flex-1 overflow-y-auto rounded-[4px] border border-[#d3d9e5] bg-white px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] sm:mx-3 sm:mb-3 sm:px-4">
                         {activeProfileTabId === 'company-info' ? (
-                            <div className="max-w-[980px] space-y-10">
-                                <div className="grid gap-x-12 gap-y-5 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-center">
+                            <div className="max-w-[980px] space-y-6">
+                                <div className="grid gap-x-6 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
                                     {workspace.companyInfo.map((field) => (
                                         <div key={field.id} className="contents">
-                                            <label className="text-[16px] text-[#1f2436]">{field.label}</label>
+                                            <label className="text-[14px] md:text-[15px] text-[#1f2436]">{field.label}</label>
                                             <div>
                                                 <PreferenceField 
                                                     field={field} 
@@ -275,7 +282,7 @@ export default function PreferencesView({ page }) {
             <div className="mx-2 mb-2 flex min-h-[320px] items-center justify-center rounded-[4px] border border-[#d3d9e5] bg-white px-6 py-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] sm:mx-3 sm:mb-3">
                 <div className="max-w-[560px] space-y-3">
                     <h3 className="text-[22px] font-medium text-[#2b3449]">{currentItem?.label}</h3>
-                    <p className="text-[16px] leading-7 text-[#687389]">
+                    <p className="text-[14px] md:text-[15px] leading-6 text-[#687389]">
                         Halaman preferensi untuk {currentItem?.label?.toLowerCase()} belum dirender pada iterasi
                         ini. Struktur `Fitur` sudah dibuat reusable agar sub-halaman berikutnya bisa mengikuti pola
                         yang sama.
@@ -286,7 +293,7 @@ export default function PreferencesView({ page }) {
     }
 
     return (
-        <div className="flex min-h-full flex-col overflow-hidden rounded-[4px] border border-[#cad1dd] bg-[#f7f7f8] shadow-[0_2px_10px_rgba(15,23,42,0.06)]">
+        <div className="flex h-full flex-col overflow-hidden rounded-[4px] border border-[#cad1dd] bg-[#f7f7f8] shadow-[0_2px_10px_rgba(15,23,42,0.06)]">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden border-t border-[#d7dde8] bg-[#f8f8f8] px-2 pt-1 md:flex-row">
                 <div className="flex min-h-0 w-full shrink-0 flex-col md:w-[190px]">
                     <div className="min-h-0 flex-1 border border-[#cfd6e2] bg-[#efefef] px-3 pb-3 pt-2 md:rounded-l-sm md:border-r-0 md:pr-0">

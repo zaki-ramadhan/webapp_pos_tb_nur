@@ -35,7 +35,7 @@ export default function DashboardPage({ dashboard, widgets }) {
 
     return (
         <WorkspaceLayout title={dashboard.sample.label}>
-            <div className="flex min-h-screen flex-col overflow-x-hidden">
+            <div className="flex h-screen flex-col overflow-hidden">
                 <div ref={topBarRef} className="fixed inset-x-0 top-0 z-50">
                     <DashboardTopBar
                         contextLabel={dashboard.headerContextLabel}

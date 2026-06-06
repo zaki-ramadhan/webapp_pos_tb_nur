@@ -186,10 +186,11 @@ export default function TableToolbar({
 
                     {pageValue !== null ? (
                         <TextInput
-                            value={pageValue}
+                            value={pageValue || '0'}
                             readOnly
+                            interactiveReadOnly
                             className={`rounded-[4px] border-[#cfd6e2] ${sizeStyle.pageInput}`.trim()}
-                            inputClassName={size === 'compact' ? 'text-right text-[15px]' : 'text-right text-[17px] text-[#646d83]'}
+                            inputClassName={size === 'compact' ? 'text-center text-[15px] !px-2' : 'text-center text-[17px] text-[#646d83] !px-2'}
                         />
                     ) : null}
                 </div>

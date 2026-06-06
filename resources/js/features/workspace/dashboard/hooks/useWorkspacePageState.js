@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     hasDirtyTabsForPage,
     withDirtyLabel,
@@ -7,7 +7,6 @@ import {
     buildInitialLevel2ContentTabsState,
     buildInitialLevel2TabsState,
     buildTabItems,
-    createDetailTabOpeners,
     resolveActivePage,
     resolveActivePageContentTabs,
     resolveLevel2State,
@@ -20,8 +19,10 @@ import mergeWorkspacePageConfigs from '@/features/workspace/dashboard/mergeWorks
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 import useWorkspaceDirtyState from './useWorkspaceDirtyState';
 import useWorkspaceURLSync from './useWorkspaceURLSync';
+import useWorkspaceTabs from './useWorkspaceTabs';
 
 export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspaceMenu }) {
+    const preferences = useMemo(() => dashboard.preferences ?? {}, [dashboard.preferences]);
     const pages = useMemo(() => mergeWorkspacePageConfigs(dashboard.pages), [dashboard.pages]);
     const dashboardPage = pages.dashboard;
     const initialLevel2Tabs = useMemo(() => buildInitialLevel2TabsState(pages), [pages]);
@@ -34,15 +35,14 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
                 dashboardPage,
                 initialLevel2Tabs,
                 initialLevel2ContentTabs,
+                preferences,
             }),
-        [dashboardPage, initialLevel2ContentTabs, initialLevel2Tabs, pages],
+        [dashboardPage, initialLevel2ContentTabs, initialLevel2Tabs, pages, preferences],
     );
 
     const [activePanelId, setActivePanelId] = useState(null);
     const [openPages, setOpenPages] = useState(initialWorkspacePageState.openPages);
     const [activePageId, setActivePageId] = useState(initialWorkspacePageState.activePageId);
-    const [activeLevel2Tabs, setActiveLevel2Tabs] = useState(initialWorkspacePageState.activeLevel2Tabs);
-    const [pageLevel2ContentTabs, setPageLevel2ContentTabs] = useState(initialWorkspacePageState.pageLevel2ContentTabs);
     const [pageOpeningLoading, setPageOpeningLoading] = useState(null);
     
     // Delegate dirty tab state management to custom hook
@@ -54,6 +54,63 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
     } = useWorkspaceDirtyState();
 
     const [pendingCloseRequest, setPendingCloseRequest] = useState(null);
+
+    const activePage = resolveActivePage(openPages, activePageId, dashboardPage);
+
+    // Hoisted helper closure for page closing
+    function closePageNow(pageId) {
+        if (pageId === dashboardPage.id) {
+            return;
+        }
+
+        clearPageDirty(pageId);
+        setOpenPages((currentPages) => currentPages.filter((page) => page.id !== pageId));
+        setPageLevel2ContentTabs((currentTabs) => ({
+            ...currentTabs,
+            [pageId]: initialLevel2ContentTabs[pageId] ?? [],
+        }));
+        setActiveLevel2Tabs((currentTabs) => ({
+            ...currentTabs,
+            [pageId]: initialLevel2Tabs[pageId] ?? currentTabs[pageId],
+        }));
+        setActivePageId((currentPageId) => (currentPageId === pageId ? dashboardPage.id : currentPageId));
+    }
+
+    const {
+        activeLevel2Tabs,
+        setActiveLevel2Tabs,
+        pageLevel2ContentTabs,
+        setPageLevel2ContentTabs,
+        handleOpenContentTab,
+        handleOpenDefaultContentTab,
+        detailTabBuilders,
+        detailTabOpeners,
+        createDetailTabOpener,
+        handleSelectLevel2Tab,
+        closeLevel2TabNow,
+        requestCloseLevel2Tab,
+        handleCloseDetailTab,
+    } = useWorkspaceTabs({
+        pages,
+        initialLevel2Tabs,
+        initialLevel2ContentTabs,
+        initialActiveLevel2Tabs: initialWorkspacePageState.activeLevel2Tabs,
+        initialPageLevel2ContentTabs: initialWorkspacePageState.pageLevel2ContentTabs,
+        dirtyTabs,
+        clearTabDirty,
+        closePageNow,
+        activePage,
+        setPendingCloseRequest,
+    });
+
+    const activePageContentTabs = resolveActivePageContentTabs(activePage, pageLevel2ContentTabs);
+    const isDashboardPageActive = activePage.id === dashboardPage.id;
+    const {
+        level2Tabs,
+        activeLevel2TabId,
+        activeLevel2Tab,
+        activePageMode,
+    } = resolveLevel2State(activePage, activePageContentTabs, activeLevel2Tabs);
 
     useEffect(() => {
         setOpenPages((currentPages) => {
@@ -73,7 +130,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
             ...initialLevel2ContentTabs,
             ...currentTabs,
         }));
-    }, [dashboardPage, initialLevel2ContentTabs, initialLevel2Tabs, pages]);
+    }, [dashboardPage, initialLevel2ContentTabs, initialLevel2Tabs, pages, setActiveLevel2Tabs, setPageLevel2ContentTabs]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -96,13 +153,12 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         setActivePageId(dashboardPage.id);
     }, [activePageId, dashboardPage.id, openPages]);
 
-
     function handleTogglePanel(panelId) {
         setActivePanelId((currentPanelId) => (currentPanelId === panelId ? null : panelId));
     }
 
     const openPageById = useCallback((pageId) => {
-        if (pageId !== dashboardPage.id && isWorkspacePageInactive(pageId)) {
+        if (pageId !== dashboardPage.id && isWorkspacePageInactive(pageId, preferences)) {
             setActivePanelId(null);
             onCloseMobileWorkspaceMenu?.();
             return;
@@ -130,23 +186,11 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         setActivePageId(nextPage.id);
         setActivePanelId(null);
         onCloseMobileWorkspaceMenu?.();
-    }, [dashboardPage.id, pages, openPages, onCloseMobileWorkspaceMenu]);
+    }, [dashboardPage.id, pages, openPages, onCloseMobileWorkspaceMenu, preferences]);
 
     function handleSelectPanelItem(item) {
         openPageById(item.id);
     }
-
-    const activePage = resolveActivePage(openPages, activePageId, dashboardPage);
-    const activePageContentTabs = resolveActivePageContentTabs(activePage, pageLevel2ContentTabs);
-    const isDashboardPageActive = activePage.id === dashboardPage.id;
-    const {
-        level2Tabs,
-        activeLevel2TabId,
-        activeLevel2Tab,
-        activePageMode,
-    } = resolveLevel2State(activePage, activePageContentTabs, activeLevel2Tabs);
-
-
 
     const tabItems = useMemo(
         () =>
@@ -156,6 +200,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
             })),
         [dashboardPage.id, dirtyTabs, openPages],
     );
+
     const decoratedLevel2Tabs = useMemo(
         () =>
             level2Tabs.map((tab) => ({
@@ -165,24 +210,6 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
             })),
         [activePage.id, dirtyTabs, level2Tabs],
     );
-
-    function closePageNow(pageId) {
-        if (pageId === dashboardPage.id) {
-            return;
-        }
-
-        clearPageDirty(pageId);
-        setOpenPages((currentPages) => currentPages.filter((page) => page.id !== pageId));
-        setPageLevel2ContentTabs((currentTabs) => ({
-            ...currentTabs,
-            [pageId]: initialLevel2ContentTabs[pageId] ?? [],
-        }));
-        setActiveLevel2Tabs((currentTabs) => ({
-            ...currentTabs,
-            [pageId]: initialLevel2Tabs[pageId] ?? currentTabs[pageId],
-        }));
-        setActivePageId((currentPageId) => (currentPageId === pageId ? dashboardPage.id : currentPageId));
-    }
 
     function requestClosePage(pageId) {
         if (pageId === dashboardPage.id) {
@@ -199,65 +226,6 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
             pageId,
         });
     }
-
-    const handleOpenContentTab = useCallback((pageId, tab) => {
-        if (!pages[pageId]?.subtab && !pages[pageId]?.detailTabsOnly) {
-            return;
-        }
-
-        setPageLevel2ContentTabs((currentTabs) => {
-            const pageTabs = currentTabs[pageId] ?? initialLevel2ContentTabs[pageId] ?? [];
-
-            if (pageTabs.some((item) => item.id === tab.id)) {
-                return currentTabs;
-            }
-
-            return {
-                ...currentTabs,
-                [pageId]: [...pageTabs, tab],
-            };
-        });
-        setActiveLevel2Tabs((currentTabs) => ({
-            ...currentTabs,
-            [pageId]: tab.id,
-        }));
-    }, [pages, initialLevel2ContentTabs]);
-
-    function handleOpenDefaultContentTab(pageId) {
-        const page = pages[pageId];
-
-        if (!page?.subtab) {
-            return;
-        }
-
-        handleOpenContentTab(pageId, {
-            id: page.subtab.id,
-            kind: 'content',
-            label: page.subtab.label,
-            closable: true,
-            tabType: 'create',
-        });
-    }
-    const detailTabBuilders = useMemo(() => createDetailTabOpeners(pages), [pages]);
-    const createDetailTabOpener = (pageId) => (detail) => {
-        const buildTab = detailTabBuilders[pageId];
-
-        if (!buildTab) {
-            return;
-        }
-
-        handleOpenContentTab(pageId, buildTab(detail));
-    };
-    const detailTabOpeners = useMemo(
-        () =>
-            Object.fromEntries(
-                Object.entries(detailTabBuilders).map(([pageId, buildTab]) => [
-                    pageId,
-                    (detail) => handleOpenContentTab(pageId, buildTab(detail)),
-                ]),
-            ),
-        [detailTabBuilders],
-    );
 
     useEffect(() => {
         function handleOpenPage(e) {
@@ -281,108 +249,6 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         window.addEventListener('workspace:open-page', handleOpenPage);
         return () => window.removeEventListener('workspace:open-page', handleOpenPage);
     }, [openPageById, detailTabBuilders, handleOpenContentTab]);
-
-    function handleSelectLevel2Tab(tabId) {
-        if (!activePage.subtab && !activePage.detailTabsOnly) {
-            return;
-        }
-
-        setActiveLevel2Tabs((currentTabs) => ({
-            ...currentTabs,
-            [activePage.id]: tabId,
-        }));
-    }
-
-    function closeLevel2TabNow(tabId) {
-        clearTabDirty(activePage.id, tabId);
-        const remainingTabs = activePageContentTabs.filter((tab) => tab.id !== tabId);
-
-        if (remainingTabs.length === activePageContentTabs.length) {
-            return;
-        }
-
-        if (!remainingTabs.length) {
-            if (activePage.detailTabsOnly) {
-                setPageLevel2ContentTabs((currentTabs) => ({
-                    ...currentTabs,
-                    [activePage.id]: [],
-                }));
-                setActiveLevel2Tabs((currentTabs) => ({
-                    ...currentTabs,
-                    [activePage.id]: initialLevel2Tabs[activePage.id],
-                }));
-                return;
-            }
-
-            closePageNow(activePage.id);
-            return;
-        }
-
-        setPageLevel2ContentTabs((currentTabs) => ({
-            ...currentTabs,
-            [activePage.id]: remainingTabs,
-        }));
-
-        if (activeLevel2TabId === tabId) {
-            setActiveLevel2Tabs((currentTabs) => ({
-                ...currentTabs,
-                [activePage.id]: remainingTabs[remainingTabs.length - 1].id,
-            }));
-        }
-    }
-
-    function requestCloseLevel2Tab(tabId) {
-        if (!tabId) {
-            return;
-        }
-
-        if (!dirtyTabs?.[activePage.id]?.[tabId]) {
-            closeLevel2TabNow(tabId);
-            return;
-        }
-
-        setPendingCloseRequest({
-            type: 'level2-tab',
-            pageId: activePage.id,
-            tabId,
-        });
-    }
-
-    function handleCloseDetailTab(pageId, recordId) {
-        if (!pageId || recordId == null) {
-            return;
-        }
-
-        const tabId = `${pageId}-detail-${recordId}`;
-        clearTabDirty(pageId, tabId);
-
-        setPageLevel2ContentTabs((currentTabs) => {
-            const pageTabs = currentTabs[pageId] ?? initialLevel2ContentTabs[pageId] ?? [];
-            const remainingTabs = pageTabs.filter((tab) => tab.id !== tabId);
-
-            if (remainingTabs.length === pageTabs.length) {
-                return currentTabs;
-            }
-
-             setActiveLevel2Tabs((currentLevel2Tabs) => {
-                if (currentLevel2Tabs[pageId] !== tabId) {
-                    return currentLevel2Tabs;
-                }
-
-                return {
-                    ...currentLevel2Tabs,
-                    [pageId]: remainingTabs.length
-                        ? remainingTabs[remainingTabs.length - 1].id
-                        : initialLevel2Tabs[pageId],
-                };
-            });
-
-            return {
-                ...currentTabs,
-                [pageId]: remainingTabs,
-            };
-        });
-    }
 
     useEffect(() => {
         if (!pageOpeningLoading) {

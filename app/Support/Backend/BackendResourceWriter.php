@@ -99,6 +99,65 @@ class BackendResourceWriter
                 }
             }
 
+            // Enforce required attachments based on preference settings
+            $blueprintToPreferenceMap = [
+                'sales-quotes' => 'attachments-sales-quote',
+                'sales-orders' => 'attachments-sales-order',
+                'sales-deliveries' => 'attachments-sales-delivery',
+                'sales-invoices' => 'attachments-sales-invoice',
+                'sales-receipts' => 'attachments-sales-receipt',
+                'sales-returns' => 'attachments-sales-return',
+                'price-adjustments' => 'attachments-sales-discount',
+                'purchase-orders' => 'attachments-purchase-order',
+                'goods-receipts' => 'attachments-purchase-receipt',
+                'purchase-invoices' => 'attachments-purchase-invoice',
+                'purchase-payments' => 'attachments-purchase-payment',
+                'purchase-returns' => 'attachments-purchase-return',
+                'supplier-prices' => 'attachments-purchase-price',
+                'item-requests' => 'attachments-inventory-request',
+                'stock-transfers' => 'attachments-inventory-transfer',
+                'inventory-adjustments' => 'attachments-inventory-adjustment',
+                'work-orders' => 'attachments-inventory-job-order',
+                'material-additions' => 'attachments-inventory-material-addition',
+                'work-completions' => 'attachments-inventory-job-completion',
+                'stock-opname-orders' => 'attachments-inventory-stock-opname-request',
+                'stock-opname-results' => 'attachments-inventory-stock-opname-result',
+                'expense-entries' => 'attachments-other-expense-record',
+                'payroll-entries' => 'attachments-other-salary-record',
+                'general-journals' => 'attachments-other-general-journal',
+                'cash-payments' => 'attachments-other-payment',
+                'cash-receipts' => 'attachments-other-receipt',
+                'bank-transfers' => 'attachments-other-bank-transfer',
+                'fixed-assets' => 'attachments-other-fixed-asset',
+                'asset-changes' => 'attachments-other-fixed-asset-change',
+                'asset-disposals' => 'attachments-other-fixed-asset-disposal',
+                'asset-moves' => 'attachments-other-fixed-asset-transfer',
+            ];
+
+            $prefKey = $blueprintToPreferenceMap[$blueprint->key] ?? null;
+            if ($prefKey && \Illuminate\Support\Facades\Schema::hasTable('preference_settings')) {
+                $isEnabled = DB::table('preference_settings')
+                    ->where('setting_key', $prefKey)
+                    ->where('value', '1')
+                    ->exists();
+
+                if ($isEnabled) {
+                    $hasAttachmentsInPayload = !empty($payload['attachment_ids']);
+                    $hasExistingAttachments = false;
+                    if ($record->exists) {
+                        $hasExistingAttachments = DB::table('attachments')
+                            ->where('attachable_type', get_class($record))
+                            ->where('attachable_id', $record->getKey())
+                            ->exists();
+                    }
+                    if (!$hasAttachmentsInPayload && !$hasExistingAttachments) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'attachments' => ["Lampiran wajib disertakan untuk transaksi {$blueprint->label} sesuai pengaturan preferensi."]
+                        ]);
+                    }
+                }
+            }
+
             $before = $record->exists ? $this->activityLogger->snapshot($record) : null;
             $record->fill(Arr::only($payload, $record->getFillable()));
             $record->save();

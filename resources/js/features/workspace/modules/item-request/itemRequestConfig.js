@@ -18,9 +18,9 @@ const itemRequestListColumns = [
     { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'requestType', label: 'Tipe Permintaan', widthClassName: 'w-[280px]', align: 'left' },
-    { id: 'notes', label: 'Keterangan', widthClassName: 'w-[40%]', align: 'left' },
+    { id: 'notes', label: 'Keterangan', widthClassName: 'w-[250px]', align: 'left' },
     { id: 'status', label: 'Status', widthClassName: 'w-[220px]', align: 'left' },
-    { id: 'estimatedTotal', label: 'Total Hrg Estimasi', widthClassName: 'w-[150px]', align: 'right' },
+    { id: 'estimatedTotal', label: 'Total Hrg Estimasi', widthClassName: 'w-[200px]', align: 'right' },
 ];
 
 const itemRequestDetailColumns = [

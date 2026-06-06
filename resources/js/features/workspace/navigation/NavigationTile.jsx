@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import implementedWorkspacePageIds from '@/features/workspace/shared/implementedWorkspacePageIds';
 import {
@@ -26,8 +27,10 @@ const toneClasses = {
 };
 
 export default function NavigationTile({ item, onSelect, dense = false }) {
+    const { props } = usePage();
+    const preferences = props.dashboard?.preferences ?? {};
     const tone = toneClasses[item.tone] ?? toneClasses.blue;
-    const isInactive = isWorkspacePageInactive(item.id);
+    const isInactive = isWorkspacePageInactive(item.id, preferences);
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
     const isSelectable = isImplemented && !isInactive;
     const stateClassName = isInactive

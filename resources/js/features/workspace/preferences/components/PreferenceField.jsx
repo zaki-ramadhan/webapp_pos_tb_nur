@@ -15,7 +15,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                 error={field.error}
                 message={field.message}
                 className="h-[34px] rounded-[3px] border-[#cfd6e2]"
-                selectClassName="text-[15px]"
+                selectClassName="text-[14px] md:text-[15px]"
             >
                 {field.options.map((option) => (
                     <option key={option} value={option}>
@@ -32,7 +32,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                 disabled={field.disabled}
                 onChange={(displayValue) => onChange?.(field.id, displayValue)}
                 className="w-full max-w-[280px]"
-                inputClassName="text-[15px]"
+                inputClassName="text-[14px] md:text-[15px]"
             />
         );
     },
@@ -75,7 +75,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                     error={field.error}
                     message={field.message}
                     className="h-[34px] flex-1 rounded-[3px] border-[#cfd6e2] bg-[#f8f8f8]"
-                    inputClassName="text-[15px] text-[#6a7388]"
+                    inputClassName="text-[14px] md:text-[15px] text-[#6a7388]"
                 />
                 <button
                     type="button"
@@ -94,7 +94,7 @@ const PREFERENCE_FIELD_RENDERERS = {
         return (
             <PreferenceLookupAutocomplete
                 field={field}
-                value={value}
+                value={value ?? field.value}
                 onChange={onChange}
                 options={options}
             />
@@ -105,13 +105,14 @@ const PREFERENCE_FIELD_RENDERERS = {
         return (
             <PreferenceLookupAutocomplete
                 field={field}
-                value={value}
+                value={value ?? field.value}
                 onChange={onChange}
                 options={options}
             />
         );
     },
     default(field, value, onChange) {
+        const hasValue = Boolean(value ?? field.value);
         return (
             <TextInput
                 id={field.id}
@@ -121,9 +122,20 @@ const PREFERENCE_FIELD_RENDERERS = {
                 disabled={field.disabled}
                 error={field.error}
                 message={field.message}
-                trailing={field.clearable ? <CloseIcon /> : null}
+                trailing={
+                    field.clearable && hasValue ? (
+                        <button
+                            type="button"
+                            onClick={() => onChange?.(field.id, '')}
+                            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none transition-colors"
+                            aria-label="Hapus"
+                        >
+                            <CloseIcon className="h-3.5 w-3.5" />
+                        </button>
+                    ) : null
+                }
                 className="h-[34px] rounded-[3px] border-[#cfd6e2]"
-                inputClassName="text-[15px]"
+                inputClassName="text-[14px] md:text-[15px]"
             />
         );
     },

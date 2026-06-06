@@ -124,25 +124,11 @@ export default function ItemRequestTableView({
                                 onChange={handleChangeFilter}
                             />
                         ))}
-                        <TransactionToolbarSplitButton
-                            label="Filter lanjutan"
-                            icon={<FunnelIcon className="h-4.5 w-4.5" />}
-                            items={[
-                                { id: 'reset-filter', label: 'Reset filter' },
-                                { id: 'save-filter', label: 'Simpan filter' },
-                            ]}
-                        />
                     </>
                 }
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,
-                }}
-                refreshButton={{
-                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
-                    onClick: onRefresh ?? (() => setSearchValue('')),
-                    loading,
-                    icon: <LinkIcon className="h-4.5 w-4.5" />,
                 }}
                 rightControls={
                     <>
@@ -154,11 +140,6 @@ export default function ItemRequestTableView({
                         <TransactionToolbarIconButton label="Cetak daftar">
                             <PrintIcon className="h-4.5 w-4.5" />
                         </TransactionToolbarIconButton>
-                        <TransactionToolbarSplitButton
-                            label="Atur tampilan tabel"
-                            icon={<TableActionIcon className="h-4.5 w-4.5" />}
-                            items={config.table.settingsItems}
-                        />
                     </>
                 }
                 search={{
@@ -167,7 +148,7 @@ export default function ItemRequestTableView({
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[340px]',
                 }}
-                pageValue={config.table.pageValue}
+                pageValue={String(rows.length)}
             />
 
             <div className="min-h-0 flex-1 overflow-x-auto">

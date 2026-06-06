@@ -108,9 +108,34 @@ final class PosBlueprint
                 ],
                 'sample' => $selectedSample,
                 'sampleDashboard' => self::sampleDashboard($abc, $apriori, $loadData),
+                'preferences' => self::loadPreferences(),
             ],
         ];
     }
+
+    private static function loadPreferences(): array
+    {
+        if (!Schema::hasTable('preference_settings')) {
+            return [];
+        }
+
+        return \Illuminate\Support\Facades\DB::table('preference_settings')
+            ->where('scope_type', 'company')
+            ->where('scope_key', 'default')
+            ->pluck('value', 'setting_key')
+            ->map(function ($value) {
+                $decoded = json_decode($value, true);
+                if ($decoded === 'true' || $decoded === true) {
+                    return true;
+                }
+                if ($decoded === 'false' || $decoded === false) {
+                    return false;
+                }
+                return $decoded;
+            })
+            ->toArray();
+    }
+
 
     private static function baseData(): array
     {
@@ -161,6 +186,56 @@ final class PosBlueprint
                 ['text' => ' pengguna menyertakan lampiran saat menyimpan transaksi.'],
             ],
         ];
+
+        $approvalTypesMapping = [
+            'approval-sales-quote' => ['value' => 'sales-quote', 'label' => 'Penawaran Penjualan'],
+            'approval-sales-order' => ['value' => 'sales-order', 'label' => 'Pesanan Penjualan'],
+            'approval-sales-delivery' => ['value' => 'sales-delivery', 'label' => 'Pengiriman Pesanan'],
+            'approval-sales-invoice' => ['value' => 'sales-invoice', 'label' => 'Faktur Penjualan'],
+            'approval-sales-receipt' => ['value' => 'sales-receipt', 'label' => 'Penerimaan Penjualan'],
+            'approval-sales-return' => ['value' => 'sales-return', 'label' => 'Retur Penjualan'],
+            'approval-sales-discount' => ['value' => 'price-adjustment', 'label' => 'Penyesuaian Harga/Diskon'],
+            'approval-purchase-order' => ['value' => 'purchase-order', 'label' => 'Pesanan Pembelian'],
+            'approval-purchase-receipt' => ['value' => 'goods-receipt', 'label' => 'Penerimaan Barang'],
+            'approval-purchase-invoice' => ['value' => 'purchase-invoice', 'label' => 'Faktur Pembelian'],
+            'approval-purchase-payment' => ['value' => 'purchase-payment', 'label' => 'Pembayaran Pembelian'],
+            'approval-purchase-return' => ['value' => 'purchase-return', 'label' => 'Retur Pembelian'],
+            'approval-purchase-price' => ['value' => 'supplier-price', 'label' => 'Harga Pemasok'],
+            'approval-inventory-request' => ['value' => 'item-request', 'label' => 'Permintaan Barang'],
+            'approval-inventory-adjustment' => ['value' => 'inventory-adjustment', 'label' => 'Penyesuaian Persediaan'],
+            'approval-inventory-transfer' => ['value' => 'stock-transfer', 'label' => 'Pemindahan Barang'],
+            'approval-inventory-job-order' => ['value' => 'work-order', 'label' => 'Pekerjaan Pesanan'],
+            'approval-inventory-material-addition' => ['value' => 'material-addition', 'label' => 'Penambahan Bahan Baku'],
+            'approval-inventory-job-completion' => ['value' => 'work-completion', 'label' => 'Penyelesaian Pesanan'],
+            'approval-inventory-stock-opname' => ['value' => 'stock-opname-result', 'label' => 'Hasil Stok Opname'],
+            'approval-other-payment' => ['value' => 'cash-payment', 'label' => 'Pembayaran (Kas & Bank)'],
+            'approval-other-receipt' => ['value' => 'cash-receipt', 'label' => 'Penerimaan (Kas & Bank)'],
+            'approval-other-bank-transfer' => ['value' => 'bank-transfer', 'label' => 'Transfer Bank'],
+            'approval-other-expense' => ['value' => 'expense-entry', 'label' => 'Pencatatan Beban'],
+            'approval-other-salary' => ['value' => 'payroll-entry', 'label' => 'Pencatatan Gaji'],
+            'approval-other-transfer-asset' => ['value' => 'asset-move', 'label' => 'Pindah Aset'],
+        ];
+
+        $transactionTypeOptions = [];
+        if ($loadData && Schema::hasTable('preference_settings')) {
+            $enabledApprovals = \Illuminate\Support\Facades\DB::table('preference_settings')
+                ->where('setting_key', 'like', 'approval-%')
+                ->where('value', '1')
+                ->pluck('setting_key')
+                ->toArray();
+
+            foreach ($enabledApprovals as $key) {
+                if (isset($approvalTypesMapping[$key])) {
+                    $transactionTypeOptions[] = $approvalTypesMapping[$key];
+                }
+            }
+        }
+
+        if (empty($transactionTypeOptions)) {
+            $transactionTypeOptions = [
+                ['value' => 'sales-invoice', 'label' => 'Faktur Penjualan']
+            ];
+        }
 
         $formatCurrencyShort = function ($value) {
             $abs = abs($value);
@@ -3092,10 +3167,12 @@ final class PosBlueprint
                             [
                                 'id' => 'transactionType',
                                 'rowKey' => 'transactionTypeValue',
-                                'options' => [
-                                    ['value' => 'all', 'label' => 'Tipe Transaksi: Semua'],
-                                    ['value' => 'sales-invoice', 'label' => 'Tipe Transaksi: Faktur Penjualan'],
-                                ],
+                                'options' => array_merge(
+                                    [['value' => 'all', 'label' => 'Tipe Transaksi: Semua']],
+                                    array_map(function ($opt) {
+                                        return ['value' => $opt['value'], 'label' => 'Tipe Transaksi: ' . $opt['label']];
+                                    }, $transactionTypeOptions)
+                                ),
                             ],
                             [
                                 'id' => 'branch',
@@ -3148,13 +3225,11 @@ final class PosBlueprint
                         'saveLabel' => 'Simpan',
                         'valueLabel' => 'Nilai (Rp)',
                         'defaults' => [
-                            'transactionType' => 'sales-invoice',
+                            'transactionType' => $transactionTypeOptions[0]['value'] ?? 'sales-invoice',
                             'branch' => 'all-branches',
                             'approvalRule' => 'one-approved',
                         ],
-                        'transactionTypeOptions' => [
-                            ['value' => 'sales-invoice', 'label' => 'Faktur Penjualan'],
-                        ],
+                        'transactionTypeOptions' => $transactionTypeOptions,
                         'branchOptions' => [
                             ['value' => 'all-branches', 'label' => '[Semua Cabang]'],
                         ],
@@ -3605,8 +3680,8 @@ final class PosBlueprint
                                         'icon' => 'settings',
                                         'column' => 1,
                                         'items' => [
-                                            ['id' => 'multi-branch', 'label' => 'Multi Cabang', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
-                                            ['id' => 'multi-currency', 'label' => 'Multi Mata Uang', 'checked' => true],
+                                            ['id' => 'multi-branch', 'label' => 'Multi Cabang', 'checked' => false],
+                                            ['id' => 'multi-currency', 'label' => 'Multi Mata Uang', 'checked' => false],
                                             ['id' => 'tax-feature', 'label' => 'Pajak', 'checked' => true],
                                             ['id' => 'approval-feature', 'label' => 'Persetujuan (Approval)', 'checked' => true],
                                             ['id' => 'asset-feature', 'label' => 'Pencatatan Aset', 'checked' => true],
@@ -3618,8 +3693,9 @@ final class PosBlueprint
                                         'title' => 'Metode Biaya Persediaan',
                                         'icon' => 'inventory',
                                         'column' => 1,
-                                        'textItems' => [
-                                            ['id' => 'average-method', 'label' => 'Rata-rata'],
+                                        'radioItems' => [
+                                            ['id' => 'inventory-average', 'label' => 'Rata-rata', 'checked' => false],
+                                            ['id' => 'inventory-fifo', 'label' => 'FIFO (First In First Out)', 'checked' => true],
                                         ],
                                     ],
                                     [
@@ -3629,17 +3705,6 @@ final class PosBlueprint
                                         'column' => 2,
                                         'items' => [
                                             ['id' => 'department-center', 'label' => 'Departemen', 'checked' => true],
-                                            ['id' => 'project-center', 'label' => 'Proyek', 'checked' => false],
-                                            ['id' => 'finance-category', 'label' => 'Kategori Keuangan', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
-                                        ],
-                                    ],
-                                    [
-                                        'id' => 'misc-features',
-                                        'title' => 'Lainnya',
-                                        'icon' => 'numbering',
-                                        'column' => 2,
-                                        'items' => [
-                                            ['id' => 'employee-loan', 'label' => 'Pinjaman Karyawan', 'checked' => false],
                                         ],
                                     ],
                                 ],
@@ -3656,13 +3721,8 @@ final class PosBlueprint
                                         'items' => [
                                             ['id' => 'sales-quote-order', 'label' => 'Penawaran dan Pesanan Penjualan', 'checked' => true],
                                             ['id' => 'sales-return', 'label' => 'Retur Penjualan', 'checked' => true],
-                                            ['id' => 'invoice-swap', 'label' => 'Tukar Faktur', 'checked' => false],
                                             ['id' => 'price-adjustment', 'label' => 'Penyesuaian Harga/Diskon', 'checked' => true],
-                                            ['id' => 'open-invoice', 'label' => 'Faktur Dimuka (Mendahului Pengiriman)', 'checked' => true],
                                             ['id' => 'salesman', 'label' => 'Tenaga Penjual (Salesman)', 'checked' => true],
-                                            ['id' => 'customer-claim', 'label' => 'Klaim Pelanggan', 'checked' => false],
-                                            ['id' => 'packing', 'label' => 'Pengepakan Barang', 'checked' => false],
-                                            ['id' => 'unique-code-payment', 'label' => 'Pembayaran dengan Kode Unik', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
                                         ],
                                     ],
                                     [
@@ -3671,13 +3731,8 @@ final class PosBlueprint
                                         'icon' => 'numbering',
                                         'column' => 2,
                                         'items' => [
-                                            ['id' => 'consignment', 'label' => 'Konsinyasi Barang', 'checked' => true],
                                             ['id' => 'delivery-service', 'label' => 'Jasa Pengiriman', 'checked' => true],
                                             ['id' => 'payment-terms', 'label' => 'Syarat Pembayaran', 'checked' => true],
-                                            ['id' => 'pos-settings', 'label' => 'Pengaturan POS', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
-                                            ['id' => 'bca-smartlink', 'label' => 'BCA SmartLink Integration', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
-                                            ['id' => 'uob-smartlink', 'label' => 'UOB SmartLink Integration', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
-                                            ['id' => 'mandiri-smartlink', 'label' => 'Mandiri SmartLink Integration', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
                                         ],
                                     ],
                                 ],
@@ -3693,10 +3748,7 @@ final class PosBlueprint
                                         'column' => 1,
                                         'items' => [
                                             ['id' => 'purchase-order', 'label' => 'Pesanan Pembelian', 'checked' => true],
-                                            ['id' => 'supplier-claim', 'label' => 'Klaim Pemasok', 'checked' => false],
                                             ['id' => 'supplier-price-list', 'label' => 'Daftar Harga Pemasok', 'checked' => true],
-                                            ['id' => 'open-bill', 'label' => 'Tagihan Dimuka (Mendahului Terima Barang)', 'checked' => true],
-                                            ['id' => 'other-supplier-cost', 'label' => 'Biaya Pembelian oleh Pemasok lain', 'checked' => true],
                                         ],
                                     ],
                                 ],
@@ -3714,9 +3766,7 @@ final class PosBlueprint
                                             ['id' => 'item-request', 'label' => 'Permintaan Barang', 'checked' => true],
                                             ['id' => 'multi-warehouse', 'label' => 'Multi Gudang', 'checked' => true],
                                             ['id' => 'multi-unit', 'label' => 'Multi Satuan Barang', 'checked' => true],
-                                            ['id' => 'serial-production', 'label' => 'Nomor Serial/Produksi', 'checked' => true],
                                             ['id' => 'simple-production', 'label' => 'Produksi Sederhana', 'checked' => true],
-                                            ['id' => 'manufacture', 'label' => 'Manufaktur', 'checked' => false, 'note' => 'Pelajari lebih lanjut'],
                                         ],
                                     ],
                                 ],
@@ -3732,14 +3782,7 @@ final class PosBlueprint
                                         'id' => 'tax-company-name-row',
                                         'type' => 'field',
                                         'label' => 'Nama Perusahaan',
-                                        'controlsClassName' => 'sm:flex-nowrap',
                                         'controls' => [
-                                            [
-                                                'id' => 'tax-company-name-link',
-                                                'type' => 'action',
-                                                'icon' => 'link',
-                                                'label' => 'Hubungkan nama perusahaan',
-                                            ],
                                             [
                                                 'id' => 'tax-company-name',
                                                 'type' => 'text',
@@ -3929,28 +3972,6 @@ final class PosBlueprint
                                         ],
                                     ],
                                     [
-                                        'id' => 'tax-efaktur-reference-row',
-                                        'type' => 'checkbox-list',
-                                        'label' => 'Referensi e-Faktur',
-                                        'options' => [
-                                            [
-                                                'id' => 'invoice-number',
-                                                'label' => 'Sertakan Nomor Faktur',
-                                                'checked' => true,
-                                            ],
-                                            [
-                                                'id' => 'po-number',
-                                                'label' => 'Sertakan Nomor PO',
-                                                'checked' => false,
-                                            ],
-                                            [
-                                                'id' => 'branch-name',
-                                                'label' => 'Sertakan Nama Cabang',
-                                                'checked' => false,
-                                            ],
-                                        ],
-                                    ],
-                                    [
                                         'id' => 'tax-default-quantity-price-row',
                                         'type' => 'single-checkbox',
                                         'label' => "Tampilkan Kuantitas\ndan Harga secara\nDefault pada Item\nBarang/Jasa",
@@ -4031,9 +4052,22 @@ final class PosBlueprint
                                                     ],
                                                     [
                                                         'value' => 'custom-account',
-                                                        'label' => "Dibebankan ke\nakun",
+                                                        'label' => 'Dibebankan ke akun',
                                                     ],
                                                 ],
+                                            ],
+                                            [
+                                                'id' => 'sales-return-custom-account-row',
+                                                'type' => 'field',
+                                                'label' => 'Akun Beban Retur',
+                                                'control' => [
+                                                    'id' => 'sales-return-custom-account',
+                                                    'type' => 'lookup',
+                                                    'value' => '[511.000-01] Beban Retur Penjualan',
+                                                    'clearable' => true,
+                                                    'placeholder' => 'Cari/Pilih Akun Perkiraan...',
+                                                ],
+                                                'widthClassName' => 'max-w-[420px]',
                                             ],
                                             [
                                                 'id' => 'sales-return-update-cost',
@@ -4326,7 +4360,6 @@ final class PosBlueprint
                                             ['id' => 'attachments-sales-invoice', 'label' => 'Faktur Penjualan', 'checked' => false],
                                             ['id' => 'attachments-sales-receipt', 'label' => 'Penerimaan Penjualan', 'checked' => false],
                                             ['id' => 'attachments-sales-return', 'label' => 'Retur Penjualan', 'checked' => false],
-                                            ['id' => 'attachments-sales-customer', 'label' => 'Pelanggan', 'checked' => false],
                                             ['id' => 'attachments-sales-discount', 'label' => 'Penyesuaian Harga/Diskon', 'checked' => false],
                                         ],
                                     ],
@@ -4349,7 +4382,6 @@ final class PosBlueprint
                                             ['id' => 'attachments-purchase-payment', 'label' => 'Pembayaran Pembelian', 'checked' => false],
                                             ['id' => 'attachments-purchase-return', 'label' => 'Retur Pembelian', 'checked' => false],
                                             ['id' => 'attachments-purchase-price', 'label' => 'Harga Pemasok', 'checked' => false],
-                                            ['id' => 'attachments-purchase-supplier', 'label' => 'Pemasok', 'checked' => false],
                                         ],
                                     ],
                                 ],
@@ -4373,7 +4405,6 @@ final class PosBlueprint
                                             ['id' => 'attachments-inventory-job-completion', 'label' => 'Penyelesaian Pesanan', 'checked' => false],
                                             ['id' => 'attachments-inventory-stock-opname-request', 'label' => 'Perintah Stok Opname', 'checked' => false],
                                             ['id' => 'attachments-inventory-stock-opname-result', 'label' => 'Hasil Stok Opname', 'checked' => false],
-                                            ['id' => 'attachments-inventory-minimum-branch-stock', 'label' => 'Minimum Stok Cabang', 'checked' => false],
                                         ],
                                     ],
                                 ],
@@ -4392,10 +4423,6 @@ final class PosBlueprint
                                         'items' => [
                                             ['id' => 'attachments-other-expense-record', 'label' => 'Pencatatan Beban', 'checked' => false],
                                             ['id' => 'attachments-other-salary-record', 'label' => 'Pencatatan Gaji', 'checked' => false],
-                                            ['id' => 'attachments-other-employee-loan', 'label' => 'Pinjaman Karyawan', 'checked' => false],
-                                            ['id' => 'attachments-other-loan-disbursement', 'label' => 'Pencairan Pinjaman', 'checked' => false],
-                                            ['id' => 'attachments-other-installment-payment', 'label' => 'Pembayaran Angsuran', 'checked' => false],
-                                            ['id' => 'attachments-other-loan-settlement', 'label' => 'Pelunasan Pinjaman', 'checked' => false],
                                             ['id' => 'attachments-other-general-journal', 'label' => 'Jurnal Umum', 'checked' => false],
                                         ],
                                     ],
@@ -4491,7 +4518,7 @@ final class PosBlueprint
                                                                 'beforeUnit' => 'Hari',
                                                                 'afterValue' => '',
                                                                 'afterUnit' => 'Hari',
-                                                                'unitOptions' => ['Hari', 'Minggu'],
+                                                                'unitOptions' => ['Hari', 'Bulan', 'Tahun'],
                                                             ],
                                                             [
                                                                 'id' => 'date-range-prevent',
@@ -4504,7 +4531,7 @@ final class PosBlueprint
                                                                 'beforeUnit' => 'Hari',
                                                                 'afterValue' => '',
                                                                 'afterUnit' => 'Hari',
-                                                                'unitOptions' => ['Hari', 'Minggu'],
+                                                                'unitOptions' => ['Hari', 'Bulan', 'Tahun'],
                                                             ],
                                                             [
                                                                 'id' => 'date-range-exception-users',
@@ -4536,10 +4563,116 @@ final class PosBlueprint
                                                     [
                                                         'value' => 'specific-date',
                                                         'label' => 'Berdasarkan tanggal tertentu',
+                                                        'blocks' => [
+                                                            [
+                                                                'id' => 'specific-date-warning',
+                                                                'type' => 'timing-rule',
+                                                                'label' => 'Peringati Jika',
+                                                                'option' => [
+                                                                    'checked' => false,
+                                                                ],
+                                                                'beforeValue' => '',
+                                                                'beforeUnit' => 'Hari',
+                                                                'afterValue' => '',
+                                                                'afterUnit' => 'Hari',
+                                                                'unitOptions' => ['Hari', 'Bulan', 'Tahun'],
+                                                            ],
+                                                            [
+                                                                'id' => 'specific-date-prevent',
+                                                                'type' => 'timing-rule',
+                                                                'label' => 'Cegah Jika',
+                                                                'option' => [
+                                                                    'checked' => false,
+                                                                ],
+                                                                'beforeValue' => '',
+                                                                'beforeUnit' => 'Hari',
+                                                                'afterValue' => '',
+                                                                'afterUnit' => 'Hari',
+                                                                'unitOptions' => ['Hari', 'Bulan', 'Tahun'],
+                                                            ],
+                                                            [
+                                                                'id' => 'specific-date-exception-users',
+                                                                'type' => 'search-row',
+                                                                'label' => 'Pengecualian pada pengguna',
+                                                                'control' => [
+                                                                    'value' => '',
+                                                                    'placeholder' => 'Cari/Pilih...',
+                                                                ],
+                                                            ],
+                                                            [
+                                                                'id' => 'specific-date-transaction-scope',
+                                                                'type' => 'nested-radio-group',
+                                                                'label' => 'Berlakukan pada transaksi',
+                                                                'value' => 'all-transactions',
+                                                                'options' => [
+                                                                    [
+                                                                        'value' => 'all-transactions',
+                                                                        'label' => 'Semua Transaksi',
+                                                                    ],
+                                                                    [
+                                                                        'value' => 'journaled-transactions',
+                                                                        'label' => 'Transaksi berjurnal',
+                                                                    ],
+                                                                ],
+                                                            ],
+                                                        ],
                                                     ],
                                                     [
                                                         'value' => 'after-period-days',
                                                         'label' => "Berdasarkan jumlah hari setelah akhir periode tanggal\ntransaksi",
+                                                        'blocks' => [
+                                                            [
+                                                                'id' => 'after-period-days-warning',
+                                                                'type' => 'timing-rule',
+                                                                'label' => 'Peringati Jika',
+                                                                'option' => [
+                                                                    'checked' => false,
+                                                                ],
+                                                                'beforeValue' => '',
+                                                                'beforeUnit' => 'Hari',
+                                                                'afterValue' => '',
+                                                                'afterUnit' => 'Hari',
+                                                                'unitOptions' => ['Hari', 'Bulan', 'Tahun'],
+                                                            ],
+                                                            [
+                                                                'id' => 'after-period-days-prevent',
+                                                                'type' => 'timing-rule',
+                                                                'label' => 'Cegah Jika',
+                                                                'option' => [
+                                                                    'checked' => false,
+                                                                ],
+                                                                'beforeValue' => '',
+                                                                'beforeUnit' => 'Hari',
+                                                                'afterValue' => '',
+                                                                'afterUnit' => 'Hari',
+                                                                'unitOptions' => ['Hari', 'Bulan', 'Tahun'],
+                                                            ],
+                                                            [
+                                                                'id' => 'after-period-days-exception-users',
+                                                                'type' => 'search-row',
+                                                                'label' => 'Pengecualian pada pengguna',
+                                                                'control' => [
+                                                                    'value' => '',
+                                                                    'placeholder' => 'Cari/Pilih...',
+                                                                ],
+                                                            ],
+                                                            [
+                                                                'id' => 'after-period-days-transaction-scope',
+                                                                'type' => 'nested-radio-group',
+                                                                'label' => 'Berlakukan pada transaksi',
+                                                                'value' => 'all-transactions',
+                                                                'options' => [
+                                                                    [
+                                                                        'value' => 'all-transactions',
+                                                                        'label' => 'Semua Transaksi',
+                                                                    ],
+                                                                    [
+                                                                        'value' => 'journaled-transactions',
+                                                                        'label' => 'Transaksi berjurnal',
+                                                                    ],
+                                                                ],
+                                                            ],
+                                                        ],
                                                     ],
                                                 ],
                                             ],
@@ -4680,7 +4813,7 @@ final class PosBlueprint
                             [
                                 'id' => 'others-general',
                                 'label' => 'Lainnya',
-                                'contentClassName' => 'max-w-[1020px]',
+                                'contentClassName' => 'max-w-[760px]',
                                 'sections' => [
                                     [
                                         'id' => 'others-format-section',
@@ -4700,7 +4833,7 @@ final class PosBlueprint
                                                             'Asing (9,999.9)',
                                                             'Indonesia (9.999,9)',
                                                         ],
-                                                        'containerClassName' => 'w-full max-w-[316px]',
+                                                        'containerClassName' => 'w-full max-w-[200px]',
                                                     ],
                                                 ],
                                             ],
@@ -4715,7 +4848,7 @@ final class PosBlueprint
                                                         'type' => 'select',
                                                         'value' => '0.99',
                                                         'options' => ['0.99', '0.999', '0.9999'],
-                                                        'containerClassName' => 'w-full max-w-[316px]',
+                                                        'containerClassName' => 'w-full max-w-[140px]',
                                                     ],
                                                     [
                                                         'id' => 'others-decimal-option-condition',
@@ -4725,7 +4858,7 @@ final class PosBlueprint
                                                             'Jika ada desimal',
                                                             'Selalu tampil',
                                                         ],
-                                                        'containerClassName' => 'w-full max-w-[316px]',
+                                                        'containerClassName' => 'w-full max-w-[200px]',
                                                     ],
                                                 ],
                                             ],
@@ -4742,7 +4875,7 @@ final class PosBlueprint
                                                             'Indonesia (9 Agu 2023)',
                                                             'Asing (Aug 9, 2023)',
                                                         ],
-                                                        'containerClassName' => 'w-full max-w-[316px]',
+                                                        'containerClassName' => 'w-full max-w-[220px]',
                                                     ],
                                                 ],
                                             ],
@@ -4764,8 +4897,9 @@ final class PosBlueprint
                                                         'type' => 'text',
                                                         'value' => '30',
                                                         'inputType' => 'number',
-                                                        'containerClassName' => 'w-full max-w-[148px]',
-                                                        'inputClassName' => 'text-right',
+                                                        'containerClassName' => 'w-full max-w-[65px]',
+                                                        'inputClassName' => 'text-left px-2',
+                                                        'maxLength' => 3,
                                                     ],
                                                     [
                                                         'id' => 'others-aging-ar-unit',
@@ -4808,8 +4942,9 @@ final class PosBlueprint
                                                         'type' => 'text',
                                                         'value' => '30',
                                                         'inputType' => 'number',
-                                                        'containerClassName' => 'w-full max-w-[148px]',
-                                                        'inputClassName' => 'text-right',
+                                                        'containerClassName' => 'w-full max-w-[65px]',
+                                                        'inputClassName' => 'text-left px-2',
+                                                        'maxLength' => 3,
                                                     ],
                                                     [
                                                         'id' => 'others-aging-inventory-unit',
@@ -4835,40 +4970,12 @@ final class PosBlueprint
                                                         'type' => 'select',
                                                         'value' => 'Faktur sudah lunas',
                                                         'options' => [
+                                                            'Semua Faktur',
                                                             'Faktur sudah lunas',
-                                                            'Saat transaksi disimpan',
                                                         ],
-                                                        'containerClassName' => 'w-full max-w-[486px]',
+                                                        'containerClassName' => 'w-full max-w-[240px]',
                                                     ],
                                                 ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            [
-                                'id' => 'others-email-transaction',
-                                'label' => 'Email Transaksi',
-                                'variant' => 'email-config',
-                                'contentClassName' => 'max-w-[1120px]',
-                                'intro' => [
-                                    'title' => 'Konfigurasi Pengiriman Email Transaksi',
-                                    'description' => 'TB Nur POS akan menggunakan konfigurasi ini untuk mengirimkan email transaksi anda.',
-                                ],
-                                'rows' => [
-                                    [
-                                        'id' => 'others-email-provider-row',
-                                        'type' => 'radio',
-                                        'value' => 'default-tbnur',
-                                        'options' => [
-                                            [
-                                                'value' => 'default-tbnur',
-                                                'label' => 'Default TB Nur POS (info@tbnurpos.local)',
-                                            ],
-                                            [
-                                                'value' => 'company-smtp',
-                                                'label' => 'SMTP Perusahaan',
-                                                'showInfo' => true,
                                             ],
                                         ],
                                     ],
@@ -4925,9 +5032,7 @@ final class PosBlueprint
                                 'label' => 'Jalan',
                                 'value' => 'Jl. Tomang raya nomor. 35',
                             ],
-                            'tokens' => [
-                                ['id' => 'city-token', 'label' => 'Kota Denpasar'],
-                            ],
+                            'tokens' => [],
                             'fields' => [
                                 ['id' => 'city', 'label' => 'Kota', 'value' => 'Kota Denpasar', 'clearable' => true],
                                 ['id' => 'province', 'label' => 'Provinsi', 'value' => 'Bali', 'clearable' => true],

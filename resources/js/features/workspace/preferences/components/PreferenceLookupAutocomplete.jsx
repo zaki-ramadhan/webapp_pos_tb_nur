@@ -71,7 +71,7 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
                 message={field.message}
                 trailing={<SearchIcon className="h-5 w-5 text-[#1f2d42]" />}
                 className="h-[34px] rounded-[3px] border-[#cfd6e2]"
-                inputClassName="text-[15px]"
+                inputClassName="text-[14px] md:text-[15px]"
             />
             {open && (
                 <div className="absolute left-0 right-0 z-50 mt-1 max-h-[220px] overflow-y-auto rounded-md border border-[#cad1dd] bg-white shadow-lg">
@@ -81,7 +81,7 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
                                 key={option}
                                 type="button"
                                 onClick={() => handleSelect(option)}
-                                className="flex w-full items-start px-3 py-2.5 text-left text-[15px] text-[#131a28] hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
+                                className="flex w-full items-start px-3 py-2 text-left text-[14px] md:text-[15px] text-[#131a28] hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
                             >
                                 {option}
                             </button>

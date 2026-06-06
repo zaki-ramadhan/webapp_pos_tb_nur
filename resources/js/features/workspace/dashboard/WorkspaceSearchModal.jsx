@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import EmptyState from '@/components/ui/EmptyState';
 import ModalBase from '@/components/ui/ModalBase';
@@ -43,8 +44,10 @@ function resolveToneClassName(tone) {
 }
 
 function SearchMenuCard({ item, onSelect }) {
+    const { props } = usePage();
+    const preferences = props.dashboard?.preferences ?? {};
     const toneClassName = resolveToneClassName(item.tone);
-    const isInactive = isWorkspacePageInactive(item.id);
+    const isInactive = isWorkspacePageInactive(item.id, preferences);
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
     const isSelectable = isImplemented && !isInactive;
     const className = isInactive
@@ -91,6 +94,8 @@ export default function WorkspaceSearchModal({
     onClose,
     onSelectItem,
 }) {
+    const { props } = usePage();
+    const preferences = props.dashboard?.preferences ?? {};
     const [keyword, setKeyword] = useState('');
 
     useEffect(() => {
@@ -130,9 +135,9 @@ export default function WorkspaceSearchModal({
         () =>
             filteredItems.find((item) => {
                 const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
-                return isImplemented && !isWorkspacePageInactive(item.id);
+                return isImplemented && !isWorkspacePageInactive(item.id, preferences);
             }) ?? null,
-        [filteredItems],
+        [filteredItems, preferences],
     );
 
     const sectionTitle = keyword.trim() ? modal.resultLabel ?? 'Hasil Pencarian' : modal.topLabel ?? 'Menu Teratas';

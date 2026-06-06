@@ -32,7 +32,7 @@ function TaxRowLabel({ label, showInfo = false }) {
     }
 
     return (
-        <div className="pt-2 text-[16px] leading-8 text-[#0f172a]">
+        <div className="pt-1.5 text-[14px] md:text-[15px] leading-6 text-[#0f172a]">
             <span className="whitespace-pre-line">{label}</span>
             {showInfo ? (
                 <Tooltip content={getTaxTooltip(label)} portal>
@@ -50,7 +50,7 @@ function TaxActionButton({ control }) {
             type="button"
             disabled={control.disabled}
             aria-label={control.ariaLabel ?? control.label}
-            className={`inline-flex h-[48px] w-[60px] items-center justify-center rounded-[6px] border border-[#4f86d9] bg-white text-[#0f65c9] transition hover:bg-[#f5f9ff] disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${control.className ?? ''}`.trim()}
+            className={`inline-flex h-[38px] w-[50px] items-center justify-center rounded-[6px] border border-[#4f86d9] bg-white text-[#0f65c9] transition hover:bg-[#f5f9ff] disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${control.className ?? ''}`.trim()}
         >
             {control.icon === 'link' ? <LinkIcon className="h-6 w-6" /> : null}
         </button>
@@ -70,8 +70,8 @@ function TaxInputControl({ control, onChange }) {
                 prefix={control.prefix}
                 rows={control.rows ?? 3}
                 className={`rounded-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
-                prefixClassName={`min-w-[60px] border-[#d8dde7] px-3 py-2.5 text-[15px] text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
-                textareaClassName={`min-h-[96px] px-3 py-2.5 text-[15px] leading-6 text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+                prefixClassName={`min-w-[60px] border-[#d8dde7] px-3 py-2 text-[14px] md:text-[15px] text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
+                textareaClassName={`min-h-[80px] px-3 py-2 text-[14px] md:text-[15px] leading-6 text-[#111827] ${control.inputClassName ?? ''}`.trim()}
                 onChange={(event) => onChange(event.target.value)}
             />
         );
@@ -84,11 +84,12 @@ function TaxInputControl({ control, onChange }) {
                 disabled={control.disabled}
                 onChange={(displayValue) => onChange(displayValue)}
                 className={`w-full max-w-[424px] ${control.fieldClassName ?? ''}`.trim()}
-                inputClassName={`text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+                inputClassName={`text-[14px] md:text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
             />
         );
     }
 
+    const hasValue = Boolean(control.value);
     return (
         <TextInput
             id={control.id}
@@ -98,11 +99,22 @@ function TaxInputControl({ control, onChange }) {
             error={control.error}
             message={control.message}
             prefix={control.prefix}
-            trailing={control.clearable ? <CloseIcon className="h-4 w-4" /> : null}
-            className={`h-[44px] rounded-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
-            prefixClassName={`min-w-[62px] border-[#d8dde7] px-3 text-[15px] text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
-            inputClassName={`text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
-            trailingClassName={control.clearable ? 'px-3 text-[#1f2937]' : ''}
+            trailing={
+                control.clearable && hasValue ? (
+                    <button
+                        type="button"
+                        onClick={() => onChange('')}
+                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none transition-colors"
+                        aria-label="Hapus"
+                    >
+                        <CloseIcon className="h-3.5 w-3.5" />
+                    </button>
+                ) : null
+            }
+            className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
+            prefixClassName={`min-w-[62px] border-[#d8dde7] px-3 text-[14px] md:text-[15px] text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
+            inputClassName={`text-[14px] md:text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+            trailingClassName={control.clearable && hasValue ? 'px-2.5 text-[#1f2937]' : ''}
             onChange={(event) => onChange(event.target.value)}
         />
     );
@@ -110,7 +122,7 @@ function TaxInputControl({ control, onChange }) {
 
 function TaxFieldRow({ row, onChangeControl }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[168px_minmax(0,1fr)] lg:items-start">
+        <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
             <TaxRowLabel label={row.label} showInfo={row.showInfo} />
 
             <div className={`flex flex-wrap items-start gap-3 ${row.controlsClassName ?? ''}`.trim()}>
@@ -136,10 +148,10 @@ function TaxFieldRow({ row, onChangeControl }) {
 
 function TaxRadioRow({ row, onChange }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[168px_minmax(0,1fr)] lg:items-start">
+        <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
             <TaxRowLabel label={row.label} showInfo={row.showInfo} />
 
-            <div className={`flex flex-wrap gap-x-8 gap-y-3 pt-1 ${row.optionsClassName ?? ''}`.trim()}>
+            <div className={`flex flex-wrap gap-x-8 gap-y-2 pt-0.5 ${row.optionsClassName ?? ''}`.trim()}>
                 {(row.options ?? []).map((option) => (
                     <RadioField
                         key={option.value}
@@ -147,9 +159,11 @@ function TaxRadioRow({ row, onChange }) {
                         name={row.name ?? row.id}
                         checked={row.value === option.value}
                         disabled={option.disabled}
-                        size="md"
-                        label={<span className="text-[17px]">{option.label}</span>}
+                        size="sm"
+                        containerClassName="w-auto"
+                        label={<span className="text-[14px] md:text-[15px]">{option.label}</span>}
                         className="gap-3"
+                        labelClassName="text-[14px] md:text-[15px] leading-6"
                         onChange={() => onChange(row.id, option.value)}
                     />
                 ))}
@@ -160,10 +174,10 @@ function TaxRadioRow({ row, onChange }) {
 
 function TaxCheckboxListRow({ row, onToggle }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[168px_minmax(0,1fr)] lg:items-start">
+        <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
             <TaxRowLabel label={row.label} showInfo={row.showInfo} />
 
-            <div className={`space-y-3 pt-1 ${row.optionsClassName ?? ''}`.trim()}>
+            <div className={`space-y-1.5 pt-0.5 ${row.optionsClassName ?? ''}`.trim()}>
                 {(row.options ?? []).map((option) => (
                     <CheckboxField
                         key={option.id}
@@ -172,8 +186,9 @@ function TaxCheckboxListRow({ row, onToggle }) {
                         disabled={Boolean(option.disabled)}
                         size="sm"
                         align="center"
-                        label={<span className="text-[17px]">{option.label}</span>}
+                        label={<span className="text-[14px] md:text-[15px]">{option.label}</span>}
                         className="gap-3"
+                        labelClassName="text-[14px] md:text-[15px] leading-6"
                         inputClassName="rounded-[5px] border-[#b6c1d1]"
                         onChange={(event) => onToggle(row.id, option.id, event.target.checked)}
                     />
@@ -185,7 +200,7 @@ function TaxCheckboxListRow({ row, onToggle }) {
 
 function TaxSingleCheckboxRow({ row, onToggle }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[168px_minmax(0,1fr)] lg:items-start">
+        <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
             <TaxRowLabel label={row.label} showInfo={row.showInfo} />
 
             <div className="pt-1">
@@ -195,8 +210,9 @@ function TaxSingleCheckboxRow({ row, onToggle }) {
                     disabled={Boolean(row.option?.disabled)}
                     size="sm"
                     align="center"
-                    label={<span className="text-[17px]">{row.option?.label}</span>}
+                    label={<span className="text-[14px] md:text-[15px]">{row.option?.label}</span>}
                     className="gap-3"
+                    labelClassName="text-[14px] md:text-[15px] leading-6"
                     inputClassName="rounded-[5px] border-[#b6c1d1]"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />
@@ -292,7 +308,7 @@ export default function PreferencesTaxView({ tabs, activeTabId, onSelectTab, onU
             tabs={tabs}
             activeTabId={activeTab.id}
             onSelectTab={onSelectTab}
-            panelClassName={`space-y-5 ${activeTab.contentClassName ?? ''}`.trim()}
+            panelClassName={`space-y-2 ${activeTab.contentClassName ?? ''}`.trim()}
         >
             {(activeTab.rows ?? []).map((row) => (
                 <TaxRow

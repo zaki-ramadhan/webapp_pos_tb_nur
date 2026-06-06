@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
     const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
@@ -30,8 +30,9 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
                             searchStr.includes('bank_number') || 
                             searchStr.includes('tax_number') || 
                             searchStr.includes('npwp') || 
+                            searchStr.includes('nitku') || 
                             searchStr.includes('postal') || 
-                            searchStr.includes('kodepos') ||
+                            searchStr.includes('kodepos') || 
                             searchStr.includes('zip') ||
                             /\bno\.?\b/.test(searchStr)
                         ) && !searchStr.includes('note') && !searchStr.includes('document');
@@ -43,7 +44,14 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
 
     if (isDigitOnly) {
         // Strip out everything except digits (0-9)
-        return val.replace(/[^0-9]/g, '');
+        let clean = val.replace(/[^0-9]/g, '');
+        if (searchStr.includes('npwp')) {
+            clean = clean.slice(0, 16);
+            if (/^0+$/.test(clean) && clean.length === 16) {
+                clean = '';
+            }
+        }
+        return clean;
     }
 
     // Check if it's a numeric field
@@ -54,6 +62,7 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
                       searchStr.includes('rate') || 
                       searchStr.includes('limit') || 
                       searchStr.includes('age') || 
+                      searchStr.includes('range') || 
                       searchStr.includes('days') || 
                       searchStr.includes('qty') || 
                       searchStr.includes('quantity') || 
@@ -66,21 +75,24 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
                       searchStr.includes('piutang') ||
                       searchStr.includes('utang');
 
+    const isAgeOrRange = searchStr.includes('age') || searchStr.includes('range');
+    if (isAgeOrRange) {
+        let clean = val.replace(/[^0-9]/g, '');
+        clean = clean.replace(/^0+/, '');
+        return clean;
+    }
+
     if (isNumeric) {
-        // Allow only digits, a single decimal point, and optional single minus sign
-        let clean = val.replace(/[^0-9.-]/g, '');
-        // Ensure only one minus sign at the start
-        if (clean.includes('-')) {
-            const hasMinus = clean.startsWith('-');
-            clean = clean.replace(/-/g, '');
-            if (hasMinus) {
-                clean = '-' + clean;
-            }
-        }
+        // Allow only digits and a single decimal point (no negative values)
+        let clean = val.replace(/[^0-9.]/g, '');
         // Ensure only one decimal point
         const parts = clean.split('.');
         if (parts.length > 2) {
             clean = parts[0] + '.' + parts.slice(1).join('');
+        }
+        // Remove leading zeros if not followed by a decimal point (e.g., "05" -> "5")
+        if (clean.length > 1 && clean.startsWith('0') && clean[1] !== '.') {
+            clean = clean.replace(/^0+/, '');
         }
         return clean;
     }
@@ -110,6 +122,14 @@ export default function TextInput({
     ...props
 }) {
     const inputRef = useRef(null);
+    const [localValue, setLocalValue] = useState(props.value ?? props.defaultValue ?? '');
+
+    useEffect(() => {
+        if (props.value !== undefined) {
+            setLocalValue(props.value ?? '');
+        }
+    }, [props.value]);
+
     const feedbackMessage = typeof error === 'string' ? (error || message) : message;
     const isNonInteractive = disabled || (readOnly && !interactiveReadOnly);
     const toneClassName = error
@@ -125,9 +145,6 @@ export default function TextInput({
     const resolvedInputMode = props.inputMode ?? (type === 'number' ? 'decimal' : undefined);
 
     function handleWrappedChange(event) {
-        if (!onChange) {
-            return;
-        }
         const originalValue = event.target.value;
         const name = props.name ?? '';
         const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder);
@@ -135,7 +152,45 @@ export default function TextInput({
         if (originalValue !== sanitizedValue) {
             event.target.value = sanitizedValue;
         }
-        onChange(event);
+        setLocalValue(event.target.value);
+        if (onChange) {
+            onChange(event);
+        }
+    }
+
+    function handleWrappedBlur(event) {
+        let val = event.target.value;
+        const name = props.name ?? '';
+        const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
+        
+        const isNumeric = type === 'number' || 
+                          searchStr.includes('price') || 
+                          searchStr.includes('amount') || 
+                          searchStr.includes('percentage') || 
+                          searchStr.includes('rate') || 
+                          searchStr.includes('limit') || 
+                          searchStr.includes('age') || 
+                          searchStr.includes('days') || 
+                          searchStr.includes('qty') || 
+                          searchStr.includes('quantity') || 
+                          searchStr.includes('value') ||
+                          searchStr.includes('kurs') ||
+                          searchStr.includes('jumlah') ||
+                          searchStr.includes('persen') ||
+                          searchStr.includes('nominal') ||
+                          searchStr.includes('cost') ||
+                          searchStr.includes('piutang') ||
+                          searchStr.includes('utang');
+
+        if (isNumeric) {
+            const numVal = parseFloat(val);
+            if (val === '0' || numVal === 0) {
+                event.target.value = '';
+                setLocalValue('');
+                onChange?.(event);
+            }
+        }
+        props.onBlur?.(event);
     }
 
     function focusInputFromWrapper(event) {
@@ -155,8 +210,11 @@ export default function TextInput({
         inputRef.current?.focus();
     }
 
+    const hasWidth = containerClassName.includes('w-');
+    const widthClass = hasWidth ? '' : 'w-full';
+
     return (
-        <div className={`w-full ${containerClassName}`.trim()}>
+        <div className={`${widthClass} ${containerClassName}`.trim()}>
             <div
                 onMouseDown={focusInputFromWrapper}
                 className={`group flex h-11 w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
@@ -179,16 +237,42 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(error)}
-                    className={`h-full flex-1 px-4 text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : 'px-4'} text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
+                    onBlur={handleWrappedBlur}
                     {...props}
                 />
 
-                {trailing ? (
+                {trailing || (onChange && !disabled && !readOnly && localValue !== undefined && localValue !== null && localValue !== '') ? (
                     <span
                         className={`flex h-full items-center px-3 transition-colors duration-150 ${isNonInteractive ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
                     >
-                        {trailing}
+                        {trailing ?? (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (inputRef.current) {
+                                        inputRef.current.value = '';
+                                        inputRef.current.focus();
+                                    }
+                                    setLocalValue('');
+                                    onChange?.({
+                                        target: {
+                                            id: id ?? '',
+                                            name: props.name ?? '',
+                                            value: '',
+                                        },
+                                    });
+                                }}
+                                className="inline-flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus:outline-none transition-colors cursor-pointer"
+                                aria-label="Hapus"
+                            >
+                                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        )}
                     </span>
                 ) : null}
             </div>

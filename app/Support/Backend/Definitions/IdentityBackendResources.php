@@ -206,32 +206,8 @@ class IdentityBackendResources
                 searchColumns: ['rule_name', 'transaction_type'],
                 modelClass: TransactionApprovalRule::class,
                 with: ['branch', 'steps'],
-                storeRules: [
-                    'rule_name' => ['required', 'string', 'max:120'],
-                    'transaction_type' => ['required', 'string', 'max:120'],
-                    'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-                    'threshold_amount' => ['nullable', 'numeric', 'min:0'],
-                    'is_active' => ['sometimes', 'boolean'],
-                    'steps' => ['sometimes', 'array'],
-                    'steps.*.id' => ['sometimes', 'integer', 'exists:transaction_approval_rule_steps,id'],
-                    'steps.*.approver_user_id' => ['nullable', 'integer', 'exists:users,id'],
-                    'steps.*.approver_role_id' => ['nullable', 'integer', 'exists:roles,id'],
-                    'steps.*.step_order' => ['sometimes', 'integer', 'min:1'],
-                    'steps.*.min_approvals' => ['sometimes', 'integer', 'min:1'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'rule_name' => ['required', 'string', 'max:120'],
-                    'transaction_type' => ['required', 'string', 'max:120'],
-                    'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-                    'threshold_amount' => ['nullable', 'numeric', 'min:0'],
-                    'is_active' => ['sometimes', 'boolean'],
-                    'steps' => ['sometimes', 'array'],
-                    'steps.*.id' => ['sometimes', 'integer', 'exists:transaction_approval_rule_steps,id'],
-                    'steps.*.approver_user_id' => ['nullable', 'integer', 'exists:users,id'],
-                    'steps.*.approver_role_id' => ['nullable', 'integer', 'exists:roles,id'],
-                    'steps.*.step_order' => ['sometimes', 'integer', 'min:1'],
-                    'steps.*.min_approvals' => ['sometimes', 'integer', 'min:1'],
-                ],
+                storeRules: self::transactionApprovalRuleRules(),
+                updateRules: fn (Model $record) => self::transactionApprovalRuleRules(),
                 syncUsing: function (Model $record, array $payload): void {
                     if (array_key_exists('steps', $payload)) {
                         BackendRelationSync::syncHasMany(
@@ -244,6 +220,67 @@ class IdentityBackendResources
                     }
                 },
             ),
+        ];
+    }
+
+    private static function transactionApprovalRuleRules(): array
+    {
+        return [
+            'rule_name' => ['required', 'string', 'max:120'],
+            'transaction_type' => [
+                'required',
+                'string',
+                'max:120',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $keyMap = [
+                        'sales-quote' => 'approval-sales-quote',
+                        'sales-order' => 'approval-sales-order',
+                        'sales-delivery' => 'approval-sales-delivery',
+                        'sales-invoice' => 'approval-sales-invoice',
+                        'sales-receipt' => 'approval-sales-receipt',
+                        'sales-return' => 'approval-sales-return',
+                        'price-adjustment' => 'approval-sales-discount',
+                        'purchase-order' => 'approval-purchase-order',
+                        'goods-receipt' => 'approval-purchase-receipt',
+                        'purchase-invoice' => 'approval-purchase-invoice',
+                        'purchase-payment' => 'approval-purchase-payment',
+                        'purchase-return' => 'approval-purchase-return',
+                        'supplier-price' => 'approval-purchase-price',
+                        'item-request' => 'approval-inventory-request',
+                        'inventory-adjustment' => 'approval-inventory-adjustment',
+                        'stock-transfer' => 'approval-inventory-transfer',
+                        'work-order' => 'approval-inventory-job-order',
+                        'material-addition' => 'approval-inventory-material-addition',
+                        'work-completion' => 'approval-inventory-job-completion',
+                        'stock-opname-result' => 'approval-inventory-stock-opname',
+                        'cash-payment' => 'approval-other-payment',
+                        'cash-receipt' => 'approval-other-receipt',
+                        'bank-transfer' => 'approval-other-bank-transfer',
+                        'expense-entry' => 'approval-other-expense',
+                        'payroll-entry' => 'approval-other-salary',
+                        'asset-move' => 'approval-other-transfer-asset',
+                    ];
+                    $prefKey = $keyMap[$value] ?? null;
+                    if ($prefKey && \Illuminate\Support\Facades\Schema::hasTable('preference_settings')) {
+                        $isEnabled = \Illuminate\Support\Facades\DB::table('preference_settings')
+                            ->where('setting_key', $prefKey)
+                            ->where('value', '1')
+                            ->exists();
+                        if (!$isEnabled) {
+                            $fail("Tipe transaksi ini tidak diaktifkan untuk persetujuan dalam pengaturan preferensi.");
+                        }
+                    }
+                }
+            ],
+            'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
+            'threshold_amount' => ['nullable', 'numeric', 'min:0'],
+            'is_active' => ['sometimes', 'boolean'],
+            'steps' => ['sometimes', 'array'],
+            'steps.*.id' => ['sometimes', 'integer', 'exists:transaction_approval_rule_steps,id'],
+            'steps.*.approver_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'steps.*.approver_role_id' => ['nullable', 'integer', 'exists:roles,id'],
+            'steps.*.step_order' => ['sometimes', 'integer', 'min:1'],
+            'steps.*.min_approvals' => ['sometimes', 'integer', 'min:1'],
         ];
     }
 }

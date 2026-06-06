@@ -164,26 +164,26 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
     return (
         <div className="flex min-h-[520px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0 flex-1 sm:max-w-[640px]">
-                    <TextInput
-                        value={values.itemSearch}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                itemSearch: event.target.value,
-                            }))
-                        }
-                        placeholder={config.detailSearchPlaceholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
-                    />
+                <div className="text-[22px] font-normal text-[#1f2436] shrink-0">
+                    {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <TransactionToolbarIconButton label="Cari barang" onClick={handlers.onSelectItem}>
-                        <LinkIcon className="h-4.5 w-4.5" />
-                    </TransactionToolbarIconButton>
+                <div className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-[640px] justify-end">
+                    <div className="min-w-0 flex-1">
+                        <TextInput
+                            value={values.itemSearch}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    itemSearch: event.target.value,
+                                }))
+                            }
+                            placeholder={config.detailSearchPlaceholder}
+                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            inputClassName="text-[15px] text-[#1f2436]"
+                        />
+                    </div>
 
                     {isDetail ? (
                         <TransactionToolbarSplitButton
@@ -196,41 +196,19 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
             </div>
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
-                <div className="flex items-center justify-end gap-3 pb-3">
-                    <span className="text-right text-[22px] font-normal text-[#1f2436]">
-                        {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
-                    </span>
-                </div>
-
                 <TransactionDataTable
                     columns={config.itemTable.columns}
                     rows={filteredItems}
                     emptyLabel={config.itemTable.emptyLabel}
                     minWidthClassName="min-w-[940px]"
-                    emptyLeadingCellContent={
-                        <span className="inline-flex items-center justify-center">
-                            <TableActionIcon className="h-4 w-4" />
-                        </span>
-                    }
+                    emptyLeadingCellContent={null}
                     onRowClick={handlers.onEditItem}
                     getRowClassName={() => 'cursor-pointer hover:bg-[#eef3fb]'}
                     renderHeaderCell={(column) =>
-                        column.kind === 'spacer' ? (
-                            <span className="flex justify-center text-white/55">
-                                <TableActionIcon className="h-4 w-4" />
-                            </span>
-                        ) : (
-                            column.label
-                        )
+                        column.kind === 'spacer' ? null : column.label
                     }
                     renderCell={({ row, column }) =>
-                        column.kind === 'spacer' ? (
-                            <span className="inline-flex items-center justify-center text-[#a8afbe]">
-                                <TableActionIcon className="h-4 w-4" />
-                            </span>
-                        ) : (
-                            formatTableTextValue(row[column.id])
-                        )
+                        column.kind === 'spacer' ? null : formatTableTextValue(row[column.id])
                     }
                 />
             </div>

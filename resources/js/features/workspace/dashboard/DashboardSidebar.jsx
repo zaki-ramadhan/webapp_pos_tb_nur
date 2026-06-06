@@ -12,16 +12,16 @@ import {
 
 const DISABLED_SIDEBAR_GROUP_IDS = new Set(['fixed-assets', 'tax-center']);
 
-function getVisiblePanelItems(item) {
+function getVisiblePanelItems(item, preferences) {
     return (item.panel?.items ?? []).filter((panelItem) => {
-        const isInactive = isWorkspacePageInactive(panelItem.id);
+        const isInactive = isWorkspacePageInactive(panelItem.id, preferences);
         const isImplemented = panelItem.implemented !== false || implementedWorkspacePageIds.has(panelItem.id);
         return !isInactive && isImplemented;
     });
 }
 
-function normalizeSidebarItem(item) {
-    const visiblePanelItems = getVisiblePanelItems(item);
+function normalizeSidebarItem(item, preferences) {
+    const visiblePanelItems = getVisiblePanelItems(item, preferences);
     const isForcedDisabled = DISABLED_SIDEBAR_GROUP_IDS.has(item.id);
 
     return {
@@ -104,8 +104,8 @@ function MobileModuleButton({ item, active, onSelect }) {
     );
 }
 
-function MobilePanelItemButton({ item, onSelect }) {
-    const isInactive = isWorkspacePageInactive(item.id);
+function MobilePanelItemButton({ item, onSelect, preferences }) {
+    const isInactive = isWorkspacePageInactive(item.id, preferences);
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
     const statusLabel = isInactive
         ? WORKSPACE_INACTIVE_HINT
@@ -162,10 +162,11 @@ export default function DashboardSidebar({
     desktopTopOffset = 0,
     mobileMenuOpen = false,
     onCloseMobileMenu,
+    preferences = {},
 }) {
     const railRef = useRef(null);
     const buttonRefs = useRef({});
-    const sidebarItems = sidebar.items.map(normalizeSidebarItem).filter((item) => !item.disabled);
+    const sidebarItems = sidebar.items.map(item => normalizeSidebarItem(item, preferences)).filter((item) => !item.disabled);
     const activeItem = sidebarItems.find((item) => item.id === activePanelId && !item.disabled) ?? null;
     const activeButtonElement = activePanelId ? buttonRefs.current[activePanelId] ?? null : null;
 
@@ -232,7 +233,7 @@ export default function DashboardSidebar({
 
                             <div className="mt-2 grid gap-2">
                                 {(activeItem.panel?.items ?? []).map((item) => (
-                                    <MobilePanelItemButton key={item.id} item={item} onSelect={onSelectPanelItem} />
+                                    <MobilePanelItemButton key={item.id} item={item} onSelect={onSelectPanelItem} preferences={preferences} />
                                 ))}
                             </div>
                         </div>

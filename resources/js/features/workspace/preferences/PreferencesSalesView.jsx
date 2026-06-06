@@ -7,6 +7,13 @@ import PreferencesSectionHeading from '@/features/workspace/preferences/Preferen
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
 import { InfoIcon } from '@/features/workspace/shared/Icons';
+import PreferenceLookupAutocomplete from './components/PreferenceLookupAutocomplete';
+
+const RETURN_ACCOUNT_OPTIONS = [
+    '[511.000-01] Beban Retur Penjualan',
+    '[511.000-02] Beban Kerusakan Barang Retur',
+    '[511.000-03] Beban Selisih Retur',
+];
 
 
 function getSalesInfo(id, label) {
@@ -18,8 +25,8 @@ function getSalesInfo(id, label) {
 
 function SalesInlineCheckboxRow({ row, onToggle }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
-            <div className="text-[16px] leading-8 text-[#0f172a]">
+        <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
+            <div className="text-[14px] md:text-[15px] leading-6 text-[#0f172a]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
                     <Tooltip content={getSalesInfo(row.id, row.label)} portal>
@@ -36,8 +43,9 @@ function SalesInlineCheckboxRow({ row, onToggle }) {
                     disabled={Boolean(row.option?.disabled)}
                     size="sm"
                     align="center"
-                    label={<span className="text-[17px]">{row.option?.label}</span>}
+                    label={<span className="text-[14px] md:text-[15px]">{row.option?.label}</span>}
                     className="gap-3"
+                    labelClassName="text-[14px] md:text-[15px] leading-6"
                     inputClassName="rounded-[5px] border-[#b6c1d1]"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />
@@ -48,12 +56,12 @@ function SalesInlineCheckboxRow({ row, onToggle }) {
 
 function SalesRadioGroupRow({ row, onChange }) {
     return (
-        <div className="space-y-3">
-            <div className="text-[16px] font-semibold leading-8 text-[#111827]">
+        <div className="space-y-2">
+            <div className="text-[14px] md:text-[15px] font-semibold leading-6 text-[#111827]">
                 <span className="whitespace-pre-line">{row.label}</span>
             </div>
 
-            <div className="space-y-3 pl-0 sm:pl-10">
+            <div className="flex flex-wrap gap-x-8 gap-y-2 pl-0 sm:pl-10 pt-0.5">
                 {(row.options ?? []).map((option) => (
                     <RadioField
                         key={option.value}
@@ -61,14 +69,16 @@ function SalesRadioGroupRow({ row, onChange }) {
                         name={row.name ?? row.id}
                         checked={row.value === option.value}
                         disabled={option.disabled}
-                        size="md"
+                        size="sm"
+                        containerClassName="w-auto"
                         align="center"
                         label={
-                            <span className="whitespace-pre-line text-[17px] leading-8">
+                            <span className="whitespace-pre-line text-[14px] md:text-[15px] leading-6">
                                 {option.label}
                             </span>
                         }
                         className="gap-3"
+                        labelClassName="text-[14px] md:text-[15px] leading-6"
                         onChange={() => onChange(row.id, option.value)}
                     />
                 ))}
@@ -87,11 +97,12 @@ function SalesCheckboxRow({ row, onToggle }) {
                 size="sm"
                 align="center"
                 label={
-                    <span className="whitespace-pre-line text-[17px] leading-8">
+                    <span className="whitespace-pre-line text-[14px] md:text-[15px] leading-6">
                         {row.option?.label}
                     </span>
                 }
                 className="gap-3"
+                labelClassName="text-[14px] md:text-[15px] leading-6"
                 inputClassName="rounded-[5px] border-[#b6c1d1]"
                 onChange={(event) => onToggle(row.id, event.target.checked)}
             />
@@ -99,12 +110,36 @@ function SalesCheckboxRow({ row, onToggle }) {
     );
 }
 
-function SalesSection({ section, onChangeRadio, onToggleSingle }) {
+function SalesGridFieldRow({ row, onChangeControl }) {
     return (
-        <section className="space-y-5">
+        <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
+            <div className="text-[14px] md:text-[15px] leading-6 text-[#111827]">
+                <span>{row.label}</span>
+            </div>
+
+            <div className={`${row.widthClassName ?? 'max-w-[420px]'}`.trim()}>
+                <PreferenceLookupAutocomplete
+                    field={{
+                        id: row.control?.id ?? row.id,
+                        label: row.label,
+                        disabled: row.control?.disabled,
+                        placeholder: row.control?.placeholder
+                    }}
+                    value={row.control?.value}
+                    onChange={(fieldId, option) => onChangeControl(row.id, option)}
+                    options={RETURN_ACCOUNT_OPTIONS}
+                />
+            </div>
+        </div>
+    );
+}
+
+function SalesSection({ section, onChangeRadio, onToggleSingle, onChangeControl }) {
+    return (
+        <section className="space-y-3.5">
             <PreferencesSectionHeading icon={section.icon} title={section.title} />
 
-            <div className="space-y-4">
+            <div className="space-y-2.5">
                 {(section.rows ?? []).map((row) => {
                     if (row.type === 'inline-checkbox') {
                         return (
@@ -122,6 +157,22 @@ function SalesSection({ section, onChangeRadio, onToggleSingle }) {
                                 key={row.id}
                                 row={row}
                                 onChange={onChangeRadio}
+                            />
+                        );
+                    }
+
+                    if (row.type === 'field') {
+                        if (row.id === 'sales-return-custom-account-row') {
+                            const noItemOptionRow = section.rows?.find(r => r.id === 'sales-return-no-item-option');
+                            if (noItemOptionRow?.value !== 'custom-account') {
+                                return null;
+                            }
+                        }
+                        return (
+                            <SalesGridFieldRow
+                                key={row.id}
+                                row={row}
+                                onChangeControl={onChangeControl}
                             />
                         );
                     }
@@ -184,6 +235,25 @@ export default function PreferencesSalesView({
         );
     }
 
+    function handleChangeControl(rowId, value) {
+        updateActiveTabSections((sections) =>
+            sections.map((section) => ({
+                ...section,
+                rows: (section.rows ?? []).map((row) =>
+                    row.id === rowId && row.control
+                        ? {
+                              ...row,
+                              control: {
+                                  ...row.control,
+                                  value,
+                              },
+                          }
+                        : row,
+                ),
+            })),
+        );
+    }
+
     if (!activeTab) {
         return null;
     }
@@ -201,6 +271,7 @@ export default function PreferencesSalesView({
                     section={section}
                     onChangeRadio={handleChangeRadio}
                     onToggleSingle={handleToggleSingle}
+                    onChangeControl={handleChangeControl}
                 />
             ))}
         </PreferencesTabPanel>

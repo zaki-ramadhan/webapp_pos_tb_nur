@@ -18,7 +18,7 @@
         <div id="initial-loader" style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background-color: #f8f9fb; z-index: 99999; font-family: 'Montserrat', sans-serif; transition: opacity 0.3s ease-out;">
             <div style="text-align: center;">
                 <div style="width: 50px; height: 50px; border: 4px solid #e2e8f0; border-top-color: #21539b; border-radius: 50%; animation: initial-loader-spin 1s linear infinite; margin: 0 auto 20px;"></div>
-                <div style="font-size: 16px; font-weight: 600; color: #1e293b; letter-spacing: 0.5px; animation: initial-loader-pulse 1.5s ease-in-out infinite;">Memuat TB Nur POS...</div>
+                <div style="font-size: 16px; font-weight: 600; color: #1e293b; letter-spacing: 0.5px; animation: initial-loader-pulse 1.5s ease-in-out infinite;">Memuat...</div>
             </div>
         </div>
         <style>

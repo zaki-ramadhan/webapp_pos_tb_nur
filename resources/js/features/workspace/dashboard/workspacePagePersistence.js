@@ -10,7 +10,7 @@ function clonePlainData(value) {
     return JSON.parse(JSON.stringify(value));
 }
 
-function normalizePageIds(pageIds, pages, dashboardPage) {
+function normalizePageIds(pageIds, pages, dashboardPage, preferences = {}) {
     const validIds = new Set(Object.keys(pages));
     const uniqueIds = [];
 
@@ -21,7 +21,7 @@ function normalizePageIds(pageIds, pages, dashboardPage) {
             !normalizedId ||
             !validIds.has(normalizedId) ||
             uniqueIds.includes(normalizedId) ||
-            (normalizedId !== dashboardPage.id && isWorkspacePageInactive(normalizedId))
+            (normalizedId !== dashboardPage.id && isWorkspacePageInactive(normalizedId, preferences))
         ) {
             return;
         }
@@ -56,6 +56,7 @@ export function loadWorkspacePageState({
     dashboardPage,
     initialLevel2Tabs,
     initialLevel2ContentTabs,
+    preferences = {},
 }) {
     const fallbackState = {
         openPages: [dashboardPage],
@@ -76,7 +77,7 @@ export function loadWorkspacePageState({
         }
 
         const parsedValue = JSON.parse(rawValue);
-        const pageIds = normalizePageIds(parsedValue?.openPageIds, pages, dashboardPage);
+        const pageIds = normalizePageIds(parsedValue?.openPageIds, pages, dashboardPage, preferences);
         const openPages = pageIds.map((pageId) => pages[pageId]).filter(Boolean);
         const activePageId = openPages.some((page) => page.id === parsedValue?.activePageId)
             ? parsedValue.activePageId

@@ -160,7 +160,11 @@ function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholde
 
     return (
         <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-[720px]">
+            <div className="text-[22px] font-normal text-[#1f2436] shrink-0">
+                {title} <span className="text-[#ED3969]">*</span>
+            </div>
+
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-[720px] justify-end">
                 <div className="min-w-0 flex-1">
                     {isAccountLookup ? (
                         <AccountLookupTextInput
@@ -180,18 +184,6 @@ function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholde
                             inputClassName="text-[15px] text-[#1f2436]"
                         />
                     )}
-                </div>
-
-                {!isAccountLookup && onAction ? (
-                    <TransactionToolbarIconButton label={`Pilih ${title}`} onClick={onAction}>
-                        <LinkIcon className="h-4.5 w-4.5" />
-                    </TransactionToolbarIconButton>
-                ) : null}
-            </div>
-
-            <div className="flex items-center gap-3 self-end sm:self-auto">
-                <div className="text-right text-[22px] font-normal text-[#1f2436]">
-                    {title} <span className="text-[#ED3969]">*</span>
                 </div>
             </div>
         </div>

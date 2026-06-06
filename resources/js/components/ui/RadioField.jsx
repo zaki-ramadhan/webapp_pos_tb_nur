@@ -21,8 +21,11 @@ export default function RadioField({
     const alignClassName = align === 'center' ? 'items-center' : 'items-start';
     const inputOffsetClassName = align === 'center' ? 'mt-0' : 'mt-1';
 
+    const hasWidth = containerClassName.includes('w-');
+    const widthClass = hasWidth ? '' : 'w-full';
+
     return (
-        <div className={`w-full ${containerClassName}`.trim()}>
+        <div className={`${widthClass} ${containerClassName}`.trim()}>
             <label
                 htmlFor={id}
                 className={`flex ${alignClassName} gap-2.5 text-[15px] leading-6 ${disabled ? 'cursor-not-allowed text-slate-400' : 'cursor-pointer text-slate-600'} ${className}`.trim()}

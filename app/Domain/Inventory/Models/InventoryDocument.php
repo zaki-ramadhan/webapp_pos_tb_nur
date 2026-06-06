@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InventoryDocument extends DomainModel
 {
+    protected $table = 'inventory_documents';
+
     protected $fillable = [
         'document_type',
         'branch_id',

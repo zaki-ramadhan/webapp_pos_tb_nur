@@ -106,7 +106,7 @@ const DashboardView = forwardRef(function DashboardView(
 
     return (
         <WorkspaceDraftStateProvider value={draftStateValue}>
-            <section className="flex min-h-full min-w-0 flex-1 flex-col lg:flex-row lg:items-stretch">
+            <section className="flex h-full min-w-0 flex-1 flex-col lg:flex-row lg:items-stretch">
                 <div className="min-h-0 shrink-0 self-stretch lg:w-[58px]">
                     <DashboardSidebar
                         sidebar={dashboard.sidebar}
@@ -117,11 +117,12 @@ const DashboardView = forwardRef(function DashboardView(
                         desktopTopOffset={topbarHeight}
                         mobileMenuOpen={mobileWorkspaceMenuOpen}
                         onCloseMobileMenu={onCloseMobileWorkspaceMenu}
+                        preferences={dashboard.preferences}
                     />
                 </div>
 
                 <div
-                    className="flex min-h-0 min-w-0 flex-1 flex-col border border-[#d3d9e7] border-t-0 bg-white/96 overflow-visible lg:border-l-0 lg:border-t"
+                    className="flex min-h-0 min-w-0 flex-1 flex-col border border-[#d3d9e7] border-t-0 bg-white/96 overflow-hidden lg:border-l-0 lg:border-t"
                 >
                     <DashboardPageTabs
                         tabs={tabItems}
