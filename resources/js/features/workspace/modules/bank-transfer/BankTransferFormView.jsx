@@ -4,15 +4,12 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     createBackendResource,
     deleteBackendResource,
-    getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
     BankTransferHeader,
     TransferFeeSection,
@@ -31,6 +28,7 @@ import {
     promptBankTransferFeeItem,
     validateBankTransferValues,
 } from './bankTransferShared';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function BankTransferFormView({
     pageId,
@@ -42,9 +40,6 @@ export default function BankTransferFormView({
     onRefresh,
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(() => {
         if (!activeRecordId) {
@@ -62,8 +57,6 @@ export default function BankTransferFormView({
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormState(sourceRecord, config));
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
     }, [config, sourceRecord]);
 
     const validationMessage = useMemo(() => validateBankTransferValues(values, config), [config, values]);
@@ -71,6 +64,19 @@ export default function BankTransferFormView({
         () => !areComparableValuesEqual(buildBankTransferSnapshot(initialComparable), buildBankTransferSnapshot(values)),
         [initialComparable, values],
     );
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        selectLookup,
+        handleSave,
+        requestDelete,
+        handleDelete,
+    } = useTransactionForm({ validationMessage });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     function updateValues(nextValues) {
@@ -92,7 +98,7 @@ export default function BankTransferFormView({
                             tone: values.saveTone,
                             disabled: saveDisabled,
                             label: saving ? 'Memproses...' : action.label,
-                            onClick: handleSave,
+                            onClick: onSave,
                         };
                     }
 
@@ -100,7 +106,7 @@ export default function BankTransferFormView({
                         return {
                             ...action,
                             label: saving ? 'Memproses...' : action.label,
-                            onClick: requestDelete,
+                            onClick: onRequestDelete,
                         };
                     }
 
@@ -115,21 +121,6 @@ export default function BankTransferFormView({
         dirty: isDirty,
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
-
-    async function selectLookup(resource, title, onApply) {
-        try {
-            const record = await promptSelectBackendRecord(resource, title, buildLookupLabel);
-
-            if (!record) {
-                return;
-            }
-
-            onApply(record);
-            setStatus({ tone: '', message: '' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
-        }
-    }
 
     function applyFeeUpdate(record, currentItem = null) {
         try {
@@ -158,18 +149,10 @@ export default function BankTransferFormView({
         }
     }
 
-    async function handleSave() {
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        await executeCrudFormAction({
+    async function onSave() {
+        await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui transfer bank.' : 'Sedang menyimpan transfer bank.',
             successMessage: isDetail ? 'Transfer bank berhasil diperbarui.' : 'Transfer bank berhasil dibuat.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
@@ -202,26 +185,21 @@ export default function BankTransferFormView({
         });
     }
 
-    function requestDelete() {
-        if (!values.__backendRecordId || saving) {
+    function onRequestDelete() {
+        if (!values.__backendRecordId) {
             return;
         }
-
-        setDeleteConfirmationOpen(true);
+        requestDelete();
     }
 
-    async function handleDelete() {
+    async function onDelete() {
         if (!values.__backendRecordId) {
             return;
         }
 
-        await executeCrudFormAction({
+        await handleDelete({
             loadingMessage: 'Sedang menghapus transfer bank.',
             successMessage: 'Transfer bank berhasil dihapus.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
-            onStart: () => setDeleteConfirmationOpen(false),
             execute: () => deleteBackendResource('bank-transfers', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
@@ -293,7 +271,7 @@ export default function BankTransferFormView({
                 selectLookup('accounts', 'akun biaya transfer', (record) => applyFeeUpdate(record)),
             onEditFeeItem: (item) => applyFeeUpdate(null, item),
         }),
-        [],
+        [selectLookup],
     );
 
     return (
@@ -324,7 +302,7 @@ export default function BankTransferFormView({
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
+                onConfirm={onDelete}
                 title="Hapus Transfer Bank"
                 message="Transfer bank ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"

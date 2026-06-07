@@ -4,7 +4,6 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     createBackendResource,
     deleteBackendResource,
-    getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import {
@@ -34,9 +33,8 @@ import {
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import SalesDocumentFormHeader from './SalesDocumentFormHeader';
 import {
     applyComputedTotals,
@@ -68,9 +66,6 @@ export default function SalesDocumentFormView({
     onRefresh,
 }) {
     const [itemModalOpen, setItemModalOpen] = useState(false);
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(
         () => (activeRecordId ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId)) : config.draft),
@@ -90,12 +85,23 @@ export default function SalesDocumentFormView({
         setActiveSectionId(resolveInitialSectionId(config, isDetail));
         setValues(buildSalesDocumentFormState(sourceRecord));
         setItemModalOpen(false);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
     }, [config, isDetail, sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);
     const isDirty = useMemo(() => resolveSalesDocumentDirty(values, initialSnapshot), [initialSnapshot, values]);
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        selectLookup,
+        handleSave,
+        requestDelete,
+        handleDelete,
+    } = useTransactionForm({ validationMessage });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({
@@ -104,21 +110,6 @@ export default function SalesDocumentFormView({
         dirty: isDirty,
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
-
-    async function selectLookup(resource, title, labelBuilder, onApply) {
-        try {
-            const record = await promptSelectBackendRecord(resource, title, labelBuilder);
-
-            if (!record) {
-                return;
-            }
-
-            onApply(record);
-            setStatus({ tone: '', message: '' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
-        }
-    }
 
     function updateItems(updater) {
         setValues((current) => {
@@ -135,7 +126,7 @@ export default function SalesDocumentFormView({
         applyPromptItemUpdate(item, updateItems, setStatus);
     }
 
-    async function handleSave() {
+    async function onSave() {
         if (!backendConfig) {
             const errorMessage = 'Konfigurasi backend dokumen belum tersedia.';
             setStatus({ tone: 'error', message: errorMessage });
@@ -143,17 +134,9 @@ export default function SalesDocumentFormView({
             return;
         }
 
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        await executeCrudFormAction({
+        await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.',
             successMessage: isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
@@ -191,26 +174,21 @@ export default function SalesDocumentFormView({
         });
     }
 
-    function requestDelete() {
-        if (!backendConfig || !values.__backendRecordId || saving) {
+    function onRequestDelete() {
+        if (!backendConfig || !values.__backendRecordId) {
             return;
         }
-
-        setDeleteConfirmationOpen(true);
+        requestDelete();
     }
 
-    async function handleDelete() {
+    async function onDelete() {
         if (!backendConfig || !values.__backendRecordId) {
             return;
         }
 
-        await executeCrudFormAction({
+        await handleDelete({
             loadingMessage: 'Sedang menghapus dokumen.',
             successMessage: 'Dokumen berhasil dihapus.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
-            onStart: () => setDeleteConfirmationOpen(false),
             execute: () => deleteBackendResource(backendConfig.resource, values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
@@ -226,7 +204,7 @@ export default function SalesDocumentFormView({
             onCreateItem: handleCreateItem,
             onEditItem: handleEditItem,
             onSelectPaymentTerm: () =>
-                selectLookup('payment-terms', 'syarat pembayaran', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('payment-terms', 'syarat pembayaran', (record) =>
                     setValues((current) => ({
                         ...current,
                         __paymentTermId: record.id,
@@ -234,7 +212,7 @@ export default function SalesDocumentFormView({
                     })),
                 ),
             onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('branches', 'cabang', (record) =>
                     setValues((current) => ({
                         ...current,
                         __branchId: record.id,
@@ -242,7 +220,7 @@ export default function SalesDocumentFormView({
                     })),
                 ),
             onSelectShippingMethod: () =>
-                selectLookup('shipping-methods', 'metode pengiriman', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('shipping-methods', 'metode pengiriman', (record) =>
                     setValues((current) => ({
                         ...current,
                         __shippingMethodId: record.id,
@@ -250,7 +228,7 @@ export default function SalesDocumentFormView({
                     })),
                 ),
             onSelectFob: () =>
-                selectLookup('fob-terms', 'FOB', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('fob-terms', 'FOB', (record) =>
                     setValues((current) => ({
                         ...current,
                         __fobId: record.id,
@@ -268,7 +246,7 @@ export default function SalesDocumentFormView({
                     return {
                         ...action,
                         label: saving ? 'Memproses...' : action.label,
-                        onClick: handleSave,
+                        onClick: onSave,
                         disabled: action.disabled || saveDisabled,
                     };
                 }
@@ -277,7 +255,7 @@ export default function SalesDocumentFormView({
                     return {
                         ...action,
                         label: saving ? 'Memproses...' : action.label,
-                        onClick: requestDelete,
+                        onClick: onRequestDelete,
                     };
                 }
 
@@ -302,7 +280,6 @@ export default function SalesDocumentFormView({
                             selectLookup(
                                 backendConfig?.partnerResource ?? 'customers',
                                 String(config.labels.customer).toLowerCase(),
-                                (record) => buildLookupLabel(record),
                                 (record) =>
                                     setValues((current) => ({
                                         ...current,
@@ -357,7 +334,7 @@ export default function SalesDocumentFormView({
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
+                onConfirm={onDelete}
                 title="Hapus Dokumen"
                 message="Dokumen ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"

@@ -138,6 +138,7 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>

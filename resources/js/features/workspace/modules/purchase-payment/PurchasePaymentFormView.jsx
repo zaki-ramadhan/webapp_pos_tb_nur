@@ -4,7 +4,6 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     createBackendResource,
     deleteBackendResource,
-    getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import PurchasePaymentInvoiceModal from '@/features/workspace/modules/purchase-payment/PurchasePaymentInvoiceModal';
@@ -14,9 +13,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
     PurchasePaymentAdditionalInfoSection,
     PurchasePaymentDetailsSection,
@@ -32,6 +29,7 @@ import {
     buildPurchasePaymentPayload,
     validatePurchasePaymentValues,
 } from './purchasePaymentShared';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function PurchasePaymentFormView({
     pageId,
@@ -62,21 +60,29 @@ export default function PurchasePaymentFormView({
     const [activeSectionId, setActiveSectionId] = useState(sectionTabs?.[0]?.id ?? 'details');
     const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
     const [activeInvoice, setActiveInvoice] = useState(null);
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
 
     useEffect(() => {
         setActiveSectionId((isDetail ? config.detailSectionTabs : config.sectionTabs)?.[0]?.id ?? 'details');
         setValues(buildFormState(sourceRecord, config));
         setActiveInvoice(null);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
     }, [config, isDetail, sourceRecord]);
 
     const validationMessage = useMemo(() => validatePurchasePaymentValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        selectLookup,
+        handleSave,
+        requestDelete,
+        handleDelete,
+    } = useTransactionForm({ validationMessage });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(
@@ -90,7 +96,7 @@ export default function PurchasePaymentFormView({
                             tone: isDetail ? action.tone : 'primary',
                             disabled: saveDisabled,
                             label: saving ? 'Memproses...' : action.label,
-                            onClick: handleSave,
+                            onClick: onSave,
                         };
                     }
 
@@ -98,7 +104,7 @@ export default function PurchasePaymentFormView({
                         return {
                             ...action,
                             label: saving ? 'Memproses...' : action.label,
-                            onClick: requestDelete,
+                            onClick: onRequestDelete,
                         };
                     }
 
@@ -114,33 +120,10 @@ export default function PurchasePaymentFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function selectLookup(resource, title, labelBuilder, onApply) {
-        try {
-            const record = await promptSelectBackendRecord(resource, title, labelBuilder);
-
-            if (!record) {
-                return;
-            }
-
-            onApply(record);
-            setStatus({ tone: '', message: '' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
-        }
-    }
-
-    async function handleSave() {
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        await executeCrudFormAction({
+    async function onSave() {
+        await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui pembayaran pembelian.' : 'Sedang menyimpan pembayaran pembelian.',
             successMessage: isDetail ? 'Pembayaran pembelian berhasil diperbarui.' : 'Pembayaran pembelian berhasil dibuat.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
@@ -173,26 +156,21 @@ export default function PurchasePaymentFormView({
         });
     }
 
-    function requestDelete() {
-        if (!values.__backendRecordId || saving) {
+    function onRequestDelete() {
+        if (!values.__backendRecordId) {
             return;
         }
-
-        setDeleteConfirmationOpen(true);
+        requestDelete();
     }
 
-    async function handleDelete() {
+    async function onDelete() {
         if (!values.__backendRecordId) {
             return;
         }
 
-        await executeCrudFormAction({
+        await handleDelete({
             loadingMessage: 'Sedang menghapus pembayaran pembelian.',
             successMessage: 'Pembayaran pembelian berhasil dihapus.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
-            onStart: () => setDeleteConfirmationOpen(false),
             execute: () => deleteBackendResource('purchase-payments', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
@@ -205,7 +183,7 @@ export default function PurchasePaymentFormView({
     const handlers = useMemo(
         () => ({
             onSelectPayee: () =>
-                selectLookup('suppliers', 'pemasok', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('suppliers', 'pemasok', (record) =>
                     setValues((current) => ({
                         ...current,
                         __supplierId: record.id,
@@ -219,7 +197,7 @@ export default function PurchasePaymentFormView({
                     payee: [],
                 })),
             onSelectBankAccount: () =>
-                selectLookup('accounts', 'bank pembayaran', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('accounts', 'bank pembayaran', (record) =>
                     setValues((current) => ({
                         ...current,
                         __bankAccountId: record.id,
@@ -233,7 +211,7 @@ export default function PurchasePaymentFormView({
                     bankAccounts: [],
                 })),
             onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('branches', 'cabang', (record) =>
                     setValues((current) => ({
                         ...current,
                         __branchId: record.id,
@@ -247,16 +225,20 @@ export default function PurchasePaymentFormView({
                     branches: (current.branches ?? []).filter((item) => item !== value),
                 })),
             onSelectInvoice: () =>
-                selectLookup('purchase-invoices', 'faktur pembelian', (record) => buildLookupLabel(record, 'document_number'), (record) =>
-                    setValues((current) =>
-                        applyPurchasePaymentInvoices(current, [
-                            ...(current.invoices ?? []),
-                            buildPurchasePaymentInvoiceFromRecord(record),
-                        ]),
-                    ),
+                selectLookup(
+                    'purchase-invoices',
+                    'faktur pembelian',
+                    (record) =>
+                        setValues((current) =>
+                            applyPurchasePaymentInvoices(current, [
+                                ...(current.invoices ?? []),
+                                buildPurchasePaymentInvoiceFromRecord(record),
+                            ]),
+                        ),
+                    (record) => buildLookupLabel(record, 'document_number')
                 ),
         }),
-        [],
+        [selectLookup],
     );
 
     return (
@@ -301,7 +283,7 @@ export default function PurchasePaymentFormView({
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
+                onConfirm={onDelete}
                 title="Hapus Pembayaran Pembelian"
                 message="Pembayaran pembelian ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"

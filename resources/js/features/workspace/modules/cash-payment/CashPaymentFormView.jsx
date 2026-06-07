@@ -4,7 +4,6 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     createBackendResource,
     deleteBackendResource,
-    getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
@@ -13,9 +12,7 @@ import {
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
     CashPaymentHeader,
     PaymentInfoSection,
@@ -31,6 +28,7 @@ import {
     promptCashPaymentLineItem,
     validateCashPaymentValues,
 } from './cashPaymentShared';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function CashPaymentFormView({
     pageId,
@@ -42,9 +40,6 @@ export default function CashPaymentFormView({
     onRefresh,
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(() => {
         if (!activeRecordId) {
@@ -62,12 +57,23 @@ export default function CashPaymentFormView({
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormState(sourceRecord, config));
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
     }, [config, sourceRecord]);
 
     const validationMessage = useMemo(() => validateCashPaymentValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        selectLookup,
+        handleSave,
+        requestDelete,
+        handleDelete,
+    } = useTransactionForm({ validationMessage });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(
@@ -81,7 +87,7 @@ export default function CashPaymentFormView({
                             tone: values.saveTone,
                             disabled: saveDisabled,
                             label: saving ? 'Memproses...' : action.label,
-                            onClick: handleSave,
+                            onClick: onSave,
                         };
                     }
 
@@ -89,7 +95,7 @@ export default function CashPaymentFormView({
                         return {
                             ...action,
                             label: saving ? 'Memproses...' : action.label,
-                            onClick: requestDelete,
+                            onClick: onRequestDelete,
                         };
                     }
 
@@ -104,21 +110,6 @@ export default function CashPaymentFormView({
         dirty: isDirty,
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
-
-    async function selectLookup(resource, title, onApply) {
-        try {
-            const record = await promptSelectBackendRecord(resource, title, buildLookupLabel);
-
-            if (!record) {
-                return;
-            }
-
-            onApply(record);
-            setStatus({ tone: '', message: '' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
-        }
-    }
 
     function applyLineItemUpdate(record, currentItem = null) {
         try {
@@ -151,18 +142,10 @@ export default function CashPaymentFormView({
         }
     }
 
-    async function handleSave() {
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        await executeCrudFormAction({
+    async function onSave() {
+        await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui pembayaran kas.' : 'Sedang menyimpan pembayaran kas.',
             successMessage: isDetail ? 'Pembayaran kas berhasil diperbarui.' : 'Pembayaran kas berhasil dibuat.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
@@ -195,26 +178,21 @@ export default function CashPaymentFormView({
         });
     }
 
-    function requestDelete() {
-        if (!values.__backendRecordId || saving) {
+    function onRequestDelete() {
+        if (!values.__backendRecordId) {
             return;
         }
-
-        setDeleteConfirmationOpen(true);
+        requestDelete();
     }
 
-    async function handleDelete() {
+    async function onDelete() {
         if (!values.__backendRecordId) {
             return;
         }
 
-        await executeCrudFormAction({
+        await handleDelete({
             loadingMessage: 'Sedang menghapus pembayaran kas.',
             successMessage: 'Pembayaran kas berhasil dihapus.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
-            onStart: () => setDeleteConfirmationOpen(false),
             execute: () => deleteBackendResource('cash-payments', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
@@ -257,7 +235,7 @@ export default function CashPaymentFormView({
             onSelectLineAccount: (record) => applyLineItemUpdate(record),
             onEditLineItem: (item) => applyLineItemUpdate(null, item),
         }),
-        [],
+        [selectLookup],
     );
 
     return (
@@ -288,7 +266,7 @@ export default function CashPaymentFormView({
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
+                onConfirm={onDelete}
                 title="Hapus Pembayaran Kas"
                 message="Pembayaran kas ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"

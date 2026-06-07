@@ -5,7 +5,6 @@ import TextInput from '@/components/ui/TextInput';
 import {
     createBackendResource,
     deleteBackendResource,
-    getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
@@ -15,9 +14,7 @@ import {
     TransactionSectionHeading,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
     DepositFooter,
     DepositInfoSection,
@@ -34,6 +31,7 @@ import {
     parseNumericInput,
     validateSalesDepositValues,
 } from './salesDepositShared';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function SalesDepositFormView({
     pageId,
@@ -46,9 +44,6 @@ export default function SalesDepositFormView({
     onRefresh,
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'deposit');
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(
         () => (activeRecordId ? buildRecord(config.rowMap?.[activeRecordId] ?? config.table.rows.find((row) => row.id === activeRecordId)) : config.draft),
@@ -61,12 +56,23 @@ export default function SalesDepositFormView({
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'deposit');
         setValues(buildSalesDepositFormState(sourceRecord, config));
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
     }, [config, sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDepositValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        selectLookup,
+        handleSave,
+        requestDelete,
+        handleDelete,
+    } = useTransactionForm({ validationMessage });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(
@@ -79,13 +85,13 @@ export default function SalesDepositFormView({
                               ...action,
                               disabled: saveDisabled,
                               label: saving ? 'Memproses...' : action.label,
-                              onClick: handleSave,
+                              onClick: onSave,
                           }
                         : action.id === 'delete'
                           ? {
                                 ...action,
                                 label: saving ? 'Memproses...' : action.label,
-                                onClick: requestDelete,
+                                onClick: onRequestDelete,
                             }
                           : action,
                 ),
@@ -99,33 +105,10 @@ export default function SalesDepositFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function selectLookup(resource, title, labelBuilder, onApply) {
-        try {
-            const record = await promptSelectBackendRecord(resource, title, labelBuilder);
-
-            if (!record) {
-                return;
-            }
-
-            onApply(record);
-            setStatus({ tone: '', message: '' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
-        }
-    }
-
-    async function handleSave() {
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        await executeCrudFormAction({
+    async function onSave() {
+        await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui uang muka penjualan.' : 'Sedang menyimpan uang muka penjualan.',
             successMessage: isDetail ? 'Uang muka penjualan berhasil diperbarui.' : 'Uang muka penjualan berhasil dibuat.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
@@ -158,26 +141,21 @@ export default function SalesDepositFormView({
         });
     }
 
-    function requestDelete() {
-        if (!values.__backendRecordId || saving) {
+    function onRequestDelete() {
+        if (!values.__backendRecordId) {
             return;
         }
-
-        setDeleteConfirmationOpen(true);
+        requestDelete();
     }
 
-    async function handleDelete() {
+    async function onDelete() {
         if (!values.__backendRecordId) {
             return;
         }
 
-        await executeCrudFormAction({
+        await handleDelete({
             loadingMessage: 'Sedang menghapus uang muka penjualan.',
             successMessage: 'Uang muka penjualan berhasil dihapus.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
-            onStart: () => setDeleteConfirmationOpen(false),
             execute: () => deleteBackendResource('sales-deposits', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
@@ -190,7 +168,7 @@ export default function SalesDepositFormView({
     const handlers = useMemo(
         () => ({
             onSelectCustomer: () =>
-                selectLookup('customers', 'pelanggan', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('customers', 'pelanggan', (record) =>
                     setValues((current) => ({
                         ...current,
                         __customerId: record.id,
@@ -204,7 +182,7 @@ export default function SalesDepositFormView({
                     customer: [],
                 })),
             onSelectPaymentTerm: () =>
-                selectLookup('payment-terms', 'syarat pembayaran', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('payment-terms', 'syarat pembayaran', (record) =>
                     setValues((current) => ({
                         ...current,
                         __paymentTermId: record.id,
@@ -218,7 +196,7 @@ export default function SalesDepositFormView({
                     paymentTerms: (current.paymentTerms ?? []).filter((item) => item !== value),
                 })),
             onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('branches', 'cabang', (record) =>
                     setValues((current) => ({
                         ...current,
                         __branchId: record.id,
@@ -232,7 +210,7 @@ export default function SalesDepositFormView({
                     branches: (current.branches ?? []).filter((item) => item !== value),
                 })),
         }),
-        [],
+        [selectLookup],
     );
 
     return (
@@ -336,7 +314,7 @@ export default function SalesDepositFormView({
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
+                onConfirm={onDelete}
                 title="Hapus Uang Muka Penjualan"
                 message="Uang muka penjualan ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"
