@@ -8,6 +8,8 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
+import SelectField from '@/components/ui/SelectField';
+import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import { LinkIcon, PlusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { renderSimpleMasterCellValue } from './simpleMasterShared.jsx';
@@ -133,6 +135,20 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

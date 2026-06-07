@@ -12,6 +12,7 @@ import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import Pagination from '@/components/ui/Pagination';
 import {
     ChevronDownIcon,
     DownloadIcon,
@@ -137,10 +138,23 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
-                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

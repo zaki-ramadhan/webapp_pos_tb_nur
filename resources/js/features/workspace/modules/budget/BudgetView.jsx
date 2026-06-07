@@ -12,11 +12,22 @@ export default function BudgetView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: 'budgets',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
 
@@ -55,10 +66,20 @@ export default function BudgetView({
                     refreshLabel: loading ? 'Memuat data...' : page.budgetPage.table.refreshLabel,
                     emptyLabel: error || 'Belum ada data',
                     onRefresh: reload,
+                    pagination: {
+                        page: currentPage,
+                        perPage,
+                        total,
+                        lastPage,
+                        from,
+                        to,
+                        onPageChange: setPage,
+                        onPerPageChange: setPerPage,
+                    },
                 }
             }
         };
-    }, [page, rows, total, loading, error, reload]);
+    }, [page, rows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <BudgetTableView

@@ -7,11 +7,22 @@ import SimpleMasterTableView from './simple-master/SimpleMasterTableView';
 
 export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const backendConfig = SIMPLE_MASTER_BACKEND_CONFIG[page.id] ?? null;
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: backendConfig?.resource,
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: Boolean(backendConfig),
     });
 
@@ -32,9 +43,19 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenCo
                 refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [backendConfig, error, loading, page, reload, rows, total]);
+    }, [backendConfig, error, loading, page, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <SimpleMasterTableView table={resolvedPage.table} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />

@@ -17,23 +17,38 @@ export default function useBackendIndexResource({
     resource,
     filters = {},
     enabled = true,
+    initialPerPage = 25,
 }) {
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(initialPerPage);
     const [payload, setPayload] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [reloadVersion, setReloadVersion] = useState(0);
     const serializedFilters = JSON.stringify(filters ?? {});
+
+    // Reset page to 1 when filters change (like search keywords)
+    useEffect(() => {
+        setPage(1);
+    }, [serializedFilters]);
+
     const normalizedFilters = useMemo(() => sanitizeFilters(filters), [serializedFilters]);
     const requestFilters = useMemo(() => {
+        const base = {
+            ...normalizedFilters,
+            page,
+            per_page: perPage,
+        };
+
         if (reloadVersion < 1) {
-            return normalizedFilters;
+            return base;
         }
 
         return {
-            ...normalizedFilters,
+            ...base,
             _refresh: reloadVersion,
         };
-    }, [normalizedFilters, reloadVersion]);
+    }, [normalizedFilters, page, perPage, reloadVersion]);
 
     useEffect(() => {
         if (!enabled || !resource) {
@@ -84,5 +99,12 @@ export default function useBackendIndexResource({
         loading,
         error,
         reload: () => setReloadVersion((currentValue) => currentValue + 1),
+        page,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage: payload?.last_page ?? 1,
+        from: payload?.from ?? 0,
+        to: payload?.to ?? 0,
     };
 }

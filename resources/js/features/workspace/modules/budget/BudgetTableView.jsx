@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
+import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import {
     CogIcon,
@@ -144,6 +145,20 @@ export default function BudgetTableView({ page, onCreate, onOpenDetail, onRefres
                     getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
                 />
             </div>
+
+            {page.budgetPage.table.pagination ? (
+                <Pagination
+                    page={page.budgetPage.table.pagination.page}
+                    perPage={page.budgetPage.table.pagination.perPage}
+                    total={page.budgetPage.table.pagination.total}
+                    lastPage={page.budgetPage.table.pagination.lastPage}
+                    from={page.budgetPage.table.pagination.from}
+                    to={page.budgetPage.table.pagination.to}
+                    onPageChange={page.budgetPage.table.pagination.onPageChange}
+                    onPerPageChange={page.budgetPage.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

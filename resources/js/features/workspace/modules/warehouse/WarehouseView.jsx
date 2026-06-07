@@ -12,11 +12,22 @@ export default function WarehouseView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: 'warehouses',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const config = useMemo(() => {
@@ -28,9 +39,19 @@ export default function WarehouseView({
                 rows: rows.map(mapWarehouseRow),
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [loading, page.warehouse, rows, total]);
+    }, [loading, page.warehouse, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <WarehouseTableView

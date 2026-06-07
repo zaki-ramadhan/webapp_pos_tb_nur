@@ -11,11 +11,22 @@ export default function SalesTargetView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: 'sales-targets',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const config = useMemo(() => {
@@ -66,9 +77,19 @@ export default function SalesTargetView({
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [loading, page.salesTarget, rows, total]);
+    }, [loading, page.salesTarget, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <SalesTargetTableView

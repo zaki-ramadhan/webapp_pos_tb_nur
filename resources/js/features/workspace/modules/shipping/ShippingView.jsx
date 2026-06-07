@@ -11,11 +11,22 @@ export default function ShippingView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: 'shipping-methods',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const config = useMemo(() => {
@@ -55,9 +66,19 @@ export default function ShippingView({
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [loading, page, rows, total]);
+    }, [loading, page, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <ShippingTableView

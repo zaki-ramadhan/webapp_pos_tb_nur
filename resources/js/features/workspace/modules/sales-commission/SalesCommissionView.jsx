@@ -11,11 +11,22 @@ export default function SalesCommissionView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: 'sales-commissions',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const config = useMemo(() => {
@@ -60,9 +71,19 @@ export default function SalesCommissionView({
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [loading, page.salesCommission, rows, total]);
+    }, [loading, page.salesCommission, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <SalesCommissionTableView

@@ -8,6 +8,7 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
+import Pagination from '@/components/ui/Pagination';
 import { TransactionToolbarIconButton, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
@@ -108,6 +109,20 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
                     </DataTable>
                 </div>
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

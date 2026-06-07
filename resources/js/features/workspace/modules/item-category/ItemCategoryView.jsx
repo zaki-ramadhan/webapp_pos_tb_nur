@@ -4,11 +4,22 @@ import ItemCategoryTableView from './ItemCategoryTableView';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 
 export default function ItemCategoryView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: 'product-categories',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const config = useMemo(() => {
@@ -31,9 +42,19 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, onOpenCo
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [loading, page.itemCategory, rows, total, reload]);
+    }, [loading, page.itemCategory, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
 
     return mode === 'table' ? (
         <ItemCategoryTableView page={{ itemCategory: config }} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />

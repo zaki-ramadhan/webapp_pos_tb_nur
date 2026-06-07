@@ -12,11 +12,22 @@ export default function BudgetTransferView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+    } = useBackendIndexResource({
         resource: 'budget-transfers',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
 
@@ -53,9 +64,19 @@ export default function BudgetTransferView({
                 rows: transferTableRows,
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [loading, page.budgetTransfer, rows, total]);
+    }, [loading, page.budgetTransfer, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <BudgetTransferTableView

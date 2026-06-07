@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import SelectField from '@/components/ui/SelectField';
+import Pagination from '@/components/ui/Pagination';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import {
     TransactionDataTable,
@@ -142,6 +143,20 @@ export default function SalesTargetTableView({ config, onCreate, onOpenDetail, o
                     getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
                 />
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }
