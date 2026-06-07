@@ -102,11 +102,19 @@ export default function BudgetTransferTableView({ config, onCreate, onOpenDetail
                     icon: <RefreshIcon className="h-5 w-5" />,
                     onClick: onRefresh,
                 }}
-                rightControls={
-                    <TableUtilityButton label={config.table.settingsLabel}>
-                        <CogIcon className="h-4 w-4" />
-                    </TableUtilityButton>
-                }
+                printButton={{
+                    label: 'Cetak',
+                }}
+                exportConfig={{
+                    columns: tableColumns,
+                    rows: filteredRows,
+                    filename: 'transfer-anggaran',
+                }}
+                menuButton={{
+                    label: config.table.settingsLabel,
+                    icon: <CogIcon className="h-4 w-4" />,
+                    items: [{ id: 'settings', label: config.table.settingsLabel }],
+                }}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),

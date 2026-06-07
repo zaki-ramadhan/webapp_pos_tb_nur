@@ -45,15 +45,14 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
                 refreshButton={{
                     label: config.table.refreshLabel,
                 }}
-                rightControls={
-                    <>
-                        <TransactionToolbarSplitButton label={config.table.downloadLabel} icon={<DownloadIcon className="h-4.5 w-4.5" />} items={config.table.downloadItems} />
-                        <TransactionToolbarSplitButton label={config.table.shareLabel} icon={<ExternalLinkIcon className="h-4.5 w-4.5" />} items={config.table.shareItems} />
-                        <TransactionToolbarIconButton label={config.table.printLabel}>
-                            <PrintIcon className="h-4.5 w-4.5" />
-                        </TransactionToolbarIconButton>
-                    </>
-                }
+                printButton={{
+                    label: config.table.printLabel,
+                }}
+                exportConfig={{
+                    columns: config.table.columns,
+                    rows: filteredRows,
+                    filename: 'kategori-barang',
+                }}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),

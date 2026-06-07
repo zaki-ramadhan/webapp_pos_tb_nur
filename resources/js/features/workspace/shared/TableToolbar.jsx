@@ -5,6 +5,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import TextInput from '@/components/ui/TextInput';
 import {
     ChevronDownIcon,
+    DownloadIcon,
     PlusIcon,
     PrintIcon,
     RefreshIcon,
@@ -34,6 +35,135 @@ const SIZE_STYLES = {
         searchText: 'text-[17px]',
     },
 };
+
+function exportToCSV(columns, rows, filename = 'export') {
+    const activeColumns = columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
+    const header = activeColumns.map(col => `"${String(col.label || '').replace(/"/g, '""')}"`).join(',');
+    
+    const body = rows.map(row => 
+        activeColumns.map(col => {
+            const val = row[col.id] !== undefined && row[col.id] !== null ? row[col.id] : '';
+            const valStr = Array.isArray(val) ? val.join(', ') : String(val);
+            return `"${valStr.replace(/"/g, '""')}"`;
+        }).join(',')
+    ).join('\n');
+    
+    const csvContent = '\uFEFF' + [header, body].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${filename}.csv`;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+function exportToExcelXML(columns, rows, filename = 'export') {
+    const activeColumns = columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
+    
+    let xml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Worksheet ss:Name="Sheet1">
+  <Table>`;
+
+    xml += '\n   <Row>';
+    activeColumns.forEach(col => {
+        const text = String(col.label || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        xml += `\n    <Cell><Data ss:Type="String">${text}</Data></Cell>`;
+    });
+    xml += '\n   </Row>';
+
+    rows.forEach(row => {
+        xml += '\n   <Row>';
+        activeColumns.forEach(col => {
+            const val = row[col.id] !== undefined && row[col.id] !== null ? row[col.id] : '';
+            const valStr = Array.isArray(val) ? val.join(', ') : String(val);
+            const isNum = typeof val === 'number' && !isNaN(val);
+            const type = isNum ? 'Number' : 'String';
+            const text = valStr.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            xml += `\n    <Cell><Data ss:Type="${type}">${text}</Data></Cell>`;
+        });
+        xml += '\n   </Row>';
+    });
+
+    xml += `\n  </Table>
+ </Worksheet>
+</Workbook>`;
+
+    const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${filename}.xls`;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+function ToolbarExportSplitButton({ exportConfig, sizeStyle }) {
+    const [open, setOpen] = useState(false);
+    const buttonRef = useRef(null);
+
+    const handleExport = (type) => {
+        const columns = exportConfig.columns ?? [];
+        const rows = exportConfig.rows ?? [];
+        const filename = exportConfig.filename ?? 'export';
+
+        if (type === 'csv') {
+            exportToCSV(columns, rows, filename);
+        } else if (type === 'excel') {
+            exportToExcelXML(columns, rows, filename);
+        } else if (type === 'pdf') {
+            window.print();
+        }
+        setOpen(false);
+    };
+
+    return (
+        <div className="relative">
+            <button
+                ref={buttonRef}
+                type="button"
+                onClick={() => setOpen((current) => !current)}
+                className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.menuButton}`.trim()}
+                title="Ekspor data"
+                aria-label="Ekspor data"
+            >
+                <DownloadIcon className="h-4.5 w-4.5 text-current" />
+                <ChevronDownIcon />
+            </button>
+
+            <DropdownMenu
+                open={open}
+                onClose={() => setOpen(false)}
+                anchorRef={buttonRef}
+                widthClassName="w-[190px]"
+            >
+                <div className="flex flex-col">
+                    <DropdownMenuItem onClick={() => handleExport('excel')}>
+                        Ekspor ke Excel (.xls)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleExport('csv')}>
+                        Ekspor ke CSV (.csv)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                        Cetak / Ekspor PDF
+                    </DropdownMenuItem>
+                </div>
+            </DropdownMenu>
+        </div>
+    );
+}
 
 function ToolbarIconButton({ label, onClick, className, children }) {
     return (
@@ -106,6 +236,7 @@ export default function TableToolbar({
     rightControls = null,
     search = null,
     pageValue = null,
+    exportConfig = null,
     className = '',
     topRowClassName = '',
     bottomRowClassName = '',
@@ -159,12 +290,16 @@ export default function TableToolbar({
                 >
                     {rightControls ? <div className="flex shrink-0 flex-row flex-wrap items-center gap-2">{rightControls}</div> : null}
 
+                    {exportConfig ? (
+                        <ToolbarExportSplitButton exportConfig={exportConfig} sizeStyle={sizeStyle} />
+                    ) : null}
+
                     {menuButton ? <ToolbarActionMenu menuButton={menuButton} sizeStyle={sizeStyle} /> : null}
 
                     {printButton ? (
                         <ToolbarIconButton
                             label={printButton.label}
-                            onClick={printButton.onClick}
+                            onClick={printButton.onClick ?? (() => window.print())}
                             className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.utilityButton}`.trim()}
                         >
                             {printButton.icon ?? <PrintIcon />}

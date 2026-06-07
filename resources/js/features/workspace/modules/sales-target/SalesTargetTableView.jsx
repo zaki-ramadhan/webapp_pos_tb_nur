@@ -97,18 +97,19 @@ export default function SalesTargetTableView({ config, onCreate, onOpenDetail, o
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
                     onClick: onRefresh,
                 }}
-                rightControls={
-                    <>
-                        <TransactionToolbarIconButton label={config.table.printLabel}>
-                            <PrintIcon className="h-4 w-4" />
-                        </TransactionToolbarIconButton>
-                        <TransactionToolbarSplitButton
-                            label={config.table.settingsLabel}
-                            icon={<NavigationIcon type="settings" className="h-4 w-4" />}
-                            items={[{ id: 'settings', label: config.table.settingsLabel }]}
-                        />
-                    </>
-                }
+                printButton={{
+                    label: config.table.printLabel,
+                }}
+                exportConfig={{
+                    columns: config.table.columns,
+                    rows: filteredRows,
+                    filename: 'target-penjualan',
+                }}
+                menuButton={{
+                    label: config.table.settingsLabel,
+                    icon: <NavigationIcon type="settings" className="h-4 w-4" />,
+                    items: [{ id: 'settings', label: config.table.settingsLabel }],
+                }}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),

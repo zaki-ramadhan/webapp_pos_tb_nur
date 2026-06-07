@@ -65,6 +65,11 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                 }
                 refreshButton={{ label: table.refreshLabel, onClick: table.onRefresh, loading: table.loading }}
                 printButton={table.printLabel ? { label: table.printLabel } : null}
+                exportConfig={{
+                    columns: table.columns,
+                    rows: filteredRows,
+                    filename: table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'data-master',
+                }}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),

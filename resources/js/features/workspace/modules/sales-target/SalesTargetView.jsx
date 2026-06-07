@@ -21,7 +21,14 @@ export default function SalesTargetView({
     const config = useMemo(() => {
         const baseConfig = page.salesTarget;
         const mappedRows = rows.map((row) => {
-            const meta = row.metadata ?? {};
+            let meta = {};
+            try {
+                if (typeof row.metadata === 'object' && row.metadata !== null) {
+                    meta = row.metadata;
+                } else if (typeof row.metadata === 'string' && (row.metadata.startsWith('{') || row.metadata.startsWith('['))) {
+                    meta = JSON.parse(row.metadata);
+                }
+            } catch (e) {}
             const isPerSales = meta.targetType === 'Per Penjual';
             return {
                 id: String(row.id),

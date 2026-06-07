@@ -197,3 +197,67 @@
         color: #ffffff;
     }
 }
+
+@media print {
+    /* Hide dashboard layout components like sidebar, tabs, page headers, buttons, and utility controls */
+    aside,
+    nav,
+    header,
+    footer,
+    button,
+    select,
+    .no-print,
+    .DashboardSidebar,
+    div[class*="DashboardSidebar"],
+    div[class*="DashboardPageTabs"],
+    div[class*="TableToolbar"],
+    div[class*="filters"],
+    input[placeholder*="Cari"] {
+        display: none !important;
+    }
+
+    /* Set main workspace layout to fit printed sheets and remove scrollbars */
+    body, html, main, section, .workspace-screen, div[class*="DashboardActivePageContent"] {
+        background: white !important;
+        color: black !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Print tables with clear borders and compact spacing */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        page-break-inside: auto !important;
+    }
+
+    tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+    }
+
+    th, td {
+        border: 1px solid #c8d0df !important;
+        padding: 6px 8px !important;
+        color: black !important;
+        font-size: 11px !important;
+        background-color: transparent !important;
+    }
+
+    th {
+        font-weight: bold !important;
+        background-color: #f1f5f9 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+

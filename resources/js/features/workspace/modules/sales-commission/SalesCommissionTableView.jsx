@@ -38,6 +38,14 @@ export default function SalesCommissionTableView({ config, onCreate, onOpenDetai
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
                     onClick: onRefresh,
                 }}
+                printButton={{
+                    label: 'Cetak',
+                }}
+                exportConfig={{
+                    columns: config.table.columns,
+                    rows: filteredRows,
+                    filename: 'komisi-penjualan',
+                }}
                 menuButton={{
                     label: config.table.settingsLabel,
                     icon: <NavigationIcon type="settings" className="h-4 w-4" />,

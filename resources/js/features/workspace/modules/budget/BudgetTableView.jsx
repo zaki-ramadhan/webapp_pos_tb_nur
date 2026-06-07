@@ -101,6 +101,11 @@ export default function BudgetTableView({ page, onCreate, onOpenDetail, onRefres
                     label: table.printLabel,
                     icon: <PrintIcon className="h-4 w-4" />,
                 }}
+                exportConfig={{
+                    columns: table.columns,
+                    rows: filteredRows,
+                    filename: 'anggaran',
+                }}
                 menuButton={{
                     label: table.actionsLabel,
                     icon: <CogIcon className="h-4 w-4" />,

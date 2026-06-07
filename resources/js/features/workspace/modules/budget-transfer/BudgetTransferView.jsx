@@ -26,7 +26,14 @@ export default function BudgetTransferView({
 
         const transferTableRows = mappedRows.map((row) => {
             const rawRecord = row.__backendRecord;
-            const meta = rawRecord.metadata ?? {};
+            let meta = {};
+            try {
+                if (typeof rawRecord.metadata === 'object' && rawRecord.metadata !== null) {
+                    meta = rawRecord.metadata;
+                } else if (typeof rawRecord.metadata === 'string' && (rawRecord.metadata.startsWith('{') || rawRecord.metadata.startsWith('['))) {
+                    meta = JSON.parse(rawRecord.metadata);
+                }
+            } catch (e) {}
             return {
                 id: row.id,
                 __backendRecord: rawRecord,

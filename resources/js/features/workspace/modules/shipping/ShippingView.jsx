@@ -23,7 +23,9 @@ export default function ShippingView({
         const mappedRows = rows.map((row) => {
             let extra = {};
             try {
-                if (row.notes && row.notes.startsWith('{')) {
+                if (typeof row.notes === 'object' && row.notes !== null) {
+                    extra = row.notes;
+                } else if (typeof row.notes === 'string' && (row.notes.startsWith('{') || row.notes.startsWith('['))) {
                     extra = JSON.parse(row.notes);
                 }
             } catch (e) {}

@@ -77,15 +77,14 @@ export default function WarehouseTableView({ config, onCreate, onOpenDetail }) {
                     label: config.table.refreshLabel,
                     icon: <RefreshIcon className="h-5 w-5" />,
                 }}
-                rightControls={
-                    <button
-                        type="button"
-                        aria-label={config.table.printLabel}
-                        className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
-                    >
-                        <PrintIcon className="h-4.5 w-4.5" />
-                    </button>
-                }
+                printButton={{
+                    label: config.table.printLabel,
+                }}
+                exportConfig={{
+                    columns: config.table.columns,
+                    rows: filteredRows,
+                    filename: 'gudang-master',
+                }}
                 menuButton={{
                     label: config.table.settingsLabel,
                     icon: <CogIcon className="h-4.5 w-4.5" />,
