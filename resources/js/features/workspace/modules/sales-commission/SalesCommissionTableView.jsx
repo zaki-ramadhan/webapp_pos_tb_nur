@@ -5,7 +5,7 @@ import { TransactionDataTable } from '@/features/workspace/modules/shared/Transa
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import { LinkIcon, PlusIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 
-export default function SalesCommissionTableView({ config, onCreate, onOpenDetail }) {
+export default function SalesCommissionTableView({ config, onCreate, onOpenDetail, onRefresh }) {
     const [keyword, setKeyword] = useState('');
 
     const filteredRows = useMemo(() => {
@@ -36,6 +36,7 @@ export default function SalesCommissionTableView({ config, onCreate, onOpenDetai
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    onClick: onRefresh,
                 }}
                 menuButton={{
                     label: config.table.settingsLabel,

@@ -72,8 +72,8 @@ class OperationBackendResources
             'sales-receipts' => self::documentResource('sales-receipts', 'Sales Receipts', 'sales-receipt', SalesReceipt::class, self::salesPaymentRules()),
             'sales-returns' => self::documentResource('sales-returns', 'Sales Returns', 'sales-return', SalesReturn::class, self::salesRules()),
             'price-adjustments' => self::documentResource('price-adjustments', 'Price Adjustments', 'price-adjustment', PriceAdjustment::class, self::inventoryLikeRules()),
-            'sales-commissions' => self::documentResource('sales-commissions', 'Sales Commissions', 'sales-commission', SalesCommission::class, self::accountingRules()),
-            'sales-targets' => self::documentResource('sales-targets', 'Sales Targets', 'sales-target', SalesTarget::class, self::accountingRules()),
+            'sales-commissions' => self::documentResource('sales-commissions', 'Sales Commissions', 'sales-commission', SalesCommission::class, self::accountingRules(requireLines: false)),
+            'sales-targets' => self::documentResource('sales-targets', 'Sales Targets', 'sales-target', SalesTarget::class, self::accountingRules(requireLines: false)),
         ];
     }
 
@@ -111,9 +111,9 @@ class OperationBackendResources
     private static function makeFinanceResources(): array
     {
         return [
-            'budgets' => self::documentResource('budgets', 'Budgets', 'budget', Budget::class, self::accountingRules()),
-            'budget-monitors' => self::documentResource('budget-monitors', 'Budget Monitors', 'budget-monitor', Budget::class, self::accountingRules()),
-            'budget-transfers' => self::documentResource('budget-transfers', 'Budget Transfers', 'budget-transfer', BudgetTransfer::class, self::accountingRules()),
+            'budgets' => self::documentResource('budgets', 'Budgets', 'budget', Budget::class, self::accountingRules(requireLines: false)),
+            'budget-monitors' => self::documentResource('budget-monitors', 'Budget Monitors', 'budget-monitor', Budget::class, self::accountingRules(requireLines: false)),
+            'budget-transfers' => self::documentResource('budget-transfers', 'Budget Transfers', 'budget-transfer', BudgetTransfer::class, self::accountingRules(requireLines: false)),
             'expense-entries' => self::documentResource('expense-entries', 'Expense Entries', 'expense-entry', ExpenseEntry::class, self::accountingRules()),
             'payroll-entries' => self::documentResource('payroll-entries', 'Payroll Entries', 'payroll-entry', PayrollEntry::class, self::accountingRules()),
             'general-journals' => self::documentResource('general-journals', 'General Journals', 'general-journal', GeneralJournal::class, self::journalRules()),
@@ -304,10 +304,10 @@ class OperationBackendResources
     /**
      * @return array<string, mixed>
      */
-    private static function accountingRules(): array
+    private static function accountingRules(bool $requireLines = true): array
     {
         return array_merge(
-            self::baseDocumentRules(requireLines: true),
+            self::baseDocumentRules(requireLines: $requireLines),
             [
                 'primary_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
                 'secondary_account_id' => ['nullable', 'integer', 'exists:accounts,id'],

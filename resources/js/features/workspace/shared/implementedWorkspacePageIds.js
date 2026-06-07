@@ -49,6 +49,7 @@ const implementedWorkspacePageIds = new Set([
     'asset-disposal',
     'asset-move',
     'budget',
+    'budget-transfer',
     'payroll-entry',
     'items-services',
     'warehouse-master',
@@ -59,6 +60,9 @@ const implementedWorkspacePageIds = new Set([
     'users',
     'branch',
     'preferences',
+    'shipping-master',
+    'sales-commission',
+    'sales-target',
 ]);
 
 export default implementedWorkspacePageIds;

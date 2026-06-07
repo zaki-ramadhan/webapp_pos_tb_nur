@@ -57,7 +57,7 @@ function DownloadSplitButton({ table }) {
     );
 }
 
-export default function ShippingTableView({ table, onCreate }) {
+export default function ShippingTableView({ table, onCreate, onOpenDetail, onRefresh }) {
     const [keyword, setKeyword] = useState('');
     const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
 
@@ -114,6 +114,7 @@ export default function ShippingTableView({ table, onCreate }) {
 
                         <button
                             type="button"
+                            onClick={onRefresh}
                             aria-label={table.refreshLabel}
                             className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
                         >
@@ -169,7 +170,17 @@ export default function ShippingTableView({ table, onCreate }) {
                     <DataTableBody>
                         {filteredRows.length ? (
                             filteredRows.map((row, index) => (
-                                <DataTableRow key={row.id} className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8]`.trim()}>
+                                <DataTableRow
+                                    key={row.id}
+                                    onClick={() =>
+                                        onOpenDetail?.({
+                                            recordId: row.id,
+                                            label: row.name,
+                                            tabLabel: row.name,
+                                        })
+                                    }
+                                    className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8] cursor-pointer hover:bg-[#eef3fb] transition`.trim()}
+                                >
                                     <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.name}</DataTableCell>
                                     <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.pic}</DataTableCell>
                                     <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.phone}</DataTableCell>

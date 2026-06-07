@@ -27,7 +27,7 @@ function TableUtilityButton({ label, children }) {
     );
 }
 
-export default function BudgetTransferTableView({ config, onCreate }) {
+export default function BudgetTransferTableView({ config, onCreate, onOpenDetail, onRefresh }) {
     const [keyword, setKeyword] = useState('');
     const [dateFilter, setDateFilter] = useState(config.table.filters[0]?.options?.[0]?.value ?? 'all');
     const tableColumns = useMemo(
@@ -100,6 +100,7 @@ export default function BudgetTransferTableView({ config, onCreate }) {
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <RefreshIcon className="h-5 w-5" />,
+                    onClick: onRefresh,
                 }}
                 rightControls={
                     <TableUtilityButton label={config.table.settingsLabel}>
@@ -128,6 +129,13 @@ export default function BudgetTransferTableView({ config, onCreate }) {
                             <span>{column.label}</span>
                         </span>
                     )}
+                    onRowClick={(row) =>
+                        onOpenDetail?.({
+                            recordId: row.id,
+                            label: row.number,
+                        })
+                    }
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
                 />
             </div>
         </div>

@@ -47,7 +47,7 @@ function SalesTargetFilterBar({ config, filters, setFilters }) {
     );
 }
 
-export default function SalesTargetTableView({ config, onCreate, onOpenDetail }) {
+export default function SalesTargetTableView({ config, onCreate, onOpenDetail, onRefresh }) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -95,6 +95,7 @@ export default function SalesTargetTableView({ config, onCreate, onOpenDetail })
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    onClick: onRefresh,
                 }}
                 rightControls={
                     <>

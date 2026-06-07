@@ -10,6 +10,7 @@ export default function WarehouseView({
     activeLevel2Tab,
     onOpenContent,
     onOpenDetail,
+    onCloseDetail,
 }) {
     const { rows, total, loading, error, reload } = useBackendIndexResource({
         resource: 'warehouses',
@@ -42,6 +43,9 @@ export default function WarehouseView({
         <WarehouseFormView
             config={config}
             activeLevel2Tab={activeLevel2Tab}
+            onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
     );

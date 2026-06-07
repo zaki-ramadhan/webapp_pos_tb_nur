@@ -1,4 +1,24 @@
-export function buildInitialValues(config) {
+export function buildInitialValues(config, detailRow = null) {
+    if (detailRow) {
+        const backend = detailRow.__backendRecord ?? {};
+        const meta = backend.metadata ?? {};
+        return {
+            year: meta.year ?? '',
+            type: meta.type ?? '',
+            branches: meta.branches ?? [],
+            autoNumber: Boolean(meta.autoNumber),
+            numberingType: meta.numberingType ?? '',
+            transferNumber: backend.document_number ?? '',
+            date: meta.date ?? '',
+            fromMonth: meta.fromMonth ?? '',
+            fromBudget: meta.fromBudget ?? '',
+            remainingBudget: meta.remainingBudget ?? '-',
+            transferAmount: meta.transferAmount ?? '',
+            toMonth: meta.toMonth ?? '',
+            toBudget: meta.toBudget ?? '',
+            notes: backend.notes ?? '',
+        };
+    }
     return {
         year: config.defaults?.year ?? config.yearOptions?.[0] ?? '',
         type: config.defaults?.type ?? config.typeOptions?.[0] ?? '',

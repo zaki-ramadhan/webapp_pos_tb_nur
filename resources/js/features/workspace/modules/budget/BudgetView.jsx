@@ -4,7 +4,14 @@ import BudgetTableView from './BudgetTableView';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildOperationDocumentTableRows } from '@/features/workspace/backend/operationDocumentBackend';
 
-export default function BudgetView({ page, mode, activeLevel2Tab, onOpenContent }) {
+export default function BudgetView({
+    page,
+    mode,
+    activeLevel2Tab,
+    onOpenContent,
+    onOpenDetail,
+    onCloseDetail,
+}) {
     const { rows, total, loading, error, reload } = useBackendIndexResource({
         resource: 'budgets',
         filters: {
@@ -53,7 +60,21 @@ export default function BudgetView({ page, mode, activeLevel2Tab, onOpenContent 
         };
     }, [page, rows, total, loading, error, reload]);
 
-    return mode === 'table'
-        ? <BudgetTableView page={pageWithDynamicData} onCreate={onOpenContent} />
-        : <BudgetFormView page={pageWithDynamicData} activeLevel2Tab={activeLevel2Tab} />;
+    return mode === 'table' ? (
+        <BudgetTableView
+            page={pageWithDynamicData}
+            onCreate={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            onRefresh={reload}
+        />
+    ) : (
+        <BudgetFormView
+            page={pageWithDynamicData}
+            activeLevel2Tab={activeLevel2Tab}
+            onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
+            onRefresh={reload}
+        />
+    );
 }

@@ -13,7 +13,7 @@ import {
 } from '@/features/workspace/shared/Icons';
 import { TransactionDataTable } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
-export default function BudgetTableView({ page, onCreate }) {
+export default function BudgetTableView({ page, onCreate, onOpenDetail, onRefresh }) {
     const table = page.budgetPage.table;
     const [keyword, setKeyword] = useState('');
     const [departmentFilter, setDepartmentFilter] = useState(table.filters[0]?.options?.[0]?.value ?? 'all');
@@ -95,6 +95,7 @@ export default function BudgetTableView({ page, onCreate }) {
                 refreshButton={{
                     label: table.refreshLabel,
                     icon: <RefreshIcon className="h-5 w-5" />,
+                    onClick: onRefresh,
                 }}
                 printButton={{
                     label: table.printLabel,
@@ -129,6 +130,13 @@ export default function BudgetTableView({ page, onCreate }) {
                         </span>
                     )}
                     renderCell={({ row, column }) => row[column.id]}
+                    onRowClick={(row) =>
+                        onOpenDetail?.({
+                            recordId: row.id,
+                            label: row.number,
+                        })
+                    }
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
                 />
             </div>
         </div>

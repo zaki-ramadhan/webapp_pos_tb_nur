@@ -5,57 +5,201 @@ import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { SaveIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import { SalesCommissionCommissionTab, SalesCommissionOtherTab } from './SalesCommissionSections';
 import { buildCommissionFormValues } from './salesCommissionShared';
+import {
+    createBackendResource,
+    deleteBackendResource,
+    getBackendErrorMessage,
+    updateBackendResource,
+} from '@/features/workspace/backend/workspaceBackendApi';
+import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 
-export default function SalesCommissionFormView({ config, activeLevel2Tab }) {
+export default function SalesCommissionFormView({
+    config,
+    activeLevel2Tab,
+    onOpenContent,
+    onOpenDetail,
+    onCloseDetail,
+    onRefresh,
+}) {
     const detailRow = useMemo(
         () =>
             activeLevel2Tab?.tabType === 'detail'
-                ? (config.table.rows ?? []).find((row) => row.id === activeLevel2Tab.recordId) ?? null
+                ? (config.table.rows ?? []).find((row) => String(row.id) === String(activeLevel2Tab.recordId)) ?? null
                 : null,
         [activeLevel2Tab, config.table.rows],
     );
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.formTabs?.[0]?.id ?? 'commission');
-    const [values, setValues] = useState(() => buildCommissionFormValues(config, detailRow));
+    const initialValues = useMemo(() => buildCommissionFormValues(config, detailRow), [config, detailRow]);
+    const [values, setValues] = useState(() => initialValues);
+    const [status, setStatus] = useState({ tone: '', message: '' });
+    const [saving, setSaving] = useState(false);
+    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     useEffect(() => {
         setActiveTabId(config.formTabs?.[0]?.id ?? 'commission');
-        setValues(buildCommissionFormValues(config, detailRow));
-    }, [config, detailRow]);
+        setValues(initialValues);
+        setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
+    }, [config, initialValues]);
+
+    const isDirty = useMemo(
+        () => JSON.stringify(values) !== JSON.stringify(initialValues),
+        [initialValues, values]
+    );
+
+    useWorkspaceDirtyRegistration({
+        pageId: 'sales-commission',
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(activeLevel2Tab?.id),
+    });
+
+    async function handleSave() {
+        if (!values.name?.trim()) {
+            rejectCrudFormAction('Nama perhitungan komisi wajib diisi.', { setStatus });
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: isDetail ? 'Sedang memperbarui komisi.' : 'Sedang menyimpan komisi.',
+            successMessage: isDetail ? 'Komisi berhasil diperbarui.' : 'Komisi berhasil dibuat.',
+            setSaving,
+            setStatus,
+            execute: async () => {
+                const payload = {
+                    branch_id: 1, // Default branch
+                    document_number: isDetail ? detailRow.document_number : 'COM-' + Date.now(),
+                    entry_date: new Date().toISOString().split('T')[0],
+                    is_closed: values.inactive,
+                    notes: values.notes || '',
+                    metadata: {
+                        periodType: values.periodType,
+                        name: values.name.trim(),
+                        sellerScope: values.sellerScope,
+                        orderSelections: values.orderSelections,
+                        productScope: values.productScope,
+                        supplierScope: values.supplierScope,
+                        conditionType: values.conditionType,
+                        salesValueFrom: values.salesValueFrom,
+                        salesValueTo: values.salesValueTo,
+                        quantityFrom: values.quantityFrom,
+                        quantityTo: values.quantityTo,
+                        quantityUnit: values.quantityUnit,
+                        rewardType: values.rewardType,
+                        rewardValue: values.rewardValue,
+                        rewardBase: values.rewardBase,
+                    }
+                };
+
+                const response = isDetail && detailRow?.id
+                    ? await updateBackendResource('sales-commissions', detailRow.id, payload)
+                    : await createBackendResource('sales-commissions', payload);
+
+                return response?.data ?? null;
+            },
+            getErrorMessage: (error) => getBackendErrorMessage(error),
+            onSuccess: async (record) => {
+                await onRefresh?.();
+
+                if (!isDetail && record?.id) {
+                    onOpenDetail?.({
+                        recordId: String(record.id),
+                        label: record.metadata?.name ?? record.document_number ?? values.name.trim(),
+                        tabLabel: record.metadata?.name ?? record.document_number ?? values.name.trim(),
+                    });
+                }
+            },
+        });
+    }
+
+    function requestDelete() {
+        if (!detailRow?.id || saving) {
+            return;
+        }
+        setDeleteConfirmationOpen(true);
+    }
+
+    async function handleDelete() {
+        if (!detailRow?.id) {
+            return;
+        }
+
+        await executeCrudFormAction({
+            loadingMessage: 'Sedang menghapus komisi.',
+            successMessage: 'Komisi berhasil dihapus.',
+            setSaving,
+            setStatus,
+            onStart: () => setDeleteConfirmationOpen(false),
+            execute: () => deleteBackendResource('sales-commissions', detailRow.id),
+            getErrorMessage: (error) => getBackendErrorMessage(error),
+            onSuccess: async () => {
+                await onRefresh?.();
+                onCloseDetail?.(detailRow.id);
+                onOpenContent?.();
+            },
+        });
+    }
 
     const dockActions = isDetail ? config.detailDockActions : config.createDockActions;
 
     return (
-        <div className="relative flex min-h-full flex-col">
-            <div className="px-1 pt-0.5">
-                <PreferencesTabs
-                    tabs={config.formTabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                    className="pt-0"
-                />
-            </div>
-
-            <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
-                    {activeTabId === 'others' ? (
-                        <SalesCommissionOtherTab config={config} values={values} setValues={setValues} />
-                    ) : (
-                        <SalesCommissionCommissionTab config={config} values={values} setValues={setValues} />
-                    )}
+        <>
+            <div className="relative flex min-h-full flex-col">
+                <div className="px-1 pt-0.5">
+                    <PreferencesTabs
+                        tabs={config.formTabs}
+                        activeTabId={activeTabId}
+                        onSelectTab={setActiveTabId}
+                        className="pt-0"
+                    />
                 </div>
 
-                <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col">
-                    {dockActions.map((action) => (
-                        <DockActionButton
-                            key={action.id}
-                            label={action.label}
-                            tone={action.tone}
-                            icon={action.icon === 'trash' ? <TrashIcon className="h-9 w-9" /> : <SaveIcon className="h-9 w-9" />}
-                        />
-                    ))}
+                <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
+                    <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+                        <CrudStatusMessage status={status} className="mb-4" />
+                        {activeTabId === 'others' ? (
+                            <SalesCommissionOtherTab config={config} values={values} setValues={setValues} />
+                        ) : (
+                            <SalesCommissionCommissionTab config={config} values={values} setValues={setValues} />
+                        )}
+                    </div>
+
+                    <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col">
+                        {dockActions.map((action) => (
+                            <DockActionButton
+                                key={action.id}
+                                label={action.label}
+                                tone={action.tone}
+                                icon={action.icon === 'trash' ? <TrashIcon className="h-9 w-9" /> : <SaveIcon className="h-9 w-9" />}
+                                loading={saving && (action.id === 'save' || action.id === 'delete')}
+                                onClick={() => {
+                                    if (action.id === 'save') {
+                                        handleSave();
+                                    } else if (action.id === 'delete') {
+                                        requestDelete();
+                                    }
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <ConfirmationModal
+                open={deleteConfirmationOpen}
+                onClose={() => setDeleteConfirmationOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Komisi Penjual"
+                message="Komisi penjual ini akan dihapus permanen. Lanjutkan?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                confirmLoading={saving}
+            />
+        </>
     );
 }
