@@ -67,6 +67,7 @@ export function LineTrendMetric({ widget }) {
                 series={widget.series ?? []}
                 accent={widget.accent}
                 valueFormat={widget.valueFormat ?? 'number'}
+                heightClassName="h-[142px] sm:h-[152px]"
             />
         </div>
     );
