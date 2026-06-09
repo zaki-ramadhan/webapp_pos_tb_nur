@@ -667,7 +667,7 @@ class DashboardBlueprintProvider
                     'title' => 'Kegiatan Mendatang',
                     'type' => 'note',
                     'noteDescription' => '12 Jun 2026 — Batas Akhir Pelaporan SPT PPh 21 Masa Mei 2026',
-                    'heightClass' => 'min-h-[160px]',
+                    'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'sales-trend',
@@ -829,7 +829,7 @@ class DashboardBlueprintProvider
                     'title' => 'Kegiatan Terlewat',
                     'type' => 'note',
                     'noteDescription' => 'Belum ada kegiatan yang terlewat.',
-                    'heightClass' => 'min-h-[160px]',
+                    'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'cash-availability',
