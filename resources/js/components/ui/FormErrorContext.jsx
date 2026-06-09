@@ -87,7 +87,8 @@ export function useFormError(explicitError, name, id) {
 export function useToggleFieldError({ error, name, id, size, align, containerClassName }) {
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
-    const feedbackMessage = resolvedError || (typeof error === 'string' ? error : '') || '';
+    // resolvedError already contains the string message when present
+    const feedbackMessage = typeof resolvedError === 'string' ? resolvedError : '';
 
     const sizeClassName = size === 'md' ? 'h-5 w-5' : 'h-4 w-4';
     const alignClassName = align === 'center' ? 'items-center' : 'items-start';
