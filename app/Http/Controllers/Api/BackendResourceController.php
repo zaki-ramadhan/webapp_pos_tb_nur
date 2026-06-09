@@ -52,7 +52,9 @@ class BackendResourceController extends Controller
 
         if ($resource === 'preferences' && $request->has('settings')) {
             $this->access->authorize($request->user(), $blueprint, 'create');
-            $settings = $request->input('settings', []);
+            $settings = collect($request->input('settings', []))
+                ->filter(fn ($val, $key) => in_array($key, $this->allowedPreferenceKeys(), true))
+                ->toArray();
             
             \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {
                 foreach ($settings as $key => $val) {
@@ -114,7 +116,9 @@ class BackendResourceController extends Controller
 
         if ($resource === 'preferences' && $request->has('settings')) {
             $this->access->authorize($request->user(), $blueprint, 'update');
-            $settings = $request->input('settings', []);
+            $settings = collect($request->input('settings', []))
+                ->filter(fn ($val, $key) => in_array($key, $this->allowedPreferenceKeys(), true))
+                ->toArray();
             
             \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {
                 foreach ($settings as $key => $val) {
@@ -250,5 +254,55 @@ class BackendResourceController extends Controller
                 'message' => 'Terjadi kesalahan sistem saat sinkronisasi: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    protected function allowedPreferenceKeys(): array
+    {
+        return [
+            // Info Perusahaan & Alamat
+            'company-name', 'business-category', 'business-field', 'phone', 'fax', 
+            'email', 'start-date', 'accounting-period', 'currency', 'street', 
+            'city', 'province', 'postal-code', 'country',
+            // Fitur Dasar
+            'multi-branch', 'multi-currency', 'tax-feature', 'approval-feature', 
+            'asset-feature', 'budget-feature',
+            // Metode Biaya & Pusat Biaya
+            'inventory-average', 'inventory-fifo', 'department-center',
+            // Penjualan & Pembelian
+            'sales-quote-order', 'sales-return', 'price-adjustment', 'salesman', 
+            'delivery-service', 'payment-terms', 'purchase-order', 'supplier-price-list',
+            // Persediaan
+            'item-request', 'multi-warehouse', 'multi-unit', 'simple-production',
+            // Persetujuan Transaksi (Approvals)
+            'approval-sales-quote', 'approval-sales-order', 'approval-sales-delivery', 
+            'approval-sales-invoice', 'approval-sales-receipt', 'approval-sales-return', 
+            'approval-sales-discount', 'approval-purchase-order', 'approval-purchase-receipt', 
+            'approval-purchase-invoice', 'approval-purchase-payment', 'approval-purchase-return', 
+            'approval-purchase-price', 'approval-inventory-request', 'approval-inventory-adjustment', 
+            'approval-inventory-transfer', 'approval-inventory-job-order', 'approval-inventory-material-addition', 
+            'approval-inventory-job-completion', 'approval-inventory-stock-opname', 'approval-other-payment', 
+            'approval-other-receipt', 'approval-other-bank-transfer', 'approval-other-expense', 
+            'approval-other-salary', 'approval-other-transfer-asset',
+            // Lampiran Transaksi (Attachments)
+            'attachments-sales-quote', 'attachments-sales-order', 'attachments-sales-delivery', 
+            'attachments-sales-invoice', 'attachments-sales-receipt', 'attachments-sales-return', 
+            'attachments-sales-discount', 'attachments-purchase-order', 'attachments-purchase-receipt', 
+            'attachments-purchase-invoice', 'attachments-purchase-payment', 'attachments-purchase-return', 
+            'attachments-purchase-price', 'attachments-inventory-request', 'attachments-inventory-transfer', 
+            'attachments-inventory-adjustment', 'attachments-inventory-job-order', 'attachments-inventory-material-addition', 
+            'attachments-inventory-job-completion', 'attachments-inventory-stock-opname-request', 'attachments-inventory-stock-opname-result', 
+            'attachments-other-expense-record', 'attachments-other-salary-record', 'attachments-other-general-journal', 
+            'attachments-other-payment', 'attachments-other-receipt', 'attachments-other-bank-transfer', 
+            'attachments-other-fixed-asset', 'attachments-other-fixed-asset-change', 'attachments-other-fixed-asset-disposal', 
+            'attachments-other-fixed-asset-transfer',
+            // Pembatasan (Limitations)
+            'limitations-operator-access-mode', 'limitations-transaction-date-mode', 
+            'limitations-general-items', 'limitations-serial-items', 'limitations-return-form-items', 
+            'limitations-period-end-items', 'limitations-advance-payment-items',
+            // Format & Lainnya
+            'others-decimal-format', 'others-decimal-option-value', 'others-decimal-option-condition', 
+            'others-date-display', 'others-aging-ar-range', 'others-aging-ar-source', 
+            'others-aging-inventory-range', 'others-sales-commission-source',
+        ];
     }
 }
