@@ -6,9 +6,9 @@ class JournalActivityLogPage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['journal-activity-log'], $journalRows = array_slice(\App\Support\Presentation\Blueprints\Pages\GeneralJournalPage::get($navigationPages)['generalJournal']['table']['rows'], 0, 20);
+        $journalRows = array_slice(\App\Support\Presentation\Blueprints\Pages\GeneralJournalPage::get($navigationPages)['generalJournal']['table']['rows'], 0, 20);
 
-        return [
+        return array_replace($navigationPages['journal-activity-log'], [
             'showViewIndicator' => true,
             'detailTabsOnly' => true,
             'journalActivityLog' => [
@@ -85,7 +85,7 @@ class JournalActivityLogPage
                     ],
                 ],
             ],
-        ];);
+        ]);
     }
 
     public static function resolveJournalActivityTypeLabel(string $transactionTypeValue, string $fallback): string

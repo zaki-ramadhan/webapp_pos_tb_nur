@@ -20,21 +20,30 @@ class ForgotPasswordLinkController extends Controller
         $this->ensureIsNotRateLimited($request);
 
         $payload = $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'identifier' => ['required', 'string', 'max:255'],
         ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.max' => 'Email terlalu panjang.',
+            'identifier.required' => 'Email atau nomor handphone wajib diisi.',
+            'identifier.max' => 'Email atau nomor handphone terlalu panjang.',
         ]);
 
-        $email = trim($payload['email']);
-        $user = User::query()->whereRaw('LOWER(email) = ?', [Str::lower($email)])->first();
+        $identifier = trim($payload['identifier']);
+        $userQuery = User::query()->whereRaw('LOWER(email) = ?', [Str::lower($identifier)]);
+
+        if ($this->supportsUserPhone()) {
+            $phoneCandidates = PhoneNumber::candidates($identifier);
+
+            if ($phoneCandidates !== []) {
+                $userQuery->orWhereIn('phone', $phoneCandidates);
+            }
+        }
+
+        $user = $userQuery->first();
 
         if ($user === null || ! filled($user->email)) {
             RateLimiter::hit($this->throttleKey($request));
 
             throw ValidationException::withMessages([
-                'email' => 'Email tidak terdaftar. Periksa kembali penulisan atau daftar akun baru jika belum memiliki akun.',
+                'identifier' => 'Email atau nomor handphone tidak terdaftar. Periksa kembali penulisan atau daftar akun baru jika belum memiliki akun.',
             ]);
         }
 
@@ -48,7 +57,7 @@ class ForgotPasswordLinkController extends Controller
             ]);
 
             throw ValidationException::withMessages([
-                'email' => 'Gagal mengirim email verifikasi karena gangguan koneksi server. Silakan coba lagi beberapa saat lagi.',
+                'identifier' => 'Gagal mengirim email verifikasi karena gangguan koneksi server. Silakan coba lagi beberapa saat lagi.',
             ]);
         }
 
@@ -56,7 +65,7 @@ class ForgotPasswordLinkController extends Controller
             RateLimiter::hit($this->throttleKey($request));
 
             throw ValidationException::withMessages([
-                'email' => 'Permintaan reset password belum dapat diproses. Coba lagi beberapa saat lagi.',
+                'identifier' => 'Permintaan reset password belum dapat diproses. Coba lagi beberapa saat lagi.',
             ]);
         }
 

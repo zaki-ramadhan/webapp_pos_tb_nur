@@ -16,7 +16,7 @@ class WorkOrderPage
                 'table' => 'Tabel',
             ],
             'workOrder' => [
-                'topActions' => self::salesTransactionTopActions(),
+                'topActions' => \App\Support\Presentation\PosBlueprint::salesTransactionTopActions(),
             ],
         ]);
     }

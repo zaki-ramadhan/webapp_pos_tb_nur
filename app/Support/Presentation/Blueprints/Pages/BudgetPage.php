@@ -6,6 +6,6 @@ class BudgetPage
 {
     public static function get(): array
     {
-        return 'Anggaran',;
+        return [];
     }
 }

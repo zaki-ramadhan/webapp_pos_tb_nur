@@ -16,7 +16,7 @@ class GoodsReceiptPage
                 'table' => 'Tabel',
             ],
             'goodsReceipt' => [
-                'topActions' => self::salesTransactionTopActions(),
+                'topActions' => \App\Support\Presentation\PosBlueprint::salesTransactionTopActions(),
                 'customerPlaceholder' => 'Cari/Pilih Pemasok...',
                 'customerSearchLabel' => 'Cari pemasok',
                 'labels' => [

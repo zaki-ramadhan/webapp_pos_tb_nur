@@ -16,7 +16,7 @@ class MaterialAdditionPage
                 'table' => 'Tabel',
             ],
             'materialAddition' => [
-                'topActions' => self::salesTransactionTopActions(),
+                'topActions' => \App\Support\Presentation\PosBlueprint::salesTransactionTopActions(),
             ],
         ]);
     }

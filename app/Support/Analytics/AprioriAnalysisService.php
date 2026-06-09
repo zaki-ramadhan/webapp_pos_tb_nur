@@ -41,23 +41,28 @@ class AprioriAnalysisService
         $transactionItems = [];
         $allProducts = [];
 
-        foreach ($transactions as $t) {
-            $lines = DB::table('operation_document_lines')
-                ->where('operation_document_id', $t->id)
+        if ($transactions->isNotEmpty()) {
+            $transactionIds = $transactions->pluck('id')->toArray();
+            
+            $linesGrouped = DB::table('operation_document_lines')
+                ->whereIn('operation_document_id', $transactionIds)
                 ->whereNotNull('product_id')
-                ->pluck('product_id')
-                ->toArray();
+                ->select('operation_document_id', 'product_id')
+                ->get()
+                ->groupBy('operation_document_id');
 
-            if (empty($lines)) {
-                continue;
-            }
+            foreach ($transactions as $t) {
+                $lines = $linesGrouped->get($t->id);
+                if (!$lines || $lines->isEmpty()) {
+                    continue;
+                }
 
-            // Store distinct product IDs in this transaction
-            $itemset = array_unique($lines);
-            $transactionItems[] = $itemset;
+                $pids = $lines->pluck('product_id')->unique()->toArray();
+                $transactionItems[] = $pids;
 
-            foreach ($itemset as $pid) {
-                $allProducts[$pid] = ($allProducts[$pid] ?? 0) + 1;
+                foreach ($pids as $pid) {
+                    $allProducts[$pid] = ($allProducts[$pid] ?? 0) + 1;
+                }
             }
         }
 

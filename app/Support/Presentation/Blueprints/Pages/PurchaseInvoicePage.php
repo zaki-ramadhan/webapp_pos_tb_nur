@@ -7,7 +7,7 @@ class PurchaseInvoicePage
     public static function get(array $navigationPages): array
     {
         return array_replace($navigationPages['purchase-invoice'], [
-            ...self::buildSalesTransactionPage('purchase-invoice-create', 'purchaseInvoice'),
+            ...\App\Support\Presentation\PosBlueprint::buildSalesTransactionPage('purchase-invoice-create', 'purchaseInvoice'),
         ]);
     }
 }

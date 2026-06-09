@@ -6,6 +6,6 @@ class SalesQuotePage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['sales-quote'], self::buildSalesTransactionPage('sales-quote-create', 'salesQuote'));
+        return array_replace($navigationPages['sales-quote'], \App\Support\Presentation\PosBlueprint::buildSalesTransactionPage('sales-quote-create', 'salesQuote'));
     }
 }

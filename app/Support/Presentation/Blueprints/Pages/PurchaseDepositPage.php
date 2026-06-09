@@ -7,7 +7,7 @@ class PurchaseDepositPage
     public static function get(array $navigationPages): array
     {
         return array_replace($navigationPages['purchase-deposit'], [
-            ...self::buildSalesTransactionPage('purchase-deposit-create', 'purchaseDeposit'),
+            ...\App\Support\Presentation\PosBlueprint::buildSalesTransactionPage('purchase-deposit-create', 'purchaseDeposit'),
         ]);
     }
 }

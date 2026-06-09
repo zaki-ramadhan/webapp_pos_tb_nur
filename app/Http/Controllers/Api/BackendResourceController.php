@@ -50,7 +50,7 @@ class BackendResourceController extends Controller
     {
         $blueprint = $request->blueprint();
 
-        if ($resource === 'preferences') {
+        if ($resource === 'preferences' && $request->has('settings')) {
             $this->access->authorize($request->user(), $blueprint, 'create');
             $settings = $request->input('settings', []);
             
@@ -112,7 +112,7 @@ class BackendResourceController extends Controller
     {
         $blueprint = $request->blueprint();
 
-        if ($resource === 'preferences') {
+        if ($resource === 'preferences' && $request->has('settings')) {
             $this->access->authorize($request->user(), $blueprint, 'update');
             $settings = $request->input('settings', []);
             

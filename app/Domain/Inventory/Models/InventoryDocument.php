@@ -108,11 +108,11 @@ class InventoryDocument extends DomainModel
 
     public function workers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'inventory_document_user');
+        return $this->belongsToMany(User::class, 'inventory_document_user', 'inventory_document_id', 'user_id');
     }
 
     public function lines(): HasMany
     {
-        return $this->hasMany(InventoryDocumentLine::class);
+        return $this->hasMany(InventoryDocumentLine::class, 'inventory_document_id');
     }
 }

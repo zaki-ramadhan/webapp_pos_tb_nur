@@ -16,7 +16,7 @@ class PurchaseOrderPage
                 'table' => 'Tabel',
             ],
             'purchaseOrder' => [
-                'topActions' => self::salesTransactionTopActions(),
+                'topActions' => \App\Support\Presentation\PosBlueprint::salesTransactionTopActions(),
                 'customerPlaceholder' => 'Cari/Pilih Pemasok...',
                 'customerSearchLabel' => 'Cari pemasok',
                 'labels' => [

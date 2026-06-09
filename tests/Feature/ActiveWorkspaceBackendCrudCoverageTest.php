@@ -37,6 +37,13 @@ class ActiveWorkspaceBackendCrudCoverageTest extends TestCase
     public function test_access_group_resource_can_store_and_update_users_and_permissions(): void
     {
         $actor = User::factory()->create();
+        $superAdminRole = \App\Domain\Identity\Models\Role::query()->create([
+            'code' => 'super_admin',
+            'name' => 'Super Administrator',
+            'is_active' => true,
+        ]);
+        $actor->roles()->attach($superAdminRole);
+
         $firstUser = User::factory()->create(['name' => 'User Satu']);
         $secondUser = User::factory()->create(['name' => 'User Dua']);
 

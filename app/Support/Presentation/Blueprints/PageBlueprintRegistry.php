@@ -4,7 +4,7 @@ namespace App\Support\Presentation\Blueprints;
 
 class PageBlueprintRegistry
 {
-    public static function all(array $navigationPages): array
+    public static function all(array $navigationPages, array $transactionTypeOptions = []): array
     {
         return [
             'users' => Pages\UsersPage::get(),
@@ -25,7 +25,7 @@ class PageBlueprintRegistry
             'recurring-transactions' => Pages\RecurringTransactionsPage::get(),
             'numbering' => Pages\NumberingPage::get(),
             'print-design' => Pages\PrintDesignPage::get(),
-            'transaction-approval' => Pages\TransactionApprovalPage::get(),
+            'transaction-approval' => Pages\TransactionApprovalPage::get($transactionTypeOptions),
             'activity-log' => Pages\ActivityLogPage::get(),
             'preferences' => Pages\PreferencesPage::get(),
             'expense-entry' => Pages\ExpenseEntryPage::get($navigationPages),

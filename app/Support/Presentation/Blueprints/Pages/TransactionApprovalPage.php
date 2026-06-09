@@ -4,7 +4,7 @@ namespace App\Support\Presentation\Blueprints\Pages;
 
 class TransactionApprovalPage
 {
-    public static function get(): array
+    public static function get(array $transactionTypeOptions = []): array
     {
         return [
                     'id' => 'transaction-approval',

@@ -262,10 +262,16 @@ class IdentityBackendResources
                     ];
                     $prefKey = $keyMap[$value] ?? null;
                     if ($prefKey && \Illuminate\Support\Facades\Schema::hasTable('preference_settings')) {
-                        $isEnabled = \Illuminate\Support\Facades\DB::table('preference_settings')
+                        $setting = \Illuminate\Support\Facades\DB::table('preference_settings')
                             ->where('setting_key', $prefKey)
-                            ->where('value', '1')
-                            ->exists();
+                            ->first();
+
+                        $isEnabled = false;
+                        if ($setting !== null) {
+                            $decoded = json_decode($setting->value, true);
+                            $isEnabled = $decoded === 'true' || $decoded === true || $decoded === '1' || $decoded === 1;
+                        }
+
                         if (!$isEnabled) {
                             $fail("Tipe transaksi ini tidak diaktifkan untuk persetujuan dalam pengaturan preferensi.");
                         }

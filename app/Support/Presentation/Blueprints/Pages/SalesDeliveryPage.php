@@ -6,6 +6,6 @@ class SalesDeliveryPage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['sales-delivery'], self::buildSalesTransactionPage('sales-delivery-create', 'salesDelivery'));
+        return array_replace($navigationPages['sales-delivery'], \App\Support\Presentation\PosBlueprint::buildSalesTransactionPage('sales-delivery-create', 'salesDelivery'));
     }
 }

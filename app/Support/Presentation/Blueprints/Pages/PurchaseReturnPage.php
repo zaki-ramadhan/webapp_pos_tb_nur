@@ -7,7 +7,7 @@ class PurchaseReturnPage
     public static function get(array $navigationPages): array
     {
         return array_replace($navigationPages['purchase-return'], [
-            ...self::buildSalesTransactionPage('purchase-return-create', 'purchaseReturn'),
+            ...\App\Support\Presentation\PosBlueprint::buildSalesTransactionPage('purchase-return-create', 'purchaseReturn'),
         ]);
     }
 }

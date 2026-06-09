@@ -6,7 +6,7 @@ class BackendResourceStoreRequest extends BackendResourceRequest
 {
     public function rules(): array
     {
-        if ($this->route('resource') === 'preferences') {
+        if ($this->route('resource') === 'preferences' && $this->has('settings')) {
             return [
                 'company_info' => ['sometimes', 'array'],
                 'settings' => ['sometimes', 'array'],

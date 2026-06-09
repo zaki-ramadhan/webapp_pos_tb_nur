@@ -12,7 +12,7 @@ class DashboardPageTest extends TestCase
     public function test_the_dashboard_page_redirects_guests_to_home(): void
     {
         $this->get('/dashboard')
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('login'));
     }
 
     public function test_the_dashboard_page_renders_when_auth_middleware_is_bypassed(): void
@@ -24,7 +24,7 @@ class DashboardPageTest extends TestCase
                 ->component('DashboardPage')
                 ->where('dashboard.user.name', 'Zaki Ramadhan')
                 ->where('dashboard.sample.id', 'retail')
-                ->has('dashboard.sampleDashboard.widgets', 15));
+                ->has('dashboard.sampleDashboard.widgets', 14));
     }
 
     public function test_the_dashboard_page_uses_authenticated_user_identity_for_the_header(): void

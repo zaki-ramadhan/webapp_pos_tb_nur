@@ -3,19 +3,21 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use PDO;
 use Tests\TestCase;
 
 class HomePageTest extends TestCase
 {
+    use RefreshDatabase;
     public function test_the_home_page_renders_the_login_flow_that_targets_the_dashboard(): void
     {
-        $this->get('/')
+        $this->get('/login')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('HomePage')
-                ->where('carousel.imageSrc', 'https://images.unsplash.com/photo-1726065235239-b20b88d43eea?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=80&w=1600')
+                ->where('carousel.imageSrc', '/auth_bg.jpg')
                 ->where('login.submitHref', route('dashboard'))
                 ->has('login'));
     }
@@ -28,7 +30,7 @@ class HomePageTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->get('/')
+        $this->get('/login')
             ->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticatedAs($user);
@@ -45,7 +47,7 @@ class HomePageTest extends TestCase
 
         config()->set('pos.auth.local_auto_login_email', 'chosen@example.com');
 
-        $this->get('/')
+        $this->get('/login')
             ->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticatedAs($targetUser);

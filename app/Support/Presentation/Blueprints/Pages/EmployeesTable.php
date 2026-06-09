@@ -6,8 +6,8 @@ class EmployeesTable
 {
     public static function rows(): array
     {
-        return 'rows' => [
-                            [
+        return [
+            [
                                 'id' => 'employee-adam',
                                 'name' => 'Adam',
                                 'position' => 'Junior Staf TB Nur',
@@ -172,6 +172,6 @@ class EmployeesTable
                                 'departmentValue' => 'consulting',
                                 'sellerValue' => 'no',
                             ],
-                        ],;
+                        ];
     }
 }

@@ -6,6 +6,6 @@ class BranchPage
 {
     public static function get(): array
     {
-        return 'Cabang',;
+        return [];
     }
 }

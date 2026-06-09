@@ -136,10 +136,15 @@ class BackendResourceWriter
 
             $prefKey = $blueprintToPreferenceMap[$blueprint->key] ?? null;
             if ($prefKey && \Illuminate\Support\Facades\Schema::hasTable('preference_settings')) {
-                $isEnabled = DB::table('preference_settings')
+                $setting = DB::table('preference_settings')
                     ->where('setting_key', $prefKey)
-                    ->where('value', '1')
-                    ->exists();
+                    ->first();
+
+                $isEnabled = false;
+                if ($setting !== null) {
+                    $decoded = json_decode($setting->value, true);
+                    $isEnabled = $decoded === 'true' || $decoded === true || $decoded === '1' || $decoded === 1;
+                }
 
                 if ($isEnabled) {
                     $hasAttachmentsInPayload = !empty($payload['attachment_ids']);

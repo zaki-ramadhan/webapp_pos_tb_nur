@@ -5,6 +5,7 @@ namespace App\Support\Backend\Queries;
 use App\Domain\Finance\Models\Account;
 use App\Domain\Support\Models\OperationDocument;
 use App\Domain\Support\Models\OperationDocumentLine;
+use App\Support\Backend\Queries\Concerns\HasQueryHelpers;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -12,6 +13,7 @@ use Illuminate\Support\Collection;
 
 class BankInquiryQueryService
 {
+    use HasQueryHelpers;
     /**
      * @param  array<string, mixed>  $filters
      */
@@ -354,29 +356,4 @@ class BankInquiryQueryService
             ?? now();
     }
 
-    protected function resolveDateFilter(mixed $value): ?CarbonInterface
-    {
-        if (! filled($value)) {
-            return null;
-        }
-
-        return Carbon::parse((string) $value);
-    }
-
-    /**
-     * @param  Collection<int, array<string, mixed>>  $rows
-     * @param  array<string, mixed>  $filters
-     */
-    protected function paginateRows(Collection $rows, array $filters): LengthAwarePaginator
-    {
-        $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 100));
-        $page = max(1, (int) request()->query('page', 1));
-
-        return ArrayPaginatorFactory::make($rows, $perPage, $page);
-    }
-
-    protected function formatNumber(float $value): string
-    {
-        return number_format($value, 2, '.', '');
-    }
 }

@@ -40,7 +40,7 @@ class AnalyticsServiceTest extends TestCase
         DB::shouldReceive('get')
             ->andReturn(collect([]));
 
-        $service = new AnalyticsService();
+        $service = new AnalyticsService(new \App\Support\Analytics\AbcAnalysisService(), new \App\Support\Analytics\AprioriAnalysisService());
         $abc = $service->getAbcAnalysis();
 
         $this->assertEmpty($abc['topItems']);

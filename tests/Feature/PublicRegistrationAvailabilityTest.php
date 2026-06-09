@@ -11,7 +11,7 @@ class PublicRegistrationAvailabilityTest extends TestCase
     {
         config()->set('pos.auth.allow_public_registration', false);
 
-        $this->get('/')
+        $this->get('/login')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('HomePage')

@@ -7,7 +7,7 @@ class PurchasePaymentPage
     public static function get(array $navigationPages): array
     {
         return array_replace($navigationPages['purchase-payment'], [
-            ...self::buildSalesTransactionPage('purchase-payment-create', 'purchasePayment'),
+            ...\App\Support\Presentation\PosBlueprint::buildSalesTransactionPage('purchase-payment-create', 'purchasePayment'),
         ]);
     }
 }
