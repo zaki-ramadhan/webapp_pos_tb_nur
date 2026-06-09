@@ -658,27 +658,21 @@ class DashboardBlueprintProvider
                 [
                     'id' => 'recent-activity',
                     'title' => 'Aktifitas Terakhir Anda',
-                    'type' => 'activity-timeline',
+                    'type' => 'recent-activity',
                     'items' => $userActivities,
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'upcoming-activity',
                     'title' => 'Kegiatan Mendatang',
-                    'type' => 'activity-list',
-                    'items' => [
-                        [
-                            'id' => 'up-1',
-                            'date' => '12 Jun 2026',
-                            'title' => 'Batas Akhir Pelaporan SPT PPh 21 Masa Mei 2026',
-                        ],
-                    ],
+                    'type' => 'note',
+                    'noteDescription' => '12 Jun 2026 — Batas Akhir Pelaporan SPT PPh 21 Masa Mei 2026',
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'sales-trend',
                     'title' => 'Tren Penjualan (Semua Cabang)',
-                    'type' => 'area-chart',
+                    'type' => 'line',
                     'labels' => $salesTrendLabels,
                     'series' => [
                         [
@@ -686,45 +680,34 @@ class DashboardBlueprintProvider
                             'data' => $salesTrendData,
                         ],
                     ],
+                    'valueFormat' => 'currency',
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'profit-loss',
                     'title' => 'Laba/Rugi Tahun Ini',
-                    'type' => 'donut-chart',
-                    'labels' => ['Penjualan', 'HPP', 'Beban'],
-                    'datasets' => [
-                        [
-                            'data' => [$pctRev, $pctHpp, $pctExp],
-                            'backgroundColor' => ['#4ade80', '#fb923c', '#f87171'],
-                        ],
-                    ],
+                    'type' => 'ring-breakdown',
+                    'percentage' => $profitPercentage,
+                    'totalLabel' => 'Estimasi Laba Bersih',
+                    'totalValue' => 'Rp ' . number_format($netProfitVal, 0, ',', '.'),
                     'legend' => [
                         [
                             'label' => 'Total Pendapatan Penjualan',
                             'value' => 'Rp ' . number_format($totalSalesVal, 0, ',', '.'),
-                            'percentage' => $pctRev . '%',
+                            'percent' => $pctRev . '%',
                             'color' => '#4ade80',
                         ],
                         [
                             'label' => 'Total HPP',
                             'value' => 'Rp ' . number_format($totalHppVal, 0, ',', '.'),
-                            'percentage' => $pctHpp . '%',
+                            'percent' => $pctHpp . '%',
                             'color' => '#fb923c',
                         ],
                         [
                             'label' => 'Total Pengeluaran Beban',
                             'value' => 'Rp ' . number_format($totalExpensesVal, 0, ',', '.'),
-                            'percentage' => $pctExp . '%',
+                            'percent' => $pctExp . '%',
                             'color' => '#f87171',
-                        ],
-                    ],
-                    'summary' => [
-                        [
-                            'label' => 'Estimasi Laba Bersih',
-                            'value' => 'Rp ' . number_format($netProfitVal, 0, ',', '.'),
-                            'percentage' => $profitPercentage,
-                            'indicatorColor' => $netProfitVal >= 0 ? 'bg-green-500' : 'bg-red-500',
                         ],
                     ],
                     'heightClass' => 'min-h-[460px]',
@@ -732,7 +715,7 @@ class DashboardBlueprintProvider
                 [
                     'id' => 'cash-flow',
                     'title' => 'Arus Kas (Semua Cabang)',
-                    'type' => 'bar-chart',
+                    'type' => 'line',
                     'labels' => $cashFlowLabels,
                     'series' => [
                         [
@@ -746,30 +729,26 @@ class DashboardBlueprintProvider
                             'color' => '#f87171',
                         ],
                     ],
+                    'valueFormat' => 'currency',
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'company-expense',
                     'title' => 'Beban Perusahaan',
-                    'type' => 'pie-chart',
-                    'labels' => ['Gaji Karyawan', 'Beban Operasional'],
-                    'datasets' => [
-                        [
-                            'data' => [$pctGaji, $pctOpr],
-                            'backgroundColor' => ['#818cf8', '#fb7185'],
-                        ],
-                    ],
+                    'type' => 'expense',
+                    'totalValue' => 'Rp ' . number_format($totalExpense, 0, ',', '.'),
+                    'percentage' => ($totalExpense > 0 ? $pctGaji : 0) . '%',
                     'legend' => [
                         [
                             'label' => 'Gaji Karyawan',
                             'value' => 'Rp ' . number_format($totalGaji, 0, ',', '.'),
-                            'percentage' => $pctGaji . '%',
+                            'percent' => $pctGaji . '%',
                             'color' => '#818cf8',
                         ],
                         [
                             'label' => 'Beban Operasional',
                             'value' => 'Rp ' . number_format($totalOperasional, 0, ',', '.'),
-                            'percentage' => $pctOpr . '%',
+                            'percent' => $pctOpr . '%',
                             'color' => '#fb7185',
                         ],
                     ],
@@ -778,89 +757,86 @@ class DashboardBlueprintProvider
                 [
                     'id' => 'sales-summary',
                     'title' => 'Penjualan',
-                    'type' => 'summary-cards',
-                    'primaryLabel' => 'Faktur Lunas',
-                    'primaryValue' => 'Rp ' . number_format($fakturLunasSales, 0, ',', '.'),
-                    'cards' => [
+                    'type' => 'summary',
+                    'sections' => [
                         [
-                            'label' => 'Belum Lunas',
-                            'value' => 'Rp ' . number_format($fakturBelumLunasSales, 0, ',', '.'),
-                            'tone' => 'rose',
+                            'title' => 'Status Piutang',
+                            'items' => [
+                                ['label' => 'Faktur Lunas', 'value' => 'Rp ' . number_format($fakturLunasSales, 0, ',', '.'), 'color' => '#22c55e'],
+                                ['label' => 'Belum Lunas', 'value' => 'Rp ' . number_format($fakturBelumLunasSales, 0, ',', '.'), 'color' => '#f43f5e'],
+                            ],
                         ],
                         [
-                            'label' => 'Belum Jatuh Tempo',
-                            'value' => 'Rp ' . number_format($belumJatuhTempoSales, 0, ',', '.'),
-                            'tone' => 'amber',
+                            'title' => 'Jatuh Tempo',
+                            'items' => [
+                                ['label' => 'Belum Jatuh Tempo', 'value' => 'Rp ' . number_format($belumJatuhTempoSales, 0, ',', '.'), 'color' => '#f59e0b'],
+                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp ' . number_format($lewatJatuhTempoSales, 0, ',', '.'), 'color' => '#f43f5e'],
+                            ],
                         ],
-                        [
-                            'label' => 'Lewat Jatuh Tempo',
-                            'value' => 'Rp ' . number_format($lewatJatuhTempoSales, 0, ',', '.'),
-                            'tone' => 'rose',
-                        ],
-                        [
-                            'label' => 'Transaksi Hari Ini',
-                            'value' => 'Rp ' . number_format($hariIniSales, 0, ',', '.'),
-                            'tone' => 'blue',
-                        ],
+                    ],
+                    'headline' => [
+                        'label' => 'Faktur Lunas',
+                        'value' => 'Rp ' . number_format($fakturLunasSales, 0, ',', '.'),
+                        'secondaryLabel' => 'Transaksi Hari Ini',
+                        'secondaryValue' => 'Rp ' . number_format($hariIniSales, 0, ',', '.'),
                     ],
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'purchase-summary',
                     'title' => 'Pembelian',
-                    'type' => 'summary-cards',
-                    'primaryLabel' => 'Faktur Lunas',
-                    'primaryValue' => 'Rp ' . number_format($fakturLunasPurchase, 0, ',', '.'),
-                    'cards' => [
+                    'type' => 'summary',
+                    'sections' => [
                         [
-                            'label' => 'Belum Lunas',
-                            'value' => 'Rp ' . number_format($fakturBelumLunasPurchase, 0, ',', '.'),
-                            'tone' => 'rose',
+                            'title' => 'Status Hutang',
+                            'items' => [
+                                ['label' => 'Faktur Lunas', 'value' => 'Rp ' . number_format($fakturLunasPurchase, 0, ',', '.'), 'color' => '#22c55e'],
+                                ['label' => 'Belum Lunas', 'value' => 'Rp ' . number_format($fakturBelumLunasPurchase, 0, ',', '.'), 'color' => '#f43f5e'],
+                            ],
                         ],
                         [
-                            'label' => 'Belum Jatuh Tempo',
-                            'value' => 'Rp ' . number_format($belumJatuhTempoPurchase, 0, ',', '.'),
-                            'tone' => 'amber',
+                            'title' => 'Jatuh Tempo',
+                            'items' => [
+                                ['label' => 'Belum Jatuh Tempo', 'value' => 'Rp ' . number_format($belumJatuhTempoPurchase, 0, ',', '.'), 'color' => '#f59e0b'],
+                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp ' . number_format($lewatJatuhTempoPurchase, 0, ',', '.'), 'color' => '#f43f5e'],
+                            ],
                         ],
-                        [
-                            'label' => 'Lewat Jatuh Tempo',
-                            'value' => 'Rp ' . number_format($lewatJatuhTempoPurchase, 0, ',', '.'),
-                            'tone' => 'rose',
-                        ],
-                        [
-                            'label' => 'Transaksi Hari Ini',
-                            'value' => 'Rp ' . number_format($hariIniPurchase, 0, ',', '.'),
-                            'tone' => 'blue',
-                        ],
+                    ],
+                    'headline' => [
+                        'label' => 'Faktur Lunas',
+                        'value' => 'Rp ' . number_format($fakturLunasPurchase, 0, ',', '.'),
+                        'secondaryLabel' => 'Transaksi Hari Ini',
+                        'secondaryValue' => 'Rp ' . number_format($hariIniPurchase, 0, ',', '.'),
                     ],
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'sales-team-performance',
                     'title' => 'Penjualan Penjual',
-                    'type' => 'performance-table',
-                    'columns' => ['Sales', 'Jabatan', 'Nilai', '% Capaian', 'Target'],
+                    'type' => 'sales-team',
                     'rows' => $salesTeamRows,
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'top-products',
                     'title' => 'Barang Paling Laku',
-                    'type' => 'product-share-list',
+                    'type' => 'top-products',
                     'items' => $topProductsItems,
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'overdue-activity',
                     'title' => 'Kegiatan Terlewat',
-                    'type' => 'activity-list',
-                    'items' => [],
+                    'type' => 'note',
+                    'noteDescription' => 'Belum ada kegiatan yang terlewat.',
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
                     'id' => 'cash-availability',
                     'title' => 'Ketersediaan Kas (Semua Cabang)',
-                    'type' => 'line-chart',
+                    'type' => 'cash-availability',
+                    'balanceLabel' => 'Estimasi Saldo Kas Berjalan',
+                    'balanceValue' => $cashAvailabilitySeries !== [] ? 'Rp ' . number_format(end($cashAvailabilitySeries), 0, ',', '.') : 'Rp -',
                     'labels' => $cashAvailabilityLabels,
                     'series' => [
                         [
@@ -868,6 +844,7 @@ class DashboardBlueprintProvider
                             'data' => $cashAvailabilitySeries,
                         ],
                     ],
+                    'valueFormat' => 'currency',
                     'heightClass' => 'min-h-[360px]',
                 ],
                 [
