@@ -14,7 +14,7 @@ export default function BrandMark({
             />
             <div className="flex flex-col items-start text-left leading-tight select-none pointer-events-none">
                 <span className={`text-[17px] sm:text-[19px] md:text-[20px] font-bold tracking-tight select-none pointer-events-none ${isDarkText ? 'text-[#1b315d]' : 'text-white'}`}>
-                    TB Nur
+                    TB Nur POS
                 </span>
                 <span className={`text-[9.5px] sm:text-[10px] md:text-[10.5px] font-medium tracking-normal select-none pointer-events-none ${isDarkText ? 'text-[#56607c]' : 'text-white/75'}`}>
                     Toko Bangunan dan Material

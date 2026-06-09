@@ -89,7 +89,7 @@ class ForgotPasswordLinkController extends Controller
 
     protected function throttleKey(Request $request): string
     {
-        return 'password-reset|'.Str::lower((string) $request->input('email', $request->input('identifier'))).'|'.$request->ip();
+        return 'password-reset|'.Str::lower(trim((string) $request->input('identifier'))).'|'.$request->ip();
     }
 
     protected function supportsUserPhone(): bool
