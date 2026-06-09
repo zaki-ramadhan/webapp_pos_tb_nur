@@ -58,23 +58,6 @@ const DashboardView = forwardRef(function DashboardView(
         openPage: openPageById,
     }));
 
-    const handleRefreshWidget = useCallback(
-        async () =>
-            new Promise((resolve) => {
-                const startTime = Date.now();
-                router.reload({
-                    only: ['widgets', 'dashboard'],
-                    onFinish: () => {
-                        const elapsed = Date.now() - startTime;
-                        const duration = dashboard.toolbar.loadingOverlay.durationMs ?? 900;
-                        const remaining = Math.max(0, duration - elapsed);
-                        setTimeout(resolve, remaining);
-                    },
-                });
-            }),
-        [dashboard.toolbar.loadingOverlay.durationMs],
-    );
-
     const widgetTemplateMap = useMemo(() => buildWidgetTemplateMap(dashboard.widgets ?? []), [dashboard.widgets]);
     const {
         isWidgetLibraryLoading,
@@ -97,6 +80,7 @@ const DashboardView = forwardRef(function DashboardView(
         handleRenameWidget,
         handleAddWidget,
         handleRemoveWidget,
+        handleRefreshWidget,
         filteredLibraryItems,
     } = useDashboardPreferencesState({
         dashboard,
