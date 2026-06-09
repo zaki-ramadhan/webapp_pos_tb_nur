@@ -13,6 +13,9 @@ class DashboardBlueprintProvider
 {
     public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true): array
     {
+        $upcomingNote = '15 ' . date('M Y') . ' — Batas Akhir Pelaporan SPT PPh 21';
+        $overdueNote = 'Belum ada kegiatan yang terlewat.';
+
         $attachmentsNotice = [
             'parts' => [
                 ['text' => 'Silahkan pilih Menu Transaksi yang '],
@@ -359,6 +362,46 @@ class DashboardBlueprintProvider
                 ->where('document_type', 'sales_order')
                 ->where('due_date', '<', date('Y-m-d'))
                 ->count();
+
+            // Calculate dynamic upcoming note
+            $today = Carbon::today();
+            $targetDay = 15;
+            $upcomingDate = $today->day <= $targetDay
+                ? Carbon::today()->setDay($targetDay)
+                : Carbon::today()->addMonth()->setDay($targetDay);
+
+            $monthMap = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            ];
+
+            $targetMonthName = $monthMap[$upcomingDate->month] ?? $upcomingDate->format('F');
+            $reportMonthName = $monthMap[$upcomingDate->copy()->subMonth()->month] ?? $upcomingDate->copy()->subMonth()->format('F');
+
+            $upcomingNote = $upcomingDate->format('d') . ' ' . $targetMonthName . ' ' . $upcomingDate->format('Y') . " — Batas Akhir Pelaporan SPT PPh 21 Masa {$reportMonthName} " . $upcomingDate->copy()->subMonth()->format('Y');
+
+            // Calculate dynamic overdue note
+            $overdueSalesInvoicesCount = DB::table('operation_documents')
+                ->where('document_type', 'sales_invoice')
+                ->where('status', 'Posted')
+                ->where('outstanding_amount', '>', 0)
+                ->where('due_date', '<', date('Y-m-d'))
+                ->count();
+
+            $overduePurchaseInvoicesCount = DB::table('operation_documents')
+                ->where('document_type', 'purchase_invoice')
+                ->where('status', 'Posted')
+                ->where('outstanding_amount', '>', 0)
+                ->where('due_date', '<', date('Y-m-d'))
+                ->count();
+
+            $overdueCount = $overdueSalesInvoicesCount + $overduePurchaseInvoicesCount;
+            if ($overdueCount > 0) {
+                $overdueNote = "Terdapat {$overdueCount} Faktur (Penjualan/Pembelian) yang telah melewati jatuh tempo pembayaran.";
+            } else {
+                $overdueNote = "Semua faktur aman. Belum ada kegiatan pembayaran yang terlewat.";
+            }
         } else {
             $latestSalesInvoiceDate = date('Y-m-d');
             $salesTrendLabels = [];
@@ -666,7 +709,7 @@ class DashboardBlueprintProvider
                     'id' => 'upcoming-activity',
                     'title' => 'Kegiatan Mendatang',
                     'type' => 'note',
-                    'noteDescription' => '12 Jun 2026 — Batas Akhir Pelaporan SPT PPh 21 Masa Mei 2026',
+                    'noteDescription' => $upcomingNote,
                     'heightClass' => 'min-h-[310px]',
                 ],
                 [
@@ -828,7 +871,7 @@ class DashboardBlueprintProvider
                     'id' => 'overdue-activity',
                     'title' => 'Kegiatan Terlewat',
                     'type' => 'note',
-                    'noteDescription' => 'Belum ada kegiatan yang terlewat.',
+                    'noteDescription' => $overdueNote,
                     'heightClass' => 'min-h-[310px]',
                 ],
                 [

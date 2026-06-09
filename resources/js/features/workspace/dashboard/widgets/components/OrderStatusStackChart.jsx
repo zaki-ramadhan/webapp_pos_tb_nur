@@ -99,7 +99,7 @@ export default function OrderStatusStackChart({ segments = [] }) {
     };
 
     return (
-        <div className="relative">
+        <div onContextMenu={(e) => e.preventDefault()} className="relative">
             <div className="h-[72px] overflow-hidden rounded-[6px]">
                 <Bar data={data} options={options} />
             </div>

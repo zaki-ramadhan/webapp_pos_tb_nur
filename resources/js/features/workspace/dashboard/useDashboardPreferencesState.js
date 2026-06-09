@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
+import { router } from '@inertiajs/react';
 
 import {
     clonePlainData,
@@ -253,42 +253,21 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
             return;
         }
 
-        const response = await axios.get(window.location.href, {
-            headers: {
-                'X-Inertia': 'true',
-                'X-Inertia-Partial-Component': 'DashboardPage',
-                'X-Inertia-Partial-Only': 'widgets',
-            },
-        });
-
-        const freshWidgets = response.data?.props?.widgets ?? [];
-        const computed = freshWidgets.find(
-            (w) => w.type === widget.type || w.id === widget.id || w.id === widget.sourceWidgetId,
-        );
-
-        if (computed) {
-            setDashboardPreferences((currentValue) => {
-                const nextWidgetsByDashboard = { ...currentValue.widgetsByDashboard };
-                const dashboardId = currentValue.selectedDashboardId;
-                if (nextWidgetsByDashboard[dashboardId]) {
-                    nextWidgetsByDashboard[dashboardId] = nextWidgetsByDashboard[dashboardId].map((w) => {
-                        if (w.id === widget.id) {
-                            return {
-                                ...w,
-                                ...computed,
-                                id: w.id,
-                                title: w.title,
-                            };
-                        }
-                        return w;
-                    });
-                }
-                return {
-                    ...currentValue,
-                    widgetsByDashboard: nextWidgetsByDashboard,
-                };
+        await new Promise((resolve, reject) => {
+            router.reload({
+                only: ['widgets'],
+                showProgress: false,
+                onSuccess: (page) => {
+                    resolve(page);
+                },
+                onError: (error) => {
+                    reject(error);
+                },
+                onFinish: () => {
+                    resolve();
+                },
             });
-        }
+        });
     }
 
     return {

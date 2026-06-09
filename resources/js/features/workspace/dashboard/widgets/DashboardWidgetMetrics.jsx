@@ -85,25 +85,27 @@ export function RingBreakdownMetric({
     growth,
 }) {
     return (
-        <div className="grid gap-4 lg:grid-cols-[156px_minmax(0,1fr)] lg:items-stretch lg:gap-4 h-full min-h-0 flex-1">
-            <div className="flex flex-col justify-between gap-3 h-full pb-1">
+        <div className="grid gap-4 lg:grid-cols-[164px_minmax(0,1fr)] lg:items-stretch lg:gap-4 h-full min-h-0 flex-1">
+            <div className="flex flex-col justify-center items-center gap-3 h-full pb-1 text-center">
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
-                <div className="flex items-center gap-1.5 flex-wrap mt-auto">
-                    {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
-                    <TrendIndicator trend={trend} growth={growth} />
-                </div>
+                {compare || trend || growth ? (
+                    <div className="flex items-center gap-1.5 flex-wrap justify-center mt-1">
+                        {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                        <TrendIndicator trend={trend} growth={growth} />
+                    </div>
+                ) : null}
             </div>
 
-            <div className="flex h-full flex-col">
-                <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="flex h-full flex-col justify-center gap-3">
+                <div className="min-h-0 overflow-y-auto">
                     <MetricLegendList items={legend} />
                 </div>
 
-                <div className="mt-auto border-t border-[#e6ebf4] pt-3 text-[#1e2437]">
-                    <div className="text-left sm:text-right">
-                        <p className={compactHeadlineLabelClassName}>{totalLabel}</p>
-                        <div className="mt-1 flex items-baseline justify-start gap-2 sm:justify-end flex-wrap">
-                            <p className={compactHeadlineValueClassName}>{totalValue}</p>
+                <div className="border-t border-[#e6ebf4] pt-2.5 text-[#1e2437]">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className={compactHeadlineLabelClassName}>{totalLabel}</span>
+                        <div className="flex items-baseline gap-2">
+                            <span className={compactHeadlineValueClassName}>{totalValue}</span>
                             <TrendIndicator trend={trend} growth={growth} />
                         </div>
                     </div>
@@ -122,27 +124,27 @@ export function ExpenseBreakdownMetric({
     growth,
 }) {
     return (
-        <div className="grid gap-4 lg:grid-cols-[156px_minmax(0,1fr)] lg:items-stretch lg:gap-4 h-full min-h-0 flex-1">
-            <div className="flex flex-col justify-between gap-3 h-full pb-1">
+        <div className="grid gap-4 lg:grid-cols-[164px_minmax(0,1fr)] lg:items-stretch lg:gap-4 h-full min-h-0 flex-1">
+            <div className="flex flex-col justify-center items-center gap-3 h-full pb-1 text-center">
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
-                <div className="flex items-center gap-1.5 flex-wrap mt-auto">
-                    {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
-                    <TrendIndicator trend={trend} growth={growth} />
-                </div>
+                {compare || trend || growth ? (
+                    <div className="flex items-center gap-1.5 flex-wrap justify-center mt-1">
+                        {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                        <TrendIndicator trend={trend} growth={growth} />
+                    </div>
+                ) : null}
             </div>
 
-            <div className="flex h-full flex-col">
-                <div className="flex flex-col gap-3 border-b border-[#edf0f6] pb-3 lg:flex-row lg:items-start lg:justify-between shrink-0">
-                    <div>
-                        <h4 className="text-[15px] font-semibold text-[#1f2536] md:text-[17px]">Beban</h4>
-                    </div>
-                    <div className="flex items-baseline gap-2 flex-wrap">
-                        <p className={compactHeadlineValueClassName}>{totalValue}</p>
+            <div className="flex h-full flex-col justify-center gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf0f6] pb-2.5 text-[#1e2437]">
+                    <span className={compactHeadlineLabelClassName}>Beban</span>
+                    <div className="flex items-baseline gap-2">
+                        <span className={compactHeadlineValueClassName}>{totalValue}</span>
                         <TrendIndicator trend={trend} growth={growth} />
                     </div>
                 </div>
 
-                <div className="mt-3 flex-1 min-h-0 overflow-y-auto">
+                <div className="min-h-0 overflow-y-auto">
                     <MetricLegendList items={legend} />
                 </div>
             </div>

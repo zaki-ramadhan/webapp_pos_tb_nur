@@ -129,10 +129,10 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
         <div className="flex h-full min-h-0 flex-col gap-5 rounded-[8px] p-2 bg-[linear-gradient(180deg,#fcfdfe_0%,#f5f8fc_100%)]">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {summaryItems.map((item, idx) => (
-                    <div key={idx} className="rounded-[6px] border border-[#e2e8f0] bg-white p-2.5 shadow-[0_2px_6px_rgba(15,23,42,0.02)]">
-                        <p className="text-sm font-semibold uppercase tracking-wider text-[#64748b]">{item.label}</p>
-                        <p className="mt-1 text-[16px] font-bold text-[#0f172a]">{item.value}</p>
-                        <p className="mt-0.5 text-sm text-[#64748b]">{item.helper}</p>
+                    <div key={idx} title="" className="rounded-[6px] border border-[#e2e8f0] bg-white p-2.5 shadow-[0_2px_6px_rgba(15,23,42,0.02)]">
+                        <p title="" className="text-sm font-semibold uppercase tracking-wider text-[#64748b]">{item.label}</p>
+                        <p title="" className="mt-1 text-[17px] sm:text-[19px] lg:text-[21px] font-bold text-[#0f172a] truncate">{item.value}</p>
+                        <p title="" className="mt-0.5 text-sm text-[#64748b]">{item.helper}</p>
                     </div>
                 ))}
             </div>

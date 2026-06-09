@@ -75,15 +75,15 @@ export function SummaryStrip({ items }) {
         <div className="rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
                 {items.map((item) => (
-                    <div key={item.label} className="rounded-[7px] border border-[#dce3ed] bg-white px-3 py-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)]">
-                        <p className="text-sm font-medium uppercase tracking-[0.08em] text-[#7d88a2]">
+                    <div key={item.label} title="" className="rounded-[7px] border border-[#dce3ed] bg-white px-3 py-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)]">
+                        <p title="" className="text-sm font-medium uppercase tracking-[0.08em] text-[#7d88a2]">
                             {item.label}
                         </p>
-                        <p className="mt-2 text-[20px] font-semibold leading-none text-[#1f2536] md:text-[22px] 2xl:text-[25px]">
+                        <p title="" className="mt-2 text-[20px] font-semibold leading-none text-[#1f2536] md:text-[22px] 2xl:text-[25px]">
                             {item.value}
                         </p>
                         {item.helper ? (
-                            <p className="mt-2 text-sm leading-5 text-[#66718c]">
+                            <p title="" className="mt-2 text-sm leading-5 text-[#66718c]">
                                 {item.helper}
                             </p>
                         ) : null}

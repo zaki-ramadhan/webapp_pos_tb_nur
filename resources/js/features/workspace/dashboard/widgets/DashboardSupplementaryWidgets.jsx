@@ -158,26 +158,25 @@ export function OrderStatusWidget({ widget }) {
 
     return (
         <div className="flex h-full flex-col gap-3">
-            <div className="flex items-end justify-between gap-3 border-b border-[#edf1f6] pb-3">
+            <div className="flex items-end justify-between gap-3 border-b border-[#edf1f6] pb-3 shrink-0">
                 <div className="min-w-0">
                     <p className="text-[14px] font-semibold text-[#1f2536] sm:text-[15px] md:text-[17px]">{widget.primaryLabel}</p>
                 </div>
                 <p className="text-[16px] font-semibold leading-none text-[#111827] sm:text-[18px] md:text-[20px]">{widget.primaryValue}</p>
             </div>
 
-            <div className="flex items-center gap-2">
-                <p className="text-[14px] font-medium text-[#ff4f1f] sm:text-[15px] md:text-[16px]">{widget.statusTitle}</p>
-                {/* <Tooltip content="Menampilkan jumlah dokumen pesanan yang belum selesai diproses." portal>
-                    <InfoIcon className="h-4 w-4 shrink-0 text-[#1f2536] cursor-help" />
-                </Tooltip> */}
-            </div>
+            <div className="flex-1 flex flex-col justify-center gap-3 min-h-0">
+                <div className="flex items-center gap-2">
+                    <p className="text-[14px] font-medium text-[#ff4f1f] sm:text-[15px] md:text-[16px]">{widget.statusTitle}</p>
+                </div>
 
-            <OrderStatusStackChart segments={segments} />
+                <OrderStatusStackChart segments={segments} />
 
-            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-1">
-                {segments.map((segment) => (
-                    <OrderLegendItem key={segment.label} item={segment} />
-                ))}
+                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-1">
+                    {segments.map((segment) => (
+                        <OrderLegendItem key={segment.label} item={segment} />
+                    ))}
+                </div>
             </div>
         </div>
     );

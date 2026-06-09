@@ -104,7 +104,7 @@ export default function AbcContributionChart({ items }) {
     };
 
     return (
-        <div className="space-y-5 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
+        <div onContextMenu={(e) => e.preventDefault()} className="space-y-5 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
             <div className="h-[200px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px] lg:h-[232px]">
                 <ReactChart ref={chartRef} type="bar" data={data} options={options} />
             </div>
