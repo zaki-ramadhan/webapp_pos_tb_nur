@@ -31,6 +31,7 @@ export default function PasswordField({
     placeholder = '',
     error = '',
     className = '',
+    required = false,
     ...props
 }) {
     const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +40,7 @@ export default function PasswordField({
     const toggleLabel = showPassword ? 'Sembunyikan password' : 'Tampilkan password';
 
     return (
-        <FormField label={label} htmlFor={inputId} className={className}>
+        <FormField label={label} htmlFor={inputId} className={className} required={required}>
             <TextInput
                 id={inputId}
                 type={showPassword ? 'text' : 'password'}

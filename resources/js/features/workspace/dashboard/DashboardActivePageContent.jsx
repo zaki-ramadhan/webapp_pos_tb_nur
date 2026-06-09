@@ -1,6 +1,7 @@
 import DashboardToolbar from '@/features/workspace/dashboard/DashboardToolbar';
 import DashboardWidgetGrid from '@/features/workspace/dashboard/DashboardWidgetGrid';
 import renderWorkspaceActivePage from '@/features/workspace/dashboard/renderWorkspaceActivePage';
+import { FormErrorProvider } from '@/components/ui/FormErrorContext';
 
 export default function DashboardActivePageContent({
     dashboard,
@@ -62,15 +63,17 @@ export default function DashboardActivePageContent({
 
     return (
         <div className="min-h-0 flex-1 overflow-y-auto flex flex-col bg-[rgba(243,246,251,0.82)] px-2 pb-2 pt-0 sm:px-2.5 sm:pb-2.5 lg:px-3 lg:pb-3">
-            {renderWorkspaceActivePage({
-                activePage,
-                activePageMode,
-                activeLevel2Tab,
-                detailTabOpeners,
-                createDetailTabOpener,
-                handleOpenDefaultContentTab,
-                handleCloseDetailTab,
-            })}
+            <FormErrorProvider>
+                {renderWorkspaceActivePage({
+                    activePage,
+                    activePageMode,
+                    activeLevel2Tab,
+                    detailTabOpeners,
+                    createDetailTabOpener,
+                    handleOpenDefaultContentTab,
+                    handleCloseDetailTab,
+                })}
+            </FormErrorProvider>
         </div>
     );
 }

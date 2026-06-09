@@ -1,3 +1,5 @@
+import { useFormError } from './FormErrorContext';
+
 export default function TextareaField({
     id,
     rows = 3,
@@ -18,7 +20,9 @@ export default function TextareaField({
     onChange,
     ...props
 }) {
-    const feedbackMessage = typeof error === 'string' ? (error || message) : message;
+    const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
     const isNonInteractive = disabled || readOnly;
 
     function handleChange(event) {
@@ -28,9 +32,11 @@ export default function TextareaField({
         if (sanitized !== event.target.value) {
             event.target.value = sanitized;
         }
+        clearError(contextKey);
         onChange(event);
     }
-    const toneClassName = error
+
+    const toneClassName = resolvedError
         ? isNonInteractive
             ? 'border-[#e39191]'
             : 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
@@ -58,7 +64,7 @@ export default function TextareaField({
                     disabled={disabled}
                     readOnly={readOnly}
                     tabIndex={readOnly ? -1 : tabIndex}
-                    aria-invalid={Boolean(error)}
+                    aria-invalid={Boolean(resolvedError)}
                     className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default text-slate-400 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
@@ -74,7 +80,7 @@ export default function TextareaField({
             </span>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[13px] leading-5 ${error ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

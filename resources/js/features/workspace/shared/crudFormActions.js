@@ -6,7 +6,15 @@ import {
     showCrudValidationToast,
 } from '@/features/workspace/shared/crudFeedback';
 
-export function rejectCrudFormAction(message, { setStatus = null } = {}) {
+function dispatchValidationErrors(errors) {
+    window.dispatchEvent(new CustomEvent('form-validation-error', { detail: errors ?? {} }));
+}
+
+function clearValidationErrors() {
+    window.dispatchEvent(new CustomEvent('form-validation-clear'));
+}
+
+export function rejectCrudFormAction(message, { setStatus = null, fieldErrors = null } = {}) {
     if (!message) {
         return false;
     }
@@ -16,6 +24,10 @@ export function rejectCrudFormAction(message, { setStatus = null } = {}) {
         message,
     });
     showCrudValidationToast(message);
+
+    if (fieldErrors && typeof fieldErrors === 'object') {
+        dispatchValidationErrors(fieldErrors);
+    }
 
     return false;
 }
@@ -34,6 +46,7 @@ export async function executeCrudFormAction({
 
     setSaving(true);
     setStatus?.({ tone: '', message: '' });
+    clearValidationErrors();
     onStart?.();
 
     try {
@@ -56,6 +69,19 @@ export async function executeCrudFormAction({
         };
     } catch (error) {
         const errorMessage = getErrorMessage?.(error) ?? error?.message ?? 'Terjadi kesalahan.';
+
+        // Surface server-side validation field errors (HTTP 422)
+        const serverFieldErrors = error?.response?.data?.errors;
+        if (serverFieldErrors && typeof serverFieldErrors === 'object') {
+            // Flatten first-error-per-field into { field: 'message' }
+            const flat = Object.fromEntries(
+                Object.entries(serverFieldErrors).map(([key, value]) => [
+                    key,
+                    Array.isArray(value) ? (value[0] ?? '') : String(value),
+                ]),
+            );
+            dispatchValidationErrors(flat);
+        }
 
         finishCrudLoadingToast(loadingToastId);
         setStatus?.({

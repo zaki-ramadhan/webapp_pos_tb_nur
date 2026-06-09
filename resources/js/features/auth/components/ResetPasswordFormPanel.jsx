@@ -84,6 +84,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
                         value={form.data.email}
                         onChange={(event) => form.setData('email', event.target.value)}
                         error={form.errors.email || Boolean(authMessage)}
+                        required
                     />
                     <PasswordField
                         label={resetPassword.passwordLabel}
@@ -93,6 +94,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
                         value={form.data.password}
                         onChange={(event) => form.setData('password', event.target.value)}
                         error={form.errors.password}
+                        required
                     />
                     <PasswordField
                         label={resetPassword.passwordConfirmationLabel}
@@ -102,6 +104,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
                         value={form.data.password_confirmation}
                         onChange={(event) => form.setData('password_confirmation', event.target.value)}
                         error={form.errors.password_confirmation}
+                        required
                     />
 
                     <Button

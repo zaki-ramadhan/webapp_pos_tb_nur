@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 
+import { useFormError } from './FormErrorContext';
+
 function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
     const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
     
@@ -123,6 +125,7 @@ export default function TextInput({
 }) {
     const inputRef = useRef(null);
     const [localValue, setLocalValue] = useState(props.value ?? props.defaultValue ?? '');
+    const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
 
     useEffect(() => {
         if (props.value !== undefined) {
@@ -130,9 +133,10 @@ export default function TextInput({
         }
     }, [props.value]);
 
-    const feedbackMessage = typeof error === 'string' ? (error || message) : message;
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
     const isNonInteractive = disabled || (readOnly && !interactiveReadOnly);
-    const toneClassName = error
+    const toneClassName = resolvedError
         ? isNonInteractive
             ? 'border-[#e39191]'
             : 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
@@ -153,6 +157,7 @@ export default function TextInput({
             event.target.value = sanitizedValue;
         }
         setLocalValue(event.target.value);
+        clearError(contextKey);
         if (onChange) {
             onChange(event);
         }
@@ -236,7 +241,7 @@ export default function TextInput({
                     disabled={disabled}
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
-                    aria-invalid={Boolean(error)}
+                    aria-invalid={Boolean(resolvedError)}
                     className={`h-full flex-1 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : 'px-4'} text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
@@ -278,7 +283,7 @@ export default function TextInput({
             </div>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[13px] leading-5 ${error ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

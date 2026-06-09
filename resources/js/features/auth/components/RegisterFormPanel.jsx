@@ -10,9 +10,9 @@ import AuthHeading from '@/features/auth/components/AuthHeading';
 import AuthInput from '@/features/auth/components/AuthInput';
 import PasswordField from '@/features/auth/components/PasswordField';
 
-function NameField({ prefix, label, value, onChange, error, placeholder }) {
+function NameField({ prefix, label, value, onChange, error, placeholder, required = false }) {
     return (
-        <FormField label={label}>
+        <FormField label={label} required={required}>
             <TextInput prefix={prefix} value={value} onChange={onChange} error={error} placeholder={placeholder} />
         </FormField>
     );
@@ -84,6 +84,7 @@ export default function RegisterFormPanel({ register }) {
                         value={form.data.name}
                         onChange={(event) => form.setData('name', event.target.value)}
                         error={form.errors.name}
+                        required
                     />
                     <AuthInput
                         label={register.emailLabel}
@@ -97,6 +98,7 @@ export default function RegisterFormPanel({ register }) {
                         value={form.data.email}
                         onChange={(event) => form.setData('email', event.target.value)}
                         error={form.errors.email}
+                        required
                     />
                     {register.showPhoneField ? (
                         <AuthInput
@@ -117,6 +119,7 @@ export default function RegisterFormPanel({ register }) {
                         value={form.data.password}
                         onChange={(event) => form.setData('password', event.target.value)}
                         error={form.errors.password}
+                        required
                     />
 
                     <Button

@@ -8,10 +8,11 @@ export default function AuthInput({
     placeholder = '',
     trailing = null,
     error = '',
+    required = false,
     ...props
 }) {
     return (
-        <FormField label={label} hint={hint}>
+        <FormField label={label} hint={hint} required={required}>
             <TextInput type={type} placeholder={placeholder} trailing={trailing} error={error} {...props} />
         </FormField>
     );

@@ -105,6 +105,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             value={form.data.email}
                             onChange={(event) => form.setData('email', event.target.value)}
                             error={authMessage ? '' : form.errors.email}
+                            required
                         />
 
                         {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}

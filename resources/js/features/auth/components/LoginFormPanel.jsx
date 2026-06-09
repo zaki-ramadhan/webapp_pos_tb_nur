@@ -85,6 +85,7 @@ export default function LoginFormPanel({ login }) {
                         value={form.data.identifier}
                         onChange={(event) => form.setData('identifier', event.target.value)}
                         error={form.errors.identifier || Boolean(authMessage)}
+                        required
                     />
                     <PasswordField
                         label={login.passwordLabel}
@@ -94,6 +95,7 @@ export default function LoginFormPanel({ login }) {
                         value={form.data.password}
                         onChange={(event) => form.setData('password', event.target.value)}
                         error={form.errors.password || Boolean(authMessage)}
+                        required
                     />
 
                     <div className="text-right">

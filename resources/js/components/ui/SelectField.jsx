@@ -1,5 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 
+import { useFormError } from './FormErrorContext';
+
 export default function SelectField({
     id,
     value,
@@ -13,13 +15,21 @@ export default function SelectField({
     iconClassName = '',
     messageClassName = '',
     children,
+    onChange,
     ...props
 }) {
-    const feedbackMessage = typeof error === 'string' ? (error || message) : message;
+    const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
     const resolvedContainerClassName = containerClassName || 'w-full';
-    const toneClassName = error
+    const toneClassName = resolvedError
         ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
         : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+
+    function handleChange(event) {
+        clearError(contextKey);
+        onChange?.(event);
+    }
 
     return (
         <div className={resolvedContainerClassName}>
@@ -31,8 +41,9 @@ export default function SelectField({
                     value={value}
                     defaultValue={defaultValue}
                     disabled={disabled}
-                    aria-invalid={Boolean(error)}
+                    aria-invalid={Boolean(resolvedError)}
                     className={`h-full w-full appearance-none bg-transparent px-4 text-sm outline-none disabled:cursor-not-allowed ${disabled ? 'text-slate-400' : 'text-slate-700'} ${selectClassName}`.trim()}
+                    onChange={handleChange}
                     {...props}
                 >
                     {children}
@@ -46,7 +57,7 @@ export default function SelectField({
             </div>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[13px] leading-5 ${error ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}
