@@ -17,7 +17,7 @@ export default function BrandMark({
                     TB Nur
                 </span>
                 <span className={`text-[9.5px] sm:text-[10px] md:text-[10.5px] font-medium tracking-normal select-none pointer-events-none ${isDarkText ? 'text-[#56607c]' : 'text-white/75'}`}>
-                    toko bangunan dan material
+                    Toko Bangunan dan Material
                 </span>
             </div>
         </div>
