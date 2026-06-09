@@ -121,7 +121,10 @@ export default function TrendLineChart({
     };
 
     return (
-        <DashboardChartShell heightClassName={heightClassName}>
+        <DashboardChartShell
+            heightClassName={heightClassName}
+            className={heightClassName.includes('flex-1') ? 'flex-1 flex flex-col min-h-0' : ''}
+        >
             <Line data={data} options={options} />
         </DashboardChartShell>
     );
