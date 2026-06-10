@@ -14,7 +14,7 @@ class BackendResourceAccessService
     /**
      * @var list<string>
      */
-    protected array $privilegedRoleCodes = ['super_admin', 'owner_manager'];
+    protected array $privilegedRoleCodes = ['super_admin'];
 
     protected ?bool $bootstrapMode = null;
 

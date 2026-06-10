@@ -1049,33 +1049,9 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $ownerRoleId = DB::table('roles')->insertGetId([
-            'code' => 'owner_manager',
-            'name' => 'Owner Manager',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $cashierRoleId = DB::table('roles')->insertGetId([
-            'code' => 'cashier',
-            'name' => 'Kasir',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $warehouseRoleId = DB::table('roles')->insertGetId([
-            'code' => 'warehouse',
-            'name' => 'Staf Gudang',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $financeRoleId = DB::table('roles')->insertGetId([
-            'code' => 'finance',
-            'name' => 'Finance & Accounting',
+        $adminRoleId = DB::table('roles')->insertGetId([
+            'code' => 'admin',
+            'name' => 'Admin',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
@@ -1148,54 +1124,6 @@ class RealisticDataSeeder extends Seeder
             ]);
         }
 
-        $warehouseGroupId = DB::table('access_groups')->insertGetId([
-            'code' => 'GUDANG',
-            'name' => 'Staf Gudang',
-            'description' => 'Akses pengelolaan persediaan barang dan gudang',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $whMenus = ['products', 'warehouses', 'units', 'product-categories', 'item-requests', 'inventory-adjustments'];
-        foreach ($whMenus as $menu) {
-            DB::table('access_group_permissions')->insert([
-                'access_group_id' => $warehouseGroupId,
-                'menu_key' => $menu,
-                'can_access' => true,
-                'can_view' => true,
-                'can_create' => true,
-                'can_update' => true,
-                'can_delete' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        $financeGroupId = DB::table('access_groups')->insertGetId([
-            'code' => 'FINANCE',
-            'name' => 'Finance & Accounting',
-            'description' => 'Akses akuntansi, pembayaran, penerimaan, dan buku besar',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $finMenus = ['accounts', 'currencies', 'taxes', 'cash-payments', 'cash-receipts', 'general-journals', 'budgets', 'bank-statements', 'bank-histories', 'bank-reconciliations'];
-        foreach ($finMenus as $menu) {
-            DB::table('access_group_permissions')->insert([
-                'access_group_id' => $financeGroupId,
-                'menu_key' => $menu,
-                'can_access' => true,
-                'can_view' => true,
-                'can_create' => true,
-                'can_update' => true,
-                'can_delete' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
         // 12. Seed Users
         $usersData = [
             [
@@ -1225,22 +1153,6 @@ class RealisticDataSeeder extends Seeder
             [
                 'name' => 'Siti Aminah (Kasir)',
                 'email' => 'siti@tbnur.com',
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Joko Widodo (Gudang)',
-                'email' => 'joko@tbnur.com',
-                'password' => \Illuminate\Support\Facades\Hash::make('password'),
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Budi Santoso (Finance)',
-                'email' => 'budi@tbnur.com',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -1277,23 +1189,17 @@ class RealisticDataSeeder extends Seeder
         DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['test@example.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $adminGroupId, 'user_id' => $usersMap['test@example.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $ownerRoleId, 'user_id' => $usersMap['owner@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['owner@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['owner@tbnur.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $cashierRoleId, 'user_id' => $usersMap['siti@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['siti@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti@tbnur.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $cashierRoleId, 'user_id' => $usersMap['andi@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['andi@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['andi@tbnur.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $cashierRoleId, 'user_id' => $usersMap['rudi@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['rudi@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['rudi@tbnur.com']]);
-
-        DB::table('role_user')->insert(['role_id' => $warehouseRoleId, 'user_id' => $usersMap['joko@tbnur.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $warehouseGroupId, 'user_id' => $usersMap['joko@tbnur.com']]);
-
-        DB::table('role_user')->insert(['role_id' => $financeRoleId, 'user_id' => $usersMap['budi@tbnur.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $financeGroupId, 'user_id' => $usersMap['budi@tbnur.com']]);
 
         // 13. Seed Activity Logs
         $logs = [
@@ -1366,9 +1272,9 @@ class RealisticDataSeeder extends Seeder
                 'subject_label' => 'Jurnal Penyesuaian Saldo Awal',
                 'document_number' => 'GJ.2026.00001',
                 'description' => 'Membuat entri jurnal umum GJ.2026.00001 untuk Saldo Awal',
-                'actor_user_id' => $usersMap['budi@tbnur.com'],
-                'actor_name' => 'Budi Santoso (Finance)',
-                'actor_email' => 'budi@tbnur.com',
+                'actor_user_id' => $usersMap['owner@tbnur.com'],
+                'actor_name' => 'H. Nurhasan (Owner)',
+                'actor_email' => 'owner@tbnur.com',
                 'ip_address' => '192.168.1.15',
                 'occurred_at' => now()->subHours(2),
                 'created_at' => now()->subHours(2),
