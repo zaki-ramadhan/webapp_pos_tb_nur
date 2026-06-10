@@ -63,19 +63,7 @@ const detailDockActions = [
     { id: 'delete', label: 'Hapus', icon: 'trash', tone: 'danger' },
 ];
 
-const tableRows = [
-    {
-        id: 'asset-move-ast-2016-12-00001',
-        number: 'AST.2016.12.00001',
-        date: '28/12/2016',
-        notes: '',
-        sourceAddressName: 'JAKARTA',
-        destinationAddressName: 'SURABAYA',
-        dateFilter: 'all',
-        sourceFilter: 'all',
-        destinationFilter: 'all',
-    },
-];
+const tableRows = [];
 
 const draftRecord = {
     autoNumber: true,
@@ -101,29 +89,7 @@ const draftRecord = {
     },
 };
 
-const detailRecords = {
-    'asset-move-ast-2016-12-00001': {
-        autoNumber: false,
-        numberingType: 'AST.2016.12.00001',
-        number: 'AST.2016.12.00001',
-        date: '28/12/2016',
-        sourceAddress: ['JAKARTA'],
-        destinationAddress: ['SURABAYA'],
-        notes: '',
-        sourceAddressDetail: 'Jl. Pluit Karang Cantik Blok B4 No.39 Penjaringan, Jakarta Utara – 14450 Jakarta DKI Jakarta 14450 Indonesia',
-        destinationAddressDetail: 'Gedung Pawitra Lt 2 NO. 203 Jl. Kalijudan No. 98A Surabaya Jawa Timur 60114 Indonesia',
-        items: [
-            {
-                id: 'asset-move-item-1',
-                code: '0301005',
-                description: 'Mobil Avanza Tipe G B 4720 FND',
-                quantity: '1',
-                notes: '',
-            },
-        ],
-        dockActions: detailDockActions,
-    },
-};
+const detailRecords = {};
 
 const defaultConfig = {
     labels: {

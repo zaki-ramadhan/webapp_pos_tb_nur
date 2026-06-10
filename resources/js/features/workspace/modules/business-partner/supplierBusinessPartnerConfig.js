@@ -4,27 +4,7 @@ import {
     SHARED_LABELS,
 } from '@/features/workspace/modules/business-partner/businessPartnerConfigCore';
 
-const SUPPLIER_ROWS = [
-    { id: 'VJKT-0003', name: 'ASMUS', code: 'VJKT-0003', primaryContact: 'ASMUS', balance: 'SGD 221,946', category: 'HANDPHONE' },
-    { id: 'VJKT-0002', name: 'Applus', code: 'VJKT-0002', primaryContact: 'Applus', balance: 'IDR 207,275,010; USD 2,488,273', category: 'Umum' },
-    { id: 'VJKT-0006', name: 'Beautiful Cellular', code: 'VJKT-0006', primaryContact: 'Beautiful Cellular', balance: 'IDR 121,961,000; USD 13,140', category: 'Umum' },
-    { id: 'VJKT-0009', name: 'CV Alam Lestari', code: 'VJKT-0009', primaryContact: 'CV Alam Lestari', balance: 'IDR 0', category: 'Umum' },
-    { id: 'VJKT-0008', name: 'CV Ganda Putra', code: 'VJKT-0008', primaryContact: 'CV Ganda Putra', balance: 'IDR 3,476,530,000', category: 'Umum' },
-    { id: 'VSBY-0005', name: 'CV Indra Part', code: 'VSBY-0005', primaryContact: 'CV Indra Part', balance: 'IDR 287,430,000', category: 'Umum' },
-    { id: 'VJKT-0007', name: 'Mentari Accessories', code: 'VJKT-0007', primaryContact: 'Mentari Accessories', balance: 'IDR 178,450,000', category: 'ACCESSORIES' },
-    { id: 'V.00002', name: 'PT Bersih Selalu', code: 'V.00002', primaryContact: 'PT Bersih Selalu', balance: 'IDR 11,542,500', category: 'Umum' },
-    { id: 'VSBY-0004', name: 'PT Multi Teknik Bersama', code: 'VSBY-0004', primaryContact: 'PT Multi Teknik Bersama', balance: 'IDR 0', category: 'Umum' },
-    { id: 'VSBY-0003', name: 'PT Selaras Inti', code: 'VSBY-0003', primaryContact: 'PT Selaras Inti', balance: 'IDR 77,800,000', category: 'Umum' },
-    { id: 'V.00001', name: 'PT. SGI', code: 'V.00001', primaryContact: 'PT. SGI', balance: 'IDR 29,210,000', category: 'Umum' },
-    { id: 'VJKT-0005', name: 'Pandawa Accessories', code: 'VJKT-0005', primaryContact: 'Pandawa Accessories', balance: 'IDR 273,254,000', category: 'ACCESSORIES' },
-    { id: 'VJKT-0001', name: 'SAMSANG', code: 'VJKT-0001', primaryContact: 'SAMSANG', balance: 'IDR 69,372,385; SGD 830,600', category: 'HANDPHONE' },
-    { id: 'VJKT-0004', name: 'Supplier Umum - Jakarta', code: 'VJKT-0004', primaryContact: 'Supplier Umum - Jakarta', balance: 'IDR 0', category: 'Umum' },
-    { id: 'VSBY-0001', name: 'Supplier Umum - Surabaya', code: 'VSBY-0001', primaryContact: 'Supplier Umum - Surabaya', balance: 'IDR 0', category: 'Umum' },
-    { id: 'VSBY-0006', name: 'Toko Berkat Cell', code: 'VSBY-0006', primaryContact: 'Toko Berkat Cell', balance: 'IDR 163,182,500', category: 'Umum' },
-    { id: 'VSBY-0002', name: 'Toko Mega Mendung', code: 'VSBY-0002', primaryContact: 'Toko Mega Mendung', balance: 'IDR 4,088,752,500', category: 'Umum' },
-    { id: 'VJKT-0010', name: 'Toko Samudra Sparepart', code: 'VJKT-0010', primaryContact: 'Toko Samudra Sparepart', balance: 'IDR 3,040,000', category: 'SPAREPART' },
-    { id: 'VSBY-0007', name: 'Toko Yan Gadget', code: 'VSBY-0007', primaryContact: 'Toko Yan Gadget', balance: 'IDR 605,340,000', category: 'HANDPHONE' },
-];
+const SUPPLIER_ROWS = [];
 
 const SUPPLIER_DEFAULTS = {
     autoCode: true,
@@ -72,53 +52,7 @@ const SUPPLIER_DEFAULTS = {
     detailActionLabel: '',
 };
 
-const SUPPLIER_DETAIL_RECORDS = {
-    'VJKT-0003': {
-        autoCode: false,
-        codeType: 'Pemasok',
-        name: 'ASMUS',
-        code: 'VJKT-0003',
-        category: ['HANDPHONE'],
-        businessPhone: '0165-9581752',
-        mobilePhone: '',
-        whatsapp: '',
-        email: 'mrkt@asmus.com',
-        fax: '0165-9581753',
-        website: 'www.asmus.com',
-        billingStreet: 'Greenhub Suited Office @ Westway Level 2 Unit 22, 27 West Coast Highway',
-        billingCity: '',
-        billingPostalCode: '',
-        billingProvince: '',
-        billingCountry: '',
-        branchUsage: 'JAKARTA',
-        currencies: ['Singapore Dollar'],
-        contacts: [],
-        serviceVendor: false,
-        supplierType: '- Pilih Tipe Pemasok -',
-        paymentTerms: ['C.O.D'],
-        defaultDiscountPercent: '',
-        defaultDescription: '',
-        payableAccount: [],
-        advanceAccount: [],
-        bankAccounts: [],
-        taxIncluded: false,
-        taxIdType: 'NIK',
-        taxNumber: '',
-        taxName: '',
-        taxTkuId: '',
-        taxTransactionType: 'Ditanggung',
-        taxSameAsBilling: true,
-        taxStreet: '',
-        taxCity: '',
-        taxPostalCode: '',
-        taxProvince: '',
-        taxCountryName: '',
-        openingBalanceRows: [],
-        invoiceNumberOnBill: true,
-        notes: '',
-        detailActionLabel: 'Utang',
-    },
-};
+const SUPPLIER_DETAIL_RECORDS = {};
 
 export const supplierBusinessPartnerTemplate = createTemplate({
     type: 'supplier',

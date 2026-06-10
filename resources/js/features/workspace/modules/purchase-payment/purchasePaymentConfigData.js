@@ -23,17 +23,7 @@ export const purchasePaymentDetailDockActions = [
     createDeleteDockAction(),
 ];
 
-const purchasePaymentTableRows = [
-    { id: '111.102-01.2017.02.00003', number: '111.102-01.2017.02.00003', date: '11/02/2017', checkNumber: '', checkDate: '11/02/2017', supplier: 'PT. SGI', bank: 'Bank Mandiri IDR Jakarta (142-205-9324)', notes: '', paymentAmount: '84,787,200', method: 'Transfer Bank', branch: 'JAKARTA' },
-    { id: '111.102-01.2017.02.00001', number: '111.102-01.2017.02.00001', date: '10/02/2017', checkNumber: '', checkDate: '10/02/2017', supplier: 'CV Indra Part', bank: 'Bank BCA IDR Surabaya (388-308-3993)', notes: '', paymentAmount: '41,800,000', method: 'Transfer Bank', branch: 'JAKARTA' },
-    { id: '111.102-01.2016.12.00003', number: '111.102-01.2016.12.00003', date: '02/12/2016', checkNumber: 'BCA 23498', checkDate: '02/12/2016', supplier: 'PT Bersih Selalu', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', paymentAmount: '11,080,800', method: 'Tunai', branch: 'JAKARTA' },
-    { id: '111.102-01.2016.11.00002', number: '111.102-01.2016.11.00002', date: '20/11/2016', checkNumber: '', checkDate: '20/11/2016', supplier: 'Mentari Accessories', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', paymentAmount: '65,000,000', method: 'Tunai', branch: 'JAKARTA' },
-    { id: '111.102-01.2016.11.00001', number: '111.102-01.2016.11.00001', date: '15/11/2016', checkNumber: '', checkDate: '15/11/2016', supplier: 'PT. SGI', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', paymentAmount: '32,160,000', method: 'Tunai', branch: 'JAKARTA' },
-    { id: '111.202-04.2016.10.00002', number: '111.202-04.2016.10.00002', date: '21/10/2016', checkNumber: '', checkDate: '21/10/2016', supplier: 'Applus', bank: 'Bank Mandiri IDR Surabaya (276-129-4178)', notes: '', paymentAmount: '19,002,000', method: 'Transfer Bank', branch: 'JAKARTA' },
-    { id: '111.201-02.2016.10.00002', number: '111.201-02.2016.10.00002', date: '17/10/2016', checkNumber: '', checkDate: '17/10/2016', supplier: 'Toko Mega Mendung', bank: 'Kas Besar Kantor Surabaya', notes: '', paymentAmount: '8,360,000', method: 'Tunai', branch: 'JAKARTA' },
-    { id: '111.202-03.2016.10.00001', number: '111.202-03.2016.10.00001', date: '12/10/2016', checkNumber: '', checkDate: '12/10/2016', supplier: 'SAMSANG', bank: 'Bank BCA SGD Surabaya (102-263-7587)', notes: '', paymentAmount: '3,548', method: 'Transfer Bank', branch: 'JAKARTA' },
-    { id: '111.201-02.2016.10.00001', number: '111.201-02.2016.10.00001', date: '11/10/2016', checkNumber: '', checkDate: '11/10/2016', supplier: 'PT Selaras Inti', bank: 'Kas Besar Kantor Surabaya', notes: '', paymentAmount: '55,123,750', method: 'Tunai', branch: 'JAKARTA' },
-];
+const purchasePaymentTableRows = [];
 
 const defaultPurchasePaymentDraft = {
     payee: [],
@@ -65,82 +55,7 @@ const defaultPurchasePaymentDraft = {
     dockActions: purchasePaymentCreateDockActions,
 };
 
-const purchasePaymentDetailRecords = {
-    '111.102-01.2017.02.00003': {
-        payee: ['[V.00001] PT. SGI'],
-        bankAccounts: ['Bank Mandiri IDR Jakarta (142-205-9324)'],
-        paymentAmount: '84,787,200',
-        paymentAmountPrefix: 'Rp',
-        paymentAmountDisplay: '84,787,200',
-        entryDate: '11/02/2017',
-        autoNumber: false,
-        numberingType: 'Bank BCA IDR Jakarta (069-773-3993)',
-        documentNumber: '111.102-01.2017.02.00003',
-        currency: 'IDR',
-        invoiceSearch: '',
-        invoices: [
-            {
-                id: 'invoice-payment-1',
-                number: 'SGI/201765501',
-                formNumber: 'PI.2016.12.00001',
-                date: '19/12/2016',
-                total: 'Rp 88,320,000',
-                outstanding: 'Rp 0',
-                pay: 'Rp 88,320,000',
-                discount: 'Rp 0',
-                payment: 'Rp 84,787,200',
-                pphChecked: true,
-                pphLabel: 'Jasa Freight forwarding',
-                pphAmount: 'Rp 3,532,800',
-                withholdingProof: 'BP/SGI-01445',
-                discountAccount: '',
-                discountValue: '',
-                discountNotes: '',
-                department: '',
-            },
-        ],
-        invoiceTitle: 'Faktur (1)',
-        paymentMethod: 'Transfer Bank',
-        dueDatePph: '11/02/2017',
-        notes: '',
-        voided: false,
-        branches: ['JAKARTA'],
-        reconcileStatus: 'Belum',
-        printStatus: 'Belum cetak/email',
-        paidWith: 'Transfer Bank',
-        paidAt: '-',
-        footerPaymentValue: 'Rp 84,787,200',
-        footerInvoiceValue: 'Rp 84,787,200',
-        showSecondaryAmountButton: false,
-        modal: {
-            title: 'Faktur',
-            tabs: [
-                { id: 'invoice', label: 'Faktur' },
-                { id: 'discount-info', label: 'Informasi Diskon' },
-            ],
-            invoice: {
-                formNumber: 'PI.2016.12.00001',
-                billNumber: 'SGI/201765501',
-                outstanding: 'Rp 0',
-                pay: '88,320,000',
-                payment: 'Rp 84,787,200',
-                pphChecked: true,
-                pphLabel: 'Jasa Freight forwarding',
-                pphAmount: 'Rp 3,532,800',
-                withholdingProof: 'BP/SGI-01445',
-                notice: 'PPh yang dipotong dibayarkan melalui menu Kas & Bank - Pembayaran - Ambil - PPh Pembelian',
-            },
-            discountInfo: {
-                discountAccount: '',
-                discountAmount: '',
-                discountNotes: '',
-                department: '',
-                rows: [],
-            },
-        },
-        dockActions: purchasePaymentDetailDockActions,
-    },
-};
+const purchasePaymentDetailRecords = {};
 
 export const defaultPurchasePaymentConfig = {
     labels: {

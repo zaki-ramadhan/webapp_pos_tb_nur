@@ -63,38 +63,8 @@ const processItems = [
     { id: 'transfer', label: 'Pindah aset' },
 ];
 
-const fixedAssetRows = [
-    ['fixed-asset-0502009', '0502009', 'Komputer 09', '17/03/2016', '1', '7,350,000'],
-    ['fixed-asset-0302004', '0302004', 'Mobil Xenia L 1291 ARI', '10/03/2016', '1', '220,000,000'],
-    ['fixed-asset-0302003', '0302003', 'Mobil Spin L 4919 EKO', '10/03/2016', '1', '260,000,000'],
-    ['fixed-asset-0301005', '0301005', 'Mobil Avanza Tipe G B 4720 FND', '08/03/2016', '1', '250,000,000'],
-    ['fixed-asset-0502008', '0502008', 'Komputer 08', '05/02/2016', '1', '7,350,000'],
-    ['fixed-asset-0502007', '0502007', 'Komputer 07', '05/02/2016', '1', '7,350,000'],
-    ['fixed-asset-0301004', '0301004', 'Mobil Avanza Veloz B 1019 RNI', '04/02/2016', '1', '250,000,000'],
-    ['fixed-asset-0301003', '0301003', 'Mobil HRV B 4383 JHN', '22/12/2015', '1', '250,000,000'],
-    ['fixed-asset-0501039', '0501039', 'Komputer 06', '15/12/2015', '1', '7,350,000'],
-    ['fixed-asset-0501038', '0501038', 'Komputer 05', '15/12/2015', '1', '7,350,000'],
-    ['fixed-asset-0402005', '0402005', 'Motor Beat Pop L 1391 SBY', '01/12/2015', '1', '15,500,000'],
-    ['fixed-asset-0401006', '0401006', 'Motor Vario Techno 125 B 1930 POP', '01/12/2015', '1', '18,500,000'],
-    ['fixed-asset-0301002', '0301002', 'Mobil Pajero B 7192 VND', '26/11/2015', '1', '750,000,000'],
-    ['fixed-asset-0501047', '0501047', 'TV 42 Inc', '11/11/2015', '1', '41,000,000'],
-    ['fixed-asset-0501037', '0501037', 'Komputer 04', '10/11/2015', '1', '7,350,000'],
-    ['fixed-asset-0501036', '0501036', 'Komputer 03', '10/11/2015', '1', '7,350,000'],
-    ['fixed-asset-0501035', '0501035', 'Komputer 02', '10/11/2015', '1', '7,350,000'],
-    ['fixed-asset-0302002', '0302002', 'Mobil HRV B 8492 ERC', '24/10/2015', '1', '300,000,000'],
-    ['fixed-asset-0302001', '0302001', 'Mobil CRV L 3819 MMD', '21/09/2015', '1', '600,000,000'],
-];
-
-const tableRows = fixedAssetRows.map(([id, number, name, purchaseDate, quantity, totalAsset]) => ({
-    id,
-    status: 'checked',
-    number,
-    name,
-    purchaseDate,
-    quantity,
-    totalAsset,
-    categoryFilter: 'all',
-}));
+const fixedAssetRows = [];
+const tableRows = [];
 
 const draftRecord = {
     autoCode: true,
@@ -139,57 +109,7 @@ const draftRecord = {
     },
 };
 
-const detailRecords = {
-    'fixed-asset-0502009': {
-        autoCode: false,
-        codeType: 'Aset Tetap',
-        code: '0502009',
-        name: 'Komputer 09',
-        purchaseDate: '17/03/2016',
-        usageDate: '17/03/2016',
-        intangibleAsset: false,
-        depreciationMethod: 'Metode Garis Lurus',
-        assetAccount: ['[121.200-04] Peralatan & Perlengkapan Kantor Surabaya'],
-        accumulatedDepreciationAccount: ['[122.200-03] Akm. Peny. Peralatan & Perlengkapan Surabaya'],
-        depreciationExpenseAccount: ['[612.001-03] Beban Penyusutan Peralatan & Perlengkapan Kantor'],
-        quantity: '1',
-        assetLifeYears: '4',
-        assetLifeMonths: '0',
-        ratio: '25',
-        residualValue: '0',
-        category: ['Peralatan Kantor'],
-        branch: ['JAKARTA'],
-        department: ['Accounting'],
-        initialLocation: ['SURABAYA'],
-        notes: '',
-        taxEnabled: true,
-        lastDepreciation: '31/01/2017',
-        taxCategory: ['Gol 1 [Garis Lurus]'],
-        expenseSearch: '',
-        expenseRows: [
-            {
-                id: 'expense-row-1',
-                code: '300001',
-                description: 'Equitas Saldo Awal',
-                date: '17/03/2016',
-                amount: '7,350,000',
-                notes: '',
-            },
-        ],
-        locationRows: [
-            {
-                id: 'location-row-1',
-                symbol: '≡',
-                name: 'SURABAYA',
-                address: 'Gedung Pawitra Lt 2 NO. 203 Jl. Kalijudan No. 98A Surabaya Jawa Timur 60114 Indonesia',
-                quantity: '1',
-            },
-        ],
-        totalAssetValue: 'Rp 7,350,000',
-        bookValue: 'Rp 5,818,750',
-        dockActions: detailDockActions,
-    },
-};
+const detailRecords = {};
 
 const defaultConfig = {
     labels: {

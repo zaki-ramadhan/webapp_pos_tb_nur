@@ -92,8 +92,7 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
     }, [activeDashboardWidgets, dashboard.toolbar.widgetLibraryModal.items]);
 
     function handleOpenWidgetLibrary() {
-        setIsWidgetLibraryOpen(false);
-        setIsWidgetLibraryLoading(true);
+        setIsWidgetLibraryOpen(true);
     }
 
     function handleOpenDashboardModal(mode) {

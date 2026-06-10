@@ -7,7 +7,6 @@ import {
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
-import { tableRows, detailRecords as sampleDetailRecords } from './priceAdjustmentSampleData';
 
 const todayDisplayDate = buildTodayDisplayDate();
 
@@ -71,12 +70,7 @@ const draftRecord = {
     },
 };
 
-const detailRecords = Object.fromEntries(
-    Object.entries(sampleDetailRecords).map(([key, record]) => [
-        key,
-        { ...record, dockActions: detailDockActions },
-    ])
-);
+const detailRecords = {};
 
 const defaultConfig = {
     labels: {
@@ -99,7 +93,7 @@ const defaultConfig = {
         pageValue: '116',
         filterButtonLabel: 'Filter lanjutan',
         columns: priceAdjustmentListColumns,
-        rows: tableRows,
+        rows: [],
         filters: [
             {
                 id: 'date',

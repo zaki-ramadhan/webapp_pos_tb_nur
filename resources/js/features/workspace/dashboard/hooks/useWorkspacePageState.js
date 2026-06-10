@@ -173,15 +173,6 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
         const pageAlreadyOpen = openPages.some((page) => page.id === nextPage.id);
 
-        if (nextPage.openLoading && !pageAlreadyOpen) {
-            setActivePanelId(null);
-            setPageOpeningLoading({
-                pageId: nextPage.id,
-                loading: nextPage.openLoading,
-            });
-            return;
-        }
-
         setOpenPages((currentPages) => (pageAlreadyOpen ? currentPages : [...currentPages, nextPage]));
         setActivePageId(nextPage.id);
         setActivePanelId(null);

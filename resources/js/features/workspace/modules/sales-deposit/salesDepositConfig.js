@@ -42,32 +42,7 @@ const salesDepositListColumns = [
     { id: 'total', label: 'Total', widthClassName: 'w-[150px]', align: 'right' },
 ];
 
-const salesDepositTableRows = [
-    {
-        id: 'SI.2017.02.00002',
-        number: 'SI.2017.02.00002',
-        date: '10/02/2017',
-        customer: 'Abadi Phone Center',
-        customerShort: 'Abadi Phone Center',
-        notes: 'Deposit uang muka.',
-        status: 'Belum Lunas',
-        requiredIdType: '',
-        age: '3362',
-        total: '50,000,000',
-    },
-    {
-        id: 'SI.2016.12.00002',
-        number: 'SI.2016.12.00002',
-        date: '13/12/2016',
-        customer: 'Cinema Phone Cellular',
-        customerShort: 'Cinema Phone Cellular',
-        notes: '',
-        status: 'Lunas',
-        requiredIdType: '',
-        age: '0',
-        total: '10,000,000',
-    },
-];
+const salesDepositTableRows = [];
 
 const draftDockActions = [
     createSaveDockAction(),
@@ -101,49 +76,7 @@ const salesDepositDraft = {
     total: '0',
 };
 
-const salesDepositDetailRecords = {
-    'SI.2017.02.00002': {
-        customer: ['[CSBY-0005] Abadi Phone Center'],
-        entryDate: '10/02/2017',
-        autoNumber: false,
-        numberingType: 'Faktur Penjualan',
-        documentNumber: 'SI.2017.02.00002',
-        currency: 'IDR',
-        depositAmount: '50,000,000',
-        purchaseOrderNumber: '',
-        taxEnabled: false,
-        taxIncluded: false,
-        paymentTerms: ['C.O.D'],
-        address: 'Jl. Raya Pabean Sedati 79',
-        branches: ['JAKARTA'],
-        notes: 'Deposit uang muka.',
-        summary: [
-            ['Total', 'Rp 50,000,000'],
-            ['Uang Muka Terpakai/Retur', 'Rp 1,925,000'],
-            ['Sisa Uang Muka', 'Rp 48,075,000'],
-            ['Pembayaran', 'Rp 0'],
-            ['Retur', 'Rp 0'],
-            ['Piutang', 'Rp 50,000,000'],
-            ['Status', 'Belum Lunas'],
-            ['Dicetak/email', 'Belum cetak/email'],
-        ],
-        usedDepositRows: [
-            {
-                id: 'SI.2017.02.00003',
-                number: 'SI.2017.02.00003',
-                date: '10/02/2017',
-                amount: 'Rp 1,925,000',
-            },
-        ],
-        approvalStamp: 'DISETUJUI',
-        statusStamp: 'BELUM\nLUNAS',
-        statusTone: 'gray',
-        processButtonLabel: 'Proses',
-        dockActions: sharedDetailDockActions,
-        subtotal: 'Rp 50,000,000',
-        total: 'Rp 50,000,000',
-    },
-};
+const salesDepositDetailRecords = {};
 
 export const defaultSalesDepositConfig = {
     topActions: salesDepositTopActions,

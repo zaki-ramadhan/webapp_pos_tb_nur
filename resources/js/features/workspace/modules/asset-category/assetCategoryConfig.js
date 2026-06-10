@@ -1,18 +1,5 @@
-const tableRows = [
-    { id: 'asset-category-gedung', name: 'Gedung' },
-    { id: 'asset-category-kendaraan-1', name: 'Kendaraan 1' },
-    { id: 'asset-category-kendaraan-2', name: 'Kendaraan 2' },
-    { id: 'asset-category-peralatan-kantor', name: 'Peralatan Kantor' },
-    { id: 'asset-category-tanah', name: 'Tanah' },
-];
-
-const detailRecords = {
-    'asset-category-gedung': { name: 'Gedung' },
-    'asset-category-kendaraan-1': { name: 'Kendaraan 1' },
-    'asset-category-kendaraan-2': { name: 'Kendaraan 2' },
-    'asset-category-peralatan-kantor': { name: 'Peralatan Kantor' },
-    'asset-category-tanah': { name: 'Tanah' },
-};
+const tableRows = [];
+const detailRecords = {};
 
 const defaultConfig = {
     table: {

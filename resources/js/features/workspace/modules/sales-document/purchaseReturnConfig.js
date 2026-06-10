@@ -46,26 +46,7 @@ const purchaseReturnCostColumns = [
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[22%]', align: 'left' },
 ];
 
-const purchaseReturnTableRows = [
-    { id: 'PRT.2017.01.00003', number: 'PRT.2017.01.00003', date: '30/01/2017', customer: 'SAMSANG', customerShort: 'SAMSANG', notes: '', total: '2,105', printedStatus: 'all' },
-    { id: 'PRT.2017.01.00002', number: 'PRT.2017.01.00002', date: '20/01/2017', customer: 'Applus', customerShort: 'Applus', notes: '', total: '6,181', printedStatus: 'all' },
-    { id: 'PRT.2017.01.00001', number: 'PRT.2017.01.00001', date: '15/01/2017', customer: 'Toko Samudra Sparepart', customerShort: 'Toko Samudra Sparepart', notes: '', total: '190,000', printedStatus: 'all' },
-    { id: 'PRT.2016.12.00004', number: 'PRT.2016.12.00004', date: '30/12/2016', customer: 'Applus', customerShort: 'Applus', notes: '', total: '5,278', printedStatus: 'all' },
-    { id: 'PRT.2016.12.00003', number: 'PRT.2016.12.00003', date: '20/12/2016', customer: 'SAMSANG', customerShort: 'SAMSANG', notes: '', total: '1,660', printedStatus: 'all' },
-    { id: 'PRT.2016.12.00002', number: 'PRT.2016.12.00002', date: '20/12/2016', customer: 'Toko Samudra Sparepart', customerShort: 'Toko Samudra Sparepart', notes: '', total: '95,000', printedStatus: 'all' },
-    { id: 'PRT.2016.12.00001', number: 'PRT.2016.12.00001', date: '15/12/2016', customer: 'ASMUS', customerShort: 'ASMUS', notes: '', total: '6,224', printedStatus: 'all' },
-    { id: 'PRT.2016.11.00004', number: 'PRT.2016.11.00004', date: '30/11/2016', customer: 'Toko Yan Gadget', customerShort: 'Toko Yan Gadget', notes: '', total: '1,140,000', printedStatus: 'all' },
-    { id: 'PRT.2016.11.00002', number: 'PRT.2016.11.00002', date: '30/11/2016', customer: 'Toko Mega Mendung', customerShort: 'Toko Mega Mendung', notes: '', total: '79,135,000', printedStatus: 'all' },
-    { id: 'PRT.2016.11.00003', number: 'PRT.2016.11.00003', date: '20/11/2016', customer: 'Toko Yan Gadget', customerShort: 'Toko Yan Gadget', notes: '', total: '1,520,000', printedStatus: 'all' },
-    { id: 'PRT.2016.11.00001', number: 'PRT.2016.11.00001', date: '16/11/2016', customer: 'Toko Mega Mendung', customerShort: 'Toko Mega Mendung', notes: '', total: '190,000', printedStatus: 'all' },
-    { id: 'PRT.2016.10.00004', number: 'PRT.2016.10.00004', date: '31/10/2016', customer: 'Applus', customerShort: 'Applus', notes: '', total: '5,916', printedStatus: 'all' },
-    { id: 'PRT.2016.10.00003', number: 'PRT.2016.10.00003', date: '30/10/2016', customer: 'Applus', customerShort: 'Applus', notes: '', total: '4,248', printedStatus: 'all' },
-    { id: 'PRT.2016.10.00001', number: 'PRT.2016.10.00001', date: '30/10/2016', customer: 'Toko Berkat Cell', customerShort: 'Toko Berkat Cell', notes: '', total: '6,412,500', printedStatus: 'all' },
-    { id: 'PRT.2016.10.00002.1', number: 'PRT.2016.10.00002.1', date: '29/10/2016', customer: 'Applus', customerShort: 'Applus', notes: '', total: '14,920', printedStatus: 'all' },
-    { id: 'PRT.2016.10.00006', number: 'PRT.2016.10.00006', date: '28/10/2016', customer: 'SAMSANG', customerShort: 'SAMSANG', notes: '', total: '3,456', printedStatus: 'all' },
-    { id: 'PRT.2016.10.00005', number: 'PRT.2016.10.00005', date: '25/10/2016', customer: 'SAMSANG', customerShort: 'SAMSANG', notes: '', total: '4,620', printedStatus: 'all' },
-    { id: 'PRT.2017.02.00001', number: 'PRT.2017.02.00001', date: '20/10/2016', customer: 'Beautiful Cellular', customerShort: 'Beautiful Cellular', notes: '', total: '6,650,000', printedStatus: 'all' },
-];
+const purchaseReturnTableRows = [];
 
 const purchaseReturnCreateDockActions = [
     createSaveDockAction(),
@@ -123,60 +104,7 @@ const defaultPurchaseReturnDraft = {
     dockActions: purchaseReturnCreateDockActions,
 };
 
-const purchaseReturnDetailRecords = {
-    'PRT.2017.01.00003': {
-        customer: ['[VJKT-0001] SAMSANG'],
-        entryDate: '30/01/2017',
-        autoNumber: false,
-        numberingType: 'Retur Pembelian',
-        documentNumber: 'PRT.2017.01.00003',
-        currency: 'SGD',
-        exchangeRate: '9,450',
-        exchangeRateLabel: '',
-        exchangeRatePrefix: 'Rtl',
-        secondaryExchangeRate: '',
-        secondaryExchangeRatePrefix: 'Pjk',
-        showSecondaryExchangeRateField: true,
-        returnSource: 'Faktur',
-        returnSourceReferences: ['SS-2483217'],
-        itemSearch: '',
-        items: [
-            {
-                id: 'purchase-return-detail-item-1',
-                name: 'Samsung Galaxy Tab S2 8.0 (32 GB)',
-                code: '1100007',
-                quantity: '5',
-                unit: 'PCS',
-                price: '421',
-                total: '2,105',
-                discount: '0',
-            },
-        ],
-        itemCountLabel: '1 Barang (5)',
-        address: 'JustOffice @ Asia Square, Asia Square Tow..., #23-01, 12 Marina View, 018961',
-        branches: ['JAKARTA'],
-        notes: '',
-        printedStatus: 'Belum cetak/email',
-        taxEnabled: false,
-        taxIncluded: false,
-        costSearch: '',
-        additionalCosts: [],
-        summary: [],
-        processedBy: null,
-        approvalStamp: '',
-        processStamp: '',
-        showProcessButton: false,
-        processDisabled: false,
-        showHeaderTakeButton: false,
-        subtotal: '$ 2,105',
-        discountValue: '0',
-        discountPrefix: '$',
-        taxLabel: '',
-        taxValue: '',
-        total: '$ 2,105',
-        dockActions: purchaseReturnDetailDockActions,
-    },
-};
+const purchaseReturnDetailRecords = {};
 
 const defaultPurchaseReturnConfig = {
     labels: {

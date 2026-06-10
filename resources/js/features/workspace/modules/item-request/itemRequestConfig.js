@@ -48,47 +48,7 @@ const itemRequestDetailDockActions = [
     createDeleteDockAction(),
 ];
 
-const itemRequestTableRows = [
-    {
-        id: 'PR.2016.10.00003',
-        number: 'PR.2016.10.00003',
-        date: '10/10/2016',
-        requestType: 'Beli Barang',
-        notes: '',
-        status: 'Menunggu diproses',
-        estimatedTotal: '0',
-        dateFilter: 'all',
-        statusFilter: 'pending',
-        printedFilter: 'all',
-        typeFilter: 'purchase-request',
-    },
-    {
-        id: 'PR.2016.10.00002',
-        number: 'PR.2016.10.00002',
-        date: '04/10/2016',
-        requestType: 'Beli Barang',
-        notes: '',
-        status: 'Sebagian diproses',
-        estimatedTotal: '0',
-        dateFilter: 'all',
-        statusFilter: 'partial',
-        printedFilter: 'all',
-        typeFilter: 'purchase-request',
-    },
-    {
-        id: 'PR.2016.10.00001',
-        number: 'PR.2016.10.00001',
-        date: '03/10/2016',
-        requestType: 'Beli Barang',
-        notes: 'Stock tersisa sedikit',
-        status: 'Selesai',
-        estimatedTotal: '0',
-        dateFilter: 'all',
-        statusFilter: 'completed',
-        printedFilter: 'all',
-        typeFilter: 'purchase-request',
-    },
-];
+const itemRequestTableRows = [];
 
 const defaultItemRequestDraft = {
     requestDate: todayDisplayDate,
@@ -188,51 +148,7 @@ const defaultItemRequestConfig = {
     },
     additionalInfoTitle: 'Info lainnya',
     draft: defaultItemRequestDraft,
-    detailRecords: {
-        'PR.2016.10.00003': {
-            requestDate: '10/10/2016',
-            requestType: 'Beli Barang',
-            autoNumber: false,
-            numberingType: 'Permintaan Pembelian',
-            documentNumber: 'PR.2016.10.00003',
-            notes: '',
-            closeRequest: false,
-            branches: ['SURABAYA'],
-            items: [
-                {
-                    id: 'PR.2016.10.00003-item-1',
-                    name: 'Anti Gores Iphone 5',
-                    code: '9900012',
-                    quantity: '100',
-                    unit: 'PCS',
-                    requestDate: '10/10/2016',
-                    department: [],
-                    notes: '',
-                },
-                {
-                    id: 'PR.2016.10.00003-item-2',
-                    name: 'Headset',
-                    code: '9900001',
-                    quantity: '50',
-                    unit: 'PCS',
-                    requestDate: '10/10/2016',
-                    department: [],
-                    notes: '',
-                },
-                {
-                    id: 'PR.2016.10.00003-item-3',
-                    name: 'Soft Case',
-                    code: '9900003',
-                    quantity: '50',
-                    unit: 'PCS',
-                    requestDate: '10/10/2016',
-                    department: [],
-                    notes: '',
-                },
-            ],
-            dockActions: itemRequestDetailDockActions,
-        },
-    },
+    detailRecords: {},
 };
 
 function cloneItems(items) {

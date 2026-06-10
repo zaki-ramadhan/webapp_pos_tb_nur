@@ -66,18 +66,7 @@ const detailDockActions = [
     createDeleteDockAction(),
 ];
 
-const salesReceiptTableRows = [
-    { id: '111.102-01.2017.02.00002', number: '111.102-01.2017.02.00002', date: '10/02/2017', checkNumber: 'BRI00001', checkDate: '24/02/2017', customer: 'Pelanggan Umum - Jakarta', customerShort: 'Pelanggan Umum - Jakarta', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', useCredit: 'Tidak', paymentAmount: '33,600,000' },
-    { id: '111.101-02.2017.02.00001', number: '111.101-02.2017.02.00001', date: '10/02/2017', checkNumber: '', checkDate: '10/02/2017', customer: 'Pelanggan Umum - Jakarta', customerShort: 'Pelanggan Umum - Jakarta', bank: 'Kas Besar Kantor Jakarta', notes: '', useCredit: 'Tidak', paymentAmount: '6,600,000' },
-    { id: '111.202-01.2017.01.00003', number: '111.202-01.2017.01.00003', date: '10/01/2017', checkNumber: '', checkDate: '10/01/2017', customer: 'PT Kassakki Indo Baja', customerShort: 'PT Kassakki Indo Baja', bank: 'Bank BCA IDR Surabaya (388-308-3993)', notes: '', useCredit: 'Tidak', paymentAmount: '794,000' },
-    { id: '111.102-01.2016.12.00003', number: '111.102-01.2016.12.00003', date: '13/12/2016', checkNumber: '', checkDate: '13/12/2016', customer: 'Cinema Phone Cellular', customerShort: 'Cinema Phone Cellular', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', useCredit: 'Tidak', paymentAmount: '15,960,000' },
-    { id: '111.102-01.2016.12.00002', number: '111.102-01.2016.12.00002', date: '13/12/2016', checkNumber: '', checkDate: '13/12/2016', customer: 'Cinema Phone Cellular', customerShort: 'Cinema Phone Cellular', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', useCredit: 'Tidak', paymentAmount: '10,000,000' },
-    { id: '111.102-01.2016.12.00001', number: '111.102-01.2016.12.00001', date: '13/12/2016', checkNumber: '', checkDate: '13/12/2016', customer: 'Abadi Phone Center', customerShort: 'Abadi Phone Center', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: 'Sisanya dua minggu kemudian.', useCredit: 'Tidak', paymentAmount: '10,000,000' },
-    { id: '111.102-01.2016.11.00002', number: '111.102-01.2016.11.00002', date: '30/11/2016', checkNumber: '', checkDate: '30/11/2016', customer: 'Abadi Phone Center', customerShort: 'Abadi Phone Center', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', useCredit: 'Tidak', paymentAmount: '33,500,000' },
-    { id: '111.102-03.2016.11.00001', number: '111.102-03.2016.11.00001', date: '20/11/2016', checkNumber: '', checkDate: '20/11/2016', customer: 'PT CIRCLE PHONE', customerShort: 'PT CIRCLE PHONE', bank: 'Bank BCA SGD Jakarta (157-375-3993)', notes: '', useCredit: 'Tidak', paymentAmount: '10,730' },
-    { id: '111.102-01.2016.10.00003', number: '111.102-01.2016.10.00003', date: '30/10/2016', checkNumber: '', checkDate: '30/10/2016', customer: 'Abadi Phone Center', customerShort: 'Abadi Phone Center', bank: 'Bank BCA IDR Jakarta (069-773-3993)', notes: '', useCredit: 'Tidak', paymentAmount: '2,484,000' },
-    { id: '111.201-01.2017.02.00001', number: '111.201-01.2017.02.00001', date: '20/10/2016', checkNumber: 'CA 99675', checkDate: '20/10/2016', customer: 'Pelanggan Umum - Surabaya', customerShort: 'Pelanggan Umum - Surabaya', bank: 'Kas Kecil Kantor Surabaya', notes: '', useCredit: 'Tidak', paymentAmount: '2,640,000' },
-];
+const salesReceiptTableRows = [];
 
 const salesReceiptDraft = {
     customer: [],
@@ -102,73 +91,7 @@ const salesReceiptDraft = {
     dockActions: draftDockActions,
 };
 
-const salesReceiptDetailRecords = {
-    '111.102-01.2017.02.00002': {
-        customer: ['[CJKT-0001] Pelanggan Umum - Jakarta'],
-        bankAccounts: ['Bank BCA IDR Jakarta (069-773-3993)'],
-        entryDate: '10/02/2017',
-        autoNumber: false,
-        numberingType: 'Bank BCA IDR Jakarta (069-773-3993)',
-        documentNumber: '111.102-01.2017.02.00002',
-        currency: 'IDR',
-        paymentAmount: '33,600,000',
-        invoiceSearch: '',
-        invoices: [
-            {
-                id: 'SI.2016.10.00004',
-                invoiceNumber: 'SI.2016.10.00004',
-                invoiceDate: '11/10/2016',
-                invoiceTotal: 'Rp 26,000,000',
-                outstanding: 'Rp 6,000,000',
-                paid: 'Rp 16,000,000',
-                discount: 'Rp 0',
-                payment: 'Rp 16,000,000',
-                modal: {
-                    invoiceNumber: 'SI.2016.10.00004',
-                    invoiceDate: '11/10/2016',
-                    outstanding: 'Rp 6,000,000',
-                    payment: '16,000,000',
-                    discountAccount: [],
-                    discountAmount: '',
-                    discountNotes: '',
-                    department: [],
-                    discountRows: [],
-                },
-            },
-            {
-                id: 'SI.2017.02.00005',
-                invoiceNumber: 'SI.2017.02.00005',
-                invoiceDate: '10/02/2017',
-                invoiceTotal: 'Rp 17,600,000',
-                outstanding: 'Rp 0',
-                paid: 'Rp 17,600,000',
-                discount: 'Rp 0',
-                payment: 'Rp 17,600,000',
-                modal: {
-                    invoiceNumber: 'SI.2017.02.00005',
-                    invoiceDate: '10/02/2017',
-                    outstanding: 'Rp 0',
-                    payment: '17,600,000',
-                    discountAccount: [],
-                    discountAmount: '',
-                    discountNotes: '',
-                    department: [],
-                    discountRows: [],
-                },
-            },
-        ],
-        paymentMethod: 'Cek/Giro',
-        checkNumber: 'BRI00001',
-        checkDate: '24/02/2017',
-        voided: false,
-        branches: ['JAKARTA'],
-        notes: '',
-        reconcileStatus: 'Belum',
-        printStatus: 'Belum cetak/email',
-        amountButtons: ['refresh'],
-        dockActions: detailDockActions,
-    },
-};
+const salesReceiptDetailRecords = {};
 
 export const defaultSalesReceiptConfig = {
     topActions: salesReceiptTopActions,

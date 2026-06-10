@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             HandleInertiaRequests::class,
+            \App\Http\Middleware\SecureHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -25,27 +25,7 @@ const accountTableColumns = [
     { id: 'balance', label: 'Saldo', widthClassName: 'w-[180px]', align: 'right' },
 ];
 
-const accountRows = [
-    { id: '111.000-00', code: '111.000-00', name: 'Kas dan Setara Kas', type: 'Kas & Bank', balance: '28,086,825,446.8', level: 0 },
-    { id: '111.100-00', code: '111.100-00', name: 'Kas dan Setara Kas Jakarta', type: 'Kas & Bank', balance: '16,185,188,363.7', level: 1, parentId: '111.000-00' },
-    { id: '111.101-00', code: '111.101-00', name: 'Kas Jakarta', type: 'Kas & Bank', balance: '178,860,364', level: 2, parentId: '111.100-00' },
-    { id: '111.101-01', code: '111.101-01', name: 'Kas Kecil Kantor Jakarta', type: 'Kas & Bank', balance: '4,202,000', level: 3, parentId: '111.101-00' },
-    { id: '111.101-02', code: '111.101-02', name: 'Kas Besar Kantor Jakarta', type: 'Kas & Bank', balance: '174,658,364', level: 3, parentId: '111.101-00' },
-    { id: '111.102-00', code: '111.102-00', name: 'Bank Jakarta', type: 'Kas & Bank', balance: '16,006,327,999.7', level: 2, parentId: '111.100-00' },
-    { id: '111.102-01', code: '111.102-01', name: 'Bank BCA IDR Jakarta (069-773-3993)', type: 'Kas & Bank', balance: '14,260,127,477', level: 3, parentId: '111.102-00' },
-    { id: '111.102-02', code: '111.102-02', name: 'Bank BCA USD Jakarta (273-846-4723)', type: 'Kas & Bank', balance: '902,226,600', level: 3, parentId: '111.102-00' },
-    { id: '111.102-03', code: '111.102-03', name: 'Bank BCA SGD Jakarta (157-375-3993)', type: 'Kas & Bank', balance: '656,672,014.7', level: 3, parentId: '111.102-00' },
-    { id: '111.102-04', code: '111.102-04', name: 'Bank Mandiri IDR Jakarta (142-205-9324)', type: 'Kas & Bank', balance: '187,301,908', level: 3, parentId: '111.102-00' },
-    { id: '111.200-00', code: '111.200-00', name: 'Kas dan Setara Kas Surabaya', type: 'Kas & Bank', balance: '11,901,637,083.1', level: 1, parentId: '111.000-00' },
-    { id: '111.201-00', code: '111.201-00', name: 'Kas Surabaya', type: 'Kas & Bank', balance: '28,061,128', level: 2, parentId: '111.200-00' },
-    { id: '111.201-01', code: '111.201-01', name: 'Kas Kecil Kantor Surabaya', type: 'Kas & Bank', balance: '23,935,000', level: 3, parentId: '111.201-00' },
-    { id: '111.201-02', code: '111.201-02', name: 'Kas Besar Kantor Surabaya', type: 'Kas & Bank', balance: '4,126,128', level: 3, parentId: '111.201-00' },
-    { id: '111.202-00', code: '111.202-00', name: 'Bank Surabaya', type: 'Kas & Bank', balance: '11,873,575,955.1', level: 2, parentId: '111.200-00' },
-    { id: '111.202-01', code: '111.202-01', name: 'Bank BCA IDR Surabaya (388-308-3993)', type: 'Kas & Bank', balance: '11,542,950,800', level: 3, parentId: '111.202-00' },
-    { id: '111.202-02', code: '111.202-02', name: 'Bank BCA USD Surabaya (247-878-6241)', type: 'Kas & Bank', balance: '233,544,600', level: 3, parentId: '111.202-00' },
-    { id: '111.202-03', code: '111.202-03', name: 'Bank BCA SGD Surabaya (102-263-7587)', type: 'Kas & Bank', balance: '104,091,617.1', level: 3, parentId: '111.202-00' },
-    { id: '111.202-04', code: '111.202-04', name: 'Bank Mandiri IDR Surabaya (276-129-4178)', type: 'Kas & Bank', balance: '(7,011,062)', level: 3, parentId: '111.202-00', negative: true },
-];
+const accountRows = [];
 
 const accountCreateValues = {
     type: 'Kas & Bank',
@@ -60,27 +40,7 @@ const accountCreateValues = {
     allUsers: true,
 };
 
-const accountDetailRecords = {
-    '111.000-00': {
-        type: 'Kas & Bank',
-        isSubAccount: false,
-        code: '111.000-00',
-        name: 'Kas dan Setara Kas',
-        currencyLabel: 'Indonesian Rupiah',
-        balanceLabel: 'Rp 28,086,825,446.8',
-        notes: '',
-        cashBankReference: 'Kas dan Setara Kas',
-        allUsers: true,
-        childAccounts: accountRows
-            .filter((row) => row.id !== '111.000-00')
-            .map((row) => ({
-                id: row.id,
-                code: row.code,
-                name: row.name,
-                level: row.level,
-            })),
-    },
-};
+const accountDetailRecords = {};
 
 export const defaultAccountsConfig = {
     topActions: accountTopActions,

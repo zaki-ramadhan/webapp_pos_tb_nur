@@ -60,25 +60,7 @@ const salesReturnDetailDockActions = [
     createDeleteDockAction(),
 ];
 
-const salesReturnTableRows = [
-    { id: 'SRT.2017.01.00005', rowSpacer: '', number: 'SRT.2017.01.00005', date: '31/01/2017', customer: 'PT Galaxy Phone', customerShort: 'PT Galaxy Phone', notes: '', total: '7,600', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2017.01.00004', rowSpacer: '', number: 'SRT.2017.01.00004', date: '30/01/2017', customer: 'PT CIRCLE PHONE', customerShort: 'PT CIRCLE PHONE', notes: '', total: '2,400', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2017.01.00003', rowSpacer: '', number: 'SRT.2017.01.00003', date: '20/01/2017', customer: 'Global Phone Jaya', customerShort: 'Global Phone Jaya', notes: '', total: '39,160,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2017.01.00002', rowSpacer: '', number: 'SRT.2017.01.00002', date: '20/01/2017', customer: 'Pelanggan Umum - Surabaya', customerShort: 'Pelanggan Umum - Sur...', notes: '', total: '6,000,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2017.01.00001', rowSpacer: '', number: 'SRT.2017.01.00001', date: '18/01/2017', customer: 'Pelanggan Umum - Jakarta', customerShort: 'Pelanggan Umum - Jak...', notes: '', total: '3,600,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.12.00004', rowSpacer: '', number: 'SRT.2016.12.00004', date: '31/12/2016', customer: 'Abadi Phone Center', customerShort: 'Abadi Phone Center', notes: '', total: '1,705,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.12.00003', rowSpacer: '', number: 'SRT.2016.12.00003', date: '25/12/2016', customer: 'PT Global Makmur', customerShort: 'PT Global Makmur', notes: '', total: '37,400,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.12.00002', rowSpacer: '', number: 'SRT.2016.12.00002', date: '20/12/2016', customer: 'PT CIRCLE PHONE', customerShort: 'PT CIRCLE PHONE', notes: '', total: '2,400', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.12.00001', rowSpacer: '', number: 'SRT.2016.12.00001', date: '13/12/2016', customer: 'Abadi Phone Center', customerShort: 'Abadi Phone Center', notes: 'Barang Rusak.', total: '1,100,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.11.00004', rowSpacer: '', number: 'SRT.2016.11.00004', date: '30/11/2016', customer: 'Dimas seraya Accessories', customerShort: 'Dimas seraya Accessories', notes: '', total: '300,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.11.00001', rowSpacer: '', number: 'SRT.2016.11.00001', date: '30/11/2016', customer: 'Abadi Phone Center', customerShort: 'Abadi Phone Center', notes: '', total: '12,210,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.11.00003', rowSpacer: '', number: 'SRT.2016.11.00003', date: '25/11/2016', customer: 'Global Phone Jaya', customerShort: 'Global Phone Jaya', notes: '', total: '1,950,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.11.00002', rowSpacer: '', number: 'SRT.2016.11.00002', date: '20/11/2016', customer: 'Dimas seraya Accessories', customerShort: 'Dimas seraya Accessories', notes: '', total: '500,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.10.00004', rowSpacer: '', number: 'SRT.2016.10.00004', date: '31/10/2016', customer: 'Pelanggan Umum - Surabaya', customerShort: 'Pelanggan Umum - Sur...', notes: '', total: '4,000,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.10.00003', rowSpacer: '', number: 'SRT.2016.10.00003', date: '30/10/2016', customer: 'Pelanggan Umum - Jakarta', customerShort: 'Pelanggan Umum - Jak...', notes: '', total: '4,000,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.10.00001', rowSpacer: '', number: 'SRT.2016.10.00001', date: '30/10/2016', customer: 'PT Nusantara Indah', customerShort: 'PT Nusantara Indah', notes: '', total: '46,500,000', returnType: 'Faktur', printedStatus: 'all' },
-    { id: 'SRT.2016.10.00002', rowSpacer: '', number: 'SRT.2016.10.00002', date: '25/10/2016', customer: 'PT Nusantara Indah', customerShort: 'PT Nusantara Indah', notes: '', total: '34,100,000', returnType: 'Faktur', printedStatus: 'all' },
-];
+const salesReturnTableRows = [];
 
 const salesReturnDraft = {
     customer: [],
@@ -124,62 +106,7 @@ const salesReturnDraft = {
     dockActions: salesReturnCreateDockActions,
 };
 
-const salesReturnDetailRecords = {
-    'SRT.2017.01.00005': {
-        customer: ['[CJKT-0002] PT Galaxy Phone'],
-        entryDate: '31/01/2017',
-        autoNumber: false,
-        numberingType: 'Retur Penjualan',
-        documentNumber: 'SRT.2017.01.00005',
-        currency: 'SGD',
-        exchangeRate: '9,543',
-        exchangeRateLabel: '',
-        exchangeRatePrefix: 'Rtl',
-        secondaryExchangeRate: '9,391.68',
-        secondaryExchangeRatePrefix: 'Pjk',
-        showSecondaryExchangeRateField: true,
-        returnSource: 'Faktur',
-        returnSourceReferences: ['SI.2017.02.00009'],
-        itemSearch: '',
-        items: [
-            {
-                id: 'sales-return-detail-item-1',
-                name: 'Samsung S7',
-                code: '1100004',
-                quantity: '5',
-                unit: 'PCS',
-                price: '1,520',
-                discount: '0',
-                total: '7,600',
-            },
-        ],
-        itemCountLabel: '1 Barang (5)',
-        address: 'Peakview Estate, 3, 3 Jalan Pari Dedap, 488606',
-        branches: ['JAKARTA'],
-        notes: '',
-        returnItemMode: 'returned',
-        printedBy: '',
-        printedDate: '',
-        taxEnabled: false,
-        taxIncluded: false,
-        costSearch: '',
-        additionalCosts: [],
-        summary: [],
-        processedBy: null,
-        approvalStamp: '',
-        processStamp: '',
-        showProcessButton: false,
-        processDisabled: false,
-        showHeaderTakeButton: false,
-        subtotal: '$ 7,600',
-        discountValue: '0',
-        discountPrefix: '$',
-        taxLabel: '',
-        taxValue: '',
-        total: '$ 7,600',
-        dockActions: salesReturnDetailDockActions,
-    },
-};
+const salesReturnDetailRecords = {};
 
 const defaultSalesReturnConfig = {
     labels: {
