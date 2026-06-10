@@ -12,11 +12,7 @@ function resolveMaxColumns(itemCount) {
         return 3;
     }
 
-    if (itemCount <= 11) {
-        return 5;
-    }
-
-    return 6;
+    return 4;
 }
 
 function resolveColumnCount(itemCount) {
@@ -98,8 +94,8 @@ export default function SidebarFlyout({
               : viewportWidth < 1024
                 ? Math.min(isDense ? 4 : 3, resolveColumnCount(itemCount))
                 : viewportWidth < 1280
-                  ? Math.min(isDense ? 5 : 4, resolveColumnCount(itemCount))
-                  : resolveColumnCount(itemCount);
+                  ? Math.min(4, resolveColumnCount(itemCount))
+                  : Math.min(4, resolveColumnCount(itemCount));
     const tileWidth = resolveTileWidth(columnCount, isDense);
     const flyoutWidth = resolveFlyoutWidth(columnCount, tileWidth, isDense);
 
