@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ImportItemsModal from '@/features/workspace/shared/ImportItemsModal';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -66,6 +67,7 @@ export default function SalesDocumentFormView({
     onRefresh,
 }) {
     const [itemModalOpen, setItemModalOpen] = useState(false);
+    const [importModalOpen, setImportModalOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(
         () => (activeRecordId ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId)) : config.draft),
@@ -85,6 +87,7 @@ export default function SalesDocumentFormView({
         setActiveSectionId(resolveInitialSectionId(config, isDetail));
         setValues(buildSalesDocumentFormState(sourceRecord));
         setItemModalOpen(false);
+        setImportModalOpen(false);
     }, [config, isDetail, sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);
@@ -235,8 +238,38 @@ export default function SalesDocumentFormView({
                         fob: [buildLookupLabel(record)],
                     })),
                 ),
+            onImportClick: () => setImportModalOpen(true),
+            onImportItems: (importedItems) => {
+                updateItems((existingItems) => {
+                    const mergedItems = [...existingItems];
+                    importedItems.forEach((imported) => {
+                        const duplicateIdx = mergedItems.findIndex(
+                            (item) => String(item.code).toLowerCase() === String(imported.code).toLowerCase()
+                        );
+                        if (duplicateIdx !== -1) {
+                            const existingQty = parseFloat(mergedItems[duplicateIdx].quantity) || 0;
+                            const importedQty = parseFloat(imported.quantity) || 0;
+                            const newQty = existingQty + importedQty;
+
+                            const price = parseFloat(String(mergedItems[duplicateIdx].price).replace(/[^\d.-]/g, '')) || 0;
+                            const discount = parseFloat(String(mergedItems[duplicateIdx].discount).replace(/[^\d.-]/g, '')) || 0;
+                            const newTotal = Math.max(0, newQty * price - discount);
+
+                            mergedItems[duplicateIdx].quantity = String(newQty);
+                            mergedItems[duplicateIdx].total = newTotal.toLocaleString('id-ID');
+                        } else {
+                            mergedItems.push({
+                                ...imported,
+                                id: `imported-item-${Date.now()}-${Math.random()}`,
+                            });
+                        }
+                    });
+                    return mergedItems;
+                });
+                setStatus({ tone: 'success', message: `${importedItems.length} item berhasil diimpor.` });
+            },
         }),
-        [selectLookup],
+        [selectLookup, updateItems, setStatus],
     );
 
     const dockActions = useMemo(
@@ -341,6 +374,12 @@ export default function SalesDocumentFormView({
                 cancelLabel="Batal"
                 confirmVariant="danger"
                 confirmLoading={saving}
+            />
+            <ImportItemsModal
+                open={importModalOpen}
+                onClose={() => setImportModalOpen(false)}
+                onImport={handlers.onImportItems}
+                mode={String(pageId || '').toLowerCase().includes('purchase') || String(pageId || '').toLowerCase().includes('receipt') ? 'purchasing' : 'sales'}
             />
         </div>
     );

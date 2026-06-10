@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ImportItemsModal from '@/features/workspace/shared/ImportItemsModal';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -43,6 +44,7 @@ export default function ItemRequestFormView({
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const [importModalOpen, setImportModalOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(
         () =>
@@ -60,6 +62,7 @@ export default function ItemRequestFormView({
         setValues(buildFormValues(sourceRecord));
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
+        setImportModalOpen(false);
     }, [config.sectionTabs, sourceRecord]);
 
     const validationMessage = useMemo(() => validateItemRequestValues(values, config), [config, values]);
@@ -232,6 +235,30 @@ export default function ItemRequestFormView({
             onSelectItem: () =>
                 selectLookup('products', 'barang', (record) => buildLookupLabel(record), (record) => applyItemUpdate(record)),
             onEditItem: (item) => applyItemUpdate(null, item),
+            onImportClick: () => setImportModalOpen(true),
+            onImportItems: (importedItems) => {
+                setValues((current) => {
+                    const existingItems = current.items ?? [];
+                    const mergedItems = [...existingItems];
+                    importedItems.forEach((imported) => {
+                        const duplicateIdx = mergedItems.findIndex(
+                            (item) => String(item.code).toLowerCase() === String(imported.code).toLowerCase()
+                        );
+                        if (duplicateIdx !== -1) {
+                            const existingQty = parseFloat(mergedItems[duplicateIdx].quantity) || 0;
+                            const importedQty = parseFloat(imported.quantity) || 0;
+                            mergedItems[duplicateIdx].quantity = String(existingQty + importedQty);
+                        } else {
+                            mergedItems.push({
+                                ...imported,
+                                id: `imported-item-${Date.now()}-${Math.random()}`,
+                            });
+                        }
+                    });
+                    return applyItemRequestItems(current, mergedItems);
+                });
+                setStatus({ tone: 'success', message: `${importedItems.length} barang berhasil diimpor.` });
+            },
         }),
         [values.requestDate],
     );
@@ -263,6 +290,13 @@ export default function ItemRequestFormView({
                 cancelLabel="Batal"
                 confirmVariant="danger"
                 confirmLoading={saving}
+            />
+
+            <ImportItemsModal
+                open={importModalOpen}
+                onClose={() => setImportModalOpen(false)}
+                onImport={handlers.onImportItems}
+                mode="purchasing"
             />
         </>
     );

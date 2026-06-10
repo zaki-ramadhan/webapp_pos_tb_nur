@@ -13,6 +13,16 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
     const itemRowClick = canOpenItemModal ? config.onOpenItemModal : handlers?.onEditItem;
     const itemTitleClick = canOpenItemModal ? config.onOpenItemModal : handlers?.onCreateItem;
 
+    const importButton = !isDetail && handlers?.onImportClick ? (
+        <button
+            type="button"
+            onClick={handlers.onImportClick}
+            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b] hover:bg-[#f3f7fc] transition shrink-0 cursor-pointer"
+        >
+            Impor Excel/CSV
+        </button>
+    ) : null;
+
     return (
         <SearchableTableSection
             searchValue={values.itemSearch}
@@ -25,6 +35,7 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             showTitleSearchButton={config.showItemTitleSearchButton ?? isDetail}
             hideSearchField={config.hideItemSearchField}
             leadingAction={itemLeadingAction}
+            extraActions={importButton}
             onTitleClick={itemTitleClick}
             onRowClick={itemRowClick}
         />

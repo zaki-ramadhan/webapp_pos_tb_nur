@@ -116,6 +116,7 @@ export function SearchableTableSection({
     leadingAction = null,
     onTitleClick,
     onRowClick,
+    extraActions = null,
 }) {
     const titleContent = (
         <>
@@ -128,16 +129,18 @@ export function SearchableTableSection({
     return (
         <div className={`flex flex-col ${hasRows ? 'min-h-[540px] sm:min-h-[620px]' : 'min-h-[240px] sm:min-h-[260px]'}`.trim()}>
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className={`flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center ${hideSearchField ? '' : 'sm:max-w-[560px]'}`.trim()}>
+                <div className={`flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center ${hideSearchField ? '' : 'sm:max-w-[640px]'}`.trim()}>
                     {leadingAction ? (
                         <button
                             type="button"
                             onClick={leadingAction.onClick}
-                            className="inline-flex h-[40px] w-full shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[15px] text-[#21539b] sm:w-auto"
+                            className="inline-flex h-[40px] w-full shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[15px] text-[#21539b] sm:w-auto hover:bg-[#f3f7fc] transition"
                         >
                             {leadingAction.label}
                         </button>
                     ) : null}
+
+                    {extraActions}
 
                     {!hideSearchField ? (
                         <div className="min-w-0 flex-1">
