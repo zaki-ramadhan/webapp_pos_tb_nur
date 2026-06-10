@@ -24,7 +24,7 @@ export default function AuthLayout({ children, title }) {
         <>
             <Head title={title || appName} />
 
-        <div className="auth-screen relative h-screen overflow-hidden bg-[#9ab8ea] text-slate-700">
+        <div className="auth-screen relative h-screen overflow-hidden bg-layout-bg text-slate-700">
                 <GlobalBackgroundArt />
 
                 <div className="relative flex h-full items-center justify-center px-4 py-8 sm:px-6 sm:py-12 lg:px-8">

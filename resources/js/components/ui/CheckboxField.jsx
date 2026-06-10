@@ -47,18 +47,18 @@ export default function CheckboxField({
                     type="checkbox"
                     disabled={disabled}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`${inputOffsetClassName} shrink-0 rounded-[4px] border border-slate-300 text-[#0f65c9] focus:ring-2 focus:ring-[#5a84e5]/30 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${sizeClassName} ${resolvedError ? 'border-[#d65959]' : ''} ${inputClassName}`.trim()}
+                    className={`${inputOffsetClassName} shrink-0 rounded-[4px] border border-slate-300 text-input-brand focus:ring-2 focus:ring-input-focus/30 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${sizeClassName} ${resolvedError ? 'border-error-border' : ''} ${inputClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
                 />
                 <span className={`min-w-0 ${labelClassName}`.trim()}>
-                    <span className={`${disabled ? 'text-slate-400' : 'text-[#131a28]'}`.trim()}>
+                    <span className={`${disabled ? 'text-slate-400' : 'text-brand-dark'}`.trim()}>
                         {label}
                         {children}
                     </span>
 
                     {feedbackMessage ? (
-                        <span className={`mt-1 block text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                        <span className={`mt-1 block text-[13px] leading-5 ${resolvedError ? 'text-error-text' : 'text-slate-500'} ${messageClassName}`.trim()}>
                             {feedbackMessage}
                         </span>
                     ) : null}

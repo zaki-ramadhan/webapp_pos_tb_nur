@@ -7,14 +7,14 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
         : 'gap-2 px-3.5 md:gap-2.5 md:px-4.5';
     const className = isViewTab
         ? active
-            ? 'border-x-[1px] border-b-0 border-[#cfd4dc] border-t-[3px] border-t-[#e6e9ee] bg-[#f7f8fa] font-medium text-[#626b80]'
-            : 'border-l-[#58bc32] border-r-[#58bc32] border-t-[#90e66a] bg-[#59c62e] font-normal text-white'
+            ? 'border-x-[1px] border-b-0 border-tab-view-active-border-x border-t-[3px] border-t-tab-view-active-border-t bg-tab-view-active-bg font-medium text-tab-view-active-text'
+            : 'border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'
         : active
-          ? 'border-l-[#bcc3cf] border-r-[#bcc3cf] border-t-[3px] border-t-[#ED3969] bg-[#f7f8fa] font-medium text-[#3c4459]'
-          : 'border-l-[#adb4c1] border-r-[#adb4c1] border-t-[#c1c6d0] bg-[#d5d9df] font-normal text-[#5c6478]';
+          ? 'border-l-tab-active-border-x border-r-tab-active-border-x border-t-[3px] border-t-tab-active-border-t bg-tab-active-bg font-medium text-tab-active-text'
+          : 'border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text';
     const closeButtonClassName = active
         ? 'text-current hover:bg-white/20'
-        : 'text-[#6e768b] hover:bg-white/70';
+        : 'text-text-muted hover:bg-white/70';
 
     return (
         <div

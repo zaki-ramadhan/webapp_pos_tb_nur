@@ -1,10 +1,10 @@
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
 const TONE_CONFIG = {
-    info:    { classes: 'border-[#c8ddff] bg-[#eef5ff] text-[#45608f]', Icon: Info },
-    success: { classes: 'border-[#cfe8da] bg-[#edf9f2] text-[#3e7454]', Icon: CheckCircle },
-    warning: { classes: 'border-[#f7e0b8] bg-[#fff7e8] text-[#8b6533]', Icon: AlertTriangle },
-    danger:  { classes: 'border-[#f7c6d2] bg-[#fff1f5] text-[#9a4f66]', Icon: AlertCircle },
+    info:    { classes: 'border-info-border bg-info-bg text-info-text', Icon: Info },
+    success: { classes: 'border-success-border bg-success-bg text-success-text', Icon: CheckCircle },
+    warning: { classes: 'border-warning-border bg-warning-bg text-warning-text', Icon: AlertTriangle },
+    danger:  { classes: 'border-danger-border bg-danger-bg text-danger-text', Icon: AlertCircle },
 };
 
 export default function Notice({ children, tone = 'info', className = '' }) {

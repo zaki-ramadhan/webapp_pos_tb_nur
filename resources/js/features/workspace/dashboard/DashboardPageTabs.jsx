@@ -23,8 +23,8 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
             }}
             className={`relative -mb-px inline-flex h-8.5 items-center rounded-t-[5px] border text-[12px] leading-normal transition sm:h-9 sm:text-[13px] md:h-9.75 md:text-[15px] max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
-                    ? 'z-10 border-[2px] border-[#ED3969] bg-[#ED3969] font-medium text-white'
-                    : 'border-[#bcc3cf] bg-[#d9dcdf] font-normal text-[#596076] hover:bg-[#d1d5da]'
+                    ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-medium text-white'
+                    : 'border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
             } shrink-0 whitespace-nowrap`.trim()}
             aria-label={tab.label}
         >
@@ -39,7 +39,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
                         onClose(tab.id);
                     }}
                 className={`inline-flex h-5 w-5 items-center justify-center rounded-[3px] sm:h-6 sm:w-6 ${
-                        active ? 'text-white/95 hover:bg-white/15' : 'text-[#6e768b] hover:bg-white/70'
+                        active ? 'text-white/95 hover:bg-white/15' : 'text-text-muted hover:bg-white/70'
                     }`.trim()}
                     aria-label={`Tutup tab ${tab.label}`}
                 >
@@ -65,7 +65,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((currentValue) => !currentValue)}
-                className="inline-flex h-8.5 min-w-[40px] items-center justify-center gap-1 border-l border-[#d7dbe4] px-2 text-[12px] text-[#5a6278] transition hover:bg-[#eceef2] sm:h-9 sm:min-w-[44px] sm:px-2.5 sm:text-[13px] md:min-w-[46px] md:px-3 md:text-[14px]"
+                className="inline-flex h-8.5 min-w-[40px] items-center justify-center gap-1 border-l border-tab-overflow-border px-2 text-[12px] text-text-medium transition hover:bg-ui-bg-hover sm:h-9 sm:min-w-[44px] sm:px-2.5 sm:text-[13px] md:min-w-[46px] md:px-3 md:text-[14px]"
                 aria-label={`Buka daftar ${tabs.length} tab halaman`}
                 aria-expanded={open}
             >
@@ -79,7 +79,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                 anchorRef={buttonRef}
                 widthClassName="w-[min(18rem,calc(100vw-1rem))]"
                 className="z-[60]"
-                panelClassName="rounded-none border-[#d3d9e5] p-0 shadow-[0_8px_18px_rgba(15,23,42,0.14)]"
+                panelClassName="rounded-none border-tab-overflow-panel-border p-0 shadow-[0_8px_18px_rgba(15,23,42,0.14)]"
             >
                 <div className="py-1">
                     {tabs.map((tab) => (
@@ -88,8 +88,8 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                             onClick={() => handleSelect(tab.id)}
                             className={`rounded-none px-3 py-2 text-[13px] md:text-[14px] ${
                                 activePage?.id === tab.id
-                                    ? 'bg-[#f4f7fc] font-medium text-[#234b87]'
-                                    : 'text-[#1f2436]'
+                                    ? 'bg-brand-blue-lightest font-medium text-brand-blue-darker'
+                                    : 'text-brand-dark'
                             }`.trim()}
                             contentClassName="truncate"
                         >
@@ -109,8 +109,8 @@ function HeaderActionButton({ action }) {
             : <CogIcon className="h-[18px] w-[18px]" />;
     const toneClassName =
         action.tone === 'warning'
-            ? 'border-[#f4b038] bg-[#ffab13] text-white'
-            : 'border-[#7aa2d5] bg-white text-[#2353a0]';
+            ? 'border-warning-border bg-warning text-white'
+            : 'border-brand-blue-border bg-white text-brand-blue';
 
     return (
         <button
@@ -136,8 +136,8 @@ export default function DashboardPageTabs({
     onCloseLevel2Tab,
 }) {
     return (
-        <div className="border-b border-[#d4d8e1] bg-[#f3f4f6] pt-0.5 sm:pt-1">
-            <div className="border-t border-[#d8dde7] bg-[#f2f2f3] px-1 pt-0.5 sm:px-1.5 sm:pt-1">
+        <div className="border-b border-ui-border-medium bg-ui-bg-panel pt-0.5 sm:pt-1">
+            <div className="border-t border-ui-border-medium bg-ui-bg-panel-light px-1 pt-0.5 sm:px-1.5 sm:pt-1">
                 <div className="flex items-stretch justify-between gap-1 sm:gap-2">
                     <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                         <div className="flex w-max min-w-full items-end gap-[5px]">
@@ -158,12 +158,12 @@ export default function DashboardPageTabs({
             </div>
 
             {activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length ? (
-                <div className="border-t border-[#d8dbe2] bg-[#f6f6f7] px-2 pb-0 pt-1.5 sm:px-2.5">
+                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-1.5 sm:px-2.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <div
                             aria-disabled="true"
                             title="Mode daftar tidak dapat diubah pada halaman ini"
-                            className="relative -mb-px inline-flex h-9 cursor-not-allowed items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-[#c5c9d2] border-r-[#c5c9d2] border-t-[#9ca3af] bg-[#e5e7eb] px-3 text-[#9ca3af] sm:h-9.5 sm:px-4"
+                            className="relative -mb-px inline-flex h-9 cursor-not-allowed items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-disabled-border border-r-disabled-border border-t-disabled-border-t bg-disabled-bg px-3 text-disabled-text sm:h-9.5 sm:px-4"
                         >
                             <ViewModeIcon />
                         </div>
@@ -180,7 +180,7 @@ export default function DashboardPageTabs({
             ) : null}
 
             {activePage?.id !== 'dashboard' && level2Tabs.length ? (
-                <div className="border-t border-[#d8dbe2] bg-[#f6f6f7] px-2 pb-0 pt-1.5 sm:px-2.5">
+                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-1.5 sm:px-2.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <SecondaryTabs
                             tabs={level2Tabs}

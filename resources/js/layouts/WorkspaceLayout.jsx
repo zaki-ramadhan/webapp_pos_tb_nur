@@ -9,7 +9,7 @@ export default function WorkspaceLayout({ children, title = 'Workspace' }) {
         <>
             <Head title={title || appName} />
 
-            <div className="workspace-screen relative h-screen w-screen overflow-hidden bg-[#9ab8ea] text-[#4f5679]">
+            <div className="workspace-screen relative h-screen w-screen overflow-hidden bg-layout-bg text-layout-text">
                 <GlobalBackgroundArt />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.55)_0%,rgba(237,247,255,0.84)_100%)]" />
 

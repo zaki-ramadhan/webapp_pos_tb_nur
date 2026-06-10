@@ -54,7 +54,7 @@ export default function DashboardTopBar({
     }
 
     return (
-        <header className="relative z-20 border-b border-[#ED3969] bg-[linear-gradient(90deg,#213e75_0%,#1b315d_100%)] px-3 py-1.5 text-white shadow-[0_4px_12px_rgba(15,23,42,0.14)] sm:px-4 sm:py-2">
+        <header className="relative z-20 border-b border-brand-primary bg-header-gradient px-3 py-1.5 text-white shadow-[0_4px_12px_rgba(15,23,42,0.14)] sm:px-4 sm:py-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center">
                     <BrandMark
