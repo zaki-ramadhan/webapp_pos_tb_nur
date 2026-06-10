@@ -56,34 +56,7 @@ class BackendResourceController extends Controller
                 ->filter(fn ($val, $key) => in_array($key, $this->allowedPreferenceKeys(), true))
                 ->toArray();
             
-            \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {
-                foreach ($settings as $key => $val) {
-                    $group = 'features';
-                    $companyKeys = [
-                        'company-name', 'business-category', 'business-field', 
-                        'phone', 'fax', 'email', 'start-date', 'accounting-period', 
-                        'currency', 'street', 'city', 'province', 'postal-code', 'country'
-                    ];
-                    if (in_array($key, $companyKeys)) {
-                        $group = 'company_info';
-                    }
-
-                    \App\Domain\Support\Models\PreferenceSetting::updateOrCreate(
-                        [
-                            'group_key' => $group,
-                            'setting_key' => $key,
-                            'scope_type' => 'company',
-                            'scope_key' => 'default',
-                        ],
-                        [
-                            'label' => ucwords(str_replace('-', ' ', $key)),
-                            'data_type' => 'string',
-                            'value' => $val,
-                            'is_active' => true,
-                        ]
-                    );
-                }
-            });
+            $this->savePreferences($settings);
 
             return response()->json([
                 'message' => 'Preferensi berhasil disimpan.',
@@ -120,34 +93,7 @@ class BackendResourceController extends Controller
                 ->filter(fn ($val, $key) => in_array($key, $this->allowedPreferenceKeys(), true))
                 ->toArray();
             
-            \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {
-                foreach ($settings as $key => $val) {
-                    $group = 'features';
-                    $companyKeys = [
-                        'company-name', 'business-category', 'business-field', 
-                        'phone', 'fax', 'email', 'start-date', 'accounting-period', 
-                        'currency', 'street', 'city', 'province', 'postal-code', 'country'
-                    ];
-                    if (in_array($key, $companyKeys)) {
-                        $group = 'company_info';
-                    }
-
-                    \App\Domain\Support\Models\PreferenceSetting::updateOrCreate(
-                        [
-                            'group_key' => $group,
-                            'setting_key' => $key,
-                            'scope_type' => 'company',
-                            'scope_key' => 'default',
-                        ],
-                        [
-                            'label' => ucwords(str_replace('-', ' ', $key)),
-                            'data_type' => 'string',
-                            'value' => $val,
-                            'is_active' => true,
-                        ]
-                    );
-                }
-            });
+            $this->savePreferences($settings);
 
             return response()->json([
                 'message' => 'Preferensi berhasil disimpan.',
@@ -254,6 +200,38 @@ class BackendResourceController extends Controller
                 'message' => 'Terjadi kesalahan sistem saat sinkronisasi: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    protected function savePreferences(array $settings): void
+    {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {
+            foreach ($settings as $key => $val) {
+                $group = 'features';
+                $companyKeys = [
+                    'company-name', 'business-category', 'business-field', 
+                    'phone', 'fax', 'email', 'start-date', 'accounting-period', 
+                    'currency', 'street', 'city', 'province', 'postal-code', 'country'
+                ];
+                if (in_array($key, $companyKeys)) {
+                    $group = 'company_info';
+                }
+
+                \App\Domain\Support\Models\PreferenceSetting::updateOrCreate(
+                    [
+                        'group_key' => $group,
+                        'setting_key' => $key,
+                        'scope_type' => 'company',
+                        'scope_key' => 'default',
+                    ],
+                    [
+                        'label' => ucwords(str_replace('-', ' ', $key)),
+                        'data_type' => 'string',
+                        'value' => $val,
+                        'is_active' => true,
+                    ]
+                );
+            }
+        });
     }
 
     protected function allowedPreferenceKeys(): array
