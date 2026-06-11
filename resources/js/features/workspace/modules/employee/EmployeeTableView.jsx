@@ -9,19 +9,11 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
-import TextInput from '@/components/ui/TextInput';
+import TableToolbar from '@/features/workspace/shared/TableToolbar';
+import { FunnelIcon, PlusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import {
-    DownloadIcon,
-    ExternalLinkIcon,
-    FunnelIcon,
-    PlusIcon,
-    PrintIcon,
-    RefreshIcon,
-    SearchIcon,
-} from '@/features/workspace/shared/Icons';
 import { matchesEmployeeFilter } from '@/features/workspace/modules/employee/employeeViewShared';
-import { TableActionMenu, ToolbarSquareButton } from '@/features/workspace/modules/employee/employeeControls';
+import { useColumnVisibility, getTableSchemaKey } from '@/features/workspace/shared/columnVisibility';
 
 export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
@@ -31,6 +23,13 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
             return result;
         }, {}),
     );
+
+    const schemaKey = getTableSchemaKey(table.columns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
+
+    const visibleColumns = useMemo(() => {
+        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [table.columns, visibleColumnIds]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -63,85 +62,68 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-            <div className="mb-3 flex flex-wrap items-center gap-2.5">
-                {table.filters.map((filter) => (
-                    <SelectField
-                        key={filter.id}
-                        value={filters[filter.id]}
-                        onChange={(event) =>
-                            setFilters((currentFilters) => ({
-                                ...currentFilters,
-                                [filter.id]: event.target.value,
-                            }))
-                        }
-                        containerClassName="w-auto shrink-0"
-                        className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2] sm:min-w-[154px]"
-                        selectClassName="text-[14px] text-[#394157]"
-                    >
-                        {filter.options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
+            <TableToolbar
+                size="compact"
+                filters={
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        {table.filters.map((filter) => (
+                            <SelectField
+                                key={filter.id}
+                                value={filters[filter.id]}
+                                onChange={(event) =>
+                                    setFilters((currentFilters) => ({
+                                        ...currentFilters,
+                                        [filter.id]: event.target.value,
+                                    }))
+                                }
+                                containerClassName="w-auto shrink-0"
+                                className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2] sm:min-w-[154px]"
+                                selectClassName="text-[14px] text-[#394157]"
+                            >
+                                {filter.options.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </SelectField>
                         ))}
-                    </SelectField>
-                ))}
-
-                <ToolbarSquareButton label={table.filterButtonLabel}>
-                    <FunnelIcon className="h-5 w-5" />
-                </ToolbarSquareButton>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={onCreate}
-                        aria-label={table.createLabel}
-                        className="inline-flex h-[34px] w-[60px] shrink-0 items-center justify-center rounded-[4px] bg-[#2353a0] text-white shadow-[0_4px_10px_rgba(15,23,42,0.08)]"
-                    >
-                        <PlusIcon className="h-6 w-6" />
-                    </button>
-
-                    <ToolbarSquareButton label={table.refreshLabel} onClick={table.onRefresh}>
-                        <RefreshIcon className="h-5 w-5" />
-                    </ToolbarSquareButton>
-                </div>
-
-                <div className="flex min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
-                    <ToolbarSquareButton label={table.downloadLabel}>
-                        <DownloadIcon className="h-4 w-4" />
-                    </ToolbarSquareButton>
-                    <ToolbarSquareButton label={table.shareLabel}>
-                        <ExternalLinkIcon className="h-4 w-4" />
-                    </ToolbarSquareButton>
-                    <ToolbarSquareButton label={table.printLabel}>
-                        <PrintIcon className="h-4 w-4" />
-                    </ToolbarSquareButton>
-                    <TableActionMenu items={table.menuItems} label={table.actionsLabel} />
-
-                    <TextInput
-                        value={keyword}
-                        onChange={(event) => setKeyword(event.target.value)}
-                        placeholder={table.searchPlaceholder}
-                        className="h-[34px] w-full rounded-[4px] border-[#cfd6e2] sm:w-[340px]"
-                        inputClassName="text-[15px] text-[#1f2436]"
-                        trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
-                    />
-
-                    <TextInput
-                        value={table.pageValue}
-                        readOnly
-                        className="h-[34px] w-[74px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-[15px] text-[#646d83]"
-                    />
-                </div>
-            </div>
+                    </div>
+                }
+                createButton={{
+                    label: table.createLabel,
+                    onClick: onCreate,
+                    icon: <PlusIcon className="h-6 w-6" />,
+                }}
+                refreshButton={{
+                    label: table.refreshLabel,
+                    onClick: table.onRefresh,
+                    loading: table.loading,
+                }}
+                resourceName="employees"
+                onRefresh={table.onRefresh}
+                exportConfig={{
+                    columns: table.columns,
+                    rows: filteredRows,
+                    filename: 'daftar-karyawan',
+                    title: 'Laporan Daftar Karyawan',
+                }}
+                search={{
+                    value: keyword,
+                    onChange: (event) => setKeyword(event.target.value),
+                    placeholder: table.searchPlaceholder,
+                    widthClassName: 'sm:w-[340px]',
+                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                }}
+            />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable className="min-w-[1460px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {table.columns.map((column) => (
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-[15px] font-medium text-white">
+                                No.
+                            </DataTableHead>
+                            {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
@@ -160,21 +142,20 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                                     className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer' : ''}`.trim()}
                                     onClick={onOpenDetail ? () => onOpenDetail({ recordId: String(row.id), label: row.tabLabel ?? row.name, tabLabel: row.tabLabel ?? row.name }) : undefined}
                                 >
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.name)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.position)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.email)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.mobilePhone)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
-                                        <span className="block max-w-[112px] truncate">{formatTableTextValue(row.employeeId)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.taxStatus)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.employmentStatus)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-right text-[15px] text-[#131a28]">{formatTableTextValue(row.payable)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-center text-[15px] text-[#646d83]">{index + 1}</DataTableCell>
+                                    {visibleColumns.map((column) => (
+                                        <DataTableCell
+                                            key={column.id}
+                                            className={`px-2.5 text-[15px] text-[#131a28] ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
+                                        >
+                                            {formatTableTextValue(row[column.id])}
+                                        </DataTableCell>
+                                    ))}
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-2.5 py-4 text-center text-[15px] text-[#6b7280]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-4 text-center text-[15px] text-[#6b7280]">
                                     {table.loading ? 'Memuat data...' : table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

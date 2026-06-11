@@ -14,13 +14,13 @@ import {
 } from './accountsViewShared';
 
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData }) {
-    const selectedCurrencies = useMemo(() => {
-        if (!values.currencyId) return [];
-        const found = (lookupData?.currencies ?? []).find(c => c.id === values.currencyId);
-        if (found) return [found];
-        const name = values.currency?.[0] ?? values.currencyLabel ?? '';
-        return [{ id: values.currencyId, name, code: '' }];
-    }, [values.currencyId, values.currency, values.currencyLabel, lookupData?.currencies]);
+    const selectedParentAccount = useMemo(() => {
+        if (!values.parentId) return [];
+        const code = values.parentAccountCode ?? '';
+        const name = values.parentAccountName ?? values.parentAccount?.[0] ?? '';
+        const label = values.parentAccountLabel ?? (code ? `${code} - ${name}` : name);
+        return [{ id: values.parentId, code, name, label }];
+    }, [values.parentId, values.parentAccountLabel, values.parentAccountCode, values.parentAccountName, values.parentAccount]);
 
     return (
         <div className="space-y-4">
@@ -47,18 +47,63 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                     </SelectField>
                 )}
             </AccountsFormFieldRow>
- 
-            <div className="lg:pl-[280px]">
-                <CheckboxField
-                    id="accounts-sub-account"
-                    label={config.labels.isSubAccount}
-                    checked={Boolean(values.isSubAccount)}
-                    onChange={(event) => onChange('isSubAccount', event.target.checked)}
-                    align="center"
-                    labelClassName="text-[17px]"
-                    inputClassName="mt-0 h-[18px] w-[18px]"
-                    containerClassName="w-auto"
-                />
+
+            <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,430px)] lg:items-start">
+                <div className="pt-2 lg:pt-1.5 flex items-center">
+                    <CheckboxField
+                        id="accounts-sub-account"
+                        label={config.labels.isSubAccount}
+                        checked={Boolean(values.isSubAccount)}
+                        onChange={(event) => {
+                            onChange('isSubAccount', event.target.checked);
+                            if (!event.target.checked) {
+                                onChange('parentId', null);
+                                onChange('parentAccount', []);
+                                onChange('parentAccountLabel', '');
+                                onChange('parentAccountCode', '');
+                                onChange('parentAccountName', '');
+                            }
+                        }}
+                        align="center"
+                        labelClassName="text-[17px] font-normal text-[#1f2436]"
+                        inputClassName="mt-0 h-[18px] w-[18px]"
+                        containerClassName="w-auto"
+                    />
+                </div>
+                <div>
+                    {Boolean(values.isSubAccount) && (
+                        isDetail ? (
+                            <TextInput
+                                value={values.parentAccountLabel || ''}
+                                readOnly
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-[15px] text-[#8a91a8]"
+                            />
+                        ) : (
+                            <BackendLookupField
+                                resource="accounts"
+                                values={selectedParentAccount}
+                                placeholder="Cari/Pilih..."
+                                searchLabel="Cari akun perkiraan"
+                                getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
+                                onSelect={(option) => {
+                                    onChange('parentId', option.id);
+                                    onChange('parentAccount', [option.name]);
+                                    onChange('parentAccountLabel', `${option.code} - ${option.name}`);
+                                    onChange('parentAccountCode', option.code);
+                                    onChange('parentAccountName', option.name);
+                                }}
+                                onRemove={() => {
+                                    onChange('parentId', null);
+                                    onChange('parentAccount', []);
+                                    onChange('parentAccountLabel', '');
+                                    onChange('parentAccountCode', '');
+                                    onChange('parentAccountName', '');
+                                }}
+                            />
+                        )
+                    )}
+                </div>
             </div>
  
             <AccountsFormFieldRow label={config.labels.code} required>
@@ -86,33 +131,6 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                 <p className="mt-2 pl-4 text-[14px] italic text-[#8a91a8]">{config.helperText.nameExample}</p>
             </AccountsFormFieldRow>
  
-            <AccountsFormFieldRow label={config.labels.currency}>
-                {isDetail ? (
-                    <TextInput
-                        value={values.currencyLabel}
-                        readOnly
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#8a91a8]"
-                    />
-                ) : (
-                    <BackendLookupField
-                        resource="currencies"
-                        values={selectedCurrencies}
-                        placeholder={config.placeholders.currency}
-                        searchLabel="Cari mata uang"
-                        getOptionLabel={(option) => option ? (option.code ? `${option.name} (${option.code})` : option.name) : ''}
-                        onSelect={(option) => {
-                            onChange('currencyId', option.id);
-                            onChange('currency', [option.name]);
-                        }}
-                        onRemove={() => {
-                            onChange('currencyId', null);
-                            onChange('currency', []);
-                        }}
-                    />
-                )}
-            </AccountsFormFieldRow>
- 
             {isDetail ? (
                 <AccountsFormFieldRow label={config.labels.balance}>
                     <div className="pt-1 text-[18px] text-[#1f2436]">{values.balanceLabel}</div>
@@ -122,39 +140,10 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
     );
 }
 
-export function AccountsOpeningBalanceTab({ config, values, onChange, lookupData }) {
-    const selectedBranches = useMemo(() => {
-        return (values.branchIds ?? []).map((id, index) => {
-            const found = (lookupData?.branches ?? []).find(b => b.id === id);
-            if (found) return found;
-            const name = values.branch?.[index] ?? `Cabang #${id}`;
-            return { id, name };
-        });
-    }, [values.branchIds, values.branch, lookupData?.branches]);
-
+export function AccountsOpeningBalanceTab({ config, values, onChange }) {
     return (
         <div className="space-y-6">
             <h3 className="text-[24px] font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
- 
-            <AccountsFormFieldRow label={config.labels.branch}>
-                <BackendLookupField
-                    resource="branches"
-                    values={selectedBranches}
-                    placeholder={config.placeholders.branch}
-                    searchLabel="Cari cabang"
-                    getOptionLabel={(option) => option?.name ?? ''}
-                    onSelect={(option) => {
-                        onChange('branchIds', [option.id]);
-                        onChange('branch', [option.name]);
-                    }}
-                    onRemove={(removedBranch) => {
-                        const nextIds = (values.branchIds ?? []).filter(id => id !== removedBranch.id);
-                        const nextNames = (values.branch ?? []).filter(name => name !== removedBranch.name);
-                        onChange('branchIds', nextIds);
-                        onChange('branch', nextNames);
-                    }}
-                />
-            </AccountsFormFieldRow>
 
             <AccountsFormFieldRow label={config.labels.openingBalanceValue}>
                 <FormattedAmountInput

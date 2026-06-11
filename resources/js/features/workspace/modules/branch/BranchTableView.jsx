@@ -80,13 +80,15 @@ export default function BranchTableView({ table, onCreate, onOpenDetail }) {
                     widthClassName: 'sm:w-[310px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={table.pageValue}
             />
 
             <div className="mt-3 min-h-0">
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -112,6 +114,9 @@ export default function BranchTableView({ table, onCreate, onOpenDetail }) {
                                     }
                                     className={`border-[#dde1e8] cursor-pointer transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                 >
+                                    <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
                                     <DataTableCell className="px-3 text-[15px] text-[#131a28]">
                                         <span className="block truncate">{formatTableTextValue(row.phone)}</span>
                                     </DataTableCell>
@@ -128,7 +133,7 @@ export default function BranchTableView({ table, onCreate, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={4} className="px-3 py-8 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={5} className="px-3 py-8 text-center text-[15px] text-[#131a28]">
                                     {table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

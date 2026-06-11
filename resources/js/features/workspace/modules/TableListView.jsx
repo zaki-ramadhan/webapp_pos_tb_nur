@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
     DataTableBody,
     DataTableCell,
+    DataTableHead,
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
@@ -13,6 +14,7 @@ import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHe
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { FunnelIcon, LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -132,6 +134,22 @@ export default function TableListView({
         });
     }, [filters, keyword, sortDir, sortKey, table.columns, table.filters, table.rows, table.searchKeys]);
 
+    const schemaKey = getTableSchemaKey(table.columns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
+
+    const visibleColumns = useMemo(() => {
+        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [table.columns, visibleColumnIds]);
+
+    useEffect(() => {
+        tableRegistry.setActiveTable(table.columns, filteredRows, table.resource);
+        return () => {
+            if (tableRegistry.activeTable?.resource === table.resource) {
+                tableRegistry.setActiveTable(null, null, null);
+            }
+        };
+    }, [table.columns, filteredRows, table.resource]);
+
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-2 py-2 shadow-[0_2px_10px_rgba(15,23,42,0.08)] sm:px-3 sm:py-3">
             <TableToolbar
@@ -164,17 +182,7 @@ export default function TableListView({
                         : null
                 }
                 rightControls={rightControls}
-                menuButton={
-                    menuButton ??
-                    (table.settingsLabel
-                        ? {
-                              label: table.settingsLabel,
-                              icon: <NavigationIcon type="settings" className="h-4 w-4" />,
-                              items: [{ id: 'settings', label: table.settingsLabel }],
-                              widthClassName: 'w-[180px]',
-                          }
-                        : null)
-                }
+                menuButton={menuButton}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -182,7 +190,14 @@ export default function TableListView({
                     widthClassName: table.searchWidthClassName ?? 'w-full sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={table.pageValue}
+                resourceName={table.resource}
+                onRefresh={table.onRefresh}
+                exportConfig={{
+                    columns: table.columns,
+                    rows: filteredRows,
+                    filename: table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'export',
+                    title: table.label || 'Laporan',
+                }}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -192,7 +207,10 @@ export default function TableListView({
                 >
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {table.columns.map((column) => (
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-[15px] font-medium text-white">
+                                No.
+                            </DataTableHead>
+                            {visibleColumns.map((column) => (
                                 <SortableTableHeaderCell
                                     key={column.id}
                                     label={column.label}
@@ -215,7 +233,10 @@ export default function TableListView({
                                     className={`border-[#dde1e8] ${onRowClick ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''} ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
-                                    {table.columns.map((column) => (
+                                    <DataTableCell className="px-2.5 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+                                    {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-[15px] text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
@@ -231,7 +252,7 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
                                     {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

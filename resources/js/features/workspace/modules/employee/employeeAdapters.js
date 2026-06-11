@@ -175,6 +175,7 @@ export function buildEmployeeSnapshot(values) {
         branch: values.branch ?? '',
         department: values.department ?? '',
         isSalesperson: Boolean(values.isSalesperson),
+        autoEmployeeId: Boolean(values.autoEmployeeId),
         note: values.note ?? '',
         street: values.street ?? '',
         city: values.city ?? '',

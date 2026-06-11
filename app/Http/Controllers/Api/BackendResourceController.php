@@ -202,6 +202,116 @@ class BackendResourceController extends Controller
         }
     }
 
+    public function import(Request $request, string $resource): JsonResponse
+    {
+        $blueprint = $this->resolveBlueprint($resource);
+        $this->access->authorize($request->user(), $blueprint, 'create');
+
+        $rows = $request->input('rows', []);
+        if (!is_array($rows) || empty($rows)) {
+            return response()->json([
+                'message' => 'Data impor tidak boleh kosong.',
+            ], 422);
+        }
+
+        $relationClassMap = [
+            'tax_id' => \App\Domain\Finance\Models\Tax::class,
+            'branch_id' => \App\Domain\Organization\Models\Branch::class,
+            'parent_id' => $blueprint->modelClass(),
+            'category_id' => \App\Domain\Catalog\Models\ProductCategory::class,
+            'brand_id' => \App\Domain\Catalog\Models\Brand::class,
+            'base_unit_id' => \App\Domain\Catalog\Models\Unit::class,
+            'purchase_unit_id' => \App\Domain\Catalog\Models\Unit::class,
+            'sales_unit_id' => \App\Domain\Catalog\Models\Unit::class,
+            'unit_id' => \App\Domain\Catalog\Models\Unit::class,
+            'supplier_id' => \App\Domain\Partner\Models\Supplier::class,
+            'product_id' => \App\Domain\Catalog\Models\Product::class,
+            'department_id' => \App\Domain\Organization\Models\Department::class,
+            'user_id' => \App\Models\User::class,
+            'output_account_id' => \App\Domain\Finance\Models\Account::class,
+            'input_account_id' => \App\Domain\Finance\Models\Account::class,
+            'account_id' => \App\Domain\Finance\Models\Account::class,
+        ];
+
+        $created = 0;
+        $errors = [];
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($blueprint, $rows, $relationClassMap, &$created, &$errors) {
+                foreach ($rows as $index => $row) {
+                    if (!is_array($row)) continue;
+
+                    $cleanRow = [];
+                    foreach ($row as $k => $v) {
+                        if ($v !== null && $v !== '') {
+                            $cleanRow[trim($k)] = is_string($v) ? trim($v) : $v;
+                        }
+                    }
+
+                    foreach ($cleanRow as $key => $val) {
+                        if (str_ends_with($key, '_id') && is_string($val) && !is_numeric($val)) {
+                            $modelClass = $relationClassMap[$key] ?? null;
+                            if ($modelClass) {
+                                $resolvedId = $this->resolveRelationId($modelClass, $val);
+                                if ($resolvedId !== null) {
+                                    $cleanRow[$key] = $resolvedId;
+                                } else {
+                                    $rowNum = $index + 2;
+                                    throw new \Exception("Baris {$rowNum}: Gagal mencocokkan '{$val}' untuk kolom '{$key}'. Pastikan data referensi tersebut sudah terdaftar.");
+                                }
+                            }
+                        }
+                    }
+
+                    $rules = $blueprint->storeRules();
+                    unset($rules['attachment_ids'], $rules['attachment_ids.*']);
+
+                    $validator = \Illuminate\Support\Facades\Validator::make($cleanRow, $rules);
+                    if ($validator->fails()) {
+                        $rowNum = $index + 2;
+                        $firstError = collect($validator->errors()->all())->first();
+                        throw new \Exception("Baris {$rowNum}: {$firstError}");
+                    }
+
+                    $payload = $this->payloadSanitizer->sanitize($cleanRow);
+                    $this->writer->create($blueprint, $payload);
+                    $created++;
+                }
+            });
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => "Berhasil mengimpor {$created} data ke database.",
+        ]);
+    }
+
+    protected function resolveRelationId(string $modelClass, string $value): ?int
+    {
+        $value = trim($value);
+        if ($value === '') return null;
+
+        $tempModel = new $modelClass();
+        $tableName = $tempModel->getTable();
+        $columns = \Illuminate\Support\Facades\Schema::getColumnListing($tableName);
+
+        $matchCols = array_intersect(['code', 'employee_code', 'name', 'full_name', 'description'], $columns);
+        foreach ($matchCols as $col) {
+            $record = $modelClass::query()->where($col, $value)->first();
+            if ($record) return $record->getKey();
+        }
+
+        foreach ($matchCols as $col) {
+            $record = $modelClass::query()->where($col, 'like', $value)->first();
+            if ($record) return $record->getKey();
+        }
+
+        return null;
+    }
+
     protected function savePreferences(array $settings): void
     {
         \Illuminate\Support\Facades\DB::transaction(function () use ($settings): void {

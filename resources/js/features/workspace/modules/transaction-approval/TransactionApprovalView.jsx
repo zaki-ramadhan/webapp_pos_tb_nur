@@ -244,6 +244,7 @@ function TransactionApprovalTableView({ table, onCreate, onRefresh, onOpenDetail
                     buttonClassName: 'w-[70px]',
                     items: table.menuItems,
                 }}
+                pageValue={table.pageValue}
             />
 
             <div className="mt-3 min-h-0">

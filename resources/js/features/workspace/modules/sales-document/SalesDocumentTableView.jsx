@@ -61,6 +61,9 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -88,7 +91,10 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                                     }`.trim()}
                                     onClick={() => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                                 >
-                                    {config.table.columns.map((column) => (
+                                                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+{config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
@@ -103,7 +109,7 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
                                 <DataTableCell
-                                    colSpan={config.table.columns.length}
+                                    colSpan={config.table.columns.length + 1}
                                     className="px-2.5 py-6 text-center text-[15px] text-[#7d879a]"
                                 >
                                     {config.table.emptyLabel ?? 'Belum ada data'}

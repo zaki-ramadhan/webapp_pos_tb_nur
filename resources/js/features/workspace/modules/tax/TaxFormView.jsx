@@ -49,11 +49,24 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(values, initialValues),
+        [initialValues, values],
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [initialValues]);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     function handleChange(field, nextValue) {
         setValues((current) => ({
@@ -69,10 +82,6 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
         { label: form.labels.salesAccount, value: values.salesAccount, type: 'lookup' },
         { label: form.labels.purchaseAccount, value: values.purchaseAccount, type: 'lookup' },
     ]), [form.labels, values]);
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(values, initialValues),
-        [initialValues, values],
-    );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({
@@ -197,7 +206,8 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                                     onChange={(event) =>
                                         handleChange('percentage', event.target.value.replace(/[^\d.]/g, ''))
                                     }
-                                    className="h-[34px] w-[96px] rounded-[4px] border-[#cfd6e2]"
+                                    containerClassName="w-[120px]"
+                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
                                     inputClassName="text-right text-[15px] text-[#1f2436]"
                                 />
                                 <span className="text-[17px] text-[#1f2436]">%</span>

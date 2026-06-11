@@ -106,13 +106,15 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={table.pageValue}
-            />
+                />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable className="min-w-[1180px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -140,7 +142,10 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                                     })
                                 }
                             >
-                                {table.columns.map((column) => (
+                                                                    <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+{table.columns.map((column) => (
                                     <DataTableCell key={column.id} className="px-2.5 text-[15px] text-[#131a28]">
                                         {row[column.id]}
                                     </DataTableCell>

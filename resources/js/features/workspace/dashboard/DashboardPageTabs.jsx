@@ -39,7 +39,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
                         onClose(tab.id);
                     }}
                 className={`inline-flex h-5 w-5 items-center justify-center rounded-[3px] sm:h-6 sm:w-6 ${
-                        active ? 'text-white/95 hover:bg-white/15' : 'text-text-muted hover:bg-white/70'
+                        active ? 'text-white/95 hover:bg-white/15' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200/70'
                     }`.trim()}
                     aria-label={`Tutup tab ${tab.label}`}
                 >

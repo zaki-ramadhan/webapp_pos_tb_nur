@@ -73,11 +73,24 @@ export default function ShippingFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
+    const isDirty = useMemo(
+        () => JSON.stringify(values) !== JSON.stringify(initialValues),
+        [initialValues, values]
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [initialValues]);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -85,11 +98,6 @@ export default function ShippingFormView({
             [field]: nextValue,
         }));
     }
-
-    const isDirty = useMemo(
-        () => JSON.stringify(values) !== JSON.stringify(initialValues),
-        [initialValues, values]
-    );
 
     useWorkspaceDirtyRegistration({
         pageId: 'shipping-master',
@@ -224,7 +232,7 @@ export default function ShippingFormView({
                                         prefix="Jalan"
                                     />
 
-                                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_170px]">
+                                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
                                         <CityAutocompleteInput
                                             value={values.city}
                                             onChange={(nextValue) => handleChange('city', nextValue)}
@@ -235,13 +243,14 @@ export default function ShippingFormView({
                                                 handleChange('country', item.country);
                                             }}
                                             prefix="Kota"
-                                            prefixClassName="min-w-[92px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
-                                            dropdownLeftOffsetClassName="left-[92px]"
+                                            prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
+                                            dropdownLeftOffsetClassName="left-[62px]"
                                         />
                                         <PrefixedInput
                                             value={values.postalCode}
                                             onChange={(event) => handleChange('postalCode', event.target.value)}
                                             prefix="K.Pos"
+                                            prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
                                         />
                                     </div>
 

@@ -212,4 +212,74 @@ class WorkspaceBackendResourceApiTest extends TestCase
             ->assertJsonPath('data.0.item_code', 'ITM-001')
             ->assertJsonPath('data.0.available_stock', '5.00');
     }
+
+    public function test_taxes_resource_can_be_imported(): void
+    {
+        $user = User::factory()->create();
+
+        $rows = [
+            [
+                'code' => 'TAX-IMP-01',
+                'name' => 'Imported Tax 1',
+                'tax_type' => 'Value Added Tax',
+                'rate' => 10.0,
+            ],
+            [
+                'code' => 'TAX-IMP-02',
+                'name' => 'Imported Tax 2',
+                'tax_type' => 'Service Tax',
+                'rate' => 5.5,
+            ],
+        ];
+
+        $response = $this->actingAs($user)->postJson('/api/backend/taxes/import', [
+            'rows' => $rows,
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('message', 'Berhasil mengimpor 2 data ke database.');
+
+        $this->assertDatabaseHas('taxes', [
+            'code' => 'TAX-IMP-01',
+            'name' => 'Imported Tax 1',
+            'rate' => 10.0000,
+        ]);
+
+        $this->assertDatabaseHas('taxes', [
+            'code' => 'TAX-IMP-02',
+            'name' => 'Imported Tax 2',
+            'rate' => 5.5000,
+        ]);
+    }
+
+    public function test_import_rolls_back_entire_transaction_on_failure(): void
+    {
+        $user = User::factory()->create();
+
+        $rows = [
+            [
+                'code' => 'TAX-IMP-GOOD',
+                'name' => 'Good Tax',
+                'tax_type' => 'VAT',
+                'rate' => 10.0,
+            ],
+            [
+                'code' => 'TAX-IMP-BAD',
+                // missing 'name' which is required, causing validation failure
+                'tax_type' => 'VAT',
+                'rate' => -5.0, // invalid negative rate
+            ],
+        ];
+
+        $response = $this->actingAs($user)->postJson('/api/backend/taxes/import', [
+            'rows' => $rows,
+        ]);
+
+        $response->assertStatus(422);
+
+        // Assert that the first tax (TAX-IMP-GOOD) is NOT in database due to transaction rollback
+        $this->assertDatabaseMissing('taxes', [
+            'code' => 'TAX-IMP-GOOD',
+        ]);
+    }
 }

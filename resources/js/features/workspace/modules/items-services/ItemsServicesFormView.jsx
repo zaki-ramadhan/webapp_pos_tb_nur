@@ -54,12 +54,25 @@ export default function ItemsServicesFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
+    const isDirty = useMemo(
+        () => JSON.stringify(values) !== JSON.stringify(initialValues),
+        [initialValues, values]
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setActiveTabId(config.tabs?.[0]?.id ?? 'general');
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [config, initialValues]);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -67,11 +80,6 @@ export default function ItemsServicesFormView({
             [field]: nextValue,
         }));
     }
-
-    const isDirty = useMemo(
-        () => JSON.stringify(values) !== JSON.stringify(initialValues),
-        [initialValues, values]
-    );
 
     useWorkspaceDirtyRegistration({
         pageId,

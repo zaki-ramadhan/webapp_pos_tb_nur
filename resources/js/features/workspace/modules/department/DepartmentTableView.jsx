@@ -144,12 +144,7 @@ function DepartmentTableToolbar({
                         trailingClassName="px-3"
                     />
 
-                    <TextInput
-                        value={table.pageValue}
-                        readOnly
-                        className="h-[34px] w-[74px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-[15px] text-[#646d83]"
-                    />
+
                 </div>
             </div>
         </div>
@@ -196,6 +191,9 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                    No.
+                                </DataTableHead>
                                 {table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
@@ -226,6 +224,9 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                                             })
                                         }
                                     >
+                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                            {index + 1}
+                                        </DataTableCell>
                                         <DataTableCell className="px-3 text-[15px] text-[#131a28]">
                                             <span className="block truncate">{formatTableTextValue(row.name)}</span>
                                         </DataTableCell>
@@ -237,7 +238,7 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                             ) : (
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
-                                        colSpan={table.columns.length}
+                                        colSpan={table.columns.length + 1}
                                         className="px-3 py-3 text-center text-[15px] text-[#131a28]"
                                     >
                                         {table.emptyLabel}

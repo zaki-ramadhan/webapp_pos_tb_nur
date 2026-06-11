@@ -20,6 +20,7 @@ import {
     buildEmployeeFormValues,
     buildEmployeePayload,
     buildEmployeeSnapshot,
+    validateEmployeeFields,
     validateEmployeeValues,
     validateEmployeeWebsite,
 } from '@/features/workspace/modules/employee/employeeViewShared';
@@ -50,7 +51,15 @@ export default function EmployeeFormView({
         return tableRows.find((row) => String(row.id) === String(recordId)) ?? null;
     }, [activeLevel2Tab, tableRows]);
     const detailRowId = detailRow?.id ?? null;
-    const [activeTabId, setActiveTabId] = useState(form.tabs?.[0]?.id ?? 'employee-general');
+    const tabs = useMemo(() => {
+        return form.tabs && form.tabs.length > 0 ? form.tabs : [
+            { id: 'employee-general', label: 'Karyawan' },
+            { id: 'employee-address', label: 'Alamat' },
+            { id: 'employee-tax', label: 'Pajak Penghasilan' },
+            { id: 'employee-bank', label: 'Rekening Gaji' }
+        ];
+    }, [form.tabs]);
+    const [activeTabId, setActiveTabId] = useState(tabs[0].id);
     const initialValues = useMemo(() => buildEmployeeFormValues(form, detailRow), [detailRow]);
     const [values, setValues] = useState(() => initialValues);
     const [status, setStatus] = useState({ tone: '', message: '' });
@@ -61,18 +70,32 @@ export default function EmployeeFormView({
         website: validateEmployeeWebsite(initialValues.website ?? ''),
     }));
 
-    useEffect(() => {
-        setActiveTabId(form.tabs?.[0]?.id ?? 'employee-general');
-    }, [detailRowId, form.tabs]);
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(buildEmployeeSnapshot(values), buildEmployeeSnapshot(initialValues)),
+        [initialValues, values],
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
+        setActiveTabId(tabs[0].id);
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
         setErrors({
             website: validateEmployeeWebsite(initialValues.website ?? ''),
         });
-    }, [initialValues]);
+        window.dispatchEvent(new CustomEvent('form-validation-clear'));
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+            setErrors({
+                website: validateEmployeeWebsite(initialValues.website ?? ''),
+            });
+        }
+    }, [initialValues, isDirty]);
 
     function handleChange(field, nextValue) {
         if (field === 'website') {
@@ -129,10 +152,6 @@ export default function EmployeeFormView({
     }
 
     const validationMessage = useMemo(() => validateEmployeeValues(values), [values]);
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildEmployeeSnapshot(values), buildEmployeeSnapshot(initialValues)),
-        [initialValues, values],
-    );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({
@@ -143,8 +162,9 @@ export default function EmployeeFormView({
     });
 
     async function handleSave() {
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
+        const fieldErrors = validateEmployeeFields(values);
+        if (Object.keys(fieldErrors).length > 0) {
+            rejectCrudFormAction(validationMessage, { setStatus, fieldErrors });
             return;
         }
 
@@ -206,18 +226,18 @@ export default function EmployeeFormView({
     }
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
             <PreferencesTabs
-                tabs={form.tabs}
+                tabs={tabs}
                 activeTabId={activeTabId}
                 onSelectTab={setActiveTabId}
             />
 
-            <div className="flex min-h-[740px] flex-col gap-5 px-4 py-4 xl:flex-row">
-                <div className="min-w-0 flex-1">
-                    <CrudStatusMessage status={status} className="mb-4" />
+            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row overflow-hidden">
+                <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                    <CrudStatusMessage status={status} className="shrink-0 mb-4" />
 
-                    <div className="rounded-[6px] border border-[#d8dde7] bg-white px-3 py-3 sm:px-4 sm:py-4">
+                    <div className="flex-1 min-h-0 overflow-y-auto rounded-[6px] border border-[#d8dde7] bg-white px-3 py-3 sm:px-4 sm:py-4">
                         {activeTabId === 'employee-address' ? (
                             <EmployeeAddressTab values={values} onChange={handleChange} />
                         ) : activeTabId === 'employee-tax' ? (
@@ -230,7 +250,7 @@ export default function EmployeeFormView({
                     </div>
                 </div>
 
-                <div className="flex shrink-0 flex-row justify-start gap-3 self-start xl:flex-col">
+                <div className="flex shrink-0 flex-row justify-start gap-3 self-start lg:flex-col shrink-0">
                     <DockSaveButton
                         label={saving ? 'Memproses...' : form.saveLabel}
                         disabled={saveDisabled}

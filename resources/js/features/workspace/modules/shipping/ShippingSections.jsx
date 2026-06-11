@@ -2,7 +2,7 @@ import TextInput from '@/components/ui/TextInput';
 
 export function ShippingFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,420px)] lg:items-start">
+        <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,500px)] lg:items-start">
             <label className="pt-2 text-[17px] leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
@@ -28,14 +28,14 @@ export function PrefixedTextArea({ value, onChange, prefix }) {
     );
 }
 
-export function PrefixedInput({ value, onChange, prefix, className = '' }) {
+export function PrefixedInput({ value, onChange, prefix, className = '', prefixClassName = '' }) {
     return (
         <TextInput
             value={value}
             onChange={onChange}
             prefix={prefix}
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName="min-w-[92px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
+            prefixClassName={prefixClassName || "min-w-[92px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"}
             inputClassName="text-[15px] text-[#1f2436]"
         />
     );

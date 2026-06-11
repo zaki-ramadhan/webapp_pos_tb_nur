@@ -7,6 +7,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
     Route::post('/attachments/upload', [\App\Http\Controllers\Api\AttachmentUploadController::class, 'upload']);
     Route::post('/currencies/sync', [BackendResourceController::class, 'syncCurrencies']);
     Route::get('/resources', [BackendResourceController::class, 'resources']);
+    Route::post('/{resource}/import', [BackendResourceController::class, 'import']);
     Route::get('/{resource}', [BackendResourceController::class, 'index']);
     Route::post('/{resource}', [BackendResourceController::class, 'store']);
     Route::get('/{resource}/{record}', [BackendResourceController::class, 'show'])->whereNumber('record');

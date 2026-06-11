@@ -39,17 +39,25 @@ export default function SalesCommissionFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
+    const isDirty = useMemo(
+        () => JSON.stringify(values) !== JSON.stringify(initialValues),
+        [initialValues, values]
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setActiveTabId(config.formTabs?.[0]?.id ?? 'commission');
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [config, initialValues]);
+    }, [activeTabInstanceId]);
 
-    const isDirty = useMemo(
-        () => JSON.stringify(values) !== JSON.stringify(initialValues),
-        [initialValues, values]
-    );
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     useWorkspaceDirtyRegistration({
         pageId: 'sales-commission',

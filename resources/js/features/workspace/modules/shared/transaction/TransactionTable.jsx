@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from 'react';
 import {
     DataTable,
     DataTableBody,
@@ -9,6 +10,7 @@ import {
 import TextInput from '@/components/ui/TextInput';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 
 import { TRANSACTION_LINE_TITLE_CLASS_NAME } from './transactionStyles';
 
@@ -34,15 +36,37 @@ export function TransactionDataTable({
     emptyLeadingCellContent = null,
     onRowClick = null,
     getRowClassName = null,
+    showNumbering = true,
 }) {
-    const hasLeadingEmptyCell = columns[0]?.kind === 'spacer' && emptyLeadingCellContent !== null;
+    const schemaKey = getTableSchemaKey(columns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, columns);
+
+    const visibleColumns = useMemo(() => {
+        return columns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [columns, visibleColumnIds]);
+
+    useEffect(() => {
+        tableRegistry.setActiveTable(columns, rows, null);
+        return () => {
+            if (tableRegistry.activeTable?.columns === columns) {
+                tableRegistry.setActiveTable(null, null, null);
+            }
+        };
+    }, [columns, rows]);
+
+    const hasLeadingEmptyCell = visibleColumns[0]?.kind === 'spacer' && emptyLeadingCellContent !== null;
 
     return (
         <div className={minWidthClassName}>
             <DataTable wrapperClassName="border-[#d1d8e4]">
                 <DataTableHeader className="bg-[#5f7690]">
                     <tr>
-                        {columns.map((column) => (
+                        {showNumbering && (
+                            <DataTableHead className="w-[50px] px-3 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
+                        )}
+                        {visibleColumns.map((column) => (
                             <DataTableHead
                                 key={column.id}
                                 className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
@@ -65,7 +89,12 @@ export function TransactionDataTable({
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${customRowClassName}`.trim()}
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
-                                    {columns.map((column) => (
+                                    {showNumbering && (
+                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                            {index + 1}
+                                        </DataTableCell>
+                                    )}
+                                    {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`px-3 text-[15px] text-[#131a28] ${resolveTransactionAlignClassName(column.align)}`.trim()}
@@ -90,7 +119,7 @@ export function TransactionDataTable({
                                 </DataTableCell>
                             ) : null}
                             <DataTableCell
-                                colSpan={columns.length - (hasLeadingEmptyCell ? 1 : 0)}
+                                colSpan={visibleColumns.length - (hasLeadingEmptyCell ? 1 : 0) + (showNumbering ? 1 : 0)}
                                 className="px-3 py-3 text-center text-[15px] text-[#131a28]"
                             >
                                 {emptyLabel}
@@ -167,6 +196,7 @@ export function TransactionLineItemsSection({
                     emptyLeadingCellContent={emptyLeadingCellContent}
                     onRowClick={onRowClick}
                     getRowClassName={getRowClassName}
+                    showNumbering={false}
                     renderHeaderCell={(column) => (column.kind === 'spacer' ? spacerHeaderContent : column.label)}
                     renderCell={({ row, column }) =>
                         column.kind === 'spacer' ? spacerCellContent : formatTableTextValue(row[column.id])

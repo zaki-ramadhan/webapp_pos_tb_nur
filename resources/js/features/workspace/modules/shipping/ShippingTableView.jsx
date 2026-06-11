@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -8,25 +8,22 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
-import DropdownMenu from '@/components/ui/DropdownMenu';
-import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import SelectField from '@/components/ui/SelectField';
-import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import {
-    ChevronDownIcon,
-    DownloadIcon,
-    PlusIcon,
-    PrintIcon,
-    RefreshIcon,
-    SearchIcon,
-    SortIcon,
-} from '@/features/workspace/shared/Icons';
+import { PlusIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { useColumnVisibility, getTableSchemaKey } from '@/features/workspace/shared/columnVisibility';
 
 export default function ShippingTableView({ table, onCreate, onOpenDetail, onRefresh }) {
     const [keyword, setKeyword] = useState('');
     const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
+
+    const schemaKey = getTableSchemaKey(table.columns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
+
+    const visibleColumns = useMemo(() => {
+        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [table.columns, visibleColumnIds]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -76,16 +73,16 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                 }}
                 refreshButton={{
                     label: table.refreshLabel,
-                    icon: <RefreshIcon className="h-5 w-5" />,
                     onClick: onRefresh,
+                    loading: table.loading,
                 }}
-                printButton={{
-                    label: table.printLabel,
-                }}
+                resourceName="shipping-methods"
+                onRefresh={onRefresh}
                 exportConfig={{
                     columns: table.columns,
                     rows: filteredRows,
                     filename: 'metode-pengiriman',
+                    title: 'Laporan Metode Pengiriman',
                 }}
                 search={{
                     value: keyword,
@@ -94,14 +91,16 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={table.pageValue}
             />
 
             <div className="mt-3 min-h-0">
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {table.columns.map((column) => (
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
+                            {visibleColumns.map((column) => (
                                 <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 py-2.5 text-[16px] font-medium text-white`.trim()}>
                                     <span className="flex items-center gap-2">
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
@@ -126,16 +125,17 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                                     }
                                     className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8] cursor-pointer hover:bg-[#eef3fb] transition`.trim()}
                                 >
-                                    <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.name}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.pic}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.phone}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.address}</DataTableCell>
-                                    <DataTableCell className="px-3 py-2.5 text-[15px] text-[#131a28]">{row.inactiveLabel}</DataTableCell>
+                                    <DataTableCell className="px-3 py-2.5 text-center text-[15px] text-[#646d83]">{index + 1}</DataTableCell>
+                                    {visibleColumns.map((column) => (
+                                        <DataTableCell key={column.id} className="px-3 py-2.5 text-[15px] text-[#131a28]">
+                                            {row[column.id]}
+                                        </DataTableCell>
+                                    ))}
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

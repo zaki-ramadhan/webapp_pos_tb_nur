@@ -51,12 +51,25 @@ export default function BranchFormView({
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const isDetailMode = Boolean(detailRow);
 
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(buildBranchSnapshot(values), buildBranchSnapshot(initialValues)),
+        [initialValues, values],
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setActiveTabId(form.tabs?.[0]?.id ?? 'branch-general');
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [form, initialValues]);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -66,10 +79,6 @@ export default function BranchFormView({
     }
 
     const validationMessage = useMemo(() => validateBranchValues(values, form), [form, values]);
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildBranchSnapshot(values), buildBranchSnapshot(initialValues)),
-        [initialValues, values],
-    );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({

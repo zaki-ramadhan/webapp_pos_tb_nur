@@ -41,13 +41,6 @@ export default function BudgetFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-    useEffect(() => {
-        setActiveTabId(config.sectionTabs?.[0]?.id ?? 'budget-lines');
-        setValues(initialValues);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
-    }, [config, initialValues]);
-
     const initialComparable = useMemo(() => {
         return {
             month: initialValues.month,
@@ -85,6 +78,21 @@ export default function BudgetFormView({
             }),
         [config.labels.branch, config.labels.month, currentComparable, initialComparable, values.branches, values.month],
     );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
+    useEffect(() => {
+        setActiveTabId(config.sectionTabs?.[0]?.id ?? 'budget-lines');
+        setValues(initialValues);
+        setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     useWorkspaceDirtyRegistration({
         pageId: page.id,

@@ -47,13 +47,15 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                     widthClassName: 'sm:w-[320px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={table.pageValue}
-            />
+                />
 
             <div className="mt-3">
                 <DataTable>
                     <DataTableHeader>
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -80,7 +82,10 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                                         index % 2 === 1 ? 'bg-[#f6f7f9]' : 'bg-white'
                                     }`.trim()}
                                 >
-                                    <DataTableCell className="text-left text-[15px] font-normal text-[#131a28]">
+                                                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+<DataTableCell className="text-left text-[15px] font-normal text-[#131a28]">
                                         {formatTableTextValue(row.groupName)}
                                     </DataTableCell>
                                     <DataTableCell className="text-left text-[15px] font-normal text-[#131a28]">
@@ -90,7 +95,7 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-3 py-8 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-8 text-center text-[15px] text-[#131a28]">
                                     {loading ? 'Memuat data...' : (error || table.emptyLabel || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

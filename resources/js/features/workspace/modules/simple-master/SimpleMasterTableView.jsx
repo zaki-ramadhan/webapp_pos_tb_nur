@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -13,6 +13,7 @@ import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import { PlusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { renderSimpleMasterCellValue } from './simpleMasterShared.jsx';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 
 export default function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
@@ -36,6 +37,22 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
             });
         });
     }, [keyword, table.columns, table.rows]);
+    const schemaKey = getTableSchemaKey(table.columns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
+
+    const visibleColumns = useMemo(() => {
+        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [table.columns, visibleColumnIds]);
+
+    useEffect(() => {
+        tableRegistry.setActiveTable(table.columns, filteredRows, table.resource);
+        return () => {
+            if (tableRegistry.activeTable?.resource === table.resource) {
+                tableRegistry.setActiveTable(null, null, null);
+            }
+        };
+    }, [table.columns, filteredRows, table.resource]);
+
     const isRowInteractive = Boolean(onOpenDetail);
 
     return (
@@ -48,11 +65,13 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                     icon: <PlusIcon className="h-6 w-6" />,
                 }}
                 refreshButton={{ label: table.refreshLabel, onClick: table.onRefresh, loading: table.loading }}
-                printButton={table.printLabel ? { label: table.printLabel } : null}
+                resourceName={table.resource}
+                onRefresh={table.onRefresh}
                 exportConfig={{
                     columns: table.columns,
                     rows: filteredRows,
                     filename: table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'data-master',
+                    title: table.label || 'Laporan',
                 }}
                 search={{
                     value: keyword,
@@ -61,14 +80,16 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                     widthClassName: 'sm:w-[310px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={table.pageValue}
             />
 
             <div className="mt-3 min-h-0">
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {table.columns.map((column) => (
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
+                            {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
@@ -93,7 +114,10 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                                         })
                                     }
                                 >
-                                    {table.columns.map((column) => (
+                                    <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+                                    {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.cellClassName ?? ''} px-3 text-[15px] text-[#131a28]`.trim()}
@@ -109,7 +133,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
                                     {table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

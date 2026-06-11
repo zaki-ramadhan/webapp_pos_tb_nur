@@ -39,10 +39,7 @@ export default function RadioField({
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <label
-                htmlFor={id}
-                className={`flex ${alignClassName} gap-2.5 text-[15px] leading-6 ${disabled ? 'cursor-not-allowed text-slate-400' : 'cursor-pointer text-slate-600'} ${className}`.trim()}
-            >
+            <div className={`flex ${alignClassName} gap-2.5 text-[15px] leading-6`.trim()}>
                 <input
                     id={id}
                     name={name}
@@ -53,7 +50,10 @@ export default function RadioField({
                     onChange={handleChange}
                     {...props}
                 />
-                <span className={`min-w-0 ${labelClassName}`.trim()}>
+                <label
+                    htmlFor={id}
+                    className={`min-w-0 ${disabled ? 'cursor-not-allowed text-slate-400' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
+                >
                     <span className={`${disabled ? 'text-slate-400' : 'text-brand-dark'}`.trim()}>
                         {label}
                         {children}
@@ -64,8 +64,8 @@ export default function RadioField({
                             {feedbackMessage}
                         </span>
                     ) : null}
-                </span>
-            </label>
+                </label>
+            </div>
         </div>
     );
 }

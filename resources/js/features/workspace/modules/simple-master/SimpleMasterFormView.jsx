@@ -45,11 +45,21 @@ export default function SimpleMasterFormView({
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const initialValues = useMemo(() => buildSimpleMasterFormValues(form, detailRow), [detailRow, form]);
 
+    const isDirty = useMemo(() => !areComparableValuesEqual(values, initialValues), [initialValues, values]);
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [initialValues]);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     function handleChange(fieldId, nextValue) {
         setValues((currentValues) => ({
@@ -74,7 +84,6 @@ export default function SimpleMasterFormView({
 
         return backendConfig?.validate?.(values) ?? '';
     }, [backendConfig, form.fields, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(values, initialValues), [initialValues, values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({

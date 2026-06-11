@@ -173,9 +173,9 @@ export function buildPurchasePaymentInvoiceFromRecord(record) {
 export function buildFormState(source = {}, config) {
     return applyPurchasePaymentInvoices({
         __backendRecordId: source.__backendRecordId ?? null,
-        __supplierId: source.__supplierId ?? null,
-        __bankAccountId: source.__bankAccountId ?? null,
-        __branchId: source.__branchId ?? null,
+        __supplierId: source.__supplierId ?? config.draft?.__supplierId ?? null,
+        __bankAccountId: source.__bankAccountId ?? config.draft?.__bankAccountId ?? null,
+        __branchId: source.__branchId ?? config.draft?.__branchId ?? null,
         payee: [...(source.payee ?? config.draft?.payee ?? [])],
         bankAccounts: [...(source.bankAccounts ?? config.draft?.bankAccounts ?? [])],
         paymentAmount: source.paymentAmount ?? config.draft?.paymentAmount ?? '',

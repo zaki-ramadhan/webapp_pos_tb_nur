@@ -76,22 +76,31 @@ export default function DepartmentFormView({
         [form.lookupOptions],
     );
 
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(buildDepartmentSnapshot(values), buildDepartmentSnapshot(initialValues)),
+        [initialValues, values],
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setActiveTabId(form.tabs?.[0]?.id ?? 'department-general');
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [form, initialValues]);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => applyDepartmentFormChange(currentValues, field, nextValue));
     }
 
     const validationMessage = useMemo(() => validateDepartmentValues(values, form), [form, values]);
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildDepartmentSnapshot(values), buildDepartmentSnapshot(initialValues)),
-        [initialValues, values],
-    );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({

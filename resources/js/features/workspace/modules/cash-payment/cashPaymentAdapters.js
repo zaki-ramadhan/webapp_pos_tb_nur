@@ -110,7 +110,7 @@ export function buildDetailRecordFromRow(row = {}, config) {
         checkNumber: row.checkNumber ?? '',
         recipient: row.recipient ?? '',
         voided: row.voided ?? false,
-        __branchId: null,
+        __branchId: branch === 'SURABAYA' ? 2 : (branch === 'JAKARTA' ? 1 : (config.draft?.__branchId ?? 1)),
         __primaryAccountId: null,
         branches: branch ? [branch] : [],
         notes: row.description ?? '',
@@ -139,8 +139,8 @@ export function buildFormState(source = {}, config) {
     return applyCashPaymentLineItems(
         {
             __backendRecordId: source.__backendRecordId ?? null,
-            __primaryAccountId: source.__primaryAccountId ?? null,
-            __branchId: source.__branchId ?? null,
+            __primaryAccountId: source.__primaryAccountId ?? config.draft?.__primaryAccountId ?? null,
+            __branchId: source.__branchId ?? config.draft?.__branchId ?? null,
             bankAccounts: [...(source.bankAccounts ?? config.draft?.bankAccounts ?? [])],
             entryDate: source.entryDate ?? config.draft?.entryDate ?? '',
             autoNumber: source.autoNumber ?? config.draft?.autoNumber ?? true,

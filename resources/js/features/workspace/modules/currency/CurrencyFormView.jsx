@@ -45,19 +45,28 @@ export default function CurrencyFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(buildCurrencySnapshot(values), buildCurrencySnapshot(initialValues)),
+        [initialValues, values],
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
     useEffect(() => {
         setActiveTabId('currency-general');
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [initialValues]);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     const tabs = isDetailMode ? config.detailTabs : config.createTabs;
     const validationMessage = useMemo(() => validateCurrencyValues(values, config), [config, values]);
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildCurrencySnapshot(values), buildCurrencySnapshot(initialValues)),
-        [initialValues, values],
-    );
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({

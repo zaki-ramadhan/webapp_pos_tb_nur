@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -29,19 +28,6 @@ import {
 import { AccountsDockActions } from './accountsViewShared';
 
 export default function AccountsFormView({ config, backendRows, activeLevel2Tab, onOpenDetail, onCloseDetail, onReload }) {
-    const branchesResource = useBackendIndexResource({
-        resource: 'branches',
-        filters: { per_page: 100 },
-    });
-    const currenciesResource = useBackendIndexResource({
-        resource: 'currencies',
-        filters: { per_page: 100 },
-    });
-    const lookupData = useMemo(() => ({
-        branches: branchesResource.rows,
-        currencies: currenciesResource.rows,
-    }), [branchesResource.rows, currenciesResource.rows]);
-
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     const tabs = isDetail ? config.detailTabs : config.createTabs;
@@ -61,13 +47,25 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
     const [saving, setSaving] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const initialValues = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
+    const hasChanges = useMemo(
+        () => !areComparableValuesEqual(buildComparableFormValues(initialValues), buildComparableFormValues(values)),
+        [initialValues, values],
+    );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
         setActiveTabId((isDetail ? config.detailTabs : config.createTabs)[0]?.id ?? 'general');
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteModalOpen(false);
-    }, [config.createTabs, config.detailTabs, initialValues, isDetail]);
+    }, [activeTabInstanceId, config.createTabs, config.detailTabs, isDetail]);
+
+    useEffect(() => {
+        if (!hasChanges) {
+            setValues(initialValues);
+        }
+    }, [initialValues, hasChanges]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -85,10 +83,6 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                 { label: config.labels.name, value: values.name },
             ]),
         [config.labels.code, config.labels.name, config.labels.type, values.code, values.name, values.type],
-    );
-    const hasChanges = useMemo(
-        () => !areComparableValuesEqual(buildComparableFormValues(initialValues), buildComparableFormValues(values)),
-        [initialValues, values],
     );
     const saveDisabled = saving || Boolean(validationMessage) || !hasChanges;
 
@@ -175,13 +169,13 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                         <div className="max-w-[1260px]">
                             <CrudStatusMessage status={status} className="mb-4" />
                             {activeTabId === 'opening-balance' ? (
-                                <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} lookupData={lookupData} />
+                                <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
                             ) : activeTabId === 'others' ? (
                                 <AccountsOthersTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
                             ) : activeTabId === 'children' ? (
                                 <AccountsChildrenTab values={values} />
                             ) : (
-                                <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} lookupData={lookupData} />
+                                <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
                             )}
                         </div>
                     </div>

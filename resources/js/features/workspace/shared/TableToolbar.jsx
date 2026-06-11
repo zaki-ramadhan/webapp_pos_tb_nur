@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -15,6 +15,7 @@ import {
     UploadIcon,
 } from '@/features/workspace/shared/Icons';
 import { exportToCSV, exportToExcelXML, importFromFile, printTable } from './exportUtils';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry } from './columnVisibility';
 
 const SIZE_STYLES = {
     compact: {
@@ -311,6 +312,79 @@ function ToolbarActionMenu({ menuButton, sizeStyle }) {
  *
  * exportConfig gains an optional `title` field for print headers.
  */
+function mapImportRow(row, columns) {
+    const mapped = {};
+    const rowKeys = Object.keys(row);
+
+    columns.forEach(col => {
+        if (!col.id || col.kind === 'spacer' || col.id === 'actions') return;
+
+        const normalizedLabel = String(col.label || '').toLowerCase().trim();
+        const normalizedId = String(col.id).toLowerCase().trim();
+
+        const matchedKey = rowKeys.find(k => {
+            const normalizedKey = k.toLowerCase().trim();
+            return normalizedKey === normalizedLabel || 
+                   normalizedKey === normalizedId ||
+                   normalizedKey.replace(/[^a-z0-9]/g, '') === normalizedId.replace(/[^a-z0-9]/g, '');
+        });
+
+        if (matchedKey !== undefined) {
+            mapped[col.id] = row[matchedKey];
+        } else {
+            const aliasMap = {
+                code: ['kode', 'no', 'nomor', 'employee_code', 'number'],
+                name: ['nama', 'nama lengkap', 'description', 'full_name'],
+                description: ['keterangan', 'deskripsi', 'catatan'],
+                notes: ['keterangan', 'deskripsi', 'catatan'],
+                rate: ['rate', 'persentase', 'persen', 'nilai'],
+                percentage: ['rate', 'persentase', 'persen', 'nilai'],
+            };
+            const aliases = aliasMap[col.id] || [];
+            const matchedAliasKey = rowKeys.find(k => {
+                const normalizedKey = k.toLowerCase().trim();
+                return aliases.includes(normalizedKey);
+            });
+            if (matchedAliasKey !== undefined) {
+                mapped[col.id] = row[matchedAliasKey];
+            }
+        }
+    });
+
+    return mapped;
+}
+
+function cleanRightControls(controls) {
+    if (!controls) return null;
+
+    const controlsArray = React.Children.toArray(controls);
+
+    const isDummyAction = (element) => {
+        if (!React.isValidElement(element)) return false;
+
+        const props = element.props || {};
+        const key = String(element.key || '').toLowerCase();
+        const icon = String(props.icon || '').toLowerCase();
+        const id = String(props.id || props.action?.id || '').toLowerCase();
+        const label = String(props.label || props.action?.label || '').toLowerCase();
+
+        const dummyKeys = ['download', 'print', 'settings'];
+        const dummyIcons = ['download', 'print', 'settings'];
+        const dummyIds = ['download', 'print', 'settings'];
+        const dummyLabels = ['unduh', 'cetak', 'pengaturan tabel', 'download', 'print', 'settings'];
+
+        return (
+            dummyKeys.some(dk => key.includes(dk)) ||
+            dummyIcons.some(di => icon.includes(di)) ||
+            dummyIds.some(di => id === di) ||
+            dummyLabels.some(dl => label.includes(dl))
+        );
+    };
+
+    const cleaned = controlsArray.filter(child => !isDummyAction(child));
+    return cleaned.length > 0 ? cleaned : null;
+}
+
 export default function TableToolbar({
     size = 'default',
     filters = null,
@@ -323,18 +397,91 @@ export default function TableToolbar({
     columnSettings = null,
     rightControls = null,
     search = null,
-    pageValue = null,
+    pageValue = undefined,
     exportConfig = null,
     className = '',
     topRowClassName = '',
     bottomRowClassName = '',
     rightControlsClassName = '',
+    resourceName = null,
+    onRefresh = null,
 }) {
+    const [activeTableState, setActiveTableState] = useState(() => tableRegistry.activeTable);
+
+    useEffect(() => {
+        return tableRegistry.subscribe((tableState) => {
+            setActiveTableState(tableState);
+        });
+    }, []);
+
+    const resolvedColumns = exportConfig?.columns ?? activeTableState?.columns ?? [];
+    const resolvedRows = exportConfig?.rows ?? activeTableState?.rows ?? [];
+    const resolvedResourceName = resourceName ?? activeTableState?.resource ?? null;
+
+    const schemaKey = getTableSchemaKey(resolvedColumns);
+    const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, resolvedColumns);
+
+    const resolvedColumnSettings = columnSettings || (resolvedColumns.length ? {
+        columns: resolvedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
+        visibleIds: visibleColumnIds,
+        onToggle: (columnId) => {
+            setVisibleColumnIds(prev =>
+                prev.includes(columnId)
+                    ? prev.filter(id => id !== columnId)
+                    : [...prev, columnId]
+            );
+        }
+    } : null);
+
+    const resolvedPrintButton = printButton || (resolvedColumns.length ? {
+        label: 'Cetak data',
+        onClick: () => {
+            const activeCols = resolvedColumns.filter(col => {
+                if (visibleColumnIds && !visibleColumnIds.includes(col.id)) return false;
+                return col && col.kind !== 'spacer' && col.id !== 'actions';
+            });
+            printTable(activeCols, resolvedRows, exportConfig?.title || activeTableState?.title || 'Laporan');
+        }
+    } : null);
+
+    const resolvedImportButton = importButton || (resolvedResourceName ? {
+        label: 'Impor data',
+        onImport: async ({ headers, rows }) => {
+            if (!rows.length) return;
+            try {
+                const mappedRows = rows.map(row => mapImportRow(row, resolvedColumns));
+
+                const response = await window.axios.post(`/api/backend/${resolvedResourceName}/import`, {
+                    rows: mappedRows,
+                });
+
+                alert(response.data?.message || 'Berhasil mengimpor data.');
+                if (typeof onRefresh === 'function') {
+                    onRefresh();
+                } else if (typeof refreshButton?.onClick === 'function') {
+                    refreshButton.onClick();
+                }
+            } catch (err) {
+                const msg = err.response?.data?.message || err.message || 'Gagal mengimpor data.';
+                alert(msg);
+            }
+        }
+    } : null);
+
+    const resolvedExportConfig = exportConfig || (resolvedColumns.length ? {
+        columns: resolvedColumns,
+        rows: resolvedRows,
+        filename: resolvedResourceName ? resolvedResourceName.replace(/\s+/g, '-') : 'export',
+        title: exportConfig?.title || activeTableState?.title || 'Laporan',
+    } : null);
+
     const sizeStyle = SIZE_STYLES[size] ?? SIZE_STYLES.default;
     const searchLoading = Boolean(search?.loading ?? refreshButton?.loading);
     const searchTrailing = searchLoading
         ? <RefreshIcon className={`${sizeStyle.searchIcon} animate-spin`.trim()} />
         : (search?.trailing ?? <SearchIcon className={sizeStyle.searchIcon} />);
+
+    const cleanedRightControls = cleanRightControls(rightControls);
 
     return (
         <div className={className}>
@@ -358,29 +505,43 @@ export default function TableToolbar({
                         </ToolbarIconButton>
                     ) : null}
 
+                    {refreshButton ? (
+                        <ToolbarIconButton
+                            label={refreshButton.label ?? 'Muat ulang'}
+                            onClick={refreshButton.onClick}
+                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.utilityButton}`.trim()}
+                        >
+                            {refreshButton.loading ? (
+                                <RefreshIcon className="h-4.5 w-4.5 animate-spin" />
+                            ) : (
+                                <RefreshIcon className="h-4.5 w-4.5" />
+                            )}
+                        </ToolbarIconButton>
+                    ) : null}
+
                     {leftControls}
                 </div>
 
                 <div
                     className={`flex w-full min-w-0 flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center md:flex-nowrap ${rightControlsClassName}`.trim()}
                 >
-                    {rightControls ? <div className="flex shrink-0 flex-row flex-wrap items-center gap-2">{rightControls}</div> : null}
+                    {cleanedRightControls ? <div className="flex shrink-0 flex-row flex-wrap items-center gap-2">{cleanedRightControls}</div> : null}
 
-                    {importButton ? <ToolbarImportButton importConfig={importButton} sizeStyle={sizeStyle} /> : null}
+                    {resolvedImportButton ? <ToolbarImportButton importConfig={resolvedImportButton} sizeStyle={sizeStyle} /> : null}
 
-                    {exportConfig ? <ToolbarExportSplitButton exportConfig={exportConfig} sizeStyle={sizeStyle} /> : null}
+                    {resolvedExportConfig ? <ToolbarExportSplitButton exportConfig={resolvedExportConfig} sizeStyle={sizeStyle} /> : null}
 
                     {menuButton ? <ToolbarActionMenu menuButton={menuButton} sizeStyle={sizeStyle} /> : null}
 
-                    {columnSettings ? <ToolbarColumnSettings columnSettings={columnSettings} sizeStyle={sizeStyle} /> : null}
+                    {resolvedColumnSettings ? <ToolbarColumnSettings columnSettings={resolvedColumnSettings} sizeStyle={sizeStyle} /> : null}
 
-                    {printButton ? (
+                    {resolvedPrintButton ? (
                         <ToolbarIconButton
-                            label={printButton.label}
-                            onClick={printButton.onClick ?? (() => window.print())}
+                            label={resolvedPrintButton.label}
+                            onClick={resolvedPrintButton.onClick ?? (() => window.print())}
                             className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.utilityButton}`.trim()}
                         >
-                            {printButton.icon ?? <PrintIcon />}
+                            {resolvedPrintButton.icon ?? <PrintIcon />}
                         </ToolbarIconButton>
                     ) : null}
 
@@ -397,15 +558,6 @@ export default function TableToolbar({
                         />
                     ) : null}
 
-                    {pageValue !== null ? (
-                        <TextInput
-                            value={pageValue || '0'}
-                            readOnly
-                            interactiveReadOnly
-                            className={`rounded-[4px] border-[#cfd6e2] ${sizeStyle.pageInput}`.trim()}
-                            inputClassName={size === 'compact' ? 'text-center text-[15px] !px-2' : 'text-center text-[17px] text-[#646d83] !px-2'}
-                        />
-                    ) : null}
                 </div>
             </div>
         </div>

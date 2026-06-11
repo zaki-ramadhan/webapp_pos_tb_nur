@@ -1,6 +1,6 @@
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
-const WORKSPACE_PAGE_STATE_STORAGE_KEY = 'pos-workspace-open-pages:v1';
+const WORKSPACE_PAGE_STATE_STORAGE_KEY = 'pos-workspace-open-pages:v2';
 
 function canUseBrowserStorage() {
     return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';

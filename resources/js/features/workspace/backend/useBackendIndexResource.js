@@ -13,6 +13,14 @@ function sanitizeFilters(filters = {}) {
     );
 }
 
+// Global cache for SWR (Stale-While-Revalidate) mechanism
+const globalCache = new Map();
+const CACHE_FRESH_THRESHOLD_MS = 5000; // 5 seconds freshness
+
+function getCacheKey(resource, filters) {
+    return `${resource}::${JSON.stringify(filters)}`;
+}
+
 export default function useBackendIndexResource({
     resource,
     filters = {},
@@ -21,7 +29,6 @@ export default function useBackendIndexResource({
 }) {
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(initialPerPage);
-    const [payload, setPayload] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [reloadVersion, setReloadVersion] = useState(0);
@@ -50,15 +57,56 @@ export default function useBackendIndexResource({
         };
     }, [normalizedFilters, page, perPage, reloadVersion]);
 
+    const cacheKey = useMemo(() => getCacheKey(resource, requestFilters), [resource, requestFilters]);
+
+    // Initialize payload from cache if available
+    const [payload, setPayload] = useState(() => {
+        const cached = globalCache.get(cacheKey);
+        return cached ? cached.payload : null;
+    });
+
+    // Derive state from cacheKey during render to sync payload immediately when key changes
+    const [prevCacheKey, setPrevCacheKey] = useState(cacheKey);
+    if (cacheKey !== prevCacheKey) {
+        setPrevCacheKey(cacheKey);
+        const cached = globalCache.get(cacheKey);
+        setPayload(cached ? cached.payload : null);
+    }
+
     useEffect(() => {
         if (!enabled || !resource) {
             return undefined;
         }
 
         let active = true;
+        const currentCacheKey = getCacheKey(resource, requestFilters);
+        const cachedEntry = globalCache.get(currentCacheKey);
+        const now = Date.now();
+
+        const isForceRefresh = requestFilters._refresh !== undefined;
+        const isFresh = cachedEntry && (now - cachedEntry.timestamp < CACHE_FRESH_THRESHOLD_MS);
+
+        // If force refresh is triggered, invalidate cache for this entire resource
+        if (isForceRefresh) {
+            for (const key of globalCache.keys()) {
+                if (key.startsWith(`${resource}::`)) {
+                    globalCache.delete(key);
+                }
+            }
+        }
+
+        // Skip fetch if cache is fresh and not forced
+        if (isFresh && !isForceRefresh) {
+            setPayload(cachedEntry.payload);
+            setLoading(false);
+            return undefined;
+        }
 
         async function run() {
-            setLoading(true);
+            // Show loading spinner only if we don't have cached data OR it is a force refresh
+            if (!cachedEntry || isForceRefresh) {
+                setLoading(true);
+            }
             setError('');
 
             try {
@@ -67,6 +115,12 @@ export default function useBackendIndexResource({
                 if (!active) {
                     return;
                 }
+
+                // Update cache
+                globalCache.set(currentCacheKey, {
+                    payload: nextPayload,
+                    timestamp: Date.now(),
+                });
 
                 setPayload(nextPayload);
             } catch (requestError) {
@@ -106,5 +160,36 @@ export default function useBackendIndexResource({
         lastPage: payload?.last_page ?? 1,
         from: payload?.from ?? 0,
         to: payload?.to ?? 0,
+    };
+}
+
+if (typeof window !== 'undefined') {
+    window.__clearBackendCache = function(pageId) {
+        if (!pageId) {
+            globalCache.clear();
+            return;
+        }
+
+        const normalizedPageId = pageId.toLowerCase();
+        const tokens = normalizedPageId.split('-');
+
+        for (const key of globalCache.keys()) {
+            const resourceName = key.split('::')[0].toLowerCase();
+            
+            // Check if pageId is exactly the resource name,
+            // or if any of the significant tokens match the resource name
+            const isMatch = resourceName.includes(normalizedPageId) || 
+                            normalizedPageId.includes(resourceName) ||
+                            tokens.some(token => {
+                                if (token.length <= 2) return false;
+                                return resourceName.includes(token) || 
+                                       token.includes(resourceName) || 
+                                       (resourceName.substring(0, 5) === token.substring(0, 5) && token.length >= 5);
+                            });
+
+            if (isMatch) {
+                globalCache.delete(key);
+            }
+        }
     };
 }

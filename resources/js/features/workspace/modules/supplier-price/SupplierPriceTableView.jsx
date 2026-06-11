@@ -117,13 +117,15 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={config.table.pageValue}
-            />
+                />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable className="min-w-[1280px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -147,7 +149,10 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                                     key={row.id}
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                 >
-                                    {config.table.columns.map((column) => (
+                                                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+{config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
@@ -160,7 +165,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell
-                                    colSpan={config.table.columns.length}
+                                    colSpan={config.table.columns.length + 1}
                                     className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
                                 >
                                     {config.table.emptyLabel}

@@ -222,7 +222,7 @@ export default function TextInput({
         inputRef.current?.focus();
     }
 
-    const hasWidth = containerClassName.includes('w-');
+    const hasWidth = containerClassName.includes('w-') || className.includes('w-');
     const widthClass = hasWidth ? '' : 'w-full';
 
     return (

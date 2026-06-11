@@ -104,7 +104,7 @@ export default function GeneralJournalTableView({
                         widthClassName: 'sm:w-[342px]',
                         trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                     }}
-                    pageValue={config.table.pageValue}
+                    pageValue={filteredRows.length.toLocaleString('id-ID')}
                 />
 
                 <div className="mt-3 min-h-0 overflow-x-auto">

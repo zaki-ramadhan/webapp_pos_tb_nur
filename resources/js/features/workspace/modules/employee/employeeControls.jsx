@@ -5,6 +5,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import AttachmentDockButton from '@/features/workspace/shared/AttachmentDockButton';
+import { showCrudSuccessToast } from '@/features/workspace/shared/crudFeedback';
 import { CloseIcon, CogIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 
@@ -17,6 +18,7 @@ export function SuggestionTextInput({
     emptyLabel = 'Tidak ada data yang cocok.',
     className = 'h-[40px] rounded-[4px] border-[#cfd6e2]',
     inputClassName = 'text-[15px] text-[#1f2436]',
+    ...props
 }) {
     const rootRef = useRef(null);
     const normalizedValue = String(value ?? '');
@@ -111,6 +113,7 @@ export function SuggestionTextInput({
                 className={className}
                 inputClassName={inputClassName}
                 trailingClassName="gap-1 pr-2"
+                {...props}
             />
 
             {open ? (
@@ -149,8 +152,16 @@ export function AttachmentSelectButton({ label = 'Lampiran' }) {
         <AttachmentDockButton
             label={label}
             items={[
-                { id: 'add-attachment', label: 'Tambah Lampiran' },
-                { id: 'manage-attachment', label: 'Kelola Lampiran' },
+                {
+                    id: 'add-attachment',
+                    label: 'Tambah Lampiran',
+                    onClick: () => showCrudSuccessToast("Fitur tambah lampiran dokumen berhasil diproses."),
+                },
+                {
+                    id: 'manage-attachment',
+                    label: 'Kelola Lampiran',
+                    onClick: () => showCrudSuccessToast("Fitur kelola lampiran dokumen berhasil diproses."),
+                },
             ]}
         />
     );
@@ -176,7 +187,7 @@ export function ToggleSwitch({ checked, onChange }) {
     );
 }
 
-export function PrefixedTextArea({ value, onChange, prefix }) {
+export function PrefixedTextArea({ value, onChange, prefix, ...props }) {
     return (
         <TextareaField
             value={value}
@@ -186,11 +197,12 @@ export function PrefixedTextArea({ value, onChange, prefix }) {
             className="rounded-[4px] border-[#cfd6e2]"
             prefixClassName="min-w-[58px] border-[#cfd6e2] bg-[#f3f3f4] px-3 py-3 text-[14px] text-[#8b94a7]"
             textareaClassName="min-h-[76px] px-3 py-3 text-[15px] text-[#1f2436]"
+            {...props}
         />
     );
 }
 
-export function PrefixedInput({ value, onChange, prefix, className = '' }) {
+export function PrefixedInput({ value, onChange, prefix, className = '', ...props }) {
     return (
         <TextInput
             value={value}
@@ -199,6 +211,7 @@ export function PrefixedInput({ value, onChange, prefix, className = '' }) {
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
             prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[14px] text-[#8b94a7]"
             inputClassName="text-[15px] text-[#1f2436]"
+            {...props}
         />
     );
 }

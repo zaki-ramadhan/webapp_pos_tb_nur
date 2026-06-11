@@ -69,6 +69,7 @@ export function buildPurchasePaymentRecord(row = {}, config) {
         dueDatePph: row.checkDate ?? row.date ?? '',
         notes: row.notes ?? '',
         branches: row.branch ? [row.branch] : ['JAKARTA'],
+        __branchId: row.branch === 'SURABAYA' ? 2 : (row.branch === 'JAKARTA' ? 1 : (config.draft?.__branchId ?? 1)),
         reconcileStatus: row.reconcileStatus ?? 'Belum',
         printStatus: row.printStatus ?? 'Belum cetak/email',
         paidWith: row.method ?? 'Tunai',

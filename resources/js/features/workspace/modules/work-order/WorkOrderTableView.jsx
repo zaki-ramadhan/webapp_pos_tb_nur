@@ -148,14 +148,16 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[340px]',
                 }}
-                pageValue={config.table.pageValue}
-            />
+                />
 
             <div className="min-h-0 flex-1 overflow-x-auto">
                 <div className="min-w-[1320px]">
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                                 {config.table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
@@ -192,7 +194,10 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                                             })
                                         }
                                     >
-                                        {config.table.columns.map((column) => (
+                                                                            <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+{config.table.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
                                                 className={`px-3 text-[15px] text-[#131a28] ${resolveWorkOrderCellAlignClassName(column.align)}`.trim()}
@@ -205,7 +210,7 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                             ) : (
                                 <DataTableRow className="border-[#dde1e8] bg-white">
                                     <DataTableCell
-                                        colSpan={config.table.columns.length}
+                                        colSpan={config.table.columns.length + 1}
                                         className="px-3 py-3 text-center text-[15px] text-[#131a28]"
                                     >
                                         Belum ada data

@@ -17,10 +17,10 @@ export default function PreferencesTabs({
                         key={tab.id}
                         type="button"
                         onClick={() => onSelectTab(tab.id)}
-                        className={`relative -mb-px -mr-px inline-flex h-8.5 shrink-0 items-center rounded-t-[4px] border border-b-0 px-3 text-[13px] transition first:rounded-tr-none sm:h-9 sm:px-4 sm:text-[14px] md:h-9.5 md:text-[15px] ${
+                        className={`relative -mb-px -mr-px inline-flex h-8.5 shrink-0 items-center rounded-t-[5px] border border-b-0 px-3 text-[13px] transition sm:h-9 sm:px-4 sm:text-[14px] md:h-9.5 md:text-[15px] ${
                             activeTabId === tab.id
-                                ? 'z-10 border-[#bcc4d0] border-t-[3px] border-t-[#ED3969] bg-white font-semibold text-[#2b3449]'
-                                : 'border-[#afb7c4] bg-[#c9c9c9] font-normal text-[#5a6278]'
+                                ? 'z-10 border-[#bcc4d0] border-t-[3px] border-t-[#ED3969] bg-white font-semibold text-[#475569]'
+                                : 'border-[#bcc4d0] bg-[#e2e8f0] font-normal text-[#475569] hover:bg-[#cbd5e1]'
                         } ${activeTabId === tab.id ? activeTabClassName : inactiveTabClassName} ${tabClassName}`.trim()}
                     >
                         {tab.label}

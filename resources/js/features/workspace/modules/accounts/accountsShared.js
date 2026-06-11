@@ -5,6 +5,7 @@ export function buildFormState(source = {}) {
         ...source,
         currency: [...(source.currency ?? [])],
         branch: [...(source.branch ?? [])],
+        parentAccount: [...(source.parentAccount ?? [])],
         childAccounts: [...(source.childAccounts ?? [])],
     };
 }
@@ -106,6 +107,10 @@ export function buildAccountSourceRecord(record, config) {
         ...config.createValues,
         id: String(record.id),
         parentId: record.parent_id ?? null,
+        parentAccount: record.parent ? [record.parent.name] : [],
+        parentAccountLabel: record.parent ? `${record.parent.code} - ${record.parent.name}` : '',
+        parentAccountCode: record.parent?.code ?? '',
+        parentAccountName: record.parent?.name ?? '',
         currencyId: record.currency_id ?? record.currency?.id ?? null,
         branchIds: Array.isArray(record.branches) ? record.branches.map((branch) => branch.id) : [],
         userIds: Array.isArray(record.users) ? record.users.map((user) => user.id) : [],
@@ -132,6 +137,7 @@ export function buildComparableFormValues(values) {
     return {
         type: String(values.type ?? '').trim(),
         isSubAccount: Boolean(values.isSubAccount),
+        parentId: values.parentId ?? null,
         code: String(values.code ?? '').trim(),
         name: String(values.name ?? '').trim(),
         currencyId: values.currencyId ?? null,

@@ -89,13 +89,15 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={total.toLocaleString('id-ID')}
-            />
+                />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -124,7 +126,10 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                                         })
                                     }
                                 >
-                                    {table.columns.map((column) => (
+                                                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+{table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-[15px] text-[#131a28]`.trim()}
@@ -136,7 +141,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
                                     {error || (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

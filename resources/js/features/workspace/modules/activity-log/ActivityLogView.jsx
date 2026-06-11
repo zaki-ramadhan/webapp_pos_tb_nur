@@ -139,7 +139,7 @@ export default function ActivityLogView({ page }) {
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={table.pageValue}
+                pageValue={filteredRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">

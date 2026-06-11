@@ -42,14 +42,6 @@ export default function BudgetTransferFormView({
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-
-    useEffect(() => {
-        setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-        setValues(initialValues);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
-    }, [config, initialValues]);
-
     const initialComparable = useMemo(() => {
         return {
             year: initialValues.year,
@@ -132,6 +124,21 @@ export default function BudgetTransferFormView({
             values.year,
         ],
     );
+
+    const activeTabInstanceId = activeLevel2Tab?.id;
+
+    useEffect(() => {
+        setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+        setValues(initialValues);
+        setStatus({ tone: '', message: '' });
+        setDeleteConfirmationOpen(false);
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!isDirty) {
+            setValues(initialValues);
+        }
+    }, [initialValues, isDirty]);
 
     useWorkspaceDirtyRegistration({
         pageId,

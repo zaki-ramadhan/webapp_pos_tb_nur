@@ -81,6 +81,7 @@ export default function TransactionDateInput({
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
     disabled = false,
     ariaLabel = 'Pilih tanggal',
+    ...props
 }) {
     const [displayValue, setDisplayValue] = useState(() => formatDateValue(value));
     const [nativeValue, setNativeValue] = useState(() => normalizeDateValue(value));
@@ -156,6 +157,7 @@ export default function TransactionDateInput({
                     className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
                     inputClassName={`cursor-pointer ${inputClassName}`.trim()}
                     trailingClassName={`pointer-events-none ${trailingClassName}`.trim()}
+                    {...props}
                 />
                 <button
                     type="button"

@@ -64,6 +64,12 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         }
 
         clearPageDirty(pageId);
+
+        // Clear cached resource data for this page when it is closed
+        if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
+            window.__clearBackendCache(pageId);
+        }
+
         setOpenPages((currentPages) => currentPages.filter((page) => page.id !== pageId));
         setPageLevel2ContentTabs((currentTabs) => ({
             ...currentTabs,

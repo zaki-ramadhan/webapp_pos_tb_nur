@@ -60,14 +60,16 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[342px]',
                 }}
-                pageValue={config.table.pageValue}
-            />
+                />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <div className="min-w-[1060px]">
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                No.
+                            </DataTableHead>
                                 {config.table.columns.map((column) => (
                                     <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveRowAlignClassName(column.align)}`.trim()}>
                                         {column.kind === 'spacer' ? (
@@ -98,7 +100,10 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
                                         })
                                     }
                                 >
-                                    {config.table.columns.map((column) => (
+                                                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+{config.table.columns.map((column) => (
                                         <DataTableCell key={column.id} className={`${column.cellClassName ?? ''} px-3 text-[15px] text-[#131a28]`.trim()}>
                                             {column.kind === 'spacer' ? null : <span className="block truncate">{formatTableTextValue(row[column.id])}</span>}
                                         </DataTableCell>
