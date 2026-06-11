@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { sanitizeNumericInput } from './accountsShared';
@@ -12,6 +14,14 @@ import {
 } from './accountsViewShared';
 
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData }) {
+    const selectedCurrencies = useMemo(() => {
+        if (!values.currencyId) return [];
+        const found = (lookupData?.currencies ?? []).find(c => c.id === values.currencyId);
+        if (found) return [found];
+        const name = values.currency?.[0] ?? values.currencyLabel ?? '';
+        return [{ id: values.currencyId, name, code: '' }];
+    }, [values.currencyId, values.currency, values.currencyLabel, lookupData?.currencies]);
+
     return (
         <div className="space-y-4">
             <AccountsFormFieldRow label={config.labels.type}>
@@ -85,24 +95,21 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                         inputClassName="text-[15px] text-[#8a91a8]"
                     />
                 ) : (
-                    <SelectField
-                        value={values.currencyId ?? ''}
-                        onChange={(event) => {
-                            const selectedId = event.target.value ? parseInt(event.target.value) : null;
-                            const selectedCurrency = (lookupData?.currencies ?? []).find(c => c.id === selectedId);
-                            onChange('currencyId', selectedId);
-                            onChange('currency', selectedCurrency ? [selectedCurrency.name] : []);
+                    <BackendLookupField
+                        resource="currencies"
+                        values={selectedCurrencies}
+                        placeholder={config.placeholders.currency}
+                        searchLabel="Cari mata uang"
+                        getOptionLabel={(option) => option ? (option.code ? `${option.name} (${option.code})` : option.name) : ''}
+                        onSelect={(option) => {
+                            onChange('currencyId', option.id);
+                            onChange('currency', [option.name]);
                         }}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
-                    >
-                        <option value="">Pilih Mata Uang...</option>
-                        {(lookupData?.currencies ?? []).map((currency) => (
-                            <option key={currency.id} value={currency.id}>
-                                {currency.name} ({currency.code})
-                            </option>
-                        ))}
-                    </SelectField>
+                        onRemove={() => {
+                            onChange('currencyId', null);
+                            onChange('currency', []);
+                        }}
+                    />
                 )}
             </AccountsFormFieldRow>
  
@@ -116,29 +123,37 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
 }
 
 export function AccountsOpeningBalanceTab({ config, values, onChange, lookupData }) {
+    const selectedBranches = useMemo(() => {
+        return (values.branchIds ?? []).map((id, index) => {
+            const found = (lookupData?.branches ?? []).find(b => b.id === id);
+            if (found) return found;
+            const name = values.branch?.[index] ?? `Cabang #${id}`;
+            return { id, name };
+        });
+    }, [values.branchIds, values.branch, lookupData?.branches]);
+
     return (
         <div className="space-y-6">
             <h3 className="text-[24px] font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
  
             <AccountsFormFieldRow label={config.labels.branch}>
-                <SelectField
-                    value={values.branchIds?.[0] ?? ''}
-                    onChange={(event) => {
-                        const selectedId = event.target.value ? parseInt(event.target.value) : null;
-                        const selectedBranch = (lookupData?.branches ?? []).find(b => b.id === selectedId);
-                        onChange('branchIds', selectedId ? [selectedId] : []);
-                        onChange('branch', selectedBranch ? [selectedBranch.name] : []);
+                <BackendLookupField
+                    resource="branches"
+                    values={selectedBranches}
+                    placeholder={config.placeholders.branch}
+                    searchLabel="Cari cabang"
+                    getOptionLabel={(option) => option?.name ?? ''}
+                    onSelect={(option) => {
+                        onChange('branchIds', [option.id]);
+                        onChange('branch', [option.name]);
                     }}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
-                >
-                    <option value="">Pilih Cabang...</option>
-                    {(lookupData?.branches ?? []).map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                            {branch.name}
-                        </option>
-                    ))}
-                </SelectField>
+                    onRemove={(removedBranch) => {
+                        const nextIds = (values.branchIds ?? []).filter(id => id !== removedBranch.id);
+                        const nextNames = (values.branch ?? []).filter(name => name !== removedBranch.name);
+                        onChange('branchIds', nextIds);
+                        onChange('branch', nextNames);
+                    }}
+                />
             </AccountsFormFieldRow>
 
             <AccountsFormFieldRow label={config.labels.openingBalanceValue}>
