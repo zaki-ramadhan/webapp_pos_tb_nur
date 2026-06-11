@@ -36,6 +36,7 @@ import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils';
 import SalesDocumentFormHeader from './SalesDocumentFormHeader';
 import {
     applyComputedTotals,
@@ -241,30 +242,23 @@ export default function SalesDocumentFormView({
             onImportClick: () => setImportModalOpen(true),
             onImportItems: (importedItems) => {
                 updateItems((existingItems) => {
-                    const mergedItems = [...existingItems];
-                    importedItems.forEach((imported) => {
-                        const duplicateIdx = mergedItems.findIndex(
-                            (item) => String(item.code).toLowerCase() === String(imported.code).toLowerCase()
-                        );
-                        if (duplicateIdx !== -1) {
-                            const existingQty = parseFloat(mergedItems[duplicateIdx].quantity) || 0;
-                            const importedQty = parseFloat(imported.quantity) || 0;
-                            const newQty = existingQty + importedQty;
-
-                            const price = parseFloat(String(mergedItems[duplicateIdx].price).replace(/[^\d.-]/g, '')) || 0;
-                            const discount = parseFloat(String(mergedItems[duplicateIdx].discount).replace(/[^\d.-]/g, '')) || 0;
-                            const newTotal = Math.max(0, newQty * price - discount);
-
-                            mergedItems[duplicateIdx].quantity = String(newQty);
-                            mergedItems[duplicateIdx].total = newTotal.toLocaleString('id-ID');
-                        } else {
-                            mergedItems.push({
-                                ...imported,
-                                id: `imported-item-${Date.now()}-${Math.random()}`,
-                            });
-                        }
+                    const mergedItems = mergeImportedItems(
+                        existingItems,
+                        importedItems.map((item) => ({
+                            ...item,
+                            id: item.id || `imported-item-${Date.now()}-${Math.random()}`,
+                        }))
+                    );
+                    return mergedItems.map((item) => {
+                        const qty = parseFloat(item.quantity) || 0;
+                        const price = parseFloat(String(item.price).replace(/[^\d.-]/g, '')) || 0;
+                        const discount = parseFloat(String(item.discount).replace(/[^\d.-]/g, '')) || 0;
+                        const total = Math.max(0, qty * price - discount);
+                        return {
+                            ...item,
+                            total: total.toLocaleString('id-ID'),
+                        };
                     });
-                    return mergedItems;
                 });
                 setStatus({ tone: 'success', message: `${importedItems.length} item berhasil diimpor.` });
             },
