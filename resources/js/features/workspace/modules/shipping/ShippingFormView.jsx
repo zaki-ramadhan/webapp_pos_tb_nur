@@ -16,6 +16,7 @@ import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteInput';
 
 function renderDockIcon(icon) {
     if (icon === 'trash') {
@@ -224,10 +225,18 @@ export default function ShippingFormView({
                                     />
 
                                     <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_170px]">
-                                        <PrefixedInput
+                                        <CityAutocompleteInput
                                             value={values.city}
-                                            onChange={(event) => handleChange('city', event.target.value)}
+                                            onChange={(nextValue) => handleChange('city', nextValue)}
+                                            onSelectCity={(item) => {
+                                                handleChange('city', item.city);
+                                                handleChange('province', item.province);
+                                                handleChange('postalCode', item.postalCode);
+                                                handleChange('country', item.country);
+                                            }}
                                             prefix="Kota"
+                                            prefixClassName="min-w-[92px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
+                                            dropdownLeftOffsetClassName="left-[92px]"
                                         />
                                         <PrefixedInput
                                             value={values.postalCode}

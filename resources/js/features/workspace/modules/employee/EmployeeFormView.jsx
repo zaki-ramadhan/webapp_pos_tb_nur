@@ -49,8 +49,9 @@ export default function EmployeeFormView({
 
         return tableRows.find((row) => String(row.id) === String(recordId)) ?? null;
     }, [activeLevel2Tab, tableRows]);
+    const detailRowId = detailRow?.id ?? null;
     const [activeTabId, setActiveTabId] = useState(form.tabs?.[0]?.id ?? 'employee-general');
-    const initialValues = useMemo(() => buildEmployeeFormValues(form, detailRow), [detailRow, form]);
+    const initialValues = useMemo(() => buildEmployeeFormValues(form, detailRow), [detailRow]);
     const [values, setValues] = useState(() => initialValues);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
@@ -62,13 +63,16 @@ export default function EmployeeFormView({
 
     useEffect(() => {
         setActiveTabId(form.tabs?.[0]?.id ?? 'employee-general');
+    }, [detailRowId, form.tabs]);
+
+    useEffect(() => {
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
         setErrors({
             website: validateEmployeeWebsite(initialValues.website ?? ''),
         });
-    }, [form, initialValues]);
+    }, [initialValues]);
 
     function handleChange(field, nextValue) {
         if (field === 'website') {

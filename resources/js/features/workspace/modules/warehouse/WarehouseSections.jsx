@@ -4,6 +4,7 @@ import TextareaField from '@/components/ui/TextareaField';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
+import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteInput';
 
 export function WarehouseFieldRow({ label, required = false, children, className = '' }) {
     return (
@@ -136,13 +137,27 @@ export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
 }
 
 export function WarehouseAddressTab({ config, values, onChange }) {
+    const handleSelectCity = (item) => {
+        onChange('city', item.city);
+        onChange('province', item.province);
+        onChange('postalCode', item.postalCode);
+        onChange('country', item.country);
+    };
+
     return (
         <WarehouseFieldRow label={config.labels.address}>
             <div className="max-w-[720px] space-y-3">
                 <PrefixedTextArea prefix="Jalan" value={values.street} onChange={(event) => onChange('street', event.target.value)} />
 
                 <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.74fr)]">
-                    <PrefixedInput prefix="Kota" value={values.city} onChange={(event) => onChange('city', event.target.value)} />
+                    <CityAutocompleteInput
+                        value={values.city}
+                        onChange={(nextValue) => onChange('city', nextValue)}
+                        onSelectCity={handleSelectCity}
+                        prefix="Kota"
+                        prefixClassName="min-w-[48px] border-[#cfd6e2] bg-[#f3f3f4] px-2 text-[15px] text-[#8b94a7]"
+                        dropdownLeftOffsetClassName="left-[48px]"
+                    />
                     <PrefixedInput prefix="K.Pos" value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} />
                 </div>
 

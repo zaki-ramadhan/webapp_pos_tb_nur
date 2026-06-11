@@ -1,6 +1,7 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import TextInput from '@/components/ui/TextInput';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
+import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteInput';
 
 export function BranchFieldRow({ label, required = false, children }) {
     return (
@@ -44,6 +45,13 @@ export function PrefixedInput({ value, onChange, prefix, className = '', inputCl
 }
 
 export function BranchGeneralTab({ values, onChange }) {
+    const handleSelectCity = (item) => {
+        onChange('city', item.city);
+        onChange('province', item.province);
+        onChange('postalCode', item.postalCode);
+        onChange('country', item.country);
+    };
+
     return (
         <div className="grid gap-8 lg:grid-cols-2">
             <div className="space-y-4">
@@ -83,10 +91,13 @@ export function BranchGeneralTab({ values, onChange }) {
                         />
 
                         <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_184px]">
-                            <PrefixedInput
+                            <CityAutocompleteInput
                                 value={values.city}
-                                onChange={(event) => onChange('city', event.target.value)}
+                                onChange={(nextValue) => onChange('city', nextValue)}
+                                onSelectCity={handleSelectCity}
                                 prefix="Kota"
+                                prefixClassName="min-w-[92px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
+                                dropdownLeftOffsetClassName="left-[92px]"
                             />
                             <PrefixedInput
                                 value={values.postalCode}

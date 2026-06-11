@@ -10,6 +10,7 @@ import {
     SuggestionTextInput,
     ToggleSwitch,
 } from '@/features/workspace/modules/employee/employeeControls';
+import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteInput';
 
 export function EmployeeGeneralTab({ form, values, errors, onChange }) {
     return (
@@ -73,6 +74,13 @@ export function EmployeeGeneralTab({ form, values, errors, onChange }) {
 }
 
 export function EmployeeAddressTab({ values, onChange }) {
+    const handleSelectCity = (item) => {
+        onChange('city', item.city);
+        onChange('province', item.province);
+        onChange('postalCode', item.postalCode);
+        onChange('country', item.country);
+    };
+
     return (
         <div className="max-w-[900px]">
             <div className="grid gap-3 lg:grid-cols-[208px_minmax(0,1fr)] lg:items-start">
@@ -80,7 +88,12 @@ export function EmployeeAddressTab({ values, onChange }) {
                 <div className="space-y-3">
                     <PrefixedTextArea value={values.street} onChange={(event) => onChange('street', event.target.value)} prefix="Jalan" />
                     <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_260px]">
-                        <PrefixedInput value={values.city} onChange={(event) => onChange('city', event.target.value)} prefix="Kota" />
+                        <CityAutocompleteInput
+                            value={values.city}
+                            onChange={(nextValue) => onChange('city', nextValue)}
+                            onSelectCity={handleSelectCity}
+                            prefix="Kota"
+                        />
                         <PrefixedInput value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} prefix="K.Pos" />
                     </div>
                     <PrefixedInput value={values.province} onChange={(event) => onChange('province', event.target.value)} prefix="Provinsi" />

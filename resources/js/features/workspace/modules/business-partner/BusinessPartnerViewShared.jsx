@@ -23,6 +23,7 @@ import {
     SaveIcon,
     TrashIcon,
 } from '@/features/workspace/shared/Icons';
+import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteInput';
 
 export function buildFormState(source = {}) {
     return Object.fromEntries(
@@ -87,6 +88,13 @@ export function SectionHeading({ title }) {
 }
 
 export function AddressStack({ prefixValue, values, readOnly = false, onChange = null }) {
+    const handleSelectCity = (item) => {
+        onChange?.('city', item.city);
+        onChange?.('province', item.province);
+        onChange?.('postalCode', item.postalCode);
+        onChange?.('country', item.country);
+    };
+
     return (
         <div className="space-y-3">
             <TextareaField
@@ -101,15 +109,25 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
             />
 
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_240px]">
-                <TextInput
-                    value={values.city}
-                    onChange={(event) => onChange?.('city', event.target.value)}
-                    readOnly={readOnly}
-                    prefix="Kota"
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
-                    inputClassName="text-[15px] text-[#1f2436]"
-                />
+                {readOnly ? (
+                    <TextInput
+                        value={values.city}
+                        readOnly
+                        prefix="Kota"
+                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                        prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
+                        inputClassName="text-[15px] text-[#1f2436]"
+                    />
+                ) : (
+                    <CityAutocompleteInput
+                        value={values.city}
+                        onChange={(nextValue) => onChange?.('city', nextValue)}
+                        onSelectCity={handleSelectCity}
+                        prefix="Kota"
+                        prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1] border-[#cfd6e2] border-r"
+                        dropdownLeftOffsetClassName="left-[64px]"
+                    />
+                )}
                 <TextInput
                     value={values.postalCode}
                     onChange={(event) => onChange?.('postalCode', event.target.value)}
