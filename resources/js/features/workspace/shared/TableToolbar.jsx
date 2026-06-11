@@ -15,7 +15,8 @@ import {
     UploadIcon,
 } from '@/features/workspace/shared/Icons';
 import { exportToCSV, exportToExcelXML, importFromFile, printTable } from './exportUtils';
-import { useColumnVisibility, getTableSchemaKey, tableRegistry } from './columnVisibility';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from './columnVisibility';
+import { showWarningToast, showInfoToast } from '@/components/feedback/toast';
 
 const SIZE_STYLES = {
     compact: {
@@ -105,10 +106,20 @@ function ToolbarImportButton({ importConfig, sizeStyle }) {
 function ToolbarExportSplitButton({ exportConfig, sizeStyle }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
+    const rows = exportConfig.rows ?? [];
+    const disabled = rows.length === 0;
 
     function handleExport(type) {
+        if (disabled) {
+            showWarningToast({
+                title: 'Ekspor Gagal',
+                message: 'Tidak ada data di tabel untuk diekspor.',
+            });
+            setOpen(false);
+            return;
+        }
+
         const columns = exportConfig.columns ?? [];
-        const rows = exportConfig.rows ?? [];
         const filename = exportConfig.filename ?? 'export';
         const title = exportConfig.title ?? filename;
 
@@ -128,9 +139,20 @@ function ToolbarExportSplitButton({ exportConfig, sizeStyle }) {
             <button
                 ref={buttonRef}
                 type="button"
-                onClick={() => setOpen(current => !current)}
-                className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.menuButton}`.trim()}
-                title="Ekspor data"
+                onClick={() => {
+                    if (disabled) {
+                        showWarningToast({
+                            title: 'Ekspor Gagal',
+                            message: 'Tidak ada data di tabel untuk diekspor.',
+                        });
+                        return;
+                    }
+                    setOpen(current => !current);
+                }}
+                className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.menuButton} ${
+                    disabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : ''
+                }`.trim()}
+                title={disabled ? 'Tidak ada data untuk diekspor' : 'Ekspor data'}
                 aria-label="Ekspor data"
             >
                 <DownloadIcon className="h-4 w-4 text-current" />
@@ -257,7 +279,34 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
 
 // ─── Action Menu Button ───────────────────────────────────────────────────────
 
-function ToolbarActionMenu({ menuButton, sizeStyle }) {
+function getPreferencesTabForResource(filename, resourceName) {
+    const name = (filename || resourceName || '').toLowerCase();
+
+    if (name.includes('anggaran') || name.includes('budget') || name.includes('departemen') || name.includes('gudang') || name.includes('cabang')) {
+        return 'features';
+    }
+    if (name.includes('pajak') || name.includes('tax')) {
+        return 'tax';
+    }
+    if (name.includes('sales') || name.includes('penjualan') || name.includes('pengiriman') || name.includes('syarat-pembayaran')) {
+        return 'sales';
+    }
+    if (name.includes('pemasok') || name.includes('supplier')) {
+        return 'purchase';
+    }
+    if (name.includes('pembayaran') || name.includes('penerimaan') || name.includes('transfer-bank') || name.includes('beban') || name.includes('jurnal') || name.includes('gaji')) {
+        return 'approval';
+    }
+    if (name.includes('karyawan') || name.includes('employee')) {
+        return 'limitations';
+    }
+    if (name.includes('log') || name.includes('history') || name.includes('activity')) {
+        return 'others';
+    }
+    return 'features';
+}
+
+function ToolbarActionMenu({ menuButton, sizeStyle, exportConfig, resolvedResourceName, resolvedColumns = [], resolvedRows = [] }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
 
@@ -287,7 +336,25 @@ function ToolbarActionMenu({ menuButton, sizeStyle }) {
                         <DropdownMenuItem
                             key={item.id}
                             onClick={() => {
-                                item.onClick?.();
+                                if (item.onClick) {
+                                    item.onClick();
+                                } else if (item.id === 'settings' || item.id === 'column-settings' || item.id === 'arrange-columns' || item.id.includes('settings')) {
+                                    const targetTab = getPreferencesTabForResource(exportConfig?.filename, resolvedResourceName);
+                                    window.__nextPreferencesTab = targetTab;
+                                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
+                                        detail: { pageId: 'preferences' }
+                                    }));
+                                    window.dispatchEvent(new CustomEvent('workspace:open-preferences-tab', {
+                                        detail: { sideItemId: targetTab }
+                                    }));
+                                } else if (item.id === 'export-log' || item.id.includes('export') || item.id.includes('download')) {
+                                    exportToExcelXML(resolvedColumns, resolvedRows, exportConfig?.filename || resolvedResourceName || 'export');
+                                } else {
+                                    showInfoToast({
+                                        title: 'Pengaturan Tabel',
+                                        message: 'Pengaturan kolom untuk tabel ini dapat disesuaikan menggunakan tombol "Pengaturan Kolom" (ikon kolom) di sebelah kanan.',
+                                    });
+                                }
                                 setOpen(false);
                             }}
                             icon={item.icon}
@@ -414,7 +481,16 @@ export default function TableToolbar({
         });
     }, []);
 
-    const resolvedColumns = exportConfig?.columns ?? activeTableState?.columns ?? [];
+    const rawResolvedColumns = exportConfig?.columns ?? activeTableState?.columns ?? [];
+    const resolvedColumns = React.useMemo(() => {
+        return rawResolvedColumns.map(col => {
+            if (!col) return col;
+            return {
+                ...col,
+                label: cleanHeaderLabel(col.label)
+            };
+        });
+    }, [rawResolvedColumns]);
     const resolvedRows = exportConfig?.rows ?? activeTableState?.rows ?? [];
     const resolvedResourceName = resourceName ?? activeTableState?.resource ?? null;
 
@@ -433,16 +509,30 @@ export default function TableToolbar({
         }
     } : null);
 
-    const resolvedPrintButton = printButton || (resolvedColumns.length ? {
-        label: 'Cetak data',
-        onClick: () => {
-            const activeCols = resolvedColumns.filter(col => {
-                if (visibleColumnIds && !visibleColumnIds.includes(col.id)) return false;
-                return col && col.kind !== 'spacer' && col.id !== 'actions';
+    const defaultPrintHandler = () => {
+        if (resolvedRows.length === 0) {
+            showWarningToast({
+                title: 'Cetak Gagal',
+                message: 'Tidak ada data di tabel untuk dicetak.',
             });
-            printTable(activeCols, resolvedRows, exportConfig?.title || activeTableState?.title || 'Laporan');
+            return;
         }
-    } : null);
+        const activeCols = resolvedColumns.filter(col => {
+            if (visibleColumnIds && !visibleColumnIds.includes(col.id)) return false;
+            return col && col.kind !== 'spacer' && col.id !== 'actions';
+        });
+        printTable(activeCols, resolvedRows, exportConfig?.title || activeTableState?.title || 'Laporan');
+    };
+
+    const resolvedPrintButton = printButton
+        ? {
+              ...printButton,
+              onClick: printButton.onClick ?? defaultPrintHandler,
+          }
+        : (resolvedColumns.length ? {
+              label: 'Cetak data',
+              onClick: defaultPrintHandler,
+          } : null);
 
     const resolvedImportButton = importButton || (resolvedResourceName ? {
         label: 'Impor data',
@@ -531,15 +621,26 @@ export default function TableToolbar({
 
                     {resolvedExportConfig ? <ToolbarExportSplitButton exportConfig={resolvedExportConfig} sizeStyle={sizeStyle} /> : null}
 
-                    {menuButton ? <ToolbarActionMenu menuButton={menuButton} sizeStyle={sizeStyle} /> : null}
+                    {menuButton ? (
+                        <ToolbarActionMenu
+                            menuButton={menuButton}
+                            sizeStyle={sizeStyle}
+                            exportConfig={resolvedExportConfig}
+                            resolvedResourceName={resolvedResourceName}
+                            resolvedColumns={resolvedColumns}
+                            resolvedRows={resolvedRows}
+                        />
+                    ) : null}
 
                     {resolvedColumnSettings ? <ToolbarColumnSettings columnSettings={resolvedColumnSettings} sizeStyle={sizeStyle} /> : null}
 
                     {resolvedPrintButton ? (
                         <ToolbarIconButton
                             label={resolvedPrintButton.label}
-                            onClick={resolvedPrintButton.onClick ?? (() => window.print())}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.utilityButton}`.trim()}
+                            onClick={resolvedPrintButton.onClick}
+                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.utilityButton} ${
+                                resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : ''
+                            }`.trim()}
                         >
                             {resolvedPrintButton.icon ?? <PrintIcon />}
                         </ToolbarIconButton>

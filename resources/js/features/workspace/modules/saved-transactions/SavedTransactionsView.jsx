@@ -21,6 +21,8 @@ import {
     SortIcon,
 } from '@/features/workspace/shared/Icons';
 
+import { cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
+
 function ActionMenuButton({ menu }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
@@ -110,6 +112,13 @@ export default function SavedTransactionsView({ page }) {
         }, {}),
     );
 
+    const cleanedColumns = useMemo(() => {
+        return (table.columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [table.columns]);
+
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
 
@@ -132,13 +141,13 @@ export default function SavedTransactionsView({ page }) {
                 return true;
             }
 
-            return table.columns.some((column) =>
+            return cleanedColumns.some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );
         });
-    }, [filters, keyword, table.columns, table.filters, table.rows]);
+    }, [filters, keyword, cleanedColumns, table.filters, table.rows]);
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
@@ -185,19 +194,23 @@ export default function SavedTransactionsView({ page }) {
                 >
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {table.columns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
-                                >
-                                    <span
-                                        className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : ''}`.trim()}
+                            {cleanedColumns.map((column) => {
+                                const minWidth = getColumnMinWidth(column.label);
+                                return (
+                                    <DataTableHead
+                                        key={column.id}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
+                                        style={minWidth ? { minWidth } : undefined}
                                     >
-                                        <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                        <span>{column.label}</span>
-                                    </span>
-                                </DataTableHead>
-                            ))}
+                                        <span
+                                            className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : ''}`.trim()}
+                                        >
+                                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
+                                            <span>{column.label}</span>
+                                        </span>
+                                    </DataTableHead>
+                                );
+                            })}
                         </tr>
                     </DataTableHeader>
 
@@ -208,7 +221,7 @@ export default function SavedTransactionsView({ page }) {
                                     key={row.id}
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                 >
-                                    {table.columns.map((column) => (
+                                    {cleanedColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
@@ -221,7 +234,7 @@ export default function SavedTransactionsView({ page }) {
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell
-                                    colSpan={table.columns.length}
+                                    colSpan={cleanedColumns.length}
                                     className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
                                 >
                                     {table.emptyLabel ?? 'Belum ada data'}

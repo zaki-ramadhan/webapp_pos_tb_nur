@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 
 import { DataTableHead } from '@/components/ui/DataTable';
+import { getColumnMinWidth } from './columnVisibility';
 
 function resolveAlignClassName(align) {
     return align === 'right' ? 'text-right' : align === 'left' ? 'text-left' : 'text-center';
@@ -24,11 +25,13 @@ export default function SortableTableHeaderCell({
 }) {
     const alignClass = resolveAlignClassName(align);
     const textClass = `block ${noWrap ? 'whitespace-nowrap' : 'whitespace-normal break-words'}`;
+    const minWidth = getColumnMinWidth(label);
 
     if (!sortable || !onSort) {
         return (
             <DataTableHead
                 className={`${widthClassName} px-2.5 py-1.5 text-[15px] font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
+                style={minWidth ? { minWidth } : undefined}
             >
                 <span className={textClass}>{label}</span>
             </DataTableHead>
@@ -38,6 +41,7 @@ export default function SortableTableHeaderCell({
     return (
         <DataTableHead
             className={`${widthClassName} px-2.5 py-1.5 text-[15px] font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
+            style={minWidth ? { minWidth } : undefined}
         >
             <button
                 type="button"

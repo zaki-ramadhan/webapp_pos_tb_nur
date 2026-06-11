@@ -13,7 +13,7 @@ import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import { PlusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { renderSimpleMasterCellValue } from './simpleMasterShared.jsx';
-import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
 
 export default function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
@@ -37,21 +37,28 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
             });
         });
     }, [keyword, table.columns, table.rows]);
-    const schemaKey = getTableSchemaKey(table.columns);
-    const [visibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
+    const cleanedColumns = useMemo(() => {
+        return (table.columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [table.columns]);
+
+    const schemaKey = getTableSchemaKey(cleanedColumns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
 
     const visibleColumns = useMemo(() => {
-        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
-    }, [table.columns, visibleColumnIds]);
+        return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [cleanedColumns, visibleColumnIds]);
 
     useEffect(() => {
-        tableRegistry.setActiveTable(table.columns, filteredRows, table.resource);
+        tableRegistry.setActiveTable(cleanedColumns, filteredRows, table.resource);
         return () => {
             if (tableRegistry.activeTable?.resource === table.resource) {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [table.columns, filteredRows, table.resource]);
+    }, [cleanedColumns, filteredRows, table.resource]);
 
     const isRowInteractive = Boolean(onOpenDetail);
 
@@ -68,7 +75,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                 resourceName={table.resource}
                 onRefresh={table.onRefresh}
                 exportConfig={{
-                    columns: table.columns,
+                    columns: cleanedColumns,
                     rows: filteredRows,
                     filename: table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'data-master',
                     title: table.label || 'Laporan',
@@ -89,14 +96,18 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
                                 No.
                             </DataTableHead>
-                            {visibleColumns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
-                                >
-                                    {column.label}
-                                </DataTableHead>
-                            ))}
+                            {visibleColumns.map((column) => {
+                                const minWidth = getColumnMinWidth(column.label);
+                                return (
+                                    <DataTableHead
+                                        key={column.id}
+                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                        style={minWidth ? { minWidth } : undefined}
+                                    >
+                                        {column.label}
+                                    </DataTableHead>
+                                );
+                            })}
                         </tr>
                     </DataTableHeader>
 

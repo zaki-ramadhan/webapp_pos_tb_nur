@@ -18,6 +18,8 @@ import {
     SearchIcon,
 } from '@/features/workspace/shared/Icons';
 
+import { cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
+
 function buildInitialValues(config) {
     return (config.controls ?? []).reduce((result, control) => {
         result[control.id] = control.value ?? '';
@@ -138,6 +140,13 @@ export default function InventoryInquiryView({
         });
     }, [keyword, onFiltersChange, values]);
 
+    const cleanedColumns = useMemo(() => {
+        return (config.table.columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [config.table.columns]);
+
     const filteredRows = useMemo(() => {
         const sourceRows = rows ?? config.table.rows ?? [];
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -148,7 +157,7 @@ export default function InventoryInquiryView({
 
         const searchKeys = config.table.searchKeys?.length
             ? config.table.searchKeys
-            : config.table.columns.filter((column) => column.kind !== 'checkbox').map((column) => column.id);
+            : cleanedColumns.filter((column) => column.kind !== 'checkbox').map((column) => column.id);
 
         return sourceRows.filter((row) =>
             searchKeys.some((key) =>
@@ -157,7 +166,7 @@ export default function InventoryInquiryView({
                     .includes(normalizedKeyword),
             ),
         );
-    }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword, rows]);
+    }, [cleanedColumns, config.table.rows, config.table.searchKeys, keyword, rows]);
 
     function handleChange(controlId, nextValue) {
         setValues((currentValues) => ({
@@ -166,7 +175,7 @@ export default function InventoryInquiryView({
         }));
     }
 
-    const firstColumnIsCheckbox = config.table.columns[0]?.kind === 'checkbox';
+    const firstColumnIsCheckbox = cleanedColumns[0]?.kind === 'checkbox';
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
@@ -204,18 +213,22 @@ export default function InventoryInquiryView({
                 <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {config.table.columns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
-                                >
-                                    {column.kind === 'checkbox' ? (
-                                        <span className="inline-flex h-[22px] w-[22px] rounded-[4px] border border-[#d8dde7] bg-white" />
-                                    ) : (
-                                        column.label
-                                    )}
-                                </DataTableHead>
-                            ))}
+                            {cleanedColumns.map((column) => {
+                                const minWidth = column.kind !== 'checkbox' ? getColumnMinWidth(column.label) : undefined;
+                                return (
+                                    <DataTableHead
+                                        key={column.id}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                        style={minWidth ? { minWidth } : undefined}
+                                    >
+                                        {column.kind === 'checkbox' ? (
+                                            <span className="inline-flex h-[22px] w-[22px] rounded-[4px] border border-[#d8dde7] bg-white" />
+                                        ) : (
+                                            column.label
+                                        )}
+                                    </DataTableHead>
+                                );
+                            })}
                         </tr>
                     </DataTableHeader>
 
@@ -226,7 +239,7 @@ export default function InventoryInquiryView({
                                     key={row.id}
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                 >
-                                    {config.table.columns.map((column) => (
+                                    {cleanedColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`px-2.5 text-[15px] text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}

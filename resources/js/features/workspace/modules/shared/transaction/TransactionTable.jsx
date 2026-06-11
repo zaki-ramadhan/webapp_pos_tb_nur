@@ -10,7 +10,7 @@ import {
 import TextInput from '@/components/ui/TextInput';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
-import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
 
 import { TRANSACTION_LINE_TITLE_CLASS_NAME } from './transactionStyles';
 
@@ -38,21 +38,28 @@ export function TransactionDataTable({
     getRowClassName = null,
     showNumbering = true,
 }) {
-    const schemaKey = getTableSchemaKey(columns);
-    const [visibleColumnIds] = useColumnVisibility(schemaKey, columns);
+    const cleanedColumns = useMemo(() => {
+        return (columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [columns]);
+
+    const schemaKey = getTableSchemaKey(cleanedColumns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
 
     const visibleColumns = useMemo(() => {
-        return columns.filter((column) => visibleColumnIds.includes(column.id));
-    }, [columns, visibleColumnIds]);
+        return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [cleanedColumns, visibleColumnIds]);
 
     useEffect(() => {
-        tableRegistry.setActiveTable(columns, rows, null);
+        tableRegistry.setActiveTable(cleanedColumns, rows, null);
         return () => {
-            if (tableRegistry.activeTable?.columns === columns) {
+            if (tableRegistry.activeTable?.columns === cleanedColumns) {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [columns, rows]);
+    }, [cleanedColumns, rows]);
 
     const hasLeadingEmptyCell = visibleColumns[0]?.kind === 'spacer' && emptyLeadingCellContent !== null;
 
@@ -66,14 +73,18 @@ export function TransactionDataTable({
                                 No.
                             </DataTableHead>
                         )}
-                        {visibleColumns.map((column) => (
-                            <DataTableHead
-                                key={column.id}
-                                className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
-                            >
-                                {renderHeaderCell ? renderHeaderCell(column) : column.label}
-                            </DataTableHead>
-                        ))}
+                        {visibleColumns.map((column) => {
+                            const minWidth = getColumnMinWidth(column.label);
+                            return (
+                                <DataTableHead
+                                    key={column.id}
+                                    className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
+                                    style={minWidth ? { minWidth } : undefined}
+                                >
+                                    {renderHeaderCell ? renderHeaderCell(column) : column.label}
+                                </DataTableHead>
+                            );
+                        })}
                     </tr>
                 </DataTableHeader>
 

@@ -14,7 +14,7 @@ import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHe
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { FunnelIcon, LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -134,21 +134,28 @@ export default function TableListView({
         });
     }, [filters, keyword, sortDir, sortKey, table.columns, table.filters, table.rows, table.searchKeys]);
 
-    const schemaKey = getTableSchemaKey(table.columns);
-    const [visibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
+    const cleanedColumns = useMemo(() => {
+        return (table.columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [table.columns]);
+
+    const schemaKey = getTableSchemaKey(cleanedColumns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
 
     const visibleColumns = useMemo(() => {
-        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
-    }, [table.columns, visibleColumnIds]);
+        return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [cleanedColumns, visibleColumnIds]);
 
     useEffect(() => {
-        tableRegistry.setActiveTable(table.columns, filteredRows, table.resource);
+        tableRegistry.setActiveTable(cleanedColumns, filteredRows, table.resource);
         return () => {
             if (tableRegistry.activeTable?.resource === table.resource) {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [table.columns, filteredRows, table.resource]);
+    }, [cleanedColumns, filteredRows, table.resource]);
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-2 py-2 shadow-[0_2px_10px_rgba(15,23,42,0.08)] sm:px-3 sm:py-3">
@@ -193,7 +200,7 @@ export default function TableListView({
                 resourceName={table.resource}
                 onRefresh={table.onRefresh}
                 exportConfig={{
-                    columns: table.columns,
+                    columns: cleanedColumns,
                     rows: filteredRows,
                     filename: table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'export',
                     title: table.label || 'Laporan',

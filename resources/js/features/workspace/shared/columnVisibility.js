@@ -62,3 +62,14 @@ export const tableRegistry = {
         };
     }
 };
+
+export function cleanHeaderLabel(label) {
+    if (typeof label !== 'string') return label;
+    return label.replace(/\s*#\s*$/, '').trim();
+}
+
+export function getColumnMinWidth(label) {
+    if (typeof label !== 'string' || !label) return undefined;
+    return `${Math.ceil(label.length * 8.5) + 24}px`;
+}
+

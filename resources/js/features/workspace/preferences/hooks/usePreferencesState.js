@@ -40,7 +40,16 @@ export default function usePreferencesState(workspace, backendRows) {
     const [activePurchaseTabId, setActivePurchaseTabId] = useState(workspace.purchaseTabs?.[0]?.id ?? '');
     const [activeSalesTabId, setActiveSalesTabId] = useState(workspace.salesTabs?.[0]?.id ?? '');
     const [activeTaxTabId, setActiveTaxTabId] = useState(workspace.taxTabs?.[0]?.id ?? '');
-    const [activeSideItemId, setActiveSideItemId] = useState(workspace.defaultSidebarItemId ?? 'company-root');
+    const getInitialSideItemId = () => {
+        if (typeof window !== 'undefined' && window.__nextPreferencesTab) {
+            const tabId = window.__nextPreferencesTab;
+            window.__nextPreferencesTab = null;
+            return tabId;
+        }
+        return workspace.defaultSidebarItemId ?? 'company-root';
+    };
+
+    const [activeSideItemId, setActiveSideItemId] = useState(getInitialSideItemId);
     const [saving, setSaving] = useState(false);
 
     const handleTabsUpdate = (key, nextTabs) => {
@@ -53,6 +62,17 @@ export default function usePreferencesState(workspace, backendRows) {
             setTabsData(prev => mergeValuesIntoTabs(prev, values));
         }
     }, [values]);
+
+    useEffect(() => {
+        function handleOpenTab(e) {
+            const { sideItemId } = e.detail || {};
+            if (sideItemId) {
+                setActiveSideItemId(sideItemId);
+            }
+        }
+        window.addEventListener('workspace:open-preferences-tab', handleOpenTab);
+        return () => window.removeEventListener('workspace:open-preferences-tab', handleOpenTab);
+    }, []);
 
     return {
         values,

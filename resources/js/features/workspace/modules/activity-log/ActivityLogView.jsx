@@ -17,6 +17,7 @@ import {
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CogIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -37,12 +38,19 @@ export default function ActivityLogView({ page }) {
     });
     const rows = useMemo(() => mapActivityLogRows(backendRows), [backendRows]);
     const filtersConfig = useMemo(() => buildActivityLogFilters(rows), [rows]);
+    const cleanedColumns = useMemo(() => {
+        return (page.table.columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [page.table.columns]);
     const table = useMemo(() => ({
         ...page.table,
         filters: filtersConfig,
+        columns: cleanedColumns,
         rows,
         pageValue: total.toLocaleString('id-ID'),
-    }), [filtersConfig, page.table, rows, total]);
+    }), [filtersConfig, page.table, cleanedColumns, rows, total]);
     const [filters, setFilters] = useState(() =>
         filtersConfig.reduce((result, filter) => {
             result[filter.id] = filter.options?.[0]?.value ?? 'all';
@@ -126,11 +134,17 @@ export default function ActivityLogView({ page }) {
                     onClick: reload,
                     loading,
                 }}
+                exportConfig={{
+                    columns: table.columns,
+                    rows: filteredRows,
+                    filename: 'log-aktivitas',
+                    title: 'Log Aktivitas',
+                }}
                 menuButton={{
-                    label: table.actionsLabel,
+                    label: 'Pengaturan',
                     icon: <CogIcon className="h-5 w-5" />,
-                    items: table.menuItems,
-                    widthClassName: 'w-[190px]',
+                    items: [{ id: 'settings', label: 'Pengaturan' }],
+                    widthClassName: 'w-[160px]',
                 }}
                 search={{
                     value: keyword,
@@ -143,17 +157,21 @@ export default function ActivityLogView({ page }) {
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1320px] table-fixed" wrapperClassName="border-[#d1d8e4]">
+                <DataTable className="min-w-[1320px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {table.columns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
-                                >
-                                    <span className="block truncate whitespace-nowrap">{column.label}</span>
-                                </DataTableHead>
-                            ))}
+                            {table.columns.map((column) => {
+                                const minWidth = getColumnMinWidth(column.label);
+                                return (
+                                    <DataTableHead
+                                        key={column.id}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                        style={minWidth ? { minWidth } : undefined}
+                                    >
+                                        <span className="block whitespace-nowrap">{column.label}</span>
+                                    </DataTableHead>
+                                );
+                            })}
                         </tr>
                     </DataTableHeader>
 

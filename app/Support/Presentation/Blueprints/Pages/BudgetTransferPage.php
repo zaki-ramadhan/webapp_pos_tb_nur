@@ -101,11 +101,11 @@ class BudgetTransferPage
                                 ],
                             ],
                             'columns' => [
-                                ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[24%]'],
+                                ['id' => 'number', 'label' => 'No. Transfer #', 'widthClassName' => 'w-[24%]'],
                                 ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[14%]'],
                                 ['id' => 'fromAccount', 'label' => 'Dari Akun', 'widthClassName' => 'w-[23%]'],
                                 ['id' => 'toAccount', 'label' => 'Ke Akun', 'widthClassName' => 'w-[23%]'],
-                                ['id' => 'transferValue', 'label' => 'Nilai Transfer', 'widthClassName' => 'w-[16%]', 'align' => 'right'],
+                                ['id' => 'transferValue', 'label' => 'Nilai Transfer', 'widthClassName' => 'w-[16%]', 'align' => 'left'],
                             ],
                             'rows' => [],
                         ],

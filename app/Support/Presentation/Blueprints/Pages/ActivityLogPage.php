@@ -78,9 +78,9 @@ class ActivityLogPage
                             ],
                             [
                                 'id' => 'actionLabel',
-                                'label' => 'Tipe Tin...',
+                                'label' => 'Tipe Tindakan',
                                 'align' => 'left',
-                                'widthClassName' => 'w-[90px]',
+                                'widthClassName' => 'w-[130px]',
                             ],
                             [
                                 'id' => 'transactionTypeLabel',
