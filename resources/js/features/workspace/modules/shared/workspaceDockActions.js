@@ -82,3 +82,35 @@ export function createDeleteDockAction({
 } = {}) {
     return { id, label, icon, tone };
 }
+
+/**
+ * Merge runtime callbacks and state into static dock action definitions.
+ * Replaces the repetitive action.id === 'save' ? {...} : ... pattern.
+ *
+ * @param {Array} actions - Static action definitions (from config)
+ * @param {object} opts
+ * @param {boolean} opts.saving - Whether a save is in progress
+ * @param {boolean} [opts.saveDisabled] - Additional disabled condition for save
+ * @param {Function} opts.onSave - Save handler
+ * @param {Function} [opts.onDelete] - Delete handler
+ * @param {string} [opts.saveTone] - Override tone for save button
+ * @returns {Array} Actions with runtime state merged in
+ */
+export function mapDockActions(actions, { saving, saveDisabled = false, onSave, onDelete, saveTone } = {}) {
+    return actions.map(action => {
+        if (action.id === 'save') {
+            return {
+                ...action,
+                loading: saving,
+                disabled: saving || saveDisabled,
+                onClick: onSave,
+                ...(saveTone ? { tone: saveTone } : {}),
+            };
+        }
+        if (action.id === 'delete') {
+            return { ...action, onClick: onDelete };
+        }
+        return action;
+    });
+}
+

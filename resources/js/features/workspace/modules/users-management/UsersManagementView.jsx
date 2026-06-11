@@ -13,14 +13,14 @@ import SectionTab from '@/features/workspace/shared/SectionTab';
 import PanelActions from '@/features/workspace/shared/PanelActions';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { CrossStatusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { SearchIcon } from '@/features/workspace/shared/Icons';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { mapUserRow, toUserPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
 import SelectField from '@/components/ui/SelectField';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import { executeCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
-import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 
 function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpenDetail, lookupData }) {
     const detailRow = useMemo(() => {
@@ -57,10 +57,8 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
         setStatus({ tone: '', message: '' });
     }, [detailRow]);
 
-    const { processing, store, update } = useBackendResource({
-        resource: 'users',
-        onResolved: () => onRefresh?.(),
-    });
+    const [saving, setSaving] = useState(false);
+    const { store, update } = useBackendResource({ resource: 'users' });
 
     const handleSave = async () => {
         if (!values.name.trim()) {
@@ -72,47 +70,32 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
             return;
         }
 
-        const emailStr = values.email.trim();
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(emailStr)) {
-            setStatus({ tone: 'error', message: 'Format email tidak valid. Pastikan menggunakan domain DNS lengkap (contoh: nama@domain.com).' });
+        if (!emailRegex.test(values.email.trim())) {
+            setStatus({ tone: 'error', message: 'Format email tidak valid.' });
             return;
         }
 
-        setStatus({ tone: '', message: '' });
         const payload = toUserPayload(values);
-        const loadingToastId = showLoadingToast({
-            title: 'Memproses',
-            message: isDetail ? 'Sedang memperbarui pengguna.' : 'Sedang menyimpan pengguna baru.',
+        const { ok, result, errorMessage } = await executeCrudFormAction({
+            loadingMessage: isDetail ? 'Sedang memperbarui pengguna.' : 'Sedang menyimpan pengguna baru.',
+            successMessage: isDetail ? 'Pengguna berhasil diperbarui.' : 'Pengguna berhasil disimpan.',
+            setSaving,
+            setStatus,
+            getErrorMessage: (err) => getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.'),
+            execute: () => isDetail ? update(recordId, payload) : store(payload),
+            onSuccess: async (res) => {
+                onRefresh?.();
+                const record = res?.data ?? res;
+                if (!isDetail && record?.id && onOpenDetail) {
+                    onOpenDetail({
+                        recordId: String(record.id),
+                        label: record.name ?? values.name.trim(),
+                        tabLabel: record.name ?? values.name.trim(),
+                    });
+                }
+            },
         });
-        try {
-            let record;
-            if (isDetail) {
-                await update(recordId, payload);
-            } else {
-                const response = await store(payload);
-                record = response?.data ?? response;
-            }
-            dismissToast(loadingToastId);
-            showSuccessToast({
-                title: 'Berhasil',
-                message: isDetail ? 'Pengguna berhasil diperbarui.' : 'Pengguna berhasil disimpan.',
-            });
-            if (!isDetail && record?.id && onOpenDetail) {
-                onOpenDetail({
-                    recordId: String(record.id),
-                    label: record.name ?? values.name.trim(),
-                    tabLabel: record.name ?? values.name.trim(),
-                });
-            }
-        } catch (err) {
-            dismissToast(loadingToastId);
-            showErrorToast({
-                title: 'Gagal menyimpan',
-                message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.'),
-            });
-            setStatus({ tone: 'error', message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.') });
-        }
     };
 
     const actions = [
@@ -122,8 +105,8 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
             icon: 'save',
             tone: 'primary',
             onClick: handleSave,
-            loading: processing,
-            disabled: processing,
+            loading: saving,
+            disabled: saving,
             showLabel: true,
         },
     ];

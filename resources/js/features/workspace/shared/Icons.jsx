@@ -4,6 +4,7 @@ import {
     ChevronDown,
     CircleCheck,
     CircleX,
+    Columns3,
     Download,
     EllipsisVertical,
     ExternalLink,
@@ -26,6 +27,7 @@ import {
     Shield,
     TriangleAlert,
     Trash2,
+    Upload,
     X,
 } from 'lucide-react';
 
@@ -75,6 +77,14 @@ export function PrintIcon({ className = 'h-4 w-4' }) {
 
 export function DownloadIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Download} className={className} />;
+}
+
+export function UploadIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={Upload} className={className} />;
+}
+
+export function ColumnsIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={Columns3} className={className} />;
 }
 
 export function ExternalLinkIcon({ className = 'h-4 w-4' }) {
