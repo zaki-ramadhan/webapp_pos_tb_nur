@@ -64,6 +64,7 @@ const salesDepositDraft = {
     paymentTerms: [],
     address: '',
     branches: ['JAKARTA'],
+    __branchId: 1,
     notes: '',
     summary: [],
     usedDepositRows: [],

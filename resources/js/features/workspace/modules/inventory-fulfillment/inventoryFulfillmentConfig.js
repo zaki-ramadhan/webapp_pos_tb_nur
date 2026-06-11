@@ -96,6 +96,7 @@ const workCompletionDetailRecords = {
             },
         ],
         branches: ['JAKARTA'],
+    __branchId: 1,
         notes: '',
         dockActions: [
             createSaveDockAction({ tone: 'muted', items: [] }),

@@ -61,6 +61,7 @@ const draftRecord = {
     itemSearch: '',
     chargeSearch: '',
     branches: ['JAKARTA'],
+    __branchId: 1,
     notes: '',
     items: [],
     additionalCosts: [],

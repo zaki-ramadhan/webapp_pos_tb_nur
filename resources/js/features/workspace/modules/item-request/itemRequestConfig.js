@@ -59,6 +59,7 @@ const defaultItemRequestDraft = {
     notes: '',
     closeRequest: false,
     branches: ['JAKARTA'],
+    __branchId: 1,
     itemSearch: '',
     items: [],
     itemModal: {

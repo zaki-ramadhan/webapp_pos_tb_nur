@@ -56,6 +56,7 @@ const defaultGoodsReceiptDraft = {
     itemCountLabel: 'Rincian Barang',
     address: '',
     branches: ['JAKARTA'],
+    __branchId: 1,
     notes: '',
     shippingDate: todayDisplayDate,
     shippingMethod: [],

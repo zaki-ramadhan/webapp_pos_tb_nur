@@ -107,6 +107,7 @@ class GeneralJournalPage
                     'transactionType' => 'Jurnal Umum',
                     'transactionTypeValue' => 'general-journal',
                     'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                     'notes' => '',
                     'lineLookup' => '',
                     'lineItems' => [],
@@ -125,6 +126,7 @@ class GeneralJournalPage
                         'transactionType' => 'Penerimaan Penjualan',
                         'transactionTypeValue' => 'sales-receipt',
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => 'Pembayaran No. Faktur SI.2016.10.00004, SI.2017.02.00005',
                         'lineLookup' => '',
                         'lineItems' => [

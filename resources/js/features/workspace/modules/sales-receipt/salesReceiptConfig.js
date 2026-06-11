@@ -84,6 +84,7 @@ const salesReceiptDraft = {
     checkDate: '',
     voided: false,
     branches: ['JAKARTA'],
+    __branchId: 1,
     notes: '',
     reconcileStatus: '',
     printStatus: '',

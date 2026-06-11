@@ -113,6 +113,7 @@ class CashPaymentPage
                     'recipient' => '',
                     'voided' => false,
                     'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                     'notes' => '',
                     'lineItems' => [],
                     'totalValue' => '0',

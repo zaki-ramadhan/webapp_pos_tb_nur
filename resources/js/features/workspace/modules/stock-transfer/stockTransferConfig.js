@@ -89,6 +89,7 @@ const draftRecord = {
     itemSearch: '',
     notes: '',
     branches: ['JAKARTA'],
+    __branchId: 1,
     printedEmail: '',
     items: [],
     itemModal: {
@@ -117,6 +118,7 @@ const detailRecords = {
         date: '17/01/2017',
         notes: '',
         branches: ['JAKARTA'],
+    __branchId: 1,
         printedEmail: 'Belum cetak/email',
         items: [
             {

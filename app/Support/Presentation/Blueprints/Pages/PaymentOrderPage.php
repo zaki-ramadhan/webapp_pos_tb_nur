@@ -61,6 +61,7 @@ class PaymentOrderPage
                     'invoiceSearch' => '',
                     'notes' => '',
                     'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                     'footerValue' => '0',
                 ],
                 'invoiceTable' => [

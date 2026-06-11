@@ -104,6 +104,7 @@ class PayrollEntryPage
                         'defaults' => [
                             'paymentType' => 'Bulanan',
                             'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                             'month' => 'April',
                             'year' => '2026',
                             'autoNumber' => true,

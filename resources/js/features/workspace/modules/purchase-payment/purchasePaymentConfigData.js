@@ -44,6 +44,7 @@ const defaultPurchasePaymentDraft = {
     notes: '',
     voided: false,
     branches: ['JAKARTA'],
+    __branchId: 1,
     reconcileStatus: '',
     printStatus: '',
     paidWith: '',

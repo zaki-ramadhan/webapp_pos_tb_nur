@@ -82,6 +82,7 @@ const purchaseDepositDraft = {
     bankAccounts: [],
     address: '',
     branches: ['JAKARTA'],
+    __branchId: 1,
     notes: '',
     taxInvoiceDate: '',
     taxTransactionType: 'Faktur Pembelian',

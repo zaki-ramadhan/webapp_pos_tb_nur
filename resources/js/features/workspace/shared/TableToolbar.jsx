@@ -358,18 +358,6 @@ export default function TableToolbar({
                         </ToolbarIconButton>
                     ) : null}
 
-                    {refreshButton ? (
-                        <ToolbarIconButton
-                            label={refreshButton.label}
-                            onClick={refreshButton.loading ? undefined : refreshButton.onClick}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.utilityButton} ${refreshButton.loading ? 'pointer-events-none opacity-80' : ''}`.trim()}
-                        >
-                            <span className={refreshButton.loading ? 'animate-spin' : ''}>
-                                {refreshButton.icon ?? <RefreshIcon />}
-                            </span>
-                        </ToolbarIconButton>
-                    ) : null}
-
                     {leftControls}
                 </div>
 

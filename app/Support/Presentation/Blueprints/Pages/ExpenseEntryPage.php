@@ -115,6 +115,7 @@ class ExpenseEntryPage
                     'documentNumber' => '',
                     'dueDate' => '25/04/2026',
                     'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                     'notes' => '',
                     'lineLookup' => '',
                     'lineItems' => [],
@@ -133,6 +134,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '06/01/2017',
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -157,6 +159,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '06/01/2017',
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => 'Pembebanan biaya promosi akhir tahun.',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -181,6 +184,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '08/12/2016',
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -205,6 +209,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '09/12/2016',
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -229,6 +234,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '11/11/2016',
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -253,6 +259,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '10/11/2016',
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [

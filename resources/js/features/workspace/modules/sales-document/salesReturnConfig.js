@@ -82,6 +82,7 @@ const salesReturnDraft = {
     itemCountLabel: 'Rincian Barang',
     address: '',
     branches: ['JAKARTA'],
+    __branchId: 1,
     notes: '',
     returnItemMode: 'returned',
     printedBy: '',

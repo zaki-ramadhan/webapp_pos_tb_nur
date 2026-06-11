@@ -76,6 +76,7 @@ const defaultPurchaseInvoiceDraft = {
     purchaseOrderNumber: '',
     address: '',
     branches: ['JAKARTA'],
+    __branchId: 1,
     notes: '',
     taxEnabled: false,
     taxIncluded: false,

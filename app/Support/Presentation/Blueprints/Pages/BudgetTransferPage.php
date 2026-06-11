@@ -51,6 +51,7 @@ class BudgetTransferPage
                             'year' => '2026',
                             'type' => 'Umum',
                             'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                             'autoNumber' => true,
                             'numberingType' => 'Transfer Anggaran',
                             'transferNumber' => '',

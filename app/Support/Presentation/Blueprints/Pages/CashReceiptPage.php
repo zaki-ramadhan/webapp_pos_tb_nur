@@ -109,6 +109,7 @@ class CashReceiptPage
                     'payer' => '',
                     'voided' => false,
                     'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                     'notes' => '',
                     'lineItems' => [],
                     'totalValue' => '0',
@@ -189,6 +190,7 @@ class CashReceiptPage
                         'payer' => '',
                         'voided' => false,
                         'branches' => ['JAKARTA'],
+                    '__branchId' => 1,
                         'notes' => '',
                         'lineItems' => [
                             [

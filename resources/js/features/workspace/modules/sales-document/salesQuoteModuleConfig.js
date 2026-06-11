@@ -45,6 +45,7 @@ const salesQuoteDetailRecords = {
         purchaseOrderNumber: '',
         address: 'Jl. Raya Pabean Sedati 79',
         branches: ['JAKARTA'],
+    __branchId: 1,
         notes: '',
         taxEnabled: true,
         taxIncluded: false,

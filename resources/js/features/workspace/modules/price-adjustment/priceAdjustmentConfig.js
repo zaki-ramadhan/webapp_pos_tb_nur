@@ -187,6 +187,7 @@ export function buildInventoryAdjustmentRecord(row = {}, config = defaultConfig)
               documentNumber: row.number ?? '',
               notes: row.notes ?? '',
               branches: ['JAKARTA'],
+    __branchId: 1,
               dockActions: detailDockActions,
           };
     const items = cloneItems(source.items ?? []);
