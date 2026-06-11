@@ -194,6 +194,13 @@ export function printTable(columns, rows, title = 'Laporan') {
       body {
         margin: 0;
       }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      table, th, td {
+        border: 1px solid #94a3b8 !important;
+      }
       .print-header {
         border-bottom-color: #1e3a8a;
       }
