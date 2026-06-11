@@ -517,10 +517,13 @@ export default function TableToolbar({
             });
             return;
         }
-        const activeCols = resolvedColumns.filter(col => {
+        let activeCols = resolvedColumns.filter(col => {
             if (visibleColumnIds && !visibleColumnIds.includes(col.id)) return false;
             return col && col.kind !== 'spacer' && col.id !== 'actions';
         });
+        if (activeCols.length === 0) {
+            activeCols = resolvedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
+        }
         printTable(activeCols, resolvedRows, exportConfig?.title || activeTableState?.title || 'Laporan');
     };
 

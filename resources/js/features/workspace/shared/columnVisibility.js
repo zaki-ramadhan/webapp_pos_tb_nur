@@ -3,21 +3,33 @@ import { useEffect, useState } from 'react';
 const listeners = new Set();
 
 export function useColumnVisibility(schemaKey, initialColumns = []) {
-    const [visibleIds, setVisibleIds] = useState(() => {
+    const getInitialVisibleIds = () => {
         if (!schemaKey) {
             return initialColumns.map(c => c.id).filter(Boolean);
         }
         const cached = localStorage.getItem(`col_vis_${schemaKey}`);
         if (cached) {
             try {
-                return JSON.parse(cached);
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
             } catch (e) {}
         }
         return initialColumns.map(c => c.id).filter(Boolean);
-    });
+    };
+
+    const [visibleIds, setVisibleIds] = useState(getInitialVisibleIds);
+    const [lastSchemaKey, setLastSchemaKey] = useState(schemaKey);
+
+    // Sync state if schemaKey changes (e.g. table loaded asynchronously)
+    if (schemaKey !== lastSchemaKey) {
+        setLastSchemaKey(schemaKey);
+        setVisibleIds(getInitialVisibleIds());
+    }
 
     useEffect(() => {
-        if (!schemaKey) return;
+        if (!schemaKey || !visibleIds || visibleIds.length === 0) return;
         localStorage.setItem(`col_vis_${schemaKey}`, JSON.stringify(visibleIds));
         // Notify listeners
         listeners.forEach(listener => listener(schemaKey, visibleIds));
