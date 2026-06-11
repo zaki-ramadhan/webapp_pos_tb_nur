@@ -36,8 +36,15 @@ export default function LoginFormPanel({ login }) {
 
         const width = 500;
         const height = 650;
-        const left = window.screen.width / 2 - width / 2;
-        const top = window.screen.height / 2 - height / 2;
+
+        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+        const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+
+        const containerWidth = window.innerWidth ? window.innerWidth : (document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width);
+        const containerHeight = window.innerHeight ? window.innerHeight : (document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height);
+
+        const left = (containerWidth / 2) - (width / 2) + dualScreenLeft;
+        const top = (containerHeight / 2) - (height / 2) + dualScreenTop;
         const popupUrl = `${login.googleHref}?popup=1`;
 
         if (messageListenerRef.current) {
