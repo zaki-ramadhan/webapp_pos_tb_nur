@@ -11,15 +11,13 @@ import {
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
     ItemRequestAdditionalInfoSection,
     ItemRequestDetailsSection,
     ItemRequestFormHeader,
 } from './ItemRequestSections';
-import { createDeleteDockAction } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { createDeleteDockAction, mapDockActions } from '@/features/workspace/modules/shared/workspaceDockActions';
 import {
     applyItemRequestItems,
     buildFormValues,
@@ -29,6 +27,9 @@ import {
     promptItemRequestItem,
     validateItemRequestValues,
 } from './itemRequestShared';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils';
+
 
 export default function ItemRequestFormView({
     pageId,
@@ -41,9 +42,6 @@ export default function ItemRequestFormView({
     buildRecord,
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [importModalOpen, setImportModalOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const sourceRecord = useMemo(
@@ -60,13 +58,24 @@ export default function ItemRequestFormView({
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormValues(sourceRecord));
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
         setImportModalOpen(false);
     }, [config.sectionTabs, sourceRecord]);
 
     const validationMessage = useMemo(() => validateItemRequestValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        selectLookup,
+        handleSave,
+        requestDelete,
+        handleDelete,
+    } = useTransactionForm({ validationMessage });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(() => {
@@ -76,24 +85,15 @@ export default function ItemRequestFormView({
             baseActions.push(createDeleteDockAction());
         }
 
-        return baseActions
-            .filter((action) => (isDetail ? true : action.id !== 'delete'))
-            .map((action) =>
-                action.id === 'save'
-                    ? {
-                          ...action,
-                          disabled: saveDisabled,
-                          label: saving ? 'Memproses...' : action.label,
-                          onClick: handleSave,
-                      }
-                    : action.id === 'delete'
-                      ? {
-                            ...action,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: requestDelete,
-                        }
-                      : action,
-            );
+        return mapDockActions(
+            baseActions.filter((action) => (isDetail ? true : action.id !== 'delete')),
+            {
+                saving,
+                saveDisabled,
+                onSave: onSaveClick,
+                onDelete: requestDelete,
+            }
+        );
     }, [isDetail, saveDisabled, saving, values.dockActions]);
 
     useWorkspaceDirtyRegistration({
@@ -102,21 +102,6 @@ export default function ItemRequestFormView({
         dirty: isDirty,
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
-
-    async function selectLookup(resource, title, labelBuilder, onApply) {
-        try {
-            const record = await promptSelectBackendRecord(resource, title, labelBuilder);
-
-            if (!record) {
-                return;
-            }
-
-            onApply(record);
-            setStatus({ tone: '', message: '' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
-        }
-    }
 
     function applyItemUpdate(record, currentItem = null) {
         try {
@@ -143,18 +128,10 @@ export default function ItemRequestFormView({
         }
     }
 
-    async function handleSave() {
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        await executeCrudFormAction({
+    async function onSaveClick() {
+        await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui permintaan barang.' : 'Sedang menyimpan permintaan barang.',
             successMessage: isDetail ? 'Permintaan barang berhasil diperbarui.' : 'Permintaan barang berhasil dibuat.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
@@ -187,26 +164,14 @@ export default function ItemRequestFormView({
         });
     }
 
-    function requestDelete() {
-        if (!values.__backendRecordId || saving) {
-            return;
-        }
-
-        setDeleteConfirmationOpen(true);
-    }
-
-    async function handleDelete() {
+    async function onDeleteClick() {
         if (!values.__backendRecordId) {
             return;
         }
 
-        await executeCrudFormAction({
+        await handleDelete({
             loadingMessage: 'Sedang menghapus permintaan barang.',
             successMessage: 'Permintaan barang berhasil dihapus.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
-            onStart: () => setDeleteConfirmationOpen(false),
             execute: () => deleteBackendResource('item-requests', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
@@ -219,7 +184,7 @@ export default function ItemRequestFormView({
     const handlers = useMemo(
         () => ({
             onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) => buildLookupLabel(record), (record) =>
+                selectLookup('branches', 'cabang', (record) =>
                     setValues((current) => ({
                         ...current,
                         __branchId: record.id,
@@ -233,34 +198,25 @@ export default function ItemRequestFormView({
                     branches: (current.branches ?? []).filter((item) => item !== value),
                 })),
             onSelectItem: () =>
-                selectLookup('products', 'barang', (record) => buildLookupLabel(record), (record) => applyItemUpdate(record)),
+                selectLookup('products', 'barang', (record) => applyItemUpdate(record)),
             onEditItem: (item) => applyItemUpdate(null, item),
             onImportClick: () => setImportModalOpen(true),
             onImportItems: (importedItems) => {
                 setValues((current) => {
                     const existingItems = current.items ?? [];
-                    const mergedItems = [...existingItems];
-                    importedItems.forEach((imported) => {
-                        const duplicateIdx = mergedItems.findIndex(
-                            (item) => String(item.code).toLowerCase() === String(imported.code).toLowerCase()
-                        );
-                        if (duplicateIdx !== -1) {
-                            const existingQty = parseFloat(mergedItems[duplicateIdx].quantity) || 0;
-                            const importedQty = parseFloat(imported.quantity) || 0;
-                            mergedItems[duplicateIdx].quantity = String(existingQty + importedQty);
-                        } else {
-                            mergedItems.push({
-                                ...imported,
-                                id: `imported-item-${Date.now()}-${Math.random()}`,
-                            });
-                        }
-                    });
+                    const mergedItems = mergeImportedItems(
+                        existingItems,
+                        importedItems.map((item) => ({
+                            ...item,
+                            id: item.id || `imported-item-${Date.now()}-${Math.random()}`,
+                        }))
+                    );
                     return applyItemRequestItems(current, mergedItems);
                 });
                 setStatus({ tone: 'success', message: `${importedItems.length} barang berhasil diimpor.` });
             },
         }),
-        [values.requestDate],
+        [selectLookup, values.requestDate],
     );
 
     return (
@@ -283,7 +239,7 @@ export default function ItemRequestFormView({
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
+                onConfirm={onDeleteClick}
                 title="Hapus Permintaan Barang"
                 message="Permintaan barang ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"
@@ -301,3 +257,4 @@ export default function ItemRequestFormView({
         </>
     );
 }
+

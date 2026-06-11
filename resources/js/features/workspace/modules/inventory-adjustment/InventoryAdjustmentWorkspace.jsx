@@ -7,7 +7,6 @@ import {
 import {
     createBackendResource,
     deleteBackendResource,
-    getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import TableListView from '@/features/workspace/modules/TableListView';
@@ -18,11 +17,10 @@ import {
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { CogIcon, PrintIcon } from '@/features/workspace/shared/Icons';
-import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { mapDockActions } from '@/features/workspace/modules/shared/workspaceDockActions';
 import {
     applyInventoryPromptItemUpdate,
     buildFormValues,
@@ -37,6 +35,7 @@ import {
     InventoryAdjustmentHeader,
     InventoryAdjustmentInfoSection,
 } from './InventoryAdjustmentSections';
+
 
 export function InventoryAdjustmentFormView({
     pageId,
@@ -60,9 +59,6 @@ export function InventoryAdjustmentFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const [values, setValues] = useState(() => buildFormValues(sourceRecord));
     const [selectedItem, setSelectedItem] = useState(null);
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const isDetail = Boolean(activeRecordId);
     const initialSnapshot = useMemo(() => buildInventoryComparableSnapshot(buildFormValues(sourceRecord)), [sourceRecord]);
 
@@ -70,12 +66,23 @@ export function InventoryAdjustmentFormView({
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormValues(sourceRecord));
         setSelectedItem(null);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
     }, [config.sectionTabs, sourceRecord]);
 
     const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail), [config, isDetail, values]);
     const isDirty = useMemo(() => resolveInventoryDirtyState(values, initialSnapshot), [initialSnapshot, values]);
+
+    const {
+        status,
+        setStatus,
+        saving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        selectLookup,
+        handleSave,
+        requestDelete,
+        handleDelete,
+    } = useTransactionForm({ validationMessage });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({
@@ -85,21 +92,6 @@ export function InventoryAdjustmentFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function selectLookup(resource, title, onApply) {
-        try {
-            const record = await promptSelectBackendRecord(resource, title, buildLookupLabel);
-
-            if (!record) {
-                return;
-            }
-
-            onApply(record);
-            setStatus({ tone: '', message: '' });
-        } catch (error) {
-            setStatus({ tone: 'error', message: getBackendErrorMessage(error, error.message) });
-        }
-    }
-
     function handleCreateItem() {
         applyInventoryPromptItemUpdate(null, setValues, setStatus);
     }
@@ -108,25 +100,16 @@ export function InventoryAdjustmentFormView({
         applyInventoryPromptItemUpdate(item, setValues, setStatus);
     }
 
-    async function handleSave() {
+    async function onSaveClick() {
         if (!backendConfig) {
             const errorMessage = 'Konfigurasi backend belum tersedia.';
             setStatus({ tone: 'error', message: errorMessage });
-            showCrudErrorToast(errorMessage);
             return;
         }
 
-        if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        await executeCrudFormAction({
+        await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.',
             successMessage: isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
             execute: async () => {
                 const resolvedDocumentNumber =
                     values.autoNumber || !String(values.documentNumber ?? '').trim()
@@ -160,26 +143,14 @@ export function InventoryAdjustmentFormView({
         });
     }
 
-    function requestDelete() {
-        if (!backendConfig || !values.__backendRecordId || saving) {
-            return;
-        }
-
-        setDeleteConfirmationOpen(true);
-    }
-
-    async function handleDelete() {
+    async function onDeleteClick() {
         if (!backendConfig || !values.__backendRecordId) {
             return;
         }
 
-        await executeCrudFormAction({
+        await handleDelete({
             loadingMessage: 'Sedang menghapus dokumen.',
             successMessage: 'Dokumen berhasil dihapus.',
-            setSaving,
-            setStatus,
-            getErrorMessage: getBackendErrorMessage,
-            onStart: () => setDeleteConfirmationOpen(false),
             execute: () => deleteBackendResource(backendConfig.resource, values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
@@ -191,25 +162,11 @@ export function InventoryAdjustmentFormView({
 
     const dockActions = useMemo(
         () =>
-            (values.dockActions ?? []).map((action) => {
-                if (action.id === 'save') {
-                    return {
-                        ...action,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: handleSave,
-                        disabled: action.disabled || saveDisabled,
-                    };
-                }
-
-                if (action.id === 'delete') {
-                    return {
-                        ...action,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: requestDelete,
-                    };
-                }
-
-                return action;
+            mapDockActions(values.dockActions ?? [], {
+                saving,
+                saveDisabled,
+                onSave: onSaveClick,
+                onDelete: requestDelete,
             }),
         [saveDisabled, saving, values.dockActions],
     );
@@ -225,7 +182,7 @@ export function InventoryAdjustmentFormView({
                     })),
                 ),
         }),
-        [],
+        [selectLookup],
     );
 
     return (
@@ -269,7 +226,7 @@ export function InventoryAdjustmentFormView({
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
-                onConfirm={handleDelete}
+                onConfirm={onDeleteClick}
                 title="Hapus Dokumen"
                 message="Dokumen ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"
