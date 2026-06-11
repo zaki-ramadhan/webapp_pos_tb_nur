@@ -177,7 +177,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                     <button
                         type="button"
                         aria-label={purchaseConfig.bankAddLabel}
-                        className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                        className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
                     >
                         <PlusIcon className="h-5 w-5" />
                     </button>

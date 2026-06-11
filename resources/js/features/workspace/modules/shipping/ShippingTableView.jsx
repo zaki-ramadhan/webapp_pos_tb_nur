@@ -13,6 +13,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
+import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import {
     ChevronDownIcon,
     DownloadIcon,

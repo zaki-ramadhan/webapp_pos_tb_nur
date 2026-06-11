@@ -29,7 +29,7 @@ function DepartmentToolbarButton({ label, onClick, className = '', children }) {
             type="button"
             onClick={onClick}
             aria-label={label}
-            className={className}
+            className={`shrink-0 ${className}`.trim()}
         >
             {children}
         </button>
@@ -51,7 +51,7 @@ function DepartmentTableActionMenu({ table }) {
                 type="button"
                 onClick={() => setOpen((current) => !current)}
                 aria-label={table.settingsLabel}
-                className="inline-flex h-[34px] w-[52px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-2 text-[#2353a0]"
+                className="inline-flex h-[34px] w-[52px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-2 text-[#2353a0]"
             >
                 <CogIcon className="h-4 w-4" />
                 <ChevronDownIcon className="h-4 w-4" />

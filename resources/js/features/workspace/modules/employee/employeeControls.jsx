@@ -210,7 +210,7 @@ export function ToolbarSquareButton({ label, onClick, className = '', children }
             onClick={onClick}
             aria-label={label}
             title={label}
-            className={`inline-flex h-[34px] w-[48px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${className}`.trim()}
+            className={`inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${className}`.trim()}
         >
             {children}
         </button>
@@ -228,7 +228,7 @@ export function TableActionMenu({ items = [], label = 'Aksi' }) {
                 type="button"
                 aria-label={label}
                 onClick={() => setOpen((currentOpen) => !currentOpen)}
-                className="inline-flex h-[34px] w-[48px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
             >
                 <CogIcon className="h-5 w-5" />
             </button>

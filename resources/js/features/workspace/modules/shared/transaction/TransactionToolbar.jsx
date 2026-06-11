@@ -27,7 +27,7 @@ export function TransactionToolbarSplitButton({ label, icon, items = [] }) {
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((current) => !current)}
-                className="inline-flex h-[34px] overflow-hidden rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                className="inline-flex h-[34px] shrink-0 overflow-hidden rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
                 aria-label={label}
                 title={label}
             >

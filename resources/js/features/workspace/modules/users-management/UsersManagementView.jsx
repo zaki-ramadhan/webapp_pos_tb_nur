@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -22,20 +22,40 @@ import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 
-function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
-    const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpenDetail, lookupData }) {
+    const detailRow = useMemo(() => {
+        const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+        if (!recordId) {
+            return null;
+        }
+        return tableRows.find((row) => String(row.id) === String(recordId)) ?? null;
+    }, [activeLevel2Tab, tableRows]);
+
+    const recordId = detailRow ? String(detailRow.id) : null;
     const isDetail = Boolean(recordId);
 
     const [values, setValues] = useState({
-        name: activeLevel2Tab?.record?.name ?? '',
-        email: activeLevel2Tab?.record?.email ?? '',
-        phone: activeLevel2Tab?.record?.phone ?? '',
+        name: detailRow?.name ?? '',
+        email: detailRow?.email ?? '',
+        phone: detailRow?.phone ?? '',
         password: '',
-        isActive: activeLevel2Tab?.record?.isActive ?? true,
-        accessGroupIds: activeLevel2Tab?.record?.accessGroupIds ?? [],
+        isActive: detailRow?.isActive ?? true,
+        accessGroupIds: detailRow?.accessGroupIds ?? [],
     });
 
     const [status, setStatus] = useState({ tone: '', message: '' });
+
+    useEffect(() => {
+        setValues({
+            name: detailRow?.name ?? '',
+            email: detailRow?.email ?? '',
+            phone: detailRow?.phone ?? '',
+            password: '',
+            isActive: detailRow?.isActive ?? true,
+            accessGroupIds: detailRow?.accessGroupIds ?? [],
+        });
+        setStatus({ tone: '', message: '' });
+    }, [detailRow]);
 
     const { processing, store, update } = useBackendResource({
         resource: 'users',
@@ -66,16 +86,25 @@ function UserFormView({ form, activeLevel2Tab, onRefresh, lookupData }) {
             message: isDetail ? 'Sedang memperbarui pengguna.' : 'Sedang menyimpan pengguna baru.',
         });
         try {
+            let record;
             if (isDetail) {
                 await update(recordId, payload);
             } else {
-                await store(payload);
+                const response = await store(payload);
+                record = response?.data ?? response;
             }
             dismissToast(loadingToastId);
             showSuccessToast({
                 title: 'Berhasil',
                 message: isDetail ? 'Pengguna berhasil diperbarui.' : 'Pengguna berhasil disimpan.',
             });
+            if (!isDetail && record?.id && onOpenDetail) {
+                onOpenDetail({
+                    recordId: String(record.id),
+                    label: record.name ?? values.name.trim(),
+                    tabLabel: record.name ?? values.name.trim(),
+                });
+            }
         } catch (err) {
             dismissToast(loadingToastId);
             showErrorToast({
@@ -273,7 +302,17 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
 
                     <DataTableBody>
                         {filteredRows.map((row) => (
-                            <DataTableRow key={row.id} onClick={() => onOpenDetail?.(row)}>
+                            <DataTableRow
+                                key={row.id}
+                                className="cursor-pointer"
+                                onClick={() =>
+                                    onOpenDetail?.({
+                                        recordId: String(row.id),
+                                        label: row.name,
+                                        tabLabel: row.tabLabel,
+                                    })
+                                }
+                            >
                                 <DataTableCell>{formatTableTextValue(row.name)}</DataTableCell>
                                 <DataTableCell>{formatTableTextValue(row.phone)}</DataTableCell>
                                 <DataTableCell>{formatTableTextValue(row.email)}</DataTableCell>
@@ -297,6 +336,7 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
 export default function UsersManagementView({
     page,
     mode,
+    activeLevel2Tab,
     onOpenContent,
     onOpenDetail,
     onCloseDetail,
@@ -328,8 +368,10 @@ export default function UsersManagementView({
     ) : (
         <UserFormView
             form={page.form}
-            activeLevel2Tab={onOpenDetail?.record ? { record: onOpenDetail.record } : undefined}
+            tableRows={resolvedTable.rows}
+            activeLevel2Tab={activeLevel2Tab}
             onRefresh={reload}
+            onOpenDetail={onOpenDetail}
             lookupData={{
                 groups: groupsResource.rows,
             }}

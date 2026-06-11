@@ -215,7 +215,7 @@ export function ContactsTab({ config }) {
                 <h3 className="text-[22px] font-normal text-[#1f2436]">{config.contactsTable.title}</h3>
                 <button
                     type="button"
-                    className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                    className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
                 >
                     <PlusIcon className="h-5 w-5" />
                 </button>
@@ -269,10 +269,10 @@ export function ShippingTab({ config, values, onChange }) {
             <section>
                 <SectionHeading title={config.headingLabels.shippingRight} />
                 <div className="mb-3 mt-4 flex flex-wrap items-center gap-3">
-                    <button type="button" className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]">
+                    <button type="button" className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]">
                         <PlusIcon className="h-5 w-5" />
                     </button>
-                    <button type="button" className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#2353a0]">
+                    <button type="button" className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#2353a0]">
                         Ambil<span className="ml-1">⌄</span>
                     </button>
                 </div>

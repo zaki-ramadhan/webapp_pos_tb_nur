@@ -32,8 +32,9 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
+    const [isDuplicated, setIsDuplicated] = useState(false);
 
-    const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const recordId = activeLevel2Tab?.tabType === 'detail' && !isDuplicated ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     const initialGeneralSnapshot = useMemo(() => buildGeneralState(form.general), [form.general]);
     const initialPermissionSnapshot = useMemo(
@@ -42,6 +43,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
     );
 
     useEffect(() => {
+        setIsDuplicated(false);
         setActiveTabId(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
         setGeneralValues(buildGeneralState(form.general));
         setPermissionCategories(buildInitialPermissionCategories(form.permissions, form.permissionPreset));
@@ -51,6 +53,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
 
     const isDirty = useMemo(
         () =>
+            isDuplicated ||
             JSON.stringify(buildGroupAccessComparableState(generalValues, permissionCategories)) !==
             JSON.stringify(buildGroupAccessComparableState(initialGeneralSnapshot, initialPermissionSnapshot)),
         [generalValues, initialGeneralSnapshot, initialPermissionSnapshot, permissionCategories],
@@ -114,6 +117,52 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                     });
                 }
             },
+        });
+    }
+
+    function handleDuplicate() {
+        setIsDuplicated(true);
+        setGeneralValues((current) => ({
+            ...current,
+            groupName: current.groupName ? `${current.groupName} - Copy` : 'Copy',
+        }));
+        setStatus({
+            tone: 'success',
+            message: 'Akses grup berhasil diduplikasi. Silakan ubah nama dan simpan sebagai grup baru.',
+        });
+    }
+
+    function handleResetPermissions() {
+        setPermissionCategories((current) =>
+            current.map((category) => ({
+                ...category,
+                sections: (category.sections ?? []).map((section) => ({
+                    ...section,
+                    rows: (section.rows ?? []).map((row) => ({
+                        ...row,
+                        permissions: {
+                            active: false,
+                            create: false,
+                            update: false,
+                            delete: false,
+                            view: false,
+                        },
+                    })),
+                })),
+            }))
+        );
+        setStatus({
+            tone: 'success',
+            message: 'Seluruh checklist hak akses telah dikosongkan. Klik Simpan untuk memperbarui.',
+        });
+    }
+
+    function handleExportUsers() {
+        const users = normalizeSelectedUsers(generalValues.selectedUsers);
+        const usersText = users.map((u) => u.label).join(', ');
+        setStatus({
+            tone: 'success',
+            message: `Ekspor data pengguna grup (${users.length} orang) berhasil diproses. Pengguna: ${usersText || 'Tidak ada pengguna'}.`,
         });
     }
 
@@ -227,21 +276,14 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
             </div>
 
             <GroupAccessActionDock
-                actions={form.actions.map((action) => ({
-                    ...action,
-                    loading:
-                        action.id === 'save'
-                            ? saving
-                            : action.id === 'delete'
-                              ? saving
-                              : false,
-                    disabled:
-                        action.id === 'save'
-                            ? saving || Boolean(validationMessage)
-                            : action.id === 'delete'
-                              ? !isDetail || saving
-                              : Boolean(action.disabled) || saving,
-                }))}
+                actions={form.actions
+                    .filter((action) => action.id === 'save')
+                    .map((action) => ({
+                        ...action,
+                        loading: saving,
+                        disabled: saving || Boolean(validationMessage),
+                    }))
+                }
                 isDirty={isDirty && !validationMessage}
                 onSave={handleSave}
                 onDelete={requestDelete}

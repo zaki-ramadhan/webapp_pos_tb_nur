@@ -1,4 +1,7 @@
+import { useRef, useState } from 'react';
 import Spinner from '@/components/ui/Spinner';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     ChevronDownIcon,
     KebabIcon,
@@ -25,35 +28,75 @@ export function resolveActionToneClass(action, disabled) {
 }
 
 export function GroupAccessActionButton({ action, disabled = false, onClick }) {
+    const [open, setOpen] = useState(false);
+    const buttonRef = useRef(null);
     const isLoading = Boolean(action.loading);
+    const hasMenu = Boolean(action.items?.length);
 
     return (
-        <button
-            type="button"
-            aria-label={action.label}
-            title={action.label}
-            disabled={disabled || isLoading}
-            onClick={onClick}
-            className={`inline-flex h-[56px] w-[104px] items-center justify-center rounded-[8px] border transition ${resolveActionToneClass(
-                action,
-                disabled || isLoading,
-            )}`.trim()}
-        >
-            {isLoading ? (
-                <Spinner className="h-8 w-8 text-current" />
-            ) : action.icon === 'trash' ? (
-                <TrashIcon className="h-9 w-9" />
-            ) : action.icon === 'kebab' ? (
-                <div className="inline-flex items-center gap-2">
-                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-current">
-                        <KebabIcon className="h-3.5 w-3.5 text-current" />
-                    </span>
-                    {action.hasCaret ? <ChevronDownIcon className="h-4 w-4 text-current" /> : null}
-                </div>
-            ) : (
-                <SaveIcon className="h-9 w-9" />
-            )}
-        </button>
+        <div className="relative">
+            <button
+                ref={buttonRef}
+                type="button"
+                aria-label={action.label}
+                title={action.label}
+                disabled={disabled || isLoading}
+                onClick={() => {
+                    if (disabled || isLoading) {
+                        return;
+                    }
+
+                    if (hasMenu) {
+                        setOpen((current) => !current);
+                        return;
+                    }
+
+                    onClick?.();
+                }}
+                className={`inline-flex h-[56px] w-[104px] items-center justify-center rounded-[8px] border transition ${resolveActionToneClass(
+                    action,
+                    disabled || isLoading,
+                )}`.trim()}
+            >
+                {isLoading ? (
+                    <Spinner className="h-8 w-8 text-current" />
+                ) : action.icon === 'trash' ? (
+                    <TrashIcon className="h-9 w-9" />
+                ) : action.icon === 'kebab' ? (
+                    <div className="inline-flex items-center gap-2">
+                        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-current">
+                            <KebabIcon className="h-3.5 w-3.5 text-current" />
+                        </span>
+                        {action.hasCaret ? <ChevronDownIcon className="h-4 w-4 text-current" /> : null}
+                    </div>
+                ) : (
+                    <SaveIcon className="h-9 w-9" />
+                )}
+            </button>
+
+            {hasMenu ? (
+                <DropdownMenu
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    anchorRef={buttonRef}
+                    widthClassName="w-[180px]"
+                >
+                    <div className="flex flex-col">
+                        {action.items.map((item) => (
+                            <DropdownMenuItem
+                                key={item.id}
+                                onClick={() => {
+                                    item.onClick?.();
+                                    setOpen(false);
+                                }}
+                            >
+                                {item.label}
+                            </DropdownMenuItem>
+                        ))}
+                    </div>
+                </DropdownMenu>
+            ) : null}
+        </div>
     );
 }
 
@@ -75,7 +118,7 @@ export function GroupAccessActionDock({ actions = [], isDirty, onSave, onDelete 
                                 ? onSave
                                 : action.id === 'delete'
                                   ? onDelete
-                                  : undefined
+                                  : action.onClick
                         }
                     />
                 ))}
@@ -83,3 +126,4 @@ export function GroupAccessActionDock({ actions = [], isDirty, onSave, onDelete 
         </div>
     );
 }
+

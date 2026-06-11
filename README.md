@@ -13,9 +13,16 @@ Aplikasi POS (Point of Sale) versi web untuk Toko Bangunan "TB Nur". Web app ini
 2. **Katalog Produk**: Kelola data barang (satuan, konversi unit, barcode, dan tiering harga grosir/eceran).
 3. **Pembelian (Purchasing)**: Input faktur pembelian dari supplier, pembayaran utang, dan retur pembelian.
 4. **Penjualan (Sales)**: Input faktur penjualan (mendukung impor item dari Excel/CSV), pelunasan piutang pelanggan, retur penjualan, dan sales check-in.
-5. **Persediaan (Inventory)**: Permintaan barang antar gudang (mendukung impor item dari Excel/CSV), penyesuaian stok, stock opname, dan cek stok per gudang.
+5. **Persediaan & HPP (Inventory & Costing)**: Permintaan barang antar gudang (mutasi barang), penyesuaian stok, stock opname, cek stok per gudang, serta penilaian persediaan dan perhitungan HPP berbasis **FIFO (First-In-First-Out)**.
 6. **Kas & Bank**: Pencatatan uang masuk/keluar non-dagang, transfer bank, dan rekonsiliasi bank.
 7. **Laporan**: Laporan laba rugi, neraca, arus kas, mutasi stok, serta history penjualan/pembelian.
+
+### 📈 Penilaian Persediaan & HPP (FIFO Costing Engine)
+Aplikasi dilengkapi dengan sistem penilaian persediaan otomatis berbasis FIFO yang handal:
+* **Pencatatan Batch Persediaan (Stock Entry)**: Setiap transaksi masuk (Goods Receipt, Sales Return, Work Completion, penyesuaian stok positif, dan hasil stock opname positif) otomatis mendaftarkan batch persediaan baru lengkap dengan data warehouse, kuantitas, tanggal masuk, dan harga beli asli (`unit_cost`).
+* **Konsumsi FIFO Otomatis (Stock Consumption)**: Setiap transaksi keluar (Sales Delivery, Purchase Return, Material Addition, penyesuaian stok negatif, dan hasil stock opname negatif) otomatis memotong persediaan dari batch tertua terlebih dahulu, menghitung COGS/HPP dinamis berdasarkan harga beli batch tersebut, serta menyematkan rincian konsumsi pada baris transaksi.
+* **Mutasi Stok Presisi (Stock Transfer)**: Transfer barang antar-gudang mengonsumsi stok gudang asal menggunakan alur FIFO, kemudian otomatis mendaftarkan batch baru di gudang tujuan dengan menggunakan harga beli rata-rata tertimbang dari batch yang dipindahkan.
+* **Alur Koreksi Pintar (Rollback Costing)**: Jika dokumen transaksi diperbarui (update), dihapus (delete), atau dibatalkan (void/cancelled), sistem secara otomatis membatalkan konsumsi batch dan mengembalikan persediaan/batch ke kondisi semula guna mencegah terjadinya ketidaksesuaian nilai buku stok.
 
 ## 🚀 Cara Menjalankan Aplikasi
 

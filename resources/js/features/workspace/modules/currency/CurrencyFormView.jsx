@@ -171,24 +171,13 @@ export default function CurrencyFormView({
 
                 <div className="flex justify-end lg:shrink-0">
                     <div className="flex flex-row gap-3 lg:flex-col">
-                        {!isDetailMode || activeTabId === 'currency-default-accounts' ? (
-                            <DockActionButton
-                                label={saving ? 'Memproses...' : config.saveLabel}
-                                tone="primary"
-                                icon={<SaveIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                                onClick={handleSave}
-                                disabled={saveDisabled}
-                            />
-                        ) : null}
-                        {isDetailMode ? (
-                            <DockActionButton
-                                label={saving ? 'Memproses...' : config.deleteLabel}
-                                tone="danger"
-                                icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                                disabled={saving}
-                                onClick={requestDelete}
-                            />
-                        ) : null}
+                        <DockActionButton
+                            label={saving ? 'Memproses...' : config.saveLabel}
+                            tone="primary"
+                            icon={<SaveIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                            onClick={handleSave}
+                            disabled={saveDisabled}
+                        />
                     </div>
                 </div>
             </div>

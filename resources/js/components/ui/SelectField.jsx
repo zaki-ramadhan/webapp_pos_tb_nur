@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 import { useFormError } from './FormErrorContext';
@@ -16,45 +17,243 @@ export default function SelectField({
     messageClassName = '',
     children,
     onChange,
+    placeholder = 'Pilih...',
     ...props
 }) {
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
     const resolvedContainerClassName = containerClassName || 'w-full';
+    
     const toneClassName = resolvedError
         ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
         : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
-    function handleChange(event) {
+    const triggerRef = useRef(null);
+    const dropdownRef = useRef(null);
+    const [open, setOpen] = useState(false);
+    const [placement, setPlacement] = useState('bottom');
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+    const isControlled = value !== undefined;
+    const [localValue, setLocalValue] = useState(defaultValue ?? '');
+    const currentValue = isControlled ? value : localValue;
+
+    // Parse options from standard React children
+    const options = useMemo(() => {
+        const list = [];
+        const traverse = (nodes) => {
+            React.Children.forEach(nodes, (node) => {
+                if (!node) return;
+                
+                if (React.isValidElement(node)) {
+                    if (node.type === 'option') {
+                        list.push({
+                            value: node.props.value !== undefined ? String(node.props.value) : '',
+                            label: node.props.children !== undefined 
+                                ? (Array.isArray(node.props.children) ? node.props.children.join('') : String(node.props.children))
+                                : (node.props.label || String(node.props.value || '')),
+                            disabled: Boolean(node.props.disabled),
+                        });
+                    } else if (node.props && node.props.children) {
+                        traverse(node.props.children);
+                    }
+                }
+            });
+        };
+        traverse(children);
+        return list;
+    }, [children]);
+
+    const selectedOption = useMemo(() => {
+        return options.find((opt) => String(opt.value) === String(currentValue)) ?? null;
+    }, [options, currentValue]);
+
+    const displayLabel = selectedOption ? selectedOption.label : (currentValue || placeholder);
+
+    // Auto placement flipping based on viewport space
+    useEffect(() => {
+        if (!open || !triggerRef.current) return;
+
+        const rect = triggerRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+
+        if (spaceBelow < 280 && rect.top > 280) {
+            setPlacement('top');
+        } else {
+            setPlacement('bottom');
+        }
+    }, [open]);
+
+    // Handle outside clicks to close the dropdown
+    useEffect(() => {
+        if (!open) return;
+
+        function handleClickOutside(event) {
+            if (
+                dropdownRef.current && 
+                !dropdownRef.current.contains(event.target) &&
+                triggerRef.current && 
+                !triggerRef.current.contains(event.target)
+            ) {
+                setOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [open]);
+
+    // Keyboard selection highlight scroll tracking
+    useEffect(() => {
+        if (open && highlightedIndex >= 0 && dropdownRef.current) {
+            const activeEl = dropdownRef.current.children[highlightedIndex];
+            if (activeEl) {
+                activeEl.scrollIntoView({ block: 'nearest' });
+            }
+        }
+    }, [highlightedIndex, open]);
+
+    // Reset keyboard selection highlighted index on open/close
+    useEffect(() => {
+        if (open) {
+            const index = options.findIndex((opt) => String(opt.value) === String(currentValue));
+            setHighlightedIndex(index >= 0 ? index : 0);
+        } else {
+            setHighlightedIndex(-1);
+        }
+    }, [open, currentValue, options]);
+
+    function handleSelect(val) {
+        if (!isControlled) {
+            setLocalValue(val);
+        }
+        setOpen(false);
+        triggerRef.current?.focus();
+
+        const simulatedEvent = {
+            target: {
+                id,
+                name: props.name,
+                value: val,
+            },
+        };
+        onChange?.(simulatedEvent);
         clearError(contextKey);
-        onChange?.(event);
+    }
+
+    function handleKeyDown(event) {
+        if (disabled) return;
+
+        if (event.key === 'Escape') {
+            setOpen(false);
+            triggerRef.current?.focus();
+            event.preventDefault();
+        } else if (event.key === 'ArrowDown') {
+            if (!open) {
+                setOpen(true);
+            } else {
+                setHighlightedIndex((prev) => (prev + 1) % options.length);
+            }
+            event.preventDefault();
+        } else if (event.key === 'ArrowUp') {
+            if (!open) {
+                setOpen(true);
+            } else {
+                setHighlightedIndex((prev) => (prev - 1 + options.length) % options.length);
+            }
+            event.preventDefault();
+        } else if (event.key === 'Enter' || event.key === ' ') {
+            if (open) {
+                if (highlightedIndex >= 0 && highlightedIndex < options.length) {
+                    const option = options[highlightedIndex];
+                    if (!option.disabled) {
+                        handleSelect(option.value);
+                    }
+                }
+                event.preventDefault();
+            } else {
+                setOpen(true);
+                event.preventDefault();
+            }
+        }
     }
 
     return (
-        <div className={resolvedContainerClassName}>
+        <div className={`relative ${resolvedContainerClassName}`.trim()}>
+            {/* Real select element hidden for testing frameworks / accessibility */}
+            <select
+                id={id}
+                name={props.name}
+                value={currentValue}
+                disabled={disabled}
+                onChange={(e) => handleSelect(e.target.value)}
+                className="sr-only"
+                tabIndex={-1}
+                aria-hidden="true"
+            >
+                {children}
+            </select>
+
             <div
                 className={`group flex h-11 w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''} ${className}`.trim()}
             >
-                <select
-                    id={id}
-                    value={value}
-                    defaultValue={defaultValue}
+                <button
+                    ref={triggerRef}
+                    type="button"
                     disabled={disabled}
-                    aria-invalid={Boolean(resolvedError)}
-                    className={`h-full w-full appearance-none bg-transparent px-4 text-sm outline-none disabled:cursor-not-allowed ${disabled ? 'text-slate-400' : 'text-slate-700'} ${selectClassName}`.trim()}
-                    onChange={handleChange}
+                    onClick={() => setOpen((o) => !o)}
+                    onKeyDown={handleKeyDown}
+                    className={`h-full w-full bg-transparent px-4 text-left text-sm outline-none disabled:cursor-not-allowed flex items-center justify-between ${disabled ? 'text-slate-400' : 'text-slate-700'} ${selectClassName}`.trim()}
+                    aria-haspopup="listbox"
+                    aria-expanded={open}
                     {...props}
                 >
-                    {children}
-                </select>
-
-                <span
-                    className={`pointer-events-none mr-3 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-300 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName}`.trim()}
-                >
-                    <ChevronDown aria-hidden="true" className="h-4 w-4" strokeWidth={2.2} absoluteStrokeWidth />
-                </span>
+                    <span className="truncate mr-2">
+                        {displayLabel}
+                    </span>
+                    <ChevronDown
+                        aria-hidden="true"
+                        className={`h-4 w-4 shrink-0 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-300 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName}`.trim()}
+                        strokeWidth={2.2}
+                        absoluteStrokeWidth
+                    />
+                </button>
             </div>
+
+            {open && !disabled && options.length > 0 && (
+                <div
+                    ref={dropdownRef}
+                    role="listbox"
+                    className={`absolute left-0 right-0 ${placement === 'top' ? 'bottom-[calc(100%+4px)]' : 'top-[calc(100%+4px)]'} z-[100] max-h-[260px] overflow-y-auto rounded-md border border-[#d6deea] bg-white py-1 shadow-[0_10px_24px_rgba(15,23,42,0.14)]`}
+                >
+                    {options.map((option, index) => {
+                        const isSelected = String(option.value) === String(currentValue);
+                        const isHighlighted = index === highlightedIndex;
+                        return (
+                            <button
+                                key={option.value}
+                                type="button"
+                                role="option"
+                                aria-selected={isSelected}
+                                disabled={option.disabled}
+                                onClick={() => handleSelect(option.value)}
+                                className={`block w-full px-4 py-2.5 text-left text-sm transition-colors duration-100 ${
+                                    isSelected 
+                                        ? 'bg-[#eef3fb] font-semibold text-[#2353a0]' 
+                                        : isHighlighted 
+                                            ? 'bg-slate-50 text-slate-900 font-medium' 
+                                            : 'text-slate-700 hover:bg-slate-50'
+                                } ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`.trim()}
+                            >
+                                {option.label}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
 
             {feedbackMessage ? (
                 <p className={`mt-1.5 text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>

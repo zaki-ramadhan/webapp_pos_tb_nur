@@ -97,7 +97,7 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                         type="button"
                         onClick={onCreate}
                         aria-label={table.createLabel}
-                        className="inline-flex h-[34px] w-[60px] items-center justify-center rounded-[4px] bg-[#2353a0] text-white shadow-[0_4px_10px_rgba(15,23,42,0.08)]"
+                        className="inline-flex h-[34px] w-[60px] shrink-0 items-center justify-center rounded-[4px] bg-[#2353a0] text-white shadow-[0_4px_10px_rgba(15,23,42,0.08)]"
                     >
                         <PlusIcon className="h-6 w-6" />
                     </button>

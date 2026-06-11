@@ -200,15 +200,6 @@ export default function DepartmentFormView({
                         disabled={saveDisabled}
                         onClick={handleSave}
                     />
-                    {isDetailMode ? (
-                        <DockActionButton
-                            label={saving ? 'Memproses...' : 'Hapus'}
-                            tone="danger"
-                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                            disabled={saving}
-                            onClick={requestDelete}
-                        />
-                    ) : null}
                 </div>
             </div>
 
