@@ -121,17 +121,19 @@ export default function TextInput({
     interactiveReadOnly = false,
     tabIndex,
     onChange,
+    value,
+    defaultValue,
     ...props
 }) {
     const inputRef = useRef(null);
-    const [localValue, setLocalValue] = useState(props.value ?? props.defaultValue ?? '');
+    const [localValue, setLocalValue] = useState(value ?? defaultValue ?? '');
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
 
     useEffect(() => {
-        if (props.value !== undefined) {
-            setLocalValue(props.value ?? '');
+        if (value !== undefined) {
+            setLocalValue(value ?? '');
         }
-    }, [props.value]);
+    }, [value]);
 
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
@@ -164,6 +166,11 @@ export default function TextInput({
     }
 
     function handleWrappedBlur(event) {
+        if (readOnly || disabled) {
+            props.onBlur?.(event);
+            return;
+        }
+
         let val = event.target.value;
         const name = props.name ?? '';
         const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
@@ -238,6 +245,7 @@ export default function TextInput({
                     type={resolvedType}
                     inputMode={resolvedInputMode}
                     placeholder={placeholder}
+                    value={localValue}
                     disabled={disabled}
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}

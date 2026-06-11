@@ -11,21 +11,8 @@ import {
 import SelectField from '@/components/ui/SelectField';
 import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import { LinkIcon, PlusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { PlusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { renderSimpleMasterCellValue } from './simpleMasterShared.jsx';
-
-function ToolbarLeftButton({ button }) {
-    return (
-        <button
-            type="button"
-            aria-label={button.label}
-            title={button.label}
-            className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
-        >
-            <LinkIcon className="h-4.5 w-4.5" />
-        </button>
-    );
-}
 
 export default function SimpleMasterTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
@@ -60,11 +47,6 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                     onClick: onCreate,
                     icon: <PlusIcon className="h-6 w-6" />,
                 }}
-                leftControls={
-                    table.leftButtons?.length
-                        ? table.leftButtons.map((button) => <ToolbarLeftButton key={button.id} button={button} />)
-                        : null
-                }
                 refreshButton={{ label: table.refreshLabel, onClick: table.onRefresh, loading: table.loading }}
                 printButton={table.printLabel ? { label: table.printLabel } : null}
                 exportConfig={{
