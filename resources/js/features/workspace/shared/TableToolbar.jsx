@@ -549,7 +549,7 @@ export default function TableToolbar({
                         <TextInput
                             value={search.value}
                             onChange={search.onChange}
-                            placeholder={search.placeholder || 'Cari...'}
+                            placeholder={search.placeholder || 'Cari data di sini...'}
                             trailing={searchTrailing}
                             aria-label={search.placeholder || 'Cari data'}
                             className={`${sizeStyle.searchInput} w-full rounded-[4px] border-[#cfd6e2] ${search.widthClassName ?? 'sm:max-w-[248px]'}`.trim()}

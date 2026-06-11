@@ -186,7 +186,7 @@ export default function TableListView({
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
-                    placeholder: table.searchPlaceholder ?? 'Cari...',
+                    placeholder: table.searchPlaceholder ?? 'Cari data di sini...',
                     widthClassName: table.searchWidthClassName ?? 'w-full sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
