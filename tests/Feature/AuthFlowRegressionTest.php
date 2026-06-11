@@ -186,6 +186,68 @@ class AuthFlowRegressionTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_google_callback_popup_success(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'google.popup@example.com',
+            'is_active' => true,
+        ]);
+
+        $this->mockGoogleUser(
+            id: 'google-popup-123',
+            email: 'google.popup@example.com',
+            name: 'Popup User',
+            avatar: 'https://example.com/avatar.png',
+        );
+
+        $this->withSession(['auth_use_popup' => true])
+            ->get('/auth/google/callback?code=fake-code')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->assertSee('window.opener.postMessage')
+            ->assertSee('success')
+            ->assertSee('Berhasil masuk dengan Google.');
+
+        $this->assertAuthenticatedAs($user->fresh());
+    }
+
+    public function test_google_callback_popup_error_inactive_user(): void
+    {
+        User::factory()->create([
+            'email' => 'inactive.popup@example.com',
+            'is_active' => false,
+        ]);
+
+        $this->mockGoogleUser(
+            id: 'google-popup-456',
+            email: 'inactive.popup@example.com',
+            name: 'Inactive Popup User',
+            avatar: 'https://example.com/avatar.png',
+        );
+
+        $this->withSession(['auth_use_popup' => true])
+            ->get('/auth/google/callback?code=fake-code')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->assertSee('window.opener.postMessage')
+            ->assertSee('error')
+            ->assertSee('Akun ini tidak aktif. Hubungi administrator.');
+
+        $this->assertGuest();
+    }
+
+    public function test_google_redirect_popup_error_when_config_missing(): void
+    {
+        config()->set('services.google.client_id', null);
+
+        $this->get('/auth/google?popup=1')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->assertSee('window.opener.postMessage')
+            ->assertSee('error')
+            ->assertSee('Login Google belum dikonfigurasi.');
+    }
+
     private function mockGoogleUser(string $id, string $email, string $name, string $avatar): void
     {
         $oauthUser = \Mockery::mock(OAuthUser::class);

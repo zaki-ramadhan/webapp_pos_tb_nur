@@ -1,5 +1,5 @@
 import { useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import Button from '@/components/ui/Button';
 import Divider from '@/components/ui/Divider';
@@ -20,6 +20,61 @@ export default function LoginFormPanel({ login }) {
         identifier: '',
         password: '',
     });
+
+    const messageListenerRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            if (messageListenerRef.current) {
+                window.removeEventListener('message', messageListenerRef.current);
+            }
+        };
+    }, []);
+
+    function handleGoogleLogin(event) {
+        event.preventDefault();
+
+        const width = 500;
+        const height = 650;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+        const popupUrl = `${login.googleHref}?popup=1`;
+
+        if (messageListenerRef.current) {
+            window.removeEventListener('message', messageListenerRef.current);
+        }
+
+        const handleMessage = (event) => {
+            if (event.origin !== window.location.origin) return;
+
+            const data = event.data;
+            if (data && (data.status === 'success' || data.status === 'error')) {
+                if (data.status === 'success') {
+                    showLoadingToast({
+                        title: 'Berhasil',
+                        message: data.message || 'Sedang mengalihkan ke dashboard...',
+                    });
+                    window.location.href = '/dashboard';
+                } else {
+                    showErrorToast({
+                        title: 'Login gagal',
+                        message: data.message || 'Gagal login menggunakan Google.',
+                    });
+                }
+                window.removeEventListener('message', handleMessage);
+                messageListenerRef.current = null;
+            }
+        };
+
+        messageListenerRef.current = handleMessage;
+        window.addEventListener('message', handleMessage);
+
+        window.open(
+            popupUrl,
+            'GoogleLoginPopup',
+            `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,status=no`
+        );
+    }
 
     function submit(event) {
         event.preventDefault();
@@ -125,6 +180,7 @@ export default function LoginFormPanel({ login }) {
                     <SocialButton
                         label={`Masuk dengan ${login.googleLabel}`}
                         href={login.googleHref}
+                        onClick={handleGoogleLogin}
                         disabled={form.processing}
                     />
                 </form>

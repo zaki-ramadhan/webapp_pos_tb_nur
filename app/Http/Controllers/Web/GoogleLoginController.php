@@ -16,9 +16,14 @@ use Throwable;
 
 class GoogleLoginController extends Controller
 {
-    public function redirect(): RedirectResponse
+    public function redirect(Request $request): \Symfony\Component\HttpFoundation\Response
     {
+        $usePopup = $request->query('popup') === '1';
+
         if (! $this->hasGoogleCredentials()) {
+            if ($usePopup) {
+                return $this->respondWithPopupError('Login Google belum dikonfigurasi.');
+            }
             return redirect()
                 ->route('home')
                 ->withErrors([
@@ -26,14 +31,25 @@ class GoogleLoginController extends Controller
                 ]);
         }
 
+        if ($usePopup) {
+            $request->session()->put('auth_use_popup', true);
+        } else {
+            $request->session()->forget('auth_use_popup');
+        }
+
         return Socialite::driver('google')
             ->stateless()
             ->redirect();
     }
 
-    public function callback(Request $request): RedirectResponse
+    public function callback(Request $request): \Symfony\Component\HttpFoundation\Response
     {
+        $usePopup = $request->session()->pull('auth_use_popup', false);
+
         if (! $this->hasGoogleCredentials()) {
+            if ($usePopup) {
+                return $this->respondWithPopupError('Login Google belum dikonfigurasi.');
+            }
             return redirect()
                 ->route('home')
                 ->withErrors([
@@ -49,6 +65,9 @@ class GoogleLoginController extends Controller
         } catch (Throwable $exception) {
             report($exception);
 
+            if ($usePopup) {
+                return $this->respondWithPopupError('Autentikasi Google gagal diproses. Silakan coba lagi.');
+            }
             return redirect()
                 ->route('home')
                 ->withErrors([
@@ -59,6 +78,9 @@ class GoogleLoginController extends Controller
         $email = Str::lower(trim((string) $oauthUser->getEmail()));
 
         if ($email === '') {
+            if ($usePopup) {
+                return $this->respondWithPopupError('Akun Google Anda tidak memiliki email yang dapat digunakan.');
+            }
             return redirect()
                 ->route('home')
                 ->withErrors([
@@ -73,6 +95,9 @@ class GoogleLoginController extends Controller
         }
 
         if ($this->supportsUserActivation() && ! (bool) $user->is_active) {
+            if ($usePopup) {
+                return $this->respondWithPopupError('Akun ini tidak aktif. Hubungi administrator.');
+            }
             return redirect()
                 ->route('home')
                 ->withErrors([
@@ -84,6 +109,10 @@ class GoogleLoginController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+
+        if ($usePopup) {
+            return $this->respondWithPopupSuccess('Berhasil masuk dengan Google.');
+        }
 
         return redirect()
             ->intended(route('dashboard'))
@@ -186,5 +215,73 @@ class GoogleLoginController extends Controller
     private function supportsEmailVerification(): bool
     {
         return Schema::hasColumn('users', 'email_verified_at');
+    }
+
+    private function respondWithPopupSuccess(string $message): \Illuminate\Http\Response
+    {
+        $html = sprintf('
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Autentikasi Berhasil</title>
+                <style>
+                    body { font-family: sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; }
+                    .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin-bottom: 12px; }
+                    @keyframes spin { 0%% { transform: rotate(0deg); } 100%% { transform: rotate(360deg); } }
+                </style>
+            </head>
+            <body>
+                <div class="loader"></div>
+                <p>Autentikasi berhasil, mengalihkan...</p>
+                <script>
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            status: "success",
+                            message: %s
+                        }, window.location.origin);
+                        window.close();
+                    } else {
+                        window.location.href = %s;
+                    }
+                </script>
+            </body>
+            </html>
+        ', json_encode($message), json_encode(route('dashboard')));
+
+        return response($html)->header('Content-Type', 'text/html');
+    }
+
+    private function respondWithPopupError(string $message): \Illuminate\Http\Response
+    {
+        $html = sprintf('
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Autentikasi Gagal</title>
+                <style>
+                    body { font-family: sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; }
+                    .loader { border: 3px solid #f3f3f3; border-top: 3px solid #ef4444; border-radius: 50%%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin-bottom: 12px; }
+                    @keyframes spin { 0%% { transform: rotate(0deg); } 100%% { transform: rotate(360deg); } }
+                </style>
+            </head>
+            <body>
+                <div class="loader"></div>
+                <p>Autentikasi gagal: %s. Menutup...</p>
+                <script>
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            status: "error",
+                            message: %s
+                        }, window.location.origin);
+                        window.close();
+                    } else {
+                        window.location.href = "/?error=" + encodeURIComponent(%s);
+                    }
+                </script>
+            </body>
+            </html>
+        ', htmlspecialchars($message), json_encode($message), json_encode($message));
+
+        return response($html)->header('Content-Type', 'text/html');
     }
 }
