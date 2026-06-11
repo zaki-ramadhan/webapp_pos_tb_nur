@@ -11,7 +11,7 @@ import {
     AccountsReadonlyTrailingIcon,
 } from './accountsViewShared';
 
-export function AccountsGeneralTab({ config, values, isDetail, onChange }) {
+export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData }) {
     return (
         <div className="space-y-4">
             <AccountsFormFieldRow label={config.labels.type}>
@@ -37,7 +37,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange }) {
                     </SelectField>
                 )}
             </AccountsFormFieldRow>
-
+ 
             <div className="lg:pl-[280px]">
                 <CheckboxField
                     id="accounts-sub-account"
@@ -50,7 +50,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange }) {
                     containerClassName="w-auto"
                 />
             </div>
-
+ 
             <AccountsFormFieldRow label={config.labels.code} required>
                 <TextInput
                     value={values.code}
@@ -62,7 +62,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange }) {
                     trailingClassName={isDetail ? 'px-3' : ''}
                 />
             </AccountsFormFieldRow>
-
+ 
             <AccountsFormFieldRow label={config.labels.name} required>
                 <TextInput
                     value={values.name}
@@ -75,7 +75,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange }) {
                 />
                 <p className="mt-2 pl-4 text-[14px] italic text-[#8a91a8]">{config.helperText.nameExample}</p>
             </AccountsFormFieldRow>
-
+ 
             <AccountsFormFieldRow label={config.labels.currency}>
                 {isDetail ? (
                     <TextInput
@@ -85,15 +85,27 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange }) {
                         inputClassName="text-[15px] text-[#8a91a8]"
                     />
                 ) : (
-                    <ChipLookupField
-                        values={values.currency}
-                        placeholder={config.placeholders.currency}
-                        onRemove={() => {}}
-                        searchLabel="Cari mata uang"
-                    />
+                    <SelectField
+                        value={values.currencyId ?? ''}
+                        onChange={(event) => {
+                            const selectedId = event.target.value ? parseInt(event.target.value) : null;
+                            const selectedCurrency = (lookupData?.currencies ?? []).find(c => c.id === selectedId);
+                            onChange('currencyId', selectedId);
+                            onChange('currency', selectedCurrency ? [selectedCurrency.name] : []);
+                        }}
+                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                        selectClassName="text-[15px] text-[#1f2436]"
+                    >
+                        <option value="">Pilih Mata Uang...</option>
+                        {(lookupData?.currencies ?? []).map((currency) => (
+                            <option key={currency.id} value={currency.id}>
+                                {currency.name} ({currency.code})
+                            </option>
+                        ))}
+                    </SelectField>
                 )}
             </AccountsFormFieldRow>
-
+ 
             {isDetail ? (
                 <AccountsFormFieldRow label={config.labels.balance}>
                     <div className="pt-1 text-[18px] text-[#1f2436]">{values.balanceLabel}</div>
@@ -103,18 +115,30 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange }) {
     );
 }
 
-export function AccountsOpeningBalanceTab({ config, values, onChange }) {
+export function AccountsOpeningBalanceTab({ config, values, onChange, lookupData }) {
     return (
         <div className="space-y-6">
             <h3 className="text-[24px] font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
-
+ 
             <AccountsFormFieldRow label={config.labels.branch}>
-                <ChipLookupField
-                    values={values.branch}
-                    placeholder={config.placeholders.branch}
-                    onRemove={() => {}}
-                    searchLabel="Cari cabang"
-                />
+                <SelectField
+                    value={values.branchIds?.[0] ?? ''}
+                    onChange={(event) => {
+                        const selectedId = event.target.value ? parseInt(event.target.value) : null;
+                        const selectedBranch = (lookupData?.branches ?? []).find(b => b.id === selectedId);
+                        onChange('branchIds', selectedId ? [selectedId] : []);
+                        onChange('branch', selectedBranch ? [selectedBranch.name] : []);
+                    }}
+                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                    selectClassName="text-[15px] text-[#1f2436]"
+                >
+                    <option value="">Pilih Cabang...</option>
+                    {(lookupData?.branches ?? []).map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                            {branch.name}
+                        </option>
+                    ))}
+                </SelectField>
             </AccountsFormFieldRow>
 
             <AccountsFormFieldRow label={config.labels.openingBalanceValue}>

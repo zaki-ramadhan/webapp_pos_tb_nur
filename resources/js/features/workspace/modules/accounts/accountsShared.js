@@ -134,6 +134,8 @@ export function buildComparableFormValues(values) {
         isSubAccount: Boolean(values.isSubAccount),
         code: String(values.code ?? '').trim(),
         name: String(values.name ?? '').trim(),
+        currencyId: values.currencyId ?? null,
+        branchIds: Array.isArray(values.branchIds) ? [...values.branchIds].sort() : [],
         openingBalanceValue: normalizeNumericValue(values.openingBalanceValue),
         openingBalanceDate: normalizeDateForPayload(values.openingBalanceDate),
         notes: String(values.notes ?? '').trim(),

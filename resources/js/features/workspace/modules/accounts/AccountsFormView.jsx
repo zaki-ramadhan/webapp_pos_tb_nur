@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -28,6 +29,19 @@ import {
 import { AccountsDockActions } from './accountsViewShared';
 
 export default function AccountsFormView({ config, backendRows, activeLevel2Tab, onOpenDetail, onCloseDetail, onReload }) {
+    const branchesResource = useBackendIndexResource({
+        resource: 'branches',
+        filters: { per_page: 100 },
+    });
+    const currenciesResource = useBackendIndexResource({
+        resource: 'currencies',
+        filters: { per_page: 100 },
+    });
+    const lookupData = useMemo(() => ({
+        branches: branchesResource.rows,
+        currencies: currenciesResource.rows,
+    }), [branchesResource.rows, currenciesResource.rows]);
+
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     const tabs = isDetail ? config.detailTabs : config.createTabs;
@@ -161,13 +175,13 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                         <div className="max-w-[1260px]">
                             <CrudStatusMessage status={status} className="mb-4" />
                             {activeTabId === 'opening-balance' ? (
-                                <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
+                                <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} lookupData={lookupData} />
                             ) : activeTabId === 'others' ? (
                                 <AccountsOthersTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
                             ) : activeTabId === 'children' ? (
                                 <AccountsChildrenTab values={values} />
                             ) : (
-                                <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
+                                <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} lookupData={lookupData} />
                             )}
                         </div>
                     </div>
