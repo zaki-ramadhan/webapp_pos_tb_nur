@@ -6,6 +6,8 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { InfoIcon, PinIcon } from '@/features/workspace/shared/Icons';
 import { TransactionFieldLabel, TransactionSectionHeading } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { ReadonlyDocumentTextarea } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
+import CheckboxField from '@/components/ui/CheckboxField';
+import TextareaField from '@/components/ui/TextareaField';
 
 function getSalesReturnInfo(value, label) {
     const map = {
@@ -107,10 +109,14 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                 {config.showPreInvoiceOption ? (
                     <>
                         <TransactionFieldLabel label={config.labels.preInvoice ?? 'Faktur Dimuka'} />
-                        <label className="inline-flex h-[34px] items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-                            <input type="checkbox" checked={values.preInvoice} readOnly className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
-                            <span>{config.preInvoiceOptionLabel ?? 'Ya (Mendahului Pengiriman)'}</span>
-                        </label>
+                        <CheckboxField
+                            id="preInvoice"
+                            label={config.preInvoiceOptionLabel ?? 'Ya (Mendahului Pengiriman)'}
+                            checked={values.preInvoice}
+                            disabled
+                            inputClassName="h-[20px] w-[20px] rounded"
+                            containerClassName="w-auto inline-flex items-center h-[34px]"
+                        />
                     </>
                 ) : null}
 
@@ -206,7 +212,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                 />
 
                 <TransactionFieldLabel label={config.labels.notes} />
-                <textarea
+                <TextareaField
                     value={values.notes}
                     onChange={(event) =>
                         setValues?.((current) => ({
@@ -215,7 +221,8 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                         }))
                     }
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                    className="border-[#cfd6e2]"
+                    textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
                 {additionalTrailingFields.map((field, index) => renderAdditionalField(field, `${field.valueKey ?? field.label}-trailing-${index}`))}

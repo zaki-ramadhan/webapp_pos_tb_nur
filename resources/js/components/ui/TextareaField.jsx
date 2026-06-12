@@ -65,7 +65,7 @@ export default function TextareaField({
                     readOnly={readOnly}
                     tabIndex={readOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default text-slate-400 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
+                    className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${isNonInteractive ? 'cursor-default text-slate-400 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
                 />

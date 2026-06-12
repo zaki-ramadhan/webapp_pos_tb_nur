@@ -1,4 +1,5 @@
 import TextInput from '@/components/ui/TextInput';
+import TextareaField from '@/components/ui/TextareaField';
 
 export function ShippingFieldRow({ label, required = false, children }) {
     return (
@@ -18,11 +19,12 @@ export function PrefixedTextArea({ value, onChange, prefix }) {
             <div className="flex min-w-[92px] items-start justify-start border-r border-slate-400 bg-[#f3f3f4] px-3 py-3 text-xs sm:text-sm text-[#8b94a7]">
                 {prefix}
             </div>
-            <textarea
+            <TextareaField
                 value={value}
                 onChange={onChange}
                 rows={4}
-                className="min-h-[112px] w-full resize-none px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                className="border-none"
+                textareaClassName="min-h-[112px] text-[#1f2436]"
             />
         </div>
     );

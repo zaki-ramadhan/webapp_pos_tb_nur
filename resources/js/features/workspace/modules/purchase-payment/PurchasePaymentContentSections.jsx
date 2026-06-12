@@ -1,3 +1,4 @@
+import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
@@ -52,7 +53,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                 </div>
             </div>
 
-            <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
+            <div className="mt-2 min-h-0 flex-1 overflow-x-auto">
                 <TransactionDataTable
                     columns={config.invoiceTable.columns}
                     rows={values.invoices}
@@ -107,15 +108,14 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                 {isDetail ? (
                     <>
                         <TransactionFieldLabel label={config.labels.voided} />
-                        <label className="inline-flex h-[34px] items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
-                            <input
-                                type="checkbox"
-                                checked={values.voided}
-                                readOnly
-                                className="h-[24px] w-[24px] rounded-[4px] border border-[#cfd6e2]"
-                            />
-                            <span>Ya</span>
-                        </label>
+                        <CheckboxField
+                            id="voided"
+                            label="Ya"
+                            checked={values.voided}
+                            disabled
+                            inputClassName="h-[24px] w-[24px] rounded-[4px]"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
                     </>
                 ) : null}
 

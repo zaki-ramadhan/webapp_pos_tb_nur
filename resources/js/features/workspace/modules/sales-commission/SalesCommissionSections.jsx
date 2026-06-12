@@ -2,6 +2,7 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import RadioField from '@/components/ui/RadioField';
 
 function FormFieldRow({ label, required = false, align = 'center', children }) {
     return (
@@ -17,15 +18,14 @@ function FormFieldRow({ label, required = false, align = 'center', children }) {
 
 function RadioOption({ checked, label, onChange }) {
     return (
-        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-            <input
-                type="radio"
-                checked={checked}
-                onChange={onChange}
-                className="h-[22px] w-[22px] border-[#cfd6e2] text-[#2353a0] focus:ring-[#2353a0]/20"
-            />
-            <span>{label}</span>
-        </label>
+        <RadioField
+            id={label}
+            checked={checked}
+            onChange={onChange}
+            label={label}
+            inputClassName="h-[22px] w-[22px] border-[#cfd6e2]"
+            containerClassName="w-auto inline-flex items-center"
+        />
     );
 }
 

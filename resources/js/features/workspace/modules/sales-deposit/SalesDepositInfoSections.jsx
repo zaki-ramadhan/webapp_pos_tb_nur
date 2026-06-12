@@ -17,6 +17,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { PinIcon } from '@/features/workspace/shared/Icons';
+import TextareaField from '@/components/ui/TextareaField';
 
 export { DepositAmountField, DepositStamp };
 
@@ -74,7 +75,7 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                 />
 
                 <TransactionFieldLabel label={config.labels.notes} />
-                <textarea
+                <TextareaField
                     value={values.notes}
                     onChange={(event) =>
                         setValues((current) => ({
@@ -83,7 +84,8 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                         }))
                     }
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                    className="border-[#cfd6e2]"
+                    textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
         </section>

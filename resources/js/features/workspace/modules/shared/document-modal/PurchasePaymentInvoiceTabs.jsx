@@ -3,6 +3,7 @@ import { TransactionFieldLabel } from '@/features/workspace/modules/shared/Trans
 
 import { DocumentModalCurrencyField } from './DocumentModalFields';
 import DiscountInfoTab from './DiscountInfoTab';
+import CheckboxField from '@/components/ui/CheckboxField';
 
 export function PurchasePaymentInvoiceTab({ values, setValues }) {
     return (
@@ -45,20 +46,19 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                 />
             </div>
 
-            <label className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
-                <input
-                    type="checkbox"
-                    checked={values.pphChecked}
-                    onChange={(event) =>
-                        setValues((current) => ({
-                            ...current,
-                            pphChecked: event.target.checked,
-                        }))
-                    }
-                    className="h-[22px] w-[22px] rounded-[4px] border border-[#cfd6e2]"
-                />
-                <span>Dipotong PPh</span>
-            </label>
+            <CheckboxField
+                id="pphChecked"
+                label="Dipotong PPh"
+                checked={values.pphChecked}
+                onChange={(event) =>
+                    setValues((current) => ({
+                        ...current,
+                        pphChecked: event.target.checked,
+                    }))
+                }
+                inputClassName="h-[22px] w-[22px] rounded-[4px]"
+                containerClassName="w-auto inline-flex items-center"
+            />
 
             <div className="space-y-3 pl-[44px]">
                 <div className="flex items-center justify-between gap-4 text-xs sm:text-sm text-[#1f2436]">

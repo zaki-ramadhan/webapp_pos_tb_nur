@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 
+import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
@@ -78,15 +79,14 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                         {isDetail ? (
                             <>
                                 <TransactionFieldLabel label={config.labels.voided} />
-                                <label className="inline-flex h-[34px] items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
-                                    <input
-                                        type="checkbox"
-                                        checked={values.voided}
-                                        readOnly
-                                        className="h-[24px] w-[24px] rounded-[4px] border border-[#cfd6e2]"
-                                    />
-                                    <span>Ya</span>
-                                </label>
+                                <CheckboxField
+                                    id="voided"
+                                    label="Ya"
+                                    checked={values.voided}
+                                    disabled
+                                    inputClassName="h-[24px] w-[24px] rounded-[4px]"
+                                    containerClassName="w-auto inline-flex items-center"
+                                />
                             </>
                         ) : null}
 

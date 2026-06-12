@@ -1,27 +1,29 @@
 import Tooltip from '@/components/ui/Tooltip';
 import { CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
 import { GroupAccessUserLookupField } from './GroupAccessControls';
+import RadioField from '@/components/ui/RadioField';
 
 export function GroupAccessAccessOption({ option, checked, onChange, children }) {
     return (
         <div className="flex flex-col gap-2">
-            <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#20273b] cursor-pointer">
-                <input
-                    type="radio"
-                    name="group-access-limitation"
-                    checked={checked}
-                    onChange={() => onChange(option.id)}
-                    className="h-5 w-5 border-[#c7d0df] text-[#0f65c9] focus:ring-[#5a84e5]/30"
-                />
-                <span className="inline-flex items-center gap-2">
-                    <span>{option.label}</span>
-                    {option.info ? (
-                        <Tooltip content="Membatasi waktu akses login pengguna ke sistem." portal>
-                            <InfoIcon className="h-[18px] w-[18px] text-[#2f374d] cursor-help" />
-                        </Tooltip>
-                    ) : null}
-                </span>
-            </label>
+            <RadioField
+                id={option.id}
+                name="group-access-limitation"
+                checked={checked}
+                onChange={() => onChange(option.id)}
+                label={
+                    <span className="inline-flex items-center gap-2">
+                        <span>{option.label}</span>
+                        {option.info ? (
+                            <Tooltip content="Membatasi waktu akses login pengguna ke sistem." portal>
+                                <InfoIcon className="h-[18px] w-[18px] text-[#2f374d] cursor-help" />
+                            </Tooltip>
+                        ) : null}
+                    </span>
+                }
+                inputClassName="h-5 w-5 border-[#c7d0df]"
+                containerClassName="w-auto inline-flex items-center"
+            />
             {checked && children}
         </div>
     );

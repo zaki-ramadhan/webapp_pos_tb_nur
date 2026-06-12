@@ -5,6 +5,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
+import CheckboxField from '@/components/ui/CheckboxField';
 
 export function CopyPermissionsButton({ label, options, onSelect }) {
     const [open, setOpen] = useState(false);
@@ -50,11 +51,12 @@ export function CopyPermissionsButton({ label, options, onSelect }) {
 export function PermissionCell({ checked, onChange }) {
     return (
         <div className="flex items-center justify-center">
-            <input
-                type="checkbox"
+            <CheckboxField
+                id="permission"
                 checked={checked}
                 onChange={onChange}
-                className="h-[22px] w-[22px] rounded-[5px] border border-[#c9d0da] text-[#0f65c9] focus:ring-2 focus:ring-[#5a84e5]/25"
+                inputClassName="h-[22px] w-[22px] rounded-[5px] border-[#c9d0da]"
+                containerClassName="w-auto flex items-center justify-center"
             />
         </div>
     );

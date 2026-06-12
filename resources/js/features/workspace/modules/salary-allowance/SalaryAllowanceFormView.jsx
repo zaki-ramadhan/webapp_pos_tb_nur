@@ -18,6 +18,7 @@ import SectionTab from '@/features/workspace/shared/SectionTab';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { CloseIcon, SaveIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import { buildSalaryAllowancePayload } from './salaryAllowanceShared';
+import CheckboxField from '@/components/ui/CheckboxField';
 
 export default function SalaryAllowanceFormView({
     pageId,
@@ -224,15 +225,15 @@ export default function SalaryAllowanceFormView({
                             {isDetail ? (
                                 <>
                                     <div className="pt-2 text-lg text-[#1f2436]">{fields.inactiveLabel}</div>
-                                    <label className="inline-flex h-[40px] items-center gap-3 text-lg text-[#1f2436]">
-                                        <input
-                                            type="checkbox"
-                                            checked={inactive}
-                                            onChange={(event) => setInactive(event.target.checked)}
-                                            className="h-6 w-6 rounded-[4px] border border-[#cfd6e2] text-[#2d61ab] focus:ring-[#2d61ab]"
-                                        />
-                                        <span>{fields.inactiveOptionLabel}</span>
-                                    </label>
+                                    <CheckboxField
+                                        id="inactive"
+                                        label={fields.inactiveOptionLabel}
+                                        checked={inactive}
+                                        onChange={(event) => setInactive(event.target.checked)}
+                                        inputClassName="h-6 w-6 rounded-[4px]"
+                                        containerClassName="w-auto inline-flex items-center h-[40px]"
+                                        labelClassName="text-lg"
+                                    />
                                 </>
                             ) : null}
                         </div>

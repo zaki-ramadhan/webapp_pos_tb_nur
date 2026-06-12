@@ -3,6 +3,7 @@ import TextInput from '@/components/ui/TextInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { ChevronDownIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import TextareaField from '@/components/ui/TextareaField';
 import {
     TransactionDataTable,
     TransactionFieldLabel,
@@ -73,11 +74,12 @@ export function BudgetInfoSection({ config, values, setValues }) {
         <div className="min-h-[540px]">
             <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
                 <TransactionFieldLabel label={config.labels.notes} />
-                <textarea
+                <TextareaField
                     value={values.notes}
                     onChange={(event) => setValues((current) => ({ ...current, notes: event.target.value }))}
                     rows={4}
-                    className="min-h-[60px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="border-[#cfd6e2]"
+                    textareaClassName="min-h-[60px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
                 <TransactionFieldLabel label={config.labels.analyzer} />

@@ -1,6 +1,7 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import TextareaField from '@/components/ui/TextareaField';
 
 function PaymentFieldRow({ label, required = false, children }) {
     return (
@@ -39,11 +40,12 @@ export function PaymentTermsCreateSection({ config, createValues, setCreateValue
             </PaymentFieldRow>
 
             <PaymentFieldRow label={config.createLabels.description}>
-                <textarea
+                <TextareaField
                     value={createValues.description}
                     onChange={(event) => setCreateValues((current) => ({ ...current, description: event.target.value }))}
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-slate-400 px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="border-slate-400"
+                    textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </PaymentFieldRow>
 

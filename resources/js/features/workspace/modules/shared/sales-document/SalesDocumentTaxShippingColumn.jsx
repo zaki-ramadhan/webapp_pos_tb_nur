@@ -1,6 +1,7 @@
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { TransactionDateInput, TransactionFieldLabel, TransactionSectionHeading } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import CheckboxField from '@/components/ui/CheckboxField';
 
 function SalesDocumentInvoiceTaxSection({ values }) {
     return (
@@ -10,14 +11,22 @@ function SalesDocumentInvoiceTaxSection({ values }) {
                 <div className="grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label="Pajak" />
                     <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-[#1f2436]">
-                        <label className="inline-flex items-center gap-3">
-                            <input type="checkbox" checked={values.taxEnabled} onChange={(event) => values.setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))} className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
-                            <span>Kena Pajak</span>
-                        </label>
-                        <label className="inline-flex items-center gap-3">
-                            <input type="checkbox" checked={values.taxIncluded} onChange={(event) => values.setValues?.((current) => ({ ...current, taxIncluded: event.target.checked }))} className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
-                            <span>Total termasuk Pajak</span>
-                        </label>
+                        <CheckboxField
+                            id="taxEnabled"
+                            label="Kena Pajak"
+                            checked={values.taxEnabled}
+                            onChange={(event) => values.setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))}
+                            inputClassName="h-[20px] w-[20px] rounded"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
+                        <CheckboxField
+                            id="taxIncluded"
+                            label="Total termasuk Pajak"
+                            checked={values.taxIncluded}
+                            onChange={(event) => values.setValues?.((current) => ({ ...current, taxIncluded: event.target.checked }))}
+                            inputClassName="h-[20px] w-[20px] rounded"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
                     </div>
                     <TransactionFieldLabel label="Tipe ID" />
                     <TextInput value={values.taxIdType ?? ''} readOnly className="h-[34px] max-w-[272px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />

@@ -3,6 +3,7 @@ import { TransactionFieldLabel } from '@/features/workspace/modules/shared/Trans
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { CloseIcon, DownloadIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 
+import CheckboxField from '@/components/ui/CheckboxField';
 import {
     DocumentModalCurrencyReadonlyField,
     ReadonlyDocumentTextarea,
@@ -71,15 +72,14 @@ export function ItemDetailTab({ detail }) {
             />
 
             <TransactionFieldLabel label="Pajak" />
-            <label className="inline-flex h-[34px] items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-                <input
-                    type="checkbox"
-                    checked={detail.taxChecked ?? false}
-                    readOnly
-                    className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
-                />
-                <span>{detail.taxLabel ?? 'PPN 10 %'}</span>
-            </label>
+            <CheckboxField
+                id="taxChecked"
+                label={detail.taxLabel ?? 'PPN 10 %'}
+                checked={detail.taxChecked ?? false}
+                disabled
+                inputClassName="h-[20px] w-[20px] rounded"
+                containerClassName="w-auto inline-flex items-center h-[34px]"
+            />
 
             <TransactionFieldLabel label="Gudang" required />
             <ChipLookupField

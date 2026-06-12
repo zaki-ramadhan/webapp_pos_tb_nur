@@ -6,7 +6,9 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
+import CheckboxField from '@/components/ui/CheckboxField';
 import TextInput from '@/components/ui/TextInput';
+import TextareaField from '@/components/ui/TextareaField';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import {
     TransactionFieldLabel,
@@ -112,25 +114,25 @@ export function ReceiptInfoSection({ config, values, isDetail, handlers = {} }) 
                 </div>
 
                 <TransactionFieldLabel label={config.labels.payer} />
-                <textarea
+                <TextareaField
                     value={values.payer}
                     readOnly
                     rows={3}
-                    className="min-h-[56px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                    className="rounded-[4px] border-[#cfd6e2]"
+                    textareaClassName="min-h-[56px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
                 {isDetail ? (
                     <>
                         <TransactionFieldLabel label={config.labels.voided} />
-                        <label className="inline-flex h-[34px] items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
-                            <input
-                                type="checkbox"
-                                checked={values.voided}
-                                readOnly
-                                className="h-[24px] w-[24px] rounded-[4px] border border-[#cfd6e2]"
-                            />
-                            <span>Ya</span>
-                        </label>
+                        <CheckboxField
+                            id="voided"
+                            label="Ya"
+                            checked={values.voided}
+                            disabled
+                            inputClassName="h-[24px] w-[24px] rounded-[4px]"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
                     </>
                 ) : null}
 
@@ -144,11 +146,12 @@ export function ReceiptInfoSection({ config, values, isDetail, handlers = {} }) 
                 />
 
                 <TransactionFieldLabel label={config.labels.notes} />
-                <textarea
+                <TextareaField
                     value={values.notes}
                     readOnly
                     rows={4}
-                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                    className="rounded-[4px] border-[#cfd6e2]"
+                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
                 {isDetail ? (

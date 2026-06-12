@@ -113,7 +113,7 @@ export default function CityAutocompleteInput({
                         placeholder={placeholder}
                         disabled={disabled}
                         autoComplete="off"
-                        className={`h-full flex-1 bg-transparent text-xs sm:text-sm outline-none placeholder:text-slate-300 ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                        className={`h-full flex-1 bg-transparent text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                         {...props}
                     />
                 </div>

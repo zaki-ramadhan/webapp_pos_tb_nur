@@ -49,11 +49,12 @@ export function PrefixedTextArea({ prefix, value, onChange }) {
             <div className="flex min-w-[40px] items-start justify-start border-r border-[#cfd6e2] bg-[#f3f3f4] px-2 py-3 text-xs sm:text-sm text-[#8b94a7]">
                 {prefix}
             </div>
-            <textarea
+            <TextareaField
                 value={value}
                 onChange={onChange}
                 rows={4}
-                className="min-h-[74px] w-full resize-none px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                className="border-none"
+                textareaClassName="min-h-[74px] text-[#1f2436]"
             />
         </div>
     );

@@ -9,6 +9,7 @@ import {
 } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
 import { BalanceTab, SalesTab, TaxTab } from '@/features/workspace/modules/business-partner/BusinessPartnerTransactionSections';
 import { ContactsTab, GeneralTab, ShippingTab } from '@/features/workspace/modules/business-partner/BusinessPartnerProfileSections';
+import RadioField from '@/components/ui/RadioField';
 
 function CustomerOthersTab({ config, values, onChange }) {
     return (
@@ -17,15 +18,15 @@ function CustomerOthersTab({ config, values, onChange }) {
                 <SectionHeading title={config.headingLabels.othersLimit} />
 
                 <div className="mt-4 space-y-3">
-                    <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-                        <input
-                            type="radio"
-                            checked={values.receivableLimitMode === 'per-customer'}
-                            onChange={() => onChange('receivableLimitMode', 'per-customer')}
-                            className="h-[18px] w-[18px]"
-                        />
-                        <span>Per Pelanggan</span>
-                    </label>
+                    <RadioField
+                        id="limit-per-customer"
+                        name="receivableLimitMode"
+                        label="Per Pelanggan"
+                        checked={values.receivableLimitMode === 'per-customer'}
+                        onChange={() => onChange('receivableLimitMode', 'per-customer')}
+                        inputClassName="h-[18px] w-[18px]"
+                        containerClassName="w-auto inline-flex items-center"
+                    />
 
                     <div className="space-y-3 pl-6">
                         <div className="flex flex-wrap items-center gap-3">
@@ -68,15 +69,15 @@ function CustomerOthersTab({ config, values, onChange }) {
                         </div>
                     </div>
 
-                    <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-                        <input
-                            type="radio"
-                            checked={values.receivableLimitMode === 'merge-parent'}
-                            onChange={() => onChange('receivableLimitMode', 'merge-parent')}
-                            className="h-[18px] w-[18px]"
-                        />
-                        <span>Tergabung ke Pelanggan Induk</span>
-                    </label>
+                    <RadioField
+                        id="limit-merge-parent"
+                        name="receivableLimitMode"
+                        label="Tergabung ke Pelanggan Induk"
+                        checked={values.receivableLimitMode === 'merge-parent'}
+                        onChange={() => onChange('receivableLimitMode', 'merge-parent')}
+                        inputClassName="h-[18px] w-[18px]"
+                        containerClassName="w-auto inline-flex items-center"
+                    />
                 </div>
             </section>
 

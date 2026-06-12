@@ -13,6 +13,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
+import TextareaField from '@/components/ui/TextareaField';
 
 export function PayrollHeader({ config, values, setValues }) {
     return (
@@ -203,7 +204,7 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
                 />
 
                 <TransactionFieldLabel label={config.additionalInfoFields.noteLabel} />
-                <textarea
+                <TextareaField
                     value={values.notes}
                     onChange={(event) =>
                         setValues((current) => ({
@@ -212,7 +213,8 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
                         }))
                     }
                     rows={4}
-                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="border-[#cfd6e2]"
+                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
         </div>

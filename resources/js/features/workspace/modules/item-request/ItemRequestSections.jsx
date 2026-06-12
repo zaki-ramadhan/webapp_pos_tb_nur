@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
@@ -251,20 +252,19 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                 {isDetail ? (
                     <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
                         <TransactionFieldLabel label={config.labels.closeRequest} />
-                        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-                            <input
-                                type="checkbox"
-                                checked={values.closeRequest}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        closeRequest: event.target.checked,
-                                    }))
-                                }
-                                className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
-                            />
-                            <span>Ya (Tidak dapat diproses lagi)</span>
-                        </label>
+                        <CheckboxField
+                            id="closeRequest"
+                            label="Ya (Tidak dapat diproses lagi)"
+                            checked={values.closeRequest}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    closeRequest: event.target.checked,
+                                }))
+                            }
+                            inputClassName="h-[20px] w-[20px] rounded"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
                     </div>
                 ) : null}
 

@@ -7,6 +7,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
+import CheckboxField from '@/components/ui/CheckboxField';
 
 export default function WorkOrderAdditionalInfoDetailSection({ config, values, setValues, isDetail }) {
     return (
@@ -133,23 +134,23 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
                 {isDetail ? (
                     <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-center">
                         <TransactionFieldLabel label={config.labels.closeJob} />
-                        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-                            <input
-                                type="checkbox"
-                                checked={values.closeJob}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        closeJob: event.target.checked,
-                                    }))
-                                }
-                                className="h-5 w-5 rounded border border-[#cfd6e2]"
-                            />
-                            <span>Ya</span>
-                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#7aa2d5] text-sm text-[#21539b]">
+                        <CheckboxField
+                            id="closeJob"
+                            checked={values.closeJob}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    closeJob: event.target.checked,
+                                }))
+                            }
+                            inputClassName="h-5 w-5 rounded"
+                            containerClassName="w-auto inline-flex items-center"
+                        >
+                            <span className="ml-1 text-xs sm:text-sm text-[#1f2436]">Ya</span>
+                            <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#7aa2d5] text-sm text-[#21539b]">
                                 i
                             </span>
-                        </label>
+                        </CheckboxField>
                     </div>
                 ) : null}
             </div>

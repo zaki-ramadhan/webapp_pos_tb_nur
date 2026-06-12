@@ -326,7 +326,7 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-slate-400 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}

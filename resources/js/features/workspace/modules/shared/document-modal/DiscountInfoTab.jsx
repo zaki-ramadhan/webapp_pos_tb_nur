@@ -13,6 +13,7 @@ import { TransactionFieldLabel } from '@/features/workspace/modules/shared/Trans
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { PlusIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+import TextareaField from '@/components/ui/TextareaField';
 
 export default function DiscountInfoTab({ values, setValues }) {
     const discountColumns = useMemo(
@@ -64,7 +65,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                 </div>
 
                 <TransactionFieldLabel label="Keterangan Diskon" />
-                <textarea
+                <TextareaField
                     value={values.discountNotes}
                     onChange={(event) =>
                         setValues((current) => ({
@@ -73,7 +74,8 @@ export default function DiscountInfoTab({ values, setValues }) {
                         }))
                     }
                     rows={3}
-                    className="min-h-[56px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                    className="border-[#cfd6e2]"
+                    textareaClassName="min-h-[56px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
                 <TransactionFieldLabel label="Departemen" />

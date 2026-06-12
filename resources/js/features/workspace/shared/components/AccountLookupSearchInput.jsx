@@ -78,7 +78,7 @@ export default function AccountLookupSearchInput({
                     autoComplete="off"
                     autoCorrect="off"
                     spellCheck={false}
-                    className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-slate-300 disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-[#a1a8b7] disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} ${inputClassName}`.trim()}
                 />
             </div>
 

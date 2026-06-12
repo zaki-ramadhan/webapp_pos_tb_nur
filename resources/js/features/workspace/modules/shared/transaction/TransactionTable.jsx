@@ -199,7 +199,7 @@ export function TransactionLineItemsSection({
                 </div>
             </div>
 
-            <div className={`mt-4 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
+            <div className={`mt-2 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
                 <TransactionDataTable
                     columns={columns}
                     rows={rows}

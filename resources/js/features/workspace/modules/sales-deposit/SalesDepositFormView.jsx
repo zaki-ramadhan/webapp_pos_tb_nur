@@ -32,6 +32,7 @@ import {
     validateSalesDepositValues,
 } from './salesDepositShared';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import CheckboxField from '@/components/ui/CheckboxField';
 
 export default function SalesDepositFormView({
     pageId,
@@ -276,34 +277,32 @@ export default function SalesDepositFormView({
 
                                 <TransactionFieldLabel label={config.labels.tax} />
                                 <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-[#1f2436]">
-                                    <label className="inline-flex items-center gap-3">
-                                        <input
-                                            type="checkbox"
-                                            checked={values.taxEnabled}
-                                            onChange={(event) =>
-                                                setValues((current) => ({
-                                                    ...current,
-                                                    taxEnabled: event.target.checked,
-                                                }))
-                                            }
-                                            className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
-                                        />
-                                        <span>Kena Pajak</span>
-                                    </label>
-                                    <label className="inline-flex items-center gap-3">
-                                        <input
-                                            type="checkbox"
-                                            checked={values.taxIncluded}
-                                            onChange={(event) =>
-                                                setValues((current) => ({
-                                                    ...current,
-                                                    taxIncluded: event.target.checked,
-                                                }))
-                                            }
-                                            className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
-                                        />
-                                        <span>Total termasuk Pajak</span>
-                                    </label>
+                                    <CheckboxField
+                                        id="taxEnabled"
+                                        label="Kena Pajak"
+                                        checked={values.taxEnabled}
+                                        onChange={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                taxEnabled: event.target.checked,
+                                            }))
+                                        }
+                                        inputClassName="h-[20px] w-[20px] rounded"
+                                        containerClassName="w-auto inline-flex items-center"
+                                    />
+                                    <CheckboxField
+                                        id="taxIncluded"
+                                        label="Total termasuk Pajak"
+                                        checked={values.taxIncluded}
+                                        onChange={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                taxIncluded: event.target.checked,
+                                            }))
+                                        }
+                                        inputClassName="h-[20px] w-[20px] rounded"
+                                        containerClassName="w-auto inline-flex items-center"
+                                    />
                                 </div>
                             </div>
                         </section>

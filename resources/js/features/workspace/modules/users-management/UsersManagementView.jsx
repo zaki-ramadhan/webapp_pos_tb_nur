@@ -21,6 +21,7 @@ import SelectField from '@/components/ui/SelectField';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
+import RadioField from '@/components/ui/RadioField';
 
 function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpenDetail, lookupData }) {
     const detailRow = useMemo(() => {
@@ -209,24 +210,24 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                         Status Akun
                     </label>
                     <div className="flex items-center gap-6 pt-3">
-                        <label className="inline-flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="radio"
-                                checked={values.isActive}
-                                onChange={() => setValues({ ...values, isActive: true })}
-                                className="h-5 w-5 text-[#2f62ab]"
-                            />
-                            <span>Aktif</span>
-                        </label>
-                        <label className="inline-flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="radio"
-                                checked={!values.isActive}
-                                onChange={() => setValues({ ...values, isActive: false })}
-                                className="h-5 w-5 text-[#2f62ab]"
-                            />
-                            <span>Nonaktif</span>
-                        </label>
+                        <RadioField
+                            id="user-active"
+                            name="user-status"
+                            label="Aktif"
+                            checked={values.isActive}
+                            onChange={() => setValues({ ...values, isActive: true })}
+                            inputClassName="h-5 w-5"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
+                        <RadioField
+                            id="user-inactive"
+                            name="user-status"
+                            label="Nonaktif"
+                            checked={!values.isActive}
+                            onChange={() => setValues({ ...values, isActive: false })}
+                            inputClassName="h-5 w-5"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
                     </div>
                 </div>
             </div>

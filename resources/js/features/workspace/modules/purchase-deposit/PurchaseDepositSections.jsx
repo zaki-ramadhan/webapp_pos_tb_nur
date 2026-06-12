@@ -15,18 +15,18 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { CloseIcon, PinIcon } from '@/features/workspace/shared/Icons';
+import CheckboxField from '@/components/ui/CheckboxField';
 
 function PurchaseDepositCheckbox({ checked, label }) {
     return (
-        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-            <input
-                type="checkbox"
-                checked={checked}
-                readOnly
-                className="h-[20px] w-[20px] rounded border border-[#cfd6e2]"
-            />
-            <span>{label}</span>
-        </label>
+        <CheckboxField
+            id="deposit-checked"
+            label={label}
+            checked={checked}
+            disabled
+            inputClassName="h-[20px] w-[20px] rounded"
+            containerClassName="w-auto inline-flex items-center"
+        />
     );
 }
 

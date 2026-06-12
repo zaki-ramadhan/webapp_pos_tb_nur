@@ -23,6 +23,8 @@ import {
     SortIcon,
     TableActionIcon,
 } from '@/features/workspace/shared/Icons';
+import CheckboxField from '@/components/ui/CheckboxField';
+import TextareaField from '@/components/ui/TextareaField';
 import {
     buildInvoiceSectionTitle,
     ReadonlyTextarea,
@@ -240,20 +242,19 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                 {isDetail ? (
                     <>
                         <TransactionFieldLabel label={config.labels.voided} />
-                        <label className="inline-flex h-[34px] items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
-                            <input
-                                type="checkbox"
-                                checked={values.voided}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        voided: event.target.checked,
-                                    }))
-                                }
-                                className="h-[24px] w-[24px] rounded-[4px] border border-[#cfd6e2]"
-                            />
-                            <span>Ya</span>
-                        </label>
+                        <CheckboxField
+                            id="voided"
+                            label="Ya"
+                            checked={values.voided}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    voided: event.target.checked,
+                                }))
+                            }
+                            inputClassName="h-[24px] w-[24px] rounded-[4px]"
+                            containerClassName="w-auto inline-flex items-center h-[34px]"
+                        />
                     </>
                 ) : null}
 
