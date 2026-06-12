@@ -70,7 +70,7 @@ export function PaymentTermsDetailSection({ config, detailValues, setDetailValue
                 <ChipLookupField value={detailValues.name} />
             </PaymentFieldRow>
 
-            <div className="lg:pl-[360px]">
+            <div className="lg:pl-[372px]">
                 <CheckboxField
                     id="payment-term-default"
                     label={config.detailLabels.default}
@@ -83,7 +83,7 @@ export function PaymentTermsDetailSection({ config, detailValues, setDetailValue
                 />
             </div>
 
-            <div className="lg:pl-[360px]">
+            <div className="lg:pl-[372px]">
                 <CheckboxField
                     id="payment-term-inactive"
                     label={config.detailLabels.inactive}

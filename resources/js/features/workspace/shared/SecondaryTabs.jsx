@@ -30,7 +30,6 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
             }}
             className={`relative -mb-px inline-flex h-8.5 shrink-0 items-center rounded-t-[5px] border-x border-t-2 border-b-0 text-xs leading-normal whitespace-nowrap transition sm:h-9 sm:text-sm md:h-9.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
-            title={tab.title ?? tab.label}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">
                 {isViewTab ? <ViewModeIcon /> : <span className="block truncate py-1">{renderTabLabel(tab.label, active, false)}</span>}

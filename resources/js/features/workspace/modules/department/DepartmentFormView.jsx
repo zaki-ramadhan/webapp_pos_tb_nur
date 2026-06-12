@@ -190,8 +190,8 @@ export default function DepartmentFormView({
                 />
             </div>
 
-            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 xl:flex-row xl:items-stretch overflow-hidden">
-                <div className="order-2 min-w-0 flex-1 xl:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
+                <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
                     <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
                     <div className="flex-1 min-h-0 flex flex-col">
@@ -207,7 +207,7 @@ export default function DepartmentFormView({
                     </div>
                 </div>
 
-                <div className="order-1 flex justify-end gap-3 xl:order-2 xl:shrink-0 xl:self-start xl:flex-col">
+                <div className="order-1 flex justify-end gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col">
                     <DockSaveButton
                         label={saving ? 'Memproses...' : form.saveLabel}
                         disabled={saveDisabled}

@@ -19,6 +19,8 @@
         "@inertiajs/vite": "^3.0.3",
         "@vitejs/plugin-react": "^5.0.2",
         "chart.js": "^4.5.1",
+        "jspdf": "^4.2.1",
+        "jspdf-autotable": "^5.0.8",
         "lucide-react": "^1.11.0",
         "react": "^19.2.5",
         "react-calendar": "^6.0.1",

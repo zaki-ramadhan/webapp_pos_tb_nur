@@ -78,7 +78,7 @@ export default function ChipLookupField({
                         </span>
                     ))
                 ) : (
-                    <span className="block truncate px-1 text-base text-[#a1a8b7]">{placeholder}</span>
+                    <span className="block truncate px-1 text-xs sm:text-sm text-[#a1a8b7]">{placeholder}</span>
                 )}
             </div>
 

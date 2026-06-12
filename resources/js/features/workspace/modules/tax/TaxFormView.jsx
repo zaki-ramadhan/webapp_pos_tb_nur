@@ -187,7 +187,7 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                 <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
             </div>
 
-            <div className="flex flex-1 min-h-0 flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] xl:flex-row xl:items-stretch overflow-hidden">
+            <div className="flex flex-1 min-h-0 flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden">
                 <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
                     <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
@@ -279,8 +279,8 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                     </div>
                 </div>
 
-                <div className="flex justify-end xl:shrink-0 xl:self-start">
-                    <div className="flex flex-row gap-3 xl:flex-col">
+                <div className="flex justify-end lg:shrink-0 lg:self-start">
+                    <div className="flex flex-row gap-3 lg:flex-col">
                         <DockActionButton
                             label={saving ? 'Memproses...' : form.saveLabel}
                             tone="primary"

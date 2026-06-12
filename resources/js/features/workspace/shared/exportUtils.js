@@ -1,4 +1,6 @@
 import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
@@ -330,147 +332,145 @@ export function importFromFile(file) {
  */
 export function printTable(columns, rows, title = 'Laporan') {
     const activeCols = columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
-
-    const headerCells = activeCols
-        .map(col => {
-            const align = col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left';
-            return `<th style="text-align: ${align};">${esc(col.label || '')}</th>`;
-        })
-        .join('');
-
-    const bodyRows = rows
-        .map(row => {
-            const cells = activeCols
-                .map(col => {
-                    const val = row[col.id] !== undefined && row[col.id] !== null ? row[col.id] : '';
-                    const str = Array.isArray(val) ? val.join(', ') : String(val);
-                    const align = col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left';
-                    return `<td style="text-align: ${align};">${esc(str)}</td>`;
-                })
-                .join('');
-            return `<tr>${cells}</tr>`;
-        })
-        .join('');
-
-    const html = `<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <title>${esc(title)}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      color: #1e293b;
-      font-size: 11px;
-      line-height: 1.5;
-      margin: 24px;
-      background: #ffffff;
-    }
-    .print-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      border-bottom: 2px solid #2353a0;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-    }
-    .header-left {
-      text-align: left;
-    }
-    .header-right {
-      text-align: right;
-    }
-    .company-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1e3a8a;
-      letter-spacing: -0.025em;
-    }
-    .report-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-top: 4px;
-      color: #475569;
-    }
-    .print-meta {
-      font-size: 10px;
-      color: #64748b;
-      margin-top: 2px;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #cbd5e1;
-      padding: 8px 12px;
-    }
-    th {
-      background: #2353a0;
-      color: #ffffff;
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 9px;
-      letter-spacing: 0.05em;
-    }
-    tr {
-      page-break-inside: avoid;
-    }
-    tr:nth-child(even) {
-      background: #f8fafc;
-    }
-    @media print {
-      @page {
-        margin: 1.5cm;
-      }
-      body {
-        margin: 0;
-      }
-      * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      table, th, td {
-        border: 1px solid #94a3b8 !important;
-      }
-      .print-header {
-        border-bottom-color: #1e3a8a;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="print-header">
-    <div class="header-left">
-      <div class="company-title">UD. TB Nur</div>
-      <div class="report-title">${esc(title)}</div>
-    </div>
-    <div class="header-right">
-      <div class="print-meta">Dibuat pada: ${new Date().toLocaleString('id-ID')}</div>
-      <div class="print-meta">Total data: ${rows.length} entri</div>
-    </div>
-  </div>
-  <table>
-    <thead><tr>${headerCells}</tr></thead>
-    <tbody>${bodyRows}</tbody>
-  </table>
-</body>
-</html>`;
-
-    const win = window.open('', '_blank');
-    if (!win) return;
-    win.document.write(html);
-    win.document.close();
-    win.focus();
+    const headers = [activeCols.map(col => col.label || '')];
     
-    // Delayed print trigger to allow DOM painting and style calculations in modern browsers.
-    setTimeout(() => {
-        win.print();
-    }, 350);
+    const data = rows.map(row => {
+        return activeCols.map(col => {
+            let val = row[col.id];
+            if (val === undefined || val === null || String(val).trim() === '') {
+                val = isNumericColumn(col, rows) ? '0' : '-';
+            }
+            return Array.isArray(val) ? val.join(', ') : String(val);
+        });
+    });
+
+    const isLandscape = activeCols.length > 6;
+    const orientation = isLandscape ? 'landscape' : 'portrait';
+    const fontSize = isLandscape ? 7 : 8;
+    const cellPadding = isLandscape ? 3 : 4;
+
+    const doc = new jsPDF({
+        orientation: orientation,
+        unit: 'pt',
+        format: 'a4',
+    });
+
+    // Set metadata properties
+    doc.setProperties({
+        title: title,
+        subject: `Laporan ${title} - UD. TB Nur`,
+        creator: 'UD. TB Nur POS System',
+        author: 'UD. TB Nur'
+    });
+
+    // Draw page 1 branding header
+    const width = doc.internal.pageSize.width;
+
+    // Company Title (UD. TB Nur)
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(30, 58, 138); // Navy-900 (#1e3a8a)
+    doc.text('UD. TB Nur', 36, 45);
+
+    // Report Title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(71, 85, 105); // Slate-600 (#475569)
+    doc.text(title, 36, 62);
+
+    // Timestamp & Stats on the right
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139); // Slate-500 (#64748b)
+    
+    const localeDate = new Date().toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+    const localeTime = new Date().toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const timestampStr = `Dibuat pada: ${localeDate} ${localeTime}`;
+    const statsStr = `Total data: ${rows.length} entri`;
+
+    doc.text(timestampStr, width - 36, 45, { align: 'right' });
+    doc.text(statsStr, width - 36, 58, { align: 'right' });
+
+    // Header divider line
+    doc.setDrawColor(35, 83, 160); // Brand primary color (#2353a0)
+    doc.setLineWidth(2);
+    doc.line(36, 75, width - 36, 75);
+
+    // Align column configurations
+    const columnStyles = {};
+    activeCols.forEach((col, idx) => {
+        const align = col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left';
+        columnStyles[idx] = { halign: align };
+    });
+
+    // Generate AutoTable
+    autoTable(doc, {
+        head: headers,
+        body: data,
+        startY: 90,
+        margin: { top: 40, bottom: 40, left: 36, right: 36 },
+        styles: {
+            font: 'helvetica',
+            fontSize: fontSize,
+            cellPadding: cellPadding,
+            valign: 'middle',
+            lineColor: [226, 232, 240], // Slate-200
+            lineWidth: 0.5,
+        },
+        headStyles: {
+            fillColor: [35, 83, 160], // Navy-600 (#2353a0)
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+            halign: 'left',
+        },
+        alternateRowStyles: {
+            fillColor: [248, 250, 252], // Slate-50 (#f8fafc)
+        },
+        columnStyles: columnStyles,
+        theme: 'grid',
+    });
+
+    // Add page numbers and headers/footers in post-processing
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139); // Slate-500
+
+        // Footer Page Number
+        const footerText = `Halaman ${i} dari ${totalPages}`;
+        doc.text(footerText, width - 36, doc.internal.pageSize.height - 20, { align: 'right' });
+
+        // Header (only for pages > 1)
+        if (i > 1) {
+            doc.text(`UD. TB Nur — ${title}`, 36, 25);
+            doc.setDrawColor(226, 232, 240); // Slate-200
+            doc.setLineWidth(0.5);
+            doc.line(36, 28, width - 36, 28);
+        }
+    }
+
+    // Output PDF in a new window/tab as a Blob URL, falling back to direct save if blocked
+    try {
+        const blob = doc.output('blob');
+        const url = URL.createObjectURL(blob);
+        const win = window.open(url, '_blank');
+        if (!win) {
+            // Popup blocker triggered, download instead
+            doc.save(`${getFormattedFilename(title)}.pdf`);
+        }
+    } catch (e) {
+        console.error('Failed to open PDF preview, downloading instead.', e);
+        doc.save(`${getFormattedFilename(title)}.pdf`);
+    }
 }
 
 // ─── Private ──────────────────────────────────────────────────────────────────

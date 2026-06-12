@@ -111,7 +111,7 @@ export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
                 />
             </WarehouseFieldRow>
 
-            <div className="space-y-3 lg:pl-[260px]">
+            <div className="space-y-3 lg:pl-[182px]">
                 <CheckboxField
                     id="warehouse-damaged"
                     label={config.labels.damagedWarehouse}

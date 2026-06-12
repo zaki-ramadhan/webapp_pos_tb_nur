@@ -31,8 +31,8 @@ export default function OrderFulfillmentView({ page }) {
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-            <div className="flex flex-col gap-3 border-b border-[#e0e5ee] pb-3 xl:flex-row xl:items-center xl:justify-between">
-                <div className="flex min-w-0 flex-1 flex-col gap-3 xl:flex-row xl:items-center">
+            <div className="flex flex-col gap-3 border-b border-[#e0e5ee] pb-3 lg:flex-row xl:items-center xl:justify-between">
+                <div className="flex min-w-0 flex-1 flex-col gap-3 lg:flex-row xl:items-center">
                     <div className="w-full xl:max-w-[424px]">
                         <SelectField
                             value={branch}

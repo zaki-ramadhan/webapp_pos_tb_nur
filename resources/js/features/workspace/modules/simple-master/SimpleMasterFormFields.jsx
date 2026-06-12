@@ -129,7 +129,7 @@ export function MasterFieldRow({ field, value, onChange }) {
 
 export function StandaloneCheckboxField({ field, value, onChange }) {
     return (
-        <div className={field.offsetClassName ?? 'lg:pl-[260px]'}>
+        <div className={field.offsetClassName ?? 'lg:pl-[182px]'}>
             <CheckboxField
                 id={field.id}
                 label={field.label}

@@ -95,7 +95,7 @@ function TransactionApprovalFormView({ form }) {
                 <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
             </div>
 
-            <div className="flex min-h-0 h-fit flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] xl:flex-row xl:items-start">
+            <div className="flex min-h-0 h-fit flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row xl:items-start">
                 <div className="min-w-0 flex-1">
                     <div className="grid gap-8 lg:grid-cols-2">
                         <div className="space-y-3">
@@ -173,7 +173,7 @@ function TransactionApprovalFormView({ form }) {
                     </div>
                 </div>
 
-                <div className="flex justify-end xl:shrink-0">
+                <div className="flex justify-end lg:shrink-0">
                     <DockSaveButton label={form.saveLabel} />
                 </div>
             </div>

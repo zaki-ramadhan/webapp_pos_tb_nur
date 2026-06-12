@@ -41,7 +41,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                     <TransactionDateInput value={values.effectiveDate} className="max-w-[282px]" />
                 </FormFieldRow>
 
-                <div className="lg:pl-[260px]">
+                <div className="lg:pl-[182px]">
                     <CheckboxField
                         id="supplier-price-auto-end-date"
                         label={config.labels.autoEndDate}

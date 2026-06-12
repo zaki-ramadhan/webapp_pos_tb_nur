@@ -226,7 +226,7 @@ export default function ReferenceLookupInput({
                                         renderOption(item)
                                     ) : (
                                         <div className="min-w-0">
-                                            <div className="truncate text-base text-[#131a28]">{getOptionLabel(item)}</div>
+                                            <div className="truncate text-xs sm:text-sm font-medium text-[#131a28]">{getOptionLabel(item)}</div>
                                         </div>
                                     )}
                                 </button>

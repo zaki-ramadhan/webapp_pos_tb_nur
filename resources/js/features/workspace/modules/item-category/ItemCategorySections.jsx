@@ -59,7 +59,7 @@ export function ItemCategoryGeneralTab({ config, values, onChange }) {
                 />
             </ItemCategoryFieldRow>
 
-            <div className="lg:pl-[280px]">
+            <div className="lg:pl-[192px]">
                 <CheckboxField
                     id="item-category-subcategory"
                     label={config.labels.isSubCategory}

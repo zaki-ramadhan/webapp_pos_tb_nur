@@ -150,13 +150,13 @@ export default function AssetDisposalFormView({ page, activeLevel2Tab, onOpenCon
     });
 
     return (
-        <div className="flex h-full min-h-0 flex-col gap-5 xl:flex-row xl:items-stretch overflow-hidden">
-            <div className="order-2 min-w-0 flex-1 xl:order-1 flex flex-col gap-3 overflow-hidden">
+        <div className="flex h-full min-h-0 flex-col gap-5 lg:flex-row lg:items-stretch overflow-hidden">
+            <div className="order-2 min-w-0 flex-1 lg:order-1 flex flex-col gap-3 overflow-hidden">
                 <div className="shrink-0">
                     <AssetDisposalHeader config={{ ...config, errors }} values={values} setValues={setValues} isDetail={isDetail} />
                 </div>
 
-                <div className="flex flex-1 min-h-0 flex-col gap-4 xl:flex-row overflow-hidden">
+                <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden">
                     <div className="shrink-0">
                         <TransactionSectionRail
                             tabs={config.sectionTabs}
@@ -173,7 +173,7 @@ export default function AssetDisposalFormView({ page, activeLevel2Tab, onOpenCon
                 </div>
             </div>
 
-            <div className="order-1 flex justify-end xl:order-2 xl:shrink-0 xl:self-start">
+            <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
                 <TransactionDock actions={dockActions} />
             </div>
         </div>

@@ -62,26 +62,11 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                     icon: <PlusIcon className="h-6 w-6" />,
                 }}
                 refreshButton={{
-                    label: loading ? 'Memuat data...' : table.refreshLabel,
-                    onClick: onRefresh,
-                    loading,
+                    label: syncing || loading ? 'Sinkronisasi Kurs...' : 'Sinkronisasi Kurs API',
+                    onClick: handleSync,
+                    loading: syncing || loading,
                     icon: <RefreshIcon className="h-5 w-5" />,
                 }}
-                leftControls={
-                    <button
-                        type="button"
-                        onClick={handleSync}
-                        disabled={syncing}
-                        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-slate-200 bg-white px-3 h-[34px] text-base font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60 disabled:pointer-events-none"
-                    >
-                        {syncing ? (
-                            <RefreshIcon className="h-4.5 w-4.5 animate-spin text-[#ED3969]" />
-                        ) : (
-                            <RefreshIcon className="h-4.5 w-4.5 text-slate-500" />
-                        )}
-                        <span>{syncing ? 'Menyingkronkan...' : 'Sinkronisasi Kurs API'}</span>
-                    </button>
-                }
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),

@@ -29,8 +29,8 @@ export default function NumberingFormView({ form }) {
                 <PreferencesTabs tabs={form.tabs} activeTabId={activeTabId} onSelectTab={setActiveTabId} className="border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] sm:px-2" />
             </div>
 
-            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 xl:flex-row xl:items-stretch overflow-hidden">
-                <div className="order-2 min-w-0 flex-1 xl:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
+                <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
                     <div className="flex-1 min-h-0 flex flex-col">
                         {activeTabId === 'numbering-users' ? (
                             <NumberingUsersTab form={form} values={values} onChange={handleChange} />
@@ -40,7 +40,7 @@ export default function NumberingFormView({ form }) {
                     </div>
                 </div>
 
-                <div className="order-1 flex justify-end xl:order-2 xl:shrink-0 xl:self-start">
+                <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
                     <DockSaveButton label={form.saveLabel} />
                 </div>
             </div>

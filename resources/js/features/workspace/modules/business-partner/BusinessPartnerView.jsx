@@ -154,7 +154,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             />
 
             <div className="flex min-h-[700px] flex-col gap-5 px-4 py-4 lg:flex-row lg:items-start">
-                <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-3 py-4 sm:px-4 lg:order-1">
+                <div className="order-2 min-w-0 flex-1 lg:order-1">
                     <CrudStatusMessage status={status} className="mb-4" />
                     {renderPartnerTab({
                         config,

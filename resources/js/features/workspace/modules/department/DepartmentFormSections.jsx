@@ -32,9 +32,9 @@ function DepartmentFieldRow({ label, required = false, children }) {
 function renderReferenceOptionPrimary(item, secondaryText = '') {
     return (
         <div className="min-w-0">
-            <div className="truncate text-base text-[#131a28]">{item.label}</div>
+            <div className="truncate text-xs sm:text-sm font-medium text-[#131a28]">{item.label}</div>
             {secondaryText ? (
-                <div className="mt-1 truncate text-sm text-[#7d879a]">{secondaryText}</div>
+                <div className="mt-0.5 truncate text-xs text-[#7d879a]">{secondaryText}</div>
             ) : null}
         </div>
     );
@@ -62,7 +62,7 @@ export function DepartmentGeneralTab({ form, values, onChange, parentDepartmentO
                 />
             </DepartmentFieldRow>
 
-            <div className="lg:pl-[280px]">
+            <div className="lg:pl-[192px]">
                 <CheckboxField
                     id="department-sub-department"
                     label={form.labels.subDepartment}

@@ -237,7 +237,7 @@ export default function EmployeeFormView({
                 <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
                     <CrudStatusMessage status={status} className="shrink-0 mb-4" />
 
-                    <div className="flex-1 min-h-0 overflow-y-auto rounded-[6px] border border-[#d8dde7] bg-white px-3 py-3 sm:px-4 sm:py-4">
+                    <div className="flex-1 min-h-0 overflow-y-auto">
                         {activeTabId === 'employee-address' ? (
                             <EmployeeAddressTab values={values} onChange={handleChange} />
                         ) : activeTabId === 'employee-tax' ? (

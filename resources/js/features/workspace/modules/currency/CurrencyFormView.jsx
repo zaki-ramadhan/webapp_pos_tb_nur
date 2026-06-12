@@ -165,7 +165,7 @@ export default function CurrencyFormView({
             </div>
 
             <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
-                <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+                <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
                     <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
                     <div className="flex-1 min-h-0 flex flex-col">

@@ -167,7 +167,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                 </div>
 
                 <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
-                    <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col rounded-[6px] border border-[#d8dde7] bg-white px-3 py-4 sm:px-4 lg:order-1">
+                    <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col lg:order-1">
                         <div className="max-w-[1260px]">
                             <CrudStatusMessage status={status} className="mb-4 shrink-0" />
                             {activeTabId === 'opening-balance' ? (

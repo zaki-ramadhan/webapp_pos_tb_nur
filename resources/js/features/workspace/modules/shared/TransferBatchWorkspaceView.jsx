@@ -79,7 +79,7 @@ export default function TransferBatchWorkspaceView({ config }) {
     return (
         <div className="flex min-h-full flex-col overflow-hidden rounded-[6px] border border-[#d6dce8] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <div className="border-b border-[#d8dde7] px-3 py-3">
-                <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+                <div className="flex flex-col gap-3 lg:flex-row xl:items-center xl:justify-between">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                         {(config.controls ?? []).map((control) => (
                             <div key={control.id} className={control.wrapperClassName ?? ''}>

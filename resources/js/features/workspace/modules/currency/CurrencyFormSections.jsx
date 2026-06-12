@@ -101,9 +101,9 @@ export function CurrencyGeneralSection({ config, values, setValues, isDetailMode
                         emptyDescription="Coba cari nama, kode, atau simbol mata uang."
                         renderOption={(option) => (
                             <div className="min-w-0">
-                                <div className="truncate text-base text-[#131a28]">{option.name}</div>
-                                <div className="mt-1 text-xs sm:text-sm text-[#1f2436]">
-                                    {option.currencyCode} {option.symbol}
+                                <div className="truncate text-xs sm:text-sm font-medium text-[#131a28]">{option.name}</div>
+                                <div className="mt-0.5 text-xs text-[#64748b]">
+                                    {option.currencyCode} • {option.symbol}
                                 </div>
                             </div>
                         )}
