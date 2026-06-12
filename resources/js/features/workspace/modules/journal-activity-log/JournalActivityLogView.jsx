@@ -16,6 +16,7 @@ import SectionTab from '@/features/workspace/shared/SectionTab';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CogIcon, LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 
 function buildFallbackDetailRecord(row, config) {
     return {
@@ -50,6 +51,20 @@ function buildFallbackDetailRecord(row, config) {
 function JournalActivityLogTableView({ config, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
 
+    const cleanedColumns = useMemo(() => {
+        return (config.table.columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [config.table.columns]);
+
+    const schemaKey = getTableSchemaKey(cleanedColumns);
+    const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
+
+    const visibleColumns = useMemo(() => {
+        return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [cleanedColumns, visibleColumnIds]);
+
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
 
@@ -76,11 +91,22 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                     onClick: config.table.onRefresh,
                     loading: Boolean(config.table.loading),
                 }}
-                menuButton={{
-                    label: config.table.settingsLabel,
-                    icon: <CogIcon className="h-4 w-4" />,
-                    items: config.table.menuItems,
-                    widthClassName: 'w-[190px]',
+                exportConfig={{
+                    columns: cleanedColumns,
+                    rows: filteredRows,
+                    filename: 'jurnal-aktivitas',
+                    title: 'Laporan Jurnal Aktivitas',
+                }}
+                columnSettings={{
+                    columns: cleanedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
+                    visibleIds: visibleColumnIds,
+                    onToggle: (columnId) => {
+                        setVisibleColumnIds(prev =>
+                            prev.includes(columnId)
+                                ? prev.filter(id => id !== columnId)
+                                : [...prev, columnId]
+                        );
+                    }
                 }}
                 search={{
                     value: keyword,
@@ -96,7 +122,7 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {config.table.columns.map((column) => (
+                            {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
@@ -125,15 +151,19 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                                         })
                                     }
                                 >
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.date)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.number)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.transactionNumber)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.typeLabel)}</DataTableCell>
+                                    {visibleColumns.map((column) => (
+                                        <DataTableCell
+                                            key={column.id}
+                                            className="px-2.5 text-base text-[#131a28]"
+                                        >
+                                            {formatTableTextValue(row[column.id])}
+                                        </DataTableCell>
+                                    ))}
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

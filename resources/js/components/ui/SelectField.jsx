@@ -27,7 +27,7 @@ export default function SelectField({
     
     const toneClassName = resolvedError
         ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
-        : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+        : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     const triggerRef = useRef(null);
     const listRef = useRef(null);
@@ -149,7 +149,7 @@ export default function SelectField({
         <div className={`relative ${resolvedContainerClassName}`.trim()}>
             {/* Real select element hidden for testing frameworks / accessibility */}
             <select
-                id={id}
+                id={id ? `${id}-select` : undefined}
                 name={props.name}
                 value={currentValue}
                 disabled={disabled}
@@ -166,6 +166,7 @@ export default function SelectField({
             >
                 <button
                     ref={triggerRef}
+                    id={id}
                     type="button"
                     disabled={disabled}
                     onClick={() => setOpen((o) => !o)}

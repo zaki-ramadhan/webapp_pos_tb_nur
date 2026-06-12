@@ -209,24 +209,35 @@ export function buildBankTransferSnapshot(values) {
     };
 }
 
-export function promptBankTransferFeeItem(record, currentItem = null) {
-    const label = buildLookupLabel(record ?? currentItem ?? {});
-    const amountValue = window.prompt(`Nilai biaya transfer untuk ${label}`, currentItem?.amount ?? '0');
+import { showPromptModal } from '@/components/ui/promptModal';
 
-    if (amountValue === null) {
+export async function promptBankTransferFeeItem(record, currentItem = null) {
+    const label = buildLookupLabel(record ?? currentItem ?? {});
+    const result = await showPromptModal(`Input Biaya Transfer - ${label}`, [
+        {
+            name: 'amount',
+            label: 'Nilai Biaya Transfer',
+            type: 'number',
+            defaultValue: currentItem?.amount ?? '0',
+            required: true,
+        },
+        {
+            name: 'chargedTo',
+            label: 'Dibebankan ke',
+            type: 'text',
+            defaultValue: currentItem?.chargedTo ?? 'Dari Kas/Bank',
+            required: true,
+        },
+    ]);
+
+    if (!result) {
         return null;
     }
 
-    const amount = parseNumericInput(amountValue);
+    const amount = parseNumericInput(result.amount);
 
     if (amount <= 0) {
         throw new Error('Nilai biaya transfer harus lebih dari 0.');
-    }
-
-    const chargedTo = window.prompt('Dibebankan ke', currentItem?.chargedTo ?? 'Dari Kas/Bank');
-
-    if (chargedTo === null) {
-        return null;
     }
 
     return {
@@ -236,6 +247,6 @@ export function promptBankTransferFeeItem(record, currentItem = null) {
         accountCode: record?.code ?? currentItem?.accountCode ?? '',
         accountName: record?.name ?? currentItem?.accountName ?? '',
         amount: formatCurrencyValue(amount),
-        chargedTo: chargedTo.trim() || 'Dari Kas/Bank',
+        chargedTo: result.chargedTo.trim() || 'Dari Kas/Bank',
     };
 }

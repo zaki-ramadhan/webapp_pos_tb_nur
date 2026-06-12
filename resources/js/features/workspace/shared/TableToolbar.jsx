@@ -13,10 +13,12 @@ import {
     RefreshIcon,
     SearchIcon,
     UploadIcon,
+    CogIcon,
+    FunnelIcon,
 } from '@/features/workspace/shared/Icons';
 import { exportToCSV, exportToExcelXML, importFromFile, printTable } from './exportUtils';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from './columnVisibility';
-import { showWarningToast } from '@/components/feedback/toast';
+import { showWarningToast, showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 
 const SIZE_STYLES = {
     compact: {
@@ -209,7 +211,7 @@ function ToolbarSettingsMenu({ menuButton, columnSettings, sizeStyle }) {
                     className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-2 text-[#2353a0] ${sizeStyle.menuButton} ${menuButton?.buttonClassName ?? ''}`.trim()}
                     aria-label={menuButton?.label ?? 'Pengaturan kolom'}
                 >
-                    {menuButton?.icon ?? <ColumnsIcon className="h-4 w-4" />}
+                    {menuButton?.icon ?? <CogIcon className="h-4 w-4" />}
                     <ChevronDownIcon />
                 </button>
             </Tooltip>
@@ -398,21 +400,65 @@ function cleanRightControls(controls) {
         const id = String(props.id || props.action?.id || '').toLowerCase();
         const label = String(props.label || props.action?.label || '').toLowerCase();
 
-        const dummyKeys = ['download', 'print', 'settings'];
-        const dummyIcons = ['download', 'print', 'settings'];
-        const dummyIds = ['download', 'print', 'settings'];
-        const dummyLabels = ['unduh', 'cetak', 'pengaturan tabel', 'download', 'print', 'settings'];
+        const dummyKeys = ['download', 'print', 'settings', 'cog', 'columns'];
+        const dummyIcons = ['download', 'print', 'settings', 'cog', 'columns'];
+        const dummyIds = [
+            'download',
+            'print',
+            'settings',
+            'cog',
+            'columns',
+            'arrange-columns',
+            'download-excel',
+            'share-link',
+        ];
+        const dummyLabels = [
+            'unduh',
+            'cetak',
+            'pengaturan',
+            'download',
+            'print',
+            'settings',
+            'cog',
+            'kolom',
+            'tampilan',
+        ];
 
         return (
             dummyKeys.some(dk => key.includes(dk)) ||
             dummyIcons.some(di => icon.includes(di)) ||
-            dummyIds.some(di => id === di) ||
+            dummyIds.some(di => id === di || id.includes(di)) ||
             dummyLabels.some(dl => label.includes(dl))
         );
     };
 
     const cleaned = controlsArray.filter(child => !isDummyAction(child));
     return cleaned.length > 0 ? cleaned : null;
+}
+
+function hasFunnelButton(node) {
+    if (!node) return false;
+    if (React.isValidElement(node)) {
+        const type = node.type;
+        const typeName = typeof type === 'function' ? (type.name || type.displayName || '') : (typeof type === 'string' ? type : '');
+        const ariaLabel = String(node.props?.['aria-label'] || '').toLowerCase();
+        
+        if (
+            typeName === 'FunnelIcon' ||
+            typeName.toLowerCase().includes('filter') ||
+            ariaLabel.includes('filter') ||
+            node.props?.icon?.type?.name === 'FunnelIcon'
+        ) {
+            return true;
+        }
+        if (node.props?.children) {
+            return React.Children.toArray(node.props.children).some(child => hasFunnelButton(child));
+        }
+    }
+    if (Array.isArray(node)) {
+        return node.some(child => hasFunnelButton(child));
+    }
+    return false;
 }
 
 export default function TableToolbar({
@@ -511,7 +557,9 @@ export default function TableToolbar({
                     rows: mappedRows,
                 });
 
-                alert(response.data?.message || 'Berhasil mengimpor data.');
+                 showSuccessToast({
+                    message: response.data?.message || 'Berhasil mengimpor data.',
+                });
                 if (typeof onRefresh === 'function') {
                     onRefresh();
                 } else if (typeof refreshButton?.onClick === 'function') {
@@ -519,7 +567,9 @@ export default function TableToolbar({
                 }
             } catch (err) {
                 const msg = err.response?.data?.message || err.message || 'Gagal mengimpor data.';
-                alert(msg);
+                showErrorToast({
+                    message: msg,
+                });
             }
         }
     } : null);
@@ -543,7 +593,18 @@ export default function TableToolbar({
         <div className={className}>
             {filters ? (
                 <div className={`flex flex-wrap items-center justify-between gap-3 ${topRowClassName}`.trim()}>
-                    <div className="flex w-full flex-wrap items-center gap-3">{filters}</div>
+                    <div className="flex w-full flex-wrap items-center gap-2">
+                        {filters}
+                        {!hasFunnelButton(filters) && (
+                            <button
+                                type="button"
+                                className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0] transition hover:bg-[#cbe3ff]"
+                                aria-label="Filter"
+                            >
+                                <FunnelIcon className="h-5 w-5" />
+                            </button>
+                        )}
+                    </div>
                 </div>
             ) : null}
 

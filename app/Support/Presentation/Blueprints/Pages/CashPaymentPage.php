@@ -67,13 +67,13 @@ class CashPaymentPage
                         ],
                     ],
                     [
-                        'id' => 'document',
-                        'label' => 'Form lain',
-                        'icon' => 'document',
+                        'id' => 'print',
+                        'label' => 'Cetak',
+                        'icon' => 'printer',
                         'tone' => 'secondary',
                         'items' => [
-                            ['id' => 'open-document', 'label' => 'Buka dokumen terkait'],
-                            ['id' => 'preview-document', 'label' => 'Preview dokumen'],
+                            ['id' => 'print-pdf', 'label' => 'Cetak PDF'],
+                            ['id' => 'preview-pdf', 'label' => 'Preview PDF'],
                         ],
                     ],
                     [

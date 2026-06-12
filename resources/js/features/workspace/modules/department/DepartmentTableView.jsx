@@ -1,7 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import DropdownMenu from '@/components/ui/DropdownMenu';
-import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     DataTable,
     DataTableBody,
@@ -11,149 +9,32 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
-import TextInput from '@/components/ui/TextInput';
 import {
-    ChevronDownIcon,
-    CogIcon,
     PlusIcon,
-    PrintIcon,
-    RefreshIcon,
     SearchIcon,
     SortIcon,
 } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-
-function DepartmentToolbarButton({ label, onClick, className = '', children }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            aria-label={label}
-            className={`shrink-0 ${className}`.trim()}
-        >
-            {children}
-        </button>
-    );
-}
-
-function DepartmentTableActionMenu({ table }) {
-    const [open, setOpen] = useState(false);
-    const buttonRef = useRef(null);
-
-    if (!table.menuItems?.length) {
-        return null;
-    }
-
-    return (
-        <div className="relative">
-            <button
-                ref={buttonRef}
-                type="button"
-                onClick={() => setOpen((current) => !current)}
-                aria-label={table.settingsLabel}
-                className="inline-flex h-[34px] w-[52px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-2 text-[#2353a0]"
-            >
-                <CogIcon className="h-4 w-4" />
-                <ChevronDownIcon className="h-4 w-4" />
-            </button>
-
-            <DropdownMenu
-                open={open}
-                onClose={() => setOpen(false)}
-                anchorRef={buttonRef}
-                widthClassName="w-[190px]"
-            >
-                <div className="flex flex-col">
-                    {table.menuItems.map((item) => (
-                        <DropdownMenuItem
-                            key={item.id}
-                            onClick={() => setOpen(false)}
-                        >
-                            {item.label}
-                        </DropdownMenuItem>
-                    ))}
-                </div>
-            </DropdownMenu>
-        </div>
-    );
-}
-
-function DepartmentTableToolbar({
-    table,
-    keyword,
-    inactiveFilter,
-    onKeywordChange,
-    onFilterChange,
-    onCreate,
-}) {
-    return (
-        <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-3">
-                <SelectField
-                    value={inactiveFilter}
-                    onChange={(event) => onFilterChange(event.target.value)}
-                    containerClassName="w-auto"
-                    className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
-                >
-                    {table.filterOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </SelectField>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                    <DepartmentToolbarButton
-                        label={table.createLabel}
-                        onClick={onCreate}
-                        className="inline-flex h-[34px] w-[60px] items-center justify-center rounded-[4px] bg-[#2353a0] text-white shadow-[0_4px_10px_rgba(15,23,42,0.08)]"
-                    >
-                        <PlusIcon className="h-6 w-6" />
-                    </DepartmentToolbarButton>
-
-                    <DepartmentToolbarButton
-                        label={table.refreshLabel}
-                        onClick={table.loading ? undefined : table.onRefresh}
-                        className={`inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${table.loading ? 'pointer-events-none opacity-80' : ''}`.trim()}
-                    >
-                        <RefreshIcon className={`h-5 w-5 ${table.loading ? 'animate-spin' : ''}`.trim()} />
-                    </DepartmentToolbarButton>
-                </div>
-
-                <div className="flex min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
-                    <DepartmentToolbarButton
-                        label={table.printLabel}
-                        className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
-                    >
-                        <PrintIcon className="h-5 w-5" />
-                    </DepartmentToolbarButton>
-
-                    <DepartmentTableActionMenu table={table} />
-
-                    <TextInput
-                        value={keyword}
-                        onChange={(event) => onKeywordChange(event.target.value)}
-                        placeholder={table.searchPlaceholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
-                        className="h-[34px] w-full rounded-[4px] border-[#cfd6e2] sm:w-[342px]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                        trailingClassName="px-3"
-                    />
-
-
-                </div>
-            </div>
-        </div>
-    );
-}
+import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
+import TableToolbar from '@/features/workspace/shared/TableToolbar';
 
 export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
+
+    const cleanedColumns = useMemo(() => {
+        return (table.columns ?? []).map(col => ({
+            ...col,
+            label: cleanHeaderLabel(col.label)
+        }));
+    }, [table.columns]);
+
+    const schemaKey = getTableSchemaKey(cleanedColumns);
+    const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
+
+    const visibleColumns = useMemo(() => {
+        return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [cleanedColumns, visibleColumnIds]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -177,13 +58,60 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-            <DepartmentTableToolbar
-                table={table}
-                keyword={keyword}
-                inactiveFilter={inactiveFilter}
-                onKeywordChange={setKeyword}
-                onFilterChange={setInactiveFilter}
-                onCreate={onCreate}
+            <TableToolbar
+                size="compact"
+                filters={
+                    <SelectField
+                        value={inactiveFilter}
+                        onChange={(event) => setInactiveFilter(event.target.value)}
+                        containerClassName="w-auto"
+                        className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
+                        selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
+                        iconClassName="mr-2 text-[#6c7894]"
+                    >
+                        {table.filterOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </SelectField>
+                }
+                createButton={{
+                    label: table.createLabel,
+                    onClick: onCreate,
+                    icon: <PlusIcon className="h-6 w-6" />,
+                }}
+                refreshButton={{
+                    label: table.refreshLabel,
+                    onClick: table.onRefresh,
+                    loading: table.loading,
+                }}
+                resourceName="departments"
+                onRefresh={table.onRefresh}
+                exportConfig={{
+                    columns: cleanedColumns,
+                    rows: filteredRows,
+                    filename: 'departemen',
+                    title: 'Laporan Departemen',
+                }}
+                columnSettings={{
+                    columns: cleanedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
+                    visibleIds: visibleColumnIds,
+                    onToggle: (columnId) => {
+                        setVisibleColumnIds(prev =>
+                            prev.includes(columnId)
+                                ? prev.filter(id => id !== columnId)
+                                : [...prev, columnId]
+                        );
+                    }
+                }}
+                search={{
+                    value: keyword,
+                    onChange: (event) => setKeyword(event.target.value),
+                    placeholder: table.searchPlaceholder,
+                    widthClassName: 'sm:w-[342px]',
+                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                }}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -194,7 +122,7 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                                 <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
-                                {table.columns.map((column) => (
+                                {visibleColumns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
                                         className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
@@ -227,18 +155,20 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                                         <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                             {index + 1}
                                         </DataTableCell>
-                                        <DataTableCell className="px-3 text-base text-[#131a28]">
-                                            <span className="block truncate">{formatTableTextValue(row.name)}</span>
-                                        </DataTableCell>
-                                        <DataTableCell className="px-3 text-base text-[#131a28]">
-                                            <span className="block truncate">{formatTableTextValue(row.userList)}</span>
-                                        </DataTableCell>
+                                        {visibleColumns.map((column) => (
+                                            <DataTableCell
+                                                key={column.id}
+                                                className={`px-3 text-base text-[#131a28] ${column.align === 'left' ? 'text-left' : 'text-center'}`}
+                                            >
+                                                <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                            </DataTableCell>
+                                        ))}
                                     </DataTableRow>
                                 ))
                             ) : (
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
-                                        colSpan={table.columns.length + 1}
+                                        colSpan={visibleColumns.length + 1}
                                         className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
                                         {table.emptyLabel}

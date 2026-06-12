@@ -190,49 +190,43 @@ export default function SimpleMasterFormView({
 
     return (
         <>
-            <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
-                <div className="px-1 pt-0.5 shrink-0">
-                    <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
-                </div>
+            <div className="flex flex-1 min-h-0 flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden xl:px-4 xl:py-4">
+                <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
-                <div className="flex flex-1 min-h-0 flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden xl:px-4 xl:py-4">
-                    <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-
-                        <div className="space-y-3">
-                            {(form.fields ?? []).map((field) => (
-                                field.standalone ? (
-                                    <StandaloneCheckboxField
-                                        key={field.id}
-                                        field={field}
-                                        value={values[field.id]}
-                                        onChange={handleChange}
-                                    />
-                                ) : (
-                                    <MasterFieldRow
-                                        key={field.id}
-                                        field={field}
-                                        value={values[field.id] ?? ''}
-                                        onChange={handleChange}
-                                    />
-                                )
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col lg:self-start">
-                        {buildSimpleMasterDockActions(form, isDetailMode).map((action) => (
-                            <DockActionButton
-                                key={action.id}
-                                label={action.label}
-                                tone={action.tone}
-                                icon={renderSimpleMasterDockIcon(action.icon)}
-                                onClick={() => handleAction(action.id)}
-                                loading={saving && (action.id === 'save' || action.id === 'delete')}
-                                disabled={action.id === 'save' ? saveDisabled : saving}
-                            />
+                    <div className="space-y-3">
+                        {(form.fields ?? []).map((field) => (
+                            field.standalone ? (
+                                <StandaloneCheckboxField
+                                    key={field.id}
+                                    field={field}
+                                    value={values[field.id]}
+                                    onChange={handleChange}
+                                />
+                            ) : (
+                                <MasterFieldRow
+                                    key={field.id}
+                                    field={field}
+                                    value={values[field.id] ?? ''}
+                                    onChange={handleChange}
+                                />
+                            )
                         ))}
                     </div>
+                </div>
+
+                <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col lg:self-start">
+                    {buildSimpleMasterDockActions(form, isDetailMode).map((action) => (
+                        <DockActionButton
+                            key={action.id}
+                            label={action.label}
+                            tone={action.tone}
+                            icon={renderSimpleMasterDockIcon(action.icon)}
+                            onClick={() => handleAction(action.id)}
+                            loading={saving && (action.id === 'save' || action.id === 'delete')}
+                            disabled={action.id === 'save' ? saveDisabled : saving}
+                        />
+                    ))}
                 </div>
             </div>
 

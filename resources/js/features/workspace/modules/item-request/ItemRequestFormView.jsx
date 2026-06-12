@@ -103,9 +103,9 @@ export default function ItemRequestFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    function applyItemUpdate(record, currentItem = null) {
+    async function applyItemUpdate(record, currentItem = null) {
         try {
-            const nextItem = promptItemRequestItem(record, currentItem, values.requestDate);
+            const nextItem = await promptItemRequestItem(record, currentItem, values.requestDate);
 
             if (!nextItem) {
                 return;

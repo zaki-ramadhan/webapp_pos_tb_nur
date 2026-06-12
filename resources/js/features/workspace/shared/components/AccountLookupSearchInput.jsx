@@ -16,6 +16,7 @@ export default function AccountLookupSearchInput({
     onChange,
     onClear,
     error = false,
+    id,
 }) {
     const inputRef = useRef(null);
     const hasSelectedValue = Boolean(selectedValue);
@@ -39,7 +40,7 @@ export default function AccountLookupSearchInput({
 
     const toneClassName = error
         ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
-        : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+        : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div
@@ -68,6 +69,7 @@ export default function AccountLookupSearchInput({
 
                 <input
                     ref={inputRef}
+                    id={id}
                     value={value}
                     onFocus={onFocus}
                     onChange={(event) => onChange(event.target.value)}

@@ -16,6 +16,7 @@ export default function ChipLookupField({
     onSearch = null,
     searching = false,
     error = false,
+    id,
 }) {
     const searchButtonRef = useRef(null);
     const items = Array.isArray(values) ? values.filter(Boolean) : value ? [value] : [];
@@ -84,6 +85,7 @@ export default function ChipLookupField({
 
             <button
                 ref={searchButtonRef}
+                id={id}
                 type="button"
                 onClick={handleSearch}
                 disabled={disabled}

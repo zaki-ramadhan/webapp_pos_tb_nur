@@ -46,11 +46,6 @@ export function ExpenseLineItemsSection({ config, values, setValues, handlers = 
                     ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
                     : undefined
             }
-            spacerHeaderContent={
-                <span className="flex justify-center">
-                    <SortIcon className="h-3 w-3 text-white/55" />
-                </span>
-            }
         />
     );
 }
@@ -122,85 +117,97 @@ export function ExpenseSummarySection({ config, values }) {
 
 export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch, handlers = {} }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.liabilityAccount} required />
-                <div className="w-full max-w-[420px]">
-                    <AccountLookupField
-                        values={values.liabilityAccounts}
-                        placeholder={config.liabilityAccountPlaceholder}
-                        dialogTitle="Pilih Akun Hutang Beban"
-                        onRemove={(value) =>
-                            handlers.onRemoveLiabilityAccount
-                                ? handlers.onRemoveLiabilityAccount(value)
-                                : setValues((current) => ({
-                                      ...current,
-                                      liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
-                                    }))
-                        }
-                        searchLabel="Cari akun hutang beban"
-                        onSelectAccount={(record) => handlers.onSelectLiabilityAccount?.(record)}
-                    />
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.liabilityAccount} required htmlFor="liabilityAccount" />
+                    <div className="max-w-[320px] w-full">
+                        <AccountLookupField
+                            id="liabilityAccount"
+                            values={values.liabilityAccounts}
+                            placeholder={config.liabilityAccountPlaceholder}
+                            dialogTitle="Pilih Akun Hutang Beban"
+                            onRemove={(value) =>
+                                handlers.onRemoveLiabilityAccount
+                                    ? handlers.onRemoveLiabilityAccount(value)
+                                    : setValues((current) => ({
+                                          ...current,
+                                          liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
+                                        }))
+                            }
+                            searchLabel="Cari akun hutang beban"
+                            onSelectAccount={(record) => handlers.onSelectLiabilityAccount?.(record)}
+                        />
+                    </div>
                 </div>
 
-                <TransactionFieldLabel label={config.labels.entryDate} required />
-                <TransactionDateInput
-                    value={values.entryDate}
-                    onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                    className="w-full max-w-[150px]"
-                />
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.entryDate} required htmlFor="entryDate" />
+                    <TransactionDateInput
+                        id="entryDate"
+                        value={values.entryDate}
+                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
+                    />
+                </div>
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <div className="flex items-center gap-2">
-                    <TransactionFieldLabel label={config.labels.documentNumber} required />
-                    {showAutoNumberSwitch ? (
-                        <TransactionSwitch
-                            checked={values.autoNumber}
-                            onChange={(nextChecked) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    autoNumber: nextChecked,
-                                }))
-                            }
-                        />
-                    ) : null}
+            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div className="flex items-center justify-start gap-4">
+                        <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
+                        {showAutoNumberSwitch ? (
+                            <TransactionSwitch
+                                checked={values.autoNumber}
+                                onChange={(nextChecked) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        autoNumber: nextChecked,
+                                    }))
+                                }
+                            />
+                        ) : null}
+                    </div>
+
+                    <div className="max-w-[240px] w-full">
+                        {values.autoNumber ? (
+                            <SelectField
+                                id="documentNumber"
+                                value={values.numberingType}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        numberingType: event.target.value,
+                                    }))
+                                }
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            >
+                                {config.numberingOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        ) : (
+                            <TextInput
+                                id="documentNumber"
+                                value={values.documentNumber}
+                                readOnly
+                                trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                trailingClassName="px-3"
+                            />
+                        )}
+                    </div>
                 </div>
 
-                {values.autoNumber ? (
-                    <SelectField
-                        value={values.numberingType}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                numberingType: event.target.value,
-                            }))
-                        }
-                        containerClassName="w-full max-w-[320px]"
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                    >
-                        {config.numberingOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
-                ) : (
-                    <TextInput
-                        value={values.documentNumber}
-                        readOnly
-                        trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                        className="h-[40px] w-full max-w-[320px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                        trailingClassName="px-3"
-                    />
-                )}
-
-                <div />
-                <div className="flex gap-2 w-full max-w-[250px]">
-                    <TransactionHeaderButton label={config.takeButtonLabel} trailingChevron className="flex-1" />
-                    <TransactionHeaderButton label={config.processButtonLabel} trailingChevron className="flex-1" />
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div />
+                    <div className="flex justify-start gap-2 w-full max-w-[250px] md:max-w-none">
+                        <TransactionHeaderButton label={config.takeButtonLabel} trailingChevron className="flex-1 max-w-[120px]" />
+                        <TransactionHeaderButton label={config.processButtonLabel} trailingChevron className="flex-1 max-w-[120px]" />
+                    </div>
                 </div>
             </div>
         </div>

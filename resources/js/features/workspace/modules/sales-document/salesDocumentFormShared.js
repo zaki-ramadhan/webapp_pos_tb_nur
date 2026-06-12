@@ -121,43 +121,67 @@ export function validateSalesDocumentValues(values, config) {
     return '';
 }
 
-export function promptItemEditor(item = null) {
-    const name = window.prompt('Nama barang', item?.name ?? '');
+import { showPromptModal } from '@/components/ui/promptModal';
 
-    if (name === null) {
+export async function promptItemEditor(item = null) {
+    const result = await showPromptModal(item ? 'Edit Rincian Barang' : 'Tambah Rincian Barang', [
+        {
+            name: 'name',
+            label: 'Nama Barang',
+            type: 'text',
+            defaultValue: item?.name ?? '',
+            required: true,
+        },
+        {
+            name: 'code',
+            label: 'Kode Barang',
+            type: 'text',
+            defaultValue: item?.code ?? '',
+        },
+        {
+            name: 'quantity',
+            label: 'Kuantitas',
+            type: 'number',
+            defaultValue: item?.quantity ?? '1',
+            required: true,
+        },
+        {
+            name: 'unit',
+            label: 'Satuan',
+            type: 'text',
+            defaultValue: item?.unit ?? 'PCS',
+            required: true,
+        },
+        {
+            name: 'price',
+            label: 'Harga Satuan',
+            type: 'number',
+            defaultValue: item?.price ?? '0',
+            required: true,
+        },
+        {
+            name: 'discountValue',
+            label: 'Diskon Nominal',
+            type: 'number',
+            defaultValue: item?.discountValue ?? item?.discount ?? '0',
+            required: true,
+        },
+    ]);
+
+    if (!result) {
         return null;
     }
 
-    const trimmedName = name.trim();
-
+    const trimmedName = result.name.trim();
     if (!trimmedName) {
         throw new Error('Nama barang wajib diisi.');
     }
 
-    const code = window.prompt('Kode barang', item?.code ?? '') ?? '';
-    const quantity = window.prompt('Kuantitas', item?.quantity ?? '1');
-
-    if (quantity === null) {
-        return null;
-    }
-
-    const unit = window.prompt('Satuan', item?.unit ?? 'PCS');
-
-    if (unit === null) {
-        return null;
-    }
-
-    const price = window.prompt('Harga satuan', item?.price ?? '0');
-
-    if (price === null) {
-        return null;
-    }
-
-    const discountValue = window.prompt('Diskon nominal', item?.discountValue ?? item?.discount ?? '0');
-
-    if (discountValue === null) {
-        return null;
-    }
+    const code = result.code ?? '';
+    const quantity = result.quantity ?? '1';
+    const unit = result.unit ?? 'PCS';
+    const price = result.price ?? '0';
+    const discountValue = result.discountValue ?? '0';
 
     const quantityAmount = parseNumericInput(quantity);
     const unitPriceAmount = parseNumericInput(price);
@@ -178,9 +202,9 @@ export function promptItemEditor(item = null) {
     };
 }
 
-export function applyPromptItemUpdate(item, updateItems, setStatus) {
+export async function applyPromptItemUpdate(item, updateItems, setStatus) {
     try {
-        const nextItem = promptItemEditor(item);
+        const nextItem = await promptItemEditor(item);
 
         if (!nextItem) {
             return;

@@ -25,7 +25,7 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
     const [typeFilter, setTypeFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
 
     const schemaKey = getTableSchemaKey(TAX_COLUMNS);
-    const [visibleColumnIds] = useColumnVisibility(schemaKey, TAX_COLUMNS);
+    const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, TAX_COLUMNS);
 
     const visibleColumns = useMemo(() => {
         return TAX_COLUMNS.filter((column) => visibleColumnIds.includes(column.id));
@@ -96,6 +96,17 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
                     rows: filteredRows,
                     filename: 'tarif-pajak',
                     title: 'Laporan Tarif Pajak',
+                }}
+                columnSettings={{
+                    columns: TAX_COLUMNS.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
+                    visibleIds: visibleColumnIds,
+                    onToggle: (columnId) => {
+                        setVisibleColumnIds(prev =>
+                            prev.includes(columnId)
+                                ? prev.filter(id => id !== columnId)
+                                : [...prev, columnId]
+                        );
+                    }
                 }}
                 search={{
                     value: keyword,

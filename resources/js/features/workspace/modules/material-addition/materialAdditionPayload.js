@@ -47,17 +47,23 @@ export function buildMaterialAdditionPayload(values) {
     };
 }
 
-export function promptMaterialAdditionItem(record, currentItem = null) {
-    const quantityValue = window.prompt(
-        `Kuantitas untuk ${record?.name ?? currentItem?.name ?? 'barang'}`,
-        currentItem?.quantity ?? '1',
-    );
+export async function promptMaterialAdditionItem(record, currentItem = null) {
+    const itemName = record?.name ?? currentItem?.name ?? 'barang';
+    const result = await showPromptModal(`Input Kuantitas - ${itemName}`, [
+        {
+            name: 'quantity',
+            label: 'Kuantitas',
+            type: 'number',
+            defaultValue: currentItem?.quantity ?? '1',
+            required: true,
+        },
+    ]);
 
-    if (quantityValue === null) {
+    if (!result) {
         return null;
     }
 
-    const quantity = parseNumericInput(quantityValue);
+    const quantity = parseNumericInput(result.quantity);
 
     if (quantity <= 0) {
         throw new Error('Kuantitas harus lebih dari 0.');
@@ -75,17 +81,23 @@ export function promptMaterialAdditionItem(record, currentItem = null) {
     };
 }
 
-export function promptMaterialAdditionCharge(record, currentCharge = null) {
-    const amountValue = window.prompt(
-        `Nilai biaya untuk ${record?.name ?? currentCharge?.name ?? 'biaya'}`,
-        currentCharge?.amount ?? '0',
-    );
+export async function promptMaterialAdditionCharge(record, currentCharge = null) {
+    const chargeName = record?.name ?? currentCharge?.name ?? 'biaya';
+    const result = await showPromptModal(`Input Nilai Biaya - ${chargeName}`, [
+        {
+            name: 'amount',
+            label: 'Nilai Biaya',
+            type: 'number',
+            defaultValue: currentCharge?.amount ?? '0',
+            required: true,
+        },
+    ]);
 
-    if (amountValue === null) {
+    if (!result) {
         return null;
     }
 
-    const amount = parseNumericInput(amountValue);
+    const amount = parseNumericInput(result.amount);
 
     if (amount <= 0) {
         throw new Error('Nilai biaya harus lebih dari 0.');
@@ -95,8 +107,8 @@ export function promptMaterialAdditionCharge(record, currentCharge = null) {
         id: currentCharge?.id ?? `draft-charge-${Date.now()}`,
         __lineId: currentCharge?.__lineId ?? null,
         __accountId: record?.id ?? currentCharge?.__accountId ?? null,
-        name: record?.name ?? currentCharge?.name ?? '',
-        code: record?.code ?? currentCharge?.code ?? '',
+        accountCode: record?.code ?? currentCharge?.accountCode ?? '',
+        accountName: record?.name ?? currentCharge?.accountName ?? '',
         amount: formatCurrencyValue(amount),
     };
 }

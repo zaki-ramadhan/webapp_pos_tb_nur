@@ -132,6 +132,29 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
     return val;
 }
 
+function isClearOrCloseElement(element) {
+    if (!element) return false;
+    if (typeof element === 'object' && element.type) {
+        const typeName = element.type.name || (element.type.render && element.type.render.name) || '';
+        if (typeName === 'CloseIcon' || typeName === 'Close') {
+            return true;
+        }
+        if (element.props) {
+            if (element.props.className && element.props.className.includes('CloseIcon')) {
+                return true;
+            }
+            if (element.props['aria-label'] && /close|clear|hapus/i.test(element.props['aria-label'])) {
+                return true;
+            }
+            const children = element.props.children;
+            if (typeof children === 'string' && (children === 'x' || children === '×')) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 export default function TextInput({
     id,
     type = 'text',
@@ -173,8 +196,8 @@ export default function TextInput({
             ? 'border-[#e39191]'
             : 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
         : isNonInteractive
-            ? 'border-slate-300'
-            : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+            ? 'border-slate-400'
+            : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
     const disabledClassName = isNonInteractive ? 'bg-slate-100 text-slate-400' : 'bg-white';
 
     const resolvedType = type === 'number' ? 'text' : type;
@@ -253,7 +276,7 @@ export default function TextInput({
         inputRef.current?.focus();
     }
 
-    const hasWidth = containerClassName.includes('w-') || className.includes('w-');
+    const hasWidth = containerClassName.includes('w-');
     const widthClass = hasWidth ? '' : 'w-full';
 
     const hasPrefixMinW = prefixClassName.includes('min-w-');
@@ -271,6 +294,12 @@ export default function TextInput({
                      searchStr.includes('kode pos');
 
     const resolvedMaxLength = props.maxLength ?? (isPostal ? 5 : undefined);
+    const hasTrailingPx = trailingClassName.includes('px-') || trailingClassName.includes('pl-') || trailingClassName.includes('pr-');
+
+    const isClearOrClose = isClearOrCloseElement(trailing);
+    const showTrailing = trailing 
+        ? !(isNonInteractive && isClearOrClose)
+        : (onChange && !isNonInteractive && localValue !== undefined && localValue !== null && localValue !== '');
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
@@ -280,7 +309,7 @@ export default function TextInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-300 ${prefixPxClass} text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -297,16 +326,16 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`h-full flex-1 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-slate-400 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}
                     {...props}
                 />
 
-                {trailing || (onChange && !disabled && !readOnly && localValue !== undefined && localValue !== null && localValue !== '') ? (
+                {showTrailing ? (
                     <span
-                        className={`flex h-full items-center px-3 transition-colors duration-150 ${isNonInteractive ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
+                        className={`flex h-full items-center ${hasTrailingPx ? '' : 'px-3'} transition-colors duration-150 ${isNonInteractive ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
                     >
                         {trailing ?? (
                             <button

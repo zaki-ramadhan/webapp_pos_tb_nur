@@ -1,3 +1,5 @@
+import { useState, useRef } from 'react';
+
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
@@ -5,8 +7,9 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import {
     CloseIcon,
     FunnelIcon,
-    TableActionIcon,
 } from '@/features/workspace/shared/Icons';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -47,16 +50,6 @@ export function PaymentLineItemsSection({ config, values, setValues, handlers = 
                     ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
                     : undefined
             }
-            spacerCellContent={
-                <span className="inline-flex items-center justify-center text-[#a8afbe]">
-                    <TableActionIcon className="h-4 w-4" />
-                </span>
-            }
-            emptyLeadingCellContent={
-                <span className="inline-flex items-center justify-center">
-                    <TableActionIcon className="h-4 w-4" />
-                </span>
-            }
         />
     );
 }
@@ -68,7 +61,7 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                 <section className="min-w-0">
                     <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-                    <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                    <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.checkNumber} />
                         <div className="max-w-[276px]">
                             <TextInput
@@ -130,7 +123,7 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                     <section className="min-w-0">
                         <TransactionSectionHeading title={config.additionalInfoTitle} icon="payment" />
 
-                        <div className="mt-4 grid gap-y-4 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                        <div className="mt-4 grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.kapKjs} />
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <TextInput
@@ -163,74 +156,132 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
 }
 
 export function CashPaymentHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
+    const [openAmbil, setOpenAmbil] = useState(false);
+    const ambilButtonRef = useRef(null);
+
     return (
-        <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.cashBank} required />
-                <ChipLookupField
-                    values={values.bankAccounts}
-                    placeholder={config.cashBankPlaceholder}
-                    onRemove={(value) => handlers.onRemoveBankAccount?.(value)}
-                    searchLabel="Cari kas atau bank"
-                    onSearch={handlers.onSelectBankAccount}
-                />
-
-                <TransactionFieldLabel label={config.labels.entryDate} required />
-                <TransactionDateInput
-                    value={values.entryDate}
-                    onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                    className="w-full max-w-[238px]"
-                />
-            </div>
-
-            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <div className="flex items-center justify-start gap-4 sm:justify-end">
-                    <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
-                    {!activeRecordId ? (
-                        <TransactionSwitch
-                            checked={values.autoNumber}
-                            onChange={(nextChecked) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    autoNumber: nextChecked,
-                                }))
-                            }
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.cashBank} required htmlFor="cashBank" />
+                    <div className="max-w-[320px] w-full">
+                        <ChipLookupField
+                            id="cashBank"
+                            values={values.bankAccounts}
+                            placeholder={config.cashBankPlaceholder}
+                            onRemove={(value) => handlers.onRemoveBankAccount?.(value)}
+                            searchLabel="Cari kas atau bank"
+                            onSearch={handlers.onSelectBankAccount}
                         />
-                    ) : null}
+                    </div>
                 </div>
 
-                {values.autoNumber ? (
-                    <SelectField
-                        value={values.numberingType}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                numberingType: event.target.value,
-                            }))
-                        }
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                    >
-                        {config.numberingOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
-                ) : (
-                    <TextInput
-                        value={values.documentNumber}
-                        readOnly
-                        trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                        trailingClassName="px-3"
+                <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.entryDate} required htmlFor="entryDate" />
+                    <TransactionDateInput
+                        id="entryDate"
+                        value={values.entryDate}
+                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
                     />
-                )}
+                </div>
+            </div>
 
-                <div />
-                <div className="flex justify-end">
-                    <TransactionHeaderButton label={config.takeButtonLabel} trailingChevron />
+            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div className="flex items-center justify-start gap-4">
+                        <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
+                        {!activeRecordId ? (
+                            <TransactionSwitch
+                                checked={values.autoNumber}
+                                onChange={(nextChecked) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        autoNumber: nextChecked,
+                                    }))
+                                }
+                            />
+                        ) : null}
+                    </div>
+
+                    <div className="max-w-[240px] w-full">
+                        {values.autoNumber ? (
+                            <SelectField
+                                id="documentNumber"
+                                value={values.numberingType}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        numberingType: event.target.value,
+                                    }))
+                                }
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            >
+                                {config.numberingOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        ) : (
+                            <TextInput
+                                id="documentNumber"
+                                value={values.documentNumber}
+                                readOnly
+                                trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                trailingClassName="px-3"
+                            />
+                        )}
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div />
+                    <div className="flex justify-start relative">
+                        <button
+                            ref={ambilButtonRef}
+                            type="button"
+                            onClick={() => setOpenAmbil((o) => !o)}
+                            className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm font-medium text-[#21539b]"
+                        >
+                            <span>{config.takeButtonLabel}</span>
+                            <span className="text-xs text-[#21539b]/70 font-normal">⌄</span>
+                        </button>
+                        <DropdownMenu
+                            open={openAmbil}
+                            onClose={() => setOpenAmbil(false)}
+                            anchorRef={ambilButtonRef}
+                            align="start"
+                            widthClassName="w-[180px]"
+                        >
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    setOpenAmbil(false);
+                                    handlers.onTakeFavorite?.();
+                                }}
+                            >
+                                Favorit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    setOpenAmbil(false);
+                                    handlers.onTakeExpenseEntry?.();
+                                }}
+                            >
+                                Pencatatan Beban
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    setOpenAmbil(false);
+                                    handlers.onTakePayrollEntry?.();
+                                }}
+                            >
+                                Pencatatan Gaji
+                            </DropdownMenuItem>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </div>
         </div>

@@ -53,15 +53,25 @@ export function buildCashPaymentPayload(values) {
     };
 }
 
-export function promptCashPaymentLineItem(record, currentItem = null) {
-    const label = buildLookupLabel(record ?? currentItem ?? {});
-    const amountValue = window.prompt(`Nilai pembayaran untuk ${label}`, currentItem?.amount ?? '0');
+import { showPromptModal } from '@/components/ui/promptModal';
 
-    if (amountValue === null) {
+export async function promptCashPaymentLineItem(record, currentItem = null) {
+    const label = buildLookupLabel(record ?? currentItem ?? {});
+    const result = await showPromptModal(`Input Nilai Pembayaran - ${label}`, [
+        {
+            name: 'amount',
+            label: 'Nilai Pembayaran',
+            type: 'number',
+            defaultValue: currentItem?.amount ?? '0',
+            required: true,
+        },
+    ]);
+
+    if (!result) {
         return null;
     }
 
-    const amount = parseNumericInput(amountValue);
+    const amount = parseNumericInput(result.amount);
 
     if (amount <= 0) {
         throw new Error('Nilai pembayaran harus lebih dari 0.');

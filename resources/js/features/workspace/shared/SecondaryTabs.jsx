@@ -8,10 +8,10 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
         : 'gap-2 px-3.5 md:gap-2.5 md:px-4.5';
     const className = isViewTab
         ? active
-            ? 'border-x-[1px] border-b-0 border-tab-view-active-border-x border-t-[3px] border-t-tab-view-active-border-t bg-tab-view-active-bg font-medium text-tab-view-active-text'
+            ? 'border-x-[1px] border-b-0 border-tab-view-active-border-x border-t-[3px] border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
             : 'border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'
         : active
-          ? 'border-l-tab-active-border-x border-r-tab-active-border-x border-t-[3px] border-t-tab-active-border-t bg-tab-active-bg font-medium text-tab-active-text'
+          ? 'border-l-tab-active-border-x border-r-tab-active-border-x border-t-[3px] border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
           : 'border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text';
     const closeButtonClassName = active
         ? 'text-current hover:bg-white/20'

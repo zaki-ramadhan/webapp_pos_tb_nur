@@ -10,6 +10,7 @@ import {
     DownloadIcon,
     KebabIcon,
     PaperclipIcon,
+    PrintIcon,
     SaveIcon,
     TrashIcon,
 } from '@/features/workspace/shared/Icons';
@@ -119,6 +120,9 @@ function TransactionDockIcon({ icon }) {
             return <NavigationIcon type="form" className="h-7 w-7 sm:h-8 sm:w-8" />;
         case 'document':
             return <NavigationIcon type="document" className="h-7 w-7 sm:h-8 sm:w-8" />;
+        case 'printer':
+        case 'print':
+            return <PrintIcon className="h-7 w-7 sm:h-8 sm:w-8" />;
         case 'paperclip':
             return <PaperclipIcon className="h-7 w-7 sm:h-8 sm:w-8" />;
         case 'kebab':

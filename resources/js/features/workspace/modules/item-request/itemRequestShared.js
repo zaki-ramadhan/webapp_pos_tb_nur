@@ -230,27 +230,38 @@ export function validateItemRequestValues(values, config) {
     return '';
 }
 
-export function promptItemRequestItem(record, currentItem = null, fallbackDate = '') {
-    const quantityValue = window.prompt(
-        `Kuantitas untuk ${record?.name ?? currentItem?.name ?? 'barang'}`,
-        currentItem?.quantity ?? '1',
-    );
+import { showPromptModal } from '@/components/ui/promptModal';
 
-    if (quantityValue === null) {
+export async function promptItemRequestItem(record, currentItem = null, fallbackDate = '') {
+    const itemName = record?.name ?? currentItem?.name ?? 'barang';
+    const result = await showPromptModal(`Input Rincian Permintaan - ${itemName}`, [
+        {
+            name: 'quantity',
+            label: 'Kuantitas',
+            type: 'number',
+            defaultValue: currentItem?.quantity ?? '1',
+            required: true,
+        },
+        {
+            name: 'requestDate',
+            label: 'Tanggal Diminta (dd/mm/yyyy)',
+            type: 'text',
+            defaultValue: currentItem?.requestDate ?? fallbackDate ?? '',
+            required: true,
+        },
+    ]);
+
+    if (!result) {
         return null;
     }
 
-    const quantity = parseNumericInput(quantityValue);
+    const quantity = parseNumericInput(result.quantity);
 
     if (quantity <= 0) {
         throw new Error('Kuantitas harus lebih dari 0.');
     }
 
-    const requestDate = window.prompt('Tanggal diminta (dd/mm/yyyy)', currentItem?.requestDate ?? fallbackDate ?? '');
-
-    if (requestDate === null) {
-        return null;
-    }
+    const requestDate = result.requestDate;
 
     return {
         id: currentItem?.id ?? `draft-item-${Date.now()}`,

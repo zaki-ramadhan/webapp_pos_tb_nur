@@ -122,12 +122,12 @@ export default function SalesDocumentFormView({
         });
     }
 
-    function handleCreateItem() {
-        applyPromptItemUpdate(null, updateItems, setStatus);
+    async function handleCreateItem() {
+        await applyPromptItemUpdate(null, updateItems, setStatus);
     }
 
-    function handleEditItem(item) {
-        applyPromptItemUpdate(item, updateItems, setStatus);
+    async function handleEditItem(item) {
+        await applyPromptItemUpdate(item, updateItems, setStatus);
     }
 
     async function onSave() {

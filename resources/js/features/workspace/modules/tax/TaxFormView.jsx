@@ -21,7 +21,7 @@ import { buildFormValues, mapTaxRow } from './taxShared';
 
 function TaxFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[360px_minmax(0,600px)] lg:items-center">
+        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,600px)] lg:items-center">
             <label className="text-xs sm:text-sm leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
@@ -182,11 +182,7 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
     }
 
     return (
-        <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="px-1 pt-0.5 shrink-0">
-                <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
-            </div>
-
+        <>
             <div className="flex flex-1 min-h-0 flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden">
                 <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
                     <CrudStatusMessage status={status} className="mb-4 shrink-0" />
@@ -198,7 +194,7 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                                 name="type"
                                 value={values.type}
                                 onChange={(event) => handleChange('type', event.target.value)}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
+                                className="h-[34px] rounded-[4px] border-slate-400"
                                 selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {form.typeOptions.map((option) => (
@@ -215,7 +211,7 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                                 name="description"
                                 value={values.description}
                                 onChange={(event) => handleChange('description', event.target.value)}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
+                                className="h-[34px] rounded-[4px] border-slate-400"
                                 inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </TaxFieldRow>
@@ -230,7 +226,7 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                                         handleChange('percentage', event.target.value.replace(/[^\d.]/g, ''))
                                     }
                                     containerClassName="w-[120px]"
-                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
+                                    className="h-[34px] rounded-[4px] border-slate-400"
                                     inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                                 />
                                 <span className="text-xs sm:text-sm text-[#1f2436]">%</span>
@@ -312,6 +308,6 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
+        </>
     );
 }

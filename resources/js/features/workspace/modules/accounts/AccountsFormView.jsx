@@ -157,7 +157,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
 
     return (
         <>
-            <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+            <div className="flex h-full min-h-0 flex-col overflow-hidden">
                 <div className="shrink-0">
                     <PreferencesTabs
                         tabs={tabs}
@@ -166,30 +166,32 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                     />
                 </div>
 
-                <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
-                    <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col lg:order-1">
-                        <div className="max-w-[1260px]">
-                            <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                            {activeTabId === 'opening-balance' ? (
-                                <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
-                            ) : activeTabId === 'others' ? (
-                                <AccountsOthersTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
-                            ) : activeTabId === 'children' ? (
-                                <AccountsChildrenTab values={values} />
-                            ) : (
-                                <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
-                            )}
+                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+                    <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
+                        <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col lg:order-1">
+                            <div className="max-w-[1260px]">
+                                <CrudStatusMessage status={status} className="mb-4 shrink-0" />
+                                {activeTabId === 'opening-balance' ? (
+                                    <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
+                                ) : activeTabId === 'others' ? (
+                                    <AccountsOthersTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
+                                ) : activeTabId === 'children' ? (
+                                    <AccountsChildrenTab values={values} />
+                                ) : (
+                                    <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
-                        <AccountsDockActions
-                            actions={dockActions}
-                            onSave={handleSave}
-                            onDelete={() => setDeleteModalOpen(true)}
-                            saveDisabled={saveDisabled}
-                            saving={saving}
-                        />
+                        <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
+                            <AccountsDockActions
+                                actions={dockActions}
+                                onSave={handleSave}
+                                onDelete={() => setDeleteModalOpen(true)}
+                                saveDisabled={saveDisabled}
+                                saving={saving}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

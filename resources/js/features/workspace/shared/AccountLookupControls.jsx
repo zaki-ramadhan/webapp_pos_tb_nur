@@ -47,6 +47,7 @@ export function AccountLookupField({
         <div ref={controller.rootRef} className="relative">
             {isMultiValue ? (
                 <ChipLookupField
+                    id={id}
                     value={value}
                     values={values}
                     placeholder={placeholder}
@@ -66,6 +67,7 @@ export function AccountLookupField({
                 />
             ) : (
                 <AccountLookupSearchInput
+                    id={id}
                     value={controller.draftValue}
                     selectedValue={controller.selectedValue}
                     placeholder={placeholder}
@@ -116,6 +118,7 @@ export function AccountLookupField({
 }
 
 export function AccountLookupTextInput({
+    id,
     value = '',
     placeholder = 'Cari/Pilih Akun Perkiraan...',
     searchLabel = 'Cari akun perkiraan',
@@ -131,6 +134,7 @@ export function AccountLookupTextInput({
     return (
         <div ref={controller.rootRef} className="relative">
             <AccountLookupSearchInput
+                id={id}
                 value={normalizeInputValue(controller.draftValue)}
                 selectedValue={controller.selectedValue}
                 placeholder={placeholder}

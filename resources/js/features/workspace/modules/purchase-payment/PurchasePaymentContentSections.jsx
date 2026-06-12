@@ -19,7 +19,7 @@ import { PurchasePaymentHeaderIconButton } from './PurchasePaymentHeaderSections
 export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice, handlers = {} }) {
     return (
         <div className="flex min-h-[540px] flex-col">
-            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 xl:flex-row xl:items-center xl:justify-between">
+            <div className="flex flex-col gap-3 pb-3 xl:flex-row xl:items-center xl:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1 sm:max-w-[560px]">
                         <TextInput
@@ -86,7 +86,7 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.paymentMethod} />
                 <div className="max-w-[276px]">
                     <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">

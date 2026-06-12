@@ -157,9 +157,9 @@ export function TransactionLineItemsSection({
     showTitleSearchButton = false,
     searchReadOnly = false,
     searchInput = null,
-    spacerHeaderContent = null,
-    spacerCellContent = null,
-    emptyLeadingCellContent = null,
+    spacerHeaderContent = 'No.',
+    spacerCellContent = ({ index }) => <span className="text-center text-sm text-[#646d83] block w-full">{index + 1}</span>,
+    emptyLeadingCellContent = <span className="text-center text-sm text-[#a8afbe] block w-full">-</span>,
     onRowClick = null,
     getRowClassName = null,
 }) {
@@ -167,7 +167,7 @@ export function TransactionLineItemsSection({
 
     return (
         <div className={`flex flex-col ${hasRows ? 'min-h-[540px]' : 'min-h-[240px]'}`.trim()}>
-            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0 flex-1 sm:max-w-[560px]">
                     {searchInput ?? (
                         <TextInput

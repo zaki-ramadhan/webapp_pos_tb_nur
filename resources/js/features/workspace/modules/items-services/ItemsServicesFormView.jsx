@@ -175,12 +175,12 @@ export default function ItemsServicesFormView({
 
     return (
         <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
-            <div className="shrink-0 flex flex-col gap-2 border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] lg:flex-row lg:items-end lg:justify-between">
+            <div className="shrink-0 flex flex-col gap-2 border-b border-[#d5d9e1] bg-transparent pl-0 pr-2 pt-[6px] sm:pl-0 lg:flex-row lg:items-end lg:justify-between">
                 <PreferencesTabs
                     tabs={config.tabs}
                     activeTabId={activeTabId}
                     onSelectTab={setActiveTabId}
-                    className="flex-1 border-none bg-transparent px-0 pt-0 sm:px-0"
+                    className="flex-1 border-none bg-transparent pt-0"
                 />
 
                 {isDetail ? (

@@ -92,12 +92,12 @@ export function InventoryAdjustmentFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    function handleCreateItem() {
-        applyInventoryPromptItemUpdate(null, setValues, setStatus);
+    async function handleCreateItem() {
+        await applyInventoryPromptItemUpdate(null, setValues, setStatus);
     }
 
-    function handleEditItem(item) {
-        applyInventoryPromptItemUpdate(item, setValues, setStatus);
+    async function handleEditItem(item) {
+        await applyInventoryPromptItemUpdate(item, setValues, setStatus);
     }
 
     async function onSaveClick() {

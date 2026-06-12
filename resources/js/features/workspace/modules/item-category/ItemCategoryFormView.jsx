@@ -166,7 +166,7 @@ export default function ItemCategoryFormView({
         <>
             <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
                 <div className="shrink-0">
-                    <PreferencesTabs tabs={config.tabs} activeTabId={activeTabId} onSelectTab={setActiveTabId} className="border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] sm:px-2" />
+                    <PreferencesTabs tabs={config.tabs} activeTabId={activeTabId} onSelectTab={setActiveTabId} className="border-b border-[#d5d9e1] bg-transparent pr-2 pt-[6px] sm:pr-2" />
                 </div>
 
                 <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">

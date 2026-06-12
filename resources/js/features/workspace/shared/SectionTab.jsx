@@ -9,13 +9,5 @@ export default function SectionTab({
     className = '',
     textClassName = 'text-base font-medium',
 }) {
-    const toneClassName = TONE_CLASS_NAMES[tone] ?? TONE_CLASS_NAMES.neutral;
-
-    return (
-        <div
-            className={`relative z-10 -mb-px inline-flex h-[36px] items-center rounded-t-[5px] border-x border-t-[2px] border-b-0 border-l-section-tab-border-x border-r-section-tab-border-x bg-white px-3.5 max-w-[180px] sm:max-w-[240px] md:max-w-[300px] ${textClassName} ${toneClassName} ${className}`.trim()}
-        >
-            <span className="block truncate">{label}</span>
-        </div>
-    );
+    return null;
 }

@@ -46,7 +46,7 @@ export default function RadioField({
                     type="radio"
                     disabled={disabled}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`${inputOffsetClassName} shrink-0 border border-slate-300 text-input-brand focus:ring-2 focus:ring-input-focus/30 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${sizeClassName} ${resolvedError ? 'border-error-border' : ''} ${inputClassName}`.trim()}
+                    className={`${inputOffsetClassName} shrink-0 border border-slate-400 text-input-brand focus:ring-2 focus:ring-input-focus/30 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${sizeClassName} ${resolvedError ? 'border-error-border' : ''} ${inputClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
                 />

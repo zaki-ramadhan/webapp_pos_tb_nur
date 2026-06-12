@@ -122,9 +122,9 @@ export default function BankTransferFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    function applyFeeUpdate(record, currentItem = null) {
+    async function applyFeeUpdate(record, currentItem = null) {
         try {
-            const nextItem = promptBankTransferFeeItem(record, currentItem);
+            const nextItem = await promptBankTransferFeeItem(record, currentItem);
 
             if (!nextItem) {
                 return;

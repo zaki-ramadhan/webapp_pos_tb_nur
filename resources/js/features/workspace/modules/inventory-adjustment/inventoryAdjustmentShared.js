@@ -124,38 +124,71 @@ export function buildInventoryDocumentNumber(pageId) {
     return `${prefix}.${dateLabel}.${Date.now()}`;
 }
 
-export function promptInventoryAdjustmentItemEditor(item = null) {
-    const name = window.prompt('Nama barang', item?.name ?? '');
+import { showPromptModal } from '@/components/ui/promptModal';
 
-    if (name === null) {
+export async function promptInventoryAdjustmentItemEditor(item = null) {
+    const result = await showPromptModal(item ? 'Edit Item Penyesuaian' : 'Tambah Item Penyesuaian', [
+        {
+            name: 'name',
+            label: 'Nama Barang',
+            type: 'text',
+            defaultValue: item?.name ?? '',
+            required: true,
+        },
+        {
+            name: 'code',
+            label: 'Kode Barang',
+            type: 'text',
+            defaultValue: item?.code ?? '',
+        },
+        {
+            name: 'adjustmentType',
+            label: 'Tipe Penyesuaian',
+            type: 'select',
+            defaultValue: item?.adjustmentType ?? 'Penambahan',
+            options: [
+                { value: 'Penambahan', label: 'Penambahan' },
+                { value: 'Pengurangan', label: 'Pengurangan' },
+            ],
+            required: true,
+        },
+        {
+            name: 'quantity',
+            label: 'Kuantitas',
+            type: 'number',
+            defaultValue: item?.quantity ?? '1',
+            required: true,
+        },
+        {
+            name: 'unit',
+            label: 'Satuan',
+            type: 'text',
+            defaultValue: item?.unit ?? 'PCS',
+            required: true,
+        },
+        {
+            name: 'unitCost',
+            label: 'Harga Satuan',
+            type: 'number',
+            defaultValue: item?.unitCost ?? '0',
+            required: true,
+        },
+    ]);
+
+    if (!result) {
         return null;
     }
 
-    const trimmedName = name.trim();
-
+    const trimmedName = result.name.trim();
     if (!trimmedName) {
         throw new Error('Nama barang wajib diisi.');
     }
 
-    const code = window.prompt('Kode barang', item?.code ?? '') ?? '';
-    const adjustmentType = window.prompt('Tipe penyesuaian', item?.adjustmentType ?? 'Penambahan') ?? item?.adjustmentType ?? 'Penambahan';
-    const quantity = window.prompt('Kuantitas', item?.quantity ?? '1');
-
-    if (quantity === null) {
-        return null;
-    }
-
-    const unit = window.prompt('Satuan', item?.unit ?? 'PCS');
-
-    if (unit === null) {
-        return null;
-    }
-
-    const unitCost = window.prompt('Harga satuan', item?.unitCost ?? '0');
-
-    if (unitCost === null) {
-        return null;
-    }
+    const code = result.code ?? '';
+    const adjustmentType = result.adjustmentType ?? 'Penambahan';
+    const quantity = result.quantity ?? '1';
+    const unit = result.unit ?? 'PCS';
+    const unitCost = result.unitCost ?? '0';
 
     const quantityAmount = parseNumericInput(quantity);
     const unitCostAmount = parseNumericInput(unitCost);
@@ -178,9 +211,9 @@ export function promptInventoryAdjustmentItemEditor(item = null) {
     };
 }
 
-export function applyInventoryPromptItemUpdate(item, setValues, setStatus) {
+export async function applyInventoryPromptItemUpdate(item, setValues, setStatus) {
     try {
-        const nextItem = promptInventoryAdjustmentItemEditor(item);
+        const nextItem = await promptInventoryAdjustmentItemEditor(item);
 
         if (!nextItem) {
             return;

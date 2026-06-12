@@ -41,8 +41,8 @@ export default function TextareaField({
             ? 'border-[#e39191]'
             : 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
         : isNonInteractive
-            ? 'border-slate-300'
-            : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+            ? 'border-slate-400'
+            : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div className={`w-full ${containerClassName}`.trim()}>
@@ -51,7 +51,7 @@ export default function TextareaField({
             >
                 {prefix ? (
                     <span
-                        className={`flex min-w-[86px] shrink-0 items-start border-r border-slate-300 px-4 py-3 text-xs sm:text-sm transition-colors duration-150 group-focus-within:border-current ${isNonInteractive ? 'bg-slate-100 text-slate-400' : 'text-[#5a84e5]'} ${prefixClassName}`.trim()}
+                        className={`flex min-w-[86px] shrink-0 items-start border-r border-slate-400 px-4 py-3 text-xs sm:text-sm transition-colors duration-150 group-focus-within:border-current ${isNonInteractive ? 'bg-slate-100 text-slate-400' : 'text-[#5a84e5]'} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>

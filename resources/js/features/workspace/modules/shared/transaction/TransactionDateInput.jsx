@@ -74,15 +74,53 @@ function resolveCalendarDate(value) {
 }
 
 export default function TransactionDateInput({
+    id,
     value,
     onChange,
-    className = 'w-full max-w-full sm:max-w-[238px]',
+    className = '',
     inputClassName = 'text-sm text-[#1f2436]',
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
     disabled = false,
     ariaLabel = 'Pilih tanggal',
     ...props
 }) {
+    const classes = className.split(' ').filter(Boolean);
+    const layoutClasses = [];
+    const styleClasses = [];
+
+    classes.forEach((c) => {
+        if (
+            c.startsWith('w-') ||
+            c.startsWith('max-w-') ||
+            c.startsWith('min-w-') ||
+            c.startsWith('m-') ||
+            c.startsWith('mx-') ||
+            c.startsWith('my-') ||
+            c.startsWith('mt-') ||
+            c.startsWith('mb-') ||
+            c.startsWith('ml-') ||
+            c.startsWith('mr-')
+        ) {
+            layoutClasses.push(c);
+        } else {
+            styleClasses.push(c);
+        }
+    });
+
+    const hasWidth = layoutClasses.some((c) => c.startsWith('w-'));
+    const hasMaxWidth = layoutClasses.some((c) => c.startsWith('max-w-'));
+
+    const defaultWidth = hasWidth ? '' : 'w-full';
+    const defaultMaxWidth = hasMaxWidth ? '' : 'max-w-[180px]';
+
+    const wrapperClassName = `relative ${defaultWidth} ${defaultMaxWidth} ${layoutClasses.join(' ')}`.trim();
+    const finalStyleClasses = [...new Set([
+        'h-[40px]',
+        'rounded-[4px]',
+        'border-[#cfd6e2]',
+        ...styleClasses,
+    ])].join(' ');
+
     const [displayValue, setDisplayValue] = useState(() => formatDateValue(value));
     const [nativeValue, setNativeValue] = useState(() => normalizeDateValue(value));
     const [calendarOpen, setCalendarOpen] = useState(false);
@@ -147,19 +185,20 @@ export default function TransactionDateInput({
 
     return (
         <>
-            <div className={`relative ${className}`.trim()}>
+            <div className={wrapperClassName}>
                 <TextInput
                     value={displayValue}
                     readOnly
                     interactiveReadOnly
                     disabled={disabled}
                     trailing={<CalendarIcon className="h-4 w-4 -translate-x-px text-[#1f2436]" />}
-                    className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
+                    className={finalStyleClasses}
                     inputClassName={`cursor-pointer ${inputClassName}`.trim()}
                     trailingClassName={`pointer-events-none ${trailingClassName}`.trim()}
                     {...props}
                 />
                 <button
+                    id={id}
                     type="button"
                     onClick={handleCalendarOpen}
                     disabled={disabled}

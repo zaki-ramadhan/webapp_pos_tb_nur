@@ -117,9 +117,9 @@ export default function GeneralJournalFormView({
         }
     }
 
-    function applyLineItemUpdate(record, currentItem = null) {
+    async function applyLineItemUpdate(record, currentItem = null) {
         try {
-            const nextItem = promptJournalLineItem(record, currentItem);
+            const nextItem = await promptJournalLineItem(record, currentItem);
 
             if (!nextItem) {
                 return;

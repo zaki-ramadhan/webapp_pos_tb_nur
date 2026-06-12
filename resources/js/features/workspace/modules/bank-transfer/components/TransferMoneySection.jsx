@@ -6,6 +6,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { applyBankTransferComputedValues } from '@/features/workspace/modules/bank-transfer/bankTransferShared';
 import TransferValueInput from './TransferValueInput';
+import { showSuccessToast, showErrorToast, showInfoToast } from '@/components/feedback/toast';
 
 export default function TransferMoneySection({ config, values, setValues, handlers = {}, isDetail }) {
     const [fetchingRate, setFetchingRate] = useState(false);
@@ -29,7 +30,9 @@ export default function TransferMoneySection({ config, values, setValues, handle
                 exchangeRate: '1',
                 exchangeRateLabel: `1 ${fromCurrency} = 1 ${toCurrency} (Mata Uang Sama)`,
             }));
-            window.alert(`Mata uang sama (${fromCurrency}). Kurs diset ke 1.`);
+            showInfoToast({
+                message: `Mata uang sama (${fromCurrency}). Kurs diset ke 1.`,
+            });
             return;
         }
 
@@ -50,12 +53,16 @@ export default function TransferMoneySection({ config, values, setValues, handle
                     exchangeRate: String(rate.toFixed(4)),
                     exchangeRateLabel: `1 ${fromCurrency} = ${rate.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} ${toCurrency} (API Real-time)`,
                 }));
-                window.alert(`Berhasil mengambil kurs: 1 ${fromCurrency} = ${rate.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} ${toCurrency}`);
+                showSuccessToast({
+                    message: `Berhasil mengambil kurs: 1 ${fromCurrency} = ${rate.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} ${toCurrency}`,
+                });
             } else {
                 throw new Error(`Data kurs tidak tersedia untuk ${fromCurrency} atau ${toCurrency}.`);
             }
         } catch (err) {
-            window.alert(`Gagal mengambil kurs real-time: ${err.message}`);
+            showErrorToast({
+                message: `Gagal mengambil kurs real-time: ${err.message}`,
+            });
         } finally {
             setFetchingRate(false);
         }

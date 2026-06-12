@@ -59,16 +59,16 @@ export function SalesTeamWidget({ widget }) {
     }
 
     return (
-        <div className="flex h-full flex-col gap-4">
+        <div className="flex h-full flex-col gap-4 min-h-0">
             <WidgetPeriod value={widget.period} />
 
-            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,auto)] gap-4 border-b border-[#edf1f6] pb-2 text-sm font-semibold text-[#1f2536] md:grid-cols-[minmax(0,1fr)_120px_56px]">
+            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,auto)] gap-4 border-b border-[#edf1f6] pb-2 text-sm font-semibold text-[#1f2536] md:grid-cols-[minmax(0,1fr)_120px_56px] shrink-0">
                 <span>Penjual</span>
                 <span className="text-right">Total Penjualan</span>
                 <span className="hidden text-right md:block">Target</span>
             </div>
 
-            <div className="space-y-0">
+            <div className="flex-1 overflow-y-auto space-y-0 pr-1.5 [scrollbar-width:thin]">
                 {(widget.rows ?? []).map((row) => (
                     <SalesTeamRow key={row.name} row={row} />
                 ))}
@@ -102,10 +102,10 @@ export function TopProductsWidget({ widget }) {
     }
 
     return (
-        <div className="flex h-full flex-col gap-4">
+        <div className="flex h-full flex-col gap-4 min-h-0">
             <WidgetPeriod value={widget.period} />
 
-            <div className="space-y-3">
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1.5 [scrollbar-width:thin]">
                 {(widget.items ?? []).map((item, index) => (
                     <TopProductRow key={item.name} item={item} index={index} />
                 ))}
@@ -190,8 +190,8 @@ export function RecentActivityWidget({ widget }) {
     }
 
     return (
-        <div className="flex h-full flex-col gap-4">
-            <div className="space-y-0">
+        <div className="flex h-full flex-col gap-4 min-h-0">
+            <div className="flex-1 overflow-y-auto space-y-0 pr-1.5 [scrollbar-width:thin]">
                 {items.map((item, index) => (
                     <div key={item.id ?? index} className="flex gap-6 py-4 border-b border-[#edf1f6] last:border-b-0 first:pt-0">
                         <div className="flex flex-col items-center justify-center text-center min-w-[56px] shrink-0">

@@ -48,11 +48,6 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
                     ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
                     : undefined
             }
-            spacerHeaderContent={
-                <span className="flex justify-center">
-                    <SortIcon className="h-3 w-3 text-white/55" />
-                </span>
-            }
         />
     );
 }

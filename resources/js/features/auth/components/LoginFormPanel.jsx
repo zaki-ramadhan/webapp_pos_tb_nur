@@ -35,7 +35,7 @@ export default function LoginFormPanel({ login }) {
         event.preventDefault();
 
         const width = 500;
-        const height = 650;
+        const height = 550;
 
         const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
         const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;

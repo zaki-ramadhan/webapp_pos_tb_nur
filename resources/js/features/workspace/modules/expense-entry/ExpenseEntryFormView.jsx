@@ -114,9 +114,9 @@ export default function ExpenseEntryFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    function applyLineItemUpdate(record, currentItem = null) {
+    async function applyLineItemUpdate(record, currentItem = null) {
         try {
-            const nextItem = promptExpenseLineItem(record, currentItem);
+            const nextItem = await promptExpenseLineItem(record, currentItem);
 
             if (!nextItem) {
                 return;

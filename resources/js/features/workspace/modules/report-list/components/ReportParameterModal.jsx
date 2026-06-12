@@ -3,6 +3,7 @@ import { X, Plus, Minus, Pencil } from 'lucide-react';
 import ModalBase from '@/components/ui/ModalBase';
 import CheckboxField from '@/components/ui/CheckboxField';
 import { showInfoToast } from '@/components/feedback/toast';
+import { showPromptModal } from '@/components/ui/promptModal';
 import {
     ReportDateField,
     ReportBranchField,
@@ -130,14 +131,23 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
         setSelectedColumnId(null);
     };
 
-    const handleEditColumn = () => {
+    const handleEditColumn = async () => {
         if (!selectedColumnId) return;
         const col = visibleColumns.find(c => c.id === selectedColumnId);
         if (col && col.isMandatory) return; // Cannot edit mandatory columns
 
-        const newLabel = window.prompt("Ubah nama kolom:", col.label);
-        if (newLabel && newLabel.trim()) {
-            setVisibleColumns(prev => prev.map(c => c.id === selectedColumnId ? { ...c, label: newLabel.trim() } : c));
+        const result = await showPromptModal("Ubah Nama Kolom", [
+            {
+                name: 'newLabel',
+                label: 'Nama Kolom',
+                type: 'text',
+                defaultValue: col.label,
+                required: true,
+            },
+        ]);
+
+        if (result && result.newLabel.trim()) {
+            setVisibleColumns(prev => prev.map(c => c.id === selectedColumnId ? { ...c, label: result.newLabel.trim() } : c));
         }
     };
 

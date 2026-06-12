@@ -11,6 +11,7 @@ import {
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { PlusIcon, RefreshIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 
 export default function CurrencyTableView({ page, rows, total, loading, error, onCreate, onOpenDetail, onRefresh }) {
     const table = page.currency.table;
@@ -26,11 +27,11 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
         try {
             const response = await window.axios.post('/api/backend/currencies/sync');
             const message = response?.data?.message || 'Berhasil mensinkronisasi kurs mata uang.';
-            window.alert(message);
+            showSuccessToast({ message });
             await onRefresh?.();
         } catch (syncError) {
             const errorMsg = syncError?.response?.data?.message || 'Gagal mensinkronisasi kurs mata uang.';
-            window.alert(errorMsg);
+            showErrorToast({ message: errorMsg });
         } finally {
             setSyncing(false);
         }

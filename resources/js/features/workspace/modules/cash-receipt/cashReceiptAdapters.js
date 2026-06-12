@@ -168,15 +168,25 @@ export function buildCashReceiptFormState(source = {}, config) {
     );
 }
 
-export function promptCashReceiptLineItem(record, currentItem = null) {
-    const label = buildLookupLabel(record ?? currentItem ?? {});
-    const amountValue = window.prompt(`Nilai penerimaan untuk ${label}`, currentItem?.amount ?? '0');
+import { showPromptModal } from '@/components/ui/promptModal';
 
-    if (amountValue === null) {
+export async function promptCashReceiptLineItem(record, currentItem = null) {
+    const label = buildLookupLabel(record ?? currentItem ?? {});
+    const result = await showPromptModal(`Input Nilai Penerimaan - ${label}`, [
+        {
+            name: 'amount',
+            label: 'Nilai Penerimaan',
+            type: 'number',
+            defaultValue: currentItem?.amount ?? '0',
+            required: true,
+        },
+    ]);
+
+    if (!result) {
         return null;
     }
 
-    const amount = parseNumericInput(amountValue);
+    const amount = parseNumericInput(result.amount);
 
     if (amount <= 0) {
         throw new Error('Nilai penerimaan harus lebih dari 0.');

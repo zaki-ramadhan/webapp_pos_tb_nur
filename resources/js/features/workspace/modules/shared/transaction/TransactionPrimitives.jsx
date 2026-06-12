@@ -8,9 +8,9 @@ export function buildCurrencyValue(value = '0') {
     return String(value).startsWith('Rp ') || String(value).startsWith('$ ') ? String(value) : `Rp ${value}`;
 }
 
-export function TransactionFieldLabel({ label, required = false, className = '' }) {
+export function TransactionFieldLabel({ label, required = false, className = '', htmlFor }) {
     return (
-        <label className={`text-xs sm:text-sm text-[#1f2436] ${className}`.trim()}>
+        <label htmlFor={htmlFor} className={`text-xs sm:text-sm text-[#1f2436] ${htmlFor ? 'cursor-pointer' : ''} ${className}`.trim()}>
             {label}
             {required ? <span className="text-[#ED3969]"> *</span> : null}
         </label>
@@ -77,7 +77,7 @@ export function TransactionHeaderButton({ label, trailingChevron = false, classN
     return (
         <button
             type="button"
-            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b] ${className}`.trim()}
+            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm text-[#21539b] ${className}`.trim()}
         >
             <span>{label}</span>
             {trailingChevron ? <ChevronDownIcon className="h-4 w-4" /> : null}

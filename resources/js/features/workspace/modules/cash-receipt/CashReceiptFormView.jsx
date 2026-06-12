@@ -115,9 +115,9 @@ export default function CashReceiptFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    function applyLineItemUpdate(record, currentItem = null) {
+    async function applyLineItemUpdate(record, currentItem = null) {
         try {
-            const nextItem = promptCashReceiptLineItem(record, currentItem);
+            const nextItem = await promptCashReceiptLineItem(record, currentItem);
 
             if (!nextItem) {
                 return;
@@ -249,56 +249,70 @@ export default function CashReceiptFormView({
                 <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
                     <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                         <div className="border-b border-[#d8dde7] px-4 py-4">
-                            <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-                                <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                                    <TransactionFieldLabel label={config.labels.cashBank} required />
-                                    <ChipLookupField
-                                        values={values.bankAccounts}
-                                        placeholder={config.cashBankPlaceholder}
-                                        onRemove={handlers.onRemoveBankAccount}
-                                        searchLabel="Cari kas atau bank"
-                                        onSearch={handlers.onSelectBankAccount}
-                                    />
-
-                                    <TransactionFieldLabel label={config.labels.entryDate} required />
-                                    <TransactionDateInput
-                                        value={values.entryDate}
-                                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                                    />
-                                </div>
-
-                                <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                                    <div className="flex items-center justify-start gap-4 sm:justify-end">
-                                        <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
-                                        {!activeRecordId ? (
-                                            <TransactionSwitch
-                                                checked={values.autoNumber}
-                                                onChange={(nextChecked) => setValues((current) => ({ ...current, autoNumber: nextChecked }))}
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+                                <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                                        <TransactionFieldLabel label={config.labels.cashBank} required htmlFor="cashBank" />
+                                        <div className="max-w-[320px] w-full">
+                                            <ChipLookupField
+                                                id="cashBank"
+                                                values={values.bankAccounts}
+                                                placeholder={config.cashBankPlaceholder}
+                                                onRemove={handlers.onRemoveBankAccount}
+                                                searchLabel="Cari kas atau bank"
+                                                onSearch={handlers.onSelectBankAccount}
                                             />
-                                        ) : null}
+                                        </div>
                                     </div>
 
-                                    {values.autoNumber ? (
-                                        <SelectField
-                                            value={values.numberingType}
-                                            onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                                        >
-                                            {config.numberingOptions.map((option) => (
-                                                <option key={option} value={option}>
-                                                    {option}
-                                                </option>
-                                            ))}
-                                        </SelectField>
-                                    ) : (
-                                        <TextInput
-                                            value={values.documentNumber}
-                                            readOnly
-                                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                                        <TransactionFieldLabel label={config.labels.entryDate} required htmlFor="entryDate" />
+                                        <TransactionDateInput
+                                            id="entryDate"
+                                            value={values.entryDate}
+                                            onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
                                         />
-                                    )}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                                    <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                                        <div className="flex items-center justify-start gap-4">
+                                            <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
+                                            {!activeRecordId ? (
+                                                <TransactionSwitch
+                                                    checked={values.autoNumber}
+                                                    onChange={(nextChecked) => setValues((current) => ({ ...current, autoNumber: nextChecked }))}
+                                                />
+                                            ) : null}
+                                        </div>
+
+                                        <div className="max-w-[240px] w-full">
+                                            {values.autoNumber ? (
+                                                <SelectField
+                                                    id="documentNumber"
+                                                    value={values.numberingType}
+                                                    onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
+                                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                                >
+                                                    {config.numberingOptions.map((option) => (
+                                                        <option key={option} value={option}>
+                                                            {option}
+                                                        </option>
+                                                    ))}
+                                                </SelectField>
+                                            ) : (
+                                                <TextInput
+                                                    id="documentNumber"
+                                                    value={values.documentNumber}
+                                                    readOnly
+                                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

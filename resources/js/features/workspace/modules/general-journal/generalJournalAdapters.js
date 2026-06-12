@@ -174,22 +174,33 @@ export function buildFormState(source = {}, config) {
     );
 }
 
-export function promptJournalLineItem(record, currentItem = null) {
+import { showPromptModal } from '@/components/ui/promptModal';
+
+export async function promptJournalLineItem(record, currentItem = null) {
     const label = buildLookupLabel(record ?? currentItem ?? {});
-    const debitValue = window.prompt(`Nilai debit untuk ${label}`, currentItem?.debit ?? '0');
+    const result = await showPromptModal(`Input Debit/Kredit - ${label}`, [
+        {
+            name: 'debit',
+            label: 'Nilai Debit',
+            type: 'number',
+            defaultValue: currentItem?.debit ?? '0',
+            required: true,
+        },
+        {
+            name: 'credit',
+            label: 'Nilai Kredit',
+            type: 'number',
+            defaultValue: currentItem?.credit ?? '0',
+            required: true,
+        },
+    ]);
 
-    if (debitValue === null) {
+    if (!result) {
         return null;
     }
 
-    const creditValue = window.prompt(`Nilai kredit untuk ${label}`, currentItem?.credit ?? '0');
-
-    if (creditValue === null) {
-        return null;
-    }
-
-    const debitAmount = parseNumericInput(debitValue);
-    const creditAmount = parseNumericInput(creditValue);
+    const debitAmount = parseNumericInput(result.debit);
+    const creditAmount = parseNumericInput(result.credit);
 
     if (debitAmount <= 0 && creditAmount <= 0) {
         throw new Error('Debit atau kredit harus lebih dari 0.');

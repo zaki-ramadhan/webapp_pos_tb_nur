@@ -109,9 +109,9 @@ export default function MaterialAdditionFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    function applyItemUpdate(record, currentItem = null) {
+    async function applyItemUpdate(record, currentItem = null) {
         try {
-            const nextItem = promptMaterialAdditionItem(record, currentItem);
+            const nextItem = await promptMaterialAdditionItem(record, currentItem);
 
             if (!nextItem) {
                 return;
@@ -134,9 +134,9 @@ export default function MaterialAdditionFormView({
         }
     }
 
-    function applyChargeUpdate(record, currentCharge = null) {
+    async function applyChargeUpdate(record, currentCharge = null) {
         try {
-            const nextCharge = promptMaterialAdditionCharge(record, currentCharge);
+            const nextCharge = await promptMaterialAdditionCharge(record, currentCharge);
 
             if (!nextCharge) {
                 return;

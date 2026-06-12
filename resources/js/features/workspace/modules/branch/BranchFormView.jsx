@@ -164,7 +164,7 @@ export default function BranchFormView({
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
             <div className="shrink-0">
                 <PreferencesTabs
                     tabs={form.tabs}
@@ -173,32 +173,34 @@ export default function BranchFormView({
                 />
             </div>
 
-            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
-                <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
+            <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+                <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
+                    <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
-                    {activeTabId === 'branch-users' ? (
-                        <BranchUsersTab form={form} values={values} onChange={handleChange} />
-                    ) : (
-                        <BranchGeneralTab values={values} onChange={handleChange} />
-                    )}
-                </div>
+                        {activeTabId === 'branch-users' ? (
+                            <BranchUsersTab form={form} values={values} onChange={handleChange} />
+                        ) : (
+                            <BranchGeneralTab values={values} onChange={handleChange} />
+                        )}
+                    </div>
 
-                <div className="flex justify-end gap-3 lg:shrink-0 lg:flex-col lg:self-start">
-                    <DockSaveButton
-                        label={saving ? 'Memproses...' : form.saveLabel}
-                        disabled={saveDisabled}
-                        onClick={handleSave}
-                    />
-                    {isDetailMode ? (
-                        <DockActionButton
-                            label={saving ? 'Memproses...' : 'Hapus'}
-                            tone="danger"
-                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                            disabled={saving}
-                            onClick={requestDelete}
+                    <div className="flex justify-end gap-3 lg:shrink-0 lg:flex-col lg:self-start">
+                        <DockSaveButton
+                            label={saving ? 'Memproses...' : form.saveLabel}
+                            disabled={saveDisabled}
+                            onClick={handleSave}
                         />
-                    ) : null}
+                        {isDetailMode ? (
+                            <DockActionButton
+                                label={saving ? 'Memproses...' : 'Hapus'}
+                                tone="danger"
+                                icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                                disabled={saving}
+                                onClick={requestDelete}
+                            />
+                        ) : null}
+                    </div>
                 </div>
             </div>
 

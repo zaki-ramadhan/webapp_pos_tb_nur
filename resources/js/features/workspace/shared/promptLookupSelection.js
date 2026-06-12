@@ -2,13 +2,18 @@ import {
     extractBackendRows,
     listBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { showPromptModal } from '@/components/ui/promptModal';
 
 export async function promptSelectBackendRecord(resource, title, labelBuilder) {
-    const keyword = window.prompt(`Cari ${title}`);
+    const searchResult = await showPromptModal(`Cari ${title}`, [
+        { name: 'keyword', label: 'Kata Kunci Pencarian', type: 'text', required: true }
+    ]);
 
-    if (keyword === null) {
+    if (!searchResult) {
         return null;
     }
+
+    const keyword = searchResult.keyword;
 
     const payload = await listBackendResource(resource, {
         search: keyword.trim(),
@@ -20,16 +25,27 @@ export async function promptSelectBackendRecord(resource, title, labelBuilder) {
         throw new Error(`${title} tidak ditemukan.`);
     }
 
-    const optionText = records
-        .map((record, index) => `${index + 1}. ${labelBuilder(record)}`)
-        .join('\n');
-    const pickedValue = window.prompt(`Pilih ${title}:\n${optionText}\nKetik nomor pilihan.`);
+    const options = records.map((record, index) => ({
+        value: String(index),
+        label: labelBuilder(record)
+    }));
 
-    if (pickedValue === null) {
+    const pickResult = await showPromptModal(`Pilih ${title}`, [
+        {
+            name: 'pickedIndex',
+            label: `Pilih salah satu ${title}`,
+            type: 'select',
+            defaultValue: '0',
+            options: options,
+            required: true
+        }
+    ]);
+
+    if (!pickResult) {
         return null;
     }
 
-    const pickedIndex = Number.parseInt(pickedValue, 10) - 1;
+    const pickedIndex = Number.parseInt(pickResult.pickedIndex, 10);
 
     if (!Number.isInteger(pickedIndex) || !records[pickedIndex]) {
         throw new Error(`Pilihan ${title} tidak valid.`);

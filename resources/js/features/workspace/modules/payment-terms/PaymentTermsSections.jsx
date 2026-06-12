@@ -4,7 +4,7 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 
 function PaymentFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[360px_minmax(0,570px)] lg:items-start">
+        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,570px)] lg:items-start">
             <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
@@ -17,7 +17,7 @@ function PaymentFieldRow({ label, required = false, children }) {
 function UnitField({ value, onChange, unit }) {
     return (
         <div className="flex items-center gap-4">
-            <TextInput value={value} onChange={onChange} className="h-[40px] w-[116px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-right text-xs sm:text-sm text-[#1f2436]" />
+            <TextInput value={value} onChange={onChange} className="h-[40px] w-[116px] rounded-[4px] border-slate-400" inputClassName="text-right text-xs sm:text-sm text-[#1f2436]" />
             <span className="text-xs sm:text-sm text-[#1f2436]">{unit}</span>
         </div>
     );
@@ -43,7 +43,7 @@ export function PaymentTermsCreateSection({ config, createValues, setCreateValue
                     value={createValues.description}
                     onChange={(event) => setCreateValues((current) => ({ ...current, description: event.target.value }))}
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-slate-400 px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                 />
             </PaymentFieldRow>
 
@@ -70,7 +70,7 @@ export function PaymentTermsDetailSection({ config, detailValues, setDetailValue
                 <ChipLookupField value={detailValues.name} />
             </PaymentFieldRow>
 
-            <div className="lg:pl-[372px]">
+            <div className="lg:pl-[192px]">
                 <CheckboxField
                     id="payment-term-default"
                     label={config.detailLabels.default}
@@ -83,7 +83,7 @@ export function PaymentTermsDetailSection({ config, detailValues, setDetailValue
                 />
             </div>
 
-            <div className="lg:pl-[372px]">
+            <div className="lg:pl-[192px]">
                 <CheckboxField
                     id="payment-term-inactive"
                     label={config.detailLabels.inactive}
