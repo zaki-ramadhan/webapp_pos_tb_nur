@@ -12,11 +12,13 @@ use App\Support\Backend\BackendResourceIndexQuery;
 use App\Support\Backend\BackendResourcePayloadSanitizer;
 use App\Support\Backend\BackendResourceRegistry;
 use App\Support\Backend\BackendResourceWriter;
+use App\Support\Backend\BackendResourceSecurityValidator;
 use App\Domain\Finance\Models\Currency;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BackendResourceController extends Controller
@@ -26,6 +28,7 @@ class BackendResourceController extends Controller
         protected BackendResourceIndexQuery $indexQuery,
         protected BackendResourcePayloadSanitizer $payloadSanitizer,
         protected BackendResourceWriter $writer,
+        protected BackendResourceSecurityValidator $validator,
     ) {
     }
 
@@ -64,6 +67,9 @@ class BackendResourceController extends Controller
         }
 
         $payload = $this->payloadSanitizer->sanitize($request->validated());
+        $this->validator->validateBranchAssignment($request->user(), $payload);
+        $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
+        
         $record = $this->writer->create($blueprint, $payload);
 
         return response()->json([
@@ -76,10 +82,16 @@ class BackendResourceController extends Controller
     {
         $blueprint = $this->resolveBlueprint($resource);
         $this->access->authorize($request->user(), $blueprint, 'view');
+
+        $entity = $this->findRecord($blueprint, $record);
+        if (! $this->access->canAccessRecord($request->user(), $entity)) {
+            throw new AuthorizationException('You are not allowed to access this record.');
+        }
+
         $customRecord = $blueprint->runShow($record);
 
         return response()->json([
-            'data' => $customRecord ?? $this->findRecord($blueprint, $record),
+            'data' => $customRecord ?? $entity,
         ]);
     }
 
@@ -101,7 +113,14 @@ class BackendResourceController extends Controller
         }
 
         $entity = $this->findRecord($blueprint, $record);
+        if (! $this->access->canAccessRecord($request->user(), $entity)) {
+            throw new AuthorizationException('You are not allowed to access this record.');
+        }
+
         $payload = $this->payloadSanitizer->sanitize($request->validated());
+        $this->validator->validateBranchAssignment($request->user(), $payload);
+        $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
+        
         $entity = $this->writer->update($blueprint, $entity, $payload);
 
         return response()->json([
@@ -114,7 +133,11 @@ class BackendResourceController extends Controller
     {
         $blueprint = $this->resolveBlueprint($resource);
         $this->access->authorize($request->user(), $blueprint, 'delete');
+        
         $entity = $this->findRecord($blueprint, $record);
+        if (! $this->access->canAccessRecord($request->user(), $entity)) {
+            throw new AuthorizationException('You are not allowed to access this record.');
+        }
 
         $this->writer->delete($blueprint, $entity);
 

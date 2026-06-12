@@ -4,6 +4,7 @@ namespace App\Support\Backend;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Schema;
 
 class BackendResourceIndexQuery
 {
@@ -22,6 +23,18 @@ class BackendResourceIndexQuery
         $search = trim((string) ($filters['search'] ?? ''));
         $perPage = max(1, min((int) ($filters['per_page'] ?? 15), 1000));
         $query = $modelClass::query()->with($blueprint->with);
+
+        $user = auth()->user();
+        if ($user && ! $user->hasAnyRoleCodes(['super_admin'])) {
+            $modelInstance = new $modelClass();
+            $tableName = $modelInstance->getTable();
+            if (Schema::hasColumn($tableName, 'branch_id')) {
+                if ($user->branches()->exists()) {
+                    $allowedBranchIds = $user->branches->pluck('id')->toArray();
+                    $query->whereIn("{$tableName}.branch_id", $allowedBranchIds);
+                }
+            }
+        }
 
         if ($search !== '') {
             $this->applySearch($query, $search, $blueprint->searchColumns);

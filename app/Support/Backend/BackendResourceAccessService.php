@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class BackendResourceAccessService
 {
@@ -176,5 +177,23 @@ class BackendResourceAccessService
     protected function supportsUserActivation(): bool
     {
         return Schema::hasColumn('users', 'is_active');
+    }
+
+    public function canAccessRecord(User $user, Model $record): bool
+    {
+        if ($user->hasAnyRoleCodes($this->privilegedRoleCodes)) {
+            return true;
+        }
+
+        if (isset($record->branch_id) && $record->branch_id !== null) {
+            if ($user->branches()->exists()) {
+                $allowedBranchIds = $user->branches->pluck('id')->toArray();
+                if (! in_array((int) $record->branch_id, $allowedBranchIds, true)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
