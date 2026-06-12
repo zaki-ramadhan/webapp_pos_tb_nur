@@ -68,7 +68,7 @@ export default function DashboardFormModal({
         >
             <div className="border-b border-[#0f366d] bg-[#163a6d] px-3 py-2 text-white">
                 <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-[16px] font-medium">{modal.title}</h2>
+                    <h2 className="text-base font-medium">{modal.title}</h2>
                     <button
                         type="button"
                         onClick={onClose}
@@ -81,8 +81,8 @@ export default function DashboardFormModal({
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white px-3 py-7">
-                <div className="grid gap-4 md:grid-cols-[182px_minmax(0,1fr)] md:items-center">
-                    <label htmlFor="dashboard-name" className="text-[15px] font-medium text-[#2c344a]">
+                <div className="grid gap-4 md:grid-cols-[140px_minmax(0,1fr)] md:items-center">
+                    <label htmlFor="dashboard-name" className="text-xs sm:text-sm font-medium text-[#2c344a]">
                         {modal.nameLabel}
                     </label>
 
@@ -92,7 +92,7 @@ export default function DashboardFormModal({
                             type="text"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
-                            className="h-10 w-full rounded-[4px] border border-[#cdd4e3] px-3 pr-9 text-[15px] text-[#2c344a] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                            className="h-10 w-full rounded-[4px] border border-[#cdd4e3] px-3 pr-9 text-base text-[#2c344a] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                             autoFocus
                         />
 
@@ -120,7 +120,7 @@ export default function DashboardFormModal({
                                 disabled={isDeleting}
                                 loading={isDeleting}
                                 loadingLabel="Memproses..."
-                                className="rounded-[4px] px-3 text-[15px] font-medium text-[#1f63ad] hover:no-underline"
+                                className="rounded-[4px] px-3 text-base font-medium text-[#1f63ad] hover:no-underline"
                             >
                                 {modal.deleteLabel}
                             </Button>
@@ -132,7 +132,7 @@ export default function DashboardFormModal({
                         disabled={!trimmedName || isSubmitting}
                         loading={isSubmitting}
                         loadingLabel="Memproses..."
-                        className="min-w-[88px] rounded-[4px] bg-[#234d97] px-5 text-[15px] hover:bg-[#1d4386]"
+                        className="min-w-[88px] rounded-[4px] bg-[#234d97] px-5 text-base hover:bg-[#1d4386]"
                     >
                         {modal.submitLabel}
                     </Button>

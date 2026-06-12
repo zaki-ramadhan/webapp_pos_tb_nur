@@ -51,7 +51,7 @@ export default function TextareaField({
             >
                 {prefix ? (
                     <span
-                        className={`flex min-w-[86px] shrink-0 items-start border-r border-slate-300 px-4 py-3 text-[15px] transition-colors duration-150 group-focus-within:border-current ${isNonInteractive ? 'bg-slate-100 text-slate-400' : 'text-[#5a84e5]'} ${prefixClassName}`.trim()}
+                        className={`flex min-w-[86px] shrink-0 items-start border-r border-slate-300 px-4 py-3 text-xs sm:text-sm transition-colors duration-150 group-focus-within:border-current ${isNonInteractive ? 'bg-slate-100 text-slate-400' : 'text-[#5a84e5]'} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -65,7 +65,7 @@ export default function TextareaField({
                     readOnly={readOnly}
                     tabIndex={readOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default text-slate-400 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
+                    className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default text-slate-400 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
                 />
@@ -80,7 +80,7 @@ export default function TextareaField({
             </span>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

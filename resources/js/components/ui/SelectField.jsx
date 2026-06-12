@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
-
+import PortalDropdown from './PortalDropdown';
 import { useFormError } from './FormErrorContext';
 
 export default function SelectField({
@@ -30,9 +30,8 @@ export default function SelectField({
         : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     const triggerRef = useRef(null);
-    const dropdownRef = useRef(null);
+    const listRef = useRef(null);
     const [open, setOpen] = useState(false);
-    const [placement, setPlacement] = useState('bottom');
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
     const isControlled = value !== undefined;
@@ -71,45 +70,10 @@ export default function SelectField({
 
     const displayLabel = selectedOption ? selectedOption.label : (currentValue || placeholder);
 
-    // Auto placement flipping based on viewport space
-    useEffect(() => {
-        if (!open || !triggerRef.current) return;
-
-        const rect = triggerRef.current.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-
-        if (spaceBelow < 280 && rect.top > 280) {
-            setPlacement('top');
-        } else {
-            setPlacement('bottom');
-        }
-    }, [open]);
-
-    // Handle outside clicks to close the dropdown
-    useEffect(() => {
-        if (!open) return;
-
-        function handleClickOutside(event) {
-            if (
-                dropdownRef.current && 
-                !dropdownRef.current.contains(event.target) &&
-                triggerRef.current && 
-                !triggerRef.current.contains(event.target)
-            ) {
-                setOpen(false);
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [open]);
-
     // Keyboard selection highlight scroll tracking
     useEffect(() => {
-        if (open && highlightedIndex >= 0 && dropdownRef.current) {
-            const activeEl = dropdownRef.current.children[highlightedIndex];
+        if (open && highlightedIndex >= 0 && listRef.current) {
+            const activeEl = listRef.current.children[highlightedIndex];
             if (activeEl) {
                 activeEl.scrollIntoView({ block: 'nearest' });
             }
@@ -206,7 +170,7 @@ export default function SelectField({
                     disabled={disabled}
                     onClick={() => setOpen((o) => !o)}
                     onKeyDown={handleKeyDown}
-                    className={`h-full w-full bg-transparent px-4 text-left text-sm outline-none disabled:cursor-not-allowed flex items-center justify-between ${disabled ? 'text-slate-400' : 'text-slate-700'} ${selectClassName}`.trim()}
+                    className={`h-full w-full bg-transparent px-4 text-left text-xs sm:text-sm outline-none disabled:cursor-default disabled:pointer-events-none flex items-center justify-between ${disabled ? 'text-slate-400' : 'text-slate-700'} ${selectClassName}`.trim()}
                     aria-haspopup="listbox"
                     aria-expanded={open}
                     {...props}
@@ -223,11 +187,19 @@ export default function SelectField({
                 </button>
             </div>
 
-            {open && !disabled && options.length > 0 && (
+            <PortalDropdown
+                open={open && !disabled && options.length > 0}
+                onClose={() => setOpen(false)}
+                anchorRef={triggerRef}
+                align="stretch"
+                side="bottom"
+                maxHeightLimit={260}
+                className="py-1"
+            >
                 <div
-                    ref={dropdownRef}
+                    ref={listRef}
                     role="listbox"
-                    className={`absolute left-0 right-0 ${placement === 'top' ? 'bottom-[calc(100%+4px)]' : 'top-[calc(100%+4px)]'} z-[100] max-h-[260px] overflow-y-auto rounded-md border border-[#d6deea] bg-white py-1 shadow-[0_10px_24px_rgba(15,23,42,0.14)]`}
+                    className="overflow-y-auto w-full flex-1 min-h-0"
                 >
                     {options.map((option, index) => {
                         const isSelected = String(option.value) === String(currentValue);
@@ -240,23 +212,23 @@ export default function SelectField({
                                 aria-selected={isSelected}
                                 disabled={option.disabled}
                                 onClick={() => handleSelect(option.value)}
-                                className={`block w-full px-4 py-2.5 text-left text-sm transition-colors duration-100 ${
+                                className={`block w-full px-4 py-2.5 text-left text-xs sm:text-sm transition-colors duration-100 ${
                                     isSelected 
                                         ? 'bg-[#eef3fb] font-semibold text-[#2353a0]' 
                                         : isHighlighted 
                                             ? 'bg-slate-50 text-slate-900 font-medium' 
                                             : 'text-slate-700 hover:bg-slate-50'
-                                } ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`.trim()}
+                                } ${option.disabled ? 'opacity-50 cursor-default pointer-events-none' : 'cursor-pointer'}`.trim()}
                             >
                                 {option.label}
                             </button>
                         );
                     })}
                 </div>
-            )}
+            </PortalDropdown>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

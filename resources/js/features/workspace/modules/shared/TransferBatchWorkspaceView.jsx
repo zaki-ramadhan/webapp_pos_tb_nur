@@ -92,7 +92,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                         }))
                                     }
                                     className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                                    selectClassName="text-[15px] text-[#1f2436]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                 >
                                     {(control.options ?? []).map((option) => (
                                         <option key={option.value} value={option.value}>
@@ -120,7 +120,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                 placeholder={config.search.placeholder}
                                 trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         </div>
@@ -139,7 +139,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                 {config.table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
                                     >
                                         {column.kind === 'checkbox' ? (
                                             <span className="inline-flex h-[22px] w-[22px] rounded-[4px] border border-[#d8dde7] bg-white" />
@@ -161,7 +161,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                         {config.table.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`px-2.5 text-[15px] text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                                className={`px-2.5 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
                                             >
                                                 {column.kind === 'checkbox' ? (
                                                     <span className="inline-flex h-[18px] w-[18px] rounded-[4px] border border-[#cfd6e2] bg-white" />
@@ -177,7 +177,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                     {firstColumnIsCheckbox ? <DataTableCell className="px-2.5" /> : null}
                                     <DataTableCell
                                         colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
-                                        className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
+                                        className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                     >
                                         {config.table.emptyLabel ?? 'Belum ada data'}
                                     </DataTableCell>
@@ -196,25 +196,25 @@ export default function TransferBatchWorkspaceView({ config }) {
                         title={config.emptyState?.title ?? 'Belum ada data'}
                         description={config.emptyState?.description ?? 'Belum ada data'}
                         className="min-h-[260px] px-6 py-10"
-                        titleClassName="text-[15px] font-medium text-[#6b738f]"
-                        descriptionClassName="mt-2 text-[13px] leading-5 text-[#8a91a8]"
+                        titleClassName="text-base font-medium text-[#6b738f]"
+                        descriptionClassName="mt-2 text-sm leading-5 text-[#8a91a8]"
                     />
                 ) : null}
             </div>
 
             {config.footer ? (
                 <div className="border-t border-[#d8dde7] bg-white px-3 py-2.5">
-                    <div className="grid gap-3 lg:grid-cols-[220px_minmax(0,1fr)_190px] lg:items-center">
+                    <div className="grid gap-3 lg:grid-cols-[160px_minmax(0,1fr)_190px] lg:items-center">
                         <div className="flex items-center justify-between gap-3 rounded-[4px] border border-[#d2d8e3] bg-[#fbfcfe] px-3 py-2">
-                            <span className="text-[15px] text-[#5f6779]">{config.footer.totalLabel}</span>
-                            <span className="text-[18px] font-semibold text-[#5f6779]">{config.footer.totalValue}</span>
+                            <span className="text-base text-[#5f6779]">{config.footer.totalLabel}</span>
+                            <span className="text-lg font-semibold text-[#5f6779]">{config.footer.totalValue}</span>
                         </div>
 
                         <SelectField
                             value={config.footer.selectValue}
                             onChange={() => {}}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.footer.selectOptions.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -226,7 +226,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                         <button
                             type="button"
                             disabled
-                            className="inline-flex h-[40px] w-full items-center justify-center rounded-[4px] border border-[#d1d5dc] bg-[#d9d9da] px-4 text-[15px] font-medium text-white disabled:cursor-not-allowed lg:w-auto"
+                            className="inline-flex h-[40px] w-full items-center justify-center rounded-[4px] border border-[#d1d5dc] bg-[#d9d9da] px-4 text-base font-medium text-white disabled:cursor-not-allowed lg:w-auto"
                         >
                             {config.footer.actionLabel}
                         </button>

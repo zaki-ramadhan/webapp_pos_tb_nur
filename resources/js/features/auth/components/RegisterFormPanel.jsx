@@ -28,7 +28,7 @@ function NameField({ salutation, onSalutationChange, prefixClassName, label, val
                             ref={buttonRef}
                             type="button"
                             onClick={() => setIsOpen(!isOpen)}
-                            className="flex items-center gap-1.5 text-[#5a84e5] text-[15px] font-semibold outline-none cursor-pointer focus:outline-none h-full"
+                            className="flex items-center gap-1.5 text-[#5a84e5] text-base font-semibold outline-none cursor-pointer focus:outline-none h-full"
                         >
                             <span>{salutation}</span>
                             <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />
@@ -144,7 +144,7 @@ export default function RegisterFormPanel({ register }) {
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
                 <AuthHeading title={register.title} subtitle={register.subtitle} />
 
-                <form className="mt-6 space-y-4 sm:mt-8" onSubmit={submit}>
+                <form className="mt-6 space-y-3 sm:mt-8" onSubmit={submit}>
                     <NameField
                         salutation={salutation}
                         onSalutationChange={setSalutation}

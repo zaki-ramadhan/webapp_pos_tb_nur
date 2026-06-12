@@ -75,7 +75,7 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
         >
             <div className="border-b border-[#0f366d] bg-[#163a6d] px-4 py-2 text-white">
                 <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-[16px] font-medium">{modal.title}</h2>
+                    <h2 className="text-base font-medium">{modal.title}</h2>
                     <button
                         type="button"
                         onClick={onClose}
@@ -93,7 +93,7 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                     onChange={(event) => setKeyword(event.target.value)}
                     placeholder={modal.searchPlaceholder}
                     className="h-[34px] max-w-[316px] rounded-[4px]"
-                    inputClassName="text-[15px]"
+                    inputClassName="text-xs sm:text-sm"
                 />
 
                 <div className="mt-3 h-[400px] overflow-y-auto rounded-[4px] border border-[#d7dde8]">
@@ -106,10 +106,10 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                         >
                             <LibraryIcon type={item.icon} />
                             <span className="min-w-0">
-                                <span className="block text-[17px] font-medium leading-6 text-[#1f2536]">
+                                <span className="block text-base font-medium leading-6 text-[#1f2536]">
                                     {item.title}
                                 </span>
-                                <span className="mt-1 block text-[13px] leading-5 text-[#7a8198]">
+                                <span className="mt-1 block text-sm leading-5 text-[#7a8198]">
                                     {item.description}
                                 </span>
                             </span>
@@ -126,8 +126,8 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                                     size="sm"
                                     tone="subtle"
                                     className="bg-transparent px-0 py-0"
-                                    titleClassName="text-[16px] font-medium text-[#6b738f]"
-                                    descriptionClassName="mt-2 text-[13px] leading-5 text-[#8a91a8]"
+                                    titleClassName="text-base font-medium text-[#6b738f]"
+                                    descriptionClassName="mt-2 text-sm leading-5 text-[#8a91a8]"
                                 />
                             ) : (
                                 <EmptyState
@@ -137,8 +137,8 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                                     size="sm"
                                     tone="subtle"
                                     className="bg-transparent px-0 py-0"
-                                    titleClassName="text-[16px] font-medium text-[#6b738f]"
-                                    descriptionClassName="mt-2 text-[13px] leading-5 text-[#8a91a8]"
+                                    titleClassName="text-base font-medium text-[#6b738f]"
+                                    descriptionClassName="mt-2 text-sm leading-5 text-[#8a91a8]"
                                 />
                             )}
                         </div>

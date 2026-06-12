@@ -12,12 +12,12 @@ import { ContactsTab, GeneralTab, ShippingTab } from '@/features/workspace/modul
 
 function CustomerOthersTab({ config, values, onChange }) {
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             <section className="max-w-[880px]">
                 <SectionHeading title={config.headingLabels.othersLimit} />
 
-                <div className="mt-4 space-y-4">
-                    <label className="inline-flex items-center gap-3 text-[17px] text-[#1f2436]">
+                <div className="mt-4 space-y-3">
+                    <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
                         <input
                             type="radio"
                             checked={values.receivableLimitMode === 'per-customer'}
@@ -35,7 +35,7 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 checked={Boolean(values.receivableAgeEnabled)}
                                 onChange={(event) => onChange('receivableAgeEnabled', event.target.checked)}
                                 align="center"
-                                labelClassName="text-[17px]"
+                                labelClassName="text-base"
                                 inputClassName="mt-0 h-[18px] w-[18px]"
                                 containerClassName="w-auto"
                             />
@@ -43,9 +43,9 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 value={values.receivableAgeDays}
                                 onChange={(event) => onChange('receivableAgeDays', event.target.value)}
                                 className="h-[40px] w-[130px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-right text-[15px] text-[#1f2436]"
+                                inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                             />
-                            <span className="text-[17px] text-[#1f2436]">Hari</span>
+                            <span className="text-xs sm:text-sm text-[#1f2436]">Hari</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3">
@@ -55,7 +55,7 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 checked={Boolean(values.receivableAmountEnabled)}
                                 onChange={(event) => onChange('receivableAmountEnabled', event.target.checked)}
                                 align="center"
-                                labelClassName="text-[17px]"
+                                labelClassName="text-base"
                                 inputClassName="mt-0 h-[18px] w-[18px]"
                                 containerClassName="w-auto"
                             />
@@ -63,12 +63,12 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 value={values.receivableAmount}
                                 onChange={(event) => onChange('receivableAmount', event.target.value)}
                                 className="h-[40px] w-[280px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-right text-[15px] text-[#8a8f98]"
+                                inputClassName="text-right text-xs sm:text-sm text-[#8a8f98]"
                             />
                         </div>
                     </div>
 
-                    <label className="inline-flex items-center gap-3 text-[17px] text-[#1f2436]">
+                    <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
                         <input
                             type="radio"
                             checked={values.receivableLimitMode === 'merge-parent'}
@@ -94,7 +94,7 @@ function CustomerOthersTab({ config, values, onChange }) {
                             onChange={(event) => onChange('notes', event.target.value)}
                             rows={4}
                             className="rounded-[4px] border-[#cfd6e2]"
-                            textareaClassName="min-h-[98px] text-[15px] text-[#1f2436]"
+                            textareaClassName="min-h-[98px] text-xs sm:text-sm text-[#1f2436]"
                         />
                     </FormFieldRow>
                 </div>
@@ -123,7 +123,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                             prefix="%"
                             className="h-[40px] max-w-[360px] rounded-[4px] border-[#cfd6e2]"
                             prefixClassName="min-w-[34px] bg-[#f5f6f8] px-3 text-[#9aa3b1]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </FormFieldRow>
 
@@ -133,7 +133,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                             onChange={(event) => onChange('defaultDescription', event.target.value)}
                             rows={3}
                             className="rounded-[4px] border-[#cfd6e2]"
-                            textareaClassName="min-h-[72px] text-[15px] text-[#1f2436]"
+                            textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
                         />
                     </FormFieldRow>
                 </div>
@@ -164,7 +164,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                         </FormFieldRow>
                     </div>
 
-                    <p className="mt-4 max-w-[620px] border-l-[4px] border-[#8e8f91] pl-3 text-[14px] italic leading-7 text-[#ef513f]">
+                    <p className="mt-4 max-w-[620px] border-l-[4px] border-[#8e8f91] pl-3 text-sm italic leading-7 text-[#ef513f]">
                         {purchaseConfig.accountNote}
                     </p>
                 </div>
@@ -204,7 +204,7 @@ function SupplierOthersTab({ config, values, onChange }) {
                         checked={Boolean(values.invoiceNumberOnBill)}
                         onChange={(event) => onChange('invoiceNumberOnBill', event.target.checked)}
                         align="center"
-                        labelClassName="text-[17px]"
+                        labelClassName="text-base"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
@@ -216,7 +216,7 @@ function SupplierOthersTab({ config, values, onChange }) {
                         onChange={(event) => onChange('notes', event.target.value)}
                         rows={4}
                         className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[98px] text-[15px] text-[#1f2436]"
+                        textareaClassName="min-h-[98px] text-xs sm:text-sm text-[#1f2436]"
                     />
                 </FormFieldRow>
             </div>

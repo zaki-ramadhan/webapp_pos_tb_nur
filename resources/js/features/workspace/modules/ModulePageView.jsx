@@ -15,7 +15,7 @@ export default function ModulePageView({ page }) {
     return (
         <div className="flex min-h-full flex-col">
             <div className="px-1 pt-0.5">
-                <div className="relative z-10 -mb-px inline-flex h-[34px] max-w-full items-center rounded-t-[5px] border-x border-t-[2px] border-b-0 border-l-[#bcc3cf] border-r-[#bcc3cf] border-t-[#ED3969] bg-white px-3 text-[14px] font-medium text-[#21283b] sm:px-3.5 sm:text-[15px] md:text-[16px]">
+                <div className="relative z-10 -mb-px inline-flex h-[34px] max-w-full items-center rounded-t-[5px] border-x border-t-[2px] border-b-0 border-l-[#bcc3cf] border-r-[#bcc3cf] border-t-[#ED3969] bg-white px-3 text-sm font-medium text-[#21283b] sm:px-3.5 sm:text-base md:text-base">
                     {page.label}
                 </div>
             </div>
@@ -26,16 +26,16 @@ export default function ModulePageView({ page }) {
                         <NavigationIcon type={page.icon} className="h-10 w-10 sm:h-12 sm:w-12" />
                     </span>
 
-                    <p className="mt-6 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#8a91a8]">
+                    <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-[#8a91a8]">
                         {page.moduleLabel}
                     </p>
-                    <h2 className="mt-3 text-[20px] font-semibold text-[#1f2536] sm:text-[22px] md:text-[24px] xl:text-[26px] 2xl:text-[28px]">{page.label}</h2>
-                    <p className="mt-3 text-[14px] leading-6 text-[#69718d] md:text-[15px]">
+                    <h2 className="mt-3 text-xl font-semibold text-[#1f2536] sm:text-2xl md:text-2xl xl:text-3xl 2xl:text-3xl">{page.label}</h2>
+                    <p className="mt-3 text-sm leading-6 text-[#69718d] md:text-base">
                         {placeholder.description ??
                             `Halaman ${page.label} sudah bisa dibuka sebagai stack tab dari menu ${page.moduleLabel}.`}
                     </p>
 
-                    <div className="mt-6 inline-flex items-center rounded-full bg-[#f3f6fb] px-4 py-2 text-[13px] text-[#53607f]">
+                    <div className="mt-6 inline-flex items-center rounded-full bg-[#f3f6fb] px-4 py-2 text-sm text-[#53607f]">
                         Struktur halaman ini sudah terhubung ke navigasi sidebar dan siap diisi form atau tabel berikutnya.
                     </div>
                 </div>

@@ -23,7 +23,7 @@ import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 
 function PaymentOrderFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-center">
+        <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-center">
             <TransactionFieldLabel label={label} required={required} />
             <div>{children}</div>
         </div>
@@ -40,7 +40,7 @@ function PaymentOrderInvoiceTable({ config }) {
                             {config.invoiceTable.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${
                                         column.align === 'right'
                                             ? 'text-right'
                                             : column.align === 'center'
@@ -69,7 +69,7 @@ function PaymentOrderInvoiceTable({ config }) {
                         <DataTableRow className="bg-white">
                             <DataTableCell
                                 colSpan={config.invoiceTable.columns.length}
-                                className="px-3 py-3 text-center text-[15px] text-[#131a28]"
+                                className="px-3 py-3 text-center text-base text-[#131a28]"
                             >
                                 {config.invoiceTable.emptyLabel}
                             </DataTableCell>
@@ -100,7 +100,7 @@ export function PaymentOrderHeader({ config, values, setValues }) {
                                 }))
                             }
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.paymentMethodOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -113,7 +113,7 @@ export function PaymentOrderHeader({ config, values, setValues }) {
             </div>
 
             <div className="space-y-3">
-                <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
+                <div className="grid gap-3 lg:grid-cols-[140px_minmax(0,1fr)] lg:items-center">
                     <div className="flex items-center justify-start gap-4 lg:justify-end">
                         <TransactionFieldLabel label={config.labels.documentNumber} required />
                         <TransactionSwitch
@@ -136,7 +136,7 @@ export function PaymentOrderHeader({ config, values, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -167,13 +167,13 @@ export function PaymentOrderDetailsSection({ config, values, setValues }) {
                             placeholder={config.invoiceSearchPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
                     <button
                         type="button"
-                        className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                        className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                     >
                         {config.takeButtonLabel}
                     </button>
@@ -183,7 +183,7 @@ export function PaymentOrderDetailsSection({ config, values, setValues }) {
                     <TransactionToolbarIconButton label="Cari faktur">
                         <SearchIcon className="h-5 w-5" />
                     </TransactionToolbarIconButton>
-                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {config.invoiceSectionTitle} <span className="text-[#ED3969]">*</span>
                     </div>
                 </div>
@@ -199,7 +199,7 @@ export function PaymentOrderInfoSection({ config, values, setValues }) {
         <div className="min-h-[560px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.notes} />
                 <div className="max-w-[568px]">
                     <TextareaField
@@ -212,7 +212,7 @@ export function PaymentOrderInfoSection({ config, values, setValues }) {
                         }
                         rows={4}
                         className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 

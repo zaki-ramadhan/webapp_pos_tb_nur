@@ -37,22 +37,22 @@ export default function EmptyState({
         sm: {
             wrapper: 'gap-3 px-4 py-6',
             icon: 'mb-1',
-            title: 'text-[16px]',
-            description: 'mt-1 max-w-sm text-[13px] leading-5',
+            title: 'text-base',
+            description: 'mt-1 max-w-sm text-sm leading-5',
             action: 'mt-4',
         },
         md: {
             wrapper: 'gap-4 px-6 py-10',
             icon: 'mb-2',
-            title: 'text-[18px]',
-            description: 'mt-2 max-w-md text-[14px] leading-6',
+            title: 'text-lg',
+            description: 'mt-2 max-w-md text-sm leading-6',
             action: 'mt-5',
         },
         lg: {
             wrapper: 'gap-5 px-8 py-14',
             icon: 'mb-3',
-            title: 'text-[20px]',
-            description: 'mt-3 max-w-lg text-[15px] leading-7',
+            title: 'text-xl',
+            description: 'mt-3 max-w-lg text-base leading-7',
             action: 'mt-6',
         },
     };

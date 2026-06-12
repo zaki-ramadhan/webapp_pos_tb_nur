@@ -223,7 +223,7 @@ class GeneralJournalPage
                         ['id' => 'export-journal', 'label' => 'Ekspor jurnal umum'],
                     ],
                     'columns' => [
-                        ['id' => 'documentNumber', 'label' => 'Nomor #', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
+                        ['id' => 'documentNumber', 'label' => 'No. Jurnal', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
                         ['id' => 'transactionNumber', 'label' => 'No. Trans #', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
                         ['id' => 'description', 'label' => 'Keterangan', 'widthClassName' => 'w-[30%]', 'align' => 'left'],

@@ -56,7 +56,7 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                         onChange={(event) => setInactiveFilter(event.target.value)}
                         containerClassName="w-auto"
                         className="h-[34px] min-w-[130px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="px-3 text-[15px] text-[#394157]"
+                        selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                         iconClassName="mr-2 text-[#6c7894]"
                     >
                         {table.filterOptions.map((option) => (
@@ -97,11 +97,11 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {visibleColumns.map((column) => (
-                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 py-2.5 text-[16px] font-medium text-white`.trim()}>
+                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 py-2.5 text-base font-medium text-white`.trim()}>
                                     <span className="flex items-center gap-2">
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span className="truncate">{column.label}</span>
@@ -125,9 +125,9 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                                     }
                                     className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8] cursor-pointer hover:bg-[#eef3fb] transition`.trim()}
                                 >
-                                    <DataTableCell className="px-3 py-2.5 text-center text-[15px] text-[#646d83]">{index + 1}</DataTableCell>
+                                    <DataTableCell className="px-3 py-2.5 text-center text-base text-[#646d83]">{index + 1}</DataTableCell>
                                     {visibleColumns.map((column) => (
-                                        <DataTableCell key={column.id} className="px-3 py-2.5 text-[15px] text-[#131a28]">
+                                        <DataTableCell key={column.id} className="px-3 py-2.5 text-base text-[#131a28]">
                                             {row[column.id]}
                                         </DataTableCell>
                                     ))}
@@ -135,7 +135,7 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

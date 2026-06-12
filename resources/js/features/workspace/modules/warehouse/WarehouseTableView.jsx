@@ -49,7 +49,7 @@ export default function WarehouseTableView({ config, onCreate, onOpenDetail }) {
                                 onChange={(event) => setInactiveFilter(event.target.value)}
                                 containerClassName="w-auto shrink-0"
                                 className="h-[40px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#394157]"
+                                selectClassName="text-xs sm:text-sm text-[#394157]"
                             >
                                 {filter.options.map((option) => (
                                     <option key={option.value} value={option.value}>

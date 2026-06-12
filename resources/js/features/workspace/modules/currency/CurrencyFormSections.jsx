@@ -5,8 +5,8 @@ import { currencyReferenceOptions } from '@/features/workspace/shared/referenceL
 
 function CurrencyFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,570px)] lg:items-start">
-            <label className="pt-2 text-[17px] leading-6 text-[#1f2436]">
+        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,570px)] lg:items-start">
+            <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
@@ -101,8 +101,8 @@ export function CurrencyGeneralSection({ config, values, setValues, isDetailMode
                         emptyDescription="Coba cari nama, kode, atau simbol mata uang."
                         renderOption={(option) => (
                             <div className="min-w-0">
-                                <div className="truncate text-[17px] text-[#131a28]">{option.name}</div>
-                                <div className="mt-1 text-[15px] text-[#1f2436]">
+                                <div className="truncate text-base text-[#131a28]">{option.name}</div>
+                                <div className="mt-1 text-xs sm:text-sm text-[#1f2436]">
                                     {option.currencyCode} {option.symbol}
                                 </div>
                             </div>
@@ -114,15 +114,15 @@ export function CurrencyGeneralSection({ config, values, setValues, isDetailMode
             {isDetailMode ? (
                 <>
                     <CurrencyFieldRow label={config.labels.code}>
-                        <div className="pt-2 text-[17px] font-semibold text-[#131a28]">{values.code}</div>
+                        <div className="pt-2 text-base font-semibold text-[#131a28]">{values.code}</div>
                     </CurrencyFieldRow>
 
                     <CurrencyFieldRow label={config.labels.symbol}>
-                        <div className="pt-2 text-[17px] font-semibold text-[#131a28]">{values.symbol}</div>
+                        <div className="pt-2 text-base font-semibold text-[#131a28]">{values.symbol}</div>
                     </CurrencyFieldRow>
 
                     <CurrencyFieldRow label="Kurs (ke IDR)">
-                        <div className="pt-2 text-[17px] font-semibold text-[#131a28]">
+                        <div className="pt-2 text-base font-semibold text-[#131a28]">
                             {values.exchangeRate ? `Rp ${Number(values.exchangeRate).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}` : '1.0000'}
                         </div>
                     </CurrencyFieldRow>

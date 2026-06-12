@@ -18,7 +18,7 @@ import { CloseIcon, PinIcon } from '@/features/workspace/shared/Icons';
 
 function PurchaseDepositCheckbox({ checked, label }) {
     return (
-        <label className="inline-flex items-center gap-3 text-[17px] text-[#1f2436]">
+        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
             <input
                 type="checkbox"
                 checked={checked}
@@ -35,7 +35,7 @@ export function PurchaseDepositProcessButton({ label, disabled = false }) {
         <button
             type="button"
             disabled={disabled}
-            className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-[15px] ${
+            className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-base ${
                 disabled
                     ? 'border-[#d8dbe2] bg-[#f3f3f4] text-[#a6adba]'
                     : 'border-[#7aa2d5] bg-white text-[#21539b]'
@@ -57,13 +57,13 @@ function PurchaseDepositSummaryCard({ title, rows }) {
                 {rows.map(([label, value]) =>
                     label === 'Status' ? (
                         <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#e6ebf2] px-4 py-2.5">
-                            <span className="text-[17px] text-[#1f2436]">{label}</span>
+                            <span className="text-xs sm:text-sm text-[#1f2436]">{label}</span>
                             <DepositStatusPill value={value} />
                         </div>
                     ) : (
                         <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#e6ebf2] px-4 py-2.5 last:border-b-0">
-                            <span className="text-[17px] text-[#1f2436]">{label}</span>
-                            <span className={`text-right text-[17px] ${label === 'Dicetak/email' ? 'font-semibold text-[#111827]' : 'text-[#111827]'}`.trim()}>
+                            <span className="text-xs sm:text-sm text-[#1f2436]">{label}</span>
+                            <span className={`text-right text-base ${label === 'Dicetak/email' ? 'font-semibold text-[#111827]' : 'text-[#111827]'}`.trim()}>
                                 {value}
                             </span>
                         </div>
@@ -77,7 +77,7 @@ function PurchaseDepositSummaryCard({ title, rows }) {
 export function PurchaseDepositHeader({ config, values, isDetail, setValues }) {
     return (
         <div className={`grid gap-6 ${isDetail ? 'xl:grid-cols-[minmax(0,1fr)_180px_minmax(0,0.92fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]'}`.trim()}>
-            <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.supplier} required />
                 <ChipLookupField values={values.supplier} placeholder="Cari/Pilih Pemasok..." onRemove={() => {}} searchLabel="Cari pemasok" />
 
@@ -91,12 +91,12 @@ export function PurchaseDepositHeader({ config, values, isDetail, setValues }) {
                         value={values.currency}
                         readOnly
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
             ) : null}
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                     {!isDetail ? (
@@ -122,7 +122,7 @@ export function PurchaseDepositHeader({ config, values, isDetail, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -136,7 +136,7 @@ export function PurchaseDepositHeader({ config, values, isDetail, setValues }) {
                         readOnly
                         trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                 )}
@@ -161,13 +161,13 @@ export function PurchaseDepositMainSection({ config, values, isDetail }) {
                 <section>
                     <TransactionSectionHeading title={config.depositTitle} icon="payment" />
 
-                    <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                    <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.purchaseOrderNumber} />
                         <TextInput
                             value={values.purchaseOrderNumber}
                             readOnly
                             className="h-[34px] rounded-[4px] border-[#9ce04f] bg-[#eef8e7]"
-                            inputClassName="text-[15px] text-[#4d9b1f]"
+                            inputClassName="text-xs sm:text-sm text-[#4d9b1f]"
                         />
 
                         <TransactionFieldLabel label={config.labels.orderTotal} />
@@ -175,7 +175,7 @@ export function PurchaseDepositMainSection({ config, values, isDetail }) {
                             value={values.orderTotal}
                             readOnly
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-right text-[15px] text-[#6b7280]"
+                            inputClassName="text-right text-xs sm:text-sm text-[#6b7280]"
                         />
 
                         <TransactionFieldLabel label={config.labels.depositAmount} required />
@@ -196,17 +196,17 @@ export function PurchaseDepositMainSection({ config, values, isDetail }) {
                     <section>
                         <TransactionSectionHeading title={config.taxInfoTitle} icon="tax" />
 
-                        <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                        <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.taxInvoiceDate} />
                             <TransactionDateInput value={values.taxInvoiceDate} className="max-w-none" />
 
                             <TransactionFieldLabel label={config.labels.taxTransactionType} />
-                            <SelectField value={values.taxTransactionType} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-[15px] text-[#1f2436]">
+                            <SelectField value={values.taxTransactionType} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                                 <option value={values.taxTransactionType}>{values.taxTransactionType}</option>
                             </SelectField>
 
                             <TransactionFieldLabel label={config.labels.taxTransactionDetail} />
-                            <SelectField value={values.taxTransactionDetail} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-[15px] text-[#1f2436]">
+                            <SelectField value={values.taxTransactionDetail} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                                 <option value={values.taxTransactionDetail}>{values.taxTransactionDetail}</option>
                             </SelectField>
 
@@ -216,7 +216,7 @@ export function PurchaseDepositMainSection({ config, values, isDetail }) {
                                 readOnly
                                 trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         </div>
@@ -237,7 +237,7 @@ export function PurchaseDepositAdditionalInfoSection({ config, values, isDetail 
             <section className="max-w-[860px]">
                 <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-                <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     {isDetail ? (
                         <>
                             <TransactionFieldLabel label={config.labels.supplierInvoiceNumber} required />
@@ -246,7 +246,7 @@ export function PurchaseDepositAdditionalInfoSection({ config, values, isDetail 
                                 readOnly
                                 trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         </>
@@ -288,7 +288,7 @@ export function PurchaseDepositInvoiceInfoSection({ config, values, isDetail }) 
             <div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
                 <PurchaseDepositSummaryCard title={config.invoiceInfoTitle} rows={values.summary} />
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                     <DepositLinkedRowsSection title={config.paymentHistoryTitle} icon="payment" rows={values.paymentHistoryRows} />
                     <DepositLinkedRowsSection title={config.usedDepositTitle} icon="receipt" rows={values.usedDepositRows} />
                 </div>

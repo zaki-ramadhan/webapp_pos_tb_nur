@@ -31,7 +31,7 @@ function TableFilterField({ filter, value, onChange }) {
             value={value}
             onChange={(event) => onChange(filter.id, event.target.value)}
             className="h-[40px] min-w-[110px] rounded-[4px] border-[#cfd6e2]"
-            selectClassName="text-[15px] text-[#1f2436]"
+            selectClassName="text-xs sm:text-sm text-[#1f2436]"
             containerClassName="w-auto"
         >
             {(filter.options ?? []).map((option) => (
@@ -155,13 +155,13 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                                 {config.table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveWorkOrderCellAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveWorkOrderCellAlignClassName(column.align)}`.trim()}
                                     >
                                         <span
                                             className={`flex items-center gap-2 ${
@@ -194,13 +194,13 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                                             })
                                         }
                                     >
-                                                                            <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                                                            <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
 {config.table.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`px-3 text-[15px] text-[#131a28] ${resolveWorkOrderCellAlignClassName(column.align)}`.trim()}
+                                                className={`px-3 text-base text-[#131a28] ${resolveWorkOrderCellAlignClassName(column.align)}`.trim()}
                                             >
                                                 {formatTableTextValue(row[column.id])}
                                             </DataTableCell>
@@ -211,7 +211,7 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                                 <DataTableRow className="border-[#dde1e8] bg-white">
                                     <DataTableCell
                                         colSpan={config.table.columns.length + 1}
-                                        className="px-3 py-3 text-center text-[15px] text-[#131a28]"
+                                        className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
                                         Belum ada data
                                     </DataTableCell>

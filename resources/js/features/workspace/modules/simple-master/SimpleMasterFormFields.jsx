@@ -14,7 +14,7 @@ function getFieldInfoTooltip(label) {
 
 export function FieldLabel({ field, className = '' }) {
     return (
-        <label className={`text-[17px] text-[#1f2436] ${className}`.trim()}>
+        <label className={`text-xs sm:text-sm text-[#1f2436] ${className}`.trim()}>
             {field.label}
             {field.required ? <span className="text-[#ED3969]"> *</span> : null}
             {field.info ? (
@@ -31,14 +31,14 @@ export function MasterFieldRow({ field, value, onChange }) {
     if (field.type === 'heading') {
         return (
             <div className={`pt-1 ${field.containerClassName ?? ''}`.trim()}>
-                <div className="text-[17px] font-semibold text-[#1f2436]">{field.label}</div>
+                <div className="text-base font-semibold text-[#1f2436]">{field.label}</div>
             </div>
         );
     }
 
     if (field.type === 'checkbox') {
         return (
-            <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,420px)] lg:items-center">
+            <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-center">
                 <FieldLabel field={field} />
                 <CheckboxField
                     id={field.id}
@@ -46,7 +46,7 @@ export function MasterFieldRow({ field, value, onChange }) {
                     checked={Boolean(value)}
                     onChange={(event) => onChange(field.id, event.target.checked)}
                     align="center"
-                    labelClassName="text-[16px] md:text-[17px]"
+                    labelClassName="text-base md:text-base"
                     inputClassName="mt-0 h-[18px] w-[18px]"
                     containerClassName={field.containerClassName ?? 'w-auto'}
                 />
@@ -56,15 +56,17 @@ export function MasterFieldRow({ field, value, onChange }) {
 
     if (field.type === 'textarea') {
         return (
-            <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,420px)] lg:items-start">
+            <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-start">
                 <FieldLabel field={field} className="pt-2" />
                 <div>
                     <TextareaField
+                        id={field.id}
+                        name={field.id}
                         value={value}
                         onChange={(event) => onChange(field.id, event.target.value)}
                         rows={field.rows ?? 3}
                         className={`rounded-[4px] border-[#cfd6e2] ${field.className ?? ''}`.trim()}
-                        textareaClassName={`text-[15px] text-[#1f2436] ${field.textareaClassName ?? ''}`.trim()}
+                        textareaClassName={`text-xs sm:text-sm text-[#1f2436] ${field.textareaClassName ?? ''}`.trim()}
                         containerClassName={field.containerClassName ?? ''}
                     />
                 </div>
@@ -74,15 +76,17 @@ export function MasterFieldRow({ field, value, onChange }) {
 
     if (field.type === 'lookup') {
         return (
-            <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,420px)] lg:items-center">
+            <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-center">
                 <FieldLabel field={field} />
                 <div>
                     <TextInput
+                        id={field.id}
+                        name={field.id}
                         value={value}
                         onChange={(event) => onChange(field.id, event.target.value)}
                         placeholder={field.placeholder ?? 'Cari/Pilih...'}
                         className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${field.className ?? ''}`.trim()}
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         containerClassName={field.containerClassName ?? ''}
                         trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
                         trailingClassName="px-3"
@@ -93,14 +97,16 @@ export function MasterFieldRow({ field, value, onChange }) {
     }
 
     return (
-        <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,420px)] lg:items-center">
+        <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-center">
             <FieldLabel field={field} />
             <div>
                 <TextInput
+                    id={field.id}
+                    name={field.id}
                     value={value}
                     onChange={(event) => onChange(field.id, event.target.value)}
                     className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${field.className ?? ''}`.trim()}
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     containerClassName={field.containerClassName ?? ''}
                     trailing={
                         field.clearable && value ? (
@@ -130,7 +136,7 @@ export function StandaloneCheckboxField({ field, value, onChange }) {
                 checked={Boolean(value)}
                 onChange={(event) => onChange(field.id, event.target.checked)}
                 align="center"
-                labelClassName="text-[16px] md:text-[17px]"
+                labelClassName="text-base md:text-base"
                 inputClassName="mt-0 h-[18px] w-[18px]"
                 containerClassName={field.containerClassName ?? 'w-auto'}
             />

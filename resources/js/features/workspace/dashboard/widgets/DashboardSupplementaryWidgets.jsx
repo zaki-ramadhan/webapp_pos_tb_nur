@@ -121,7 +121,7 @@ export function CashAvailabilityWidget({ widget }) {
                 <div className="min-w-0">
                     <MetricCaption>{widget.balanceLabel}</MetricCaption>
                     <div className="mt-2 flex items-baseline gap-2 flex-wrap">
-                        <p className="text-[18px] font-semibold leading-none text-[#1f2536] sm:text-[20px] md:text-[22px] xl:text-[24px]">
+                        <p className="text-lg font-semibold leading-none text-[#1f2536] sm:text-xl md:text-2xl xl:text-2xl">
                             {widget.balanceValue}
                         </p>
                         <TrendIndicator trend={widget.trend} growth={widget.growth} />
@@ -160,14 +160,14 @@ export function OrderStatusWidget({ widget }) {
         <div className="flex h-full flex-col gap-3">
             <div className="flex items-end justify-between gap-3 border-b border-[#edf1f6] pb-3 shrink-0">
                 <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-[#1f2536] sm:text-[15px] md:text-[17px]">{widget.primaryLabel}</p>
+                    <p className="text-sm font-semibold text-[#1f2536] sm:text-base md:text-base">{widget.primaryLabel}</p>
                 </div>
-                <p className="text-[16px] font-semibold leading-none text-[#111827] sm:text-[18px] md:text-[20px]">{widget.primaryValue}</p>
+                <p className="text-base font-semibold leading-none text-[#111827] sm:text-lg md:text-xl">{widget.primaryValue}</p>
             </div>
 
             <div className="flex-1 flex flex-col justify-center gap-3 min-h-0">
                 <div className="flex items-center gap-2">
-                    <p className="text-[14px] font-medium text-[#ff4f1f] sm:text-[15px] md:text-[16px]">{widget.statusTitle}</p>
+                    <p className="text-sm font-medium text-[#ff4f1f] sm:text-base md:text-base">{widget.statusTitle}</p>
                 </div>
 
                 <OrderStatusStackChart segments={segments} />
@@ -196,7 +196,7 @@ export function RecentActivityWidget({ widget }) {
                     <div key={item.id ?? index} className="flex gap-6 py-4 border-b border-[#edf1f6] last:border-b-0 first:pt-0">
                         <div className="flex flex-col items-center justify-center text-center min-w-[56px] shrink-0">
                             <span className="text-xs font-normal text-[#7c839b]">{item.dayName}</span>
-                            <span className="text-[32px] font-bold text-[#434a65] leading-none my-1">{item.dayNum}</span>
+                            <span className="text-4xl font-bold text-[#434a65] leading-none my-1">{item.dayNum}</span>
                             <span className="text-xs font-normal text-[#7c839b]">{item.monthName}</span>
                         </div>
 

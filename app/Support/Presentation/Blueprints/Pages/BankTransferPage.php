@@ -178,7 +178,7 @@ class BankTransferPage
                         ],
                     ],
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[190px]'],
+                        ['id' => 'number', 'label' => 'No. Transfer', 'widthClassName' => 'w-[190px]'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[120px]'],
                         ['id' => 'fromBank', 'label' => 'Bank (Keluar)', 'widthClassName' => 'w-[150px]'],
                         ['id' => 'toBank', 'label' => 'Bank (Masuk)', 'widthClassName' => 'w-[150px]'],

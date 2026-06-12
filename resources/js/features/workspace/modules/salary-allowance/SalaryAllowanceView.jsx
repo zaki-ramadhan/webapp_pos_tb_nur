@@ -30,7 +30,7 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
         return Object.values(mergedMap);
     }, [mappedBackendRows, optimisticRows]);
     const [isNewTabOpen, setIsNewTabOpen] = useState(true);
-    const [activeInnerTabId, setActiveInnerTabId] = useState('view');
+    const [activeInnerTabId, setActiveInnerTabId] = useState('new');
     const [openDetailTabIds, setOpenDetailTabIds] = useState([]);
     const [filters, setFilters] = useState(() =>
         config.table.filterOptions.reduce((result, filter) => {

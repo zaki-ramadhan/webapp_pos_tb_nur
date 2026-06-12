@@ -6,8 +6,8 @@ import { findLabelByValue } from './numberingShared';
 
 function NumberingFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[290px_minmax(0,420px)] lg:items-center">
-            <label className="text-[17px] text-[#1f2436]">
+        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,420px)] lg:items-center">
+            <label className="text-xs sm:text-sm text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
@@ -35,7 +35,7 @@ function NumberingComponentsBuilder({ form, values, onChange }) {
                         value={values.componentPicker}
                         onChange={(event) => onChange('componentPicker', event.target.value)}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {form.componentOptions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -58,7 +58,7 @@ function NumberingComponentsBuilder({ form, values, onChange }) {
             {selectedLabels.length ? (
                 <div className="flex flex-wrap gap-2">
                     {selectedLabels.map((label) => (
-                        <span key={label} className="inline-flex items-center rounded-[5px] border border-[#b8d1f1] bg-[#eef5ff] px-2.5 py-1 text-[13px] text-[#295089]">
+                        <span key={label} className="inline-flex items-center rounded-[5px] border border-[#b8d1f1] bg-[#eef5ff] px-2.5 py-1 text-sm text-[#295089]">
                             {label}
                         </span>
                     ))}
@@ -70,13 +70,13 @@ function NumberingComponentsBuilder({ form, values, onChange }) {
 
 export function NumberingGeneralTab({ form, values, onChange, preview }) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <NumberingFieldRow label="Nama" required>
-                <TextInput value={values.name} onChange={(event) => onChange('name', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
+                <TextInput value={values.name} onChange={(event) => onChange('name', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
             </NumberingFieldRow>
 
             <NumberingFieldRow label="Tipe Transaksi">
-                <SelectField value={values.transactionType} onChange={(event) => onChange('transactionType', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-[15px] text-[#1f2436]">
+                <SelectField value={values.transactionType} onChange={(event) => onChange('transactionType', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                     {form.transactionTypeOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
@@ -86,7 +86,7 @@ export function NumberingGeneralTab({ form, values, onChange, preview }) {
             </NumberingFieldRow>
 
             <NumberingFieldRow label="Tipe Penomoran">
-                <SelectField value={values.numberingType} onChange={(event) => onChange('numberingType', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-[15px] text-[#1f2436]">
+                <SelectField value={values.numberingType} onChange={(event) => onChange('numberingType', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                     {form.numberingTypeOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
@@ -100,7 +100,7 @@ export function NumberingGeneralTab({ form, values, onChange, preview }) {
                     value={values.counterDigits}
                     onChange={(event) => onChange('counterDigits', event.target.value.replace(/[^\d]/g, '').slice(0, 2))}
                     className="h-[40px] w-[106px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-right text-[15px] text-[#1f2436]"
+                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                 />
             </NumberingFieldRow>
 
@@ -109,7 +109,7 @@ export function NumberingGeneralTab({ form, values, onChange, preview }) {
             </NumberingFieldRow>
 
             <NumberingFieldRow label="Contoh hasil penomoran">
-                <div className="min-h-[24px] pt-1 text-[17px] font-semibold text-[#131a28]">{preview}</div>
+                <div className="min-h-[24px] pt-1 text-base font-semibold text-[#131a28]">{preview}</div>
             </NumberingFieldRow>
         </div>
     );
@@ -117,9 +117,9 @@ export function NumberingGeneralTab({ form, values, onChange, preview }) {
 
 export function NumberingUsersTab({ form, values, onChange }) {
     return (
-        <div className="space-y-5">
+        <div className="space-y-4">
             <div className="border-b border-[#d9dee8] pb-2.5">
-                <h3 className="text-[18px] font-medium text-[#1f2436]">{form.userAccess.title}</h3>
+                <h3 className="text-lg font-medium text-[#1f2436]">{form.userAccess.title}</h3>
             </div>
 
             <CheckboxField
@@ -128,7 +128,7 @@ export function NumberingUsersTab({ form, values, onChange }) {
                 checked={values.userScopeAll}
                 onChange={(event) => onChange('userScopeAll', event.target.checked)}
                 align="center"
-                labelClassName="text-[17px]"
+                labelClassName="text-base"
                 inputClassName="mt-0 h-[18px] w-[18px]"
             />
         </div>

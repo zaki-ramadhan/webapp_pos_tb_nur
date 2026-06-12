@@ -36,7 +36,7 @@ class JournalActivityLogPage
                     ],
                     'columns' => [
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[150px]'],
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[34%]'],
+                        ['id' => 'number', 'label' => 'No. Jurnal', 'widthClassName' => 'w-[34%]'],
                         ['id' => 'transactionNumber', 'label' => 'No. Trans #', 'widthClassName' => 'w-[34%]'],
                         ['id' => 'typeLabel', 'label' => 'Tipe Transaksi', 'widthClassName' => 'w-[260px]'],
                     ],

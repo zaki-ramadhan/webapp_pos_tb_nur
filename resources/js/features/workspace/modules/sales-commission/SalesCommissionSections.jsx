@@ -6,7 +6,7 @@ import TextareaField from '@/components/ui/TextareaField';
 function FormFieldRow({ label, required = false, align = 'center', children }) {
     return (
         <div className={`grid gap-3 lg:grid-cols-[440px_minmax(0,1fr)] ${align === 'start' ? 'lg:items-start' : 'lg:items-center'}`.trim()}>
-            <label className={`${align === 'start' ? 'pt-2' : ''} text-[17px] leading-[1.35] text-[#1f2436]`.trim()}>
+            <label className={`${align === 'start' ? 'pt-2' : ''} text-base leading-[1.35] text-[#1f2436]`.trim()}>
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
@@ -17,7 +17,7 @@ function FormFieldRow({ label, required = false, align = 'center', children }) {
 
 function RadioOption({ checked, label, onChange }) {
     return (
-        <label className="inline-flex items-center gap-3 text-[17px] text-[#1f2436]">
+        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
             <input
                 type="radio"
                 checked={checked}
@@ -45,7 +45,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
         }));
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <FormFieldRow label={config.labels.period}>
                 <div className="space-y-3">
                     {config.periodOptions.map((option) => (
@@ -64,7 +64,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                     value={values.name}
                     onChange={(event) => setValue('name', event.target.value)}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </FormFieldRow>
 
@@ -91,7 +91,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                             checked={values.orderSelections.includes(option.id)}
                             onChange={(event) => toggleOrderSelection(option.id, event.target.checked)}
                             align="center"
-                            labelClassName="text-[17px]"
+                            labelClassName="text-base"
                             inputClassName="mt-0 h-[18px] w-[18px]"
                             containerClassName="w-auto"
                         />
@@ -104,7 +104,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                     value={values.productScope}
                     onChange={(event) => setValue('productScope', event.target.value)}
                     className="h-[40px] max-w-[426px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.productScopeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -119,7 +119,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                     value={values.supplierScope}
                     onChange={(event) => setValue('supplierScope', event.target.value)}
                     className="h-[40px] max-w-[426px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.supplierScopeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -147,14 +147,14 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                             value={values.salesValueFrom}
                             onChange={(event) => setValue('salesValueFrom', event.target.value)}
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
-                        <div className="text-center text-[17px] text-[#1f2436]">s/d</div>
+                        <div className="text-center text-xs sm:text-sm text-[#1f2436]">s/d</div>
                         <TextInput
                             value={values.salesValueTo}
                             onChange={(event) => setValue('salesValueTo', event.target.value)}
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
@@ -168,14 +168,14 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                             value={values.quantityFrom}
                             onChange={(event) => setValue('quantityFrom', event.target.value)}
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
-                        <div className="text-center text-[17px] text-[#1f2436]">s/d</div>
+                        <div className="text-center text-xs sm:text-sm text-[#1f2436]">s/d</div>
                         <TextInput
                             value={values.quantityTo}
                             onChange={(event) => setValue('quantityTo', event.target.value)}
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
@@ -189,20 +189,20 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                             value={values.quantityUnit}
                             onChange={(event) => setValue('quantityUnit', event.target.value)}
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
-                        <div className="text-[17px] text-[#1f2436]">{config.conditionUnitLabel}</div>
+                        <div className="text-xs sm:text-sm text-[#1f2436]">{config.conditionUnitLabel}</div>
                     </div>
                 </div>
             </FormFieldRow>
 
             <FormFieldRow label={config.labels.reward} required>
-                <div className="grid gap-3 xl:grid-cols-[264px_270px_120px_420px] xl:items-center">
+                <div className="grid gap-3 xl:grid-cols-[170px_270px_120px_420px] xl:items-center">
                     <SelectField
                         value={values.rewardType}
                         onChange={(event) => setValue('rewardType', event.target.value)}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.rewardTypeOptions.map((option) => (
                             <option key={option} value={option}>
@@ -215,16 +215,16 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                         value={values.rewardValue}
                         onChange={(event) => setValue('rewardValue', event.target.value)}
                         className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-[15px] text-[#1f2436]"
+                        inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                     />
 
-                    <div className="text-center text-[17px] text-[#1f2436]">{config.rewardMiddleLabel}</div>
+                    <div className="text-center text-xs sm:text-sm text-[#1f2436]">{config.rewardMiddleLabel}</div>
 
                     <SelectField
                         value={values.rewardBase}
                         onChange={(event) => setValue('rewardBase', event.target.value)}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.rewardBaseOptions.map((option) => (
                             <option key={option} value={option}>
@@ -240,7 +240,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
 
 export function SalesCommissionOtherTab({ config, values, setValues }) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <FormFieldRow label={config.labels.notes} align="start">
                 <TextareaField
                     value={values.notes}
@@ -252,7 +252,7 @@ export function SalesCommissionOtherTab({ config, values, setValues }) {
                     }
                     rows={4}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[80px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[80px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </FormFieldRow>
 
@@ -268,7 +268,7 @@ export function SalesCommissionOtherTab({ config, values, setValues }) {
                         }))
                     }
                     align="center"
-                    labelClassName="text-[17px]"
+                    labelClassName="text-base"
                     inputClassName="mt-0 h-[18px] w-[18px]"
                     containerClassName="w-auto"
                 />

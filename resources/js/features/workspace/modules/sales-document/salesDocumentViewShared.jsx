@@ -23,7 +23,7 @@ export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
             {showTakeButton ? (
                 <button
                     type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                 >
                     {config.takeButtonLabel}
                 </button>
@@ -31,7 +31,7 @@ export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
             {showSecondaryHeaderAction ? (
                 <button
                     type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                 >
                     {secondaryActionLabel}
                 </button>
@@ -40,7 +40,7 @@ export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
                 <button
                     type="button"
                     disabled={values.processDisabled}
-                    className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-[15px] ${
+                    className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-base ${
                         values.processDisabled
                             ? 'border-[#d4d7de] bg-[#f0f0f1] text-[#b1b5bf]'
                             : 'border-[#7aa2d5] bg-white text-[#21539b]'
@@ -116,7 +116,7 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto"
                     className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {filter.options.map((option, optionIndex) => (

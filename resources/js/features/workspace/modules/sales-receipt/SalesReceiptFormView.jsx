@@ -65,7 +65,7 @@ export default function SalesReceiptFormView({
                     <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                         <div className="border-b border-[#d8dde7] px-4 py-4">
                             <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-                                <div className={`grid gap-y-3 ${isDetail ? 'sm:grid-cols-[170px_minmax(0,1fr)_180px]' : 'sm:grid-cols-[170px_minmax(0,1fr)]'} sm:items-center sm:gap-x-4`.trim()}>
+                                <div className={`grid gap-y-3 ${isDetail ? 'sm:grid-cols-[130px_minmax(0,1fr)_180px]' : 'sm:grid-cols-[130px_minmax(0,1fr)]'} sm:items-center sm:gap-x-4`.trim()}>
                                     <TransactionFieldLabel label={config.labels.customer} required />
                                     <ChipLookupField
                                         values={values.customer}
@@ -76,7 +76,7 @@ export default function SalesReceiptFormView({
                                     />
                                     {isDetail ? (
                                         <div className="max-w-[180px]">
-                                            <TextInput value={values.currency} readOnly className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
+                                            <TextInput value={values.currency} readOnly className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
                                         </div>
                                     ) : null}
 
@@ -105,7 +105,7 @@ export default function SalesReceiptFormView({
                                     {isDetail ? <div /> : null}
                                 </div>
 
-                                <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                                <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                                     <div className="flex items-center justify-start gap-4 sm:justify-end">
                                         <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                                         {!isDetail ? (
@@ -131,7 +131,7 @@ export default function SalesReceiptFormView({
                                                 }))
                                             }
                                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                            selectClassName="text-[15px] text-[#1f2436]"
+                                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                         >
                                             {config.numberingOptions.map((option) => (
                                                 <option key={option} value={option}>
@@ -150,7 +150,7 @@ export default function SalesReceiptFormView({
                                             }
                                             readOnly={Boolean(isDetail)}
                                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                            inputClassName="text-[15px] text-[#1f2436]"
+                                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                         />
                                     )}
 

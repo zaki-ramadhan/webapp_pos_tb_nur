@@ -50,7 +50,7 @@ function StockOpnameLookupField({ value, placeholder, readOnly = false, highligh
             placeholder={placeholder}
             trailing={readOnly ? null : <SearchIcon className="h-5 w-5 text-[#1f2436]" />}
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${highlighted ? 'border-[#97d868] bg-[#f5ffef]' : ''} ${className}`.trim()}
-            inputClassName={`text-[15px] ${highlighted ? 'font-semibold text-[#6baa2d]' : 'text-[#1f2436]'}`.trim()}
+            inputClassName={`text-xs sm:text-sm ${highlighted ? 'font-semibold text-[#6baa2d]' : 'text-[#1f2436]'}`.trim()}
             trailingClassName="px-3"
         />
     );
@@ -109,7 +109,7 @@ export function StockOpnameResultHeader({ config, values, setValues, isDetail })
                                 }
                                 containerClassName="w-full xl:w-[350px]"
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -121,9 +121,9 @@ export function StockOpnameResultHeader({ config, values, setValues, isDetail })
                             <TextInput
                                 value={values.number}
                                 readOnly
-                                trailing={isDetail ? <span className="text-[22px] font-semibold text-[#1f2436]">x</span> : null}
+                                trailing={isDetail ? <span className="text-2xl font-semibold text-[#1f2436]">x</span> : null}
                                 className="h-[40px] w-full rounded-[4px] border-[#cfd6e2] xl:w-[420px]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         )}
@@ -165,7 +165,7 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                         placeholder={config.itemSearchPlaceholder}
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2] lg:max-w-[560px]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
 
                     <SelectField
@@ -178,7 +178,7 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                         }
                         containerClassName="w-auto shrink-0"
                         className="h-[36px] min-w-[84px] rounded-[4px] border-[#7aa2d5]"
-                        selectClassName="px-3 text-[15px] text-[#21539b]"
+                        selectClassName="px-3 text-xs sm:text-sm text-[#21539b]"
                         iconClassName="mr-2 text-[#21539b]"
                     >
                         {(values.takeOptions?.length ? values.takeOptions : config.takeOptions).map((option) => (
@@ -193,7 +193,7 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                     <TransactionToolbarIconButton label={`Cari ${config.labels.itemDetails}`}>
                         <SearchIcon className="h-5 w-5 text-[#1f2436]" />
                     </TransactionToolbarIconButton>
-                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {values.resultCountLabel} <span className="text-[#ED3969]">*</span>
                     </div>
                 </div>
@@ -206,7 +206,7 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                             {config.itemTable.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -225,7 +225,7 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                                     {config.itemTable.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-3 text-[15px] text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                            className={`px-3 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -234,7 +234,7 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.itemTable.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={config.itemTable.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {config.itemTable.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
@@ -251,7 +251,7 @@ export function StockOpnameResultInfoSection({ config, values, setValues, isDeta
         <SectionCard className="min-h-[620px]">
             <TransactionSectionHeading title={config.infoSectionTitle} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[180px_minmax(0,560px)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[140px_minmax(0,560px)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField
                     value={values.notes}
@@ -264,7 +264,7 @@ export function StockOpnameResultInfoSection({ config, values, setValues, isDeta
                     }
                     rows={4}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
         </SectionCard>

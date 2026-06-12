@@ -74,7 +74,7 @@ export default function BudgetTransferTableView({ config, onCreate, onOpenDetail
                             onChange={(event) => setDateFilter(event.target.value)}
                             containerClassName="w-auto shrink-0"
                             className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-[15px] text-[#394157]"
+                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                             iconClassName="mr-2 text-[#6c7894]"
                         >
                             {config.table.filters[0].options.map((option) => (

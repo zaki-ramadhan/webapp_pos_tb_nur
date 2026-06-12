@@ -238,7 +238,7 @@ export default function SalesDepositFormView({
                         <section>
                             <TransactionSectionHeading title={config.depositTitle} icon="payment" />
 
-                            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                                 <TransactionFieldLabel label={config.labels.depositAmount} required />
                                 <div className="max-w-[320px]">
                                     <TextInput
@@ -257,7 +257,7 @@ export default function SalesDepositFormView({
                                             })
                                         }
                                         className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                        inputClassName="text-[15px] text-[#1f2436]"
+                                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                     />
                                 </div>
 
@@ -271,11 +271,11 @@ export default function SalesDepositFormView({
                                         }))
                                     }
                                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
 
                                 <TransactionFieldLabel label={config.labels.tax} />
-                                <div className="flex flex-wrap gap-8 text-[17px] text-[#1f2436]">
+                                <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-[#1f2436]">
                                     <label className="inline-flex items-center gap-3">
                                         <input
                                             type="checkbox"

@@ -9,7 +9,7 @@ import {
 export default function BankTransferHeader({ config, values, setValues, activeRecordId }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.entryDate} required />
                 <TransactionDateInput
                     value={values.entryDate}
@@ -18,7 +18,7 @@ export default function BankTransferHeader({ config, values, setValues, activeRe
                 />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                     {!activeRecordId ? (
@@ -34,7 +34,7 @@ export default function BankTransferHeader({ config, values, setValues, activeRe
                         value={values.numberingType}
                         onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -47,7 +47,7 @@ export default function BankTransferHeader({ config, values, setValues, activeRe
                         value={values.documentNumber}
                         onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 )}
             </div>

@@ -69,7 +69,7 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
                         onChange={(event) => setTypeFilter(event.target.value)}
                         containerClassName="w-auto"
                         className="h-[34px] min-w-[132px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="px-3 text-[15px] text-[#394157]"
+                        selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                         iconClassName="mr-2 text-[#6c7894]"
                     >
                         {table.filterOptions.map((option) => (
@@ -110,13 +110,13 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[45px] px-2 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[45px] px-2 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 py-2.5 text-[16px] font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`}
+                                    className={`${column.widthClassName ?? ''} px-3 py-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -134,13 +134,13 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
                                     }`.trim()}
                                     onClick={() => handleOpenRow(row)}
                                 >
-                                    <DataTableCell className="px-2 py-2.5 text-center text-[15px] text-[#646d83]">
+                                    <DataTableCell className="px-2 py-2.5 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-3 py-2.5 text-[15px] text-[#131a28] ${column.align === 'right' ? 'text-right' : 'text-left'}`}
+                                            className={`px-3 py-2.5 text-base text-[#131a28] ${column.align === 'right' ? 'text-right' : 'text-left'}`}
                                         >
                                             {row[column.id === 'percentage' ? 'percentage' : column.id === 'typeLabel' ? 'typeLabel' : 'description']}
                                         </DataTableCell>
@@ -149,7 +149,7 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {error || 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

@@ -24,19 +24,19 @@ export default function WorkOrderHeaderSection({ config, values, setValues, isDe
 
                 <div className="space-y-3">
                     {isDetail ? (
-                        <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                             <TextInput
                                 value={values.documentNumber}
                                 readOnly
-                                trailing={<span className="text-[22px] font-semibold text-[#1f2436]">x</span>}
+                                trailing={<span className="text-2xl font-semibold text-[#1f2436]">x</span>}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         </div>
                     ) : (
-                        <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
                                 <TransactionFieldLabel label={config.labels.documentNumber} required />
                                 <TransactionSwitch
@@ -59,7 +59,7 @@ export default function WorkOrderHeaderSection({ config, values, setValues, isDe
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -73,13 +73,13 @@ export default function WorkOrderHeaderSection({ config, values, setValues, isDe
                     <div className="flex flex-wrap justify-end gap-3">
                         <button
                             type="button"
-                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
                             {config.favoriteButtonLabel}
                         </button>
                         <button
                             type="button"
-                            className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
                             <span>{config.processButtonLabel}</span>
                             <ChevronDownIcon className="h-4 w-4" />

@@ -48,7 +48,7 @@ export default function PaymentTermsTableView({ page, onCreate, onOpenDetail }) 
                         onChange={(event) => setInactiveFilter(event.target.value)}
                         containerClassName="w-auto shrink-0"
                         className="h-[34px] min-w-[130px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="px-3 text-[15px] text-[#394157]"
+                        selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     >
                         {table.filterOptions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -90,11 +90,11 @@ export default function PaymentTermsTableView({ page, onCreate, onOpenDetail }) 
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {table.columns.map((column) => (
-                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
                                     <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : ''}`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span>{column.label}</span>
@@ -117,11 +117,11 @@ export default function PaymentTermsTableView({ page, onCreate, onOpenDetail }) 
                                     })
                                 }
                             >
-                                                                    <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
 {table.columns.map((column) => (
-                                    <DataTableCell key={column.id} className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}>
+                                    <DataTableCell key={column.id} className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}>
                                         {formatTableTextValue(row[column.id])}
                                     </DataTableCell>
                                 ))}

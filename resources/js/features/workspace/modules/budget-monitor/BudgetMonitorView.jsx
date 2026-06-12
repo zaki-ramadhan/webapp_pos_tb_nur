@@ -21,7 +21,7 @@ function MonitorSearchField({ value, onChange, placeholder }) {
             placeholder={placeholder}
             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-            inputClassName="text-[15px] text-[#1f2436]"
+            inputClassName="text-xs sm:text-sm text-[#1f2436]"
         />
     );
 }
@@ -33,7 +33,7 @@ function MonitorToolbar({ config, values, setValues }) {
                 value={values.type}
                 onChange={(event) => setValues((current) => ({ ...current, type: event.target.value }))}
                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                selectClassName="text-[15px] text-[#1f2436]"
+                selectClassName="text-xs sm:text-sm text-[#1f2436]"
             >
                 {config.typeOptions.map((option) => (
                     <option key={option} value={option}>
@@ -46,7 +46,7 @@ function MonitorToolbar({ config, values, setValues }) {
                 value={values.month}
                 onChange={(event) => setValues((current) => ({ ...current, month: event.target.value }))}
                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                selectClassName="text-[15px] text-[#1f2436]"
+                selectClassName="text-xs sm:text-sm text-[#1f2436]"
             >
                 {config.monthOptions.map((option) => (
                     <option key={option} value={option}>
@@ -59,7 +59,7 @@ function MonitorToolbar({ config, values, setValues }) {
                 value={values.year}
                 onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                selectClassName="text-[15px] text-[#1f2436]"
+                selectClassName="text-xs sm:text-sm text-[#1f2436]"
             >
                 {config.yearOptions.map((option) => (
                     <option key={option} value={option}>
@@ -120,7 +120,7 @@ export default function BudgetMonitorView({ page }) {
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-[15px] font-medium text-white ${
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${
                                         column.align === 'right' ? 'text-right' : 'text-center'
                                     }`.trim()}
                                 >
@@ -132,7 +132,7 @@ export default function BudgetMonitorView({ page }) {
 
                     <DataTableBody>
                         <DataTableRow className="bg-white">
-                            <DataTableCell colSpan={config.table.columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                            <DataTableCell colSpan={config.table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                                 {config.table.emptyLabel}
                             </DataTableCell>
                         </DataTableRow>

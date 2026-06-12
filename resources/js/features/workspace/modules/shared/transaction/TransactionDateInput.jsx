@@ -77,7 +77,7 @@ export default function TransactionDateInput({
     value,
     onChange,
     className = 'w-full max-w-full sm:max-w-[238px]',
-    inputClassName = 'text-[15px] text-[#1f2436]',
+    inputClassName = 'text-sm text-[#1f2436]',
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
     disabled = false,
     ariaLabel = 'Pilih tanggal',

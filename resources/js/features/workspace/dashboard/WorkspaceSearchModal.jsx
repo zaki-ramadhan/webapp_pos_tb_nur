@@ -74,10 +74,10 @@ function SearchMenuCard({ item, onSelect }) {
             aria-disabled={!isSelectable}
         >
             <NavigationIcon type={item.icon} className={`h-7 w-7 ${iconClassName}`.trim()} strokeWidth={1.65} />
-            <span className={`text-[14px] font-medium leading-5 ${labelClassName}`.trim()}>{item.label}</span>
+            <span className={`text-sm font-medium leading-5 ${labelClassName}`.trim()}>{item.label}</span>
             {statusLabel ? (
                 <span
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] ${
+                    className={`rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] ${
                         isInactive ? 'bg-[#f6dfab] text-[#8b6511]' : 'bg-[#dde2ea] text-[#7d8698]'
                     }`.trim()}
                 >
@@ -164,7 +164,7 @@ export default function WorkspaceSearchModal({
                             placeholder={modal.searchPlaceholder ?? 'Cari...'}
                             trailing={<SearchIcon className="h-5.5 w-5.5 text-[#7b859c]" />}
                             className="h-[50px] rounded-[20px] border-[#5a9ae5] shadow-[0_0_0_3px_rgba(90,154,229,0.12)]"
-                            inputClassName="text-[18px] text-[#1f2436]"
+                            inputClassName="text-lg text-[#1f2436]"
                         />
                     </div>
 
@@ -180,7 +180,7 @@ export default function WorkspaceSearchModal({
                 </div>
 
                 <div className="mt-4 sm:mt-6">
-                    <h2 className="text-center text-[17px] font-semibold text-[#20263a]">{sectionTitle}</h2>
+                    <h2 className="text-center text-base font-semibold text-[#20263a]">{sectionTitle}</h2>
 
                     {filteredItems.length ? (
                         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -197,8 +197,8 @@ export default function WorkspaceSearchModal({
                             title="Tidak ada hasil"
                             description={modal.emptyLabel ?? 'Tidak ada menu yang cocok dengan kata kunci tersebut.'}
                             className="mt-6 rounded-[8px] border-[#d6dce8] px-6 py-8"
-                            titleClassName="text-[15px] font-medium text-[#59637b]"
-                            descriptionClassName="mt-2 text-[13px] leading-5 text-[#778099]"
+                            titleClassName="text-base font-medium text-[#59637b]"
+                            descriptionClassName="mt-2 text-sm leading-5 text-[#778099]"
                         />
                     )}
                 </div>

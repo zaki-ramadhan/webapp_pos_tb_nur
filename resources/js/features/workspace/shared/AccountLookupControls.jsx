@@ -1,4 +1,5 @@
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { useFormError } from '@/components/ui/FormErrorContext';
 
 import useAccountLookupController, {
     buildAccountLookupLabel,
@@ -18,6 +19,10 @@ function normalizeInputValue(value) {
 }
 
 export function AccountLookupField({
+    id,
+    name,
+    error = '',
+    message = '',
     value = '',
     values = null,
     placeholder = 'Cari/Pilih Akun Perkiraan...',
@@ -31,6 +36,10 @@ export function AccountLookupField({
     onRemove = null,
     onSelectAccount = null,
 }) {
+    const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
+
     const controller = useAccountLookupController({ value, values, disabled });
     const isMultiValue = Array.isArray(values);
 
@@ -42,7 +51,10 @@ export function AccountLookupField({
                     values={values}
                     placeholder={placeholder}
                     searchLabel={searchLabel}
-                    onRemove={onRemove}
+                    onRemove={(val) => {
+                        onRemove?.(val);
+                        clearError(contextKey);
+                    }}
                     onSearch={disabled ? null : () => controller.openLookup('')}
                     disabled={disabled}
                     className={className}
@@ -50,6 +62,7 @@ export function AccountLookupField({
                     chipClassName={chipClassName}
                     heightClassName={heightClassName}
                     searching={controller.loading && controller.open}
+                    error={Boolean(resolvedError)}
                 />
             ) : (
                 <AccountLookupSearchInput
@@ -58,20 +71,21 @@ export function AccountLookupField({
                     placeholder={placeholder}
                     searchLabel={searchLabel}
                     disabled={disabled}
-                    className={`${heightClassName} rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-[#e39191]' : 'border-[#cfd6e2]'} ${className}`.trim()}
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     trailingClassName="gap-1 pr-2"
                     loading={controller.loading && controller.open}
                     onFocus={controller.handleInputFocus}
                     onChange={controller.handleInputChange}
+                    error={Boolean(resolvedError)}
                     onClear={() =>
                         controller.handleRemove((clearedValue) => {
                             if (onRemove) {
                                 onRemove(clearedValue);
-                                return;
+                            } else {
+                                onSelectAccount?.(null, '');
                             }
-
-                            onSelectAccount?.(null, '');
+                            clearError(contextKey);
                         })
                     }
                 />
@@ -85,9 +99,18 @@ export function AccountLookupField({
                 error={controller.error}
                 rows={controller.rows}
                 selectedLabels={controller.selectedLabels}
-                onSelectAccount={(record, label) => controller.handleSelect(record, label, onSelectAccount)}
+                onSelectAccount={(record, label) => {
+                    controller.handleSelect(record, label, onSelectAccount);
+                    clearError(contextKey);
+                }}
                 showInlineSearch={isMultiValue}
             />
+
+            {feedbackMessage ? (
+                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-[#d65959]">
+                    {feedbackMessage}
+                </p>
+            ) : null}
         </div>
     );
 }
@@ -99,7 +122,7 @@ export function AccountLookupTextInput({
     dialogTitle = 'Pilih Akun Perkiraan',
     disabled = false,
     className = 'h-[40px] rounded-[4px] border-[#cfd6e2]',
-    inputClassName = 'text-[15px] text-[#1f2436]',
+    inputClassName = 'text-xs sm:text-sm text-[#1f2436]',
     trailingClassName = '',
     onSelectAccount = null,
 }) {

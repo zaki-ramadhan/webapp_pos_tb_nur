@@ -78,7 +78,7 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                                 }
                                 containerClassName="w-auto shrink-0"
                                 className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2] sm:min-w-[154px]"
-                                selectClassName="text-[14px] text-[#394157]"
+                                selectClassName="text-xs sm:text-sm text-[#394157]"
                             >
                                 {filter.options.map((option) => (
                                     <option key={option.value} value={option.value}>
@@ -120,13 +120,13 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                 <DataTable className="min-w-[1460px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-[15px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -142,11 +142,11 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                                     className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer' : ''}`.trim()}
                                     onClick={onOpenDetail ? () => onOpenDetail({ recordId: String(row.id), label: row.tabLabel ?? row.name, tabLabel: row.tabLabel ?? row.name }) : undefined}
                                 >
-                                    <DataTableCell className="px-2.5 text-center text-[15px] text-[#646d83]">{index + 1}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">{index + 1}</DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-[15px] text-[#131a28] ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
+                                            className={`px-2.5 text-base text-[#131a28] ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -155,7 +155,7 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-4 text-center text-[15px] text-[#6b7280]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-4 text-center text-base text-[#6b7280]">
                                     {table.loading ? 'Memuat data...' : table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

@@ -57,7 +57,7 @@ export default function AttachmentUploadField({
     return (
         <div className="space-y-3">
             {label && (
-                <span className="block text-[15px] font-medium text-[#4f5678]">
+                <span className="block text-base font-medium text-[#4f5678]">
                     {label}
                 </span>
             )}
@@ -79,7 +79,7 @@ export default function AttachmentUploadField({
                             ) : (
                                 <div className="flex flex-col items-center p-2 text-center">
                                     <PaperclipIcon className="h-6 w-6 text-[#64748b]" />
-                                    <span className="mt-1 block max-w-full truncate text-[10px] text-[#475569]">
+                                    <span className="mt-1 block max-w-full truncate text-xs text-[#475569]">
                                         {item.file_name}
                                     </span>
                                 </div>
@@ -100,13 +100,13 @@ export default function AttachmentUploadField({
                 {(!multiple && currentList.length > 0) ? null : (
                     <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-[8px] border-2 border-dashed border-[#cfd6e2] bg-white transition hover:border-[#1564d7] hover:bg-[#f8fafc]">
                         {uploading ? (
-                            <span className="text-[12px] text-[#4f5678] animate-pulse">
+                            <span className="text-xs text-[#4f5678] animate-pulse">
                                 Mengunggah...
                             </span>
                         ) : (
                             <>
                                 <PlusIcon className="h-6 w-6 text-[#64748b]" />
-                                <span className="mt-1 block text-[11px] font-medium text-[#64748b]">
+                                <span className="mt-1 block text-xs font-medium text-[#64748b]">
                                     Pilih File
                                 </span>
                             </>
@@ -124,7 +124,7 @@ export default function AttachmentUploadField({
             </div>
 
             {error && (
-                <p className="text-[13px] text-[#db3e3e]">
+                <p className="text-sm text-[#db3e3e]">
                     {error}
                 </p>
             )}

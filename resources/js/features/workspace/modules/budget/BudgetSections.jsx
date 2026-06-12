@@ -11,14 +11,14 @@ import {
 export function BudgetHeader({ config, values, setValues }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.month} required />
                 <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_154px]">
                     <SelectField
                         value={values.month}
                         onChange={(event) => setValues((current) => ({ ...current, month: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.monthOptions.map((option) => (
                             <option key={option} value={option}>
@@ -31,7 +31,7 @@ export function BudgetHeader({ config, values, setValues }) {
                         value={values.year}
                         onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.yearOptions.map((option) => (
                             <option key={option} value={option}>
@@ -46,7 +46,7 @@ export function BudgetHeader({ config, values, setValues }) {
                     value={values.type}
                     onChange={(event) => setValues((current) => ({ ...current, type: event.target.value }))}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.typeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -56,7 +56,7 @@ export function BudgetHeader({ config, values, setValues }) {
                 </SelectField>
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[190px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.branch} required className="sm:text-right" />
                 <ChipLookupField
                     value={values.branches[0] ?? ''}
@@ -71,13 +71,13 @@ export function BudgetHeader({ config, values, setValues }) {
 export function BudgetInfoSection({ config, values, setValues }) {
     return (
         <div className="min-h-[540px]">
-            <div className="mt-4 grid gap-4 lg:grid-cols-[250px_minmax(0,570px)] lg:items-start">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
                 <TransactionFieldLabel label={config.labels.notes} />
                 <textarea
                     value={values.notes}
                     onChange={(event) => setValues((current) => ({ ...current, notes: event.target.value }))}
                     rows={4}
-                    className="min-h-[60px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="min-h-[60px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                 />
 
                 <TransactionFieldLabel label={config.labels.analyzer} />
@@ -85,7 +85,7 @@ export function BudgetInfoSection({ config, values, setValues }) {
                     value={values.analyzer}
                     onChange={(event) => setValues((current) => ({ ...current, analyzer: event.target.value }))}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
         </div>
@@ -101,7 +101,7 @@ export function BudgetLinesSection({ config, values, setValues }) {
                         value={values.keyword}
                         placeholder={config.accountPlaceholder}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2] sm:max-w-[590px]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         dialogTitle="Pilih Akun Anggaran"
                         searchLabel="Cari akun anggaran"
                         onSelectAccount={(_, label) =>
@@ -114,14 +114,14 @@ export function BudgetLinesSection({ config, values, setValues }) {
 
                     <button
                         type="button"
-                        className="inline-flex h-[38px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[16px] text-[#21539b]"
+                        className="inline-flex h-[38px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                     >
                         {config.takeButtonLabel}
                         <ChevronDownIcon className="h-4 w-4" />
                     </button>
                 </div>
 
-                <div className="text-right text-[24px] font-normal text-[#1f2436]">
+                <div className="text-right text-2xl font-normal text-[#1f2436]">
                     {config.gridTitle} <span className="text-[#ED3969]">*</span>
                 </div>
             </div>

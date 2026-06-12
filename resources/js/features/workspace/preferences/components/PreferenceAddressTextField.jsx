@@ -13,7 +13,7 @@ export default function PreferenceAddressTextField({ field, value, onChange, cla
             error={field.error}
             message={field.message}
             prefix={field.label}
-            prefixClassName="min-w-[62px] border-[#d8dde7] px-3 text-[14px] md:text-[15px] text-[#7b8597]"
+            prefixClassName="min-w-[62px] border-[#d8dde7] px-3 text-xs sm:text-sm text-[#7b8597]"
             trailing={
                 field.clearable && !readOnly && Boolean(value ?? field.value) ? (
                     <button
@@ -30,7 +30,7 @@ export default function PreferenceAddressTextField({ field, value, onChange, cla
             className={`h-[34px] rounded-[3px] border-[#d8dde7] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] ${
                 readOnly ? 'bg-[#f8f8f8]' : ''
             } ${className}`.trim()}
-            inputClassName={`text-[14px] md:text-[15px] text-[#1f2436] ${readOnly ? 'text-[#6a7388]' : ''}`}
+            inputClassName={`text-xs sm:text-sm text-[#1f2436] ${readOnly ? 'text-[#6a7388]' : ''}`}
         />
     );
 }

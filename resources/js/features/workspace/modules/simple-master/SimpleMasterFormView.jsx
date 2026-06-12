@@ -18,6 +18,7 @@ import {
 } from '@/features/workspace/shared/crudFeedback';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
+import { rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import { MasterFieldRow, StandaloneCheckboxField } from './SimpleMasterFormFields';
 import {
@@ -109,8 +110,18 @@ export default function SimpleMasterFormView({
         }
 
         if (validationMessage) {
-            setStatus({ tone: 'error', message: validationMessage });
-            showCrudValidationToast(validationMessage);
+            const requiredFields = (form.fields ?? [])
+                .filter((field) => field.required && field.type !== 'heading' && field.type !== 'checkbox');
+            const fieldErrors = {};
+            requiredFields.forEach((field) => {
+                const val = values[field.id];
+                const isEmpty = field.type === 'lookup' ? !val : !String(val ?? '').trim();
+                if (isEmpty) {
+                    fieldErrors[field.id] = `${field.label} wajib diisi.`;
+                }
+            });
+
+            rejectCrudFormAction(validationMessage, { setStatus, fieldErrors });
             return;
         }
 
@@ -179,16 +190,16 @@ export default function SimpleMasterFormView({
 
     return (
         <>
-            <div className="relative flex min-h-full flex-col">
-                <div className="px-1 pt-0.5">
+            <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
+                <div className="px-1 pt-0.5 shrink-0">
                     <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
                 </div>
 
-                <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
-                    <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
-                        <CrudStatusMessage status={status} />
+                <div className="flex flex-1 min-h-0 flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden xl:px-4 xl:py-4">
+                    <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {(form.fields ?? []).map((field) => (
                                 field.standalone ? (
                                     <StandaloneCheckboxField
@@ -209,7 +220,7 @@ export default function SimpleMasterFormView({
                         </div>
                     </div>
 
-                    <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col">
+                    <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col lg:self-start">
                         {buildSimpleMasterDockActions(form, isDetailMode).map((action) => (
                             <DockActionButton
                                 key={action.id}

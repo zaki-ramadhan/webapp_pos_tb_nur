@@ -24,19 +24,23 @@ export default function NumberingFormView({ form }) {
     }
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-            <PreferencesTabs tabs={form.tabs} activeTabId={activeTabId} onSelectTab={setActiveTabId} className="border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] sm:px-2" />
+        <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+            <div className="shrink-0">
+                <PreferencesTabs tabs={form.tabs} activeTabId={activeTabId} onSelectTab={setActiveTabId} className="border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] sm:px-2" />
+            </div>
 
-            <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 xl:flex-row xl:items-start">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
-                    {activeTabId === 'numbering-users' ? (
-                        <NumberingUsersTab form={form} values={values} onChange={handleChange} />
-                    ) : (
-                        <NumberingGeneralTab form={form} values={values} onChange={handleChange} preview={preview} />
-                    )}
+            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 xl:flex-row xl:items-stretch overflow-hidden">
+                <div className="order-2 min-w-0 flex-1 xl:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+                    <div className="flex-1 min-h-0 flex flex-col">
+                        {activeTabId === 'numbering-users' ? (
+                            <NumberingUsersTab form={form} values={values} onChange={handleChange} />
+                        ) : (
+                            <NumberingGeneralTab form={form} values={values} onChange={handleChange} preview={preview} />
+                        )}
+                    </div>
                 </div>
 
-                <div className="flex justify-end xl:shrink-0">
+                <div className="order-1 flex justify-end xl:order-2 xl:shrink-0 xl:self-start">
                     <DockSaveButton label={form.saveLabel} />
                 </div>
             </div>

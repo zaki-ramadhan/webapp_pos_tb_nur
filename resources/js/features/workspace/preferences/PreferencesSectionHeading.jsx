@@ -8,7 +8,7 @@ export default function PreferencesSectionHeading({ icon, title }) {
                     type={icon}
                     className="h-6 w-6 shrink-0 text-current sm:h-7 sm:w-7"
                 />
-                <h3 className="text-[16px] font-normal tracking-[-0.01em] sm:text-[17px] md:text-[18px]">
+                <h3 className="text-base font-normal tracking-[-0.01em] sm:text-base md:text-lg">
                     {title}
                 </h3>
             </div>

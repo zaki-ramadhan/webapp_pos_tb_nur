@@ -13,8 +13,8 @@ export default function PreferenceCityAutocomplete({ field, value, onChange, onS
             error={field.error}
             message={field.message}
             className="h-[34px] rounded-[3px] border-[#d8dde7] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]"
-            prefixClassName="min-w-[62px] border-[#d8dde7] px-3 text-[14px] md:text-[15px] text-[#7b8597]"
-            inputClassName="text-[14px] md:text-[15px] text-[#1f2436]"
+            prefixClassName="min-w-[62px] border-[#d8dde7] px-3 text-xs sm:text-sm text-[#7b8597]"
+            inputClassName="text-xs sm:text-sm text-[#1f2436]"
         />
     );
 }

@@ -17,13 +17,13 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 export function PayrollHeader({ config, values, setValues }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[250px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.paymentType} />
                 <SelectField
                     value={values.paymentType}
                     onChange={(event) => setValues((current) => ({ ...current, paymentType: event.target.value }))}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.paymentTypeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -51,7 +51,7 @@ export function PayrollHeader({ config, values, setValues }) {
                         value={values.month}
                         onChange={(event) => setValues((current) => ({ ...current, month: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.monthOptions.map((option) => (
                             <option key={option} value={option}>
@@ -64,7 +64,7 @@ export function PayrollHeader({ config, values, setValues }) {
                         value={values.year}
                         onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.yearOptions.map((option) => (
                             <option key={option} value={option}>
@@ -75,7 +75,7 @@ export function PayrollHeader({ config, values, setValues }) {
                 </div>
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center gap-4">
                     <TransactionFieldLabel label={config.labels.numbering} required />
                     <TransactionSwitch
@@ -92,7 +92,7 @@ export function PayrollHeader({ config, values, setValues }) {
                     value={values.numberingType}
                     onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.numberingOptions.map((option) => (
                         <option key={option} value={option}>
@@ -118,7 +118,7 @@ export function PayrollHeader({ config, values, setValues }) {
                     <button
                         type="button"
                         disabled
-                        className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#d3d7df] bg-[#f3f3f4] px-3 text-[15px] text-[#b1b5be]"
+                        className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#d3d7df] bg-[#f3f3f4] px-3 text-base text-[#b1b5be]"
                     >
                         {config.processButtonLabel}
                     </button>
@@ -139,13 +139,13 @@ export function PayrollEmployeeSection({ config, values }) {
                         placeholder={config.employeeLookupPlaceholder}
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2] sm:max-w-[590px]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
 
-                    <TransactionHeaderButton label={config.takeButtonLabel} className="h-[38px] px-4 text-[16px]" />
+                    <TransactionHeaderButton label={config.takeButtonLabel} className="h-[38px] px-4 text-base" />
                 </div>
 
-                <div className="text-right text-[24px] font-normal text-[#1f2436]">
+                <div className="text-right text-2xl font-normal text-[#1f2436]">
                     {config.employeeSectionTitle} <span className="text-[#ED3969]">*</span>
                 </div>
             </div>
@@ -181,7 +181,7 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="form" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[250px_minmax(0,570px)] lg:items-start">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
                 <TransactionFieldLabel label={config.additionalInfoFields.liabilityAccountLabel} required />
                 <AccountLookupField
                     values={values.liabilityAccounts}
@@ -212,7 +212,7 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
                         }))
                     }
                     rows={4}
-                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                 />
             </div>
         </div>

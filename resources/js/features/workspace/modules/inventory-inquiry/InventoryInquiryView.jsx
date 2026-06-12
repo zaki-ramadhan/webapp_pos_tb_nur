@@ -59,7 +59,7 @@ function InquiryTextButton({ label, tone = 'default' }) {
     return (
         <button
             type="button"
-            className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-[15px] ${
+            className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-base ${
                 tone === 'primary'
                     ? 'border-[#7aa2d5] bg-[#f0f6ff] text-[#2353a0]'
                     : 'border-[#7aa2d5] bg-white text-[#2353a0]'
@@ -78,7 +78,7 @@ function InquiryControl({ control, value, onChange, onRefresh }) {
                 onChange={(event) => onChange(control.id, event.target.value)}
                 containerClassName="w-auto shrink-0"
                 className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                selectClassName="text-[15px] text-[#1f2436]"
+                selectClassName="text-xs sm:text-sm text-[#1f2436]"
             >
                 {(control.options ?? []).map((option) => (
                     <option key={option.value} value={option.value}>
@@ -95,7 +95,7 @@ function InquiryControl({ control, value, onChange, onRefresh }) {
                 value={value}
                 onChange={(nextValue) => onChange(control.id, nextValue)}
                 className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                inputClassName="text-[15px] text-[#1f2436]"
+                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 trailingClassName="w-[42px] shrink-0 justify-center px-0"
             />
         );
@@ -116,7 +116,7 @@ function InquiryControl({ control, value, onChange, onRefresh }) {
             placeholder={control.placeholder ?? ''}
             trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            inputClassName="text-[15px] text-[#1f2436]"
+            inputClassName="text-xs sm:text-sm text-[#1f2436]"
             trailingClassName="px-3"
         />
     );
@@ -196,7 +196,7 @@ export default function InventoryInquiryView({
                             placeholder={config.search.placeholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
                             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${config.search.className ?? ''}`.trim()}
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailingClassName="px-3"
                         />
                     </div>
@@ -204,7 +204,7 @@ export default function InventoryInquiryView({
             </div>
 
             {error ? (
-                <div className="mt-3 rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-[14px] text-[#a33939]">
+                <div className="mt-3 rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-sm text-[#a33939]">
                     {error}
                 </div>
             ) : null}
@@ -218,7 +218,7 @@ export default function InventoryInquiryView({
                                 return (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
                                         {column.kind === 'checkbox' ? (
@@ -242,7 +242,7 @@ export default function InventoryInquiryView({
                                     {cleanedColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-[15px] text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                            className={`px-2.5 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
                                         >
                                             {column.kind === 'checkbox' ? (
                                                 <span className="inline-flex h-[18px] w-[18px] rounded-[4px] border border-[#cfd6e2] bg-white" />
@@ -260,7 +260,7 @@ export default function InventoryInquiryView({
                                 ) : null}
                                 <DataTableCell
                                     colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
-                                    className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
+                                    className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>

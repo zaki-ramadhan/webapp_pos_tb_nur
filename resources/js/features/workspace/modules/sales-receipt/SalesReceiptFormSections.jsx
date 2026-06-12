@@ -76,14 +76,14 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                             placeholder="Cari/Pilih..."
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
                     {isDetail ? (
                         <button
                             type="button"
-                            className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                             onClick={handlers.onSelectInvoice}
                         >
                             Ambil
@@ -95,7 +95,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                     <TransactionToolbarIconButton label="Cari faktur" className="h-[40px] w-[40px]" onClick={handlers.onSelectInvoice}>
                         <SearchIcon className="h-5 w-5 text-[#2353a0]" />
                     </TransactionToolbarIconButton>
-                    <div className="text-right text-[24px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {buildInvoiceSectionTitle(
                             config.sectionTabs?.find((tab) => tab.id === 'details')?.label ?? 'Faktur',
                             values.invoices.length,
@@ -112,7 +112,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                             {config.invoiceTable.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
                                         column.align === 'right'
                                             ? 'text-right'
                                             : column.align === 'center'
@@ -148,7 +148,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                     {config.invoiceTable.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
                                         >
                                             {column.id === 'spacer' ? (
                                                 <span className="inline-flex items-center justify-center text-[#a8afbe]">
@@ -170,7 +170,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                 </DataTableCell>
                                 <DataTableCell
                                     colSpan={config.invoiceTable.columns.length - 1}
-                                    className="px-2.5 py-6 text-center text-[15px] text-[#7d879a]"
+                                    className="px-2.5 py-6 text-center text-base text-[#7d879a]"
                                 >
                                     {config.invoiceTable.emptyLabel}
                                 </DataTableCell>
@@ -190,7 +190,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
         <section className="min-h-[540px]">
             <TransactionSectionHeading title={config.sectionTabs?.find((tab) => tab.id === 'additional-info')?.label ?? 'Info lainnya'} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.paymentMethod} />
                 <div className={`grid gap-4 ${isCheckPayment ? 'lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]' : ''}`.trim()}>
                     <SelectField
@@ -202,7 +202,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {['Tunai', 'Cek/Giro'].map((option) => (
                             <option key={option} value={option}>
@@ -220,9 +220,9 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                                     checkNumber: event.target.value,
                                 }))
                             }
-                            trailing={isDetail ? <span className="text-[18px] font-semibold text-[#1f2436]">×</span> : null}
+                            trailing={isDetail ? <span className="text-lg font-semibold text-[#1f2436]">×</span> : null}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailingClassName="px-3"
                         />
                     ) : null}
@@ -240,7 +240,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                 {isDetail ? (
                     <>
                         <TransactionFieldLabel label={config.labels.voided} />
-                        <label className="inline-flex h-[34px] items-center gap-2 text-[17px] text-[#1f2436]">
+                        <label className="inline-flex h-[34px] items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
                             <input
                                 type="checkbox"
                                 checked={values.voided}
@@ -277,20 +277,20 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                         }))
                     }
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
                 />
 
                 {isDetail ? (
                     <>
                         <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                        <div className="pt-1 text-[17px] italic text-[#1f2436]">{values.reconcileStatus || 'Belum'}</div>
+                        <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus || 'Belum'}</div>
 
                         <TransactionFieldLabel label={config.labels.printStatus} />
                         <TextInput
                             value={values.printStatus}
                             readOnly
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#5f6779]"
+                            inputClassName="text-xs sm:text-sm text-[#5f6779]"
                         />
                     </>
                 ) : null}

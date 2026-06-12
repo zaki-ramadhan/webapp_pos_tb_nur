@@ -26,7 +26,7 @@ function getSalesInfo(id, label) {
 function SalesInlineCheckboxRow({ row, onToggle }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="text-[14px] md:text-[15px] leading-6 text-[#0f172a]">
+            <div className="text-xs sm:text-sm leading-6 text-[#0f172a]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
                     <Tooltip content={getSalesInfo(row.id, row.label)} portal>
@@ -43,9 +43,9 @@ function SalesInlineCheckboxRow({ row, onToggle }) {
                     disabled={Boolean(row.option?.disabled)}
                     size="sm"
                     align="center"
-                    label={<span className="text-[14px] md:text-[15px]">{row.option?.label}</span>}
+                    label={<span className="text-xs sm:text-sm">{row.option?.label}</span>}
                     className="gap-3"
-                    labelClassName="text-[14px] md:text-[15px] leading-6"
+                    labelClassName="text-xs sm:text-sm leading-6"
                     inputClassName="rounded-[5px] border-[#b6c1d1]"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />
@@ -57,7 +57,7 @@ function SalesInlineCheckboxRow({ row, onToggle }) {
 function SalesRadioGroupRow({ row, onChange }) {
     return (
         <div className="space-y-2">
-            <div className="text-[14px] md:text-[15px] font-semibold leading-6 text-[#111827]">
+            <div className="text-xs sm:text-sm font-semibold leading-6 text-[#111827]">
                 <span className="whitespace-pre-line">{row.label}</span>
             </div>
 
@@ -73,12 +73,12 @@ function SalesRadioGroupRow({ row, onChange }) {
                         containerClassName="w-auto"
                         align="center"
                         label={
-                            <span className="whitespace-pre-line text-[14px] md:text-[15px] leading-6">
+                            <span className="whitespace-pre-line text-xs sm:text-sm leading-6">
                                 {option.label}
                             </span>
                         }
                         className="gap-3"
-                        labelClassName="text-[14px] md:text-[15px] leading-6"
+                        labelClassName="text-xs sm:text-sm leading-6"
                         onChange={() => onChange(row.id, option.value)}
                     />
                 ))}
@@ -97,12 +97,12 @@ function SalesCheckboxRow({ row, onToggle }) {
                 size="sm"
                 align="center"
                 label={
-                    <span className="whitespace-pre-line text-[14px] md:text-[15px] leading-6">
+                    <span className="whitespace-pre-line text-xs sm:text-sm leading-6">
                         {row.option?.label}
                     </span>
                 }
                 className="gap-3"
-                labelClassName="text-[14px] md:text-[15px] leading-6"
+                labelClassName="text-xs sm:text-sm leading-6"
                 inputClassName="rounded-[5px] border-[#b6c1d1]"
                 onChange={(event) => onToggle(row.id, event.target.checked)}
             />
@@ -113,7 +113,7 @@ function SalesCheckboxRow({ row, onToggle }) {
 function SalesGridFieldRow({ row, onChangeControl }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="text-[14px] md:text-[15px] leading-6 text-[#111827]">
+            <div className="text-xs sm:text-sm leading-6 text-[#111827]">
                 <span>{row.label}</span>
             </div>
 
@@ -263,7 +263,7 @@ export default function PreferencesSalesView({
             tabs={tabs}
             activeTabId={activeTab.id}
             onSelectTab={onSelectTab}
-            panelClassName={`max-w-[760px] space-y-6 ${activeTab.contentClassName ?? ''}`.trim()}
+            panelClassName={`max-w-[760px] space-y-4 ${activeTab.contentClassName ?? ''}`.trim()}
         >
             {(activeTab.sections ?? []).map((section) => (
                 <SalesSection

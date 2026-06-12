@@ -212,7 +212,7 @@ export default function SidebarFlyout({
                 style={panelMaxHeight ? { maxHeight: `${panelMaxHeight}px` } : undefined}
             >
                 <div className={`shrink-0 ${isDense ? 'pb-1.5' : 'pb-2'}`.trim()}>
-                    <h3 className={`font-medium text-[#555b76] ${isDense ? 'text-[15px] sm:text-[16px] md:text-[17px]' : 'text-[16px] sm:text-[17px] md:text-[19px]'}`.trim()}>{title}</h3>
+                    <h3 className={`font-medium text-[#555b76] ${isDense ? 'text-base sm:text-base md:text-base' : 'text-base sm:text-base md:text-lg'}`.trim()}>{title}</h3>
                     <div className={`h-[3px] w-full bg-[#ED3969] ${isDense ? 'mt-1.5' : 'mt-2'}`.trim()} />
                 </div>
 

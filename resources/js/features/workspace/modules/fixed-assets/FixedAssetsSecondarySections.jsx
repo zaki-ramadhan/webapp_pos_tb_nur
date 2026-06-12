@@ -27,7 +27,7 @@ export function FixedAssetsAdditionalInfoSection({ config, values, setValues, is
             <TransactionSectionHeading title="Info lainnya" icon="info" />
 
             <div className="mt-5 grid gap-5 xl:grid-cols-2 xl:gap-x-9">
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <FixedAssetFieldRow label={config.labels.category} required>
                         <FixedAssetLookupField values={values.category} placeholder="Cari/Pilih..." searchLabel="Cari kategori aset" />
                     </FixedAssetFieldRow>
@@ -38,7 +38,7 @@ export function FixedAssetsAdditionalInfoSection({ config, values, setValues, is
                                 value={values.branch[0] ?? ''}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                                inputClassName="text-[15px] text-[#4b5565]"
+                                inputClassName="text-xs sm:text-sm text-[#4b5565]"
                             />
                         ) : (
                             <FixedAssetLookupField values={values.branch} placeholder="Cari/Pilih..." searchLabel="Cari cabang" />
@@ -65,12 +65,12 @@ export function FixedAssetsAdditionalInfoSection({ config, values, setValues, is
                             }
                             rows={4}
                             className="rounded-[4px] border-[#cfd6e2]"
-                            textareaClassName="min-h-[96px] text-[15px] text-[#1f2436]"
+                            textareaClassName="min-h-[96px] text-xs sm:text-sm text-[#1f2436]"
                         />
                     </FixedAssetFieldRow>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                     {isDetail ? (
                         <>
                             <FixedAssetFieldRow label={config.labels.lastDepreciation}>
@@ -78,7 +78,7 @@ export function FixedAssetsAdditionalInfoSection({ config, values, setValues, is
                                     value={values.lastDepreciation}
                                     readOnly
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb] sm:max-w-[286px]"
-                                    inputClassName="text-[15px] text-[#4b5565]"
+                                    inputClassName="text-xs sm:text-sm text-[#4b5565]"
                                 />
                             </FixedAssetFieldRow>
 
@@ -87,7 +87,7 @@ export function FixedAssetsAdditionalInfoSection({ config, values, setValues, is
                                     value={values.taxEnabled ? 'Ya' : 'Tidak'}
                                     readOnly
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb] sm:max-w-[286px]"
-                                    inputClassName="text-[15px] text-[#4b5565]"
+                                    inputClassName="text-xs sm:text-sm text-[#4b5565]"
                                 />
                             </FixedAssetFieldRow>
 
@@ -114,7 +114,7 @@ export function FixedAssetsExpenseSection({ config, values, setValues, onOpenExp
                     value={values.expenseSearch}
                     placeholder="Cari/Pilih Akun Perkiraan..."
                     className="h-[40px] rounded-[4px] border-[#cfd6e2] lg:max-w-[560px]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     dialogTitle="Pilih Akun Pengeluaran"
                     searchLabel="Cari akun pengeluaran"
                     onSelectAccount={(_, label) =>
@@ -125,7 +125,7 @@ export function FixedAssetsExpenseSection({ config, values, setValues, onOpenExp
                     }
                 />
 
-                <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                <div className="text-right text-2xl font-normal text-[#1f2436]">
                     {config.labels.expenseAccount} <span className="text-[#ED3969]">*</span>
                 </div>
             </div>
@@ -142,7 +142,7 @@ export function FixedAssetsExpenseSection({ config, values, setValues, onOpenExp
                             ].map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.width} px-3 text-[16px] font-medium text-white ${resolveFixedAssetsAlignClassName(column.align)}`.trim()}
+                                    className={`${column.width} px-3 text-base font-medium text-white ${resolveFixedAssetsAlignClassName(column.align)}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -158,15 +158,15 @@ export function FixedAssetsExpenseSection({ config, values, setValues, onOpenExp
                                     className={`cursor-pointer border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} hover:bg-[#eef3fb]`.trim()}
                                     onClick={() => onOpenExpense(row)}
                                 >
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{row.code}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{row.description}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{row.date}</DataTableCell>
-                                    <DataTableCell className="px-3 text-right text-[15px] text-[#131a28]">{row.amount}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{row.code}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{row.description}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{row.date}</DataTableCell>
+                                    <DataTableCell className="px-3 text-right text-base text-[#131a28]">{row.amount}</DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={4} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={4} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     Belum ada data
                                 </DataTableCell>
                             </DataTableRow>
@@ -182,7 +182,7 @@ export function FixedAssetsLocationSection({ config, values }) {
     return (
         <SectionCard className="min-h-[620px]">
             <div className="flex justify-end border-b border-[#d8dde7] pb-3">
-                <div className="text-right text-[22px] font-normal text-[#1f2436]">{config.labels.assetLocation}</div>
+                <div className="text-right text-2xl font-normal text-[#1f2436]">{config.labels.assetLocation}</div>
             </div>
 
             <div className="mt-4 min-h-0 overflow-x-auto">
@@ -197,7 +197,7 @@ export function FixedAssetsLocationSection({ config, values }) {
                             ].map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.width} px-3 text-[16px] font-medium text-white ${resolveFixedAssetsAlignClassName(column.align)}`.trim()}
+                                    className={`${column.width} px-3 text-base font-medium text-white ${resolveFixedAssetsAlignClassName(column.align)}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -209,15 +209,15 @@ export function FixedAssetsLocationSection({ config, values }) {
                         {values.locationRows.length ? (
                             values.locationRows.map((row, index) => (
                                 <DataTableRow key={row.id} className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8]`.trim()}>
-                                    <DataTableCell className="px-3 text-center text-[15px] text-[#a0a7b6]">{row.symbol}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{row.name}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{row.address}</DataTableCell>
-                                    <DataTableCell className="px-3 text-right text-[15px] text-[#131a28]">{row.quantity}</DataTableCell>
+                                    <DataTableCell className="px-3 text-center text-base text-[#a0a7b6]">{row.symbol}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{row.name}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{row.address}</DataTableCell>
+                                    <DataTableCell className="px-3 text-right text-base text-[#131a28]">{row.quantity}</DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={4} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={4} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     Belum ada data
                                 </DataTableCell>
                             </DataTableRow>

@@ -72,7 +72,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                         type="button"
                         onClick={handleSync}
                         disabled={syncing}
-                        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-slate-200 bg-white px-3 h-[34px] text-[15px] font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60 disabled:pointer-events-none"
+                        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-slate-200 bg-white px-3 h-[34px] text-base font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60 disabled:pointer-events-none"
                     >
                         {syncing ? (
                             <RefreshIcon className="h-4.5 w-4.5 animate-spin text-[#ED3969]" />
@@ -95,13 +95,13 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
                                 >
                                     <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : ''}`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
@@ -126,13 +126,13 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                                         })
                                     }
                                 >
-                                                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
 {table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-[15px] text-[#131a28]`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-base text-[#131a28]`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -141,7 +141,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {error || (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

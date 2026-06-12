@@ -3,7 +3,7 @@ export function WidgetSection({ title, caption = null, children }) {
         <section className="min-w-0 rounded-[8px] border border-[#e0e6ef] bg-white px-3 py-3 shadow-[0_4px_12px_rgba(15,23,42,0.03)]">
             <div className="border-b border-[#e6ebf2] pb-2.5">
                 <div className="min-w-0 border-l-[3px] border-l-[#5f8fd5] pl-3">
-                    <h4 className="text-[15px] font-semibold leading-tight text-[#1f2536] md:text-[16px]">{title}</h4>
+                    <h4 className="text-base font-semibold leading-tight text-[#1f2536] md:text-base">{title}</h4>
                     {caption ? (
                         <p className="mt-1.5 break-words text-sm leading-5 text-[#7c839b]">{caption}</p>
                     ) : null}
@@ -79,7 +79,7 @@ export function SummaryStrip({ items }) {
                         <p title="" className="text-sm font-medium uppercase tracking-[0.08em] text-[#7d88a2]">
                             {item.label}
                         </p>
-                        <p title="" className="mt-2 text-[20px] font-semibold leading-none text-[#1f2536] md:text-[22px] 2xl:text-[25px]">
+                        <p title="" className="mt-2 text-xl font-semibold leading-none text-[#1f2536] md:text-2xl 2xl:text-3xl">
                             {item.value}
                         </p>
                         {item.helper ? (

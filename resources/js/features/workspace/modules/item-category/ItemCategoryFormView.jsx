@@ -164,20 +164,24 @@ export default function ItemCategoryFormView({
 
     return (
         <>
-            <div className="flex min-h-full flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-                <PreferencesTabs tabs={config.tabs} activeTabId={activeTabId} onSelectTab={setActiveTabId} className="border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] sm:px-2" />
+            <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+                <div className="shrink-0">
+                    <PreferencesTabs tabs={config.tabs} activeTabId={activeTabId} onSelectTab={setActiveTabId} className="border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] sm:px-2" />
+                </div>
 
-                <div className="flex min-h-[642px] flex-col gap-5 px-4 py-4 lg:flex-row lg:items-start">
-                    <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4 lg:order-1">
-                        <CrudStatusMessage status={status} className="mb-4" />
-                        {activeTabId === 'item-category-accounts' ? (
-                            <ItemCategoryAccountsTab config={config} values={values} onAccountChange={handleAccountChange} />
-                        ) : (
-                            <ItemCategoryGeneralTab config={config} values={values} onChange={handleChange} />
-                        )}
+                <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
+                    <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
+                        <div className="flex-1 min-h-0 flex flex-col">
+                            {activeTabId === 'item-category-accounts' ? (
+                                <ItemCategoryAccountsTab config={config} values={values} onAccountChange={handleAccountChange} />
+                            ) : (
+                                <ItemCategoryGeneralTab config={config} values={values} onChange={handleChange} />
+                            )}
+                        </div>
                     </div>
 
-                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0">
+                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
                         <div className="flex flex-row gap-3 lg:flex-col">
                             {dockActions.map((action) => (
                                 <DockActionButton

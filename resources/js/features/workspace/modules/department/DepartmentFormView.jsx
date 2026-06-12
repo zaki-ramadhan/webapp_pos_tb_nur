@@ -181,29 +181,33 @@ export default function DepartmentFormView({
     }
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-            <PreferencesTabs
-                tabs={form.tabs}
-                activeTabId={activeTabId}
-                onSelectTab={setActiveTabId}
-            />
+        <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+            <div className="shrink-0">
+                <PreferencesTabs
+                    tabs={form.tabs}
+                    activeTabId={activeTabId}
+                    onSelectTab={setActiveTabId}
+                />
+            </div>
 
-            <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 xl:flex-row xl:items-start">
-                <div className="order-2 min-w-0 flex-1 xl:order-1">
-                    <CrudStatusMessage status={status} />
+            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 xl:flex-row xl:items-stretch overflow-hidden">
+                <div className="order-2 min-w-0 flex-1 xl:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
-                    <DepartmentFormContent
-                        activeTabId={activeTabId}
-                        form={form}
-                        values={values}
-                        onChange={handleChange}
-                        branchOptions={branchOptions}
-                        userOptions={userOptions}
-                        parentDepartmentOptions={parentDepartmentOptions}
-                    />
+                    <div className="flex-1 min-h-0 flex flex-col">
+                        <DepartmentFormContent
+                            activeTabId={activeTabId}
+                            form={form}
+                            values={values}
+                            onChange={handleChange}
+                            branchOptions={branchOptions}
+                            userOptions={userOptions}
+                            parentDepartmentOptions={parentDepartmentOptions}
+                        />
+                    </div>
                 </div>
 
-                <div className="order-1 flex justify-end gap-3 xl:order-2 xl:shrink-0 xl:flex-col">
+                <div className="order-1 flex justify-end gap-3 xl:order-2 xl:shrink-0 xl:self-start xl:flex-col">
                     <DockSaveButton
                         label={saving ? 'Memproses...' : form.saveLabel}
                         disabled={saveDisabled}

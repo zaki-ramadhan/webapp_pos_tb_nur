@@ -53,7 +53,7 @@ export default function ConfirmationModal({
                         size="md"
                         onClick={onClose}
                         disabled={cancelDisabled || confirmLoading}
-                        className="h-10 min-w-[60px] rounded-[4px] border-brand-blue-border-light px-4 text-[15px] text-brand-blue-dark shadow-none"
+                        className="h-10 min-w-[60px] rounded-[4px] border-brand-blue-border-light px-4 text-base text-brand-blue-dark shadow-none"
                     >
                         {cancelLabel}
                     </Button>
@@ -65,7 +65,7 @@ export default function ConfirmationModal({
                         disabled={confirmDisabled}
                         loading={confirmLoading}
                         loadingLabel={confirmLabel}
-                        className="h-10 min-w-[60px] rounded-[4px] px-5 text-[15px] shadow-none"
+                        className="h-10 min-w-[60px] rounded-[4px] px-5 text-base shadow-none"
                     >
                         {confirmLabel}
                     </Button>
@@ -76,7 +76,7 @@ export default function ConfirmationModal({
                 <ConfirmationIllustration />
 
                 <div className="min-w-0 flex-1 pt-2">
-                    <p className="text-[16px] leading-6 text-danger sm:text-[17px]">{message}</p>
+                    <p className="text-base leading-6 text-danger sm:text-base">{message}</p>
                 </div>
             </div>
         </WorkspaceDialog>

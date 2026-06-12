@@ -13,8 +13,8 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 space-y-4">
-                <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+            <div className="mt-4 space-y-3">
+                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.customerReference} />
                     <TextInput
                         value={values.customerReference}
@@ -28,18 +28,18 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
                         placeholder="Cari/Pilih Pelanggan..."
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                         className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.expenseAccount} />
                     {isDetail ? (
                         <TextInput
                             value={values.expenseAccountText}
                             readOnly
                             className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#5f6980]"
+                            inputClassName="text-xs sm:text-sm text-[#5f6980]"
                         />
                     ) : (
                         <AccountLookupField
@@ -65,14 +65,14 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
                     )}
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.varianceAccount} />
                     {isDetail ? (
                         <TextInput
                             value={values.varianceAccountText}
                             readOnly
                             className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#5f6980]"
+                            inputClassName="text-xs sm:text-sm text-[#5f6980]"
                         />
                     ) : (
                         <AccountLookupField
@@ -98,7 +98,7 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
                     )}
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.branch} required />
                     <ChipLookupField
                         values={values.branches}
@@ -114,7 +114,7 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
                     />
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TextareaField
                         value={values.notes}
@@ -126,14 +126,14 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
                         }
                         rows={4}
                         className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 
                 {isDetail ? (
-                    <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-center">
+                    <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-center">
                         <TransactionFieldLabel label={config.labels.closeJob} />
-                        <label className="inline-flex items-center gap-3 text-[17px] text-[#1f2436]">
+                        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
                             <input
                                 type="checkbox"
                                 checked={values.closeJob}
@@ -146,7 +146,7 @@ export default function WorkOrderAdditionalInfoDetailSection({ config, values, s
                                 className="h-5 w-5 rounded border border-[#cfd6e2]"
                             />
                             <span>Ya</span>
-                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#7aa2d5] text-[13px] text-[#21539b]">
+                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#7aa2d5] text-sm text-[#21539b]">
                                 i
                             </span>
                         </label>

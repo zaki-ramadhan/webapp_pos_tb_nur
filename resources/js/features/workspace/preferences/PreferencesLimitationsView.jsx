@@ -145,7 +145,7 @@ export default function PreferencesLimitationsView({
             tabs={tabs}
             activeTabId={activeTab.id}
             onSelectTab={onSelectTab}
-            panelClassName={`max-w-[1120px] space-y-6 ${activeTab.contentClassName ?? ''}`.trim()}
+            panelClassName={`max-w-[1120px] space-y-4 ${activeTab.contentClassName ?? ''}`.trim()}
         >
             {(activeTab.sections ?? []).map((section) => (
                 <LimitationsSection

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import TextInput from '@/components/ui/TextInput';
+import Tooltip from '@/components/ui/Tooltip';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
-import TextInput from '@/components/ui/TextInput';
 import {
     ChevronDownIcon,
     ColumnsIcon,
@@ -11,12 +12,11 @@ import {
     PrintIcon,
     RefreshIcon,
     SearchIcon,
-    TableActionIcon,
     UploadIcon,
 } from '@/features/workspace/shared/Icons';
 import { exportToCSV, exportToExcelXML, importFromFile, printTable } from './exportUtils';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from './columnVisibility';
-import { showWarningToast, showInfoToast } from '@/components/feedback/toast';
+import { showWarningToast } from '@/components/feedback/toast';
 
 const SIZE_STYLES = {
     compact: {
@@ -27,7 +27,7 @@ const SIZE_STYLES = {
         pageInput: 'h-[34px] w-[68px] sm:w-[74px]',
         createIcon: 'h-5 w-5',
         searchIcon: 'h-5 w-5',
-        searchText: 'text-[15px]',
+        searchText: 'text-sm',
     },
     default: {
         createButton: 'h-[40px] min-w-[72px] px-3.5',
@@ -37,21 +37,22 @@ const SIZE_STYLES = {
         pageInput: 'h-[40px] w-[70px] sm:w-[76px]',
         createIcon: 'h-7 w-7',
         searchIcon: 'h-6 w-6',
-        searchText: 'text-[17px]',
+        searchText: 'text-sm',
     },
 };
 
 function ToolbarIconButton({ label, onClick, className, children }) {
     return (
-        <button
-            type="button"
-            onClick={onClick}
-            className={className}
-            aria-label={label}
-            title={label}
-        >
-            {children}
-        </button>
+        <Tooltip content={label} portal>
+            <button
+                type="button"
+                onClick={onClick}
+                className={className}
+                aria-label={label}
+            >
+                {children}
+            </button>
+        </Tooltip>
     );
 }
 
@@ -136,28 +137,29 @@ function ToolbarExportSplitButton({ exportConfig, sizeStyle }) {
 
     return (
         <div className="relative">
-            <button
-                ref={buttonRef}
-                type="button"
-                onClick={() => {
-                    if (disabled) {
-                        showWarningToast({
-                            title: 'Ekspor Gagal',
-                            message: 'Tidak ada data di tabel untuk diekspor.',
-                        });
-                        return;
-                    }
-                    setOpen(current => !current);
-                }}
-                className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.menuButton} ${
-                    disabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : ''
-                }`.trim()}
-                title={disabled ? 'Tidak ada data untuk diekspor' : 'Ekspor data'}
-                aria-label="Ekspor data"
-            >
-                <DownloadIcon className="h-4 w-4 text-current" />
-                <ChevronDownIcon />
-            </button>
+            <Tooltip content={disabled ? 'Tidak ada data untuk diekspor' : 'Ekspor data'} portal>
+                <button
+                    ref={buttonRef}
+                    type="button"
+                    onClick={() => {
+                        if (disabled) {
+                            showWarningToast({
+                                title: 'Ekspor Gagal',
+                                message: 'Tidak ada data di tabel untuk diekspor.',
+                            });
+                            return;
+                        }
+                        setOpen(current => !current);
+                    }}
+                    className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.menuButton} ${
+                        disabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : ''
+                    }`.trim()}
+                    aria-label="Ekspor data"
+                >
+                    <DownloadIcon className="h-4 w-4 text-current" />
+                    <ChevronDownIcon />
+                </button>
+            </Tooltip>
 
             <DropdownMenu
                 open={open}
@@ -181,32 +183,43 @@ function ToolbarExportSplitButton({ exportConfig, sizeStyle }) {
     );
 }
 
-// ─── Column Settings Panel ────────────────────────────────────────────────────
+// ─── Settings Menu (Column Settings Panel) ────────────────────────────────────
 
-function ToolbarColumnSettings({ columnSettings, sizeStyle }) {
+/**
+ * Unified settings button: CogIcon opens a search + checkbox column panel.
+ * Falls back to a no-op if no columns are available.
+ */
+function ToolbarSettingsMenu({ menuButton, columnSettings, sizeStyle }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
 
-    if (!columnSettings?.columns?.length) return null;
+    // Prefer columnSettings from toolbar; fall through if neither exist
+    const colSettings = columnSettings;
+    const hasColumns = colSettings?.columns?.length > 0;
 
-    const { columns, visibleIds, onToggle } = columnSettings;
+    // Only render if there's a menu button config or columns to show
+    if (!menuButton && !hasColumns) return null;
 
     return (
         <div ref={buttonRef} className="relative">
-            <ToolbarIconButton
-                label="Pengaturan kolom"
-                onClick={() => setOpen(current => !current)}
-                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${sizeStyle.utilityButton}`.trim()}
-            >
-                <ColumnsIcon className="h-4 w-4" />
-            </ToolbarIconButton>
+            <Tooltip content={menuButton?.label ?? 'Pengaturan kolom'} portal>
+                <button
+                    type="button"
+                    onClick={() => setOpen(c => !c)}
+                    className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-2 text-[#2353a0] ${sizeStyle.menuButton} ${menuButton?.buttonClassName ?? ''}`.trim()}
+                    aria-label={menuButton?.label ?? 'Pengaturan kolom'}
+                >
+                    {menuButton?.icon ?? <ColumnsIcon className="h-4 w-4" />}
+                    <ChevronDownIcon />
+                </button>
+            </Tooltip>
 
-            {open ? (
+            {open && hasColumns ? (
                 <ColumnSettingsPanel
                     anchorRef={buttonRef}
-                    columns={columns}
-                    visibleIds={visibleIds}
-                    onToggle={onToggle}
+                    columns={colSettings.columns}
+                    visibleIds={colSettings.visibleIds}
+                    onToggle={colSettings.onToggle}
                     onClose={() => setOpen(false)}
                 />
             ) : null}
@@ -214,9 +227,9 @@ function ToolbarColumnSettings({ columnSettings, sizeStyle }) {
     );
 }
 
-
 function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose }) {
     const panelRef = useRef(null);
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         function handlePointerDown(event) {
@@ -237,23 +250,49 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
         };
     }, [anchorRef, onClose]);
 
+    const filtered = search.trim()
+        ? columns.filter(col => col.label?.toLowerCase().includes(search.toLowerCase()))
+        : columns;
+
     return (
         <div
             ref={panelRef}
-            className="absolute right-0 top-[calc(100%+8px)] z-50 w-[220px] rounded-[6px] border border-[#d6deea] bg-white p-2 shadow-[0_6px_14px_rgba(15,23,42,0.12)]"
+            className="absolute right-0 top-[calc(100%+8px)] z-50 w-[240px] rounded-[6px] border border-[#d6deea] bg-white shadow-[0_6px_24px_rgba(15,23,42,0.14)] overflow-hidden"
         >
-            <p className="mb-1.5 px-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#8b94a7]">
-                Tampilkan Kolom
-            </p>
-            <div className="flex flex-col gap-0.5">
-                {columns.map(col => {
+            {/* Search */}
+            <div className="px-2 pt-2 pb-1.5 border-b border-[#edf0f5]">
+                <div className="flex items-center gap-1.5 rounded-[4px] border border-[#d0d7e3] bg-[#f7f9fc] px-2.5 py-1.5">
+                    <SearchIcon className="h-3.5 w-3.5 shrink-0 text-[#9aa4b6]" />
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder="Cari..."
+                        className="min-w-0 flex-1 bg-transparent text-sm text-[#1f2436] placeholder-[#b0b8c9] outline-none"
+                        autoFocus
+                    />
+                    {search ? (
+                        <button type="button" onClick={() => setSearch('')} className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[#9aa4b6] hover:text-[#1f2436]">
+                            <svg viewBox="0 0 10 10" fill="currentColor" className="h-2.5 w-2.5">
+                                <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+                            </svg>
+                        </button>
+                    ) : null}
+                </div>
+            </div>
+
+            {/* Column list */}
+            <div className="flex max-h-[280px] flex-col gap-0 overflow-y-auto py-1.5">
+                {filtered.length === 0 ? (
+                    <p className="px-3 py-2 text-xs text-[#9aa4b6]">Tidak ada kolom ditemukan.</p>
+                ) : filtered.map(col => {
                     const visible = visibleIds.includes(col.id);
                     return (
                         <button
                             key={col.id}
                             type="button"
                             onClick={() => onToggle(col.id)}
-                            className="flex items-center gap-2.5 rounded-[4px] px-2 py-1.5 text-left text-[13px] text-[#1f2436] transition hover:bg-[#eef3fb]"
+                            className="flex items-center gap-2.5 px-3 py-[7px] text-left text-sm text-[#1f2436] transition hover:bg-[#eef3fb]"
                         >
                             <span
                                 className={`flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-[3px] border transition ${
@@ -277,96 +316,7 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
     );
 }
 
-// ─── Action Menu Button ───────────────────────────────────────────────────────
 
-function getPreferencesTabForResource(filename, resourceName) {
-    const name = (filename || resourceName || '').toLowerCase();
-
-    if (name.includes('anggaran') || name.includes('budget') || name.includes('departemen') || name.includes('gudang') || name.includes('cabang')) {
-        return 'features';
-    }
-    if (name.includes('pajak') || name.includes('tax')) {
-        return 'tax';
-    }
-    if (name.includes('sales') || name.includes('penjualan') || name.includes('pengiriman') || name.includes('syarat-pembayaran')) {
-        return 'sales';
-    }
-    if (name.includes('pemasok') || name.includes('supplier')) {
-        return 'purchase';
-    }
-    if (name.includes('pembayaran') || name.includes('penerimaan') || name.includes('transfer-bank') || name.includes('beban') || name.includes('jurnal') || name.includes('gaji')) {
-        return 'approval';
-    }
-    if (name.includes('karyawan') || name.includes('employee')) {
-        return 'limitations';
-    }
-    if (name.includes('log') || name.includes('history') || name.includes('activity')) {
-        return 'others';
-    }
-    return 'features';
-}
-
-function ToolbarActionMenu({ menuButton, sizeStyle, exportConfig, resolvedResourceName, resolvedColumns = [], resolvedRows = [] }) {
-    const [open, setOpen] = useState(false);
-    const buttonRef = useRef(null);
-
-    if (!menuButton?.items?.length) return null;
-
-    return (
-        <div className="relative">
-            <button
-                ref={buttonRef}
-                type="button"
-                onClick={() => setOpen(current => !current)}
-                className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-2 text-[#2353a0] ${sizeStyle.menuButton} ${menuButton.buttonClassName ?? ''}`.trim()}
-                aria-label={menuButton.label}
-            >
-                {menuButton.icon ?? <TableActionIcon />}
-                <ChevronDownIcon />
-            </button>
-
-            <DropdownMenu
-                open={open}
-                onClose={() => setOpen(false)}
-                anchorRef={buttonRef}
-                widthClassName={menuButton.widthClassName ?? 'w-[180px]'}
-            >
-                <div className="flex flex-col">
-                    {menuButton.items.map(item => (
-                        <DropdownMenuItem
-                            key={item.id}
-                            onClick={() => {
-                                if (item.onClick) {
-                                    item.onClick();
-                                } else if (item.id === 'settings' || item.id === 'column-settings' || item.id === 'arrange-columns' || item.id.includes('settings')) {
-                                    const targetTab = getPreferencesTabForResource(exportConfig?.filename, resolvedResourceName);
-                                    window.__nextPreferencesTab = targetTab;
-                                    window.dispatchEvent(new CustomEvent('workspace:open-page', {
-                                        detail: { pageId: 'preferences' }
-                                    }));
-                                    window.dispatchEvent(new CustomEvent('workspace:open-preferences-tab', {
-                                        detail: { sideItemId: targetTab }
-                                    }));
-                                } else if (item.id === 'export-log' || item.id.includes('export') || item.id.includes('download')) {
-                                    exportToExcelXML(resolvedColumns, resolvedRows, exportConfig?.filename || resolvedResourceName || 'export');
-                                } else {
-                                    showInfoToast({
-                                        title: 'Pengaturan Tabel',
-                                        message: 'Pengaturan kolom untuk tabel ini dapat disesuaikan menggunakan tombol "Pengaturan Kolom" (ikon kolom) di sebelah kanan.',
-                                    });
-                                }
-                                setOpen(false);
-                            }}
-                            icon={item.icon}
-                        >
-                            {item.label}
-                        </DropdownMenuItem>
-                    ))}
-                </div>
-            </DropdownMenu>
-        </div>
-    );
-}
 
 // ─── TableToolbar ─────────────────────────────────────────────────────────────
 
@@ -424,7 +374,20 @@ function mapImportRow(row, columns) {
 function cleanRightControls(controls) {
     if (!controls) return null;
 
-    const controlsArray = React.Children.toArray(controls);
+    const flatten = (nodes) => {
+        let result = [];
+        React.Children.forEach(nodes, (node) => {
+            if (!node) return;
+            if (node.type === React.Fragment) {
+                result = result.concat(flatten(node.props.children));
+            } else {
+                result.push(node);
+            }
+        });
+        return result;
+    };
+
+    const controlsArray = flatten(controls);
 
     const isDummyAction = (element) => {
         if (!React.isValidElement(element)) return false;
@@ -492,7 +455,7 @@ export default function TableToolbar({
         });
     }, [rawResolvedColumns]);
     const resolvedRows = exportConfig?.rows ?? activeTableState?.rows ?? [];
-    const resolvedResourceName = resourceName ?? activeTableState?.resource ?? null;
+    const resolvedResourceName = resourceName ?? activeTableState?.resource ?? (typeof window !== 'undefined' ? window.__activePageId : null) ?? null;
 
     const schemaKey = getTableSchemaKey(resolvedColumns);
     const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, resolvedColumns);
@@ -624,18 +587,13 @@ export default function TableToolbar({
 
                     {resolvedExportConfig ? <ToolbarExportSplitButton exportConfig={resolvedExportConfig} sizeStyle={sizeStyle} /> : null}
 
-                    {menuButton ? (
-                        <ToolbarActionMenu
-                            menuButton={menuButton}
+                    {(menuButton || resolvedColumnSettings) ? (
+                        <ToolbarSettingsMenu
+                            menuButton={menuButton ?? null}
+                            columnSettings={resolvedColumnSettings}
                             sizeStyle={sizeStyle}
-                            exportConfig={resolvedExportConfig}
-                            resolvedResourceName={resolvedResourceName}
-                            resolvedColumns={resolvedColumns}
-                            resolvedRows={resolvedRows}
                         />
                     ) : null}
-
-                    {resolvedColumnSettings ? <ToolbarColumnSettings columnSettings={resolvedColumnSettings} sizeStyle={sizeStyle} /> : null}
 
                     {resolvedPrintButton ? (
                         <ToolbarIconButton

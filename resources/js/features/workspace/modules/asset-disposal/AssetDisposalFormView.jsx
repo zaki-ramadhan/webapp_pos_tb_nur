@@ -150,24 +150,32 @@ export default function AssetDisposalFormView({ page, activeLevel2Tab, onOpenCon
     });
 
     return (
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
-            <div className="space-y-4">
-                <AssetDisposalHeader config={{ ...config, errors }} values={values} setValues={setValues} isDetail={isDetail} />
+        <div className="flex h-full min-h-0 flex-col gap-5 xl:flex-row xl:items-stretch overflow-hidden">
+            <div className="order-2 min-w-0 flex-1 xl:order-1 flex flex-col gap-3 overflow-hidden">
+                <div className="shrink-0">
+                    <AssetDisposalHeader config={{ ...config, errors }} values={values} setValues={setValues} isDetail={isDetail} />
+                </div>
 
-                <div className="flex flex-col gap-4 xl:flex-row">
-                    <TransactionSectionRail
-                        tabs={config.sectionTabs}
-                        activeTabId={activeSectionId}
-                        onSelectTab={setActiveSectionId}
-                    />
+                <div className="flex flex-1 min-h-0 flex-col gap-4 xl:flex-row overflow-hidden">
+                    <div className="shrink-0">
+                        <TransactionSectionRail
+                            tabs={config.sectionTabs}
+                            activeTabId={activeSectionId}
+                            onSelectTab={setActiveSectionId}
+                        />
+                    </div>
 
-                    <SectionCard className="min-h-[642px] flex-1">
-                        <AssetDisposalGeneralSection config={{ ...config, errors }} values={values} setValues={setValues} />
-                    </SectionCard>
+                    <div className="flex-1 min-h-0 overflow-y-auto pr-1.5 flex flex-col">
+                        <SectionCard className="flex-1 min-h-0 flex flex-col">
+                            <AssetDisposalGeneralSection config={{ ...config, errors }} values={values} setValues={setValues} />
+                        </SectionCard>
+                    </div>
                 </div>
             </div>
 
-            <TransactionDock actions={dockActions} />
+            <div className="order-1 flex justify-end xl:order-2 xl:shrink-0 xl:self-start">
+                <TransactionDock actions={dockActions} />
+            </div>
         </div>
     );
 }

@@ -6,7 +6,7 @@ import { CloseIcon, PencilIcon } from '@/features/workspace/shared/Icons';
 function ModalFieldRow({ label, children }) {
     return (
         <div className="grid gap-3 sm:grid-cols-[168px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-            <TransactionFieldLabel label={label} className="text-[16px]" />
+            <TransactionFieldLabel label={label} className="text-base" />
             <div>{children}</div>
         </div>
     );
@@ -28,7 +28,7 @@ export default function StockOpnameOrderItemModal({ open, onClose, modal, item }
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <PencilIcon className="h-5 w-5 text-white" />
-                        <h2 className="text-[16px] font-medium">{modal.title}</h2>
+                        <h2 className="text-base font-medium">{modal.title}</h2>
                     </div>
 
                     <button
@@ -46,15 +46,15 @@ export default function StockOpnameOrderItemModal({ open, onClose, modal, item }
                 <div className="flex items-end gap-1 border-b border-[#d8dde7]">
                     <button
                         type="button"
-                        className="border-b-2 border-[#ff4836] px-3 py-2 text-[16px] text-[#ff4836]"
+                        className="border-b-2 border-[#ff4836] px-3 py-2 text-base text-[#ff4836]"
                     >
                         Rincian Barang
                     </button>
                 </div>
 
-                <div className="space-y-4 px-2 py-4">
+                <div className="space-y-3 px-2 py-4">
                     <ModalFieldRow label="Kode #">
-                        <div className="flex h-[36px] items-center text-[17px] font-semibold text-[#22a3f2]">
+                        <div className="flex h-[36px] items-center text-base font-semibold text-[#22a3f2]">
                             {item.code}
                         </div>
                     </ModalFieldRow>
@@ -64,7 +64,7 @@ export default function StockOpnameOrderItemModal({ open, onClose, modal, item }
                             value={item.name}
                             readOnly
                             className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </ModalFieldRow>
 
@@ -73,7 +73,7 @@ export default function StockOpnameOrderItemModal({ open, onClose, modal, item }
                             value={item.systemQuantity}
                             readOnly
                             className="h-[36px] rounded-[4px] border-[#cfd6e2] max-w-[160px]"
-                            inputClassName="text-right text-[15px] text-[#1f2436]"
+                            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                         />
                     </ModalFieldRow>
 
@@ -82,7 +82,7 @@ export default function StockOpnameOrderItemModal({ open, onClose, modal, item }
                             value={item.countedQuantity}
                             readOnly
                             className="h-[36px] rounded-[4px] border-[#cfd6e2] max-w-[160px]"
-                            inputClassName="text-right text-[15px] text-[#1f2436]"
+                            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                         />
                     </ModalFieldRow>
 
@@ -91,7 +91,7 @@ export default function StockOpnameOrderItemModal({ open, onClose, modal, item }
                             value={item.unit}
                             readOnly
                             className="h-[36px] rounded-[4px] border-[#cfd6e2] max-w-[120px]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </ModalFieldRow>
                 </div>
@@ -99,7 +99,7 @@ export default function StockOpnameOrderItemModal({ open, onClose, modal, item }
                 <div className="flex justify-end border-t border-[#d8dde7] pt-4">
                     <button
                         type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] bg-[#1d52a5] px-5 text-[15px] font-medium text-white"
+                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] bg-[#1d52a5] px-5 text-base font-medium text-white"
                         onClick={onClose}
                     >
                         {modal.submitLabel ?? 'Lanjut'}

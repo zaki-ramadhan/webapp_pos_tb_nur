@@ -15,6 +15,7 @@ export default function ChipLookupField({
     disabled = false,
     onSearch = null,
     searching = false,
+    error = false,
 }) {
     const searchButtonRef = useRef(null);
     const items = Array.isArray(values) ? values.filter(Boolean) : value ? [value] : [];
@@ -35,6 +36,7 @@ export default function ChipLookupField({
 
         event.preventDefault();
         searchButtonRef.current?.focus();
+        onSearch?.();
     }
 
     function handleSearch() {
@@ -43,17 +45,21 @@ export default function ChipLookupField({
         }
     }
 
+    const toneClassName = error
+        ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+        : 'border-[#cfd6e2] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+
     return (
         <div
             onMouseDown={focusLookup}
-            className={`group flex w-full items-center overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'bg-slate-100' : ''} ${heightClassName} ${className}`.trim()}
+            className={`group flex w-full items-center overflow-hidden rounded-[4px] border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100' : ''} ${heightClassName} ${className}`.trim()}
         >
             <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 px-2 py-1.5 ${contentClassName}`.trim()}>
                 {items.length ? (
                     items.map((item) => (
                         <span
                             key={item}
-                            className={`inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-[14px] text-[#295089] ${chipClassName}`.trim()}
+                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-sm text-[#295089] ${chipClassName}`.trim()}
                         >
                             <span className="truncate">{item}</span>
                             <button
@@ -72,7 +78,7 @@ export default function ChipLookupField({
                         </span>
                     ))
                 ) : (
-                    <span className="block truncate px-1 text-[15px] text-[#a1a8b7]">{placeholder}</span>
+                    <span className="block truncate px-1 text-base text-[#a1a8b7]">{placeholder}</span>
                 )}
             </div>
 
@@ -82,7 +88,7 @@ export default function ChipLookupField({
                 onClick={handleSearch}
                 disabled={disabled}
                 aria-label={searchLabel}
-                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:cursor-not-allowed disabled:text-slate-300"
+                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none"
             >
                 {searching ? (
                     <RefreshIcon className="h-5 w-5 animate-spin text-[#111827]" />

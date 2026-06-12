@@ -17,7 +17,7 @@ export default function ReportCard({ report, onClick }) {
             />
 
             <span className="min-w-0 flex-1">
-                <span className="block text-[17px] font-medium leading-6 text-[#111827] group-hover:text-[#ef3968] transition-colors">
+                <span className="block text-base font-medium leading-6 text-[#111827] group-hover:text-[#ef3968] transition-colors">
                     {report.title}
                 </span>
                 <span className="mt-1 block text-sm leading-5 text-[#64748b]">

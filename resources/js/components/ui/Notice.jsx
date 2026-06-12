@@ -14,7 +14,7 @@ export default function Notice({ children, tone = 'info', className = '' }) {
     return (
         <div
             role={isAlert ? 'alert' : undefined}
-            className={`flex items-start gap-3 rounded-[10px] border px-4 py-3 text-[14px] leading-6 ${classes} ${className}`.trim()}
+            className={`flex items-start gap-3 rounded-[10px] border px-4 py-3 text-sm leading-6 ${classes} ${className}`.trim()}
         >
             <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{children}</span>

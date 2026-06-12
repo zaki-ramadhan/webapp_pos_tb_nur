@@ -12,11 +12,11 @@ const DEFAULT_COLUMN_MAPPING = Object.freeze({ code: -1, quantity: -1, price: -1
 function ColumnMappingSelect({ label, fieldKey, mapping, setMapping, csvHeaders, defaultLabel = '-- Pilih Kolom --' }) {
     return (
         <div>
-            <label className="block text-[13px] font-semibold text-slate-600 mb-1">{label}</label>
+            <label className="block text-xs sm:text-sm font-semibold text-slate-600 mb-1">{label}</label>
             <select
                 value={mapping[fieldKey]}
                 onChange={(e) => setMapping(prev => ({ ...prev, [fieldKey]: parseInt(e.target.value) }))}
-                className="w-full h-[36px] rounded-[4px] border border-[#cfd6e2] px-2 text-[14px] outline-none focus:border-[#1d52a5]"
+                className="w-full h-[36px] rounded-[4px] border border-[#cfd6e2] px-2 text-sm outline-none focus:border-[#1d52a5]"
             >
                 <option value="-1">{defaultLabel}</option>
                 {csvHeaders.map((header, idx) => (
@@ -191,7 +191,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <TableActionIcon className="h-5 w-5 text-white" />
-                        <h2 className="text-[17px] font-medium">Ekstraksi File CSV / Excel</h2>
+                        <h2 className="text-base font-medium">Ekstraksi File CSV / Excel</h2>
                     </div>
                     <button
                         type="button"
@@ -206,7 +206,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             {/* Content */}
             <div className="bg-white p-6">
                 {errorMessage && (
-                    <div className="mb-4 rounded-[4px] bg-red-50 border border-red-200 p-3 text-[14px] text-red-700">
+                    <div className="mb-4 rounded-[4px] bg-red-50 border border-red-200 p-3 text-sm text-red-700">
                         {errorMessage}
                     </div>
                 )}
@@ -215,11 +215,11 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                 {!file ? (
                     <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#cfd6e2] rounded-[6px] p-8 bg-slate-50 hover:bg-slate-100 transition">
                         <TableActionIcon className="h-12 w-12 text-[#94a3b8] mb-3" />
-                        <p className="text-[15px] font-medium text-slate-700 mb-1">Pilih File</p>
-                        <p className="text-[13px] text-slate-500 mb-4 text-center">
+                        <p className="text-base font-medium text-slate-700 mb-1">Pilih File</p>
+                        <p className="text-sm text-slate-500 mb-4 text-center">
                             Mendukung format Excel (.xlsx, .xls) dan CSV (.csv)
                         </p>
-                        <label className="inline-flex h-[38px] cursor-pointer items-center justify-center rounded-[4px] bg-[#1d52a5] px-5 text-[14px] font-medium text-white hover:bg-[#173968] transition">
+                        <label className="inline-flex h-[38px] cursor-pointer items-center justify-center rounded-[4px] bg-[#1d52a5] px-5 text-xs sm:text-sm font-medium text-white hover:bg-[#173968] transition">
                             Cari File
                             <input
                                 ref={fileInputRef}
@@ -231,14 +231,14 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                         </label>
                     </div>
                 ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         {/* File info */}
                         <div className="flex items-center justify-between rounded-[4px] border border-slate-200 bg-slate-50 px-4 py-3">
-                            <span className="text-[14px] font-medium text-slate-700">{file.name}</span>
+                            <span className="text-sm font-medium text-slate-700">{file.name}</span>
                             <button
                                 type="button"
                                 onClick={() => setFile(null)}
-                                className="text-[13px] font-semibold text-red-600 hover:text-red-800"
+                                className="text-sm font-semibold text-red-600 hover:text-red-800"
                             >
                                 Ganti File
                             </button>
@@ -246,7 +246,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
 
                         {/* Step 2: Column mapping */}
                         <div>
-                            <h3 className="text-[15px] font-semibold text-slate-800 mb-3 border-b pb-2">
+                            <h3 className="text-base font-semibold text-slate-800 mb-3 border-b pb-2">
                                 Sesuaikan Pemetaan Kolom
                             </h3>
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -261,13 +261,13 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                         {columnMapping.code !== -1 && columnMapping.quantity !== -1 && (
                             <div>
                                 <div className="flex items-center justify-between border-b pb-2 mb-3">
-                                    <h3 className="text-[15px] font-semibold text-slate-800">
+                                    <h3 className="text-base font-semibold text-slate-800">
                                         Preview Pencocokan Barang ({validCount} valid dari {previewItems.length} baris)
                                     </h3>
-                                    {loadingProducts && <span className="text-[13px] text-slate-500">Mencocokkan...</span>}
+                                    {loadingProducts && <span className="text-sm text-slate-500">Mencocokkan...</span>}
                                 </div>
                                 <div className="max-h-[240px] overflow-y-auto border border-slate-200 rounded-[4px]">
-                                    <table className="w-full border-collapse text-left text-[14px]">
+                                    <table className="w-full border-collapse text-left text-sm">
                                         <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
                                             <tr>
                                                 <th className="px-3 py-2 font-semibold">Kode Input</th>
@@ -284,7 +284,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                                     <td className="px-3 py-2">
                                                         <div className="font-medium text-slate-800">{item.name}</div>
                                                         {item.valid && (
-                                                            <div className="text-[12px] text-slate-500">
+                                                            <div className="text-xs text-slate-500">
                                                                 Kode Sistem: {item.code} | Unit: {item.unit}
                                                             </div>
                                                         )}
@@ -297,9 +297,9 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                                     )}
                                                     <td className="px-3 py-2 text-center">
                                                         {item.valid ? (
-                                                            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-[12px] font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Valid</span>
+                                                            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Valid</span>
                                                         ) : (
-                                                            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-[12px] font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Tidak Ditemukan</span>
+                                                            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">Tidak Ditemukan</span>
                                                         )}
                                                     </td>
                                                 </tr>
@@ -317,7 +317,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-slate-300 bg-white px-5 text-[14px] font-semibold text-slate-700 hover:bg-slate-50 transition"
+                        className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
                     >
                         Batal
                     </button>
@@ -326,7 +326,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             type="button"
                             onClick={handleConfirmImport}
                             disabled={validCount === 0}
-                            className={`inline-flex h-[38px] items-center justify-center rounded-[4px] px-5 text-[14px] font-semibold text-white transition ${
+                            className={`inline-flex h-[38px] items-center justify-center rounded-[4px] px-5 text-sm font-semibold text-white transition ${
                                 validCount > 0 ? 'bg-[#1d52a5] hover:bg-[#173968] cursor-pointer' : 'bg-slate-300 cursor-not-allowed'
                             }`}
                         >

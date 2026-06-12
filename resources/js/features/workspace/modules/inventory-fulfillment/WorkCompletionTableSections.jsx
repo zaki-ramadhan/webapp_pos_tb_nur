@@ -39,7 +39,7 @@ export function WorkCompletionFilterBar({ config, filters, setFilters }) {
                     }
                     containerClassName="w-auto"
                     className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {filter.options.map((option, optionIndex) => (
@@ -112,7 +112,7 @@ export function WorkCompletionTableSection({ config, keyword, setKeyword, filter
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${resolveWorkCompletionAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveWorkCompletionAlignClassName(column.align)}`.trim()}
                                 >
                                     <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
@@ -134,7 +134,7 @@ export function WorkCompletionTableSection({ config, keyword, setKeyword, filter
                                     {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-[15px] text-[#131a28] ${resolveWorkCompletionAlignClassName(column.align)}`.trim()}
+                                            className={`px-2.5 text-base text-[#131a28] ${resolveWorkCompletionAlignClassName(column.align)}`.trim()}
                                         >
                                             <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
                                         </DataTableCell>
@@ -143,7 +143,7 @@ export function WorkCompletionTableSection({ config, keyword, setKeyword, filter
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     Belum ada data
                                 </DataTableCell>
                             </DataTableRow>

@@ -84,7 +84,7 @@ function InquiryControl({ control, value, onChange }) {
                 value={value}
                 onChange={(event) => onChange(control.id, event.target.value)}
                 className={`h-[34px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                selectClassName="text-[14px] text-[#1f2436] sm:text-[15px]"
+                selectClassName="text-sm text-[#1f2436] sm:text-xs sm:text-sm"
             >
                 {(control.options ?? []).map((option) => (
                     <option key={option.value} value={option.value}>
@@ -96,7 +96,7 @@ function InquiryControl({ control, value, onChange }) {
     }
 
     if (control.type === 'label') {
-        return <span className={`text-[14px] text-[#111827] sm:text-[15px] ${control.className ?? ''}`.trim()}>{control.label}</span>;
+        return <span className={`text-sm text-[#111827] sm:text-base ${control.className ?? ''}`.trim()}>{control.label}</span>;
     }
 
     if (control.type === 'date') {
@@ -105,7 +105,7 @@ function InquiryControl({ control, value, onChange }) {
                 value={value}
                 onChange={(nextValue) => onChange(control.id, nextValue)}
                 className={`h-[34px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                inputClassName="text-[14px] text-[#1f2436] sm:text-[15px]"
+                inputClassName="text-sm text-[#1f2436] sm:text-xs sm:text-sm"
                 trailingClassName="w-[40px] shrink-0 justify-center px-0"
             />
         );
@@ -118,7 +118,7 @@ function InquiryControl({ control, value, onChange }) {
             placeholder={control.placeholder ?? ''}
             trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
             className={`h-[34px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            inputClassName="text-[14px] text-[#1f2436] sm:text-[15px]"
+            inputClassName="text-sm text-[#1f2436] sm:text-xs sm:text-sm"
             trailingClassName="px-3"
         />
     );
@@ -199,7 +199,7 @@ export default function InquiryWorkspaceView({
             </div>
 
             {error ? (
-                <div className="rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-[14px] text-[#a33939]">
+                <div className="rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-sm text-[#a33939]">
                     {error}
                 </div>
             ) : null}
@@ -237,7 +237,7 @@ export default function InquiryWorkspaceView({
                                             {config.table.columns.map((column) => (
                                                 <DataTableCell
                                                     key={column.id}
-                                                    className={`${resolveAlignClassName(column.align)} px-2.5 text-[15px] text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
+                                                    className={`${resolveAlignClassName(column.align)} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
                                                 >
                                                     {column.truncate ? (
                                                         <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
@@ -252,7 +252,7 @@ export default function InquiryWorkspaceView({
                                     <DataTableRow className="bg-white">
                                         <DataTableCell
                                             colSpan={config.table.columns.length}
-                                            className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
+                                            className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                         >
                                             {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                         </DataTableCell>

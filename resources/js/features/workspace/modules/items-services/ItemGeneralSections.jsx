@@ -16,7 +16,7 @@ import {
 
 export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
     return (
-        <section className="space-y-4">
+        <section className="space-y-3">
             <SectionHeading title={config.labels.generalInfo} />
 
             <FormRow label="Nama Barang" required>
@@ -45,7 +45,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                     value={values.kind}
                     onChange={(event) => onChange('kind', event.target.value)}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.kindOptions.map((option) => (
                         <option key={option} value={option}>
@@ -105,7 +105,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                                 }
                                 className="max-w-[332px]"
                             />
-                            <span className="text-center text-[18px] text-[#1f2436]">=</span>
+                            <span className="text-center text-lg text-[#1f2436]">=</span>
                             <SimpleTextField
                                 value={conversion.quantity}
                                 onChange={(event) =>
@@ -124,7 +124,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                                 className="h-[34px]"
                                 inputClassName="text-right"
                             />
-                            <span className="text-[15px] text-[#1f2436]">
+                            <span className="text-xs sm:text-sm text-[#1f2436]">
                                 {conversion.baseUnit}
                             </span>
                         </div>
@@ -139,7 +139,7 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
     const isBrandFieldInactive = isWorkspaceControlInactive('item-brand-field');
 
     return (
-        <section className="space-y-4">
+        <section className="space-y-3">
             <SectionHeading title={config.labels.moreInfo} />
 
             <FormRow label="Merek Barang">
@@ -157,8 +157,8 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
                         disabled={isBrandFieldInactive}
                     />
                     {isBrandFieldInactive ? (
-                        <div className="flex flex-wrap items-center gap-2 text-[13px] text-[#9a7b35]">
-                            <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-[#9a7b35]">
+                            <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
                                 {WORKSPACE_INACTIVE_BADGE_LABEL}
                             </span>
                             <span>{WORKSPACE_INACTIVE_HINT}</span>
@@ -172,7 +172,7 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
                     checked={values.serialEnabled}
                     onChange={(nextValue) => onChange('serialEnabled', nextValue)}
                 />
-                <span className="text-[17px] text-[#1f2436]">
+                <span className="text-xs sm:text-sm text-[#1f2436]">
                     Aktifkan No. Seri/Produksi
                 </span>
             </div>

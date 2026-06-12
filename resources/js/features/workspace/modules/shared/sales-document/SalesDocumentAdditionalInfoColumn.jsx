@@ -39,7 +39,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                             const checked = (values[field.valueKey] ?? '') === option.value;
 
                             return (
-                                <label key={option.value} className="flex items-center gap-3 text-[17px] text-[#1f2436]">
+                                <label key={option.value} className="flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
                                     <span className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[#c8ccd4]">
                                         {checked ? <span className="h-[10px] w-[10px] rounded-full bg-[#a7a7a8]" /> : null}
                                     </span>
@@ -89,7 +89,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                     value={values[field.valueKey] ?? ''}
                     readOnly
                     className={field.className ?? 'h-[34px] rounded-[4px] border-[#cfd6e2]'}
-                    inputClassName={field.inputClassName ?? 'text-[15px] text-[#5f6779]'}
+                    inputClassName={field.inputClassName ?? 'text-xs sm:text-sm text-[#5f6779]'}
                 />
             </Fragment>
         );
@@ -99,7 +99,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
         <section>
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="document" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 {additionalInfoLeadingFields.map((field, index) =>
                     renderAdditionalField(field, `${field.valueKey ?? field.label}-leading-${index}`),
                 )}
@@ -107,7 +107,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                 {config.showPreInvoiceOption ? (
                     <>
                         <TransactionFieldLabel label={config.labels.preInvoice ?? 'Faktur Dimuka'} />
-                        <label className="inline-flex h-[34px] items-center gap-3 text-[17px] text-[#1f2436]">
+                        <label className="inline-flex h-[34px] items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
                             <input type="checkbox" checked={values.preInvoice} readOnly className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
                             <span>{config.preInvoiceOptionLabel ?? 'Ya (Mendahului Pengiriman)'}</span>
                         </label>
@@ -148,7 +148,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                                 }))
                             }
                             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </>
                 ) : null}
@@ -172,7 +172,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                                 }))
                             }
                             rows={4}
-                            className="min-h-[86px] flex-1 resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                            className="min-h-[86px] flex-1 resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
                         />
                     </div>
                 ) : (
@@ -185,7 +185,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                             }))
                         }
                         rows={4}
-                        className="min-h-[84px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                        className="min-h-[84px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
                     />
                 )}
 
@@ -215,7 +215,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                         }))
                     }
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
                 />
 
                 {additionalTrailingFields.map((field, index) => renderAdditionalField(field, `${field.valueKey ?? field.label}-trailing-${index}`))}

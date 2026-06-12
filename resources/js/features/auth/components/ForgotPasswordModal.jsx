@@ -91,9 +91,9 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                         <span className="text-sm font-semibold leading-none">&times;</span>
                     </button>
 
-                    <h2 className="text-center text-[18px] font-semibold text-[#1e293b]">{modal.title || 'Lupa Password'}</h2>
+                    <h2 className="text-center text-lg font-semibold text-[#1e293b]">{modal.title || 'Lupa Password'}</h2>
 
-                    <form className="mt-6 space-y-5" onSubmit={submit}>
+                    <form className="mt-6 space-y-4" onSubmit={submit}>
                         <AuthInput
                             label="Email Akun Anda"
                             name="email"
@@ -122,15 +122,15 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                     </form>
                 </div>
             ) : (
-                <div className="px-6 py-6 space-y-4">
+                <div className="px-6 py-6 space-y-3">
                     <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                         <svg className="h-5 w-5 text-blue-500 shrink-0 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <h3 className="text-[16px] font-semibold text-[#2563eb]">Informasi reset password</h3>
+                        <h3 className="text-base font-semibold text-[#2563eb]">Informasi reset password</h3>
                     </div>
 
-                    <p className="text-[14px] leading-6 text-[#475569]">
+                    <p className="text-sm leading-6 text-[#475569]">
                         Link verifikasi telah dikirim ke email <strong className="text-slate-800 font-bold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam. Apabila Anda masih belum menerima email verifikasi, silakan hubungi tim support kami di <a href="mailto:support@cpssoft.com" className="text-blue-500 hover:underline">support@cpssoft.com</a>
                     </p>
 

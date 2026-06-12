@@ -20,7 +20,7 @@ export function PurchasePaymentAmountField({ values }) {
             prefix={values.paymentAmountPrefix || undefined}
             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
             prefixClassName="min-w-[42px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-            inputClassName="text-right text-[15px] text-[#1f2436]"
+            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
         />
     );
 }
@@ -42,7 +42,7 @@ export function PurchasePaymentHeaderIconButton({ label, icon, onClick = null })
 export function PurchasePaymentHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.payee} required />
                 <ChipLookupField
                     values={values.payee}
@@ -73,7 +73,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                 </div>
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 {!isDetail && values.currency ? <div /> : null}
                 {isDetail && values.currency ? (
                     <>
@@ -83,7 +83,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                                 value={values.currency}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
                     </>
@@ -114,7 +114,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -128,7 +128,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                         readOnly
                         trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                 )}

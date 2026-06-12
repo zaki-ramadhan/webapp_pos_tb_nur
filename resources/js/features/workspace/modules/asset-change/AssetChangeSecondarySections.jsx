@@ -10,7 +10,7 @@ export function AssetChangeAdditionalInfoSection({ config, values, setValues, is
             <TransactionSectionHeading title="Info Lainnya" icon="info" />
 
             <div className="mt-4 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(280px,0.78fr)] xl:gap-x-10">
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <AssetChangeFieldRow label={config.labels.intangibleAsset}>
                         <InlineCheckboxField checked={values.intangibleAsset} />
                     </AssetChangeFieldRow>
@@ -25,7 +25,7 @@ export function AssetChangeAdditionalInfoSection({ config, values, setValues, is
                     </AssetChangeFieldRow>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <AssetChangeFieldRow label={config.labels.tax}>
                         <InlineCheckboxField checked={values.taxEnabled} />
                     </AssetChangeFieldRow>

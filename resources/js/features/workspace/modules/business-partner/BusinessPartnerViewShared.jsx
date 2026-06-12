@@ -33,7 +33,7 @@ export function buildFormState(source = {}) {
 
 export function FieldLabel({ label, required = false, className = '' }) {
     return (
-        <label className={`text-[17px] text-[#1f2436] ${className}`.trim()}>
+        <label className={`text-xs sm:text-sm text-[#1f2436] ${className}`.trim()}>
             {label}
             {required ? <span className="text-[#ED3969]"> *</span> : null}
         </label>
@@ -42,7 +42,7 @@ export function FieldLabel({ label, required = false, className = '' }) {
 
 export function FormFieldRow({ label, required = false, className = '', children }) {
     return (
-        <div className={`grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
+        <div className={`grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
             <FieldLabel label={label} required={required} className="pt-2 lg:pt-1.5" />
             <div>{children}</div>
         </div>
@@ -84,7 +84,7 @@ export function ToolbarIconAction({ icon, label }) {
 }
 
 export function SectionHeading({ title }) {
-    return <h3 className="border-b border-[#d9dee8] pb-3 text-[22px] font-normal text-[#1564d7]">{title}</h3>;
+    return <h3 className="border-b border-[#d9dee8] pb-3 text-2xl font-normal text-[#1564d7]">{title}</h3>;
 }
 
 export function AddressStack({ prefixValue, values, readOnly = false, onChange = null }) {
@@ -105,7 +105,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 prefix={prefixValue}
                 className="rounded-[4px] border-[#cfd6e2]"
                 prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
-                textareaClassName="min-h-[78px] text-[15px] text-[#1f2436]"
+                textareaClassName="min-h-[78px] text-xs sm:text-sm text-[#1f2436]"
             />
 
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_240px]">
@@ -116,7 +116,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                         prefix="Kota"
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 ) : (
                     <CityAutocompleteInput
@@ -135,7 +135,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                     prefix="K.Pos"
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                     prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
 
@@ -146,7 +146,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 prefix="Provinsi"
                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                 prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
-                inputClassName="text-[15px] text-[#1f2436]"
+                inputClassName="text-xs sm:text-sm text-[#1f2436]"
             />
 
             <TextInput
@@ -156,7 +156,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 prefix="Negara"
                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                 prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
-                inputClassName="text-[15px] text-[#1f2436]"
+                inputClassName="text-xs sm:text-sm text-[#1f2436]"
             />
         </div>
     );
@@ -170,7 +170,7 @@ export function EmptyDataTable({ columns, emptyLabel }) {
                     {columns.map((column) => (
                         <DataTableHead
                             key={column.id}
-                            className={`${column.widthClassName ?? ''} px-3 text-[15px] font-medium text-white text-center`.trim()}
+                            className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
                         >
                             {column.label}
                         </DataTableHead>
@@ -180,7 +180,7 @@ export function EmptyDataTable({ columns, emptyLabel }) {
 
             <DataTableBody>
                 <DataTableRow className="bg-white">
-                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                         {emptyLabel}
                     </DataTableCell>
                 </DataTableRow>

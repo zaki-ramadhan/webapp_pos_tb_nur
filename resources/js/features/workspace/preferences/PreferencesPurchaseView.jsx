@@ -27,7 +27,7 @@ export default function PreferencesPurchaseView({
             tabs={tabs}
             activeTabId={activeTab.id}
             onSelectTab={onSelectTab}
-            panelClassName={`max-w-[760px] space-y-6 ${activeTab.contentClassName ?? ''}`.trim()}
+            panelClassName={`max-w-[760px] space-y-4 ${activeTab.contentClassName ?? ''}`.trim()}
         >
             {(activeTab.sections ?? []).map((section) => (
                 <PurchaseSection

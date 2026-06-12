@@ -46,7 +46,7 @@ export default function NumberingTableView({ table, onCreate }) {
                             onChange={(event) => setTransactionType(event.target.value)}
                             containerClassName="w-auto shrink-0"
                             className="h-[40px] min-w-[228px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#394157]"
+                            selectClassName="text-xs sm:text-sm text-[#394157]"
                         >
                             {filter.options.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -83,11 +83,11 @@ export default function NumberingTableView({ table, onCreate }) {
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {table.columns.map((column) => (
-                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}>
+                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}>
                                     {column.label}
                                 </DataTableHead>
                             ))}
@@ -97,12 +97,12 @@ export default function NumberingTableView({ table, onCreate }) {
                     <DataTableBody>
                         {filteredRows.map((row, index) => (
                             <DataTableRow key={row.id} className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}>
-                                                                    <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
-<DataTableCell className="px-3 text-[15px] text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.name)}</span></DataTableCell>
-                                <DataTableCell className="px-3 text-[15px] text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.transactionTypeLabel)}</span></DataTableCell>
-                                <DataTableCell className="px-3 text-[15px] text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.userScopeLabel)}</span></DataTableCell>
+<DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.name)}</span></DataTableCell>
+                                <DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.transactionTypeLabel)}</span></DataTableCell>
+                                <DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.userScopeLabel)}</span></DataTableCell>
                             </DataTableRow>
                         ))}
                     </DataTableBody>

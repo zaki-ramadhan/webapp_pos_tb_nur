@@ -13,12 +13,12 @@ export default function PreferencesLookupField({
 
     return (
         <div
-            className={`flex min-h-[38px] w-full items-center gap-2 rounded-[6px] border border-[#cfd6e2] bg-white px-2 py-1 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'cursor-not-allowed bg-slate-100 text-slate-400' : ''} ${className}`.trim()}
+            className={`flex min-h-[38px] w-full items-center gap-2 rounded-[6px] border border-[#cfd6e2] bg-white px-2 py-1 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : ''} ${className}`.trim()}
         >
             <div className="min-w-0 flex-1">
                 {hasValue ? (
                     <span
-                        className={`inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#6ea4ef] bg-[#eef6ff] px-2 py-0.5 text-[13px] md:text-[14px] leading-5 text-[#172554] ${tokenClassName}`.trim()}
+                        className={`inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#6ea4ef] bg-[#eef6ff] px-2 py-0.5 text-sm md:text-sm leading-5 text-[#172554] ${tokenClassName}`.trim()}
                     >
                         <span className="min-w-0 whitespace-pre-line break-words">{value}</span>
                         {clearable && !disabled ? (
@@ -36,7 +36,7 @@ export default function PreferencesLookupField({
                         ) : null}
                     </span>
                 ) : (
-                    <span className="px-2 text-[14px] md:text-[15px] text-slate-400">{placeholder}</span>
+                    <span className="px-2 text-xs sm:text-sm text-slate-400">{placeholder}</span>
                 )}
             </div>
 
@@ -44,7 +44,7 @@ export default function PreferencesLookupField({
                 type="button"
                 disabled={disabled}
                 aria-label="Cari akun"
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2937] disabled:cursor-not-allowed disabled:text-slate-300"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2937] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none"
             >
                 <SearchIcon className="h-5 w-5 text-current" />
             </button>

@@ -15,7 +15,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                 error={field.error}
                 message={field.message}
                 className="h-[34px] rounded-[3px] border-[#cfd6e2]"
-                selectClassName="text-[14px] md:text-[15px]"
+                selectClassName="text-xs sm:text-sm"
             >
                 {field.options.map((option) => (
                     <option key={option} value={option}>
@@ -32,7 +32,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                 disabled={field.disabled}
                 onChange={(displayValue) => onChange?.(field.id, displayValue)}
                 className="w-full max-w-[280px]"
-                inputClassName="text-[14px] md:text-[15px]"
+                inputClassName="text-xs sm:text-sm"
             />
         );
     },
@@ -75,13 +75,13 @@ const PREFERENCE_FIELD_RENDERERS = {
                     error={field.error}
                     message={field.message}
                     className="h-[34px] flex-1 rounded-[3px] border-[#cfd6e2] bg-[#f8f8f8]"
-                    inputClassName="text-[14px] md:text-[15px] text-[#6a7388]"
+                    inputClassName="text-xs sm:text-sm text-[#6a7388]"
                 />
                 <button
                     type="button"
                     disabled={field.disabled}
                     onClick={handleCurrencyEdit}
-                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-[#e8e4dd] text-[#2a3349] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 hover:bg-[#dcd6cc] transition"
+                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-[#e8e4dd] text-[#2a3349] disabled:cursor-default disabled:bg-slate-100 disabled:text-slate-400 disabled:pointer-events-none enabled:hover:bg-[#dcd6cc] transition"
                     aria-label={`Edit ${field.label}`}
                 >
                     <PencilIcon />
@@ -135,7 +135,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                     ) : null
                 }
                 className="h-[34px] rounded-[3px] border-[#cfd6e2]"
-                inputClassName="text-[14px] md:text-[15px]"
+                inputClassName="text-xs sm:text-sm"
             />
         );
     },

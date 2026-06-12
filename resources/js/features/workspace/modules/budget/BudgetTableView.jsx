@@ -56,7 +56,7 @@ export default function BudgetTableView({ page, onCreate, onOpenDetail, onRefres
                             onChange={(event) => setDepartmentFilter(event.target.value)}
                             containerClassName="w-auto shrink-0"
                             className="h-[34px] min-w-[144px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-[15px] text-[#394157]"
+                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                         >
                             {table.filters[0].options.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -70,7 +70,7 @@ export default function BudgetTableView({ page, onCreate, onOpenDetail, onRefres
                             onChange={(event) => setTypeFilter(event.target.value)}
                             containerClassName="w-auto shrink-0"
                             className="h-[34px] min-w-[100px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-[15px] text-[#394157]"
+                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                         >
                             {table.filters[1].options.map((option) => (
                                 <option key={option.value} value={option.value}>

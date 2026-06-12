@@ -105,7 +105,7 @@ class PaymentOrderPage
                         ['id' => 'payment-order-columns', 'label' => 'Atur kolom'],
                     ],
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[18%]'],
+                        ['id' => 'number', 'label' => 'No. Permintaan', 'widthClassName' => 'w-[18%]'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[12%]'],
                         ['id' => 'notes', 'label' => 'Keterangan'],
                         ['id' => 'bank', 'label' => 'Bank', 'widthClassName' => 'w-[20%]'],

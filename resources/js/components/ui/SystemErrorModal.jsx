@@ -120,7 +120,7 @@ export default function SystemErrorModal({
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-3">
                         <HeaderIcon />
-                        <h2 className="truncate text-[15px] font-medium sm:text-[16px]">{title}</h2>
+                        <h2 className="truncate text-base font-medium sm:text-base">{title}</h2>
                     </div>
 
                     {dismissible ? (
@@ -143,11 +143,11 @@ export default function SystemErrorModal({
                     </div>
 
                     <div className="min-w-0 flex-1 space-y-2.5">
-                        <p className="text-[15px] leading-6 text-[#1f2436] sm:text-[16px]">{description}</p>
+                        <p className="text-base leading-6 text-[#1f2436] sm:text-base">{description}</p>
 
                         <div className="space-y-1.5">
                             {normalizedMessages.map((item, index) => (
-                                <p key={`${item}-${index}`} className="text-[15px] leading-6 text-[#db2347] sm:text-[16px]">
+                                <p key={`${item}-${index}`} className="text-base leading-6 text-[#db2347] sm:text-base">
                                     {item}
                                 </p>
                             ))}
@@ -161,7 +161,7 @@ export default function SystemErrorModal({
                             variant="secondary"
                             size="md"
                             onClick={handleCopy}
-                            className="h-10 min-w-[96px] rounded-[6px] border-[#9ec0ec] px-4 text-[15px] text-[#1a63b3] shadow-none"
+                            className="h-10 min-w-[96px] rounded-[6px] border-[#9ec0ec] px-4 text-base text-[#1a63b3] shadow-none"
                         >
                             {copyState === 'copied' ? copiedLabel : copyLabel}
                         </Button>
@@ -171,7 +171,7 @@ export default function SystemErrorModal({
                         <Button
                             size="md"
                             onClick={handleConfirm}
-                            className="h-10 min-w-[98px] rounded-[6px] bg-[#1f57a9] px-5 text-[15px] shadow-none hover:bg-[#1a4c95]"
+                            className="h-10 min-w-[98px] rounded-[6px] bg-[#1f57a9] px-5 text-base shadow-none hover:bg-[#1a4c95]"
                         >
                             {confirmLabel}
                         </Button>

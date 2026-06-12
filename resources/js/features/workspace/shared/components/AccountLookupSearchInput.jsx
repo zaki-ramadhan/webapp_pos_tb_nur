@@ -15,6 +15,7 @@ export default function AccountLookupSearchInput({
     onFocus,
     onChange,
     onClear,
+    error = false,
 }) {
     const inputRef = useRef(null);
     const hasSelectedValue = Boolean(selectedValue);
@@ -36,14 +37,18 @@ export default function AccountLookupSearchInput({
         inputRef.current?.focus();
     }
 
+    const toneClassName = error
+        ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+        : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+
     return (
         <div
             onMouseDown={focusInputFromWrapper}
-            className={`group flex w-full items-center overflow-hidden rounded-[4px] border border-slate-300 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'bg-slate-100 text-slate-400' : 'bg-white'} ${className}`.trim()}
+            className={`group flex w-full items-center overflow-hidden rounded-[4px] border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400' : 'bg-white'} ${className}`.trim()}
         >
             <div className="flex min-w-0 flex-1 items-center gap-2 px-3">
                 {hasSelectedValue ? (
-                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-[14px] text-[#295089]">
+                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-sm text-[#295089]">
                         <span className="truncate">{selectedValue}</span>
                         <button
                             type="button"

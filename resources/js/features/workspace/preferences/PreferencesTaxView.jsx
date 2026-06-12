@@ -33,7 +33,7 @@ function TaxRowLabel({ label, showInfo = false }) {
     }
 
     return (
-        <div className="pt-1.5 text-[14px] md:text-[15px] leading-6 text-[#0f172a]">
+        <div className="pt-1.5 text-xs sm:text-sm leading-6 text-[#0f172a]">
             <span className="whitespace-pre-line">{label}</span>
             {showInfo ? (
                 <Tooltip content={getTaxTooltip(label)} portal>
@@ -71,8 +71,8 @@ function TaxInputControl({ control, onChange }) {
                 prefix={control.prefix}
                 rows={control.rows ?? 3}
                 className={`rounded-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
-                prefixClassName={`min-w-[60px] border-[#d8dde7] px-3 py-2 text-[14px] md:text-[15px] text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
-                textareaClassName={`min-h-[80px] px-3 py-2 text-[14px] md:text-[15px] leading-6 text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+                prefixClassName={`min-w-[60px] border-[#d8dde7] px-3 py-2 text-xs sm:text-sm text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
+                textareaClassName={`min-h-[80px] px-3 py-2 text-xs sm:text-sm leading-6 text-[#111827] ${control.inputClassName ?? ''}`.trim()}
                 onChange={(event) => onChange(event.target.value)}
             />
         );
@@ -85,7 +85,7 @@ function TaxInputControl({ control, onChange }) {
                 disabled={control.disabled}
                 onChange={(displayValue) => onChange(displayValue)}
                 className={`w-full max-w-[424px] ${control.fieldClassName ?? ''}`.trim()}
-                inputClassName={`text-[14px] md:text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+                inputClassName={`text-xs sm:text-sm text-[#111827] ${control.inputClassName ?? ''}`.trim()}
             />
         );
     }
@@ -113,8 +113,8 @@ function TaxInputControl({ control, onChange }) {
                 ) : null
             }
             className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
-            prefixClassName={`min-w-[62px] border-[#d8dde7] px-3 text-[14px] md:text-[15px] text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
-            inputClassName={`text-[14px] md:text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+            prefixClassName={`min-w-[62px] border-[#d8dde7] px-3 text-xs sm:text-sm text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
+            inputClassName={`text-xs sm:text-sm text-[#111827] ${control.inputClassName ?? ''}`.trim()}
             trailingClassName={control.clearable && hasValue ? 'px-2.5 text-[#1f2937]' : ''}
             onChange={(event) => onChange(event.target.value)}
         />
@@ -162,9 +162,9 @@ function TaxRadioRow({ row, onChange }) {
                         disabled={option.disabled}
                         size="sm"
                         containerClassName="w-auto"
-                        label={<span className="text-[14px] md:text-[15px]">{option.label}</span>}
+                        label={<span className="text-xs sm:text-sm">{option.label}</span>}
                         className="gap-3"
-                        labelClassName="text-[14px] md:text-[15px] leading-6"
+                        labelClassName="text-xs sm:text-sm leading-6"
                         onChange={() => onChange(row.id, option.value)}
                     />
                 ))}
@@ -187,9 +187,9 @@ function TaxCheckboxListRow({ row, onToggle }) {
                         disabled={Boolean(option.disabled)}
                         size="sm"
                         align="center"
-                        label={<span className="text-[14px] md:text-[15px]">{option.label}</span>}
+                        label={<span className="text-xs sm:text-sm">{option.label}</span>}
                         className="gap-3"
-                        labelClassName="text-[14px] md:text-[15px] leading-6"
+                        labelClassName="text-xs sm:text-sm leading-6"
                         inputClassName="rounded-[5px] border-[#b6c1d1]"
                         onChange={(event) => onToggle(row.id, option.id, event.target.checked)}
                     />
@@ -211,9 +211,9 @@ function TaxSingleCheckboxRow({ row, onToggle }) {
                     disabled={Boolean(row.option?.disabled)}
                     size="sm"
                     align="center"
-                    label={<span className="text-[14px] md:text-[15px]">{row.option?.label}</span>}
+                    label={<span className="text-xs sm:text-sm">{row.option?.label}</span>}
                     className="gap-3"
-                    labelClassName="text-[14px] md:text-[15px] leading-6"
+                    labelClassName="text-xs sm:text-sm leading-6"
                     inputClassName="rounded-[5px] border-[#b6c1d1]"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />

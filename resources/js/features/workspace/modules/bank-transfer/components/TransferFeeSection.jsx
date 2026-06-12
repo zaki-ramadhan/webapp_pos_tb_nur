@@ -21,12 +21,12 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
                         placeholder={config.feeLookupPlaceholder}
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         onClick={handlers.onSelectFeeAccount}
                     />
                 </div>
 
-                <div className="text-right text-[24px] font-normal text-[#1f2436]">{config.feeTitle}</div>
+                <div className="text-right text-2xl font-normal text-[#1f2436]">{config.feeTitle}</div>
             </div>
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
@@ -37,7 +37,7 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
                                 {config.feeTable.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
                                     >
                                         {column.label}
                                     </DataTableHead>
@@ -56,7 +56,7 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
                                         {config.feeTable.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-[15px] text-[#131a28]`.trim()}
+                                                className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-base text-[#131a28]`.trim()}
                                             >
                                                 {formatTableTextValue(row[column.id])}
                                             </DataTableCell>
@@ -65,7 +65,7 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
                                 ))
                             ) : (
                                 <DataTableRow className="bg-white">
-                                    <DataTableCell colSpan={config.feeTable.columns.length} className="px-3 py-3 text-center text-[15px] text-[#6b7280]">
+                                    <DataTableCell colSpan={config.feeTable.columns.length} className="px-3 py-3 text-center text-base text-[#6b7280]">
                                         {config.feeTable.emptyLabel}
                                     </DataTableCell>
                                 </DataTableRow>

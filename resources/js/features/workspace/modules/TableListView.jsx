@@ -15,6 +15,7 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { FunnelIcon, LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
+import Tooltip from '@/components/ui/Tooltip';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -37,7 +38,7 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                         className={`h-[34px] min-w-[118px] rounded-[4px] sm:min-w-[138px] ${
                             filter.disabled ? 'border-[#ead6a7] bg-[#fff8e9]' : 'border-[#cfd6e2]'
                         }`.trim()}
-                        selectClassName={`px-3 text-[15px] ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#394157]'}`.trim()}
+                        selectClassName={`px-3 text-xs sm:text-sm ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#394157]'}`.trim()}
                         iconClassName={`mr-2 ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#6c7894]'}`.trim()}
                     >
                         {filter.options.map((option, optionIndex) => (
@@ -48,9 +49,9 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                     </SelectField>
 
                     {filter.disabled && filter.hint ? (
-                        <div className="flex flex-wrap items-center gap-1.5 pl-1 text-[11px] text-[#9a7b35]">
+                        <div className="flex flex-wrap items-center gap-1.5 pl-1 text-xs text-[#9a7b35]">
                             {filter.badgeLabel ? (
-                                <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                                <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
                                     {filter.badgeLabel}
                                 </span>
                             ) : null}
@@ -61,14 +62,15 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
             ))}
 
             {filterButtonLabel ? (
-                <button
-                    type="button"
-                    className="inline-flex h-[34px] w-[48px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
-                    aria-label={filterButtonLabel}
-                    title={filterButtonLabel}
-                >
-                    <FunnelIcon className="h-4.5 w-4.5" />
-                </button>
+                <Tooltip content={filterButtonLabel} portal>
+                    <button
+                        type="button"
+                        className="inline-flex h-[34px] w-[48px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                        aria-label={filterButtonLabel}
+                    >
+                        <FunnelIcon className="h-4.5 w-4.5" />
+                    </button>
+                </Tooltip>
             ) : null}
         </div>
     );
@@ -214,7 +216,7 @@ export default function TableListView({
                 >
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-[15px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {visibleColumns.map((column) => (
@@ -240,18 +242,18 @@ export default function TableListView({
                                     className={`border-[#dde1e8] ${onRowClick ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''} ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
-                                    <DataTableCell className="px-2.5 text-center text-[15px] text-[#646d83]">
+                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-[15px] text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
                                         >
                                             {column.truncate ? (
-                                                <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                                <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                                             ) : (
-                                                formatTableTextValue(row[column.id])
+                                                formatTableTextValue(row[column.id], column)
                                             )}
                                         </DataTableCell>
                                     ))}
@@ -259,7 +261,7 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

@@ -27,7 +27,7 @@ function InventoryAdjustmentTableSection({ columns, items, emptyLabel, isDetail,
                             {columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 py-2 text-[16px] font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 py-2 text-base font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -46,7 +46,7 @@ function InventoryAdjustmentTableSection({ columns, items, emptyLabel, isDetail,
                                     {columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-3 text-[15px] text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
+                                            className={`px-3 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
                                         >
                                             {item[column.id] ?? ''}
                                         </DataTableCell>
@@ -55,7 +55,7 @@ function InventoryAdjustmentTableSection({ columns, items, emptyLabel, isDetail,
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
@@ -101,7 +101,7 @@ export default function InventoryAdjustmentDetailsSection({
                             placeholder={config.detailSearchPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
@@ -114,7 +114,7 @@ export default function InventoryAdjustmentDetailsSection({
                             }))
                         }
                         className="h-[34px] min-w-[82px] rounded-[4px] border-[#7aa2d5]"
-                        selectClassName="text-[15px] text-[#21539b]"
+                        selectClassName="text-xs sm:text-sm text-[#21539b]"
                         containerClassName="w-auto shrink-0"
                     >
                         {config.detailModeOptions.map((option) => (
@@ -134,7 +134,7 @@ export default function InventoryAdjustmentDetailsSection({
                         <button
                             type="button"
                             onClick={onCreateItem}
-                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
                             Tambah Item
                         </button>
@@ -142,7 +142,7 @@ export default function InventoryAdjustmentDetailsSection({
                 </div>
 
                 <div className="flex items-center gap-3 self-end sm:self-auto">
-                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
                     </div>
                 </div>

@@ -31,12 +31,12 @@ export function LimitationsSimpleRadioGroup({ row, onChange }) {
                     size="sm"
                     align="center"
                     label={
-                        <span className="whitespace-pre-line text-[14px] md:text-[15px] leading-6">
+                        <span className="whitespace-pre-line text-xs sm:text-sm leading-6">
                             {option.label}
                         </span>
                     }
                     className="gap-3"
-                    labelClassName="text-[14px] md:text-[15px] leading-6"
+                    labelClassName="text-xs sm:text-sm leading-6"
                     onChange={() => onChange(row.id, option.value)}
                 />
             ))}
@@ -63,12 +63,12 @@ export function LimitationsAdvancedRadioGroup({
                         size="sm"
                         align="center"
                         label={
-                            <span className="whitespace-pre-line text-[14px] md:text-[15px] leading-6">
+                            <span className="whitespace-pre-line text-xs sm:text-sm leading-6">
                                 {option.label}
                             </span>
                         }
                         className="gap-3"
-                        labelClassName="text-[14px] md:text-[15px] leading-6"
+                        labelClassName="text-xs sm:text-sm leading-6"
                         onChange={() => onChange(row.id, option.value)}
                     />
 
@@ -130,12 +130,12 @@ export function LimitationsCheckboxList({ row, onToggleItem }) {
                     size="sm"
                     align="center"
                     label={
-                        <span className="text-[14px] md:text-[15px] leading-6 text-[#111827]">
+                        <span className="text-xs sm:text-sm leading-6 text-[#111827]">
                             {item.label}
                         </span>
                     }
                     className="gap-3"
-                    labelClassName="text-[14px] md:text-[15px] leading-6"
+                    labelClassName="text-xs sm:text-sm leading-6"
                     inputClassName="rounded-[5px] border-[#b6c1d1]"
                     onChange={(event) => onToggleItem(row.id, item.id, event.target.checked)}
                 />

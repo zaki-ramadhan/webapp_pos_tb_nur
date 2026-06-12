@@ -30,7 +30,7 @@ export default function SortableTableHeaderCell({
     if (!sortable || !onSort) {
         return (
             <DataTableHead
-                className={`${widthClassName} px-2.5 py-1.5 text-[15px] font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
+                className={`${widthClassName} px-2.5 py-1.5 text-base font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
                 style={minWidth ? { minWidth } : undefined}
             >
                 <span className={textClass}>{label}</span>
@@ -40,7 +40,7 @@ export default function SortableTableHeaderCell({
 
     return (
         <DataTableHead
-            className={`${widthClassName} px-2.5 py-1.5 text-[15px] font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
+            className={`${widthClassName} px-2.5 py-1.5 text-base font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
             style={minWidth ? { minWidth } : undefined}
         >
             <button

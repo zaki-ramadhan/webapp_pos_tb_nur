@@ -68,14 +68,14 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                 <section className="min-w-0">
                     <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-                    <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                    <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.checkNumber} />
                         <div className="max-w-[276px]">
                             <TextInput
                                 value={values.checkNumber}
                                 readOnly
                                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
 
@@ -85,7 +85,7 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                         {isDetail ? (
                             <>
                                 <TransactionFieldLabel label={config.labels.voided} />
-                                <label className="inline-flex h-[34px] items-center gap-2 text-[17px] text-[#1f2436]">
+                                <label className="inline-flex h-[34px] items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
                                     <input
                                         type="checkbox"
                                         checked={values.voided}
@@ -112,14 +112,14 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                         {isDetail ? (
                             <>
                                 <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                                <div className="pt-1 text-[17px] italic text-[#1f2436]">{values.reconcileStatus}</div>
+                                <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus}</div>
 
                                 <TransactionFieldLabel label={config.labels.printStatus} />
                                 <TextInput
                                     value={values.printStatus}
                                     readOnly
                                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#5f6779]"
+                                    inputClassName="text-xs sm:text-sm text-[#5f6779]"
                                 />
                             </>
                         ) : null}
@@ -130,20 +130,20 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                     <section className="min-w-0">
                         <TransactionSectionHeading title={config.additionalInfoTitle} icon="payment" />
 
-                        <div className="mt-4 grid gap-y-4 sm:grid-cols-[250px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                        <div className="mt-4 grid gap-y-4 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.kapKjs} />
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <TextInput
                                     value={values.kapNumber}
                                     readOnly
                                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                                 <TextInput
                                     value={values.kjsNumber}
                                     readOnly
                                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                             </div>
 
@@ -152,7 +152,7 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                                 value={values.ntpn}
                                 readOnly
                                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
                     </section>
@@ -165,7 +165,7 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
 export function CashPaymentHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.cashBank} required />
                 <ChipLookupField
                     values={values.bankAccounts}
@@ -183,7 +183,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                 />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                     {!activeRecordId ? (
@@ -209,7 +209,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -223,7 +223,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                         readOnly
                         trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                 )}
@@ -252,7 +252,7 @@ export function PaymentTableFilterBar({ table, filters, setFilters }) {
                     }
                     containerClassName="w-auto shrink-0"
                     className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {filter.options.map((option) => (

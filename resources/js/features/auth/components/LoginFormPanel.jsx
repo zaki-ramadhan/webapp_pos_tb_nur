@@ -144,7 +144,7 @@ export default function LoginFormPanel({ login }) {
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
                 <AuthHeading title={login.title} subtitle={login.subtitle} />
 
-                <form className="mt-6 space-y-4 sm:mt-8" onSubmit={submit}>
+                <form className="mt-6 space-y-3 sm:mt-8" onSubmit={submit}>
                     {props.flash?.status ? <Notice tone="success">{props.flash.status}</Notice> : null}
                     {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
                     <AuthInput
@@ -175,7 +175,7 @@ export default function LoginFormPanel({ login }) {
                         <button
                             type="button"
                             onClick={() => setForgotPasswordOpen(true)}
-                            className="text-[15px] text-[#4285f4] hover:underline"
+                            className="text-base text-[#4285f4] hover:underline"
                         >
                             {login.forgotPassword}
                         </button>

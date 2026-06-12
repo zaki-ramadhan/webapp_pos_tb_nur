@@ -29,7 +29,7 @@ import { mapApprovalRuleRow } from '@/features/workspace/backend/workspaceBacken
 function ApprovalHeading({ title }) {
     return (
         <div className="border-b border-[#d9dee8] pb-2">
-            <h3 className="text-[18px] font-medium text-[#1564d7] sm:text-[20px]">{title}</h3>
+            <h3 className="text-lg font-medium text-[#1564d7] sm:text-xl">{title}</h3>
         </div>
     );
 }
@@ -47,7 +47,7 @@ function getApprovalFieldTooltip(label) {
 
 function ApprovalFieldLabel({ label, required = false, info = false }) {
     return (
-        <div className="flex items-center gap-2 pt-1 text-[16px] text-[#1f2436]">
+        <div className="flex items-center gap-2 pt-1 text-xs sm:text-sm text-[#1f2436]">
             <span>
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
@@ -68,17 +68,17 @@ function ThresholdField({ valueLabel }) {
             <TextInput
                 placeholder=""
                 prefix={valueLabel}
-                prefixClassName="min-w-[110px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#9299aa]"
+                prefixClassName="min-w-[110px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#9299aa]"
                 trailing={<TableActionIcon className="h-5 w-5 text-[#1f2436]" />}
                 trailingClassName="px-3 text-[#1f2436]"
                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                inputClassName="text-[15px] text-[#1f2436]"
+                inputClassName="text-xs sm:text-sm text-[#1f2436]"
             />
 
             <TextInput
                 placeholder="Diskon (%)"
                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                inputClassName="text-[15px] text-[#1f2436]"
+                inputClassName="text-xs sm:text-sm text-[#1f2436]"
             />
         </div>
     );
@@ -95,19 +95,19 @@ function TransactionApprovalFormView({ form }) {
                 <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
             </div>
 
-            <div className="flex min-h-[642px] flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] xl:flex-row xl:items-start">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+            <div className="flex min-h-0 h-fit flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] xl:flex-row xl:items-start">
+                <div className="min-w-0 flex-1">
                     <div className="grid gap-8 lg:grid-cols-2">
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <ApprovalHeading title="Kriteria Pengajuan" />
 
-                            <div className="grid gap-3 lg:grid-cols-[290px_minmax(0,1fr)] lg:items-center">
+                            <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
                                 <ApprovalFieldLabel label="Tipe Transaksi" />
                                 <SelectField
                                     value={transactionType}
                                     onChange={(event) => setTransactionType(event.target.value)}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="text-[15px] text-[#1f2436]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                 >
                                     {form.transactionTypeOptions.map((option) => (
                                         <option key={option.value} value={option.value}>
@@ -124,7 +124,7 @@ function TransactionApprovalFormView({ form }) {
                                     placeholder="Cari/Pilih..."
                                     trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
 
                                 <ApprovalFieldLabel label="Cabang" />
@@ -132,7 +132,7 @@ function TransactionApprovalFormView({ form }) {
                                     value={branch}
                                     onChange={(event) => setBranch(event.target.value)}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="text-[15px] text-[#1f2436]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                 >
                                     {form.branchOptions.map((option) => (
                                         <option key={option.value} value={option.value}>
@@ -143,16 +143,16 @@ function TransactionApprovalFormView({ form }) {
                             </div>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <ApprovalHeading title="Kriteria Penyetuju" />
 
-                            <div className="grid gap-3 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
+                            <div className="grid gap-3 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
                                 <ApprovalFieldLabel label="Disetujui Oleh" required />
                                 <TextInput
                                     placeholder="Cari/Pilih..."
                                     trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
 
                                 <ApprovalFieldLabel label="Dengan Syarat" />
@@ -160,7 +160,7 @@ function TransactionApprovalFormView({ form }) {
                                     value={approvalRule}
                                     onChange={(event) => setApprovalRule(event.target.value)}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="text-[15px] text-[#1f2436]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                 >
                                     {form.approvalRuleOptions.map((option) => (
                                         <option key={option.value} value={option.value}>
@@ -217,7 +217,7 @@ function TransactionApprovalTableView({ table, onCreate, onRefresh, onOpenDetail
                         }
                         containerClassName="w-auto shrink-0"
                         className="h-[40px] min-w-[228px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#394157]"
+                        selectClassName="text-xs sm:text-sm text-[#394157]"
                     >
                         {filter.options.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -254,7 +254,7 @@ function TransactionApprovalTableView({ table, onCreate, onRefresh, onOpenDetail
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -270,16 +270,16 @@ function TransactionApprovalTableView({ table, onCreate, onRefresh, onOpenDetail
                                     onClick={() => onOpenDetail?.(row)}
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                 >
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{formatTableTextValue(row.valueLabel)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{formatTableTextValue(row.approvedBy)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{formatTableTextValue(row.createdBy)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-[15px] text-[#131a28]">{formatTableTextValue(row.branchLabel)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.valueLabel)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.approvedBy)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.createdBy)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.branchLabel)}</DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-3 py-8 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length} className="px-3 py-8 text-center text-base text-[#131a28]">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

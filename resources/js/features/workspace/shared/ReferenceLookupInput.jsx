@@ -2,12 +2,17 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CloseIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
+import { useFormError } from '@/components/ui/FormErrorContext';
 
 function buildNormalizedSearchValue(value) {
     return String(value ?? '').trim().toLowerCase();
 }
 
 export default function ReferenceLookupInput({
+    id,
+    name,
+    error = '',
+    message = '',
     value = '',
     values = null,
     items = [],
@@ -27,6 +32,9 @@ export default function ReferenceLookupInput({
     emptyTitle = 'Data tidak ditemukan',
     emptyDescription = 'Coba kata kunci lain.',
 }) {
+    const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
     const rootRef = useRef(null);
     const inputRef = useRef(null);
     const [query, setQuery] = useState('');
@@ -118,32 +126,39 @@ export default function ReferenceLookupInput({
         setQuery('');
         setOpen(false);
         onSelect?.(item);
+        clearError(contextKey);
     }
 
     function handleClear() {
         setQuery('');
         setOpen(false);
         onClear?.();
+        clearError(contextKey);
         inputRef.current?.focus();
     }
 
     function handleRemove(item) {
         onRemove?.(item);
+        clearError(contextKey);
         inputRef.current?.focus();
     }
+
+    const toneClassName = resolvedError
+        ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+        : 'border-[#cfd6e2] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div ref={rootRef} className={`relative w-full ${className}`.trim()}>
             <div
                 onMouseDown={focusInput}
-                className={`group flex w-full items-center overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'bg-slate-100' : ''}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-[4px] border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''}`.trim()}
             >
                 <div className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5">
                     {selectedLabels.length ? (
                         selectedLabels.map((item) => (
                             <span
                                 key={item}
-                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-[14px] text-[#295089]"
+                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-sm text-[#295089]"
                             >
                                 <span className="truncate">{item}</span>
                                 <button
@@ -177,7 +192,7 @@ export default function ReferenceLookupInput({
                         }}
                         onChange={handleChange}
                         aria-label={searchLabel}
-                        className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-[15px] text-[#1f2436] outline-none placeholder:text-[#a1a8b7] disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                        className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-[#1f2436] outline-none placeholder:text-[#a1a8b7] disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
                     />
                 </div>
 
@@ -199,7 +214,7 @@ export default function ReferenceLookupInput({
             {showMenu ? (
                 <LookupDropdownSurface className={menuClassName}>
                     {filteredItems.length ? (
-                        <div className="max-h-[260px] overflow-y-auto">
+                        <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0">
                             {filteredItems.map((item) => (
                                 <button
                                     key={item.id ?? getOptionLabel(item)}
@@ -211,7 +226,7 @@ export default function ReferenceLookupInput({
                                         renderOption(item)
                                     ) : (
                                         <div className="min-w-0">
-                                            <div className="truncate text-[17px] text-[#131a28]">{getOptionLabel(item)}</div>
+                                            <div className="truncate text-base text-[#131a28]">{getOptionLabel(item)}</div>
                                         </div>
                                     )}
                                 </button>
@@ -221,6 +236,11 @@ export default function ReferenceLookupInput({
                         <LookupEmptyState title={emptyTitle} description={emptyDescription} />
                     )}
                 </LookupDropdownSurface>
+            ) : null}
+            {feedbackMessage ? (
+                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-[#d65959]">
+                    {feedbackMessage}
+                </p>
             ) : null}
         </div>
     );

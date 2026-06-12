@@ -53,7 +53,8 @@ export function TransactionDataTable({
     }, [cleanedColumns, visibleColumnIds]);
 
     useEffect(() => {
-        tableRegistry.setActiveTable(cleanedColumns, rows, null);
+        const activeRes = (typeof window !== 'undefined' ? window.__activePageId : null);
+        tableRegistry.setActiveTable(cleanedColumns, rows, activeRes);
         return () => {
             if (tableRegistry.activeTable?.columns === cleanedColumns) {
                 tableRegistry.setActiveTable(null, null, null);
@@ -69,7 +70,7 @@ export function TransactionDataTable({
                 <DataTableHeader className="bg-[#5f7690]">
                     <tr>
                         {showNumbering && (
-                            <DataTableHead className="w-[50px] px-3 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 text-center text-sm font-medium text-white">
                                 No.
                             </DataTableHead>
                         )}
@@ -78,7 +79,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-sm font-medium text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
                                     style={minWidth ? { minWidth } : undefined}
                                 >
                                     {renderHeaderCell ? renderHeaderCell(column) : column.label}
@@ -101,14 +102,14 @@ export function TransactionDataTable({
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {showNumbering && (
-                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        <DataTableCell className="px-3 text-center text-sm text-[#646d83]">
                                             {index + 1}
                                         </DataTableCell>
                                     )}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-3 text-[15px] text-[#131a28] ${resolveTransactionAlignClassName(column.align)}`.trim()}
+                                            className={`px-3 text-sm text-[#131a28] ${resolveTransactionAlignClassName(column.align)}`.trim()}
                                         >
                                             {renderCell
                                                 ? renderCell({
@@ -131,7 +132,7 @@ export function TransactionDataTable({
                             ) : null}
                             <DataTableCell
                                 colSpan={visibleColumns.length - (hasLeadingEmptyCell ? 1 : 0) + (showNumbering ? 1 : 0)}
-                                className="px-3 py-3 text-center text-[15px] text-[#131a28]"
+                                className="px-3 py-3 text-center text-sm text-[#131a28]"
                             >
                                 {emptyLabel}
                             </DataTableCell>
@@ -176,7 +177,7 @@ export function TransactionLineItemsSection({
                             placeholder={searchPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     )}
                 </div>

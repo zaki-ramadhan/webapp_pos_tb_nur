@@ -22,7 +22,7 @@ import { buildFormValues, mapTaxRow } from './taxShared';
 function TaxFieldRow({ label, required = false, children }) {
     return (
         <div className="grid gap-3 lg:grid-cols-[360px_minmax(0,600px)] lg:items-center">
-            <label className="text-[17px] leading-6 text-[#1f2436]">
+            <label className="text-xs sm:text-sm leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
@@ -93,7 +93,24 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
 
     async function handleSave() {
         if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
+            const fieldErrors = {};
+            if (!values.type) {
+                fieldErrors.type = `${form.labels.type} wajib diisi.`;
+            }
+            if (!values.description?.trim()) {
+                fieldErrors.description = `${form.labels.description} wajib diisi.`;
+            }
+            if (!values.percentage || isNaN(Number(values.percentage)) || Number(values.percentage) < 0) {
+                fieldErrors.percentage = `${form.labels.percentage} wajib diisi dan harus bernilai 0 atau lebih.`;
+            }
+            if (!values.salesAccount) {
+                fieldErrors.salesAccount = `${form.labels.salesAccount} wajib diisi.`;
+            }
+            if (!values.purchaseAccount) {
+                fieldErrors.purchaseAccount = `${form.labels.purchaseAccount} wajib diisi.`;
+            }
+
+            rejectCrudFormAction(validationMessage, { setStatus, fieldErrors });
             return;
         }
 
@@ -165,22 +182,24 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
     }
 
     return (
-        <div className="relative flex min-h-full flex-col">
-            <div className="px-1 pt-0.5">
+        <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
+            <div className="px-1 pt-0.5 shrink-0">
                 <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
             </div>
 
-            <div className="flex min-h-[642px] flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] xl:flex-row xl:items-start">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
-                    <CrudStatusMessage status={status} />
+            <div className="flex flex-1 min-h-0 flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] xl:flex-row xl:items-stretch overflow-hidden">
+                <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
-                    <div className="max-w-[980px] space-y-4">
+                    <div className="max-w-[980px] space-y-3">
                         <TaxFieldRow label={form.labels.type} required>
                             <SelectField
+                                id="type"
+                                name="type"
                                 value={values.type}
                                 onChange={(event) => handleChange('type', event.target.value)}
                                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {form.typeOptions.map((option) => (
                                     <option key={option.value} value={option.value}>
@@ -192,30 +211,36 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
 
                         <TaxFieldRow label={form.labels.description} required>
                             <TextInput
+                                id="description"
+                                name="description"
                                 value={values.description}
                                 onChange={(event) => handleChange('description', event.target.value)}
                                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </TaxFieldRow>
 
                         <TaxFieldRow label={form.labels.percentage} required>
                             <div className="flex items-center gap-3">
                                 <TextInput
+                                    id="percentage"
+                                    name="percentage"
                                     value={values.percentage}
                                     onChange={(event) =>
                                         handleChange('percentage', event.target.value.replace(/[^\d.]/g, ''))
                                     }
                                     containerClassName="w-[120px]"
                                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-right text-[15px] text-[#1f2436]"
+                                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                                 />
-                                <span className="text-[17px] text-[#1f2436]">%</span>
+                                <span className="text-xs sm:text-sm text-[#1f2436]">%</span>
                             </div>
                         </TaxFieldRow>
 
                         <TaxFieldRow label={form.labels.salesAccount} required>
                             <AccountLookupField
+                                id="salesAccount"
+                                name="salesAccount"
                                 value={values.salesAccount}
                                 placeholder={form.accountPlaceholder}
                                 searchLabel={form.salesAccountSearchLabel}
@@ -234,6 +259,8 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
 
                         <TaxFieldRow label={form.labels.purchaseAccount} required>
                             <AccountLookupField
+                                id="purchaseAccount"
+                                name="purchaseAccount"
                                 value={values.purchaseAccount}
                                 placeholder={form.accountPlaceholder}
                                 searchLabel={form.purchaseAccountSearchLabel}
@@ -252,7 +279,7 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                     </div>
                 </div>
 
-                <div className="flex justify-end xl:shrink-0">
+                <div className="flex justify-end xl:shrink-0 xl:self-start">
                     <div className="flex flex-row gap-3 xl:flex-col">
                         <DockActionButton
                             label={saving ? 'Memproses...' : form.saveLabel}

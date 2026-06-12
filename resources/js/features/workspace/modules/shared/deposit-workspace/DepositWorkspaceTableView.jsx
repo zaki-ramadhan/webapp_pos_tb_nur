@@ -40,7 +40,7 @@ function DepositTableFilterBar({ table, filters, setFilters }) {
                     }
                     containerClassName="w-auto"
                     className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {filter.options.map((option, optionIndex) => (
@@ -152,13 +152,13 @@ export default function DepositTableView({
                 <DataTable className={config.table.minWidthClassName ?? 'min-w-[1480px]'} wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
                                         column.align === 'right'
                                             ? 'text-right'
                                             : column.align === 'center'
@@ -199,13 +199,13 @@ export default function DepositTableView({
                                         })
                                     }
                                 >
-                                                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
 {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
                                         >
                                             {column.render ? (
                                                 column.render({
@@ -222,7 +222,7 @@ export default function DepositTableView({
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-2.5 py-6 text-center text-[15px] text-[#7d879a]">
+                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-2.5 py-6 text-center text-base text-[#7d879a]">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

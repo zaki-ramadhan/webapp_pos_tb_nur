@@ -65,7 +65,7 @@ export function SectionCard({ children, className = '' }) {
 
 export function FixedAssetFieldRow({ label, required = false, labelClassName = '', children }) {
     return (
-        <div className="grid gap-3 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
             <TransactionFieldLabel label={label} required={required} className={labelClassName} />
             <div>{children}</div>
         </div>
@@ -103,8 +103,8 @@ export function InlineCheckboxField({ checked, label = 'Ya', disabled = false })
             size="md"
             align="center"
             containerClassName="w-auto"
-            className="gap-2 text-[15px]"
-            labelClassName="text-[15px]"
+            className="gap-2 text-base"
+            labelClassName="text-base"
         />
     );
 }
@@ -122,7 +122,7 @@ export function FixedAssetsProcessButton({ items = [] }) {
                 className="inline-flex h-[34px] items-center overflow-hidden rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
                 aria-label="Proses aset"
             >
-                <span className="inline-flex items-center justify-center px-4 text-[15px]">Proses</span>
+                <span className="inline-flex items-center justify-center px-4 text-base">Proses</span>
                 <span className="inline-flex h-full w-[30px] items-center justify-center border-l border-l-[#7aa2d5]">
                     <ChevronDownIcon className="h-4 w-4" />
                 </span>

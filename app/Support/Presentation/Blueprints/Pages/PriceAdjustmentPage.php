@@ -121,7 +121,7 @@ class PriceAdjustmentPage
                         ['id' => 'category', 'rowKey' => 'salesCategoryFilter', 'options' => [['value' => 'all', 'label' => 'Kategori Penjualan: Semua']]],
                     ],
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[16%]'],
+                        ['id' => 'number', 'label' => 'No. Penyesuaian', 'widthClassName' => 'w-[16%]'],
                         ['id' => 'effectiveDate', 'label' => 'Mulai Berlaku', 'widthClassName' => 'w-[12%]'],
                         ['id' => 'salesCategory', 'label' => 'Kategori Penjualan', 'widthClassName' => 'w-[16%]'],
                         ['id' => 'notes', 'label' => 'Keterangan', 'widthClassName' => 'w-[35%]'],

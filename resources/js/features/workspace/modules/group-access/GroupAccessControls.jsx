@@ -16,7 +16,7 @@ export function CopyPermissionsButton({ label, options, onSelect }) {
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((currentValue) => !currentValue)}
-                className="inline-flex h-[42px] min-w-[138px] items-center justify-center gap-2 rounded-[6px] border border-[#6da0e2] bg-white px-3.5 text-[15px] font-medium text-[#2a66b4] transition hover:bg-[#f7fbff]"
+                className="inline-flex h-[42px] min-w-[138px] items-center justify-center gap-2 rounded-[6px] border border-[#6da0e2] bg-white px-3.5 text-base font-medium text-[#2a66b4] transition hover:bg-[#f7fbff]"
             >
                 <span>{label}</span>
                 <ChevronDownIcon className="h-4 w-4" />

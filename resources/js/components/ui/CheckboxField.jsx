@@ -38,7 +38,7 @@ export default function CheckboxField({
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <div className={`flex ${alignClassName} gap-2.5 text-[15px] leading-6`.trim()}>
+            <div className={`flex ${alignClassName} gap-2.5 text-xs sm:text-sm leading-6`.trim()}>
                 <input
                     id={id}
                     type="checkbox"
@@ -50,7 +50,7 @@ export default function CheckboxField({
                 />
                 <label
                     htmlFor={id}
-                    className={`min-w-0 ${disabled ? 'cursor-not-allowed text-slate-400' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
+                    className={`min-w-0 ${disabled ? 'cursor-default text-slate-400 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
                 >
                     <span className={`${disabled ? 'text-slate-400' : 'text-brand-dark'}`.trim()}>
                         {label}
@@ -58,7 +58,7 @@ export default function CheckboxField({
                     </span>
 
                     {feedbackMessage ? (
-                        <span className={`mt-1 block text-[13px] leading-5 ${resolvedError ? 'text-error-text' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                        <span className={`mt-1 block text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-text' : 'text-slate-500'} ${messageClassName}`.trim()}>
                             {feedbackMessage}
                         </span>
                     ) : null}

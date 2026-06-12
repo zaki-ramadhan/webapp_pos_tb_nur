@@ -6,11 +6,12 @@ function DocumentModalTabButton({ active, label, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`border-b-2 px-3 py-2 text-[16px] ${
+            title={label}
+            className={`shrink-0 border-b-2 px-3 py-2 text-base max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
                 active ? 'border-[#ff4836] text-[#ff4836]' : 'border-transparent text-[#5f6980]'
             }`.trim()}
         >
-            {label}
+            <span className="block truncate">{label}</span>
         </button>
     );
 }
@@ -20,13 +21,13 @@ export function DocumentModalFooter({ deleteLabel = 'Hapus', submitLabel = 'Lanj
         <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
             <button
                 type="button"
-                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[18px] text-[#21539b]"
+                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-lg text-[#21539b]"
             >
                 {deleteLabel}
             </button>
             <button
                 type="button"
-                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-[18px] text-white"
+                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-lg text-white"
             >
                 {submitLabel}
             </button>
@@ -58,7 +59,7 @@ export default function DocumentModalLayout({
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <PencilIcon className="h-5 w-5 text-white" />
-                        <h2 className="text-[16px] font-medium">{title}</h2>
+                        <h2 className="text-base font-medium">{title}</h2>
                     </div>
 
                     <button

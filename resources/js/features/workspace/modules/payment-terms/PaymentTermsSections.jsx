@@ -5,7 +5,7 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 function PaymentFieldRow({ label, required = false, children }) {
     return (
         <div className="grid gap-3 lg:grid-cols-[360px_minmax(0,570px)] lg:items-start">
-            <label className="pt-2 text-[17px] leading-6 text-[#1f2436]">
+            <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
@@ -17,8 +17,8 @@ function PaymentFieldRow({ label, required = false, children }) {
 function UnitField({ value, onChange, unit }) {
     return (
         <div className="flex items-center gap-4">
-            <TextInput value={value} onChange={onChange} className="h-[40px] w-[116px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-right text-[15px] text-[#1f2436]" />
-            <span className="text-[17px] text-[#1f2436]">{unit}</span>
+            <TextInput value={value} onChange={onChange} className="h-[40px] w-[116px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-right text-xs sm:text-sm text-[#1f2436]" />
+            <span className="text-xs sm:text-sm text-[#1f2436]">{unit}</span>
         </div>
     );
 }
@@ -43,7 +43,7 @@ export function PaymentTermsCreateSection({ config, createValues, setCreateValue
                     value={createValues.description}
                     onChange={(event) => setCreateValues((current) => ({ ...current, description: event.target.value }))}
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                 />
             </PaymentFieldRow>
 
@@ -54,7 +54,7 @@ export function PaymentTermsCreateSection({ config, createValues, setCreateValue
                     checked={createValues.isDefault}
                     onChange={(event) => setCreateValues((current) => ({ ...current, isDefault: event.target.checked }))}
                     align="center"
-                    labelClassName="text-[17px]"
+                    labelClassName="text-base"
                     inputClassName="mt-0 h-[18px] w-[18px]"
                     containerClassName="w-auto"
                 />
@@ -77,7 +77,7 @@ export function PaymentTermsDetailSection({ config, detailValues, setDetailValue
                     checked={detailValues.isDefault}
                     onChange={(event) => setDetailValues((current) => ({ ...current, isDefault: event.target.checked }))}
                     align="center"
-                    labelClassName="text-[17px]"
+                    labelClassName="text-base"
                     inputClassName="mt-0 h-[18px] w-[18px]"
                     containerClassName="w-auto"
                 />
@@ -90,7 +90,7 @@ export function PaymentTermsDetailSection({ config, detailValues, setDetailValue
                     checked={detailValues.isInactive}
                     onChange={(event) => setDetailValues((current) => ({ ...current, isInactive: event.target.checked }))}
                     align="center"
-                    labelClassName="text-[17px]"
+                    labelClassName="text-base"
                     inputClassName="mt-0 h-[18px] w-[18px]"
                     containerClassName="w-auto"
                 />

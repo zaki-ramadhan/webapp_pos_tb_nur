@@ -92,7 +92,7 @@ class SupplierPricePage
                         ],
                     ],
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[16%]'],
+                        ['id' => 'number', 'label' => 'No. Bukti', 'widthClassName' => 'w-[16%]'],
                         ['id' => 'effectiveDate', 'label' => 'Mulai Berlaku', 'widthClassName' => 'w-[16%]'],
                         ['id' => 'supplier', 'label' => 'Pemasok', 'widthClassName' => 'w-[18%]'],
                         ['id' => 'notes', 'label' => 'Keterangan'],

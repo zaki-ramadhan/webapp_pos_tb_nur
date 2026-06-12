@@ -155,8 +155,8 @@ export default function SalaryAllowanceFormView({
                 <div className="flex min-h-[598px] items-start rounded-[4px] border border-[#d3d9e5] bg-white px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
                     <div className="w-full">
                         <CrudStatusMessage status={status} className="mb-4" />
-                        <div className="grid content-start gap-x-7 gap-y-4 lg:grid-cols-[228px_minmax(0,640px)] lg:items-start">
-                            <label className="pt-2 text-[18px] text-[#1f2436]">
+                        <div className="grid content-start gap-x-7 gap-y-4 lg:grid-cols-[160px_minmax(0,640px)] lg:items-start">
+                            <label className="pt-2 text-lg text-[#1f2436]">
                                 {fields.nameLabel} <span className="text-[#ED3969]">*</span>
                             </label>
                             <TextInput
@@ -164,23 +164,23 @@ export default function SalaryAllowanceFormView({
                                 onChange={(event) => setName(event.target.value)}
                                 trailing={isDetail ? <CloseIcon className="h-4.5 w-4.5" /> : null}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[17px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
 
-                            <div className="pt-2 text-[18px] text-[#1f2436]">{fields.typeLabel}</div>
+                            <div className="pt-2 text-lg text-[#1f2436]">{fields.typeLabel}</div>
                             {isDetail && !editableDetail ? (
                                 <TextInput
                                     value={entry.type}
                                     readOnly
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
-                                    inputClassName="text-[17px] text-[#6a7286]"
+                                    inputClassName="text-xs sm:text-sm text-[#6a7286]"
                                 />
                             ) : (
                                 <SelectField
                                     value={type}
                                     onChange={(event) => setType(event.target.value)}
                                     className="h-[42px] rounded-[4px] border-[#7fb0ee] shadow-[0_0_0_3px_rgba(127,176,238,0.12)]"
-                                    selectClassName="text-[17px] text-[#1f2436]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                 >
                                     {config.typeOptions.map((option) => (
                                         <option key={option} value={option}>
@@ -190,15 +190,15 @@ export default function SalaryAllowanceFormView({
                                 </SelectField>
                             )}
 
-                            <div className="pt-2 text-[18px] text-[#1f2436]">{fields.payDeductLabel}</div>
+                            <div className="pt-2 text-lg text-[#1f2436]">{fields.payDeductLabel}</div>
                             <TextInput
                                 value={entry.payDeduct}
                                 readOnly
                                 className="h-[40px] max-w-[390px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
-                                inputClassName="text-[17px] text-[#6a7286]"
+                                inputClassName="text-xs sm:text-sm text-[#6a7286]"
                             />
 
-                            <label className="pt-2 text-[18px] text-[#1f2436]">
+                            <label className="pt-2 text-lg text-[#1f2436]">
                                 {fields.expenseAccountLabel} <span className="text-[#ED3969]">*</span>
                             </label>
                             <AccountLookupField
@@ -223,8 +223,8 @@ export default function SalaryAllowanceFormView({
 
                             {isDetail ? (
                                 <>
-                                    <div className="pt-2 text-[18px] text-[#1f2436]">{fields.inactiveLabel}</div>
-                                    <label className="inline-flex h-[40px] items-center gap-3 text-[18px] text-[#1f2436]">
+                                    <div className="pt-2 text-lg text-[#1f2436]">{fields.inactiveLabel}</div>
+                                    <label className="inline-flex h-[40px] items-center gap-3 text-lg text-[#1f2436]">
                                         <input
                                             type="checkbox"
                                             checked={inactive}

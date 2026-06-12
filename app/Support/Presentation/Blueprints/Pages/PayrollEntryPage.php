@@ -218,7 +218,7 @@ class PayrollEntryPage
                                 ],
                             ],
                             'columns' => [
-                                ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[210px]'],
+                                ['id' => 'number', 'label' => 'No. Gaji', 'widthClassName' => 'w-[210px]'],
                                 ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[120px]'],
                                 ['id' => 'dueDate', 'label' => 'Jatuh Tempo', 'widthClassName' => 'w-[120px]'],
                                 ['id' => 'total', 'label' => 'Total', 'widthClassName' => 'w-[150px]', 'align' => 'right'],

@@ -18,7 +18,7 @@ export function WorkCompletionHeaderActions({ label }) {
         <div className="flex justify-end">
             <button
                 type="button"
-                className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
             >
                 {label}
             </button>
@@ -46,7 +46,7 @@ export function WorkCompletionAdditionalInfoSection({ config, values }) {
         <div className="min-h-[620px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.branch} required />
                 <ChipLookupField values={values.branches} placeholder="Cari/Pilih..." onRemove={() => {}} searchLabel="Cari cabang" heightClassName="h-[34px]" />
 
@@ -61,7 +61,7 @@ export function WorkCompletionHeader({ config, values, setValues, isDetail }) {
     return (
         <div className="border-b border-[#d8dde7] px-4 py-4">
             <div className="grid gap-x-10 gap-y-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
-                <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.entryDate} required />
                     <TransactionDateInput value={values.entryDate} className="max-w-[282px]" />
 
@@ -72,7 +72,7 @@ export function WorkCompletionHeader({ config, values, setValues, isDetail }) {
                         placeholder={config.jobOrderPlaceholder}
                         trailing={!isDetail ? <SearchIcon className="h-5 w-5 text-[#111827]" /> : null}
                         className={`h-[40px] rounded-[4px] ${isDetail ? 'border-[#97da73] bg-[#f2ffee]' : 'border-[#cfd6e2]'}`.trim()}
-                        inputClassName={`text-[15px] ${isDetail ? 'text-[#54a62e]' : 'text-[#1f2436]'}`.trim()}
+                        inputClassName={`text-xs sm:text-sm ${isDetail ? 'text-[#54a62e]' : 'text-[#1f2436]'}`.trim()}
                         trailingClassName="px-3"
                     />
 
@@ -86,7 +86,7 @@ export function WorkCompletionHeader({ config, values, setValues, isDetail }) {
                             }))
                         }
                         className="h-[40px] max-w-[282px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.completionTypeOptions.map((option) => (
                             <option key={option} value={option}>
@@ -96,7 +96,7 @@ export function WorkCompletionHeader({ config, values, setValues, isDetail }) {
                     </SelectField>
                 </div>
 
-                <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                     <div className="flex items-center justify-start gap-4 sm:justify-end">
                         <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                         {!isDetail ? (
@@ -122,7 +122,7 @@ export function WorkCompletionHeader({ config, values, setValues, isDetail }) {
                                 }))
                             }
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.numberingOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -134,9 +134,9 @@ export function WorkCompletionHeader({ config, values, setValues, isDetail }) {
                         <TextInput
                             value={values.documentNumber}
                             readOnly
-                            trailing={<span className="text-[18px] font-semibold text-[#1f2436]">×</span>}
+                            trailing={<span className="text-lg font-semibold text-[#1f2436]">×</span>}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailingClassName="px-3"
                         />
                     )}

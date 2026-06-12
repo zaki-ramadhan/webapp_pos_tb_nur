@@ -124,11 +124,11 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
             <div className="flex-1 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-5 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                 <div className="flex flex-wrap items-start justify-between gap-6">
                     <div className="space-y-1">
-                        <h2 className="max-w-[1100px] text-[20px] font-medium leading-8 text-[#111827]">
+                        <h2 className="max-w-[1100px] text-xl font-medium leading-8 text-[#111827]">
                             {isDetail ? `Ubah Pengguna: ${values.name}` : form.title}
                         </h2>
                         {isDetail && (
-                            <p className="text-[14px] text-slate-500">ID Pengguna: {recordId}</p>
+                            <p className="text-sm text-slate-500">ID Pengguna: {recordId}</p>
                         )}
                     </div>
                     <PanelActions actions={actions} />
@@ -136,8 +136,8 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
 
                 <CrudStatusMessage status={status} className="mb-6 mt-4" />
 
-                <div className="mt-8 grid gap-x-8 gap-y-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
-                    <label className="pt-3 text-[16px] text-[#20273b]">
+                <div className="mt-8 grid gap-x-8 gap-y-6 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start">
+                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
                         Nama Lengkap <span className="text-[#ED3969]">*</span>
                     </label>
                     <TextInput
@@ -145,10 +145,10 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                         onChange={(e) => setValues({ ...values, name: e.target.value })}
                         placeholder="Masukkan nama lengkap"
                         className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px]"
+                        inputClassName="text-xs sm:text-sm"
                     />
 
-                    <label className="pt-3 text-[16px] text-[#20273b]">
+                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
                         Email <span className="text-[#ED3969]">*</span>
                     </label>
                     <TextInput
@@ -156,11 +156,11 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                         onChange={(e) => setValues({ ...values, email: e.target.value })}
                         placeholder="email@contoh.com"
                         className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px]"
+                        inputClassName="text-xs sm:text-sm"
                         disabled={isDetail}
                     />
 
-                    <label className="pt-3 text-[16px] text-[#20273b]">
+                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
                         No. Telepon
                     </label>
                     <TextInput
@@ -168,10 +168,10 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                         onChange={(e) => setValues({ ...values, phone: e.target.value })}
                         placeholder="Contoh: 08123456789"
                         className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px]"
+                        inputClassName="text-xs sm:text-sm"
                     />
 
-                    <label className="pt-3 text-[16px] text-[#20273b]">
+                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
                         Kata Sandi {isDetail && '(Kosongkan jika tidak diubah)'}
                     </label>
                     <TextInput
@@ -180,10 +180,10 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                         onChange={(e) => setValues({ ...values, password: e.target.value })}
                         placeholder="Min. 8 karakter"
                         className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px]"
+                        inputClassName="text-xs sm:text-sm"
                     />
 
-                    <label className="pt-3 text-[16px] text-[#20273b]">
+                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
                         Grup Akses
                     </label>
                     <div className="grid gap-3">
@@ -191,7 +191,7 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                             value={values.accessGroupIds[0] ?? ''}
                             onChange={(e) => setValues({ ...values, accessGroupIds: e.target.value ? [parseInt(e.target.value)] : [] })}
                             className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px]"
+                            selectClassName="text-xs sm:text-sm"
                         >
                             <option value="">Pilih Grup Akses...</option>
                             {lookupData.groups.map((group) => (
@@ -200,12 +200,12 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                                 </option>
                             ))}
                         </SelectField>
-                        <p className="text-[13px] italic text-slate-500">
+                        <p className="text-sm italic text-slate-500">
                             Pengguna akan mendapatkan hak akses sesuai dengan grup yang dipilih.
                         </p>
                     </div>
 
-                    <label className="pt-3 text-[16px] text-[#20273b]">
+                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
                         Status Akun
                     </label>
                     <div className="flex items-center gap-6 pt-3">

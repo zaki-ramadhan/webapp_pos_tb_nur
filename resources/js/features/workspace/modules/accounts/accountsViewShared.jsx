@@ -11,7 +11,7 @@ import {
 
 export function AccountsFieldLabel({ label, required = false, className = '' }) {
     return (
-        <label className={`text-[17px] text-[#1f2436] ${className}`.trim()}>
+        <label className={`text-xs sm:text-sm text-[#1f2436] ${className}`.trim()}>
             {label}
             {required ? <span className="text-[#ED3969]"> *</span> : null}
         </label>
@@ -20,7 +20,7 @@ export function AccountsFieldLabel({ label, required = false, className = '' }) 
 
 export function AccountsFormFieldRow({ label, required = false, className = '', children }) {
     return (
-        <div className={`grid gap-3 lg:grid-cols-[280px_minmax(0,430px)] lg:items-start ${className}`.trim()}>
+        <div className={`grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start ${className}`.trim()}>
             <AccountsFieldLabel label={label} required={required} className="pt-2 lg:pt-1.5" />
             <div>{children}</div>
         </div>

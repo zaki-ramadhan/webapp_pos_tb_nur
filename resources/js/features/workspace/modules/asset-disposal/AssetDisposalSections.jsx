@@ -21,7 +21,7 @@ export function SectionCard({ children, className = '' }) {
 
 export function DisposalFieldRow({ label, required = false, children, alignTop = false }) {
     return (
-        <div className={`grid gap-3 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-x-4 ${alignTop ? 'sm:items-start' : 'sm:items-center'}`.trim()}>
+        <div className={`grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-x-4 ${alignTop ? 'sm:items-start' : 'sm:items-center'}`.trim()}>
             <TransactionFieldLabel label={label} required={required} className={alignTop ? 'pt-2' : ''} />
             <div>{children}</div>
         </div>
@@ -56,7 +56,7 @@ export function AssetDisposalHeader({ config, values, setValues, isDetail }) {
                                 value={values.lastDepreciation}
                                 readOnly
                                 className="h-10 rounded-sm border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
                         <div className="grid gap-2">
@@ -65,7 +65,7 @@ export function AssetDisposalHeader({ config, values, setValues, isDetail }) {
                                 value={values.bookValue}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-right text-[15px] text-[#1f2436]"
+                                inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
                     </div>
@@ -97,7 +97,7 @@ export function AssetDisposalHeader({ config, values, setValues, isDetail }) {
                                 }
                                 containerClassName="w-full xl:w-[400px]"
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -110,7 +110,7 @@ export function AssetDisposalHeader({ config, values, setValues, isDetail }) {
                                 value={values.numberingType}
                                 readOnly
                                 className="h-[40px] w-full rounded-[4px] border-[#cfd6e2] xl:w-[400px]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         )}
                     </div>
@@ -127,11 +127,11 @@ export function AssetDisposalHeader({ config, values, setValues, isDetail }) {
 
 export function AssetDisposalGeneralSection({ config, values, setValues }) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <TransactionSectionHeading title="Informasi umum" icon="document" />
 
             <div className="grid gap-6 pt-1 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.72fr)]">
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <DisposalFieldRow label={config.labels.quantity} required>
                         <TextInput
                             value={values.quantity}
@@ -142,7 +142,7 @@ export function AssetDisposalGeneralSection({ config, values, setValues }) {
                                 }))
                             }
                             className="h-[40px] max-w-[180px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-right text-[15px] text-[#1f2436]"
+                            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                         />
                     </DisposalFieldRow>
 
@@ -194,12 +194,12 @@ export function AssetDisposalGeneralSection({ config, values, setValues }) {
                             }
                             rows={3}
                             className="max-w-[580px] rounded-[4px] border-[#cfd6e2]"
-                            textareaClassName="text-[15px] text-[#1f2436]"
+                            textareaClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </DisposalFieldRow>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <DisposalFieldRow label={config.labels.soldAsset}>
                         <CheckboxField
                             checked={values.soldAsset}
@@ -212,7 +212,7 @@ export function AssetDisposalGeneralSection({ config, values, setValues }) {
                             label="Ya"
                             align="center"
                             containerClassName="w-auto"
-                            labelClassName="text-[16px] md:text-[17px]"
+                            labelClassName="text-base md:text-base"
                             inputClassName="mt-0 h-[18px] w-[18px]"
                         />
                     </DisposalFieldRow>

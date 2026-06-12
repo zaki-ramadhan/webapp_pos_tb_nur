@@ -13,7 +13,7 @@ export default function InventoryAdjustmentInfoSection({ config, values, setValu
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,560px)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,560px)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.adjustmentAccount} />
                 <AccountLookupField
                     values={values.adjustmentAccount}
@@ -50,7 +50,7 @@ export default function InventoryAdjustmentInfoSection({ config, values, setValu
                     }
                     rows={4}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[72px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
                 <TransactionFieldLabel label={config.labels.branch} required />

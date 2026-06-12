@@ -66,7 +66,7 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%' }
             <div className="group relative h-[132px] sm:h-[140px] lg:h-[148px]">
                 <Doughnut data={data} options={options} />
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-150 group-hover:opacity-0">
-                    <span className="text-[18px] font-semibold leading-none text-[#1f2536] sm:text-[20px] md:text-[22px] lg:text-[24px]">{percentage}</span>
+                    <span className="text-lg font-semibold leading-none text-[#1f2536] sm:text-xl md:text-2xl lg:text-2xl">{percentage}</span>
                     <span className="mt-0.5 text-xs text-[#7d88a2] normal-case tracking-normal">Ringkasan</span>
                 </div>
             </div>

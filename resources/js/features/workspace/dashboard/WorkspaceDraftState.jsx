@@ -2,10 +2,24 @@ import { createContext, useContext, useEffect } from 'react';
 
 const WorkspaceDraftStateContext = createContext(null);
 
-const DIRTY_PREFIX = '* ';
+const DIRTY_PREFIX = '*';
 
 export function stripDirtyPrefix(label = '') {
-    return String(label ?? '').replace(/^\*\s+/, '');
+    return String(label ?? '').replace(/^\*/, '');
+}
+
+export function renderTabLabel(label, active = false, isPrimary = false) {
+    if (typeof label === 'string' && label.startsWith('*')) {
+        const cleanLabel = label.slice(1);
+        const asteriskColor = isPrimary && active ? 'text-white' : 'text-[#ED3969]';
+        return (
+            <span className="inline-flex items-baseline">
+                <sup className={`text-[0.85em] font-bold select-none align-super relative -top-[0.05em] mr-0.5 ${asteriskColor}`}>*</sup>
+                <span>{cleanLabel}</span>
+            </span>
+        );
+    }
+    return label;
 }
 
 export function withDirtyLabel(label, dirty) {

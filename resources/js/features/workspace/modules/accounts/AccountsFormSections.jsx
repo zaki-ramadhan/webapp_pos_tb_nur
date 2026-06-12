@@ -23,32 +23,23 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
     }, [values.parentId, values.parentAccountLabel, values.parentAccountCode, values.parentAccountName, values.parentAccount]);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <AccountsFormFieldRow label={config.labels.type}>
-                {isDetail ? (
-                    <TextInput
-                        value={values.type}
-                        readOnly
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
-                    />
-                ) : (
-                    <SelectField
-                        value={values.type}
-                        onChange={(event) => onChange('type', event.target.value)}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
-                    >
-                        {config.typeOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
-                )}
+                <SelectField
+                    value={values.type}
+                    onChange={(event) => onChange('type', event.target.value)}
+                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                >
+                    {config.typeOptions.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </SelectField>
             </AccountsFormFieldRow>
 
-            <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,430px)] lg:items-start">
+            <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
                 <div className="pt-2 lg:pt-1.5 flex items-center">
                     <CheckboxField
                         id="accounts-sub-account"
@@ -65,43 +56,34 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             }
                         }}
                         align="center"
-                        labelClassName="text-[17px] font-normal text-[#1f2436]"
+                        labelClassName="text-base font-normal text-[#1f2436]"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
                 </div>
                 <div>
                     {Boolean(values.isSubAccount) && (
-                        isDetail ? (
-                            <TextInput
-                                value={values.parentAccountLabel || ''}
-                                readOnly
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#8a91a8]"
-                            />
-                        ) : (
-                            <BackendLookupField
-                                resource="accounts"
-                                values={selectedParentAccount}
-                                placeholder="Cari/Pilih..."
-                                searchLabel="Cari akun perkiraan"
-                                getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
-                                onSelect={(option) => {
-                                    onChange('parentId', option.id);
-                                    onChange('parentAccount', [option.name]);
-                                    onChange('parentAccountLabel', `${option.code} - ${option.name}`);
-                                    onChange('parentAccountCode', option.code);
-                                    onChange('parentAccountName', option.name);
-                                }}
-                                onRemove={() => {
-                                    onChange('parentId', null);
-                                    onChange('parentAccount', []);
-                                    onChange('parentAccountLabel', '');
-                                    onChange('parentAccountCode', '');
-                                    onChange('parentAccountName', '');
-                                }}
-                            />
-                        )
+                        <BackendLookupField
+                            resource="accounts"
+                            values={selectedParentAccount}
+                            placeholder="Cari/Pilih..."
+                            searchLabel="Cari akun perkiraan"
+                            getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
+                            onSelect={(option) => {
+                                onChange('parentId', option.id);
+                                onChange('parentAccount', [option.name]);
+                                onChange('parentAccountLabel', `${option.code} - ${option.name}`);
+                                onChange('parentAccountCode', option.code);
+                                onChange('parentAccountName', option.name);
+                            }}
+                            onRemove={() => {
+                                onChange('parentId', null);
+                                onChange('parentAccount', []);
+                                onChange('parentAccountLabel', '');
+                                onChange('parentAccountCode', '');
+                                onChange('parentAccountName', '');
+                            }}
+                        />
                     )}
                 </div>
             </div>
@@ -110,11 +92,8 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                 <TextInput
                     value={values.code}
                     onChange={(event) => onChange('code', event.target.value)}
-                    readOnly={isDetail}
-                    trailing={isDetail ? <AccountsReadonlyTrailingIcon /> : null}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
-                    trailingClassName={isDetail ? 'px-3' : ''}
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </AccountsFormFieldRow>
  
@@ -122,18 +101,15 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                 <TextInput
                     value={values.name}
                     onChange={(event) => onChange('name', event.target.value)}
-                    readOnly={isDetail}
-                    trailing={isDetail ? <AccountsReadonlyTrailingIcon /> : null}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
-                    trailingClassName={isDetail ? 'px-3' : ''}
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
-                <p className="mt-2 pl-4 text-[14px] italic text-[#8a91a8]">{config.helperText.nameExample}</p>
+                <p className="mt-2 pl-4 text-sm italic text-[#8a91a8]">{config.helperText.nameExample}</p>
             </AccountsFormFieldRow>
  
             {isDetail ? (
                 <AccountsFormFieldRow label={config.labels.balance}>
-                    <div className="pt-1 text-[18px] text-[#1f2436]">{values.balanceLabel}</div>
+                    <div className="pt-1 text-lg text-[#1f2436]">{values.balanceLabel}</div>
                 </AccountsFormFieldRow>
             ) : null}
         </div>
@@ -142,8 +118,8 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
 
 export function AccountsOpeningBalanceTab({ config, values, onChange }) {
     return (
-        <div className="space-y-6">
-            <h3 className="text-[24px] font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
+        <div className="space-y-4">
+            <h3 className="text-2xl font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
 
             <AccountsFormFieldRow label={config.labels.openingBalanceValue}>
                 <FormattedAmountInput
@@ -152,7 +128,7 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                     prefix="Rp"
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                     prefixClassName="min-w-[34px] bg-[#f5f6f8] px-3 text-[#9aa3b1]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </AccountsFormFieldRow>
 
@@ -169,14 +145,14 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
 
 export function AccountsOthersTab({ config, values, isDetail, onChange }) {
     return (
-        <div className="space-y-6">
-            <AccountsFormFieldRow label={config.labels.notes} className="lg:grid-cols-[280px_minmax(0,570px)]">
+        <div className="space-y-4">
+            <AccountsFormFieldRow label={config.labels.notes} className="lg:grid-cols-[180px_minmax(0,570px)]">
                 <TextareaField
                     value={values.notes}
                     onChange={(event) => onChange('notes', event.target.value)}
                     rows={3}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[68px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[68px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </AccountsFormFieldRow>
 
@@ -186,13 +162,13 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                         value={values.cashBankReference}
                         readOnly
                         className="h-[40px] rounded-[4px] border-[#9ce04f] bg-[#eef8e7]"
-                        inputClassName="text-[15px] text-[#4d9b1f]"
+                        inputClassName="text-xs sm:text-sm text-[#4d9b1f]"
                     />
                 </AccountsFormFieldRow>
             ) : null}
 
             <div className="border-b border-[#d9dee8] pb-2.5">
-                <h3 className="text-[18px] font-medium text-[#1f2436]">{config.headingLabels.userAccess}</h3>
+                <h3 className="text-lg font-medium text-[#1f2436]">{config.headingLabels.userAccess}</h3>
             </div>
 
             <CheckboxField
@@ -201,7 +177,7 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                 checked={Boolean(values.allUsers)}
                 onChange={(event) => onChange('allUsers', event.target.checked)}
                 align="center"
-                labelClassName="text-[17px]"
+                labelClassName="text-base"
                 inputClassName="mt-0 h-[18px] w-[18px]"
                 containerClassName="w-auto"
             />
@@ -216,7 +192,7 @@ export function AccountsChildrenTab({ values }) {
                 {values.childAccounts.map((item) => (
                     <div
                         key={`${item.id}-name`}
-                        className="rounded-[3px] bg-[#cbcbcb] px-4 py-2.5 text-[17px] text-[#1f2436]"
+                        className="rounded-[3px] bg-[#cbcbcb] px-4 py-2.5 text-xs sm:text-sm text-[#1f2436]"
                         style={{ paddingLeft: `${16 + item.level * 18}px` }}
                     >
                         {item.name}
@@ -226,7 +202,7 @@ export function AccountsChildrenTab({ values }) {
 
             <div className="space-y-1.5">
                 {values.childAccounts.map((item) => (
-                    <div key={`${item.id}-code`} className="rounded-[3px] bg-[#cbcbcb] px-4 py-2.5 text-[17px] text-[#1f2436]">
+                    <div key={`${item.id}-code`} className="rounded-[3px] bg-[#cbcbcb] px-4 py-2.5 text-xs sm:text-sm text-[#1f2436]">
                         {item.code}
                     </div>
                 ))}

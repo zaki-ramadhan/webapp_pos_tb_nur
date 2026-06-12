@@ -56,7 +56,7 @@ class GoodsReceiptPage
                     'searchPlaceholder' => 'Cari...',
                     'pageValue' => '6',
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[200px]', 'align' => 'left'],
+                        ['id' => 'number', 'label' => 'No. Penerimaan', 'widthClassName' => 'w-[200px]', 'align' => 'left'],
                         ['id' => 'receiptNumber', 'label' => 'No Terima #', 'widthClassName' => 'w-[180px]', 'align' => 'left'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[120px]', 'align' => 'left'],
                         ['id' => 'customer', 'label' => 'Pemasok', 'widthClassName' => 'w-[190px]', 'align' => 'left'],

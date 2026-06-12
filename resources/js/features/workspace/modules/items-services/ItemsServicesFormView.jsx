@@ -174,8 +174,8 @@ export default function ItemsServicesFormView({
     }
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-            <div className="flex flex-col gap-2 border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+            <div className="shrink-0 flex flex-col gap-2 border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-[6px] lg:flex-row lg:items-end lg:justify-between">
                 <PreferencesTabs
                     tabs={config.tabs}
                     activeTabId={activeTabId}
@@ -192,31 +192,33 @@ export default function ItemsServicesFormView({
                 ) : null}
             </div>
 
-            <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 xl:flex-row xl:items-start">
-                <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4 xl:order-1">
-                    <CrudStatusMessage status={status} className="mb-4" />
+            <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 xl:flex-row xl:items-stretch overflow-hidden">
+                <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4 xl:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
 
-                    {activeTabId === 'sales-purchase' ? (
-                        <ItemSalesPurchaseTab config={config} values={values} onChange={handleChange} />
-                    ) : activeTabId === 'stock' ? (
-                        <ItemStockTab config={config} values={values} />
-                    ) : activeTabId === 'accounts' ? (
-                        <ItemAccountsTab config={config} values={values} onChange={handleChange} />
-                    ) : activeTabId === 'images' ? (
-                        <ItemImagesTab values={values} onChange={handleChange} />
-                    ) : activeTabId === 'other' ? (
-                        <ItemOtherTab config={config} values={values} onChange={handleChange} />
-                    ) : (
-                        <ItemGeneralTab
-                            config={config}
-                            values={values}
-                            onChange={handleChange}
-                            isDetail={isDetail}
-                        />
-                    )}
+                    <div className="flex-1 min-h-0 flex flex-col">
+                        {activeTabId === 'sales-purchase' ? (
+                            <ItemSalesPurchaseTab config={config} values={values} onChange={handleChange} />
+                        ) : activeTabId === 'stock' ? (
+                            <ItemStockTab config={config} values={values} />
+                        ) : activeTabId === 'accounts' ? (
+                            <ItemAccountsTab config={config} values={values} onChange={handleChange} />
+                        ) : activeTabId === 'images' ? (
+                            <ItemImagesTab values={values} onChange={handleChange} />
+                        ) : activeTabId === 'other' ? (
+                            <ItemOtherTab config={config} values={values} onChange={handleChange} />
+                        ) : (
+                            <ItemGeneralTab
+                                config={config}
+                                values={values}
+                                onChange={handleChange}
+                                isDetail={isDetail}
+                            />
+                        )}
+                    </div>
                 </div>
 
-                <div className="order-1 flex justify-end xl:order-2 xl:shrink-0">
+                <div className="order-1 flex justify-end xl:order-2 xl:shrink-0 xl:self-start">
                     <div className="flex flex-row gap-3 xl:flex-col">
                         {(isDetail ? config.detailDockActions : config.createDockActions).map((action) => (
                             <DockActionButton
@@ -243,7 +245,25 @@ export default function ItemsServicesFormView({
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
                 title="Hapus Barang/Jasa"
-                message="Barang/jasa ini akan dihapus permanen. Lanjutkan?"
+                message={
+                    values.unitConversions && values.unitConversions.length > 0 ? (
+                        <div>
+                            <p className="mb-2">
+                                Barang/jasa <strong>"{values.name}"</strong> memiliki data konversi unit berelasi yang akan ikut terhapus:
+                            </p>
+                            <ul className="mb-3 list-disc pl-5 text-sm text-slate-500 max-h-[150px] overflow-y-auto">
+                                {values.unitConversions.map((conv, idx) => (
+                                    <li key={conv.id ?? idx}>
+                                        Unit: {conv.unitLabel || conv.unit?.[0]?.name || 'Pcs'} (Kuantitas: {conv.quantity})
+                                    </li>
+                                ))}
+                            </ul>
+                            <p>Apakah Anda yakin ingin melanjutkan penghapusan permanen?</p>
+                        </div>
+                    ) : (
+                        "Barang/jasa ini akan dihapus permanen. Lanjutkan?"
+                    )
+                }
                 confirmLabel="Hapus"
                 cancelLabel="Batal"
                 confirmVariant="danger"

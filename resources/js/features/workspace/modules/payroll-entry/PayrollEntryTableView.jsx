@@ -60,7 +60,7 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
                             }
                             containerClassName="w-auto"
                             className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-[15px] text-[#394157]"
+                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                             iconClassName="mr-2 text-[#6c7894]"
                         >
                             {filter.options.map((option) => (

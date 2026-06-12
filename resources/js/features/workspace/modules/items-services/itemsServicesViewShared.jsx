@@ -75,8 +75,8 @@ export function FormRow({
     contentClassName = '',
 }) {
     return (
-        <div className={`grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
-            <label className="pt-2 text-[17px] leading-6 text-[#1f2436]">
+        <div className={`grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
+            <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
                 {info ? (
@@ -94,7 +94,7 @@ export function FormRow({
 export function SectionHeading({ title }) {
     return (
         <div className="border-b border-[#dbe1ea] pb-2">
-            <h3 className="text-[22px] font-normal text-[#1564d7]">{title}</h3>
+            <h3 className="text-2xl font-normal text-[#1564d7]">{title}</h3>
         </div>
     );
 }
@@ -103,7 +103,7 @@ export function DetailActionButton({ label }) {
     return (
         <button
             type="button"
-            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#b7beca] bg-[#d3d3d4] px-3.5 text-[15px] text-[#5a6278]"
+            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#b7beca] bg-[#d3d3d4] px-3.5 text-base text-[#5a6278]"
         >
             {label}
         </button>
@@ -123,7 +123,7 @@ export function ClearableTextInput({
             onChange={onChange}
             placeholder={placeholder}
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            inputClassName="text-[15px] text-[#1f2436]"
+            inputClassName="text-xs sm:text-sm text-[#1f2436]"
             trailing={
                 trailing ??
                 (value ? (
@@ -162,8 +162,8 @@ export function SimpleTextField({
             prefix={prefix}
             trailing={trailing}
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName={prefix ? 'min-w-[32px] border-r-[#d8dde7] bg-[#f3f3f4] px-3 text-[15px] text-[#9aa3b1]' : ''}
-            inputClassName={`text-[15px] text-[#1f2436] ${inputClassName}`.trim()}
+            prefixClassName={prefix ? 'min-w-[32px] border-r-[#d8dde7] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#9aa3b1]' : ''}
+            inputClassName={`text-xs sm:text-sm text-[#1f2436] ${inputClassName}`.trim()}
             trailingClassName={trailing ? 'px-3' : ''}
         />
     );
@@ -193,8 +193,8 @@ export function LookupField({
 
 export function CodeFieldRow({ values, onChange, isDetail }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[260px_48px_minmax(0,1fr)] lg:items-center">
-            <label className="text-[17px] leading-6 text-[#1f2436]">
+        <div className="grid gap-3 lg:grid-cols-[170px_48px_minmax(0,1fr)] lg:items-center">
+            <label className="text-xs sm:text-sm leading-6 text-[#1f2436]">
                 Kode Barang <span className="text-[#ED3969]">*</span>
             </label>
             {!isDetail ? (

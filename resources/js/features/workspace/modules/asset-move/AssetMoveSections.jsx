@@ -24,7 +24,7 @@ import { resolveAssetMoveAlignClassName } from './assetMoveShared';
 
 export function AssetMoveFieldRow({ label, required = false, children, labelClassName = '' }) {
     return (
-        <div className="grid gap-3 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
             <TransactionFieldLabel label={label} required={required} className={labelClassName} />
             <div>{children}</div>
         </div>
@@ -77,14 +77,14 @@ export function AssetMoveHeader({ config, values, setValues, isDetail }) {
                             <TextInput
                                 value={values.number}
                                 readOnly
-                                trailing={<span className="text-[22px] font-semibold text-[#1f2436]">×</span>}
+                                trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         </AssetMoveFieldRow>
                     ) : (
-                        <div className="grid gap-3 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
                                 <TransactionFieldLabel label={config.labels.number} required />
                                 <TransactionSwitch
@@ -102,7 +102,7 @@ export function AssetMoveHeader({ config, values, setValues, isDetail }) {
                                 value={values.numberingType}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
                     )}
@@ -128,12 +128,12 @@ export function AssetMoveDetailsSection({ config, values, setValues, isDetail, o
                         placeholder={config.detailSearchPlaceholder}
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 
                 <div className="flex items-center gap-3 self-end sm:self-auto">
-                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {values.itemCountLabel ?? config.labels.assetDetails} <span className="text-[#ED3969]">*</span>
                     </div>
                 </div>
@@ -147,7 +147,7 @@ export function AssetMoveDetailsSection({ config, values, setValues, isDetail, o
                                 {config.itemTable.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveAssetMoveAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveAssetMoveAlignClassName(column.align)}`.trim()}
                                     >
                                         {column.label}
                                     </DataTableHead>
@@ -166,7 +166,7 @@ export function AssetMoveDetailsSection({ config, values, setValues, isDetail, o
                                         {config.itemTable.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`px-3 text-[15px] text-[#131a28] ${resolveAssetMoveAlignClassName(column.align)}`.trim()}
+                                                className={`px-3 text-base text-[#131a28] ${resolveAssetMoveAlignClassName(column.align)}`.trim()}
                                             >
                                                 {formatTableTextValue(item[column.id])}
                                             </DataTableCell>
@@ -177,7 +177,7 @@ export function AssetMoveDetailsSection({ config, values, setValues, isDetail, o
                                 <DataTableRow className="border-[#dde1e8] bg-white">
                                     <DataTableCell
                                         colSpan={config.itemTable.columns.length}
-                                        className="px-3 py-3 text-center text-[15px] text-[#131a28]"
+                                        className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
                                         {config.itemTable.emptyLabel}
                                     </DataTableCell>
@@ -196,8 +196,8 @@ export function AssetMoveInfoSection({ config, values, setValues, isDetail }) {
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 space-y-4">
-                <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+            <div className="mt-4 space-y-3">
+                <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TextareaField
                         value={values.notes}
@@ -209,20 +209,20 @@ export function AssetMoveInfoSection({ config, values, setValues, isDetail }) {
                         }
                         rows={4}
                         className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 
                 {isDetail ? (
                     <>
-                        <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,700px)] lg:items-start">
+                        <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,700px)] lg:items-start">
                             <TransactionFieldLabel label={config.labels.sourceAddress} />
-                            <div className="text-[17px] leading-7 text-[#1f2436]">{values.sourceAddressDetail}</div>
+                            <div className="text-base leading-7 text-[#1f2436]">{values.sourceAddressDetail}</div>
                         </div>
 
-                        <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,700px)] lg:items-start">
+                        <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,700px)] lg:items-start">
                             <TransactionFieldLabel label={config.labels.destinationAddress} />
-                            <div className="text-[17px] leading-7 text-[#1f2436]">{values.destinationAddressDetail}</div>
+                            <div className="text-base leading-7 text-[#1f2436]">{values.destinationAddressDetail}</div>
                         </div>
                     </>
                 ) : null}

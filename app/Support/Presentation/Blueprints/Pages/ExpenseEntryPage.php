@@ -53,11 +53,6 @@ class ExpenseEntryPage
                         'label' => 'Info lainnya',
                         'icon' => 'info',
                     ],
-                    [
-                        'id' => 'summary',
-                        'label' => 'Informasi Pencatatan Beban',
-                        'icon' => 'expense',
-                    ],
                 ],
                 'dockActions' => [
                     [
@@ -343,7 +338,7 @@ class ExpenseEntryPage
                         ['id' => 'export-expense', 'label' => 'Ekspor pencatatan beban'],
                     ],
                     'columns' => [
-                        ['id' => 'documentNumber', 'label' => 'Nomor #', 'widthClassName' => 'w-[16%]', 'align' => 'left'],
+                        ['id' => 'documentNumber', 'label' => 'No. Beban', 'widthClassName' => 'w-[16%]', 'align' => 'left'],
                         ['id' => 'entryDate', 'label' => 'Tanggal', 'widthClassName' => 'w-[10%]', 'align' => 'left'],
                         ['id' => 'dueDate', 'label' => 'Jatuh Tempo', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
                         ['id' => 'total', 'label' => 'Total', 'widthClassName' => 'w-[12%]', 'align' => 'right'],

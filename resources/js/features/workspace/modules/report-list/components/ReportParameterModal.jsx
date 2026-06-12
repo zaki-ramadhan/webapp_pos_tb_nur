@@ -165,7 +165,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
             <div className="flex flex-col h-full bg-white rounded-[16px] sm:rounded-[12px] overflow-hidden border border-[#0d386c]/20 shadow-2xl">
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 bg-[#0d386c] text-white">
-                    <h2 className="text-[16px] font-medium tracking-wide">
+                    <h2 className="text-base font-medium tracking-wide">
                         Parameter Laporan
                     </h2>
                     <button
@@ -182,7 +182,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="button"
                         onClick={() => setActiveTab('umum')}
-                        className={`flex-1 py-2.5 text-center text-[14px] font-medium border-b-2 transition-colors ${
+                        className={`flex-1 py-2.5 text-center text-sm font-medium border-b-2 transition-colors ${
                             activeTab === 'umum'
                                 ? 'border-[#e31a1a] text-[#e31a1a]'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
@@ -193,7 +193,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="button"
                         onClick={() => setActiveTab('kolom')}
-                        className={`flex-1 py-2.5 text-center text-[14px] font-medium border-b-2 transition-colors ${
+                        className={`flex-1 py-2.5 text-center text-sm font-medium border-b-2 transition-colors ${
                             activeTab === 'kolom'
                                 ? 'border-[#e31a1a] text-[#e31a1a]'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
@@ -204,9 +204,9 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                 </div>
 
                 {/* Content */}
-                <form onSubmit={handleTampilkan} className="flex-1 overflow-y-auto p-5 space-y-4 bg-white">
+                <form onSubmit={handleTampilkan} className="flex-1 overflow-y-auto p-5 space-y-3 bg-white">
                     {activeTab === 'umum' ? (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {/* Date Field */}
                             <ReportSectionHeading title="Tanggal" />
                             {reportSchema && (
@@ -237,7 +237,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                             )}
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <ReportSectionHeading title="Parameter Kolom" />
                             
                             <div className="border border-slate-300 rounded-[4px] bg-white h-[200px] overflow-y-auto mt-2 select-none shadow-inner divide-y divide-slate-100">
@@ -303,13 +303,13 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                                     key={opt.id}
                                                     type="button"
                                                     onClick={() => handleAddColumn(opt)}
-                                                    className="w-full text-left px-3 py-1.5 text-[14px] text-slate-700 hover:bg-slate-100 transition-colors"
+                                                    className="w-full text-left px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
                                                 >
                                                     {opt.label}
                                                 </button>
                                             ))
                                         ) : (
-                                            <div className="px-3 py-2 text-[13px] text-slate-400 italic">
+                                            <div className="px-3 py-2 text-sm text-slate-400 italic">
                                                 Semua kolom sudah ditambahkan
                                             </div>
                                         )}
@@ -325,7 +325,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="submit"
                         onClick={handleTampilkan}
-                        className="h-10 px-6 text-[15px] font-semibold text-white bg-[#154c9f] hover:bg-[#0d386c] rounded-[4px] shadow-sm transition-colors active:bg-[#0b2d5a]"
+                        className="h-10 px-6 text-base font-semibold text-white bg-[#154c9f] hover:bg-[#0d386c] rounded-[4px] shadow-sm transition-colors active:bg-[#0b2d5a]"
                     >
                         Tampilkan
                     </button>

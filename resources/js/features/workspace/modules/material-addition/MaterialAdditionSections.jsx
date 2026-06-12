@@ -44,7 +44,7 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail, ha
                                 }))
                             }
                             className="h-[40px] max-w-[330px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.typeOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -68,24 +68,24 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail, ha
                             placeholder={config.workOrderPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] max-w-[506px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-3">
                     {isDetail ? (
-                        <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                             <TextInput
                                 value={values.documentNumber}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
                     ) : values.autoNumber ? (
-                        <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
                                 <TransactionFieldLabel label={config.labels.documentNumber} required />
                                 <TransactionSwitch
@@ -108,7 +108,7 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail, ha
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -118,7 +118,7 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail, ha
                             </SelectField>
                         </div>
                     ) : (
-                        <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                             <TextInput
                                 value={values.documentNumber}
@@ -129,7 +129,7 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail, ha
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
                     )}
@@ -137,13 +137,13 @@ export function MaterialAdditionHeader({ config, values, setValues, isDetail, ha
                     <div className="flex flex-wrap justify-end gap-3">
                         <button
                             type="button"
-                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
                             {config.favoriteButtonLabel}
                         </button>
                         <button
                             type="button"
-                            className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
                             <span>{config.processButtonLabel}</span>
                             <ChevronDownIcon className="h-4 w-4" />
@@ -160,7 +160,7 @@ function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholde
 
     return (
         <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-[22px] font-normal text-[#1f2436] shrink-0">
+            <div className="text-2xl font-normal text-[#1f2436] shrink-0">
                 {title} <span className="text-[#ED3969]">*</span>
             </div>
 
@@ -181,7 +181,7 @@ function MaterialAdditionSectionHeader({ searchValue, onSearchChange, placeholde
                             placeholder={placeholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     )}
                 </div>
@@ -295,8 +295,8 @@ export function MaterialAdditionAdditionalInfoSection({ config, values, setValue
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 space-y-4">
-                <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+            <div className="mt-4 space-y-3">
+                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.branch} required />
                     <ChipLookupField
                         values={values.branches}
@@ -308,7 +308,7 @@ export function MaterialAdditionAdditionalInfoSection({ config, values, setValue
                     />
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TextareaField
                         value={values.notes}
@@ -320,7 +320,7 @@ export function MaterialAdditionAdditionalInfoSection({ config, values, setValue
                         }
                         rows={4}
                         className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
             </div>

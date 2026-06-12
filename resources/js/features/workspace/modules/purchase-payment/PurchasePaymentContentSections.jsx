@@ -28,7 +28,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                             placeholder={config.invoiceSearchPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             onClick={handlers.onSelectInvoice}
                         />
                     </div>
@@ -36,7 +36,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                     {isDetail ? (
                         <button
                             type="button"
-                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-base text-[#21539b]"
                             onClick={handlers.onSelectInvoice}
                         >
                             {config.takeButtonLabel}
@@ -46,7 +46,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
 
                 <div className="flex items-center justify-end gap-3">
                     <PurchasePaymentHeaderIconButton label="Cari faktur" icon={<SearchIcon className="h-5 w-5" />} onClick={handlers.onSelectInvoice} />
-                    <div className="text-right text-[24px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {values.invoiceTitle} <span className="text-[#ED3969]">*</span>
                     </div>
                 </div>
@@ -86,10 +86,10 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.paymentMethod} />
                 <div className="max-w-[276px]">
-                    <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-[15px] text-[#1f2436]">
+                    <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                         <option value={values.paymentMethod}>{values.paymentMethod || 'Tunai'}</option>
                     </SelectField>
                 </div>
@@ -107,7 +107,7 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                 {isDetail ? (
                     <>
                         <TransactionFieldLabel label={config.labels.voided} />
-                        <label className="inline-flex h-[34px] items-center gap-2 text-[17px] text-[#1f2436]">
+                        <label className="inline-flex h-[34px] items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
                             <input
                                 type="checkbox"
                                 checked={values.voided}
@@ -132,14 +132,14 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                 {isDetail ? (
                     <>
                         <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                        <div className="pt-1 text-[17px] italic text-[#1f2436]">{values.reconcileStatus}</div>
+                        <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus}</div>
 
                         <TransactionFieldLabel label={config.labels.printStatus} />
                         <TextInput
                             value={values.printStatus}
                             readOnly
                             className="h-[34px] max-w-[262px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#5f6779]"
+                            inputClassName="text-xs sm:text-sm text-[#5f6779]"
                         />
                     </>
                 ) : null}
@@ -153,12 +153,12 @@ export function PurchasePaymentInfoSection({ config, values }) {
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.paymentInfoTitle} icon="payment" />
 
-            <div className="mt-4 grid gap-y-3 sm:grid-cols-[260px_minmax(0,1fr)] sm:gap-x-4">
+            <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-x-4">
                 <TransactionFieldLabel label="Dibayar dengan" />
-                <div className="text-[17px] text-[#1f2436]">{values.paidWith || '-'}</div>
+                <div className="text-xs sm:text-sm text-[#1f2436]">{values.paidWith || '-'}</div>
 
                 <TransactionFieldLabel label="Tanggal dan Jam" />
-                <div className="text-[17px] text-[#1f2436]">{values.paidAt || '-'}</div>
+                <div className="text-xs sm:text-sm text-[#1f2436]">{values.paidAt || '-'}</div>
             </div>
         </div>
     );
@@ -179,7 +179,7 @@ export function PurchasePaymentTableFilterBar({ table, filters, setFilters }) {
                     }
                     containerClassName="w-auto shrink-0"
                     className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {filter.options.map((option) => (

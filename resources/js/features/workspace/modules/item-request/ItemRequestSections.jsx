@@ -21,7 +21,7 @@ import {
 
 function FormFieldRow({ label, required = false, children, labelClassName = '' }) {
     return (
-        <div className="grid gap-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className="grid gap-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
             <TransactionFieldLabel label={label} required={required} className={labelClassName} />
             <div>{children}</div>
         </div>
@@ -33,7 +33,7 @@ function ItemRequestHeaderActions({ config }) {
         <div className="flex flex-wrap items-center justify-end gap-2">
             <button
                 type="button"
-                className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
             >
                 {config.takeButtonLabel}
             </button>
@@ -64,7 +64,7 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                 }))
                             }
                             className="h-[40px] max-w-[280px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.requestTypeOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -81,14 +81,14 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                             <TextInput
                                 value={values.documentNumber}
                                 readOnly
-                                trailing={<span className="text-[22px] font-semibold text-[#1f2436]">×</span>}
+                                trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         </FormFieldRow>
                     ) : values.autoNumber ? (
-                        <div className="grid gap-3 sm:grid-cols-[190px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
                                 <TransactionFieldLabel label={config.labels.documentNumber} required />
                                 <TransactionSwitch
@@ -111,7 +111,7 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -131,7 +131,7 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </FormFieldRow>
                     )}
@@ -164,7 +164,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
     return (
         <div className="flex min-h-[520px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="text-[22px] font-normal text-[#1f2436] shrink-0">
+                <div className="text-2xl font-normal text-[#1f2436] shrink-0">
                     {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
                 </div>
 
@@ -181,7 +181,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
                             placeholder={config.detailSearchPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
@@ -189,7 +189,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
                         <button
                             type="button"
                             onClick={handlers.onImportClick}
-                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b] hover:bg-[#f3f7fc] transition shrink-0 cursor-pointer"
+                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b] hover:bg-[#f3f7fc] transition shrink-0 cursor-pointer"
                         >
                             Impor Excel/CSV
                         </button>
@@ -231,8 +231,8 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 space-y-4">
-                <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+            <div className="mt-4 space-y-3">
+                <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TextareaField
                         value={values.notes}
@@ -244,14 +244,14 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                         }
                         rows={4}
                         className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 
                 {isDetail ? (
-                    <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-center">
+                    <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
                         <TransactionFieldLabel label={config.labels.closeRequest} />
-                        <label className="inline-flex items-center gap-3 text-[17px] text-[#1f2436]">
+                        <label className="inline-flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
                             <input
                                 type="checkbox"
                                 checked={values.closeRequest}
@@ -268,7 +268,7 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                     </div>
                 ) : null}
 
-                <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+                <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.branch} required />
                     <ChipLookupField
                         values={values.branches}

@@ -27,7 +27,7 @@ export default function WorkspaceDialog({
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-3">
                         <HeaderIcon className="h-5 w-5 text-white" />
-                        <h2 className="truncate text-[15px] font-medium sm:text-[16px]">{title}</h2>
+                        <h2 className="truncate text-base font-medium sm:text-base">{title}</h2>
                     </div>
 
                     <button

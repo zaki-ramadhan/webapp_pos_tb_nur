@@ -35,7 +35,7 @@ function ModalTabButton({ active, label, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`border-b-2 px-3 py-2 text-[16px] ${
+            className={`border-b-2 px-3 py-2 text-base ${
                 active ? 'border-[#ff4836] text-[#ff4836]' : 'border-transparent text-[#5f6980]'
             }`.trim()}
         >
@@ -47,7 +47,7 @@ function ModalTabButton({ active, label, onClick }) {
 function ModalFieldRow({ label, required = false, children }) {
     return (
         <div className="grid gap-3 sm:grid-cols-[156px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-            <TransactionFieldLabel label={label} required={required} className="pt-2 text-[16px]" />
+            <TransactionFieldLabel label={label} required={required} className="pt-2 text-base" />
             <div>{children}</div>
         </div>
     );
@@ -55,18 +55,18 @@ function ModalFieldRow({ label, required = false, children }) {
 
 function DetailTab({ values, setValues, modal }) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <ModalFieldRow label="Kode #">
-                <div className="flex h-[36px] items-center text-[17px] font-semibold text-[#22a3f2]">{values.code}</div>
+                <div className="flex h-[36px] items-center text-base font-semibold text-[#22a3f2]">{values.code}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Nama Barang" required>
                 <TextInput
                     value={values.name}
                     readOnly
-                    trailing={<span className="text-[22px] font-semibold text-[#1f2436]">×</span>}
+                    trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
                     className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     trailingClassName="px-3"
                 />
             </ModalFieldRow>
@@ -81,7 +81,7 @@ function DetailTab({ values, setValues, modal }) {
                         }))
                     }
                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     containerClassName="max-w-[204px]"
                 >
                     {(modal.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan']).map((option) => (
@@ -104,7 +104,7 @@ function DetailTab({ values, setValues, modal }) {
                         }
                         trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
                         className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-[15px] text-[#1f2436]"
+                        inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                     <ChipLookupField
@@ -135,7 +135,7 @@ function DetailTab({ values, setValues, modal }) {
                     trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
                     prefixClassName="min-w-[36px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                    inputClassName="text-right text-[15px] text-[#1f2436]"
+                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                     trailingClassName="px-3"
                     containerClassName="max-w-[204px]"
                 />
@@ -146,7 +146,7 @@ function DetailTab({ values, setValues, modal }) {
                     value={values.totalCost}
                     readOnly
                     className="h-[34px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                    inputClassName="text-right text-[15px] text-[#6b7280]"
+                    inputClassName="text-right text-xs sm:text-sm text-[#6b7280]"
                     containerClassName="max-w-[204px]"
                 />
             </ModalFieldRow>
@@ -172,7 +172,7 @@ function DetailTab({ values, setValues, modal }) {
 
 function InfoTab({ values, setValues }) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <ModalFieldRow label="Departemen">
                 <ChipLookupField
                     values={values.department}
@@ -199,7 +199,7 @@ function InfoTab({ values, setValues }) {
                     }
                     rows={4}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[92px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[92px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </ModalFieldRow>
         </div>
@@ -231,7 +231,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <PencilIcon className="h-5 w-5 text-white" />
-                        <h2 className="text-[16px] font-medium">{modal.title}</h2>
+                        <h2 className="text-base font-medium">{modal.title}</h2>
                     </div>
 
                     <button
@@ -268,13 +268,13 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
                 <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
                     <button
                         type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[18px] text-[#21539b]"
+                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-lg text-[#21539b]"
                     >
                         {modal.deleteLabel ?? 'Hapus'}
                     </button>
                     <button
                         type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-[18px] text-white"
+                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-lg text-white"
                     >
                         {modal.submitLabel ?? 'Lanjut'}
                     </button>

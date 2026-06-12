@@ -26,7 +26,7 @@ export function PeriodDockButton({ label }) {
 export function PeriodFieldRow({ label, required = false, children }) {
     return (
         <div className="grid gap-3 md:grid-cols-[140px_minmax(0,1fr)] md:items-center">
-            <label className="text-[17px] text-[#1f2436]">
+            <label className="text-xs sm:text-sm text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
@@ -45,7 +45,7 @@ export function PeriodEndRatesSection({ config, month, setMonth, year, setYear, 
                             value={month}
                             onChange={(event) => setMonth(event.target.value)}
                             className="h-[40px] w-full max-w-[424px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {monthOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -60,7 +60,7 @@ export function PeriodEndRatesSection({ config, month, setMonth, year, setYear, 
                             value={year}
                             onChange={(event) => setYear(event.target.value)}
                             className="h-[40px] w-full max-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {yearOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -93,7 +93,7 @@ export function PeriodEndRatesSection({ config, month, setMonth, year, setYear, 
                                     {config.ratesTable.columns.map((column) => (
                                         <DataTableHead
                                             key={column.id}
-                                            className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-center'}`.trim()}
+                                            className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-center'}`.trim()}
                                         >
                                             {column.label}
                                         </DataTableHead>
@@ -108,8 +108,8 @@ export function PeriodEndRatesSection({ config, month, setMonth, year, setYear, 
                                         className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                     >
                                         <DataTableCell className="w-[36px] px-3 text-center text-[#a4acbc]">≡</DataTableCell>
-                                        <DataTableCell className="px-3 text-[15px] text-[#131a28]">{row.currencyName}</DataTableCell>
-                                        <DataTableCell className="px-3 text-right text-[15px] text-[#131a28]">{row.rate}</DataTableCell>
+                                        <DataTableCell className="px-3 text-base text-[#131a28]">{row.currencyName}</DataTableCell>
+                                        <DataTableCell className="px-3 text-right text-base text-[#131a28]">{row.rate}</DataTableCell>
                                     </DataTableRow>
                                 ))}
                             </DataTableBody>

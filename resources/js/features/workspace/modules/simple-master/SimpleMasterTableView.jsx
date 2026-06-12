@@ -93,7 +93,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {visibleColumns.map((column) => {
@@ -101,7 +101,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                                 return (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
                                         {column.label}
@@ -125,13 +125,13 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                                         })
                                     }
                                 >
-                                    <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.cellClassName ?? ''} px-3 text-[15px] text-[#131a28]`.trim()}
+                                            className={`${column.cellClassName ?? ''} px-3 text-base text-[#131a28]`.trim()}
                                         >
                                             {column.kind === 'spacer' ? null : (
                                                 <span className={column.truncate === false ? '' : 'block truncate'}>
@@ -144,7 +144,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

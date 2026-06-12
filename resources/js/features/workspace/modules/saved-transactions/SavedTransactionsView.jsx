@@ -74,7 +74,7 @@ function PrimaryToolbarButton({ action }) {
     return (
         <button
             type="button"
-            className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] bg-[#ff7a00] px-4 text-[15px] font-medium text-white shadow-[0_4px_10px_rgba(173,89,0,0.14)]"
+            className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] bg-[#ff7a00] px-4 text-base font-medium text-white shadow-[0_4px_10px_rgba(173,89,0,0.14)]"
             aria-label={action.label}
         >
             {action.label}
@@ -90,7 +90,7 @@ function SavedTransactionFilters({ filters, values, onChange }) {
             onChange={(event) => onChange(filter.id, event.target.value)}
             containerClassName="w-auto shrink-0"
             className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-            selectClassName="px-3 text-[15px] text-[#394157]"
+            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
             iconClassName="mr-2 text-[#6c7894]"
         >
             {filter.options.map((option) => (
@@ -199,7 +199,7 @@ export default function SavedTransactionsView({ page }) {
                                 return (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
                                         <span
@@ -224,7 +224,7 @@ export default function SavedTransactionsView({ page }) {
                                     {cleanedColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-[15px] text-[#131a28]`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -235,7 +235,7 @@ export default function SavedTransactionsView({ page }) {
                             <DataTableRow className="bg-white">
                                 <DataTableCell
                                     colSpan={cleanedColumns.length}
-                                    className="px-2.5 py-3 text-center text-[15px] text-[#131a28]"
+                                    className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>

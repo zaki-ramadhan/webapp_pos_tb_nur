@@ -1,4 +1,5 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Pagination({
     page,
@@ -12,14 +13,27 @@ export default function Pagination({
     perPageOptions = [10, 25, 50, 100],
     className = '',
 }) {
-    if (total <= 0) {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    if (!total || total <= 0) {
         return null;
     }
 
     return (
         <div className={`flex flex-col items-center justify-between gap-4 border-t border-ui-border-light bg-white px-4 py-3 sm:flex-row ${className}`.trim()}>
             {/* Info text */}
-            <div className="text-[14px] text-text-medium">
+            <div className="text-sm text-text-medium">
                 Menampilkan <span className="font-semibold text-text-dark">{from}</span> sampai{' '}
                 <span className="font-semibold text-text-dark">{to}</span> dari{' '}
                 <span className="font-semibold text-text-dark">{total}</span> data
@@ -29,19 +43,36 @@ export default function Pagination({
             <div className="flex flex-wrap items-center gap-3">
                 {/* Per Page Selector */}
                 {onPerPageChange ? (
-                    <div className="flex items-center gap-2">
-                        <span className="text-[13px] text-text-muted">Tampilkan:</span>
-                        <select
-                            value={perPage}
-                            onChange={(e) => onPerPageChange(Number(e.target.value))}
-                            className="h-[34px] rounded-[4px] border border-ui-border-dark bg-white px-2.5 text-[14px] text-text-dark focus:border-brand-blue focus:outline-none"
+                    <div className="flex items-center gap-2 relative" ref={dropdownRef}>
+                        <span className="text-sm text-text-muted">Tampilkan:</span>
+                        <button
+                            type="button"
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="inline-flex h-[34px] items-center justify-between gap-1.5 rounded-[4px] border border-ui-border-dark bg-white px-2.5 text-sm font-medium text-text-dark hover:bg-slate-50 focus:border-brand-blue focus:outline-none min-w-[64px]"
                         >
-                            {perPageOptions.map((opt) => (
-                                <option key={opt} value={opt}>
-                                    {opt}
-                                </option>
-                            ))}
-                        </select>
+                            <span>{perPage}</span>
+                            <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        
+                        {isOpen && (
+                            <div className="absolute top-full mt-1.5 right-0 z-50 min-w-[70px] rounded-[4px] border border-ui-border-dark bg-white py-1 shadow-[0_4px_12px_rgba(15,23,42,0.08)]">
+                                {perPageOptions.map((opt) => (
+                                    <button
+                                        key={opt}
+                                        type="button"
+                                        onClick={() => {
+                                            onPerPageChange(opt);
+                                            setIsOpen(false);
+                                        }}
+                                        className={`block w-full px-3 py-1.5 text-left text-sm transition hover:bg-ui-bg-hover ${
+                                            opt === perPage ? 'bg-brand-blue-lightest font-medium text-brand-blue-darker' : 'text-text-dark'
+                                        }`}
+                                    >
+                                        {opt}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 ) : null}
 
@@ -68,12 +99,12 @@ export default function Pagination({
                             return (
                                 <div key={p} className="flex items-center">
                                     {showEllipsis ? (
-                                        <span className="px-2.5 text-[14px] text-text-muted">...</span>
+                                        <span className="px-2.5 text-sm text-text-muted">...</span>
                                     ) : null}
                                     <button
                                         type="button"
                                         onClick={() => onPageChange(p)}
-                                        className={`h-[34px] min-w-[34px] px-2 text-[14px] font-medium leading-5 transition-all ${
+                                        className={`h-[34px] min-w-[34px] px-2 text-sm font-medium leading-5 transition-all ${
                                             p === page
                                                 ? 'bg-brand-blue text-white'
                                                 : 'bg-white text-text-medium hover:bg-ui-bg-hover'

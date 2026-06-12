@@ -17,7 +17,7 @@ function TableFilterField({ filter, value, onChange }) {
             value={value}
             onChange={(event) => onChange(filter.id, event.target.value)}
             className="h-[40px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-            selectClassName="text-[15px] text-[#1f2436]"
+            selectClassName="text-xs sm:text-sm text-[#1f2436]"
             containerClassName="w-auto"
         >
             {(filter.options ?? []).map((option) => (

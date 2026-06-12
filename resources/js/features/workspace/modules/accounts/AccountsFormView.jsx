@@ -157,17 +157,19 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
 
     return (
         <>
-            <div className="flex min-h-full flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-                <PreferencesTabs
-                    tabs={tabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                />
+            <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
+                <div className="shrink-0">
+                    <PreferencesTabs
+                        tabs={tabs}
+                        activeTabId={activeTabId}
+                        onSelectTab={setActiveTabId}
+                    />
+                </div>
 
-                <div className="flex min-h-[640px] flex-col gap-5 px-4 py-4 lg:flex-row lg:items-start">
-                    <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-3 py-4 sm:px-4 lg:order-1">
+                <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
+                    <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col rounded-[6px] border border-[#d8dde7] bg-white px-3 py-4 sm:px-4 lg:order-1">
                         <div className="max-w-[1260px]">
-                            <CrudStatusMessage status={status} className="mb-4" />
+                            <CrudStatusMessage status={status} className="mb-4 shrink-0" />
                             {activeTabId === 'opening-balance' ? (
                                 <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
                             ) : activeTabId === 'others' ? (
@@ -180,7 +182,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                         </div>
                     </div>
 
-                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0">
+                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
                         <AccountsDockActions
                             actions={dockActions}
                             onSave={handleSave}
@@ -194,7 +196,25 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
             <ConfirmationModal
                 open={deleteModalOpen}
                 title="Hapus akun perkiraan"
-                message={`Akun "${values.name || values.code || 'ini'}" akan dihapus. Lanjutkan?`}
+                message={
+                    values.childAccounts && values.childAccounts.length > 0 ? (
+                        <div>
+                            <p className="mb-2">
+                                Akun <strong>"{values.name || values.code}"</strong> memiliki sub-akun berikut yang akan terputus hubungannya (menjadi akun utama tanpa induk):
+                            </p>
+                            <ul className="mb-3 list-disc pl-5 text-sm text-slate-500 max-h-[150px] overflow-y-auto">
+                                {values.childAccounts.map((child) => (
+                                    <li key={child.id}>
+                                        {child.code} - {child.name}
+                                    </li>
+                                ))}
+                            </ul>
+                            <p>Apakah Anda yakin ingin melanjutkan penghapusan?</p>
+                        </div>
+                    ) : (
+                        `Akun "${values.name || values.code || 'ini'}" akan dihapus. Lanjutkan?`
+                    )
+                }
                 confirmLabel="Hapus"
                 confirmVariant="danger"
                 confirmLoading={saving}

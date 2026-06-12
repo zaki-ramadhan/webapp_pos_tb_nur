@@ -10,7 +10,7 @@ export function buildCurrencyValue(value = '0') {
 
 export function TransactionFieldLabel({ label, required = false, className = '' }) {
     return (
-        <label className={`text-[15px] text-[#1f2436] sm:text-[16px] lg:text-[17px] ${className}`.trim()}>
+        <label className={`text-xs sm:text-sm text-[#1f2436] ${className}`.trim()}>
             {label}
             {required ? <span className="text-[#ED3969]"> *</span> : null}
         </label>
@@ -77,7 +77,7 @@ export function TransactionHeaderButton({ label, trailingChevron = false, classN
     return (
         <button
             type="button"
-            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b] ${className}`.trim()}
+            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b] ${className}`.trim()}
         >
             <span>{label}</span>
             {trailingChevron ? <ChevronDownIcon className="h-4 w-4" /> : null}
@@ -91,7 +91,7 @@ export function TransactionReadonlyTextarea({ value, rows = 3, className = '' })
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none ${className}`.trim()}
         />
     );
 }

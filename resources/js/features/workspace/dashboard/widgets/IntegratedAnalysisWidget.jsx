@@ -34,7 +34,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
     if (!widget.metrics || widget.metrics.length === 0) {
         return (
             <div className="flex h-full min-h-[380px] flex-col justify-between rounded-[8px] bg-slate-50 p-5 border border-slate-100 animate-pulse">
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <div className="flex justify-between gap-4">
                         <div className="h-14 w-1/4 rounded bg-slate-200" />
                         <div className="h-14 w-1/4 rounded bg-slate-200" />
@@ -131,13 +131,13 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                 {summaryItems.map((item, idx) => (
                     <div key={idx} title="" className="rounded-[6px] border border-[#e2e8f0] bg-white p-2.5 shadow-[0_2px_6px_rgba(15,23,42,0.02)]">
                         <p title="" className="text-sm font-semibold uppercase tracking-wider text-[#64748b]">{item.label}</p>
-                        <p title="" className="mt-1 text-[17px] sm:text-[19px] lg:text-[21px] font-bold text-[#0f172a] truncate">{item.value}</p>
+                        <p title="" className="mt-1 text-base sm:text-lg lg:text-xl font-bold text-[#0f172a] truncate">{item.value}</p>
                         <p title="" className="mt-0.5 text-sm text-[#64748b]">{item.helper}</p>
                     </div>
                 ))}
             </div>
 
-            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto pr-1">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
                 <WidgetSection
                     title="Peta Kekuatan Hubungan & Kategori Produk"
                     caption="Grafik interaktif menunjukkan seberapa kuat kecenderungan produk dibeli bersamaan (Confidence) dikombinasikan dengan prioritas omzet produk tersebut."

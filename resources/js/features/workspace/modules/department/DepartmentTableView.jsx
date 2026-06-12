@@ -94,7 +94,7 @@ function DepartmentTableToolbar({
                     onChange={(event) => onFilterChange(event.target.value)}
                     containerClassName="w-auto"
                     className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {table.filterOptions.map((option) => (
@@ -140,7 +140,7 @@ function DepartmentTableToolbar({
                         placeholder={table.searchPlaceholder}
                         trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
                         className="h-[34px] w-full rounded-[4px] border-[#cfd6e2] sm:w-[342px]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
 
@@ -191,13 +191,13 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
-                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
                                 {table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
                                     >
                                         <span
                                             className={`flex items-center gap-2 ${column.align === 'left' ? 'justify-start' : 'justify-center'}`.trim()}
@@ -224,13 +224,13 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                                             })
                                         }
                                     >
-                                        <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                             {index + 1}
                                         </DataTableCell>
-                                        <DataTableCell className="px-3 text-[15px] text-[#131a28]">
+                                        <DataTableCell className="px-3 text-base text-[#131a28]">
                                             <span className="block truncate">{formatTableTextValue(row.name)}</span>
                                         </DataTableCell>
-                                        <DataTableCell className="px-3 text-[15px] text-[#131a28]">
+                                        <DataTableCell className="px-3 text-base text-[#131a28]">
                                             <span className="block truncate">{formatTableTextValue(row.userList)}</span>
                                         </DataTableCell>
                                     </DataTableRow>
@@ -239,7 +239,7 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
                                         colSpan={table.columns.length + 1}
-                                        className="px-3 py-3 text-center text-[15px] text-[#131a28]"
+                                        className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
                                         {table.emptyLabel}
                                     </DataTableCell>

@@ -47,7 +47,7 @@ class PurchaseOrderPage
                     'searchPlaceholder' => 'Cari...',
                     'pageValue' => '11',
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[200px]', 'align' => 'left'],
+                        ['id' => 'number', 'label' => 'No. Pesanan', 'widthClassName' => 'w-[200px]', 'align' => 'left'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[120px]', 'align' => 'left'],
                         ['id' => 'customerShort', 'label' => 'Pemasok', 'widthClassName' => 'w-[200px]', 'align' => 'left'],
                         ['id' => 'notes', 'label' => 'Keterangan', 'widthClassName' => 'w-[48%]', 'align' => 'left'],

@@ -45,12 +45,12 @@ export function StockOpnameOrderResultsSection({ config, values, onOpenItem }) {
         <SectionCard className="min-h-[620px]">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="text-[24px] font-normal text-[#1f2436]">{values.resultCountLabel}</div>
+                    <div className="text-2xl font-normal text-[#1f2436]">{values.resultCountLabel}</div>
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <TextInput value={searchValue} onChange={(event) => setSearchValue(event.target.value)} placeholder={config.resultSearchPlaceholder} className="h-[40px] w-full rounded-[4px] border-[#cfd6e2] sm:w-[410px]" inputClassName="text-[15px] text-[#1f2436]" />
-                    <SelectField value={filterValue} onChange={(event) => setFilterValue(event.target.value)} containerClassName="w-full sm:w-[410px]" className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-[15px] text-[#1f2436]">
+                    <TextInput value={searchValue} onChange={(event) => setSearchValue(event.target.value)} placeholder={config.resultSearchPlaceholder} className="h-[40px] w-full rounded-[4px] border-[#cfd6e2] sm:w-[410px]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                    <SelectField value={filterValue} onChange={(event) => setFilterValue(event.target.value)} containerClassName="w-full sm:w-[410px]" className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                         {config.resultFilterOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                     </SelectField>
                 </div>

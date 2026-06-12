@@ -117,7 +117,7 @@ export default function ActivityLogView({ page }) {
                         }
                         containerClassName="w-auto shrink-0"
                         className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2] sm:min-w-[138px]"
-                        selectClassName="text-[14px] text-[#394157]"
+                        selectClassName="text-xs sm:text-sm text-[#394157]"
                     >
                         {filter.options.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -165,7 +165,7 @@ export default function ActivityLogView({ page }) {
                                 return (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
                                         <span className="block whitespace-nowrap">{column.label}</span>
@@ -182,35 +182,35 @@ export default function ActivityLogView({ page }) {
                                     key={row.id}
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                 >
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.transactionDateLabel)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.referenceName)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.actionLabel)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.transactionTypeLabel)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.loggedAt)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.userName)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.email)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.ipAddress)}</span>
                                     </DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

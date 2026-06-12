@@ -68,7 +68,7 @@ export default function ResetPasswordFormPanel({ resetPassword }) {
             <div className="mx-auto flex w-full max-w-[442px] flex-1 flex-col justify-center">
                 <AuthHeading title={resetPassword.title} subtitle={resetPassword.subtitle} />
 
-                <form className="mt-6 space-y-4 sm:mt-8" onSubmit={submit}>
+                <form className="mt-6 space-y-3 sm:mt-8" onSubmit={submit}>
                     {props.flash?.error ? <Notice tone="danger">{props.flash.error}</Notice> : null}
                     {authMessage ? <Notice tone="danger">{authMessage}</Notice> : null}
 

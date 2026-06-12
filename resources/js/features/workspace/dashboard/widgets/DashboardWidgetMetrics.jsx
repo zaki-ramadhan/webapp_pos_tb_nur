@@ -24,7 +24,7 @@ export function TrendIndicator({ trend, growth, className = '' }) {
 
 const compactHeadlineLabelClassName = 'text-sm text-[#6c748e]';
 const compactHeadlineValueClassName =
-    'text-[18px] font-semibold leading-none text-[#1f2536] md:text-[21px] xl:text-[23px] 2xl:text-[28px]';
+    'text-lg font-semibold leading-none text-[#1f2536] md:text-xl xl:text-2xl 2xl:text-3xl';
 
 function MetricLegendItem({ item }) {
     return (
@@ -170,7 +170,7 @@ export function SummaryMetric({ sections = [], headline }) {
                 <div className="grid flex-1 gap-3 lg:grid-cols-2">
                     {sections.map((section) => (
                         <div key={section.title}>
-                            <h4 className="text-[14px] font-semibold text-[#1f2536] md:text-[15px] xl:text-[16px]">{section.title}</h4>
+                            <h4 className="text-sm font-semibold text-[#1f2536] md:text-base xl:text-base">{section.title}</h4>
                             <div className="mt-2.5 space-y-1.5">
                                 {section.items.map((item) => (
                                     <div key={item.label} className="flex items-center justify-between gap-2.5 text-sm">
@@ -197,7 +197,7 @@ export function SummaryMetric({ sections = [], headline }) {
                         <div className="flex items-end justify-between gap-2.5 border-t border-[#eef2f7] pt-2.5 2xl:flex-col 2xl:items-end 2xl:gap-1">
                             <p className="text-sm text-[#6c748e]">{resolvedHeadline.secondaryLabel}</p>
                             <div className="flex items-baseline gap-2 flex-wrap justify-end">
-                                <p className="text-[16px] font-semibold leading-none text-[#1f2536] md:text-[18px] xl:text-[20px] 2xl:text-[22px]">
+                                <p className="text-base font-semibold leading-none text-[#1f2536] md:text-lg xl:text-xl 2xl:text-2xl">
                                     {resolvedHeadline.secondaryValue}
                                 </p>
                                 <TrendIndicator trend={resolvedHeadline.secondaryTrend} growth={resolvedHeadline.secondaryGrowth} />

@@ -30,7 +30,7 @@ export function WorkOrderSectionHeader({ searchValue, onSearchChange, placeholde
                             placeholder={placeholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     )}
                 </div>
@@ -42,7 +42,7 @@ export function WorkOrderSectionHeader({ searchValue, onSearchChange, placeholde
                 <TransactionToolbarIconButton label={`Cari ${title}`}>
                     <SearchIcon className="h-4.5 w-4.5" />
                 </TransactionToolbarIconButton>
-                <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                <div className="text-right text-2xl font-normal text-[#1f2436]">
                     {title} <span className="text-[#ED3969]">*</span>
                 </div>
             </div>

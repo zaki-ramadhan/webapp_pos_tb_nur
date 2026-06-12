@@ -57,6 +57,14 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
     const activePage = resolveActivePage(openPages, activePageId, dashboardPage);
 
+    if (typeof window !== 'undefined') {
+        window.__activePageId = activePageId;
+    }
+
+    useEffect(() => {
+        window.__activePageId = activePageId;
+    }, [activePageId]);
+
     // Hoisted helper closure for page closing
     function closePageNow(pageId) {
         if (pageId === dashboardPage.id) {

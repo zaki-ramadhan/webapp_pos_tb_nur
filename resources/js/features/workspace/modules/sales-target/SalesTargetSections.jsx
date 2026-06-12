@@ -12,7 +12,7 @@ import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 
 function FormFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-center">
+        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
             <TransactionFieldLabel label={label} required={required} />
             <div>{children}</div>
         </div>
@@ -33,7 +33,7 @@ export function SalesTargetHeader({ config, values, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 </FormFieldRow>
 
@@ -47,7 +47,7 @@ export function SalesTargetHeader({ config, values, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.targetTypeOptions.map((option) => (
                             <option key={option} value={option}>
@@ -67,7 +67,7 @@ export function SalesTargetHeader({ config, values, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.branchOptions.map((option) => (
                             <option key={option} value={option}>
@@ -115,7 +115,7 @@ export function SalesTargetDetailsSection({ values, setValues, onOpenModal }) {
                         placeholder={values.detailSearchPlaceholder}
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 
@@ -123,7 +123,7 @@ export function SalesTargetDetailsSection({ values, setValues, onOpenModal }) {
                     <TransactionToolbarIconButton label={`Cari ${values.detailTitle}`}>
                         <SearchIcon className="h-4.5 w-4.5" />
                     </TransactionToolbarIconButton>
-                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {values.detailTitle}
                         {values.detailTitle ? <span className="text-[#ED3969]"> *</span> : null}
                     </div>
@@ -156,7 +156,7 @@ export function SalesTargetAdditionalInfoSection({ config, values, setValues }) 
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField
                     value={values.notes}
@@ -168,7 +168,7 @@ export function SalesTargetAdditionalInfoSection({ config, values, setValues }) 
                     }
                     rows={3}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[58px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[58px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
                 <TransactionFieldLabel label={config.labels.analyst} />
@@ -181,7 +181,7 @@ export function SalesTargetAdditionalInfoSection({ config, values, setValues }) 
                         }))
                     }
                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
         </div>

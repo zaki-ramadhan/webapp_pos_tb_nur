@@ -8,21 +8,23 @@ import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteI
 
 export function WarehouseFieldRow({ label, required = false, children, className = '' }) {
     return (
-        <div className={`grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
+        <div className={`grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
             <TransactionFieldLabel label={label} required={required} className="pt-2 leading-6" />
             <div>{children}</div>
         </div>
     );
 }
 
-export function ClearableTextInput({ value, onChange, placeholder = '', className = '', inputClassName = '' }) {
+export function ClearableTextInput({ id, name, value, onChange, placeholder = '', className = '', inputClassName = '', ...props }) {
     return (
         <TextInput
+            id={id}
+            name={name}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            inputClassName={`text-[15px] text-[#1f2436] ${inputClassName}`.trim()}
+            inputClassName={`text-xs sm:text-sm text-[#1f2436] ${inputClassName}`.trim()}
             trailing={
                 value ? (
                     <button
@@ -36,6 +38,7 @@ export function ClearableTextInput({ value, onChange, placeholder = '', classNam
                 ) : null
             }
             trailingClassName={value ? 'pr-2' : ''}
+            {...props}
         />
     );
 }
@@ -43,28 +46,29 @@ export function ClearableTextInput({ value, onChange, placeholder = '', classNam
 export function PrefixedTextArea({ prefix, value, onChange }) {
     return (
         <div className="flex overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white">
-            <div className="flex min-w-[40px] items-start justify-start border-r border-[#cfd6e2] bg-[#f3f3f4] px-2 py-3 text-[15px] text-[#8b94a7]">
+            <div className="flex min-w-[40px] items-start justify-start border-r border-[#cfd6e2] bg-[#f3f3f4] px-2 py-3 text-xs sm:text-sm text-[#8b94a7]">
                 {prefix}
             </div>
             <textarea
                 value={value}
                 onChange={onChange}
                 rows={4}
-                className="min-h-[74px] w-full resize-none px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                className="min-h-[74px] w-full resize-none px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
             />
         </div>
     );
 }
 
-export function PrefixedInput({ prefix, value, onChange, className = '' }) {
+export function PrefixedInput({ prefix, value, onChange, className = '', ...props }) {
     return (
         <TextInput
             value={value}
             onChange={onChange}
             prefix={prefix}
             className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName="min-w-[48px] border-[#cfd6e2] bg-[#f3f3f4] px-2 text-[15px] text-[#8b94a7]"
-            inputClassName="text-[15px] text-[#1f2436]"
+            prefixClassName="min-w-[48px] border-[#cfd6e2] bg-[#f3f3f4] px-2 text-xs sm:text-sm text-[#8b94a7]"
+            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+            {...props}
             trailing={
                 value ? (
                     <button
@@ -84,9 +88,9 @@ export function PrefixedInput({ prefix, value, onChange, className = '' }) {
 
 export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <WarehouseFieldRow label={config.labels.name} required>
-                <ClearableTextInput value={values.name} onChange={(event) => onChange('name', event.target.value)} />
+                <ClearableTextInput id="name" name="name" value={values.name} onChange={(event) => onChange('name', event.target.value)} />
             </WarehouseFieldRow>
 
             <WarehouseFieldRow label={config.labels.description}>
@@ -95,7 +99,7 @@ export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
                     onChange={(event) => onChange('description', event.target.value)}
                     rows={4}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[76px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[76px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </WarehouseFieldRow>
 
@@ -114,7 +118,7 @@ export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
                     checked={values.isDamagedWarehouse}
                     onChange={(event) => onChange('isDamagedWarehouse', event.target.checked)}
                     align="center"
-                    labelClassName="text-[17px]"
+                    labelClassName="text-base"
                     inputClassName="mt-0 h-[18px] w-[18px]"
                     containerClassName="w-auto"
                 />
@@ -126,7 +130,7 @@ export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
                         checked={values.inactive}
                         onChange={(event) => onChange('inactive', event.target.checked)}
                         align="center"
-                        labelClassName="text-[17px]"
+                        labelClassName="text-base"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
@@ -149,13 +153,13 @@ export function WarehouseAddressTab({ config, values, onChange }) {
             <div className="max-w-[720px] space-y-3">
                 <PrefixedTextArea prefix="Jalan" value={values.street} onChange={(event) => onChange('street', event.target.value)} />
 
-                <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.74fr)]">
+                <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
                     <CityAutocompleteInput
                         value={values.city}
                         onChange={(nextValue) => onChange('city', nextValue)}
                         onSelectCity={handleSelectCity}
                         prefix="Kota"
-                        prefixClassName="min-w-[48px] border-[#cfd6e2] bg-[#f3f3f4] px-2 text-[15px] text-[#8b94a7]"
+                        prefixClassName="min-w-[48px] border-[#cfd6e2] bg-[#f3f3f4] px-2 text-xs sm:text-sm text-[#8b94a7]"
                         dropdownLeftOffsetClassName="left-[48px]"
                     />
                     <PrefixedInput prefix="K.Pos" value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} />
@@ -170,9 +174,9 @@ export function WarehouseAddressTab({ config, values, onChange }) {
 
 export function WarehouseUsersTab({ config, values, onChange, isDetail }) {
     return (
-        <div className="space-y-5">
+        <div className="space-y-4">
             <div className="border-b border-[#d9dee8] pb-2.5">
-                <h3 className="text-[18px] font-medium text-[#1f2436]">{config.userAccess.title}</h3>
+                <h3 className="text-lg font-medium text-[#1f2436]">{config.userAccess.title}</h3>
             </div>
 
             <CheckboxField
@@ -181,15 +185,15 @@ export function WarehouseUsersTab({ config, values, onChange, isDetail }) {
                 checked={values.allUsers}
                 onChange={(event) => onChange('allUsers', event.target.checked)}
                 align="center"
-                labelClassName="text-[17px]"
+                labelClassName="text-base"
                 inputClassName="mt-0 h-[18px] w-[18px]"
                 containerClassName="w-auto"
             />
 
             {!values.allUsers ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <div className="pt-1">
-                        <h3 className="text-[18px] font-medium text-[#1f2436]">{config.userAccess.limitedTitle}</h3>
+                        <h3 className="text-lg font-medium text-[#1f2436]">{config.userAccess.limitedTitle}</h3>
                     </div>
 
                     <WarehouseFieldRow label={config.labels.groupBranch}>

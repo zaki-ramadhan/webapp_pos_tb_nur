@@ -66,7 +66,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
             <TransactionSectionHeading title={config.transferTitle} icon="document" />
 
             <div className="mt-4 grid gap-10 xl:grid-cols-2">
-                <section className="grid gap-y-4 sm:grid-cols-[280px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <section className="grid gap-y-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.fromBank} required />
                     <ChipLookupField
                         values={values.fromBankAccounts}
@@ -88,7 +88,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
                     <TransactionFieldLabel label={config.labels.exchangeRate} />
                     <div className="max-w-[276px]">
                         {values.exchangeRateLabel ? (
-                            <div className="mb-1 text-[13px] text-slate-500 font-medium">{values.exchangeRateLabel}</div>
+                            <div className="mb-1 text-sm text-slate-500 font-medium">{values.exchangeRateLabel}</div>
                         ) : null}
                         <div className="flex gap-2 items-center">
                             <div className="flex-1">
@@ -102,7 +102,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
                                 type="button"
                                 onClick={handleFetchRate}
                                 disabled={fetchingRate}
-                                className="inline-flex shrink-0 items-center justify-center h-[34px] px-3 rounded-[4px] border border-slate-200 bg-white text-[13px] font-semibold text-[#ED3969] shadow-sm transition hover:bg-slate-50 disabled:opacity-60 disabled:pointer-events-none"
+                                className="inline-flex shrink-0 items-center justify-center h-[34px] px-3 rounded-[4px] border border-slate-200 bg-white text-sm font-semibold text-[#ED3969] shadow-sm transition hover:bg-slate-50 disabled:opacity-60 disabled:pointer-events-none"
                             >
                                 {fetchingRate ? '...' : 'Ambil Kurs API'}
                             </button>
@@ -122,12 +122,12 @@ export default function TransferMoneySection({ config, values, setValues, handle
                     {isDetail || values.transferWords ? (
                         <>
                             <div />
-                            <div className="text-[17px] italic text-[#1f2436]">{values.transferWords}</div>
+                            <div className="text-base italic text-[#1f2436]">{values.transferWords}</div>
                         </>
                     ) : null}
                 </section>
 
-                <section className="grid gap-y-4 sm:grid-cols-[280px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <section className="grid gap-y-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.toBank} required />
                     <ChipLookupField
                         values={values.toBankAccounts}
@@ -156,7 +156,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
                     {isDetail || values.resultWords ? (
                         <>
                             <div />
-                            <div className="text-[17px] italic text-[#1f2436]">{values.resultWords}</div>
+                            <div className="text-base italic text-[#1f2436]">{values.resultWords}</div>
                         </>
                     ) : null}
                 </section>

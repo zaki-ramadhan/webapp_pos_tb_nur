@@ -11,7 +11,7 @@ function ModalTabButton({ active, label, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`border-b-2 px-3 py-2 text-[16px] ${
+            className={`border-b-2 px-3 py-2 text-base ${
                 active ? 'border-[#ff4836] text-[#ff4836]' : 'border-transparent text-[#5f6980]'
             }`.trim()}
         >
@@ -23,7 +23,7 @@ function ModalTabButton({ active, label, onClick }) {
 function ModalFieldRow({ label, children }) {
     return (
         <div className="grid gap-3 sm:grid-cols-[154px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-            <TransactionFieldLabel label={label} className="pt-2 text-[16px]" />
+            <TransactionFieldLabel label={label} className="pt-2 text-base" />
             <div>{children}</div>
         </div>
     );
@@ -41,13 +41,13 @@ function buildInitialValues(item = {}) {
 
 function ExpenseTab({ values, setValues }) {
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <ModalFieldRow label="Akun Pengeluaran">
-                <div className="pt-2 text-[17px] text-[#1f2436]">{values.accountName}</div>
+                <div className="pt-2 text-xs sm:text-sm text-[#1f2436]">{values.accountName}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Tanggal">
-                <div className="pt-2 text-[17px] text-[#1f2436]">{values.date}</div>
+                <div className="pt-2 text-xs sm:text-sm text-[#1f2436]">{values.date}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Deskripsi">
@@ -59,15 +59,15 @@ function ExpenseTab({ values, setValues }) {
                             description: event.target.value,
                         }))
                     }
-                    trailing={<span className="text-[22px] font-semibold text-[#1f2436]">×</span>}
+                    trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
                     className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     trailingClassName="px-3"
                 />
             </ModalFieldRow>
 
             <ModalFieldRow label="Jumlah">
-                <div className="pt-2 text-right text-[17px] text-[#1f2436]">{values.amount}</div>
+                <div className="pt-2 text-right text-xs sm:text-sm text-[#1f2436]">{values.amount}</div>
             </ModalFieldRow>
         </div>
     );
@@ -86,7 +86,7 @@ function NotesTab({ values, setValues }) {
                 }
                 rows={4}
                 className="rounded-[4px] border-[#cfd6e2]"
-                textareaClassName="min-h-[92px] text-[15px] text-[#1f2436]"
+                textareaClassName="min-h-[92px] text-xs sm:text-sm text-[#1f2436]"
             />
         </ModalFieldRow>
     );
@@ -117,7 +117,7 @@ export default function FixedAssetExpenseModal({ open, onClose, modal, item }) {
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <PencilIcon className="h-5 w-5 text-white" />
-                        <h2 className="text-[16px] font-medium">{modal.title}</h2>
+                        <h2 className="text-base font-medium">{modal.title}</h2>
                     </div>
 
                     <button
@@ -154,14 +154,14 @@ export default function FixedAssetExpenseModal({ open, onClose, modal, item }) {
                 <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
                     <button
                         type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[18px] text-[#21539b]"
+                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-lg text-[#21539b]"
                         onClick={onClose}
                     >
                         {modal.deleteLabel ?? 'Hapus'}
                     </button>
                     <button
                         type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-[18px] text-white"
+                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-lg text-white"
                         onClick={onClose}
                     >
                         {modal.submitLabel ?? 'Lanjut'}

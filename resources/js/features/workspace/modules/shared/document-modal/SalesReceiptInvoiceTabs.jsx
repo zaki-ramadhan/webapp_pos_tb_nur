@@ -12,18 +12,18 @@ export function SalesReceiptInvoiceTab({ values, setValues }) {
                 value={values.invoiceNumber}
                 readOnly
                 className="h-[36px] rounded-[4px] border-[#9ed66f] bg-[#f1fee9]"
-                inputClassName="text-[15px] font-semibold text-[#67b52c]"
+                inputClassName="text-xs sm:text-sm font-semibold text-[#67b52c]"
             />
 
             <TransactionFieldLabel label="Tgl Faktur" />
-            <div className="flex h-[36px] items-center text-[15px] text-[#1f2436]">{values.invoiceDate}</div>
+            <div className="flex h-[36px] items-center text-xs sm:text-sm text-[#1f2436]">{values.invoiceDate}</div>
 
             <TransactionFieldLabel label="Terhutang" />
             <TextInput
                 value={values.outstanding}
                 readOnly
                 className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                inputClassName="text-right text-[15px] text-[#64748b]"
+                inputClassName="text-right text-xs sm:text-sm text-[#64748b]"
             />
 
             <TransactionFieldLabel label="Bayar" />

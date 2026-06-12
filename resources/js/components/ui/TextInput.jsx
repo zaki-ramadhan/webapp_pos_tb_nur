@@ -2,8 +2,9 @@ import { useRef, useState, useEffect } from 'react';
 
 import { useFormError } from './FormErrorContext';
 
-function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
-    const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
+function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false) {
+    const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
+    const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
     
     // Bypass sanitization for email, username, and general login identifier fields
     if (
@@ -36,6 +37,8 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
                             searchStr.includes('postal') || 
                             searchStr.includes('kodepos') || 
                             searchStr.includes('zip') ||
+                            searchStr.includes('k.pos') ||
+                            searchStr.includes('kode pos') ||
                             /\bno\.?\b/.test(searchStr)
                         ) && !searchStr.includes('note') && !searchStr.includes('document');
 
@@ -53,7 +56,34 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '') {
                 clean = '';
             }
         }
+        if (
+            searchStr.includes('postal') || 
+            searchStr.includes('kodepos') || 
+            searchStr.includes('zip') ||
+            searchStr.includes('k.pos') ||
+            searchStr.includes('kode pos')
+        ) {
+            clean = clean.slice(0, 5);
+        }
         return clean;
+    }
+
+    // Check if it's a letters-only field (locations, countries, cities, provinces, etc.)
+    const isLettersOnly = lettersOnly || 
+                          (
+                              (
+                                  searchStr.includes('province') || 
+                                  searchStr.includes('provinsi') || 
+                                  searchStr.includes('country') || 
+                                  searchStr.includes('negara') || 
+                                  searchStr.includes('city') || 
+                                  searchStr.includes('kota')
+                              ) && !searchStr.includes('code') && !searchStr.includes('no')
+                          );
+
+    if (isLettersOnly) {
+        // Allow only letters, spaces, hyphens, dots, and apostrophes
+        return val.replace(/[^a-zA-Z\s'.-]/g, '');
     }
 
     // Check if it's a numeric field
@@ -153,7 +183,8 @@ export default function TextInput({
     function handleWrappedChange(event) {
         const originalValue = event.target.value;
         const name = props.name ?? '';
-        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder);
+        const prefixVal = typeof prefix === 'string' ? prefix : '';
+        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly);
         
         if (originalValue !== sanitizedValue) {
             event.target.value = sanitizedValue;
@@ -225,6 +256,22 @@ export default function TextInput({
     const hasWidth = containerClassName.includes('w-') || className.includes('w-');
     const widthClass = hasWidth ? '' : 'w-full';
 
+    const hasPrefixMinW = prefixClassName.includes('min-w-');
+    const prefixMinWClass = hasPrefixMinW ? '' : 'min-w-[86px]';
+    const hasPrefixPx = prefixClassName.includes('px-') || prefixClassName.includes('pl-') || prefixClassName.includes('pr-');
+    const prefixPxClass = hasPrefixPx ? '' : 'px-5';
+
+    const name = props.name ?? '';
+    const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
+    const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
+    const isPostal = searchStr.includes('postal') || 
+                     searchStr.includes('kodepos') || 
+                     searchStr.includes('zip') ||
+                     searchStr.includes('k.pos') ||
+                     searchStr.includes('kode pos');
+
+    const resolvedMaxLength = props.maxLength ?? (isPostal ? 5 : undefined);
+
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
             <div
@@ -233,7 +280,7 @@ export default function TextInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full min-w-[86px] items-center border-r border-slate-300 px-5 text-[15px] text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-300 ${prefixPxClass} text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -250,9 +297,10 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`h-full flex-1 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : 'px-4'} text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-slate-300 ${isNonInteractive ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
+                    maxLength={resolvedMaxLength}
                     {...props}
                 />
 
@@ -291,7 +339,7 @@ export default function TextInput({
             </div>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[13px] leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

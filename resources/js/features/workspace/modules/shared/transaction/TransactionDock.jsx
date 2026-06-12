@@ -162,7 +162,7 @@ function TransactionDockButton({ action }) {
 
                     action.onClick?.();
                 }}
-                className={`inline-flex h-[48px] w-[78px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[52px] sm:w-[88px] lg:h-[56px] lg:w-[96px] ${resolveDockToneClassName(action.tone)} ${isDisabled ? 'cursor-not-allowed opacity-55' : ''}`.trim()}
+                className={`inline-flex h-[48px] w-[78px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[52px] sm:w-[88px] lg:h-[56px] lg:w-[96px] ${resolveDockToneClassName(action.tone)} ${isDisabled ? 'cursor-default opacity-55 pointer-events-none' : 'hover:brightness-105 active:brightness-95 cursor-pointer transition'}`.trim()}
             >
                 <span className="inline-flex flex-1 items-center justify-center">
                     <TransactionDockIcon icon={action.icon} />
@@ -227,8 +227,8 @@ export function TransactionTotalCard({ label, value, className = '' }) {
         <div
             className={`w-full max-w-[264px] overflow-hidden rounded-[4px] border border-[#d2d8e3] bg-white shadow-[0_4px_10px_rgba(15,23,42,0.08)] ${className}`.trim()}
         >
-            <div className="px-4 py-3 text-[15px] text-[#1f2436] sm:text-[16px] lg:text-[17px]">{label}</div>
-            <div className="px-4 pb-4 text-right text-[16px] font-semibold text-[#111827] sm:text-[17px] lg:text-[18px]">{value}</div>
+            <div className="px-4 py-3 text-xs sm:text-sm text-[#1f2436] sm:text-base lg:text-base">{label}</div>
+            <div className="px-4 pb-4 text-right text-base font-semibold text-[#111827] sm:text-base lg:text-lg">{value}</div>
         </div>
     );
 }
@@ -250,8 +250,8 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
                     key={item.label}
                     className={`p-4 ${index < items.length - 1 ? 'border-b border-[#d8dde7] sm:border-b-0 sm:border-r' : ''}`.trim()}
                 >
-                    <div className="text-[17px] text-[#1f2436]">{item.label}</div>
-                    <div className="mt-3 text-right text-[18px] font-semibold text-[#111827]">{item.value}</div>
+                    <div className="text-xs sm:text-sm text-[#1f2436]">{item.label}</div>
+                    <div className="mt-3 text-right text-lg font-semibold text-[#111827]">{item.value}</div>
                 </div>
             ))}
         </div>

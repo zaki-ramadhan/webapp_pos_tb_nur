@@ -36,7 +36,7 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
         <section>
             <TransactionSectionHeading title={config.infoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[260px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.paymentTerms} />
                 <ChipLookupField
                     values={values.paymentTerms}
@@ -83,7 +83,7 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                         }))
                     }
                     rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
                 />
             </div>
         </section>
@@ -94,7 +94,7 @@ export function DepositSmartlinkSection({ config }) {
     return (
         <section>
             <TransactionSectionHeading title={config.smartlinkTitle} icon="smartlink" />
-            <div className="mt-4 flex items-start gap-4 text-[17px] leading-8 text-[#1f2436]">
+            <div className="mt-4 flex items-start gap-4 text-base leading-8 text-[#1f2436]">
                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-full text-[#1f2436]">
                     i
                 </span>
@@ -119,13 +119,13 @@ export function DepositSummarySection({ config, values }) {
                     {values.summary.map(([label, value]) => (
                         label === 'Status' ? (
                             <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#e6ebf2] px-4 py-2.5">
-                                <span className="text-[17px] text-[#1f2436]">{label}</span>
+                                <span className="text-xs sm:text-sm text-[#1f2436]">{label}</span>
                                 <DepositStatusPill value={value} />
                             </div>
                         ) : (
                             <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#e6ebf2] px-4 py-2.5 last:border-b-0">
-                                <span className="text-[17px] text-[#1f2436]">{label}</span>
-                                <span className={`text-right text-[17px] ${label === 'Dicetak/email' ? 'font-semibold text-[#111827]' : 'text-[#111827]'}`.trim()}>
+                                <span className="text-xs sm:text-sm text-[#1f2436]">{label}</span>
+                                <span className={`text-right text-base ${label === 'Dicetak/email' ? 'font-semibold text-[#111827]' : 'text-[#111827]'}`.trim()}>
                                     {value}
                                 </span>
                             </div>
@@ -146,7 +146,7 @@ export function DepositSummarySection({ config, values }) {
 export function SalesDepositHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-            <div className={`grid gap-y-3 ${isDetail ? 'sm:grid-cols-[170px_minmax(0,1fr)_180px]' : 'sm:grid-cols-[170px_minmax(0,1fr)]'} sm:items-center sm:gap-x-4`.trim()}>
+            <div className={`grid gap-y-3 ${isDetail ? 'sm:grid-cols-[130px_minmax(0,1fr)_180px]' : 'sm:grid-cols-[130px_minmax(0,1fr)]'} sm:items-center sm:gap-x-4`.trim()}>
                 <TransactionFieldLabel label={config.labels.customer} required />
                 <ChipLookupField
                     values={values.customer}
@@ -157,7 +157,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                 />
                 {isDetail ? (
                     <div className="max-w-[180px]">
-                        <TextInput value={values.currency} readOnly className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
+                        <TextInput value={values.currency} readOnly className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
                     </div>
                 ) : null}
 
@@ -168,7 +168,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                 />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                     {!isDetail ? (
@@ -177,7 +177,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                 </div>
 
                 {!isDetail && values.autoNumber ? (
-                    <SelectField value={values.numberingType} onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-[15px] text-[#1f2436]">
+                    <SelectField value={values.numberingType} onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
                                 {option}
@@ -194,9 +194,9 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                             }))
                         }
                         readOnly={Boolean(isDetail)}
-                        trailing={<span className="text-[18px] font-semibold text-[#1f2436]">x</span>}
+                        trailing={<span className="text-lg font-semibold text-[#1f2436]">x</span>}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                 )}
@@ -206,7 +206,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                     <div className="flex justify-end">
                         <button
                             type="button"
-                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
                             {values.processButtonLabel}
                             <span className="ml-1">⌄</span>

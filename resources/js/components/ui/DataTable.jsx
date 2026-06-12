@@ -37,7 +37,7 @@ export function DataTableRow({ className = '', children, ...props }) {
 export function DataTableHead({ className = '', children, ...props }) {
     return (
         <th
-            className={`border-r border-white/20 px-3 py-2 text-center text-[12px] font-medium leading-5 last:border-r-0 sm:px-4 sm:text-[13px] ${className}`.trim()}
+            className={`border-r border-white/20 px-3 py-2 text-center text-xs font-medium leading-5 last:border-r-0 sm:px-4 sm:text-sm ${className}`.trim()}
             {...props}
         >
             {children}
@@ -47,7 +47,7 @@ export function DataTableHead({ className = '', children, ...props }) {
 
 export function DataTableCell({ className = '', children, ...props }) {
     return (
-        <td className={`border-r border-table-cell-border px-3 py-2 text-[14px] leading-5 last:border-r-0 sm:px-4 sm:text-[15px] ${className}`.trim()} {...props}>
+        <td className={`border-r border-table-cell-border px-3 py-2 text-sm leading-5 last:border-r-0 sm:px-4 ${className}`.trim()} {...props}>
             {children}
         </td>
     );

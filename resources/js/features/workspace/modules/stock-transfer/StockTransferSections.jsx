@@ -15,7 +15,7 @@ import { SearchIcon } from '@/features/workspace/shared/Icons';
 
 export function StockTransferFieldRow({ label, required = false, children, labelClassName = '' }) {
     return (
-        <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
             <TransactionFieldLabel label={label} required={required} className={labelClassName} />
             <div>{children}</div>
         </div>
@@ -36,7 +36,7 @@ export function StockTransferHeader({ config, values, setValues, isDetail }) {
                                     value={values.process}
                                     readOnly
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                             ) : (
                                 <SelectField
@@ -50,7 +50,7 @@ export function StockTransferHeader({ config, values, setValues, isDetail }) {
                                         }))
                                     }
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="text-[15px] text-[#1f2436]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                 >
                                     {config.processOptions.map((option) => (
                                         <option key={option} value={option}>
@@ -67,7 +67,7 @@ export function StockTransferHeader({ config, values, setValues, isDetail }) {
                                     value={values.referenceNumber}
                                     readOnly
                                     className="h-[40px] rounded-[4px] border-[#97d868] bg-[#f5ffef]"
-                                    inputClassName="text-[15px] font-semibold text-[#6baa2d]"
+                                    inputClassName="text-xs sm:text-sm font-semibold text-[#6baa2d]"
                                 />
                             </div>
                         ) : null}
@@ -110,14 +110,14 @@ export function StockTransferHeader({ config, values, setValues, isDetail }) {
                             <TextInput
                                 value={values.documentNumber}
                                 readOnly
-                                trailing={<span className="text-[22px] font-semibold text-[#1f2436]">x</span>}
+                                trailing={<span className="text-2xl font-semibold text-[#1f2436]">x</span>}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         </StockTransferFieldRow>
                     ) : (
-                        <div className="grid gap-3 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
                                 <TransactionFieldLabel label={config.labels.documentNumber} required />
                                 <TransactionSwitch
@@ -140,7 +140,7 @@ export function StockTransferHeader({ config, values, setValues, isDetail }) {
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -162,7 +162,7 @@ export function StockTransferHeader({ config, values, setValues, isDetail }) {
                     <div className="flex justify-end">
                         <button
                             type="button"
-                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
                             {config.takeButtonLabel}
                         </button>
@@ -200,20 +200,20 @@ export function StockTransferDetailsSection({ config, values, setValues, isDetai
                             placeholder={config.detailSearchPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
                     <button
                         type="button"
-                        className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                        className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                     >
                         {config.takeButtonLabel}
                     </button>
                 </div>
 
                 <div className="flex items-center gap-3 self-end sm:self-auto">
-                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {values.itemCountLabel ?? config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
                     </div>
                 </div>
@@ -238,8 +238,8 @@ export function StockTransferInfoSection({ config, values, setValues, isDetail }
         <div className="min-h-[520px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 space-y-4">
-                <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+            <div className="mt-4 space-y-3">
+                <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TextareaField
                         value={values.notes}
@@ -251,11 +251,11 @@ export function StockTransferInfoSection({ config, values, setValues, isDetail }
                         }
                         rows={4}
                         className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                     />
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+                <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.branch} required />
                     <ChipLookupField
                         values={values.branches}
@@ -272,13 +272,13 @@ export function StockTransferInfoSection({ config, values, setValues, isDetail }
                 </div>
 
                 {isDetail ? (
-                    <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+                    <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                         <TransactionFieldLabel label={config.labels.printedEmail} />
                         <TextInput
                             value={values.printedEmail}
                             readOnly
                             className="h-[36px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                            inputClassName="text-[15px] text-[#5f6980]"
+                            inputClassName="text-xs sm:text-sm text-[#5f6980]"
                         />
                     </div>
                 ) : null}

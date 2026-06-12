@@ -41,7 +41,7 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
             side="right"
             portal
             className="flex"
-            tooltipClassName="z-[90] rounded-[6px] bg-[#23314c] px-3 py-2 text-[12px] font-medium shadow-[0_8px_18px_rgba(15,23,42,0.18)]"
+            tooltipClassName="z-[90] rounded-[6px] bg-[#23314c] px-3 py-2 text-xs font-medium shadow-[0_8px_18px_rgba(15,23,42,0.18)]"
         >
             <button
                 ref={buttonRef}
@@ -93,10 +93,10 @@ function MobileModuleButton({ item, active, onSelect }) {
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
-                <span className="block truncate text-[12px] font-medium">{item.label}</span>
+                <span className="block truncate text-xs font-medium">{item.label}</span>
             </span>
             {item.disabled ? (
-                <span className="shrink-0 rounded-full bg-[#e6e9f0] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7b8496]">
+                <span className="shrink-0 rounded-full bg-[#e6e9f0] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#7b8496]">
                     Nonaktif
                 </span>
             ) : null}
@@ -137,15 +137,15 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
-                <span className={`block text-[12px] font-medium leading-4.5 ${isInactive ? 'text-[#7d6220]' : 'text-[#22304a]'}`.trim()}>
+                <span className={`block text-xs font-medium leading-4.5 ${isInactive ? 'text-[#7d6220]' : 'text-[#22304a]'}`.trim()}>
                     {item.label}
                 </span>
-                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-[#9a7b35]' : 'text-[#7b849c]'}`.trim()}>
+                <span className={`mt-0.5 block text-xs leading-4 ${isInactive ? 'text-[#9a7b35]' : 'text-[#7b849c]'}`.trim()}>
                     {statusLabel}
                 </span>
             </span>
             {isInactive ? (
-                <span className="shrink-0 rounded-full bg-[#f6dfab] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                <span className="shrink-0 rounded-full bg-[#f6dfab] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
                     {WORKSPACE_INACTIVE_BADGE_LABEL}
                 </span>
             ) : null}
@@ -187,15 +187,15 @@ export default function DashboardSidebar({
                     <div className="rounded-[10px] border border-[#d7ddea] bg-white p-2 shadow-[0_10px_24px_rgba(15,23,42,0.12)]">
                         <div className="flex items-center justify-between gap-3 border-b border-[#edf0f6] pb-2">
                             <div className="min-w-0">
-                                <p className="text-[11px] uppercase tracking-[0.08em] text-[#8a93a8]">Menu Workspace</p>
-                                <h3 className="truncate text-[14px] font-medium text-[#26324a]">
+                                <p className="text-xs uppercase tracking-[0.08em] text-[#8a93a8]">Menu Workspace</p>
+                                <h3 className="truncate text-sm font-medium text-[#26324a]">
                                     {activeItem?.label ?? 'Pilih kelompok menu'}
                                 </h3>
                             </div>
                             <button
                                 type="button"
                                 onClick={onCloseMobileMenu}
-                                className="shrink-0 rounded-[6px] px-2 py-1 text-[11px] font-medium text-[#4569a4] transition hover:bg-[#eef4fd]"
+                                className="shrink-0 rounded-[6px] px-2 py-1 text-xs font-medium text-[#4569a4] transition hover:bg-[#eef4fd]"
                             >
                                 Tutup
                             </button>
@@ -217,15 +217,15 @@ export default function DashboardSidebar({
                         <div className="mt-2 rounded-[10px] border border-[#d7ddea] bg-white px-2.5 py-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.12)]">
                             <div className="flex items-center justify-between gap-3 border-b border-[#edf0f6] pb-2">
                                 <div className="min-w-0">
-                                    <p className="text-[11px] uppercase tracking-[0.08em] text-[#8a93a8]">Submenu</p>
-                                    <h3 className="truncate text-[14px] font-medium text-[#26324a]">
+                                    <p className="text-xs uppercase tracking-[0.08em] text-[#8a93a8]">Submenu</p>
+                                    <h3 className="truncate text-sm font-medium text-[#26324a]">
                                         {activeItem.panel?.title ?? activeItem.label}
                                     </h3>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={onClosePanel}
-                                    className="shrink-0 rounded-[6px] px-2 py-1 text-[11px] font-medium text-[#4569a4] transition hover:bg-[#eef4fd]"
+                                    className="shrink-0 rounded-[6px] px-2 py-1 text-xs font-medium text-[#4569a4] transition hover:bg-[#eef4fd]"
                                 >
                                     Tutup
                                 </button>

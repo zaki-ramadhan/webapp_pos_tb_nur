@@ -61,7 +61,7 @@ export default function ContactView({ page }) {
                         onChange={(event) => setTypeFilter(event.target.value)}
                         containerClassName="w-auto shrink-0"
                         className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#394157]"
+                        selectClassName="text-xs sm:text-sm text-[#394157]"
                     >
                         {table.filters[0].options.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -104,7 +104,7 @@ export default function ContactView({ page }) {
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
                                 >
                                     <span className={`flex items-center gap-2 ${column.align === 'left' ? '' : 'justify-center'}`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
@@ -121,19 +121,19 @@ export default function ContactView({ page }) {
                                 key={row.id}
                                 className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                             >
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
                                     {formatTableTextValue(row.fullName)}
                                 </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
                                     {formatTableTextValue(row.typeLabel)}
                                 </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
                                     {formatTableTextValue(row.company)}
                                 </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
                                     {formatTableTextValue(row.mobilePhone)}
                                 </DataTableCell>
-                                <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
                                     {formatTableTextValue(row.email)}
                                 </DataTableCell>
                             </DataTableRow>

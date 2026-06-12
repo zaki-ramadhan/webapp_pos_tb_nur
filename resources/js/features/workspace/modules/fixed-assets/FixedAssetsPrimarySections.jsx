@@ -33,9 +33,9 @@ export function FixedAssetsHeader({ config, values, setValues, isDetail }) {
                                     name: event.target.value,
                                 }))
                             }
-                            trailing={isDetail ? <span className="text-[22px] font-semibold text-[#1f2436]">×</span> : null}
+                            trailing={isDetail ? <span className="text-2xl font-semibold text-[#1f2436]">×</span> : null}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailingClassName="px-3"
                         />
                     </div>
@@ -78,7 +78,7 @@ export function FixedAssetsHeader({ config, values, setValues, isDetail }) {
                                 }
                                 containerClassName="w-full xl:w-[400px]"
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.codeTypeOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -90,9 +90,9 @@ export function FixedAssetsHeader({ config, values, setValues, isDetail }) {
                             <TextInput
                                 value={values.code}
                                 readOnly
-                                trailing={isDetail ? <span className="text-[22px] font-semibold text-[#1f2436]">×</span> : null}
+                                trailing={isDetail ? <span className="text-2xl font-semibold text-[#1f2436]">×</span> : null}
                                 className="h-[40px] w-full rounded-[4px] border-[#cfd6e2] xl:w-[400px]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailingClassName="px-3"
                             />
                         )}
@@ -115,14 +115,14 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
             <TransactionSectionHeading title="Informasi umum" icon="info" />
 
             <div className="mt-5 grid gap-5 xl:grid-cols-2 xl:gap-x-9">
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <FixedAssetFieldRow label={config.labels.intangibleAsset}>
                         {isDetail ? (
                             <TextInput
                                 value={values.intangibleAsset ? 'Ya' : 'Tidak'}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                                inputClassName="text-[15px] text-[#4b5565]"
+                                inputClassName="text-xs sm:text-sm text-[#4b5565]"
                             />
                         ) : (
                             <InlineCheckboxField checked={values.intangibleAsset} />
@@ -135,7 +135,7 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                                 value={values.depreciationMethod}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                                inputClassName="text-[15px] text-[#4b5565]"
+                                inputClassName="text-xs sm:text-sm text-[#4b5565]"
                             />
                         ) : (
                             <SelectField
@@ -147,7 +147,7 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.depreciationMethodOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -204,7 +204,7 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                     </FixedAssetFieldRow>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <FixedAssetFieldRow label={config.labels.quantity} required>
                         <TextInput
                             value={values.quantity}
@@ -216,7 +216,7 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                                 }))
                             }
                             className="h-[40px] rounded-[4px] border-[#cfd6e2] sm:max-w-[286px]"
-                            inputClassName="text-right text-[15px] text-[#1f2436]"
+                            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                         />
                     </FixedAssetFieldRow>
 
@@ -233,9 +233,9 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                                         }))
                                     }
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-right text-[15px] text-[#1f2436]"
+                                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                                 />
-                                <span className="text-[15px] text-[#1f2436]">Tahun</span>
+                                <span className="text-xs sm:text-sm text-[#1f2436]">Tahun</span>
                             </div>
                             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
                                 <TextInput
@@ -248,9 +248,9 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                                         }))
                                     }
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-right text-[15px] text-[#1f2436]"
+                                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                                 />
-                                <span className="text-[15px] text-[#1f2436]">Bulan</span>
+                                <span className="text-xs sm:text-sm text-[#1f2436]">Bulan</span>
                             </div>
                         </div>
                     </FixedAssetFieldRow>
@@ -267,9 +267,9 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                                     }))
                                 }
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-right text-[15px] text-[#1f2436]"
+                                inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                             />
-                            <span className="text-[15px] text-[#1f2436]">%</span>
+                            <span className="text-xs sm:text-sm text-[#1f2436]">%</span>
                         </div>
                     </FixedAssetFieldRow>
 
@@ -285,7 +285,7 @@ export function FixedAssetsGeneralSection({ config, values, setValues, isDetail 
                             }
                             prefix="Rp"
                             className="h-[40px] rounded-[4px] border-[#cfd6e2] sm:max-w-[286px]"
-                            inputClassName="text-right text-[15px] text-[#1f2436]"
+                            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                             prefixClassName="min-w-[46px] justify-center px-0 text-[#7a8498]"
                         />
                     </FixedAssetFieldRow>

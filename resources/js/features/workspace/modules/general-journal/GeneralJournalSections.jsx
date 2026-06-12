@@ -62,7 +62,7 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[250px_minmax(0,570px)] lg:items-start">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
                 <TransactionFieldLabel label={config.labels.branch} required />
                 <ChipLookupField
                     values={values.branches}
@@ -88,7 +88,7 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
                         }))
                     }
                     rows={4}
-                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                 />
             </div>
         </div>
@@ -98,7 +98,7 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
 export function GeneralJournalHeader({ config, values, setValues, activeRecordId }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.95fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[250px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.entryDate} required />
                 <TransactionDateInput
                     value={values.entryDate}
@@ -111,11 +111,11 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                     value={values.transactionType}
                     readOnly
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-[15px] text-[#1f2436]"
+                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center gap-4">
                     <TransactionFieldLabel label={config.labels.documentNumber} required />
                     {!activeRecordId ? (
@@ -141,7 +141,7 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -155,7 +155,7 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                         readOnly
                         trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                 )}
@@ -170,7 +170,7 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                         value={values.transactionNumber}
                         readOnly
                         className="h-[40px] rounded-[4px] border-[#96d86d] bg-[#eef9e4]"
-                        inputClassName="text-[15px] font-medium text-[#53a11f]"
+                        inputClassName="text-xs sm:text-sm font-medium text-[#53a11f]"
                     />
                 ) : (
                     <div className="flex justify-end">
@@ -197,7 +197,7 @@ export function JournalTableFilters({ table, filters, setFilters }) {
                     }
                     containerClassName="w-auto"
                     className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {filter.options.map((option) => (

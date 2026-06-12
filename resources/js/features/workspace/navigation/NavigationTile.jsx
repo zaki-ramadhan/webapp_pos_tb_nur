@@ -44,7 +44,7 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
         ? 'min-h-[88px] gap-2.5 rounded-[10px] px-2 py-3.5 sm:min-h-[92px] md:min-h-[96px]'
         : 'min-h-[86px] gap-2.5 rounded-[10px] px-2 py-3.5 sm:min-h-[92px] sm:px-2 md:min-h-[98px]';
     const iconSizeClassName = dense ? 'h-8.5 w-8.5 sm:h-9 sm:w-9 md:h-10 md:w-10' : 'h-8 w-8 sm:h-8.5 sm:w-8.5 md:h-9 md:w-9';
-    const labelSizeClassName = dense ? 'text-[11px] sm:text-[12px] md:text-[12.5px]' : 'text-[11px] sm:text-[11.5px] md:text-[12.5px]';
+    const labelSizeClassName = dense ? 'text-xs sm:text-xs md:text-[12.5px]' : 'text-xs sm:text-[11.5px] md:text-[12.5px]';
     const hintLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
     return (
@@ -67,7 +67,7 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
             </span>
             {hintLabel ? (
                 <span
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] ${
+                    className={`rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] ${
                         isInactive ? 'bg-[#f8e6b4] text-[#8b6511]' : 'bg-[#dde2ea] text-[#7d8698]'
                     }`.trim()}
                 >

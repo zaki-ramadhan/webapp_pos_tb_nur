@@ -5,8 +5,8 @@ export default function BrandMark({
     const logoHeight = variant === 'decorative' ? 'h-[36px]' : 'h-[38px]';
     const isDarkText = variant === 'decorative';
     const titleSize = variant === 'decorative'
-        ? 'text-[15px] sm:text-[17px] md:text-[18px]'
-        : 'text-[17px] sm:text-[19px] md:text-[20px]';
+        ? 'text-base sm:text-base md:text-lg'
+        : 'text-base sm:text-lg md:text-xl';
     const gapClass = variant === 'decorative' ? 'gap-2' : 'gap-3';
 
     return (
@@ -20,7 +20,7 @@ export default function BrandMark({
                 <span className={`${titleSize} font-bold tracking-tight select-none pointer-events-none ${isDarkText ? 'text-[#1b315d]' : 'text-white'}`}>
                     TB Nur POS
                 </span>
-                <span className={`text-[9.5px] sm:text-[10px] md:text-[10.5px] font-medium tracking-normal select-none pointer-events-none ${isDarkText ? 'text-[#56607c]' : 'text-white/75'}`}>
+                <span className={`text-[9.5px] sm:text-xs md:text-[10.5px] font-medium tracking-normal select-none pointer-events-none ${isDarkText ? 'text-[#56607c]' : 'text-white/75'}`}>
                     Toko Bangunan dan Material
                 </span>
             </div>

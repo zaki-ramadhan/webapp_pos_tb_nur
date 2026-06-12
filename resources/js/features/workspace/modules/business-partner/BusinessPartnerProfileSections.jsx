@@ -24,19 +24,19 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                             value={values.name}
                             onChange={(event) => onChange('name', event.target.value)}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailing={isDetail ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
                             trailingClassName={isDetail ? 'px-3' : ''}
                         />
                     </FormFieldRow>
 
-                    <FormFieldRow label={config.labels.code} required className="lg:grid-cols-[200px_minmax(0,1fr)]">
+                    <FormFieldRow label={config.labels.code} required className="lg:grid-cols-[150px_minmax(0,1fr)]">
                         {isDetail ? (
                             <TextInput
                                 value={values.code}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailing={<CloseIcon className="h-4 w-4 text-[#111827]" />}
                                 trailingClassName="px-3"
                             />
@@ -48,7 +48,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                                         value={values.codeType}
                                         onChange={(event) => onChange('codeType', event.target.value)}
                                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                        selectClassName="text-[15px] text-[#1f2436]"
+                                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                     >
                                         <option value={values.codeType}>{values.codeType}</option>
                                     </SelectField>
@@ -71,18 +71,18 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                             value={values.businessPhone}
                             onChange={(event) => onChange('businessPhone', event.target.value)}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailing={isDetail && values.businessPhone ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
                             trailingClassName="px-3"
                         />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.mobilePhone}>
-                        <TextInput value={values.mobilePhone} onChange={(event) => onChange('mobilePhone', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
+                        <TextInput value={values.mobilePhone} onChange={(event) => onChange('mobilePhone', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.whatsapp}>
-                        <TextInput value={values.whatsapp} onChange={(event) => onChange('whatsapp', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
+                        <TextInput value={values.whatsapp} onChange={(event) => onChange('whatsapp', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.email}>
@@ -91,7 +91,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                             onChange={(event) => onChange('email', event.target.value)}
                             placeholder="Email"
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailing={isDetail && values.email ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
                             trailingClassName="px-3"
                         />
@@ -102,14 +102,14 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                             value={values.fax}
                             onChange={(event) => onChange('fax', event.target.value)}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             trailing={isDetail && values.fax ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
                             trailingClassName="px-3"
                         />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.website}>
-                        <TextInput value={values.website} onChange={(event) => onChange('website', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-[15px] text-[#1f2436]" />
+                        <TextInput value={values.website} onChange={(event) => onChange('website', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
                     </FormFieldRow>
                 </div>
             </section>
@@ -122,7 +122,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                     {isDetail && values.detailActionLabel ? (
                         <button
                             type="button"
-                            className="shrink-0 rounded-[4px] border border-[#b9b9b9] bg-[#c7c7c7] px-4 py-2 text-[16px] text-[#555e70]"
+                            className="shrink-0 rounded-[4px] border border-[#b9b9b9] bg-[#c7c7c7] px-4 py-2 text-base text-[#555e70]"
                         >
                             {values.detailActionLabel}
                         </button>
@@ -158,7 +158,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                             value={values.branchUsage}
                             onChange={(event) => onChange('branchUsage', event.target.value)}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             <option value={values.branchUsage}>{values.branchUsage}</option>
                         </SelectField>
@@ -182,7 +182,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                                     checked={Boolean(values[field.id])}
                                     onChange={(event) => onChange(field.id, event.target.checked)}
                                     align="center"
-                                    labelClassName="text-[17px]"
+                                    labelClassName="text-base"
                                     inputClassName="mt-0 h-[18px] w-[18px]"
                                     containerClassName="w-auto"
                                 />
@@ -191,7 +191,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                                     value={values[field.id]}
                                     onChange={(event) => onChange(field.id, event.target.value)}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="text-[15px] text-[#1f2436]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                                 >
                                     {field.options?.map((option) => (
                                         <option key={`${field.id}-${option}`} value={option}>
@@ -212,7 +212,7 @@ export function ContactsTab({ config }) {
     return (
         <div>
             <div className="mb-3 flex items-center gap-3">
-                <h3 className="text-[22px] font-normal text-[#1f2436]">{config.contactsTable.title}</h3>
+                <h3 className="text-2xl font-normal text-[#1f2436]">{config.contactsTable.title}</h3>
                 <button
                     type="button"
                     className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
@@ -231,14 +231,14 @@ export function ShippingTab({ config, values, onChange }) {
             <section>
                 <SectionHeading title={config.headingLabels.shippingLeft} />
 
-                <div className="mt-4 space-y-4">
+                <div className="mt-4 space-y-3">
                     <CheckboxField
                         id="customer-shipping-same"
                         label="Sama dengan alamat penagihan"
                         checked={Boolean(values.shippingSameAsBilling)}
                         onChange={(event) => onChange('shippingSameAsBilling', event.target.checked)}
                         align="center"
-                        labelClassName="text-[17px]"
+                        labelClassName="text-base"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
@@ -272,7 +272,7 @@ export function ShippingTab({ config, values, onChange }) {
                     <button type="button" className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]">
                         <PlusIcon className="h-5 w-5" />
                     </button>
-                    <button type="button" className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#2353a0]">
+                    <button type="button" className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#2353a0]">
                         Ambil<span className="ml-1">⌄</span>
                     </button>
                 </div>

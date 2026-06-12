@@ -19,7 +19,7 @@ import { getPurchaseInfo } from './purchasePreferenceHelpers';
 export function PurchaseInlineCheckboxRow({ row, onToggle }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="text-[14px] md:text-[15px] leading-6 text-[#0f172a]">
+            <div className="text-xs sm:text-sm leading-6 text-[#0f172a]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
                     <Tooltip content={getPurchaseInfo(row.id, row.label)} portal>
@@ -35,9 +35,9 @@ export function PurchaseInlineCheckboxRow({ row, onToggle }) {
                     disabled={Boolean(row.option?.disabled)}
                     size="sm"
                     align="center"
-                    label={<span className="text-[14px] md:text-[15px]">{row.option?.label}</span>}
+                    label={<span className="text-xs sm:text-sm">{row.option?.label}</span>}
                     className="gap-3"
-                    labelClassName="text-[14px] md:text-[15px] leading-6"
+                    labelClassName="text-xs sm:text-sm leading-6"
                     inputClassName="rounded-[5px] border-[#6ea4ef] shadow-[0_0_0_3px_rgba(110,164,239,0.08)]"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />
@@ -48,7 +48,7 @@ export function PurchaseInlineCheckboxRow({ row, onToggle }) {
 
 export function PurchaseDescriptionRow({ row }) {
     return (
-        <div className="text-[14px] md:text-[15px] leading-6 text-[#111827]">
+        <div className="text-xs sm:text-sm leading-6 text-[#111827]">
             <span className="whitespace-pre-line">{row.label}</span>
         </div>
     );
@@ -57,7 +57,7 @@ export function PurchaseDescriptionRow({ row }) {
 export function PurchaseRadioGroupRow({ row, onChange }) {
     return (
         <div className="space-y-2">
-            <div className="text-[14px] md:text-[15px] font-medium leading-6 text-[#111827]">
+            <div className="text-xs sm:text-sm font-medium leading-6 text-[#111827]">
                 <span className="whitespace-pre-line">{row.label}</span>
             </div>
 
@@ -72,12 +72,12 @@ export function PurchaseRadioGroupRow({ row, onChange }) {
                         size="sm"
                         align="center"
                         label={
-                            <span className="whitespace-pre-line text-[14px] md:text-[15px] leading-6">
+                            <span className="whitespace-pre-line text-xs sm:text-sm leading-6">
                                 {option.label}
                             </span>
                         }
                         className="gap-3"
-                        labelClassName="text-[14px] md:text-[15px] leading-6"
+                        labelClassName="text-xs sm:text-sm leading-6"
                         onChange={() => onChange(row.id, option.value)}
                     />
                 ))}
@@ -89,7 +89,7 @@ export function PurchaseRadioGroupRow({ row, onChange }) {
 export function PurchaseStandaloneLookupRow({ row, onChangeControl }) {
     return (
         <div className="space-y-2">
-            <div className="text-[14px] md:text-[15px] leading-6 text-[#111827]">
+            <div className="text-xs sm:text-sm leading-6 text-[#111827]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
                     <Tooltip content={getPurchaseInfo(row.id, row.label)} portal>
@@ -183,7 +183,7 @@ export function PurchaseFieldControl({ rowId, control, onChange }) {
                 id={control.id}
                 value={control.value}
                 className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                selectClassName="text-[14px] md:text-[15px] text-[#111827]"
+                selectClassName="text-xs sm:text-sm text-[#111827]"
                 onChange={(event) => onChange(event.target.value)}
             >
                 {(control.options ?? []).map((option) => (
@@ -201,7 +201,7 @@ export function PurchaseFieldControl({ rowId, control, onChange }) {
             value={control.value ?? ''}
             placeholder={control.placeholder}
             className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            inputClassName="text-[14px] md:text-[15px] text-[#111827]"
+            inputClassName="text-xs sm:text-sm text-[#111827]"
             trailing={<SearchIcon className="h-5 w-5 text-[#1f2937]" />}
             onChange={(event) => onChange(event.target.value)}
         />
@@ -211,7 +211,7 @@ export function PurchaseFieldControl({ rowId, control, onChange }) {
 export function PurchaseGridFieldRow({ row, onChangeControl }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="text-[14px] md:text-[15px] leading-6 text-[#111827]">
+            <div className="text-xs sm:text-sm leading-6 text-[#111827]">
                 <span>{row.label}</span>
                 {row.showInfo ? (
                     <Tooltip content={getPurchaseInfo(row.id, row.label)} portal>

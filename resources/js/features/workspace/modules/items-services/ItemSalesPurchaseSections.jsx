@@ -10,7 +10,7 @@ import {
 
 export function ItemSalesInfoSection({ config, values, onChange }) {
     return (
-        <section className="space-y-4">
+        <section className="space-y-3">
             <SectionHeading title={config.labels.salesInfo} />
 
             <FormRow label="Default Diskon (%)">
@@ -21,7 +21,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                             onChange('defaultDiscount', event.target.value)
                         }
                     />
-                    <span className="text-[17px] text-[#1f2436]">/ Semua Satuan</span>
+                    <span className="text-xs sm:text-sm text-[#1f2436]">/ Semua Satuan</span>
                 </div>
             </FormRow>
 
@@ -46,7 +46,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                         checked={values.bulkPricingEnabled}
                         onChange={(nextValue) => onChange('bulkPricingEnabled', nextValue)}
                     />
-                    <span className="text-[17px] text-[#1f2436]">
+                    <span className="text-xs sm:text-sm text-[#1f2436]">
                         Menerapkan Harga / Diskon Grosir{' '}
                         <Tooltip content="Mengaktifkan aturan tingkat harga grosir berdasarkan kuantitas pembelian." portal>
                             <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157] cursor-help" />
@@ -58,7 +58,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                         checked={values.substituteEnabled}
                         onChange={(nextValue) => onChange('substituteEnabled', nextValue)}
                     />
-                    <span className="text-[17px] text-[#1f2436]">Substitusi dengan</span>
+                    <span className="text-xs sm:text-sm text-[#1f2436]">Substitusi dengan</span>
                 </div>
             </div>
         </section>
@@ -68,7 +68,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
 export function ItemPurchaseTaxSection({ config, values, onChange }) {
     return (
         <section className="space-y-7">
-            <div className="space-y-4">
+            <div className="space-y-3">
                 <SectionHeading title={config.labels.purchaseInfo} />
 
                 <FormRow label="Pemasok Utama" info>
@@ -127,7 +127,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                 </FormRow>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
                 <SectionHeading title={config.labels.taxInfo} />
 
                 <FormRow label="Ref Kode Pajak" info>

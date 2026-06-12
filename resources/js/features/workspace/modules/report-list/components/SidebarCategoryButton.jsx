@@ -40,11 +40,11 @@ export default function SidebarCategoryButton({ category, active, onSelect }) {
             </span>
 
             <span className="min-w-0 flex-1">
-                <span className="block truncate text-[15px] leading-6">{category.label}</span>
+                <span className="block truncate text-base leading-6">{category.label}</span>
             </span>
 
             {isInactive ? (
-                <span className="shrink-0 rounded-[4px] bg-[#fef2f2] px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[#ef4444] border border-[#fee2e2]">
+                <span className="shrink-0 rounded-[4px] bg-[#fef2f2] px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-[#ef4444] border border-[#fee2e2]">
                     {WORKSPACE_INACTIVE_BADGE_LABEL}
                 </span>
             ) : null}

@@ -88,7 +88,7 @@ export default function SalaryAllowanceTableView({
                                 }
                                 containerClassName="w-full sm:w-auto"
                                 className="h-[34px] min-w-[222px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="px-3 text-[15px] text-[#394157]"
+                                selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                             >
                                 {filter.options.map((option) => (
                                     <option key={option.value} value={option.value}>
@@ -131,13 +131,13 @@ export default function SalaryAllowanceTableView({
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`px-3 py-2.5 text-[16px] font-medium text-white ${column.align === 'center' ? 'w-[120px] text-center' : 'text-left'}`}
+                                    className={`px-3 py-2.5 text-base font-medium text-white ${column.align === 'center' ? 'w-[120px] text-center' : 'text-left'}`}
                                 >
                                     <span>{column.label}</span>
                                 </DataTableHead>
@@ -153,11 +153,11 @@ export default function SalaryAllowanceTableView({
                                     className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f1f1f2]' : 'bg-white'}`.trim()}
                                     onClick={() => onOpenDetail(row.id)}
                                 >
-                                    <DataTableCell className="py-2.5 text-center text-[15px] text-[#646d83]">{index + 1}</DataTableCell>
+                                    <DataTableCell className="py-2.5 text-center text-base text-[#646d83]">{index + 1}</DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`py-2.5 text-[15px] text-[#131a28] ${column.align === 'center' ? 'text-center' : 'text-left'}`}
+                                            className={`py-2.5 text-base text-[#131a28] ${column.align === 'center' ? 'text-center' : 'text-left'}`}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -166,7 +166,7 @@ export default function SalaryAllowanceTableView({
                             ))
                         ) : (
                             <DataTableRow>
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="py-6 text-center text-[15px] text-[#6b7280]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="py-6 text-center text-base text-[#6b7280]">
                                     {loading ? 'Memuat data...' : config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

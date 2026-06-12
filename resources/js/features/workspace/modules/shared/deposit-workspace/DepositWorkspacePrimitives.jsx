@@ -12,7 +12,7 @@ export function ReadonlyTransactionTextarea({ value, rows = 3, className = '' })
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none ${className}`.trim()}
         />
     );
 }
@@ -35,7 +35,7 @@ export function DepositStamp({ label, tone = 'blue', className = '' }) {
                 <div className={`absolute h-[96px] w-[96px] rounded-full border-[2px] ${toneClassName}`.trim()} />
             </div>
             <div
-                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-[14px] font-bold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
+                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-sm font-bold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
             >
                 {label}
             </div>
@@ -50,7 +50,7 @@ export function DepositStatusPill({ value }) {
             : 'border-[#ffd08c] bg-[#fff5e7] text-[#ff8d08]';
 
     return (
-        <span className={`inline-flex rounded-[4px] border px-3 py-1 text-[15px] ${toneClassName}`.trim()}>
+        <span className={`inline-flex rounded-[4px] border px-3 py-1 text-base ${toneClassName}`.trim()}>
             {value}
         </span>
     );
@@ -59,10 +59,10 @@ export function DepositStatusPill({ value }) {
 export function DepositAmountField({ prefix = 'Rp', value, className = '' }) {
     return (
         <div className={`flex h-[34px] overflow-hidden rounded-[4px] border border-[#cfd6e2] ${className}`.trim()}>
-            <span className="inline-flex items-center border-r border-[#d8dde7] bg-[#f5f6f8] px-3 text-[15px] text-[#9aa3b1]">
+            <span className="inline-flex items-center border-r border-[#d8dde7] bg-[#f5f6f8] px-3 text-base text-[#9aa3b1]">
                 {prefix}
             </span>
-            <span className="inline-flex flex-1 items-center justify-end px-3 text-[18px] font-semibold text-[#111827]">
+            <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-[#111827]">
                 {value}
             </span>
             <span className="inline-flex w-10 items-center justify-center border-l border-[#d8dde7] text-[#1f2436]">
@@ -92,15 +92,15 @@ export function DepositFooterSummary({ items = [] }) {
                             index < items.length - 1 ? 'md:border-r' : ''
                         }`.trim()}
                     >
-                        <div className="flex items-center gap-2 text-[17px] text-[#1f2436]">
+                        <div className="flex items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
                             <span>{item.label}</span>
                             {item.badge ? (
-                                <span className="inline-flex rounded-[4px] border border-[#8ab2ea] px-1.5 py-0.5 text-[12px] text-[#21539b]">
+                                <span className="inline-flex rounded-[4px] border border-[#8ab2ea] px-1.5 py-0.5 text-xs text-[#21539b]">
                                     {item.badge}
                                 </span>
                             ) : null}
                         </div>
-                        <div className="mt-2 text-right text-[18px] font-semibold text-[#111827]">{item.value}</div>
+                        <div className="mt-2 text-right text-lg font-semibold text-[#111827]">{item.value}</div>
                     </div>
                 ))}
             </div>
@@ -113,7 +113,7 @@ export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], e
         <section>
             <div className="flex items-center gap-3 border-b border-[#d8dde7] pb-3">
                 <NavigationIcon type={icon} className="h-5 w-5 text-[#2f78e5]" />
-                <h3 className="text-[22px] font-normal text-[#1564d7]">{title}</h3>
+                <h3 className="text-2xl font-normal text-[#1564d7]">{title}</h3>
             </div>
 
             <div className="mt-4">
@@ -127,15 +127,15 @@ export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], e
                                 }`.trim()}
                             >
                                 <div>
-                                    <div className="text-[17px] font-semibold text-[#1661d8]">{item.number}</div>
-                                    <div className="mt-1 text-[14px] text-[#1f2436]">{item.date}</div>
+                                    <div className="text-base font-semibold text-[#1661d8]">{item.number}</div>
+                                    <div className="mt-1 text-sm text-[#1f2436]">{item.date}</div>
                                 </div>
-                                <div className="text-right text-[17px] font-semibold text-[#111827]">{item.amount}</div>
+                                <div className="text-right text-base font-semibold text-[#111827]">{item.amount}</div>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="rounded-[4px] border border-dashed border-[#d8dde7] px-4 py-6 text-[15px] text-[#7d879a]">
+                    <div className="rounded-[4px] border border-dashed border-[#d8dde7] px-4 py-6 text-base text-[#7d879a]">
                         {emptyLabel}
                     </div>
                 )}

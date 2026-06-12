@@ -39,7 +39,7 @@ class SalesCheckinPage
                 ],
                 'columns' => [
                     ['id' => 'dateLabel', 'label' => 'Tanggal', 'widthClassName' => 'w-[18%]'],
-                    ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[30%]'],
+                    ['id' => 'number', 'label' => 'No. Checkin', 'widthClassName' => 'w-[30%]'],
                     ['id' => 'customerName', 'label' => 'Nama Pelanggan (Saat Check In)', 'widthClassName' => 'w-[26%]'],
                     ['id' => 'salesName', 'label' => 'Sales', 'widthClassName' => 'w-[12%]'],
                     ['id' => 'transactionName', 'label' => 'Transaksi', 'widthClassName' => 'w-[14%]'],

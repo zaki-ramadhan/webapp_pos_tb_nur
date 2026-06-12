@@ -38,7 +38,7 @@ export default function OrderFulfillmentView({ page }) {
                             value={branch}
                             onChange={(event) => setBranch(event.target.value)}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.branchOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -53,7 +53,7 @@ export default function OrderFulfillmentView({ page }) {
                             value={warehouse}
                             onChange={(event) => setWarehouse(event.target.value)}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.warehouseOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -76,7 +76,7 @@ export default function OrderFulfillmentView({ page }) {
                     <button
                         type="button"
                         disabled
-                        className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#d4d7de] bg-[#f0f0f1] px-4 text-[15px] text-[#b1b5bf]"
+                        className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#d4d7de] bg-[#f0f0f1] px-4 text-base text-[#b1b5bf]"
                     >
                         {config.actionButtonLabel}
                     </button>
@@ -91,7 +91,7 @@ export default function OrderFulfillmentView({ page }) {
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -109,7 +109,7 @@ export default function OrderFulfillmentView({ page }) {
                                     {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-[15px] text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                            className={`px-2.5 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
                                         >
                                             {row[column.id] ?? ''}
                                         </DataTableCell>
@@ -118,7 +118,7 @@ export default function OrderFulfillmentView({ page }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {config.table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

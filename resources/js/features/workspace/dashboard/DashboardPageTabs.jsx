@@ -4,6 +4,7 @@ import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import { ChevronDownIcon, CloseIcon, CogIcon, IdeaIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import SecondaryTabs from '@/features/workspace/shared/SecondaryTabs';
+import { renderTabLabel } from '@/features/workspace/dashboard/WorkspaceDraftState';
 
 function PrimaryTab({ tab, active, onSelect, onClose }) {
     const spacingClassName = tab.closable
@@ -21,7 +22,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
                     onSelect(tab.id);
                 }
             }}
-            className={`relative -mb-px inline-flex h-8.5 items-center rounded-t-[5px] border text-[12px] leading-normal transition sm:h-9 sm:text-[13px] md:h-9.75 md:text-[15px] max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
+            className={`relative -mb-px inline-flex h-8.5 items-center rounded-t-[5px] border text-xs leading-normal transition sm:h-9 sm:text-sm md:h-9.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
                     ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-medium text-white'
                     : 'border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
@@ -29,7 +30,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
             aria-label={tab.label}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[90px] sm:max-w-[120px] md:max-w-[150px]">
-                <span className="block truncate py-1">{tab.label}</span>
+                <span className="block truncate py-1">{renderTabLabel(tab.label, active, true)}</span>
             </span>
             {tab.closable ? (
                 <button
@@ -65,7 +66,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((currentValue) => !currentValue)}
-                className="inline-flex h-8.5 min-w-[40px] items-center justify-center gap-1 border-l border-tab-overflow-border px-2 text-[12px] text-text-medium transition hover:bg-ui-bg-hover sm:h-9 sm:min-w-[44px] sm:px-2.5 sm:text-[13px] md:min-w-[46px] md:px-3 md:text-[14px]"
+                className="inline-flex h-8.5 min-w-[40px] items-center justify-center gap-1 border-l border-tab-overflow-border px-2 text-xs text-text-medium transition hover:bg-ui-bg-hover sm:h-9 sm:min-w-[44px] sm:px-2.5 sm:text-sm md:min-w-[46px] md:px-3 md:text-sm"
                 aria-label={`Buka daftar ${tabs.length} tab halaman`}
                 aria-expanded={open}
             >
@@ -86,14 +87,14 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                         <DropdownMenuItem
                             key={tab.id}
                             onClick={() => handleSelect(tab.id)}
-                            className={`rounded-none px-3 py-2 text-[13px] md:text-[14px] ${
+                            className={`rounded-none px-3 py-2 text-sm md:text-sm ${
                                 activePage?.id === tab.id
                                     ? 'bg-brand-blue-lightest font-medium text-brand-blue-darker'
                                     : 'text-brand-dark'
                             }`.trim()}
                             contentClassName="truncate"
                         >
-                            {tab.label}
+                            {renderTabLabel(tab.label, activePage?.id === tab.id, false)}
                         </DropdownMenuItem>
                     ))}
                 </div>

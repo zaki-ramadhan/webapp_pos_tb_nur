@@ -60,7 +60,7 @@ export function ExpenseAdditionalInfoSection({ config, values, setValues, handle
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[250px_minmax(0,570px)] lg:items-start">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
                 <TransactionFieldLabel label={config.labels.dueDate} required />
                 <TransactionDateInput
                     value={values.dueDate}
@@ -94,7 +94,7 @@ export function ExpenseAdditionalInfoSection({ config, values, setValues, handle
                         }))
                     }
                     rows={4}
-                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="min-h-[70px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                 />
             </div>
         </div>
@@ -107,11 +107,11 @@ export function ExpenseSummarySection({ config, values }) {
             <TransactionSectionHeading title={config.summaryTitle} icon="document" />
 
             <div className="mt-4 max-w-[860px] overflow-hidden rounded-[4px] border border-[#d2d8e3] bg-white shadow-[0_4px_10px_rgba(15,23,42,0.08)]">
-                <div className="grid grid-cols-[minmax(0,1fr)_220px] border-b border-[#d8dde7] px-4 py-3 text-[17px] text-[#1f2436]">
+                <div className="grid grid-cols-[minmax(0,1fr)_220px] border-b border-[#d8dde7] px-4 py-3 text-xs sm:text-sm text-[#1f2436]">
                     <span>{config.summaryRows.paidAmountLabel}</span>
                     <span className="text-right font-semibold text-[#111827]">{values.paidAmount}</span>
                 </div>
-                <div className="grid grid-cols-[minmax(0,1fr)_220px] px-4 py-3 text-[17px] text-[#1f2436]">
+                <div className="grid grid-cols-[minmax(0,1fr)_220px] px-4 py-3 text-xs sm:text-sm text-[#1f2436]">
                     <span>{config.summaryRows.statusLabel}</span>
                     <span className="text-right font-semibold text-[#111827]">{values.status}</span>
                 </div>
@@ -122,35 +122,37 @@ export function ExpenseSummarySection({ config, values }) {
 
 export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch, handlers = {} }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[250px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className="grid gap-x-8 gap-y-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
+            <div className="grid gap-y-3 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.liabilityAccount} required />
-                <AccountLookupField
-                    values={values.liabilityAccounts}
-                    placeholder={config.liabilityAccountPlaceholder}
-                    dialogTitle="Pilih Akun Hutang Beban"
-                    onRemove={(value) =>
-                        handlers.onRemoveLiabilityAccount
-                            ? handlers.onRemoveLiabilityAccount(value)
-                            : setValues((current) => ({
-                                  ...current,
-                                  liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
-                              }))
-                    }
-                    searchLabel="Cari akun hutang beban"
-                    onSelectAccount={(record) => handlers.onSelectLiabilityAccount?.(record)}
-                />
+                <div className="w-full max-w-[420px]">
+                    <AccountLookupField
+                        values={values.liabilityAccounts}
+                        placeholder={config.liabilityAccountPlaceholder}
+                        dialogTitle="Pilih Akun Hutang Beban"
+                        onRemove={(value) =>
+                            handlers.onRemoveLiabilityAccount
+                                ? handlers.onRemoveLiabilityAccount(value)
+                                : setValues((current) => ({
+                                      ...current,
+                                      liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
+                                    }))
+                        }
+                        searchLabel="Cari akun hutang beban"
+                        onSelectAccount={(record) => handlers.onSelectLiabilityAccount?.(record)}
+                    />
+                </div>
 
                 <TransactionFieldLabel label={config.labels.entryDate} required />
                 <TransactionDateInput
                     value={values.entryDate}
                     onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                    className="w-full max-w-full"
+                    className="w-full max-w-[150px]"
                 />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <div className="flex items-center gap-4">
+            <div className="grid gap-y-3 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                <div className="flex items-center gap-2">
                     <TransactionFieldLabel label={config.labels.documentNumber} required />
                     {showAutoNumberSwitch ? (
                         <TransactionSwitch
@@ -174,8 +176,9 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                                 numberingType: event.target.value,
                             }))
                         }
+                        containerClassName="w-full max-w-[320px]"
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -188,16 +191,16 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                         value={values.documentNumber}
                         readOnly
                         trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        className="h-[40px] w-full max-w-[320px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                 )}
 
                 <div />
-                <div className="flex flex-wrap justify-end gap-2">
-                    <TransactionHeaderButton label={config.takeButtonLabel} />
-                    <TransactionHeaderButton label={config.processButtonLabel} trailingChevron />
+                <div className="flex gap-2 w-full max-w-[250px]">
+                    <TransactionHeaderButton label={config.takeButtonLabel} trailingChevron className="flex-1" />
+                    <TransactionHeaderButton label={config.processButtonLabel} trailingChevron className="flex-1" />
                 </div>
             </div>
         </div>
@@ -219,7 +222,7 @@ export function ExpenseTableFilters({ table, filters, setFilters }) {
                     }
                     containerClassName="w-auto"
                     className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-[15px] text-[#394157]"
+                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                     iconClassName="mr-2 text-[#6c7894]"
                 >
                     {filter.options.map((option) => (

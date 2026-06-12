@@ -87,8 +87,8 @@ export default function DashboardTopBar({
                             aria-label="Buka menu pengguna"
                         >
                             <div className="hidden min-w-0 text-right leading-tight lg:block">
-                                <p className="truncate text-[13px] font-semibold text-white md:text-[14px]">{contextLabel}</p>
-                                <p className="truncate text-[11px] text-white/75 md:text-[12px]">
+                                <p className="truncate text-sm font-semibold text-white md:text-sm">{contextLabel}</p>
+                                <p className="truncate text-xs text-white/75 md:text-xs">
                                     {user.name}
                                     {user.role ? ` • ${user.role}` : ''}
                                 </p>
@@ -97,7 +97,7 @@ export default function DashboardTopBar({
                             <UserAvatar
                                 name={user.name}
                                 imageUrl={user.avatarUrl}
-                                className="h-7 w-7 bg-white text-[11px] font-semibold text-[#56607c] sm:h-7.5 sm:w-7.5 sm:text-[11px] md:h-8 md:w-8 md:text-[12px]"
+                                className="h-7 w-7 bg-white text-xs font-semibold text-[#56607c] sm:h-7.5 sm:w-7.5 sm:text-xs md:h-8 md:w-8 md:text-xs"
                                 showStatusIndicator={false}
                             />
 
@@ -117,7 +117,7 @@ export default function DashboardTopBar({
                                 onClick={handleLogout}
                                 icon={isLoggingOut ? <Spinner className="h-4 w-4 text-[#1f63ad]" /> : <LogoutIcon />}
                                 disabled={isLoggingOut}
-                                className="text-[12px] font-medium text-[#1f2536] md:text-[13px]"
+                                className="text-xs font-medium text-[#1f2536] md:text-sm"
                             >
                                 {isLoggingOut ? 'Memproses logout...' : 'Logout'}
                             </DropdownMenuItem>

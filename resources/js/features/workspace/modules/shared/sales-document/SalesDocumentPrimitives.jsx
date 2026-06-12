@@ -60,7 +60,7 @@ export function ReadonlyDocumentTextarea({ value, rows = 3, className = '' }) {
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none ${className}`.trim()}
         />
     );
 }
@@ -81,7 +81,7 @@ export function DocumentStamp({ label, tone, className = '' }) {
                 <div className={`absolute h-[92px] w-[92px] rounded-full border-[2px] ${toneClassName}`.trim()} />
             </div>
             <div
-                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-[14px] font-bold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
+                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-sm font-bold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
             >
                 {label}
             </div>
@@ -134,7 +134,7 @@ export function SearchableTableSection({
                         <button
                             type="button"
                             onClick={leadingAction.onClick}
-                            className="inline-flex h-[40px] w-full shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[15px] text-[#21539b] sm:w-auto hover:bg-[#f3f7fc] transition"
+                            className="inline-flex h-[40px] w-full shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-base text-[#21539b] sm:w-auto hover:bg-[#f3f7fc] transition"
                         >
                             {leadingAction.label}
                         </button>
@@ -151,7 +151,7 @@ export function SearchableTableSection({
                                     placeholder={searchPlaceholder}
                                     trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                             )}
                         </div>
@@ -172,13 +172,13 @@ export function SearchableTableSection({
                     {onTitleClick ? (
                         <button
                             type="button"
-                            className="text-left text-[20px] font-normal text-[#1f2436] sm:text-right sm:text-[24px]"
+                            className="text-left text-xl font-normal text-[#1f2436] sm:text-right sm:text-2xl"
                             onClick={onTitleClick}
                         >
                             {titleContent}
                         </button>
                     ) : (
-                        <div className="text-left text-[20px] font-normal text-[#1f2436] sm:text-right sm:text-[24px]">{titleContent}</div>
+                        <div className="text-left text-xl font-normal text-[#1f2436] sm:text-right sm:text-2xl">{titleContent}</div>
                     )}
                 </div>
             </div>
@@ -191,7 +191,7 @@ export function SearchableTableSection({
                                 {columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
                                     >
                                         {column.kind === 'spacer' ? (
                                             <span className="flex justify-center">
@@ -219,7 +219,7 @@ export function SearchableTableSection({
                                             {columns.map((column) => (
                                                 <DataTableCell
                                                     key={column.id}
-                                                    className={`px-3 text-[15px] text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
+                                                    className={`px-3 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
                                                 >
                                                     {column.kind === 'spacer' ? (
                                                         <span className="inline-flex items-center justify-center text-[#a8afbe]">
@@ -235,7 +235,7 @@ export function SearchableTableSection({
                                 })
                             ) : (
                                 <DataTableRow className="bg-white">
-                                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-[15px] text-[#131a28]">
+                                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                                         {emptyLabel}
                                     </DataTableCell>
                                 </DataTableRow>

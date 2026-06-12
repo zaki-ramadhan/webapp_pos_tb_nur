@@ -99,7 +99,7 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
                                         column.align === 'right' ? 'text-right' : 'text-center'
                                     }`.trim()}
                                 >
@@ -125,15 +125,15 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                                         })
                                     }
                                 >
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.date)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.number)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.transactionNumber)}</DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">{formatTableTextValue(row.typeLabel)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.date)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.number)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.transactionNumber)}</DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">{formatTableTextValue(row.typeLabel)}</DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={config.table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>
@@ -148,15 +148,15 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
 function SummaryField({ label, value, align = 'left' }) {
     return (
         <>
-            <div className={`text-[17px] text-[#1f2436] ${align === 'right' ? 'lg:text-right' : ''}`.trim()}>{label}</div>
-            <div className="text-[17px] text-[#1f2436]">{value}</div>
+            <div className={`text-xs sm:text-sm text-[#1f2436] ${align === 'right' ? 'lg:text-right' : ''}`.trim()}>{label}</div>
+            <div className="text-xs sm:text-sm text-[#1f2436]">{value}</div>
         </>
     );
 }
 
 function AmountColumn({ label, align = 'right' }) {
     return (
-        <div className={`px-2 py-2 text-[17px] text-[#1f2436] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+        <div className={`px-2 py-2 text-xs sm:text-sm text-[#1f2436] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
             {label}
         </div>
     );
@@ -176,16 +176,16 @@ function JournalActivityLogDetailView({ config, activeLevel2Tab }) {
 
             <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                 <div className="grid gap-x-8 gap-y-4 xl:grid-cols-2">
-                    <div className="grid gap-y-3 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                    <div className="grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <SummaryField label={config.labels.date} value={detail.date} />
                         <SummaryField label={config.labels.transactionType} value={detail.transactionType} />
 
-                        <div className="text-[17px] text-[#1f2436]">{config.labels.display}</div>
+                        <div className="text-xs sm:text-sm text-[#1f2436]">{config.labels.display}</div>
                         <SelectField
                             value={displayOption}
                             onChange={(event) => setDisplayOption(event.target.value)}
                             className="h-[34px] max-w-[458px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.displayOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -195,14 +195,14 @@ function JournalActivityLogDetailView({ config, activeLevel2Tab }) {
                         </SelectField>
                     </div>
 
-                    <div className="grid gap-y-3 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                    <div className="grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <SummaryField label={config.labels.number} value={detail.documentNumber} />
                         <SummaryField label={config.labels.transactionNumber} value={detail.transactionNumber} />
                     </div>
                 </div>
 
                 <div className="mt-6 border-t border-[#a8a8a8] bg-[#d8d8d8]">
-                    <div className="grid grid-cols-[240px_minmax(0,1fr)_220px_220px]">
+                    <div className="grid grid-cols-[160px_minmax(0,1fr)_220px_220px]">
                         <AmountColumn label={config.labels.accountCode} align="left" />
                         <AmountColumn label={config.labels.accountName} align="left" />
                         <AmountColumn label={config.labels.debit} />
@@ -211,30 +211,30 @@ function JournalActivityLogDetailView({ config, activeLevel2Tab }) {
                 </div>
 
                 <div className="px-2 py-2">
-                    <div className="text-[16px] font-semibold text-[#111827]">{detail.reviewedAt}</div>
-                    <div className="mt-1 text-[16px] text-[#111827]">{detail.reviewer}</div>
+                    <div className="text-base font-semibold text-[#111827]">{detail.reviewedAt}</div>
+                    <div className="mt-1 text-base text-[#111827]">{detail.reviewer}</div>
 
                     <div className="mt-4 space-y-3">
                         {detail.entries.map((entry) => (
-                            <div key={entry.id} className="grid grid-cols-[240px_minmax(0,1fr)_220px_220px] gap-x-3">
-                                <div className="text-[17px] text-[#1f2436]">{entry.accountCode}</div>
-                                <div className="text-[17px] text-[#1f2436]">{entry.accountName}</div>
-                                <div className="text-right text-[17px] text-[#1f2436]">{formatTableTextValue(entry.debit)}</div>
-                                <div className="text-right text-[17px] text-[#1f2436]">{formatTableTextValue(entry.credit)}</div>
+                            <div key={entry.id} className="grid grid-cols-[160px_minmax(0,1fr)_220px_220px] gap-x-3">
+                                <div className="text-xs sm:text-sm text-[#1f2436]">{entry.accountCode}</div>
+                                <div className="text-xs sm:text-sm text-[#1f2436]">{entry.accountName}</div>
+                                <div className="text-right text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.debit)}</div>
+                                <div className="text-right text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.credit)}</div>
                             </div>
                         ))}
                     </div>
 
-                    <div className="mt-2 grid grid-cols-[240px_minmax(0,1fr)_220px_220px] gap-x-3">
+                    <div className="mt-2 grid grid-cols-[160px_minmax(0,1fr)_220px_220px] gap-x-3">
                         <div />
                         <div />
                         <div className="pt-1 text-right">
                             <div className="ml-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
-                            <div className="pt-1 text-[18px] font-semibold text-[#111827]">{detail.totalDebit}</div>
+                            <div className="pt-1 text-lg font-semibold text-[#111827]">{detail.totalDebit}</div>
                         </div>
                         <div className="pt-1 text-right">
                             <div className="ml-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
-                            <div className="pt-1 text-[18px] font-semibold text-[#111827]">{detail.totalCredit}</div>
+                            <div className="pt-1 text-lg font-semibold text-[#111827]">{detail.totalCredit}</div>
                         </div>
                     </div>
                 </div>

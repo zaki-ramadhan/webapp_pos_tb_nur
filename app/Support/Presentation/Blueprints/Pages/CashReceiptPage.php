@@ -163,7 +163,7 @@ class CashReceiptPage
                         ],
                     ],
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[210px]'],
+                        ['id' => 'number', 'label' => 'No. Penerimaan', 'widthClassName' => 'w-[210px]'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[120px]'],
                         ['id' => 'cashBank', 'label' => 'Kas/Bank', 'widthClassName' => 'w-[200px]'],
                         ['id' => 'checkNumber', 'label' => 'No Cek #', 'widthClassName' => 'w-[150px]'],

@@ -6,7 +6,7 @@ import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTab
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
 
 function OthersRowLabel({ label }) {
-    return <div className="pt-1.5 text-[14px] md:text-[15px] leading-6 text-[#111827]">{label}</div>;
+    return <div className="pt-1.5 text-xs sm:text-sm leading-6 text-[#111827]">{label}</div>;
 }
 
 function OthersRowNote({ note }) {
@@ -17,7 +17,7 @@ function OthersRowNote({ note }) {
     return (
         <div className="flex items-start gap-3 pt-0.5">
             <span className="mt-1 block h-6 w-[5px] rounded-[2px] bg-[#9a9a9a]" aria-hidden="true" />
-            <p className="text-[14px] md:text-[15px] italic leading-6 text-[#ff4b2b]">{note}</p>
+            <p className="text-xs sm:text-sm italic leading-6 text-[#ff4b2b]">{note}</p>
         </div>
     );
 }
@@ -43,7 +43,7 @@ function OthersSelectControl({ control, onChange }) {
             message={control.message}
             containerClassName={control.containerClassName ?? 'w-full max-w-[320px]'}
             className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            selectClassName={`text-[14px] md:text-[15px] text-[#111827] ${control.selectClassName ?? ''}`.trim()}
+            selectClassName={`text-xs sm:text-sm text-[#111827] ${control.selectClassName ?? ''}`.trim()}
             onChange={(event) => onChange(event.target.value)}
         >
             {normalizeOptions(control.options).map((option) => (
@@ -68,7 +68,7 @@ function OthersTextControl({ control, onChange }) {
             maxLength={control.maxLength}
             containerClassName={control.containerClassName ?? 'w-full max-w-[160px]'}
             className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            inputClassName={`text-[14px] md:text-[15px] text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+            inputClassName={`text-xs sm:text-sm text-[#111827] ${control.inputClassName ?? ''}`.trim()}
             onChange={(event) => onChange(event.target.value)}
         />
     );
@@ -80,7 +80,7 @@ function OthersControl({ control, onChange }) {
     }
 
     if (control.type === 'static') {
-        return <span className="text-[14px] md:text-[15px] leading-6 text-[#111827]">{control.label}</span>;
+        return <span className="text-xs sm:text-sm leading-6 text-[#111827]">{control.label}</span>;
     }
 
     return <OthersSelectControl control={control} onChange={onChange} />;
@@ -132,12 +132,12 @@ function OthersRadioRow({ row, onChange }) {
                             size="sm"
                             align="center"
                             label={
-                                <span className="text-[14px] md:text-[15px] leading-6">
+                                <span className="text-xs sm:text-sm leading-6">
                                     {option.label}
                                 </span>
                             }
                             className="gap-3"
-                            labelClassName="text-[14px] md:text-[15px] leading-6"
+                            labelClassName="text-xs sm:text-sm leading-6"
                             onChange={() => onChange(row.id, option.value)}
                         />
                     ))}
@@ -174,15 +174,15 @@ function EmailIntro({ intro }) {
 
     return (
         <div className="space-y-1.5">
-            <h2 className="text-[22px] leading-tight text-[#111827]">{intro.title}</h2>
-            <p className="text-[14px] md:text-[15px] leading-6 text-[#111827]">{intro.description}</p>
+            <h2 className="text-2xl leading-tight text-[#111827]">{intro.title}</h2>
+            <p className="text-xs sm:text-sm leading-6 text-[#111827]">{intro.description}</p>
         </div>
     );
 }
 
 function EmailTabContent({ tab, onChangeRadio }) {
     return (
-        <div className={`space-y-4 ${tab.contentClassName ?? ''}`.trim()}>
+        <div className={`space-y-3 ${tab.contentClassName ?? ''}`.trim()}>
             <EmailIntro intro={tab.intro} />
 
             <div className="max-w-[640px] space-y-3 pt-1">
@@ -198,12 +198,12 @@ function EmailTabContent({ tab, onChangeRadio }) {
                                 size="sm"
                                 align="center"
                                 label={
-                                    <span className="text-[14px] md:text-[15px] leading-6">
+                                    <span className="text-xs sm:text-sm leading-6">
                                         {option.label}
                                     </span>
                                 }
                                 className="gap-3"
-                                labelClassName="text-[14px] md:text-[15px] leading-6"
+                                labelClassName="text-xs sm:text-sm leading-6"
                                 onChange={() => onChangeRadio(row.id, option.value)}
                             />
                         ))}
@@ -262,7 +262,7 @@ export default function PreferencesOthersView({ tabs, activeTabId, onSelectTab, 
             {activeTab.variant === 'email-config' ? (
                 <EmailTabContent tab={activeTab} onChangeRadio={handleChangeRadio} />
             ) : (
-                <div className={`max-w-[980px] space-y-4 ${activeTab.contentClassName ?? ''}`.trim()}>
+                <div className={`max-w-[980px] space-y-3 ${activeTab.contentClassName ?? ''}`.trim()}>
                     {(activeTab.sections ?? []).map((section) => (
                         <OthersSection
                             key={section.id}

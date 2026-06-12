@@ -25,7 +25,7 @@ export default function DiscountInfoTab({ values, setValues }) {
     );
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <div className="grid gap-y-4 sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-x-4">
                 <TransactionFieldLabel label="Akun Diskon" />
                 <AccountLookupField
@@ -59,7 +59,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                             }))
                         }
                         className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#111827]"
+                        inputClassName="text-xs sm:text-sm text-[#111827]"
                     />
                 </div>
 
@@ -73,7 +73,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                         }))
                     }
                     rows={3}
-                    className="min-h-[56px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none"
+                    className="min-h-[56px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
                 />
 
                 <TransactionFieldLabel label="Departemen" />
@@ -103,7 +103,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                             {discountColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName} px-2.5 text-[15px] font-medium text-white ${
+                                    className={`${column.widthClassName} px-2.5 text-base font-medium text-white ${
                                         column.align === 'right'
                                             ? 'text-right'
                                             : column.align === 'center'
@@ -129,10 +129,10 @@ export default function DiscountInfoTab({ values, setValues }) {
                                             <TableActionIcon className="h-4 w-4" />
                                         </span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-[15px] text-[#131a28]">
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">
                                         <span className="block truncate">{row.account}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-right text-[15px] text-[#131a28]">
+                                    <DataTableCell className="px-2.5 text-right text-base text-[#131a28]">
                                         <span className="block truncate">{row.amount}</span>
                                     </DataTableCell>
                                 </DataTableRow>
@@ -144,7 +144,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                                         <TableActionIcon className="h-4 w-4" />
                                     </span>
                                 </DataTableCell>
-                                <DataTableCell colSpan={2} className="px-2.5 py-6 text-center text-[15px] text-[#131a28]">
+                                <DataTableCell colSpan={2} className="px-2.5 py-6 text-center text-base text-[#131a28]">
                                     Belum ada data
                                 </DataTableCell>
                             </DataTableRow>

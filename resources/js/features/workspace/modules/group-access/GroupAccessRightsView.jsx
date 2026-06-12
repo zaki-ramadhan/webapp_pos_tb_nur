@@ -32,7 +32,7 @@ function FragmentSection({ section, columns, onTogglePermission }) {
             <tr className="border-t border-[#edf1f6] bg-white">
                 <td
                     colSpan={columns.length + 1}
-                    className="px-4 py-1.5 text-[15px] font-semibold text-[#141c2c]"
+                    className="px-4 py-1.5 text-base font-semibold text-[#141c2c]"
                 >
                     {section.label}
                 </td>
@@ -226,8 +226,8 @@ export default function GroupAccessRightsView({
     }
 
     return (
-        <div className="space-y-5">
-            <div className="grid gap-5 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-start">
+        <div className="space-y-4">
+            <div className="grid gap-5 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                 <GroupAccessCategoryList
                     categories={categories}
                     activeCategoryId={activeCategory?.id ?? ''}
@@ -244,7 +244,7 @@ export default function GroupAccessRightsView({
                                 placeholder={permissions.searchPlaceholder}
                                 trailing={<SearchIcon className="h-6 w-6 text-[#1f2436]" />}
                                 className="h-[44px] rounded-[6px] border-[#cfd6e2]"
-                                inputClassName="text-[17px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </div>
 

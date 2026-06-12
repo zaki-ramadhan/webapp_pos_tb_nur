@@ -108,7 +108,10 @@ export default function ShippingFormView({
 
     async function handleSave() {
         if (!values.name?.trim()) {
-            rejectCrudFormAction('Nama Pengiriman wajib diisi.', { setStatus });
+            rejectCrudFormAction('Nama Pengiriman wajib diisi.', {
+                setStatus,
+                fieldErrors: { name: 'Nama Pengiriman wajib diisi.' },
+            });
             return;
         }
 
@@ -188,21 +191,23 @@ export default function ShippingFormView({
 
     return (
         <>
-            <div className="relative flex min-h-full flex-col">
-                <div className="px-1 pt-0.5">
+            <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
+                <div className="px-1 pt-0.5 shrink-0">
                     <SectionTab label={form.sectionLabel} tone="accent" className="h-[34px]" />
                 </div>
 
-                <div className="flex min-h-[642px] flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start">
-                    <div className="order-2 min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4 lg:order-1">
-                        <CrudStatusMessage status={status} className="mb-4" />
-                        <div className="space-y-4">
+                <div className="flex flex-1 min-h-0 flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden">
+                    <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
+                        <div className="space-y-3">
                             <ShippingFieldRow label={form.labels.name} required>
                                 <TextInput
+                                    id="name"
+                                    name="name"
                                     value={values.name}
                                     onChange={(event) => handleChange('name', event.target.value)}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                             </ShippingFieldRow>
 
@@ -211,7 +216,7 @@ export default function ShippingFormView({
                                     value={values.pic}
                                     onChange={(event) => handleChange('pic', event.target.value)}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                             </ShippingFieldRow>
 
@@ -220,7 +225,7 @@ export default function ShippingFormView({
                                     value={values.phone}
                                     onChange={(event) => handleChange('phone', event.target.value)}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-[15px] text-[#1f2436]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                             </ShippingFieldRow>
 
@@ -232,7 +237,7 @@ export default function ShippingFormView({
                                         prefix="Jalan"
                                     />
 
-                                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
+                                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
                                         <CityAutocompleteInput
                                             value={values.city}
                                             onChange={(nextValue) => handleChange('city', nextValue)}
@@ -243,14 +248,14 @@ export default function ShippingFormView({
                                                 handleChange('country', item.country);
                                             }}
                                             prefix="Kota"
-                                            prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
+                                            prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
                                             dropdownLeftOffsetClassName="left-[62px]"
                                         />
                                         <PrefixedInput
                                             value={values.postalCode}
                                             onChange={(event) => handleChange('postalCode', event.target.value)}
                                             prefix="K.Pos"
-                                            prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[15px] text-[#8b94a7]"
+                                            prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
                                         />
                                     </div>
 
@@ -270,7 +275,7 @@ export default function ShippingFormView({
                         </div>
                     </div>
 
-                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0">
+                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
                         <div className="flex flex-row gap-3 lg:flex-col">
                             {dockActions.map((action) => (
                                 <DockActionButton

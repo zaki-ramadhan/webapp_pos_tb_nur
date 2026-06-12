@@ -20,8 +20,8 @@ function TransferAmountInput({ value, onChange, prefix }) {
             prefix={prefix}
             trailing={<TableActionIcon className="h-[18px] w-[18px] text-[#1f2436]" />}
             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-            prefixClassName="min-w-[46px] justify-center border-r-[#d8dde7] bg-[#fbfcfe] px-2 text-[15px] text-[#9097aa]"
-            inputClassName="text-[15px] text-[#1f2436]"
+            prefixClassName="min-w-[46px] justify-center border-r-[#d8dde7] bg-[#fbfcfe] px-2 text-xs sm:text-sm text-[#9097aa]"
+            inputClassName="text-xs sm:text-sm text-[#1f2436]"
             trailingClassName="px-2.5"
         />
     );
@@ -31,7 +31,7 @@ function TransferBudgetPanel({ title, children }) {
     return (
         <section className="min-w-0">
             <div className="border-b border-[#d8dde7] pb-3">
-                <h3 className="text-[22px] font-normal text-[#1564d7]">{title}</h3>
+                <h3 className="text-2xl font-normal text-[#1564d7]">{title}</h3>
             </div>
             <div className="pt-4">{children}</div>
         </section>
@@ -41,13 +41,13 @@ function TransferBudgetPanel({ title, children }) {
 export function BudgetTransferHeader({ config, values, setValues }) {
     return (
         <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.year} required />
                 <SelectField
                     value={values.year}
                     onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.yearOptions.map((option) => (
                         <option key={option} value={option}>
@@ -61,7 +61,7 @@ export function BudgetTransferHeader({ config, values, setValues }) {
                     value={values.type}
                     onChange={(event) => setValues((current) => ({ ...current, type: event.target.value }))}
                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-[15px] text-[#1f2436]"
+                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
                 >
                     {config.typeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -84,7 +84,7 @@ export function BudgetTransferHeader({ config, values, setValues }) {
                 />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.transferNumber} required className="sm:text-right" />
                     <TransactionSwitch
@@ -108,7 +108,7 @@ export function BudgetTransferHeader({ config, values, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -126,7 +126,7 @@ export function BudgetTransferHeader({ config, values, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-[15px] text-[#1f2436]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 )}
 
@@ -146,13 +146,13 @@ export function TransferDetailsSection({ config, values, setValues }) {
         <div className="min-h-[540px]">
             <div className="grid gap-8 xl:grid-cols-2">
                 <TransferBudgetPanel title={config.fromTitle}>
-                    <div className="grid gap-y-4 sm:grid-cols-[280px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                    <div className="grid gap-y-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.month} required />
                         <SelectField
                             value={values.fromMonth}
                             onChange={(event) => setValues((current) => ({ ...current, fromMonth: event.target.value }))}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.monthOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -176,7 +176,7 @@ export function TransferDetailsSection({ config, values, setValues }) {
                         />
 
                         <TransactionFieldLabel label={config.labels.remainingBudget} />
-                        <div className="text-[17px] text-[#1f2436]">{formatTableTextValue(values.remainingBudget)}</div>
+                        <div className="text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(values.remainingBudget)}</div>
 
                         <TransactionFieldLabel label={config.labels.transferAmount} required />
                         <div className="max-w-[348px]">
@@ -192,13 +192,13 @@ export function TransferDetailsSection({ config, values, setValues }) {
                 </TransferBudgetPanel>
 
                 <TransferBudgetPanel title={config.toTitle}>
-                    <div className="grid gap-y-4 sm:grid-cols-[280px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                    <div className="grid gap-y-4 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.month} required />
                         <SelectField
                             value={values.toMonth}
                             onChange={(event) => setValues((current) => ({ ...current, toMonth: event.target.value }))}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-[15px] text-[#1f2436]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.monthOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -232,13 +232,13 @@ export function TransferInfoSection({ config, values, setValues }) {
         <div className="min-h-[540px]">
             <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[250px_minmax(0,570px)] lg:items-start">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
                 <TransactionFieldLabel label={config.labels.notes} />
                 <textarea
                     value={values.notes}
                     onChange={(event) => setValues((current) => ({ ...current, notes: event.target.value }))}
                     rows={4}
-                    className="min-h-[60px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-[15px] text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                    className="min-h-[60px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                 />
             </div>
         </div>

@@ -7,7 +7,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
     if (!widget.metrics || widget.metrics.length === 0) {
         return (
             <div className="flex h-full min-h-[380px] flex-col justify-between rounded-[8px] bg-slate-50 p-5 border border-slate-100 animate-pulse">
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <div className="flex justify-between gap-4">
                         <div className="h-14 w-1/3 rounded bg-slate-200" />
                         <div className="h-14 w-1/3 rounded bg-slate-200" />

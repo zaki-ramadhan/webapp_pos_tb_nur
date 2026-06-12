@@ -14,7 +14,7 @@ function buildModalValues(modal, row) {
 
 function ModalTabButton({ label }) {
     return (
-        <div className="border-b-2 border-[#ff4836] px-3 py-2 text-[16px] text-[#ff4836]">
+        <div className="border-b-2 border-[#ff4836] px-3 py-2 text-base text-[#ff4836]">
             {label}
         </div>
     );
@@ -25,13 +25,13 @@ function ModalFooter({ modal }) {
         <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
             <button
                 type="button"
-                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-[18px] text-[#21539b]"
+                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-lg text-[#21539b]"
             >
                 {modal?.deleteLabel ?? 'Hapus'}
             </button>
             <button
                 type="button"
-                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-[18px] text-white"
+                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-lg text-white"
             >
                 {modal?.submitLabel ?? 'Lanjut'}
             </button>
@@ -49,7 +49,7 @@ function ModalField({ field, value }) {
                 trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
                 prefixClassName="min-w-[48px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                inputClassName="text-right text-[15px] font-semibold text-[#111827]"
+                inputClassName="text-right text-xs sm:text-sm font-semibold text-[#111827]"
                 trailingClassName="px-3"
             />
         );
@@ -60,7 +60,7 @@ function ModalField({ field, value }) {
             value={value}
             readOnly
             className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-            inputClassName="text-[15px] text-[#1f2436]"
+            inputClassName="text-xs sm:text-sm text-[#1f2436]"
         />
     );
 }
@@ -76,8 +76,8 @@ export default function TargetDetailEntryModal({ open, modal, row, onClose }) {
         <ModalBase open={open} onBackdropClick={onClose} panelClassName={modal?.panelClassName ?? 'max-w-[540px]'}>
             <div className="overflow-hidden rounded-[12px]">
                 <div className="flex items-center justify-between bg-[#12356d] px-4 py-3 text-white">
-                    <div className="flex items-center gap-3 text-[18px]">
-                        <span className="text-[18px]">{modal?.title ?? 'Rincian'}</span>
+                    <div className="flex items-center gap-3 text-lg">
+                        <span className="text-lg">{modal?.title ?? 'Rincian'}</span>
                     </div>
 
                     <button type="button" onClick={onClose} aria-label="Tutup modal rincian">

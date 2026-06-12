@@ -22,7 +22,7 @@ import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 
 function FormFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-center">
+        <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-center">
             <TransactionFieldLabel label={label} required={required} />
             <div>{children}</div>
         </div>
@@ -53,7 +53,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                             }))
                         }
                         align="center"
-                        labelClassName="text-[16px] md:text-[17px]"
+                        labelClassName="text-base md:text-base"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
@@ -61,7 +61,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
             </div>
 
             <div className="space-y-3">
-                <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
+                <div className="grid gap-3 lg:grid-cols-[140px_minmax(0,1fr)] lg:items-center">
                     <div className="flex items-center justify-start gap-4 lg:justify-end">
                         <TransactionFieldLabel label={config.labels.documentNumber} required />
                         <TransactionSwitch
@@ -84,7 +84,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                             }))
                         }
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -119,15 +119,15 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                             placeholder={config.itemSearchPlaceholder}
                             trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-[15px] text-[#1f2436]"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
 
                     <button
                         type="button"
-                        className="inline-flex h-[36px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-[15px] text-[#21539b]"
+                        className="inline-flex h-[36px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                     >
-                        {config.takeButtonLabel} <span className="ml-1 text-[12px]">⌄</span>
+                        {config.takeButtonLabel} <span className="ml-1 text-xs">⌄</span>
                     </button>
                 </div>
 
@@ -135,7 +135,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                     <TransactionToolbarIconButton label="Cari rincian barang">
                         <SearchIcon className="h-4.5 w-4.5" />
                     </TransactionToolbarIconButton>
-                    <div className="text-right text-[22px] font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-[#1f2436]">
                         {config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                                 {config.itemTable.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-[16px] font-medium text-white ${
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${
                                             column.align === 'right'
                                                 ? 'text-right'
                                                 : column.align === 'center'
@@ -178,7 +178,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                             <DataTableRow className="bg-white">
                                 <DataTableCell
                                     colSpan={config.itemTable.columns.length}
-                                    className="px-3 py-3 text-center text-[15px] text-[#131a28]"
+                                    className="px-3 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {config.itemTable.emptyLabel}
                                 </DataTableCell>
@@ -196,7 +196,7 @@ export function SupplierPriceInfoSection({ config, values, setValues }) {
         <div className="min-h-[560px]">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[220px_minmax(0,560px)] lg:items-start">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField
                     value={values.notes}
@@ -208,7 +208,7 @@ export function SupplierPriceInfoSection({ config, values, setValues }) {
                     }
                     rows={4}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
         </div>

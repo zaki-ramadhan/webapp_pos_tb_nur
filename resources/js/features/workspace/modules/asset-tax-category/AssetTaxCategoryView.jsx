@@ -36,8 +36,8 @@ function renderDockIcon(icon) {
 
 function TaxCategoryFieldRow({ label, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-center">
-            <label className="text-[17px] text-[#1f2436]">{label}</label>
+        <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-center">
+            <label className="text-xs sm:text-sm text-[#1f2436]">{label}</label>
             <div>{children}</div>
         </div>
     );
@@ -75,20 +75,20 @@ function TaxCategoryFormView({ page, activeLevel2Tab }) {
     }
 
     return (
-        <div className="relative flex min-h-full flex-col">
-            <div className="px-1 pt-0.5">
+        <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
+            <div className="shrink-0 px-1 pt-0.5">
                 <SectionTab label={config.sectionLabel} tone="accent" className="h-[34px]" />
             </div>
 
-            <div className="flex min-h-[642px] flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-start xl:px-4 xl:py-4">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4">
+            <div className="flex flex-1 min-h-0 flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch xl:px-4 xl:py-4 overflow-hidden">
+                <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col rounded-[6px] border border-[#d8dde7] bg-white px-4 py-4 lg:order-1">
                     <div className="grid max-w-[920px] gap-4">
                         <TaxCategoryFieldRow label={config.labels.name}>
                             <TextInput
                                 value={values.name}
                                 onChange={(event) => handleChange('name', event.target.value)}
                                 className="h-[40px] max-w-[570px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-[15px] text-[#1f2436]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                 trailing={
                                     values.name ? (
                                         <button
@@ -111,7 +111,7 @@ function TaxCategoryFormView({ page, activeLevel2Tab }) {
                                 onChange={(event) => handleChange('depreciationMethod', event.target.value)}
                                 containerClassName="max-w-[570px]"
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-[15px] text-[#1f2436]"
+                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
                             >
                                 {config.depreciationMethodOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -127,22 +127,22 @@ function TaxCategoryFormView({ page, activeLevel2Tab }) {
                                     value={values.estimatedLifeYears}
                                     onChange={(event) => handleChange('estimatedLifeYears', event.target.value.replace(/[^\d.,]/g, ''))}
                                     className="h-[40px] w-full max-w-[114px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-right text-[15px] text-[#1f2436]"
+                                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                                 />
-                                <span className="text-[17px] text-[#1f2436]">{config.labels.yearsSuffix}</span>
+                                <span className="text-xs sm:text-sm text-[#1f2436]">{config.labels.yearsSuffix}</span>
                             </div>
                         </TaxCategoryFieldRow>
 
                         <TaxCategoryFieldRow label={config.labels.depreciationRate}>
                             <div className="flex flex-wrap items-center gap-3">
-                                <div className="min-w-[114px] text-right text-[17px] text-[#1f2436]">{rateValue}</div>
-                                <span className="text-[17px] text-[#1f2436]">{config.labels.percentSuffix}</span>
+                                <div className="min-w-[114px] text-right text-xs sm:text-sm text-[#1f2436]">{rateValue}</div>
+                                <span className="text-xs sm:text-sm text-[#1f2436]">{config.labels.percentSuffix}</span>
                             </div>
                         </TaxCategoryFieldRow>
                     </div>
                 </div>
 
-                <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col">
+                <div className="order-1 flex shrink-0 flex-row justify-end gap-3 lg:order-2 lg:flex-col lg:self-start">
                     {dockActions.map((action) => (
                         <DockActionButton
                             key={action.id}

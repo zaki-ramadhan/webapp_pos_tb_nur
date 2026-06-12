@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useFormError } from '@/components/ui/FormErrorContext';
 import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { INDONESIAN_CITIES } from '@/features/workspace/shared/indonesianCities';
+import { LookupDropdownSurface } from '@/features/workspace/shared/LookupPrimitives';
 
 export default function CityAutocompleteInput({
     id,
@@ -14,14 +15,12 @@ export default function CityAutocompleteInput({
     error,
     message,
     className = 'h-[40px] rounded-[4px] border-[#cfd6e2]',
-    prefixClassName = 'min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-[14px] text-[#8b94a7]',
-    inputClassName = 'text-[15px] text-[#1f2436]',
+    prefixClassName = 'min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]',
+    inputClassName = 'text-xs sm:text-sm text-[#1f2436]',
     dropdownLeftOffsetClassName = 'left-[62px]',
     ...props
 }) {
-    const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
-    const containerRef = useRef(null);
     const inputRef = useRef(null);
 
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
@@ -39,26 +38,8 @@ export default function CityAutocompleteInput({
             : 'border-slate-300 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
     const disabledClassName = isNonInteractive ? 'bg-slate-100 text-slate-400' : 'bg-white';
 
-    const hasSelectedValue = Boolean(value);
-
-    useEffect(() => {
-        if (!hasSelectedValue) {
-            setQuery('');
-        }
-    }, [hasSelectedValue]);
-
-    useEffect(() => {
-        function handleOutsideClick(e) {
-            if (containerRef.current && !containerRef.current.contains(e.target)) {
-                setOpen(false);
-            }
-        }
-        document.addEventListener('mousedown', handleOutsideClick);
-        return () => document.removeEventListener('mousedown', handleOutsideClick);
-    }, []);
-
     const filteredOptions = useMemo(() => {
-        const normalized = query.trim().toLowerCase();
+        const normalized = String(value ?? '').trim().toLowerCase();
         if (!normalized) {
             return INDONESIAN_CITIES.slice(0, 50);
         }
@@ -69,7 +50,7 @@ export default function CityAutocompleteInput({
                     item.province.toLowerCase().includes(normalized)
             )
             .slice(0, 50);
-    }, [query]);
+    }, [value]);
 
     const handleSelect = (item) => {
         onSelectCity?.(item);
@@ -79,15 +60,15 @@ export default function CityAutocompleteInput({
 
     const handleClear = () => {
         onSelectCity?.({ city: '', province: '', postalCode: '', country: '' });
-        setQuery('');
         setOpen(false);
         clearError(contextKey);
         setTimeout(() => inputRef.current?.focus(), 50);
     };
 
     const highlightText = (text, highlight) => {
-        if (!highlight.trim()) return <span>{text}</span>;
-        const regex = new RegExp(`(${highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+        const queryStr = String(highlight ?? '').trim();
+        if (!queryStr) return <span>{text}</span>;
+        const regex = new RegExp(`(${queryStr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
         const parts = text.split(regex);
         return (
             <span>
@@ -105,92 +86,89 @@ export default function CityAutocompleteInput({
     };
 
     return (
-        <div ref={containerRef} className="relative w-full">
+        <div className="relative w-full">
             <div
                 className={`group flex h-11 w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full min-w-[86px] items-center border-r border-slate-300 px-5 text-[15px] text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full min-w-[86px] items-center border-r border-slate-300 px-5 text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
                 ) : null}
 
                 <div className="flex flex-1 min-w-0 items-center gap-2 px-4 h-full">
-                    {hasSelectedValue ? (
-                        <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-[14px] text-[#295089]">
-                            <span className="truncate">{value}</span>
-                            <button
-                                type="button"
-                                onClick={handleClear}
-                                disabled={disabled}
-                                aria-label="Hapus kota"
-                                className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-[#295089] disabled:text-slate-300 hover:text-red-600 transition-colors"
-                            >
-                                <CloseIcon className="h-4 w-4" />
-                            </button>
-                        </span>
-                    ) : null}
-
-                    {!hasSelectedValue && (
-                        <input
-                            ref={inputRef}
-                            id={id}
-                            type="text"
-                            value={query}
-                            onChange={(e) => {
-                                setQuery(e.target.value);
-                                onChange?.(e.target.value);
-                                setOpen(true);
-                            }}
-                            onFocus={() => setOpen(true)}
-                            placeholder={placeholder}
-                            disabled={disabled}
-                            autoComplete="off"
-                            className={`h-full flex-1 bg-transparent text-sm outline-none placeholder:text-slate-300 ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
-                            {...props}
-                        />
-                    )}
+                    <input
+                        ref={inputRef}
+                        id={id}
+                        type="text"
+                        value={value}
+                        onChange={(e) => {
+                            const cleanedVal = e.target.value.replace(/[^a-zA-Z\s'.-]/g, '');
+                            onChange?.(cleanedVal);
+                            setOpen(true);
+                        }}
+                        onFocus={() => setOpen(true)}
+                        placeholder={placeholder}
+                        disabled={disabled}
+                        autoComplete="off"
+                        className={`h-full flex-1 bg-transparent text-xs sm:text-sm outline-none placeholder:text-slate-300 ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                        {...props}
+                    />
                 </div>
 
-                <span
-                    className={`flex h-full items-center px-3 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'}`}
-                >
-                    <SearchIcon className="h-5 w-5 text-[#1f2436]" />
-                </span>
+                <div className="flex h-full items-center gap-1.5 pr-3 pl-1 shrink-0">
+                    {value && !disabled ? (
+                        <button
+                            type="button"
+                            onClick={handleClear}
+                            aria-label="Hapus kota"
+                            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                        >
+                            <CloseIcon className="h-4 w-4" />
+                        </button>
+                    ) : null}
+                    <SearchIcon className="h-5 w-5 text-slate-400" />
+                </div>
             </div>
 
             {feedbackMessage ? (
-                <p className="mt-1.5 text-[13px] leading-5 text-[#d65959]">
+                <p className="mt-1.5 text-xs sm:text-sm leading-5 text-[#d65959]">
                     {feedbackMessage}
                 </p>
             ) : null}
 
-            {open && !hasSelectedValue && (
-                <div className={`absolute right-0 z-50 mt-1 max-h-[220px] overflow-y-auto rounded-md border border-[#cad1dd] bg-white shadow-lg ${dropdownLeftOffsetClassName}`}>
-                    {filteredOptions.length > 0 ? (
-                        filteredOptions.map((item, idx) => (
-                            <button
-                                key={idx}
-                                type="button"
-                                onClick={() => handleSelect(item)}
-                                className="flex w-full flex-col px-4 py-2 text-left hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
-                            >
-                                <span className="text-[14px] md:text-[15px] font-medium text-[#131a28]">
-                                    {highlightText(item.city, query)}
-                                </span>
-                                <span className="text-[12px] text-[#7b8597]">
-                                    {highlightText(item.province, query)}
-                                </span>
-                            </button>
-                        ))
-                    ) : (
-                        <div className="px-4 py-4 text-center text-[14px] text-slate-400">
-                            Tidak ada hasil yang cocok.
-                        </div>
-                    )}
-                </div>
+            {open && (
+                <LookupDropdownSurface
+                    onClose={() => setOpen(false)}
+                    maxHeightLimit={220}
+                    className="border-[#cad1dd] shadow-lg rounded-md"
+                >
+                    <div className="overflow-y-auto w-full flex-1 min-h-0">
+                        {filteredOptions.length > 0 ? (
+                            filteredOptions.map((item, idx) => (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    onClick={() => handleSelect(item)}
+                                    className="flex w-full flex-col px-4 py-2 text-left hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
+                                >
+                                    <span className="text-xs sm:text-sm font-medium text-[#131a28]">
+                                        {highlightText(item.city, value)}
+                                    </span>
+                                    <span className="text-[10px] sm:text-xs text-[#7b8597]">
+                                        {highlightText(item.province, value)}
+                                    </span>
+                                </button>
+                            ))
+                        ) : (
+                            <div className="px-4 py-4 text-center text-xs sm:text-sm text-slate-400">
+                                Tidak ada hasil yang cocok.
+                            </div>
+                        )}
+                    </div>
+                </LookupDropdownSurface>
             )}
         </div>
     );

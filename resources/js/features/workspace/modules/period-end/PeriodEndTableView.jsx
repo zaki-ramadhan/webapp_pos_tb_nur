@@ -60,7 +60,7 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                             onChange={(event) => setMonthFilter(event.target.value)}
                             containerClassName="w-auto shrink-0"
                             className="h-[34px] min-w-[106px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-[15px] text-[#394157]"
+                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                         >
                             {table.filters[0].options.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -74,7 +74,7 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                             onChange={(event) => setYearFilter(event.target.value)}
                             containerClassName="w-auto shrink-0"
                             className="h-[34px] min-w-[110px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-[15px] text-[#394157]"
+                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
                         >
                             {table.filters[1].options.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -112,13 +112,13 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                 <DataTable className="min-w-[1180px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-[16px] font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-[15px] font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
                                 >
                                     <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : ''}`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
@@ -142,11 +142,11 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                                     })
                                 }
                             >
-                                                                    <DataTableCell className="px-3 text-center text-[15px] text-[#646d83]">
+                                                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
 {table.columns.map((column) => (
-                                    <DataTableCell key={column.id} className="px-2.5 text-[15px] text-[#131a28]">
+                                    <DataTableCell key={column.id} className="px-2.5 text-base text-[#131a28]">
                                         {row[column.id]}
                                     </DataTableCell>
                                 ))}
