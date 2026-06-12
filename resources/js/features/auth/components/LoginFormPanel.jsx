@@ -86,7 +86,13 @@ export default function LoginFormPanel({ login }) {
     function submit(event) {
         event.preventDefault();
 
-        const clientErrors = validateLoginForm(form.data);
+        const cleanedIdentifier = form.data.identifier.trim();
+        form.setData('identifier', cleanedIdentifier);
+
+        const clientErrors = validateLoginForm({
+            identifier: cleanedIdentifier,
+            password: form.data.password,
+        });
 
         if (Object.keys(clientErrors).length > 0) {
             applyClientErrors(form, clientErrors);
@@ -95,6 +101,11 @@ export default function LoginFormPanel({ login }) {
         }
 
         form.clearErrors();
+
+        form.transform((data) => ({
+            ...data,
+            identifier: cleanedIdentifier,
+        }));
 
         let loadingToastId = null;
         let requestFailed = false;

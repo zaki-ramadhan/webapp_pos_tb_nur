@@ -1,8 +1,12 @@
+import { useState, useRef } from 'react';
 import { useForm } from '@inertiajs/react';
 
 import Button from '@/components/ui/Button';
 import FormField from '@/components/ui/FormField';
 import TextInput from '@/components/ui/TextInput';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
+import { ChevronDown } from 'lucide-react';
 import { dismissToast, showErrorToast, showLoadingToast } from '@/components/feedback/toast';
 import { applyClientErrors, getAuthFormMessage, getFirstInlineError, validateRegisterForm } from '@/features/auth/authFormFeedback';
 import AuthFooterPrompt from '@/features/auth/components/AuthFooterPrompt';
@@ -10,15 +14,55 @@ import AuthHeading from '@/features/auth/components/AuthHeading';
 import AuthInput from '@/features/auth/components/AuthInput';
 import PasswordField from '@/features/auth/components/PasswordField';
 
-function NameField({ prefix, label, value, onChange, error, placeholder, required = false }) {
+function NameField({ salutation, onSalutationChange, prefixClassName, label, value, onChange, error, placeholder, required = false }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const buttonRef = useRef(null);
+
     return (
         <FormField label={label} required={required}>
-            <TextInput prefix={prefix} value={value} onChange={onChange} error={error} placeholder={placeholder} />
+            <TextInput
+                className="!overflow-visible"
+                prefix={
+                    <div className="relative flex h-full items-center justify-center">
+                        <button
+                            ref={buttonRef}
+                            type="button"
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="flex items-center gap-1.5 text-[#5a84e5] text-[15px] font-semibold outline-none cursor-pointer focus:outline-none h-full"
+                        >
+                            <span>{salutation}</span>
+                            <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />
+                        </button>
+                        <DropdownMenu
+                            open={isOpen}
+                            onClose={() => setIsOpen(false)}
+                            anchorRef={buttonRef}
+                            align="start"
+                            side="bottom"
+                            widthClassName="w-[85px]"
+                            className="-ml-4 !top-full mt-0.5"
+                        >
+                            <DropdownMenuItem onClick={() => { onSalutationChange('Bpk'); setIsOpen(false); }}>
+                                Bpk
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { onSalutationChange('Ibu'); setIsOpen(false); }}>
+                                Ibu
+                            </DropdownMenuItem>
+                        </DropdownMenu>
+                    </div>
+                }
+                prefixClassName={prefixClassName}
+                value={value}
+                onChange={onChange}
+                error={error}
+                placeholder={placeholder}
+            />
         </FormField>
     );
 }
 
 export default function RegisterFormPanel({ register }) {
+    const [salutation, setSalutation] = useState('Bpk');
     const form = useForm({
         name: '',
         email: '',
@@ -29,7 +73,24 @@ export default function RegisterFormPanel({ register }) {
     function submit(event) {
         event.preventDefault();
 
-        const clientErrors = validateRegisterForm(form.data, {
+        const cleanedName = form.data.name.trim().replace(/\s+/g, ' ');
+        const cleanedEmail = form.data.email.trim();
+        const cleanedPhone = form.data.phone.trim();
+
+        // Update form state so user sees cleaned values in inputs
+        form.setData(prev => ({
+            ...prev,
+            name: cleanedName,
+            email: cleanedEmail,
+            phone: cleanedPhone,
+        }));
+
+        const clientErrors = validateRegisterForm({
+            name: cleanedName,
+            email: cleanedEmail,
+            phone: cleanedPhone,
+            password: form.data.password,
+        }, {
             showPhoneField: register.showPhoneField,
         });
 
@@ -40,6 +101,13 @@ export default function RegisterFormPanel({ register }) {
         }
 
         form.clearErrors();
+
+        form.transform((data) => ({
+            ...data,
+            name: `${salutation}. ${cleanedName}`,
+            email: cleanedEmail,
+            phone: cleanedPhone,
+        }));
 
         let loadingToastId = null;
         let requestFailed = false;
@@ -78,7 +146,9 @@ export default function RegisterFormPanel({ register }) {
 
                 <form className="mt-6 space-y-4 sm:mt-8" onSubmit={submit}>
                     <NameField
-                        prefix={register.namePrefix}
+                        salutation={salutation}
+                        onSalutationChange={setSalutation}
+                        prefixClassName="pl-4 pr-1.5 justify-center"
                         label={register.nameLabel}
                         placeholder={register.namePlaceholder}
                         value={form.data.name}

@@ -2,12 +2,12 @@ export default function BrandMark({
     className = '',
     variant = 'default',
 }) {
-    const logoHeight = variant === 'decorative' ? 'h-[32px]' : 'h-[38px]';
+    const logoHeight = variant === 'decorative' ? 'h-[36px]' : 'h-[38px]';
     const isDarkText = variant === 'decorative';
     const titleSize = variant === 'decorative'
-        ? 'text-[14px] sm:text-[15px] md:text-[16px]'
+        ? 'text-[15px] sm:text-[17px] md:text-[18px]'
         : 'text-[17px] sm:text-[19px] md:text-[20px]';
-    const gapClass = variant === 'decorative' ? 'gap-2.5' : 'gap-3';
+    const gapClass = variant === 'decorative' ? 'gap-2' : 'gap-3';
 
     return (
         <div className={`inline-flex items-center ${gapClass} select-none pointer-events-none ${className}`.trim()}>
