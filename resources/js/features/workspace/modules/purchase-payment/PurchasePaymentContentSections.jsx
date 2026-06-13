@@ -20,7 +20,7 @@ import { PurchasePaymentHeaderIconButton } from './PurchasePaymentHeaderSections
 export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice, handlers = {} }) {
     return (
         <div className="flex min-h-[540px] flex-col">
-            <div className="flex flex-col gap-3 pb-3 xl:flex-row xl:items-center xl:justify-between">
+            <div className="flex flex-col gap-3 pb-1 xl:flex-row xl:items-center xl:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1 sm:max-w-[560px]">
                         <TextInput
@@ -53,7 +53,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                 </div>
             </div>
 
-            <div className="mt-2 min-h-0 flex-1 overflow-x-auto">
+            <div className="mt-1 min-h-0 flex-1 overflow-x-auto">
                 <TransactionDataTable
                     columns={config.invoiceTable.columns}
                     rows={values.invoices}

@@ -32,7 +32,7 @@ function PaymentOrderFieldRow({ label, required = false, children }) {
 
 function PaymentOrderInvoiceTable({ config }) {
     return (
-        <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
+        <div className="mt-1 min-h-0 flex-1 overflow-x-auto">
             <div className="min-w-[1180px]">
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
@@ -153,7 +153,7 @@ export function PaymentOrderHeader({ config, values, setValues }) {
 export function PaymentOrderDetailsSection({ config, values, setValues }) {
     return (
         <div className="flex min-h-[560px] flex-col">
-            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 xl:flex-row xl:items-center xl:justify-between">
+            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-1 xl:flex-row xl:items-center xl:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1 sm:max-w-[720px]">
                         <TextInput

@@ -48,9 +48,15 @@ export function TransactionDataTable({
     const schemaKey = getTableSchemaKey(cleanedColumns);
     const [visibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
 
+    const activeShowNumbering = showNumbering && rows.length > 0;
+
     const visibleColumns = useMemo(() => {
-        return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
-    }, [cleanedColumns, visibleColumnIds]);
+        const filtered = cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
+        if (rows.length === 0) {
+            return filtered.filter(col => col.kind !== 'spacer' && col.id !== 'spacer');
+        }
+        return filtered;
+    }, [cleanedColumns, visibleColumnIds, rows.length]);
 
     useEffect(() => {
         const activeRes = (typeof window !== 'undefined' ? window.__activePageId : null);
@@ -69,7 +75,7 @@ export function TransactionDataTable({
             <DataTable wrapperClassName="border-[#d1d8e4]">
                 <DataTableHeader className="bg-[#5f7690]">
                     <tr>
-                        {showNumbering && (
+                        {activeShowNumbering && (
                             <DataTableHead className="w-[50px] px-3 text-center text-sm font-medium text-white">
                                 No.
                             </DataTableHead>
@@ -101,7 +107,7 @@ export function TransactionDataTable({
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${customRowClassName}`.trim()}
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
-                                    {showNumbering && (
+                                    {activeShowNumbering && (
                                         <DataTableCell className="px-3 text-center text-sm text-[#646d83]">
                                             {index + 1}
                                         </DataTableCell>
@@ -131,7 +137,7 @@ export function TransactionDataTable({
                                 </DataTableCell>
                             ) : null}
                             <DataTableCell
-                                colSpan={visibleColumns.length - (hasLeadingEmptyCell ? 1 : 0) + (showNumbering ? 1 : 0)}
+                                colSpan={visibleColumns.length - (hasLeadingEmptyCell ? 1 : 0) + (activeShowNumbering ? 1 : 0)}
                                 className="px-3 py-3 text-center text-sm text-[#131a28]"
                             >
                                 {emptyLabel}
@@ -167,7 +173,7 @@ export function TransactionLineItemsSection({
 
     return (
         <div className={`flex flex-col ${hasRows ? 'min-h-[540px]' : 'min-h-[240px]'}`.trim()}>
-            <div className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0 flex-1 sm:max-w-[560px]">
                     {searchInput ?? (
                         <TextInput
@@ -199,7 +205,7 @@ export function TransactionLineItemsSection({
                 </div>
             </div>
 
-            <div className={`mt-2 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
+            <div className={`mt-1 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
                 <TransactionDataTable
                     columns={columns}
                     rows={rows}

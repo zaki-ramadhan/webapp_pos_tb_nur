@@ -90,15 +90,6 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                             </>
                         ) : null}
 
-                        <TransactionFieldLabel label={config.labels.branch} required />
-                        <ChipLookupField
-                            values={values.branches}
-                            placeholder={config.branchPlaceholder}
-                            onRemove={(value) => handlers.onRemoveBranch?.(value)}
-                            searchLabel="Cari cabang"
-                            onSearch={handlers.onSelectBranch}
-                        />
-
                         <TransactionFieldLabel label={config.labels.notes} />
                         <TransactionReadonlyTextarea value={values.notes} rows={4} className="min-h-[70px]" />
 
