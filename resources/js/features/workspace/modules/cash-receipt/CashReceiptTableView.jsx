@@ -54,8 +54,9 @@ export default function CashReceiptTableView({
                 return true;
             }
 
-            return [row.number, row.date, row.cashBank, row.checkNumber, row.description, row.amount].some((value) =>
-                String(value ?? '')
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

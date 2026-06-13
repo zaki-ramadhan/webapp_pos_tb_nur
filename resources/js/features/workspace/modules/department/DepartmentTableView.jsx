@@ -48,8 +48,9 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                 return true;
             }
 
-            return [row.name, row.userList].some((value) =>
-                String(value ?? '')
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

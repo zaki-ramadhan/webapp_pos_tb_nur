@@ -53,11 +53,12 @@ export default function BudgetTransferTableView({ config, onCreate, onOpenDetail
                     return true;
                 }
 
-                return tableColumns.some((column) =>
-                    String(row[column.id] ?? '')
-                        .toLowerCase()
-                        .includes(normalizedKeyword),
-                );
+                const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
+            );
             }),
         [config.table.rows, dateFilter, keyword, tableColumns],
     );

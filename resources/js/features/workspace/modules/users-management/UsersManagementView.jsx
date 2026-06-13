@@ -244,11 +244,14 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
             return table.rows;
         }
 
-        return table.rows.filter((row) =>
-            [row.name, row.phone, row.email, row.accessType].some((value) =>
-                String(value ?? '').toLowerCase().includes(normalizedKeyword),
-            ),
-        );
+        return table.rows.filter((row) => {
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
+            );
+        });
     }, [keyword, table.rows]);
 
     return (

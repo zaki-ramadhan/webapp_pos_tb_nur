@@ -37,8 +37,9 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                 return true;
             }
 
-            return [row.name, row.pic, row.phone, row.address, row.inactiveLabel].some((value) =>
-                String(value ?? '')
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

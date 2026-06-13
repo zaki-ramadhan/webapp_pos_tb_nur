@@ -113,8 +113,11 @@ function PrintDesignTableView({ table, onCreate }) {
                 return true;
             }
 
-            return [row.designName, row.transactionTypeLabel, row.userList].some((value) =>
-                String(value).toLowerCase().includes(normalizedKeyword),
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
             );
         });
     }, [keyword, table.rows, transactionType]);

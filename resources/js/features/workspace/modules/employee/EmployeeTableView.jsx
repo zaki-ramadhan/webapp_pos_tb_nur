@@ -47,16 +47,12 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                 return true;
             }
 
-            return [
-                row.name,
-                row.position,
-                row.email,
-                row.mobilePhone,
-                row.employeeId,
-                row.taxStatus,
-                row.employmentStatus,
-                row.payable,
-            ].some((value) => String(value ?? '').toLowerCase().includes(normalizedKeyword));
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
+            );
         });
     }, [filters, keyword, table.filters, table.rows]);
 

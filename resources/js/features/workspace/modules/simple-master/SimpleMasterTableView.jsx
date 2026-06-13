@@ -26,15 +26,12 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                 return true;
             }
 
-            return table.columns.some((column) => {
-                if (column.kind === 'spacer') {
-                    return false;
-                }
-
-                return String(row[column.id] ?? '')
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
-                    .includes(normalizedKeyword);
-            });
+                    .includes(normalizedKeyword),
+            );
         });
     }, [keyword, table.columns, table.rows]);
     const cleanedColumns = useMemo(() => {

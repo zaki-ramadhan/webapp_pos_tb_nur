@@ -72,13 +72,14 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
             return config.table.rows;
         }
 
-        return config.table.rows.filter((row) =>
-            [row.date, row.number, row.transactionNumber, row.typeLabel].some((value) =>
-                String(value ?? '')
+        return config.table.rows.filter((row) => {
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
-            ),
-        );
+            );
+        });
     }, [config.table.rows, keyword]);
 
     return (

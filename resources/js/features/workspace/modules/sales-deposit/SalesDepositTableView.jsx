@@ -53,8 +53,11 @@ export default function SalesDepositTableView({
                 return true;
             }
 
-            return [row.number, row.date, row.customer, row.notes, row.status, row.total].some((value) =>
-                String(value ?? '').toLowerCase().includes(normalizedKeyword),
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
             );
         });
     }, [config.table.filters, config.table.rows, filters, keyword]);

@@ -55,17 +55,9 @@ export default function PurchasePaymentTableView({
                 return true;
             }
 
-            return [
-                row.number,
-                row.date,
-                row.checkNumber,
-                row.checkDate,
-                row.supplier,
-                row.bank,
-                row.notes,
-                row.paymentAmount,
-            ].some((value) =>
-                String(value ?? '')
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

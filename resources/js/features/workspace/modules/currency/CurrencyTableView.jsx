@@ -45,8 +45,9 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                 return true;
             }
 
-            return [row.symbol, row.code, row.countryName].some((value) =>
-                String(value ?? '')
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

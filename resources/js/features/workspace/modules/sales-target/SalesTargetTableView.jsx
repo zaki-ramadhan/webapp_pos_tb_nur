@@ -74,7 +74,8 @@ export default function SalesTargetTableView({ config, onCreate, onOpenDetail, o
                 return true;
             }
 
-            return config.table.columns.some((column) =>
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),

@@ -87,16 +87,12 @@ export default function ActivityLogView({ page }) {
                 return true;
             }
 
-            return [
-                row.transactionDateLabel,
-                row.referenceName,
-                row.actionLabel,
-                row.transactionTypeLabel,
-                row.loggedAt,
-                row.userName,
-                row.email,
-                row.ipAddress,
-            ].some((value) => String(value ?? '').toLowerCase().includes(normalizedKeyword));
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
+            );
         });
     }, [filters, keyword, table.filters, table.rows]);
 

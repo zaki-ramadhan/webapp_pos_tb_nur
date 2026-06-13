@@ -43,8 +43,9 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
                 return true;
             }
 
-            return [row.description, row.typeLabel, row.percentage].some((value) =>
-                String(value ?? '')
+            const searchCols = TAX_COLUMNS.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

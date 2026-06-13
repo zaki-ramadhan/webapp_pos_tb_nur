@@ -29,8 +29,11 @@ export default function BranchTableView({ table, onCreate, onOpenDetail }) {
                 return true;
             }
 
-            return [row.phone, row.inactiveLabel, row.name, row.userList].some((value) =>
-                String(value).toLowerCase().includes(normalizedKeyword),
+            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
             );
         });
     }, [inactiveFilter, keyword, table.rows]);

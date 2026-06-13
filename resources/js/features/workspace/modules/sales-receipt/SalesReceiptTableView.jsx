@@ -89,17 +89,9 @@ export default function SalesReceiptTableView({
                 return true;
             }
 
-            return [
-                row.number,
-                row.date,
-                row.checkNumber,
-                row.checkDate,
-                row.customer,
-                row.bank,
-                row.notes,
-                row.paymentAmount,
-            ].some((fieldValue) =>
-                String(fieldValue ?? '')
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

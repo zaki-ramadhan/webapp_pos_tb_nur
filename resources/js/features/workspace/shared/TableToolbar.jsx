@@ -292,8 +292,10 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
                     <p className="px-3 py-2 text-xs text-[#9aa4b6]">Tidak ada kolom ditemukan.</p>
                 ) : filtered.map(col => {
                     const visible = visibleIds.includes(col.id);
+                    const originalIndex = columns.findIndex(c => c.id === col.id);
+                    const isCrucial = originalIndex < 2;
                     const toggleableVisibleCount = columns.filter(c => visibleIds.includes(c.id)).length;
-                    const cannotUncheck = visible && toggleableVisibleCount <= 2;
+                    const cannotUncheck = isCrucial || (visible && toggleableVisibleCount <= 2);
                     return (
                         <button
                             key={col.id}
@@ -469,146 +471,6 @@ function hasFunnelButton(node) {
         return node.some(child => hasFunnelButton(child));
     }
     return false;
-}
-
-function getFriendlyPlaceholder(name, fallbackPlaceholder = 'Cari data di sini...') {
-    const cleanPlaceholder = String(fallbackPlaceholder || '').trim();
-    const isGeneric = !cleanPlaceholder || 
-                      cleanPlaceholder.toLowerCase() === 'cari...' || 
-                      cleanPlaceholder.toLowerCase() === 'cari' || 
-                      cleanPlaceholder.toLowerCase() === 'cari data di sini...';
-    
-    if (!isGeneric) {
-        return fallbackPlaceholder;
-    }
-
-    const cleanName = String(name || '').toLowerCase().trim();
-    if (!cleanName) return 'Cari data di sini...';
-
-    const mapper = {
-        'expense-entries': 'Cari nomor, tanggal, deskripsi, atau nominal...',
-        'expense-entry': 'Cari nomor, tanggal, deskripsi, atau nominal...',
-        'bank-transfers': 'Cari nomor, tanggal, bank pengirim/penerima, atau nominal...',
-        'bank-transfer': 'Cari nomor, tanggal, bank pengirim/penerima, atau nominal...',
-        'cash-payments': 'Cari nomor, tanggal, penerima, bank, atau nominal...',
-        'cash-payment': 'Cari nomor, tanggal, penerima, bank, atau nominal...',
-        'cash-receipts': 'Cari nomor, tanggal, pembayar, bank, atau nominal...',
-        'cash-receipt': 'Cari nomor, tanggal, pembayar, bank, atau nominal...',
-        'general-journals': 'Cari nomor, tanggal, keterangan, atau nominal...',
-        'general-journal': 'Cari nomor, tanggal, keterangan, atau nominal...',
-        'goods-receipts': 'Cari nomor, tanggal, pemasok, atau keterangan...',
-        'goods-receipt': 'Cari nomor, tanggal, pemasok, atau keterangan...',
-        'payment-orders': 'Cari nomor, tanggal, penerima, bank, atau nominal...',
-        'payment-order': 'Cari nomor, tanggal, penerima, bank, atau nominal...',
-        'payroll-entries': 'Cari nomor, tanggal, periode, atau nominal...',
-        'payroll-entry': 'Cari nomor, tanggal, periode, atau nominal...',
-        'price-adjustments': 'Cari nomor, tanggal, atau keterangan...',
-        'price-adjustment': 'Cari nomor, tanggal, atau keterangan...',
-        'purchase-orders': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'purchase-order': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'sales-checkins': 'Cari nama sales, tanggal, atau lokasi...',
-        'sales-checkin': 'Cari nama sales, tanggal, atau lokasi...',
-        'supplier-prices': 'Cari nama barang, pemasok, atau harga...',
-        'supplier-price': 'Cari nama barang, pemasok, atau harga...',
-        'accounts': 'Cari kode, nama, atau tipe akun...',
-        'account': 'Cari kode, nama, atau tipe akun...',
-        'activity-log': 'Cari aktivitas, pengguna, atau waktu...',
-        'activity-logs': 'Cari aktivitas, pengguna, atau waktu...',
-        'asset-categories': 'Cari kode atau nama kategori...',
-        'asset-category': 'Cari kode atau nama kategori...',
-        'asset-disposals': 'Cari nomor, tanggal, aset, atau nilai...',
-        'asset-disposal': 'Cari nomor, tanggal, aset, atau nilai...',
-        'asset-moves': 'Cari nomor, tanggal, aset, atau lokasi...',
-        'asset-move': 'Cari nomor, tanggal, aset, atau lokasi...',
-        'asset-tax-categories': 'Cari kode, nama, atau tipe tarif...',
-        'asset-tax-category': 'Cari kode, nama, atau tipe tarif...',
-        'branches': 'Cari kode, nama, atau kota...',
-        'branch': 'Cari kode, nama, atau kota...',
-        'budget-monitors': 'Cari departemen, periode, atau anggaran...',
-        'budget-monitor': 'Cari departemen, periode, atau anggaran...',
-        'budgets': 'Cari departemen, periode, atau nominal...',
-        'budget': 'Cari departemen, periode, atau nominal...',
-        'budget-transfers': 'Cari nomor, tanggal, atau nominal...',
-        'budget-transfer': 'Cari nomor, tanggal, atau nominal...',
-        'company-taxes': 'Cari nama pajak, tipe, atau persentase...',
-        'company-tax': 'Cari nama pajak, tipe, atau persentase...',
-        'contacts': 'Cari nama, tipe, telepon, atau alamat...',
-        'contact': 'Cari nama, tipe, telepon, atau alamat...',
-        'currency-masters': 'Cari kode, nama, atau simbol...',
-        'currency-master': 'Cari kode, nama, atau simbol...',
-        'customer-categories': 'Cari nama kategori...',
-        'customer-category': 'Cari nama kategori...',
-        'customers': 'Cari nama, telepon, atau email...',
-        'customer': 'Cari nama, telepon, atau email...',
-        'departments': 'Cari nama atau deskripsi departemen...',
-        'department': 'Cari nama atau deskripsi departemen...',
-        'employees': 'Cari kode, nama, jabatan, atau email...',
-        'employee': 'Cari kode, nama, jabatan, atau email...',
-        'fixed-assets': 'Cari kode, nama, kategori, atau nilai...',
-        'fixed-asset': 'Cari kode, nama, kategori, atau nilai...',
-        'group-accesses': 'Cari nama grup akses...',
-        'group-access': 'Cari nama grup akses...',
-        'inventory-adjustments': 'Cari nomor, tanggal, gudang, atau keterangan...',
-        'inventory-adjustment': 'Cari nomor, tanggal, gudang, atau keterangan...',
-        'item-categories': 'Cari nama kategori barang...',
-        'item-category': 'Cari nama kategori barang...',
-        'item-locations': 'Cari nama lokasi...',
-        'item-location': 'Cari nama lokasi...',
-        'item-requests': 'Cari nomor, tanggal, peminta, atau keterangan...',
-        'item-request': 'Cari nomor, tanggal, peminta, atau keterangan...',
-        'items-services': 'Cari kode, nama, kategori, atau harga barang/jasa...',
-        'items-service': 'Cari kode, nama, kategori, atau harga barang/jasa...',
-        'item-units': 'Cari nama satuan...',
-        'item-unit': 'Cari nama satuan...',
-        'material-additions': 'Cari nomor, tanggal, atau keterangan...',
-        'material-addition': 'Cari nomor, tanggal, atau keterangan...',
-        'preferences': 'Cari preferensi...',
-        'preference': 'Cari preferensi...',
-        'purchase-deposits': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'purchase-deposit': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'purchase-invoices': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'purchase-invoice': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'purchase-payments': 'Cari nomor, tanggal, pemasok, bank, atau nominal...',
-        'purchase-payment': 'Cari nomor, tanggal, pemasok, bank, atau nominal...',
-        'purchase-returns': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'purchase-return': 'Cari nomor, tanggal, pemasok, atau nominal...',
-        'salary-allowances': 'Cari kode, nama, atau tipe tunjangan...',
-        'salary-allowance': 'Cari kode, nama, atau tipe tunjangan...',
-        'sales-commissions': 'Cari nama komisi atau persentase...',
-        'sales-commission': 'Cari nama komisi atau persentase...',
-        'sales-deliveries': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-delivery': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-deposits': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-deposit': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-invoices': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-invoice': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-orders': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-order': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-quotes': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-quote': 'Cari nomor, tanggal, pelanggan, atau nominal...',
-        'sales-receipts': 'Cari nomor, tanggal, pelanggan, bank, atau nominal...',
-        'sales-receipt': 'Cari nomor, tanggal, pelanggan, bank, atau nominal...',
-        'sales-targets': 'Cari nama target atau tipe...',
-        'sales-target': 'Cari nama target atau tipe...',
-        'shipping-masters': 'Cari nama kurir atau kurir...',
-        'shipping-master': 'Cari nama kurir atau kurir...',
-        'stock-opname-orders': 'Cari nomor, tanggal, gudang, atau keterangan...',
-        'stock-opname-order': 'Cari nomor, tanggal, gudang, atau keterangan...',
-        'stock-opname-results': 'Cari nomor, tanggal, gudang, atau keterangan...',
-        'stock-opname-result': 'Cari nomor, tanggal, gudang, atau keterangan...',
-        'stock-transfers': 'Cari nomor, tanggal, atau keterangan...',
-        'stock-transfer': 'Cari nomor, tanggal, atau keterangan...',
-        'suppliers': 'Cari nama, telepon, atau alamat...',
-        'supplier': 'Cari nama, telepon, atau alamat...',
-        'users': 'Cari nama lengkap, username, atau email...',
-        'user': 'Cari nama lengkap, username, atau email...',
-        'warehouse-masters': 'Cari nama gudang atau alamat...',
-        'warehouse-master': 'Cari nama gudang atau alamat...',
-        'work-orders': 'Cari nomor, tanggal, pelanggan, atau keterangan...',
-        'work-order': 'Cari nomor, tanggal, pelanggan, atau keterangan...',
-    };
-
-    return mapper[cleanName] ?? fallbackPlaceholder;
 }
 
 export default function TableToolbar({
@@ -824,18 +686,25 @@ export default function TableToolbar({
                         </ToolbarIconButton>
                     ) : null}
 
-                    {search ? (
-                        <TextInput
-                            value={search.value}
-                            onChange={search.onChange}
-                            placeholder={getFriendlyPlaceholder(resolvedResourceName, search.placeholder)}
-                            trailing={searchTrailing}
-                            aria-label={search.placeholder || 'Cari data'}
-                            className={`${sizeStyle.searchInput} w-full rounded-[4px] border-[#cfd6e2] ${search.widthClassName ?? 'sm:max-w-[360px]'}`.trim()}
-                            inputClassName={search.inputClassName ?? `${sizeStyle.searchText} text-[#1f2436]`}
-                            trailingClassName={search.trailingClassName ?? 'px-3'}
-                        />
-                    ) : null}
+                    {search ? (() => {
+                        const searchColumns = resolvedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+                        const primaryColumnLabels = searchColumns.slice(0, 3).map(col => col.label);
+                        const computedSearchPlaceholder = primaryColumnLabels.length > 0
+                            ? `Cari ${primaryColumnLabels.join(', ')}...`
+                            : 'Cari data...';
+                        return (
+                            <TextInput
+                                value={search.value}
+                                onChange={search.onChange}
+                                placeholder={computedSearchPlaceholder}
+                                trailing={searchTrailing}
+                                aria-label={computedSearchPlaceholder}
+                                className={`${sizeStyle.searchInput} w-full rounded-[4px] border-[#cfd6e2] ${search.widthClassName ?? 'sm:max-w-[248px]'}`.trim()}
+                                inputClassName={search.inputClassName ?? `${sizeStyle.searchText} text-[#1f2436]`}
+                                trailingClassName={search.trailingClassName ?? 'px-3'}
+                            />
+                        );
+                    })() : null}
 
                 </div>
             </div>

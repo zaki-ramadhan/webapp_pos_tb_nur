@@ -29,8 +29,9 @@ export default function WarehouseTableView({ config, onCreate, onOpenDetail }) {
                 return true;
             }
 
-            return [row.name, row.address].some((value) =>
-                String(value ?? '')
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

@@ -106,7 +106,8 @@ export default function TableListView({
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
-        const searchKeys = table.searchKeys?.length ? table.searchKeys : table.columns.map((column) => column.id);
+        const searchCols = (table.columns ?? []).filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+        const searchKeys = searchCols.slice(0, 3).map(col => col.id);
 
         const filtered = table.rows.filter((row) => {
             const passesFilters = (table.filters ?? []).every((filter) =>

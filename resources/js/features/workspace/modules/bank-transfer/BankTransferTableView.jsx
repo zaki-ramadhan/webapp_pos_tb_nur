@@ -48,8 +48,9 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                 return true;
             }
 
-            return [row.number, row.date, row.fromBank, row.toBank, row.description, row.transferTotal, row.feeTotal].some((value) =>
-                String(value ?? '')
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );

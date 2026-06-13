@@ -37,8 +37,11 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                 return true;
             }
 
-            return [row.code, row.name, row.type, row.balance].some((value) =>
-                String(value ?? '').toLowerCase().includes(normalizedKeyword),
+            const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+            return searchCols.slice(0, 3).some((column) =>
+                String(row[column.id] ?? '')
+                    .toLowerCase()
+                    .includes(normalizedKeyword),
             );
         });
     }, [config.table.filters, config.table.rows, filters, keyword]);
