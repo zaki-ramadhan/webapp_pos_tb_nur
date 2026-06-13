@@ -178,6 +178,173 @@ function getFormattedFilename(filename) {
     return `${friendlyName}_${timestamp}`;
 }
 
+export function getFriendlyTitle(name, fallbackTitle = 'Laporan') {
+    if (fallbackTitle && fallbackTitle !== 'Laporan' && fallbackTitle !== 'export' && fallbackTitle !== 'ekspor') {
+        return fallbackTitle;
+    }
+
+    const cleanName = String(name || '').toLowerCase().trim();
+    if (!cleanName) return 'Laporan';
+
+    const mapper = {
+        'expense-entries': 'Pencatatan Beban',
+        'expense-entry': 'Pencatatan Beban',
+        'bank-transfers': 'Transfer Bank',
+        'bank-transfer': 'Transfer Bank',
+        'cash-payments': 'Pembayaran',
+        'cash-payment': 'Pembayaran',
+        'cash-receipts': 'Penerimaan Tunai',
+        'cash-receipt': 'Penerimaan Tunai',
+        'general-journals': 'Jurnal Umum',
+        'general-journal': 'Jurnal Umum',
+        'goods-receipts': 'Penerimaan Barang',
+        'goods-receipt': 'Penerimaan Barang',
+        'journal-activity-log': 'Log Aktifitas Jurnal',
+        'journal-activity-logs': 'Log Aktifitas Jurnal',
+        'payment-orders': 'Permintaan Pembayaran',
+        'payment-order': 'Permintaan Pembayaran',
+        'payroll-entries': 'Pencatatan Gaji',
+        'payroll-entry': 'Pencatatan Gaji',
+        'price-adjustments': 'Penyesuaian Harga',
+        'price-adjustment': 'Penyesuaian Harga',
+        'purchase-orders': 'Pesanan Pembelian',
+        'purchase-order': 'Pesanan Pembelian',
+        'sales-checkins': 'Check-In Sales',
+        'sales-checkin': 'Check-In Sales',
+        'supplier-prices': 'Harga Pemasok',
+        'supplier-price': 'Harga Pemasok',
+        'accounts': 'Daftar Akun',
+        'account': 'Daftar Akun',
+        'activity-log': 'Log Aktivitas',
+        'activity-logs': 'Log Aktivitas',
+        'asset-categories': 'Kategori Aset',
+        'asset-category': 'Kategori Aset',
+        'asset-disposals': 'Disposisi Aset',
+        'asset-disposal': 'Disposisi Aset',
+        'asset-moves': 'Pemindahan Aset',
+        'asset-move': 'Pemindahan Aset',
+        'asset-tax-categories': 'Kategori Pajak Aset',
+        'asset-tax-category': 'Kategori Pajak Aset',
+        'branches': 'Cabang',
+        'branch': 'Cabang',
+        'budget-monitors': 'Monitoring Anggaran',
+        'budget-monitor': 'Monitoring Anggaran',
+        'budgets': 'Anggaran',
+        'budget': 'Anggaran',
+        'budget-transfers': 'Transfer Anggaran',
+        'budget-transfer': 'Transfer Anggaran',
+        'company-taxes': 'Pajak',
+        'company-tax': 'Pajak',
+        'contacts': 'Kontak',
+        'contact': 'Kontak',
+        'currency-masters': 'Mata Uang',
+        'currency-master': 'Mata Uang',
+        'customer-categories': 'Kategori Pelanggan',
+        'customer-category': 'Kategori Pelanggan',
+        'customers': 'Pelanggan',
+        'customer': 'Pelanggan',
+        'departments': 'Departemen',
+        'department': 'Departemen',
+        'employees': 'Karyawan',
+        'employee': 'Karyawan',
+        'favorite-transactions': 'Transaksi Favorit',
+        'favorite-transaction': 'Transaksi Favorit',
+        'fixed-assets': 'Aset Tetap',
+        'fixed-asset': 'Aset Tetap',
+        'fob-masters': 'FOB Master',
+        'fob-master': 'FOB Master',
+        'group-accesses': 'Akses Grup',
+        'group-access': 'Akses Grup',
+        'inventory-adjustments': 'Penyesuaian Persediaan',
+        'inventory-adjustment': 'Penyesuaian Persediaan',
+        'item-categories': 'Kategori Barang',
+        'item-category': 'Kategori Barang',
+        'item-locations': 'Lokasi Barang',
+        'item-location': 'Lokasi Barang',
+        'item-requests': 'Permintaan Barang',
+        'item-request': 'Permintaan Barang',
+        'items-services': 'Barang dan Jasa',
+        'items-service': 'Barang dan Jasa',
+        'item-units': 'Satuan Barang',
+        'item-unit': 'Satuan Barang',
+        'material-additions': 'Penambahan Bahan',
+        'material-addition': 'Penambahan Bahan',
+        'minimum-stocks': 'Stok Minimum',
+        'minimum-stock': 'Stok Minimum',
+        'numberings': 'Penomoran',
+        'numbering': 'Penomoran',
+        'order-fulfillments': 'Pemenuhan Pesanan',
+        'order-fulfillment': 'Pemenuhan Pesanan',
+        'payment-terms': 'Syarat Pembayaran',
+        'payment-term': 'Syarat Pembayaran',
+        'period-ends': 'Proses Akhir Bulan',
+        'period-end': 'Proses Akhir Bulan',
+        'preferences': 'Pengaturan',
+        'preference': 'Pengaturan',
+        'print-designs': 'Desain Cetak',
+        'print-design': 'Desain Cetak',
+        'purchase-deposits': 'Uang Muka Pembelian',
+        'purchase-deposit': 'Uang Muka Pembelian',
+        'purchase-invoices': 'Faktur Pembelian',
+        'purchase-invoice': 'Faktur Pembelian',
+        'purchase-payments': 'Pembayaran Pembelian',
+        'purchase-payment': 'Pembayaran Pembelian',
+        'purchase-returns': 'Retur Pembelian',
+        'purchase-return': 'Retur Pembelian',
+        'recurring-transactions': 'Transaksi Berulang',
+        'recurring-transaction': 'Transaksi Berulang',
+        'salary-allowances': 'Tunjangan Gaji',
+        'salary-allowance': 'Tunjangan Gaji',
+        'sales-categories': 'Kategori Penjualan',
+        'sales-category': 'Kategori Penjualan',
+        'sales-commissions': 'Komisi Penjualan',
+        'sales-commission': 'Komisi Penjualan',
+        'sales-deliveries': 'Pengiriman Penjualan',
+        'sales-delivery': 'Pengiriman Penjualan',
+        'sales-deposits': 'Uang Muka Penjualan',
+        'sales-deposit': 'Uang Muka Penjualan',
+        'sales-invoices': 'Faktur Penjualan',
+        'sales-invoice': 'Faktur Penjualan',
+        'sales-orders': 'Pesanan Penjualan',
+        'sales-order': 'Pesanan Penjualan',
+        'sales-quotes': 'Penawaran Penjualan',
+        'sales-quote': 'Penawaran Penjualan',
+        'sales-receipts': 'Penerimaan Penjualan',
+        'sales-receipt': 'Penerimaan Penjualan',
+        'sales-targets': 'Target Penjualan',
+        'sales-target': 'Target Penjualan',
+        'shipping-masters': 'Pengiriman',
+        'shipping-master': 'Pengiriman',
+        'stock-opname-orders': 'Perintah Stok Opname',
+        'stock-opname-order': 'Perintah Stok Opname',
+        'stock-opname-results': 'Hasil Stok Opname',
+        'stock-opname-result': 'Hasil Stok Opname',
+        'stock-transfers': 'Transfer Stok',
+        'stock-transfer': 'Transfer Stok',
+        'supplier-categories': 'Kategori Pemasok',
+        'supplier-category': 'Kategori Pemasok',
+        'suppliers': 'Pemasok',
+        'supplier': 'Pemasok',
+        'transaction-approvals': 'Persetujuan Transaksi',
+        'transaction-approval': 'Persetujuan Transaksi',
+        'users': 'Pengguna',
+        'user': 'Pengguna',
+        'warehouse-masters': 'Gudang',
+        'warehouse-master': 'Gudang',
+        'work-completions': 'Penyelesaian Kerja',
+        'work-completion': 'Penyelesaian Kerja',
+        'work-orders': 'Perintah Kerja',
+        'work-order': 'Perintah Kerja',
+    };
+
+    const friendlyName = mapper[cleanName];
+    if (friendlyName) {
+        return `Laporan ${friendlyName}`;
+    }
+
+    return fallbackTitle;
+}
+
 function isNumericColumn(col, rows) {
     const numericKeys = ['total', 'amount', 'rate', 'value', 'paid', 'price', 'fee', 'percentage'];
     const colIdLower = String(col.id || '').toLowerCase();
@@ -212,21 +379,21 @@ function isNumericColumn(col, rows) {
 export function exportToCSV(columns, rows, filename = 'export') {
     const formattedFilename = getFormattedFilename(filename);
     const activeCols = columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
-    const header = activeCols.map(col => `"${String(col.label || '').replace(/"/g, '""')}"`).join(',');
+    const header = ['"No."', ...activeCols.map(col => `"${String(col.label || '').replace(/"/g, '""')}"`)].join(',');
 
     const body = rows
-        .map(row =>
-            activeCols
-                .map(col => {
-                    let val = row[col.id];
-                    if (val === undefined || val === null || String(val).trim() === '') {
-                        val = isNumericColumn(col, rows) ? '0' : '-';
-                    }
-                    const str = Array.isArray(val) ? val.join(', ') : String(val);
-                    return `"${str.replace(/"/g, '""')}"`;
-                })
-                .join(','),
-        )
+        .map((row, index) => {
+            const noVal = `"${index + 1}"`;
+            const rowValues = activeCols.map(col => {
+                let val = row[col.id];
+                if (val === undefined || val === null || String(val).trim() === '') {
+                    val = isNumericColumn(col, rows) ? '0' : '-';
+                }
+                const str = Array.isArray(val) ? val.join(', ') : String(val);
+                return `"${str.replace(/"/g, '""')}"`;
+            });
+            return [noVal, ...rowValues].join(',');
+        })
         .join('\n');
 
     triggerDownload(
@@ -240,39 +407,43 @@ export function exportToExcelXML(columns, rows, filename = 'export') {
     const formattedFilename = getFormattedFilename(filename);
     const activeCols = columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
 
-    const headerRow = activeCols.map(col => col.label || '');
-    const dataRows = rows.map(row =>
-        activeCols.map(col => {
+    const headerRow = ['No.', ...activeCols.map(col => col.label || '')];
+    const dataRows = rows.map((row, index) => [
+        index + 1,
+        ...activeCols.map(col => {
             let val = row[col.id];
             if (val === undefined || val === null || String(val).trim() === '') {
                 return isNumericColumn(col, rows) ? 0 : '-';
             }
             return Array.isArray(val) ? val.join(', ') : val;
-        }),
-    );
+        })
+    ]);
 
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
 
     // Calculate column widths (fit-content)
-    const colWidths = activeCols.map((col) => {
-        let maxLen = String(col.label || '').length;
+    const colWidths = [
+        { wch: 6 },
+        ...activeCols.map((col) => {
+            let maxLen = String(col.label || '').length;
 
-        rows.forEach(row => {
-            const val = row[col.id];
-            let cellStr = '';
-            if (val === undefined || val === null || String(val).trim() === '') {
-                cellStr = isNumericColumn(col, rows) ? '0' : '-';
-            } else {
-                cellStr = Array.isArray(val) ? val.join(', ') : String(val);
-            }
-            maxLen = Math.max(maxLen, cellStr.length);
-        });
+            rows.forEach(row => {
+                const val = row[col.id];
+                let cellStr = '';
+                if (val === undefined || val === null || String(val).trim() === '') {
+                    cellStr = isNumericColumn(col, rows) ? '0' : '-';
+                } else {
+                    cellStr = Array.isArray(val) ? val.join(', ') : String(val);
+                }
+                maxLen = Math.max(maxLen, cellStr.length);
+            });
 
-        // Add padding, clamp between 12 and 50 characters
-        const optimalWidth = Math.max(12, Math.min(50, maxLen + 4));
-        return { wch: optimalWidth };
-    });
+            // Add padding, clamp between 12 and 50 characters
+            const optimalWidth = Math.max(12, Math.min(50, maxLen + 4));
+            return { wch: optimalWidth };
+        })
+    ];
 
     ws['!cols'] = colWidths;
 
@@ -331,17 +502,21 @@ export function importFromFile(file) {
  * title: string
  */
 export function printTable(columns, rows, title = 'Laporan') {
+    const cleanTitle = getFriendlyTitle(typeof window !== 'undefined' ? window.__activePageId : null, title);
     const activeCols = columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
-    const headers = [activeCols.map(col => col.label || '')];
+    const headers = [['No.', ...activeCols.map(col => col.label || '')]];
     
-    const data = rows.map(row => {
-        return activeCols.map(col => {
-            let val = row[col.id];
-            if (val === undefined || val === null || String(val).trim() === '') {
-                val = isNumericColumn(col, rows) ? '0' : '-';
-            }
-            return Array.isArray(val) ? val.join(', ') : String(val);
-        });
+    const data = rows.map((row, index) => {
+        return [
+            String(index + 1),
+            ...activeCols.map(col => {
+                let val = row[col.id];
+                if (val === undefined || val === null || String(val).trim() === '') {
+                    val = isNumericColumn(col, rows) ? '0' : '-';
+                }
+                return Array.isArray(val) ? val.join(', ') : String(val);
+            })
+        ];
     });
 
     const isLandscape = activeCols.length > 6;
@@ -357,26 +532,26 @@ export function printTable(columns, rows, title = 'Laporan') {
 
     // Set metadata properties
     doc.setProperties({
-        title: title,
-        subject: `Laporan ${title} - UD. TB Nur`,
-        creator: 'UD. TB Nur POS System',
-        author: 'UD. TB Nur'
+        title: cleanTitle,
+        subject: `Laporan ${cleanTitle} - TB Nur`,
+        creator: 'TB Nur POS System',
+        author: 'TB Nur'
     });
 
     // Draw page 1 branding header
     const width = doc.internal.pageSize.width;
 
-    // Company Title (UD. TB Nur)
+    // Company Title (TB Nur)
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(30, 58, 138); // Navy-900 (#1e3a8a)
-    doc.text('UD. TB Nur', 36, 45);
+    doc.text('TB Nur', 36, 45);
 
     // Report Title
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.setTextColor(71, 85, 105); // Slate-600 (#475569)
-    doc.text(title, 36, 62);
+    doc.text(cleanTitle, 36, 62);
 
     // Timestamp & Stats on the right
     doc.setFont('helvetica', 'normal');
@@ -404,10 +579,12 @@ export function printTable(columns, rows, title = 'Laporan') {
     doc.line(36, 75, width - 36, 75);
 
     // Align column configurations
-    const columnStyles = {};
+    const columnStyles = {
+        0: { halign: 'center' }
+    };
     activeCols.forEach((col, idx) => {
         const align = col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left';
-        columnStyles[idx] = { halign: align };
+        columnStyles[idx + 1] = { halign: align };
     });
 
     // Generate AutoTable
@@ -451,7 +628,7 @@ export function printTable(columns, rows, title = 'Laporan') {
 
         // Header (only for pages > 1)
         if (i > 1) {
-            doc.text(`UD. TB Nur — ${title}`, 36, 25);
+            doc.text(`TB Nur — ${cleanTitle}`, 36, 25);
             doc.setDrawColor(226, 232, 240); // Slate-200
             doc.setLineWidth(0.5);
             doc.line(36, 28, width - 36, 28);
@@ -464,12 +641,11 @@ export function printTable(columns, rows, title = 'Laporan') {
         const url = URL.createObjectURL(blob);
         const win = window.open(url, '_blank');
         if (!win) {
-            // Popup blocker triggered, download instead
-            doc.save(`${getFormattedFilename(title)}.pdf`);
+            doc.save(`${getFormattedFilename(cleanTitle)}.pdf`);
         }
     } catch (e) {
         console.error('Failed to open PDF preview, downloading instead.', e);
-        doc.save(`${getFormattedFilename(title)}.pdf`);
+        doc.save(`${getFormattedFilename(cleanTitle)}.pdf`);
     }
 }
 
