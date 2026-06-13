@@ -194,11 +194,22 @@ export default function BusinessPartnerView({
     partnerType = 'customer',
 }) {
     const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: resourceName,
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const pageConfig = partnerType === 'supplier' ? page.suppliers ?? {} : page.customers ?? {};
@@ -210,10 +221,20 @@ export default function BusinessPartnerView({
                 ...baseConfig.table,
                 rows: rows.map(mapPartnerRow),
                 pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
             },
         };
-    }, [loading, pageConfig, partnerType, rows, total]);
+    }, [loading, pageConfig, partnerType, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <BusinessPartnerTableView

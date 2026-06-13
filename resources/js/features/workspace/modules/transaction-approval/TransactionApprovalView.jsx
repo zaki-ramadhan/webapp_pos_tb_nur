@@ -298,17 +298,38 @@ export default function TransactionApprovalView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'transaction-approval-rules',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const resolvedTable = useMemo(() => ({
         ...page.table,
         rows: rows.map(mapApprovalRuleRow),
         pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
         refreshLabel: loading ? 'Memuat...' : page.table.refreshLabel,
     }), [loading, page.table, rows, total]);
 

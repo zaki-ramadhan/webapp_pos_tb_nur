@@ -38,7 +38,7 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -98,9 +98,11 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
+                        ) : null}
                             {visibleColumns.map((column) => (
                                 <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 py-2.5 text-base font-medium text-white`.trim()}>
                                     <span className="flex items-center gap-2">
@@ -126,7 +128,9 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                                     }
                                     className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8] cursor-pointer hover:bg-[#eef3fb] transition`.trim()}
                                 >
-                                    <DataTableCell className="px-3 py-2.5 text-center text-base text-[#646d83]">{index + 1}</DataTableCell>
+                                    {filteredRows.length > 0 ? (
+                                        <DataTableCell className="px-3 py-2.5 text-center text-base text-[#646d83]">{index + 1}</DataTableCell>
+                                    ) : null}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell key={column.id} className="px-3 py-2.5 text-base text-[#131a28]">
                                             {row[column.id]}
@@ -136,7 +140,7 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

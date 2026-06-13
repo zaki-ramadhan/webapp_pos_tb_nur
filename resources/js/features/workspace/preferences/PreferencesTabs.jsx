@@ -23,7 +23,7 @@ export default function PreferencesTabs({
                         key={tab.id}
                         type="button"
                         onClick={() => onSelectTab(tab.id)}
-                        className={`relative -mb-px -mr-px inline-flex h-8.5 shrink-0 items-center rounded-t-[5px] border border-b-0 px-3 text-sm transition sm:h-9 sm:px-4 sm:text-sm md:h-9.5 md:text-base max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
+                        className={`relative -mb-px -mr-px inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] border border-b-0 px-3 text-sm transition sm:h-8 sm:px-4 sm:text-sm md:h-8.5 md:text-base max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
                             activeTabId === tab.id
                                 ? 'z-10 border-[#bcc4d0] border-t-[3px] border-t-[#ED3969] bg-white font-normal text-[#475569]'
                                 : 'border-[#bcc4d0] bg-tab-primary-inactive-bg font-normal text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg'

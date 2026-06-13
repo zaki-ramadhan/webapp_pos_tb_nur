@@ -688,7 +688,7 @@ export default function TableToolbar({
 
                     {search ? (() => {
                         const searchColumns = resolvedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-                        const primaryColumnLabels = searchColumns.slice(0, 3).map(col => col.label);
+                        const primaryColumnLabels = searchColumns.slice(0, 2).map(col => col.label);
                         const computedSearchPlaceholder = primaryColumnLabels.length > 0
                             ? `Cari ${primaryColumnLabels.join(', ')}...`
                             : 'Cari data...';

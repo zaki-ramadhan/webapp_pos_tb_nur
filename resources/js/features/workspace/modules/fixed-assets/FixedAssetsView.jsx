@@ -7,11 +7,22 @@ import useBackendIndexResource from '@/features/workspace/backend/useBackendInde
 import { mapFixedAssetRows, buildFixedAssetsFilters } from '@/features/workspace/backend/workspaceBackendAdapters';
 
 export default function FixedAssetsView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'fixed-assets',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
 
@@ -31,9 +42,19 @@ export default function FixedAssetsView({ page, mode, activeLevel2Tab, onOpenCon
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [page.fixedAssets, rows, total, loading, error, reload]);
+    }, [page.fixedAssets, rows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     if (mode === 'table') {
         return <FixedAssetsTableView config={config} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />;

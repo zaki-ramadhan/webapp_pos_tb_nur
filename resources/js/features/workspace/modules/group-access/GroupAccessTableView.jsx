@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import {
     DataTable,
@@ -53,9 +55,11 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                 <DataTable>
                     <DataTableHeader>
                         <tr>
+                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
+                        ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -82,9 +86,11 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                                         index % 2 === 1 ? 'bg-[#f6f7f9]' : 'bg-white'
                                     }`.trim()}
                                 >
-                                                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                                                        {filteredRows.length > 0 ? (
+                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
+                                    ) : null}
 <DataTableCell className="text-left text-base font-normal text-[#131a28]">
                                         {formatTableTextValue(row.groupName)}
                                     </DataTableCell>
@@ -95,7 +101,7 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-8 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-3 py-8 text-center text-base text-[#131a28]">
                                     {loading ? 'Memuat data...' : (error || table.emptyLabel || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
@@ -103,6 +109,20 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

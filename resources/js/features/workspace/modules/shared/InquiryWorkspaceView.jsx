@@ -19,6 +19,7 @@ import {
     SearchIcon,
 } from '@/features/workspace/shared/Icons';
 import SelectField from '@/components/ui/SelectField';
+import Pagination from '@/components/ui/Pagination';
 
 const CONTENT_MIN_HEIGHT_CLASS_NAME = 'min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]';
 
@@ -131,6 +132,7 @@ export default function InquiryWorkspaceView({
     error = '',
     onRefresh = null,
     onValuesChange = null,
+    pagination = null,
 }) {
     const controls = config.controls ?? [];
     const actions = (config.actions ?? []).filter((action) => action.tone !== 'warning' && action.icon !== 'idea' && action.id !== 'help');
@@ -264,6 +266,21 @@ export default function InquiryWorkspaceView({
 
                     {!hasRows ? (
                         <div className={`border-t border-[#edf1f6] bg-white ${config.table.emptySpaceClassName ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()} />
+                    ) : null}
+
+                    {pagination ? (
+                        <div className="border-t border-[#edf1f6] bg-[#f8fafc] px-3 py-2">
+                            <Pagination
+                                page={pagination.page}
+                                perPage={pagination.perPage}
+                                total={pagination.total}
+                                lastPage={pagination.lastPage}
+                                from={pagination.from}
+                                to={pagination.to}
+                                onPageChange={pagination.onPageChange}
+                                onPerPageChange={pagination.onPerPageChange}
+                            />
+                        </div>
                     ) : null}
                 </div>
 

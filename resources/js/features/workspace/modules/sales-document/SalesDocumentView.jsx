@@ -21,11 +21,22 @@ export default function SalesDocumentView({
     onCloseDetail,
 }) {
     const backendConfig = OPERATION_DOCUMENT_BACKEND_CONFIG[pageId] ?? null;
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: backendConfig?.resource,
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: Boolean(backendConfig),
     });
 
@@ -47,9 +58,19 @@ export default function SalesDocumentView({
                 refreshLabel: loading ? 'Memuat data...' : config.table.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [backendConfig, config, error, loading, pageId, reload, rows, total]);
+    }, [backendConfig, config, error, loading, pageId, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     const resolvedBuildRecord = useMemo(
         () => (row = {}) => {

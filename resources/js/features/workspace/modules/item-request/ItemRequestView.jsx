@@ -11,11 +11,22 @@ import {
 } from './itemRequestShared';
 
 export default function ItemRequestView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'item-requests',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(() => {
         const baseConfig = buildItemRequestConfig(page.itemRequest);
@@ -32,10 +43,20 @@ export default function ItemRequestView({ page, mode, activeLevel2Tab, onOpenCon
                 rows: mappedRows,
                 filters: buildItemRequestFilters(baseConfig.table?.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
             },
         };
-    }, [loading, page.itemRequest, rows, total]);
+    }, [loading, page.itemRequest, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     const buildRecord = useCallback((row) => {
         if (row?.__backendRecord) {

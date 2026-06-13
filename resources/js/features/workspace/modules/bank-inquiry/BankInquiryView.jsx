@@ -12,9 +12,23 @@ export default function BankInquiryView({ page }) {
     const config = bankInquiryPageConfigs[page.id] ?? bankInquiryPageConfigs['bank-statement'];
     const [filters, setFilters] = useState(() => buildBankFilters({}));
     const resource = BACKEND_BANK_RESOURCES[page.id] ?? BACKEND_BANK_RESOURCES['bank-statement'];
-    const { rows, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource,
         filters,
+        initialPerPage: 25,
     });
     const tableRows = useMemo(() => mapBankRows(page.id, rows), [page.id, rows]);
 
@@ -27,6 +41,16 @@ export default function BankInquiryView({ page }) {
             error={error}
             onRefresh={reload}
             onValuesChange={(values) => setFilters(buildBankFilters(values))}
+            pagination={{
+                page: currentPage,
+                perPage,
+                total,
+                lastPage,
+                from,
+                to,
+                onPageChange: setPage,
+                onPerPageChange: setPerPage,
+            }}
         />
     );
 }

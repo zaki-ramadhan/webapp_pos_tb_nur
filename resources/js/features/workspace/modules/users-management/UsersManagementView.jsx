@@ -246,7 +246,7 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
 
         return table.rows.filter((row) => {
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -328,20 +328,42 @@ export default function UsersManagementView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'users',
-        filters: { per_page: 100 },
+        initialPerPage: 25,
     });
 
     const groupsResource = useBackendIndexResource({
         resource: 'access-groups',
-        filters: { per_page: 100 },
+        initialPerPage: 25,
     });
 
     const resolvedTable = useMemo(() => ({
         ...page.table,
         rows: rows.map(mapUserRow),
         pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
         refreshLabel: loading ? 'Memuat...' : page.table.refreshLabel,
     }), [loading, page.table, rows, total]);
 

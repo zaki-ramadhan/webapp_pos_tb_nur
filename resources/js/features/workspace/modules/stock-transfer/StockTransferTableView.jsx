@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import SelectField from '@/components/ui/SelectField';
 import { TransactionDataTable, TransactionToolbarIconButton, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -187,6 +189,20 @@ export default function StockTransferTableView({ config, onCreate, onOpenDetail 
                     )}
                 />
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

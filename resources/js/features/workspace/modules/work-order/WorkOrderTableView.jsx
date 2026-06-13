@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import {
     DataTable,
@@ -155,9 +157,11 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
+                            {rows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
+                        ) : null}
                                 {config.table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
@@ -194,9 +198,11 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                                             })
                                         }
                                     >
-                                                                            <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                                                            {rows.length > 0 ? (
+                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
+                                    ) : null}
 {config.table.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
@@ -210,7 +216,7 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                             ) : (
                                 <DataTableRow className="border-[#dde1e8] bg-white">
                                     <DataTableCell
-                                        colSpan={config.table.columns.length + 1}
+                                        colSpan={rows.length > 0 ? config.table.columns.length + 1 : config.table.columns.length}
                                         className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
                                         Belum ada data
@@ -221,6 +227,20 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                     </DataTable>
                 </div>
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

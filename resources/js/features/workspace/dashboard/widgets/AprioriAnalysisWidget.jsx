@@ -24,7 +24,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
     const supportMetric = getMetric(widget.metrics, 'Min Support');
     const confidenceMetric = getMetric(widget.metrics, 'Min Confidence');
     const validRulesMetric = getMetric(widget.metrics, 'Rule Valid');
-    const actionItems = (widget.rules ?? []).slice(0, 3).map((rule) => ({
+    const actionItems = (widget.rules ?? []).slice(0, 2).map((rule) => ({
         title: `Pasangkan ${rule.consequent} saat pelanggan membeli ${rule.antecedent}`,
         detail: `Confidence ${rule.confidence}, support ${rule.support}, lift ${rule.lift}. Cocok untuk bundling atau penempatan rak yang berdekatan.`,
     }));

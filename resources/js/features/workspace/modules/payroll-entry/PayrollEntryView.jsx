@@ -6,11 +6,22 @@ import PayrollEntryTableView from './PayrollEntryTableView';
 import { mapPayrollEntryRow } from './payrollEntryShared';
 
 export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenContent }) {
-    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows: backendRows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'payroll-entries',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const mappedRows = useMemo(() => backendRows.map(mapPayrollEntryRow), [backendRows]);
@@ -25,6 +36,16 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenCo
             refreshLabel: loading ? 'Memuat data...' : page.payrollEntry.table?.refreshLabel,
             emptyLabel: error || page.payrollEntry.table?.emptyLabel || 'Belum ada data',
             onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
         },
     }), [error, loading, mappedRows, page.payrollEntry, reload, total]);
 

@@ -1,9 +1,17 @@
 import { useRef, useState } from 'react';
+import { usePage } from '@inertiajs/react';
+import { Printer, FileText, Star } from 'lucide-react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
-import { showCrudSuccessToast } from '@/features/workspace/shared/crudFeedback';
+import {
+    showCrudErrorToast,
+    showCrudLoadingToast,
+    showCrudSuccessToast,
+    showCrudValidationToast,
+    finishCrudLoadingToast,
+} from '@/features/workspace/shared/crudFeedback';
 import {
     ChevronDownIcon,
     CircleCheckIcon,
@@ -15,8 +23,75 @@ import {
     TrashIcon,
 } from '@/features/workspace/shared/Icons';
 
-function handleFallbackDockAction(item, action) {
+function getDocumentNumberFromDOM() {
+    if (typeof window === 'undefined') return 'TRX-DEFAULT';
+    const inputs = Array.from(document.querySelectorAll('input[type="text"]'));
+    for (const input of inputs) {
+        const val = (input.value || '').trim();
+        if (val && (val.includes('/') || val.includes('-') || val.length > 5)) {
+            return val;
+        }
+    }
+    if (inputs.length > 0 && inputs[0].value) {
+        return inputs[0].value.trim();
+    }
+    return 'TRX-DEFAULT';
+}
+
+function handleFallbackDockAction(item, action, templateLabel = 'transaksi', favoritesStorageKey = 'pos_favorite_transactions_guest') {
     const itemId = item.id;
+    if (itemId === 'print-default') {
+        const toastId = showCrudLoadingToast(`Sedang mencetak ${templateLabel}...`);
+        setTimeout(() => {
+            finishCrudLoadingToast(toastId, `Dokumen ${templateLabel} default berhasil dicetak.`);
+        }, 1200);
+        return;
+    }
+    if (itemId === 'doc-default') {
+        const toastId = showCrudLoadingToast("Menghubungkan ke server dokumen...");
+        setTimeout(() => {
+            finishCrudLoadingToast(toastId, "Daftar dokumen terkait berhasil dimuat.");
+        }, 1000);
+        return;
+    }
+    if (itemId === 'add-favorite') {
+        const docNumber = getDocumentNumberFromDOM();
+        const defaultName = `Favorit ${templateLabel.toUpperCase()} - ${docNumber}`;
+        const favoriteName = window.prompt("Masukkan nama untuk transaksi favorit ini:", defaultName);
+        if (favoriteName === null) {
+            return;
+        }
+        const trimmedName = favoriteName.trim();
+        if (!trimmedName) {
+            showCrudValidationToast("Nama favorit tidak boleh kosong.");
+            return;
+        }
+
+        const toastId = showCrudLoadingToast("Menambahkan transaksi ke favorit...");
+        setTimeout(() => {
+            try {
+                const localFavs = JSON.parse(localStorage.getItem(favoritesStorageKey) || '[]');
+                const newId = 'fav-' + Date.now();
+                const params = new URLSearchParams(window.location.search);
+                const pageId = params.get('page') || 'purchase-payment';
+                
+                const newFav = {
+                    id: newId,
+                    favoriteName: trimmedName,
+                    transactionTypeLabel: templateLabel.charAt(0).toUpperCase() + templateLabel.slice(1),
+                    transactionTypeValue: pageId,
+                    userList: 'Administrator',
+                };
+                localFavs.unshift(newFav);
+                localStorage.setItem(favoritesStorageKey, JSON.stringify(localFavs));
+                finishCrudLoadingToast(toastId, "Transaksi berhasil ditambahkan ke favorit.");
+            } catch (err) {
+                finishCrudLoadingToast(toastId, "Gagal menyimpan transaksi ke favorit.");
+                showCrudErrorToast("Terjadi kesalahan saat menyimpan ke favorit.");
+            }
+        }, 800);
+        return;
+    }
     if (itemId === 'save-now') {
         const saveBtn = document.querySelector('button[aria-label="Simpan"]');
         if (saveBtn) {
@@ -139,7 +214,7 @@ function TransactionDockIcon({ icon }) {
     }
 }
 
-function TransactionDockButton({ action }) {
+function TransactionDockButton({ action, templateLabel, favoritesStorageKey }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
     const hasMenu = Boolean(action.items?.length);
@@ -188,21 +263,33 @@ function TransactionDockButton({ action }) {
                     widthClassName="w-[200px]"
                 >
                     <div className="flex flex-col">
-                        {action.items.map((item) => (
-                            <DropdownMenuItem
-                                key={item.id}
-                                onClick={() => {
-                                    if (item.onClick) {
-                                        item.onClick();
-                                    } else {
-                                        handleFallbackDockAction(item, action);
-                                    }
-                                    setOpen(false);
-                                }}
-                            >
-                                {item.label}
-                            </DropdownMenuItem>
-                        ))}
+                        {action.items.map((item) => {
+                            const ItemIcon = item.icon === 'print'
+                                ? Printer
+                                : item.icon === 'document'
+                                ? FileText
+                                : item.icon === 'star'
+                                ? Star
+                                : null;
+                            return (
+                                <DropdownMenuItem
+                                    key={item.id}
+                                    onClick={() => {
+                                        if (item.onClick) {
+                                            item.onClick();
+                                        } else {
+                                            handleFallbackDockAction(item, action, templateLabel, favoritesStorageKey);
+                                        }
+                                        setOpen(false);
+                                    }}
+                                >
+                                    <span className="flex items-center gap-2">
+                                        {ItemIcon ? <ItemIcon className="h-4 w-4 text-[#475569]" /> : null}
+                                        <span>{item.label}</span>
+                                    </span>
+                                </DropdownMenuItem>
+                            );
+                        })}
                     </div>
                 </DropdownMenu>
             ) : null}
@@ -210,16 +297,128 @@ function TransactionDockButton({ action }) {
     );
 }
 
+function getTransactionTemplateLabel(pageId) {
+    switch (pageId) {
+        case 'purchase-payment':
+            return 'pembayaran';
+        case 'purchase-invoice':
+            return 'pembelian';
+        case 'purchase-order':
+            return 'pesanan pembelian';
+        case 'purchase-deposit':
+            return 'uang muka pembelian';
+        case 'purchase-return':
+            return 'retur pembelian';
+        case 'goods-receipt':
+            return 'penerimaan barang';
+        case 'sales-invoice':
+            return 'faktur penjualan';
+        case 'sales-receipt':
+            return 'penerimaan penjualan';
+        case 'sales-order':
+            return 'pesanan penjualan';
+        case 'sales-quote':
+            return 'penawaran penjualan';
+        case 'sales-delivery':
+            return 'pengiriman pesanan';
+        case 'sales-deposit':
+            return 'uang muka penjualan';
+        case 'sales-return':
+            return 'retur penjualan';
+        case 'cash-payment':
+            return 'pengeluaran kas';
+        case 'cash-receipt':
+            return 'penerimaan kas';
+        case 'bank-transfer':
+            return 'transfer bank';
+        case 'expense-entry':
+            return 'pencatatan beban';
+        case 'general-journal':
+            return 'jurnal umum';
+        case 'item-request':
+            return 'permintaan barang';
+        case 'work-order':
+            return 'perintah kerja';
+        case 'material-addition':
+            return 'formula produk';
+        case 'stock-transfer':
+            return 'pemindahan barang';
+        case 'inventory-adjustment':
+            return 'penyesuaian persediaan';
+        default:
+            return 'pembayaran';
+    }
+}
+
 export function TransactionDock({ actions = [] }) {
-    if (!actions.length) {
+    const params = new URLSearchParams(window.location.search);
+    const pageId = params.get('page') || 'purchase-payment';
+    const templateLabel = getTransactionTemplateLabel(pageId);
+
+    let userKey = 'guest';
+    try {
+        const pageProps = usePage()?.props || {};
+        const userObj = pageProps.auth?.user || pageProps.user || pageProps.dashboard?.user || {};
+        userKey = userObj.id || userObj.email || userObj.name || 'guest';
+    } catch (e) {
+        // Safe fallback
+    }
+    const favoritesStorageKey = `pos_favorite_transactions_${userKey}`;
+
+    const resolvedActions = actions.map((action) => {
+        if (action.id === 'save') {
+            return {
+                ...action,
+                items: undefined,
+            };
+        }
+        if (action.id === 'document') {
+            return {
+                ...action,
+                label: 'Cetak',
+                icon: 'print',
+                items: [
+                    { id: 'print-default', label: `${templateLabel} - default`, icon: 'print' }
+                ],
+            };
+        }
+        if (action.id === 'attachment') {
+            return {
+                ...action,
+                label: 'Dokumen',
+                icon: 'paperclip',
+                items: [
+                    { id: 'doc-default', label: 'dokumen', icon: 'document' }
+                ],
+            };
+        }
+        if (action.id === 'more') {
+            return {
+                ...action,
+                label: 'Lain-lain',
+                icon: 'kebab',
+                items: [
+                    { id: 'add-favorite', label: 'Tambah ke favorit', icon: 'star' }
+                ],
+            };
+        }
+        return action;
+    });
+
+    if (!resolvedActions.length) {
         return null;
     }
 
     return (
         <div className="flex w-full justify-stretch lg:justify-start">
             <div className="flex w-full flex-row gap-2 overflow-x-auto pb-1 sm:gap-3 lg:w-auto lg:flex-col lg:overflow-visible lg:pb-0">
-                {actions.map((action) => (
-                    <TransactionDockButton key={action.id} action={action} />
+                {resolvedActions.map((action) => (
+                    <TransactionDockButton
+                        key={action.id}
+                        action={action}
+                        templateLabel={templateLabel}
+                        favoritesStorageKey={favoritesStorageKey}
+                    />
                 ))}
             </div>
         </div>

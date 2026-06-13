@@ -6,11 +6,22 @@ import CashReceiptTableView from '@/features/workspace/modules/cash-receipt/Cash
 import { buildCashReceiptFilters, buildCashReceiptRow } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
 
 export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'cash-receipts',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(
         () => {
@@ -27,6 +38,16 @@ export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenCon
                     rows: mappedRows,
                     filters: buildCashReceiptFilters(page.cashReceipt.table?.filters, mappedRows),
                     pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                     refreshLabel: loading ? 'Memuat data...' : page.cashReceipt.table?.refreshLabel,
                 },
             };

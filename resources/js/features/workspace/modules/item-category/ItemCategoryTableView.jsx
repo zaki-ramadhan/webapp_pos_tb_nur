@@ -68,9 +68,11 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 ? (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            ) : null}
                                 {config.table.columns.map((column) => (
                                     <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveRowAlignClassName(column.align)}`.trim()}>
                                         {column.kind === 'spacer' ? (
@@ -89,28 +91,38 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
                         </DataTableHeader>
 
                         <DataTableBody>
-                            {filteredRows.map((row, index) => (
-                                <DataTableRow
-                                    key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                                    onClick={() =>
-                                        onOpenDetail?.({
-                                            recordId: row.id,
-                                            label: row.name,
-                                            tabLabel: row.tabLabel ?? row.name,
-                                        })
-                                    }
-                                >
-                                                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
-                                        {index + 1}
+                            {filteredRows.length ? (
+                                filteredRows.map((row, index) => (
+                                    <DataTableRow
+                                        key={row.id}
+                                        className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                        onClick={() =>
+                                            onOpenDetail?.({
+                                                recordId: row.id,
+                                                label: row.name,
+                                                tabLabel: row.tabLabel ?? row.name,
+                                            })
+                                        }
+                                    >
+                                        {filteredRows.length > 0 ? (
+                                            <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                                {index + 1}
+                                            </DataTableCell>
+                                        ) : null}
+                                        {config.table.columns.map((column) => (
+                                            <DataTableCell key={column.id} className={`${column.cellClassName ?? ''} px-3 text-base text-[#131a28]`.trim()}>
+                                                {column.kind === 'spacer' ? null : <span className="block truncate">{formatTableTextValue(row[column.id])}</span>}
+                                            </DataTableCell>
+                                        ))}
+                                    </DataTableRow>
+                                ))
+                            ) : (
+                                <DataTableRow className="bg-white">
+                                    <DataTableCell colSpan={config.table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                        Belum ada data
                                     </DataTableCell>
-{config.table.columns.map((column) => (
-                                        <DataTableCell key={column.id} className={`${column.cellClassName ?? ''} px-3 text-base text-[#131a28]`.trim()}>
-                                            {column.kind === 'spacer' ? null : <span className="block truncate">{formatTableTextValue(row[column.id])}</span>}
-                                        </DataTableCell>
-                                    ))}
                                 </DataTableRow>
-                            ))}
+                            )}
                         </DataTableBody>
                     </DataTable>
                 </div>

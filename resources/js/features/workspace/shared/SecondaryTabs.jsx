@@ -28,7 +28,7 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
                     onSelect(tab.id);
                 }
             }}
-            className={`relative -mb-px inline-flex h-8.5 shrink-0 items-center rounded-t-[5px] border-x border-t-2 border-b-0 text-xs leading-normal whitespace-nowrap transition sm:h-9 sm:text-sm md:h-9.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${className}`.trim()}
+            className={`relative -mb-px inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] border-x border-t-2 border-b-0 text-xs leading-normal whitespace-nowrap transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">

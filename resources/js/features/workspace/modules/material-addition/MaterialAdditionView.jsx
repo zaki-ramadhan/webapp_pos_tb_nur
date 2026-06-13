@@ -11,11 +11,22 @@ import {
 } from './materialAdditionShared';
 
 export default function MaterialAdditionView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'material-additions',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(() => {
         const baseConfig = buildMaterialAdditionConfig(page.materialAddition);
@@ -32,10 +43,20 @@ export default function MaterialAdditionView({ page, mode, activeLevel2Tab, onOp
                 rows: mappedRows,
                 filters: buildMaterialAdditionFilters(baseConfig.table?.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
             },
         };
-    }, [loading, page.materialAddition, rows, total]);
+    }, [loading, page.materialAddition, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     const buildRecord = useCallback((row) => {
         if (row?.__backendRecord) {

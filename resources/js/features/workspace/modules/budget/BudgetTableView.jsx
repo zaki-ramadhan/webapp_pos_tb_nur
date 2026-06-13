@@ -37,7 +37,7 @@ export default function BudgetTableView({ page, onCreate, onOpenDetail, onRefres
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),

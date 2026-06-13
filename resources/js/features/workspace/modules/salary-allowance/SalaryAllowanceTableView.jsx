@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import {
     DataTable,
@@ -131,9 +133,11 @@ export default function SalaryAllowanceTableView({
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
+                        ) : null}
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -153,7 +157,9 @@ export default function SalaryAllowanceTableView({
                                     className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f1f1f2]' : 'bg-white'}`.trim()}
                                     onClick={() => onOpenDetail(row.id)}
                                 >
-                                    <DataTableCell className="py-2.5 text-center text-base text-[#646d83]">{index + 1}</DataTableCell>
+                                    {filteredRows.length > 0 ? (
+                                        <DataTableCell className="py-2.5 text-center text-base text-[#646d83]">{index + 1}</DataTableCell>
+                                    ) : null}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
@@ -166,7 +172,7 @@ export default function SalaryAllowanceTableView({
                             ))
                         ) : (
                             <DataTableRow>
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="py-6 text-center text-base text-[#6b7280]">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="py-6 text-center text-base text-[#6b7280]">
                                     {loading ? 'Memuat data...' : config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>
@@ -174,6 +180,20 @@ export default function SalaryAllowanceTableView({
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

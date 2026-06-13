@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
 
 import SelectField from '@/components/ui/SelectField';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
@@ -41,7 +42,7 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -113,9 +114,11 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                 <DataTable className="min-w-[1180px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 ? (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -131,31 +134,55 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''}`.trim()}
-                                onClick={() =>
-                                    onOpenDetail?.({
-                                        recordId: row.id,
-                                        label: row.name,
-                                        tabLabel: row.tabLabel ?? row.name,
-                                    })
-                                }
-                            >
-                                                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
-                                        {index + 1}
-                                    </DataTableCell>
-{table.columns.map((column) => (
-                                    <DataTableCell key={column.id} className="px-2.5 text-base text-[#131a28]">
-                                        {row[column.id]}
-                                    </DataTableCell>
-                                ))}
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''}`.trim()}
+                                    onClick={() =>
+                                        onOpenDetail?.({
+                                            recordId: row.id,
+                                            label: row.name,
+                                            tabLabel: row.tabLabel ?? row.name,
+                                        })
+                                    }
+                                >
+                                    {filteredRows.length > 0 ? (
+                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                            {index + 1}
+                                        </DataTableCell>
+                                    ) : null}
+                                    {table.columns.map((column) => (
+                                        <DataTableCell key={column.id} className="px-2.5 text-base text-[#131a28]">
+                                            {row[column.id]}
+                                        </DataTableCell>
+                                    ))}
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                    Belum ada data
+                                </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

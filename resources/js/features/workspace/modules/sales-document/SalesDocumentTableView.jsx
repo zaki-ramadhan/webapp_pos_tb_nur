@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import {
     DataTable,
@@ -61,9 +63,11 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
+                        ) : null}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -91,9 +95,11 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                                     }`.trim()}
                                     onClick={() => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                                 >
-                                                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                                                        {filteredRows.length > 0 ? (
+                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
+                                    ) : null}
 {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
@@ -109,7 +115,7 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
                                 <DataTableCell
-                                    colSpan={config.table.columns.length + 1}
+                                    colSpan={filteredRows.length > 0 ? config.table.columns.length + 1 : config.table.columns.length}
                                     className="px-2.5 py-6 text-center text-base text-[#7d879a]"
                                 >
                                     {config.table.emptyLabel ?? 'Belum ada data'}
@@ -119,6 +125,20 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

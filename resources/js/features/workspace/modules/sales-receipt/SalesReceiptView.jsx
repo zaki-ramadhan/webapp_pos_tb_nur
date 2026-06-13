@@ -11,11 +11,22 @@ import {
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 
 export default function SalesReceiptView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'sales-receipts',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(() => {
         const baseConfig = buildSalesReceiptConfig(page.salesReceipt);
@@ -32,10 +43,20 @@ export default function SalesReceiptView({ page, mode, activeLevel2Tab, onOpenCo
                 rows: mappedRows,
                 filters: buildSalesReceiptFilters(baseConfig.table?.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
             },
         };
-    }, [loading, page.salesReceipt, rows, total]);
+    }, [loading, page.salesReceipt, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <SalesReceiptTableView

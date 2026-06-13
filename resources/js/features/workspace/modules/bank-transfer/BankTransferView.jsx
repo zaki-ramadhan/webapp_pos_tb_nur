@@ -13,11 +13,22 @@ export default function BankTransferView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'bank-transfers',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
     const config = useMemo(() => {
@@ -38,9 +49,19 @@ export default function BankTransferView({
                 refreshLabel: loading ? 'Memuat data...' : page.bankTransfer.table?.refreshLabel,
                 emptyLabel: error || page.bankTransfer.table?.emptyLabel || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [error, loading, page.bankTransfer, reload, rows, total]);
+    }, [error, loading, page.bankTransfer, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <BankTransferTableView config={config} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />

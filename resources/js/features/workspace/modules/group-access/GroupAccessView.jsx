@@ -18,11 +18,22 @@ export default function GroupAccessView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows: backendRows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'access-groups',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const resolvedRows = useMemo(
         () => backendRows.map((record) => buildGroupAccessRow(record, page.form)),
@@ -46,6 +57,16 @@ export default function GroupAccessView({
             ...page.table,
             rows: resolvedRows,
             pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             emptyLabel: error || page.table?.emptyLabel || 'Belum ada data',
             refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
         }),

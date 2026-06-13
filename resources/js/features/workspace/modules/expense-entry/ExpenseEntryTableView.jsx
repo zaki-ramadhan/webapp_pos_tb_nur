@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
@@ -56,7 +58,7 @@ export default function ExpenseEntryTableView({
             }
 
             const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -137,7 +139,21 @@ export default function ExpenseEntryTableView({
                         )}
                     />
                 </div>
-            </div>
-        </div>
+
+    {config.table.pagination ? (
+                    <Pagination
+                        page={config.table.pagination.page}
+                        perPage={config.table.pagination.perPage}
+                        total={config.table.pagination.total}
+                        lastPage={config.table.pagination.lastPage}
+                        from={config.table.pagination.from}
+                        to={config.table.pagination.to}
+                        onPageChange={config.table.pagination.onPageChange}
+                        onPerPageChange={config.table.pagination.onPerPageChange}
+                        className="mt-3"
+                    />
+                ) : null}
+</div>
+</div>
     );
 }

@@ -15,23 +15,17 @@ export default function EmployeeView({
 }) {
     const employeeResource = useBackendIndexResource({
         resource: 'employees',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
     const branchResource = useBackendIndexResource({
         resource: 'branches',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
     const departmentResource = useBackendIndexResource({
         resource: 'departments',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
 
@@ -70,9 +64,19 @@ export default function EmployeeView({
                 refreshLabel: employeeResource.loading ? 'Memuat data...' : page.table?.refreshLabel,
                 emptyLabel: employeeResource.error || page.table?.emptyLabel || 'Belum ada data',
                 onRefresh: employeeResource.reload,
+                pagination: {
+                    page: employeeResource.page,
+                    perPage: employeeResource.perPage,
+                    total: employeeResource.total,
+                    lastPage: employeeResource.lastPage,
+                    from: employeeResource.from,
+                    to: employeeResource.to,
+                    onPageChange: employeeResource.setPage,
+                    onPerPageChange: employeeResource.setPerPage,
+                },
             },
         };
-    }, [branchResource.rows, departmentResource.rows, employeeResource.error, employeeResource.loading, employeeResource.reload, employeeResource.rows, employeeResource.total, page]);
+    }, [branchResource.rows, departmentResource.rows, employeeResource.error, employeeResource.loading, employeeResource.reload, employeeResource.rows, employeeResource.total, employeeResource.page, employeeResource.perPage, employeeResource.lastPage, employeeResource.from, employeeResource.to, employeeResource.setPage, employeeResource.setPerPage, page]);
 
     return mode === 'table' ? (
         <EmployeeTableView

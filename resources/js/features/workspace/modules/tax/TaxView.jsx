@@ -6,11 +6,22 @@ import TaxTableView from './TaxTableView';
 import { mapTaxRow } from './taxShared';
 
 export default function TaxView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows: backendRows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'taxes',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
     const mappedRows = useMemo(() => backendRows.map((row) => mapTaxRow(row)), [backendRows]);
@@ -20,6 +31,16 @@ export default function TaxView({ page, mode, activeLevel2Tab, onOpenContent, on
             ...page.table,
             rows: mappedRows,
             pageValue: total.toLocaleString('id-ID'),
+            pagination: {
+                page: currentPage,
+                perPage,
+                total,
+                lastPage,
+                from,
+                to,
+                onPageChange: setPage,
+                onPerPageChange: setPerPage,
+            },
         },
         form: {
             ...page.form,
@@ -39,7 +60,7 @@ export default function TaxView({ page, mode, activeLevel2Tab, onOpenContent, on
         onOpenDetail,
         onOpenContent,
         onCloseDetail,
-    }), [mappedRows, onCloseDetail, onOpenContent, onOpenDetail, page, reload, total]);
+    }), [mappedRows, onCloseDetail, onOpenContent, onOpenDetail, page, reload, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <TaxTableView

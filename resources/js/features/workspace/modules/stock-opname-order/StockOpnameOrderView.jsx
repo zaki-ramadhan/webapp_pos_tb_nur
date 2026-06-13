@@ -7,11 +7,22 @@ import useBackendIndexResource from '@/features/workspace/backend/useBackendInde
 import { mapStockOpnameOrderRow } from '@/features/workspace/backend/workspaceBackendAdapters';
 
 export default function StockOpnameOrderView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'stock-opname-orders',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const config = useMemo(() => {
@@ -24,9 +35,19 @@ export default function StockOpnameOrderView({ page, mode, activeLevel2Tab, onOp
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [loading, page.stockOpnameOrder, reload, rows, total]);
+    }, [loading, page.stockOpnameOrder, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     if (mode === 'table') {
         return <StockOpnameOrderTableView config={config} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />;

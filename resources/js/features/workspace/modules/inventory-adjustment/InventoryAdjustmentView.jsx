@@ -24,11 +24,22 @@ export default function InventoryAdjustmentView({
     onCloseDetail,
 }) {
     const backendConfig = INVENTORY_ADJUSTMENT_BACKEND_CONFIG[page.id] ?? null;
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: backendConfig?.resource,
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: Boolean(backendConfig),
     });
     const pageConfig = page.inventoryAdjustment ?? page.priceAdjustment;
@@ -52,6 +63,16 @@ export default function InventoryAdjustmentView({
                     refreshLabel: loading ? 'Memuat data...' : baseConfig.table.refreshLabel,
                     emptyLabel: error || 'Belum ada data',
                     onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                 },
             };
         },

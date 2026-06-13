@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
 
 import {
     DataTable,
@@ -30,13 +31,13 @@ export default function NumberingTableView({ table, onCreate }) {
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );
         });
-    }, [keyword, table.rows, transactionType]);
+    }, [keyword, table.columns, table.rows, transactionType]);
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
@@ -86,9 +87,11 @@ export default function NumberingTableView({ table, onCreate }) {
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 ? (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}>
                                     {column.label}
@@ -98,19 +101,43 @@ export default function NumberingTableView({ table, onCreate }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow key={row.id} className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}>
-                                                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
-                                        {index + 1}
-                                    </DataTableCell>
-<DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.name)}</span></DataTableCell>
-                                <DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.transactionTypeLabel)}</span></DataTableCell>
-                                <DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.userScopeLabel)}</span></DataTableCell>
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow key={row.id} className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}>
+                                    {filteredRows.length > 0 ? (
+                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                            {index + 1}
+                                        </DataTableCell>
+                                    ) : null}
+                                    <DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.name)}</span></DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.transactionTypeLabel)}</span></DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-[#131a28]"><span className="block truncate">{formatTableTextValue(row.userScopeLabel)}</span></DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                    Belum ada data
+                                </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

@@ -22,7 +22,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
                     onSelect(tab.id);
                 }
             }}
-            className={`relative -mb-px inline-flex h-8.5 items-center rounded-t-[5px] border text-xs leading-normal transition sm:h-9 sm:text-sm md:h-9.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
+            className={`relative -mb-px inline-flex h-7.5 items-center rounded-t-[5px] border text-xs leading-normal transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
                     ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-medium text-white'
                     : 'border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
@@ -66,7 +66,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((currentValue) => !currentValue)}
-                className="inline-flex h-8.5 min-w-[40px] items-center justify-center gap-1 border-l border-tab-overflow-border px-2 text-xs text-text-medium transition hover:bg-ui-bg-hover sm:h-9 sm:min-w-[44px] sm:px-2.5 sm:text-sm md:min-w-[46px] md:px-3 md:text-sm"
+                className="inline-flex h-7.5 min-w-[40px] items-center justify-center gap-1 border-l border-tab-overflow-border px-2 text-xs text-text-medium transition hover:bg-ui-bg-hover sm:h-8 sm:min-w-[44px] sm:px-2.5 sm:text-sm md:min-w-[46px] md:px-3 md:text-sm"
                 aria-label={`Buka daftar ${tabs.length} tab halaman`}
                 aria-expanded={open}
             >

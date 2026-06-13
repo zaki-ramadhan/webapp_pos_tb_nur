@@ -6,11 +6,22 @@ import GeneralJournalTableView from './GeneralJournalTableView';
 import { buildGeneralJournalFilters, buildGeneralJournalRow } from './generalJournalShared';
 
 export default function GeneralJournalView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'general-journals',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(
         () => {
@@ -30,6 +41,16 @@ export default function GeneralJournalView({ page, mode, activeLevel2Tab, onOpen
                     rows: mappedRows,
                     filters: buildGeneralJournalFilters(page.generalJournal.table?.filters, mappedRows),
                     pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                     refreshLabel: loading ? 'Memuat data...' : page.generalJournal.table?.refreshLabel,
                 },
             };

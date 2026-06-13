@@ -27,7 +27,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -90,9 +90,11 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
+                        ) : null}
                             {visibleColumns.map((column) => {
                                 const minWidth = getColumnMinWidth(column.label);
                                 return (
@@ -122,9 +124,11 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                                         })
                                     }
                                 >
-                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                    {filteredRows.length > 0 ? (
+                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                         {index + 1}
                                     </DataTableCell>
+                                    ) : null}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
@@ -141,7 +145,7 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

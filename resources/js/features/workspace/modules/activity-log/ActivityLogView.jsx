@@ -29,11 +29,25 @@ function matchesFilter(row, filter, selectedValue) {
 
 export default function ActivityLogView({ page }) {
     const [keyword, setKeyword] = useState('');
-    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows: backendRows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'activity-logs',
+        initialPerPage: 25,
         filters: {
             search: keyword.trim(),
-            per_page: 100,
+            
         },
     });
     const rows = useMemo(() => mapActivityLogRows(backendRows), [backendRows]);
@@ -50,6 +64,16 @@ export default function ActivityLogView({ page }) {
         columns: cleanedColumns,
         rows,
         pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
     }), [filtersConfig, page.table, cleanedColumns, rows, total]);
     const [filters, setFilters] = useState(() =>
         filtersConfig.reduce((result, filter) => {
@@ -69,7 +93,7 @@ export default function ActivityLogView({ page }) {
                 return result;
             }, {}),
         );
-    }, [filtersConfig]);
+    }, [filtersConfig, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -88,7 +112,7 @@ export default function ActivityLogView({ page }) {
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),

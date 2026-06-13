@@ -16,6 +16,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import { FunnelIcon, LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 import Tooltip from '@/components/ui/Tooltip';
+import Pagination from '@/components/ui/Pagination';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -93,6 +94,16 @@ export default function TableListView({
     const [sortKey, setSortKey] = useState(null);
     const [sortDir, setSortDir] = useState('asc');
 
+    const hasExternalPagination = Boolean(table.pagination);
+    const [localPage, setLocalPage] = useState(1);
+    const [localPerPage, setLocalPerPage] = useState(25);
+
+    useEffect(() => {
+        if (!hasExternalPagination) {
+            setLocalPage(1);
+        }
+    }, [keyword, filters, hasExternalPagination]);
+
     const handleSort = useCallback((columnId) => {
         setSortKey((prev) => {
             if (prev === columnId) {
@@ -107,7 +118,7 @@ export default function TableListView({
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
         const searchCols = (table.columns ?? []).filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-        const searchKeys = searchCols.slice(0, 3).map(col => col.id);
+        const searchKeys = searchCols.slice(0, 2).map(col => col.id);
 
         const filtered = table.rows.filter((row) => {
             const passesFilters = (table.filters ?? []).every((filter) =>
@@ -136,6 +147,37 @@ export default function TableListView({
             return sortDir === 'asc' ? cmp : -cmp;
         });
     }, [filters, keyword, sortDir, sortKey, table.columns, table.filters, table.rows, table.searchKeys]);
+
+    const paginatedRows = useMemo(() => {
+        if (hasExternalPagination) {
+            return filteredRows;
+        }
+        const start = (localPage - 1) * localPerPage;
+        return filteredRows.slice(start, start + localPerPage);
+    }, [filteredRows, hasExternalPagination, localPage, localPerPage]);
+
+    const paginationConfig = useMemo(() => {
+        if (hasExternalPagination) {
+            return table.pagination;
+        }
+        const total = filteredRows.length;
+        const lastPage = Math.max(1, Math.ceil(total / localPerPage));
+        const from = total > 0 ? (localPage - 1) * localPerPage + 1 : 0;
+        const to = Math.min(total, localPage * localPerPage);
+        return {
+            page: localPage,
+            perPage: localPerPage,
+            total,
+            lastPage,
+            from,
+            to,
+            onPageChange: setLocalPage,
+            onPerPageChange: (nextPerPage) => {
+                setLocalPerPage(nextPerPage);
+                setLocalPage(1);
+            },
+        };
+    }, [hasExternalPagination, table.pagination, filteredRows.length, localPage, localPerPage]);
 
     const cleanedColumns = useMemo(() => {
         return (table.columns ?? []).map(col => ({
@@ -217,9 +259,11 @@ export default function TableListView({
                 >
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {paginatedRows.length > 0 ? (
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            ) : null}
                             {visibleColumns.map((column) => (
                                 <SortableTableHeaderCell
                                     key={column.id}
@@ -234,18 +278,20 @@ export default function TableListView({
                             ))}
                         </tr>
                     </DataTableHeader>
-
+ 
                     <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
+                        {paginatedRows.length ? (
+                            paginatedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
                                     className={`border-[#dde1e8] ${onRowClick ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''} ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
-                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">
-                                        {index + 1}
-                                    </DataTableCell>
+                                    {paginatedRows.length > 0 ? (
+                                        <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">
+                                            {paginationConfig ? (paginationConfig.from + index) : (index + 1)}
+                                        </DataTableCell>
+                                    ) : null}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
@@ -262,7 +308,7 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
@@ -270,6 +316,20 @@ export default function TableListView({
                     </DataTableBody>
                 </DataTable>
             </div>
+ 
+            {paginationConfig ? (
+                <Pagination
+                    page={paginationConfig.page}
+                    perPage={paginationConfig.perPage}
+                    total={paginationConfig.total}
+                    lastPage={paginationConfig.lastPage}
+                    from={paginationConfig.from}
+                    to={paginationConfig.to}
+                    onPageChange={paginationConfig.onPageChange}
+                    onPerPageChange={paginationConfig.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

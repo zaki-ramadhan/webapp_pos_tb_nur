@@ -12,11 +12,17 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
         loading,
         error,
         reload,
+        total,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
     } = useBackendIndexResource({
         resource: 'accounts',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(() => {
         const baseConfig = buildAccountsConfig(page.accounts);
@@ -26,10 +32,20 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
             table: {
                 ...baseConfig.table,
                 rows: backendRows.map(mapAccountRow),
-                pageValue: backendRows.length.toLocaleString('id-ID'),
+                pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [backendRows, page.accounts]);
+    }, [backendRows, page.accounts, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <AccountsTableView

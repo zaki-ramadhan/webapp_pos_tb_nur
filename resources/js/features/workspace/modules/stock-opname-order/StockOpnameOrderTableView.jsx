@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import { FunnelIcon, LinkIcon, PrintIcon, SearchIcon } from '@/features/workspace/shared/Icons';
@@ -102,6 +104,20 @@ export default function StockOpnameOrderTableView({ config, onCreate, onOpenDeta
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <StockOpnameOrderTableRows config={config} rows={rows} onOpenDetail={onOpenDetail} />
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

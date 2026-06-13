@@ -9,11 +9,22 @@ import { buildSalaryAllowanceEntry, buildSalaryAllowanceRow } from './salaryAllo
 
 export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
     const config = page.salaryAllowance;
-    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows: backendRows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'salary-allowances',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const mappedBackendRows = useMemo(() => backendRows.map(buildSalaryAllowanceRow), [backendRows]);
     const [optimisticRows, setOptimisticRows] = useState({});
@@ -98,6 +109,16 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
                 loading,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         }),
         [config, error, loading, reload, resolvedRows, total],

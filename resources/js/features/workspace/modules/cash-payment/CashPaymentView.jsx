@@ -6,11 +6,22 @@ import CashPaymentTableView from './CashPaymentTableView';
 import { buildCashPaymentFilters, buildCashPaymentRow } from './cashPaymentShared';
 
 export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'cash-payments',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(
         () => {
@@ -27,6 +38,16 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenCon
                     rows: mappedRows,
                     filters: buildCashPaymentFilters(page.cashPayment.table?.filters, mappedRows),
                     pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                     refreshLabel: loading ? 'Memuat data...' : page.cashPayment.table?.refreshLabel,
                 },
             };

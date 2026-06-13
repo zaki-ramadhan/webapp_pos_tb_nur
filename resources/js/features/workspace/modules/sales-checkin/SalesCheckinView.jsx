@@ -8,11 +8,22 @@ import {
 import TableListView from '@/features/workspace/modules/TableListView';
 
 export default function SalesCheckinView({ page }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'sales-checkins',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const table = useMemo(() => {
         const mappedRows = mapSalesCheckinRows(rows);
@@ -26,8 +37,18 @@ export default function SalesCheckinView({ page }) {
             refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
             emptyLabel: error || 'Belum ada data',
             onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
         };
-    }, [error, loading, page.table, reload, rows, total]);
+    }, [error, loading, page.table, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return <TableListView table={table} />;
 }

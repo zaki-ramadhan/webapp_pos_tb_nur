@@ -14,11 +14,22 @@ export default function AssetDisposalView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'asset-disposals',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
 
@@ -50,6 +61,16 @@ export default function AssetDisposalView({
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             }
         };
 
@@ -57,7 +78,7 @@ export default function AssetDisposalView({
             ...page,
             assetDisposal: newConfig
         };
-    }, [page, rows, total, loading, error, reload]);
+    }, [page, rows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     if (mode === 'form') {
         return (

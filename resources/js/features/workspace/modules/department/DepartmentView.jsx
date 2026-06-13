@@ -29,23 +29,17 @@ function mapDepartmentRow(record) {
 export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const departmentResource = useBackendIndexResource({
         resource: 'departments',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
     const userResource = useBackendIndexResource({
         resource: 'users',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
     const branchResource = useBackendIndexResource({
         resource: 'branches',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
 
@@ -84,9 +78,19 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenCont
                 refreshLabel: departmentResource.loading ? 'Memuat data...' : page.table?.refreshLabel,
                 emptyLabel: departmentResource.error || page.table?.emptyLabel || 'Tidak ada data',
                 onRefresh: departmentResource.reload,
+                pagination: {
+                    page: departmentResource.page,
+                    perPage: departmentResource.perPage,
+                    total: departmentResource.total,
+                    lastPage: departmentResource.lastPage,
+                    from: departmentResource.from,
+                    to: departmentResource.to,
+                    onPageChange: departmentResource.setPage,
+                    onPerPageChange: departmentResource.setPerPage,
+                },
             },
         };
-    }, [branchResource.rows, departmentResource.error, departmentResource.loading, departmentResource.reload, departmentResource.rows, departmentResource.total, page, userResource.rows]);
+    }, [branchResource.rows, departmentResource.error, departmentResource.loading, departmentResource.reload, departmentResource.rows, departmentResource.total, departmentResource.page, departmentResource.perPage, departmentResource.lastPage, departmentResource.from, departmentResource.to, departmentResource.setPage, departmentResource.setPerPage, page, userResource.rows]);
 
     return mode === 'table' ? (
         <DepartmentTableView

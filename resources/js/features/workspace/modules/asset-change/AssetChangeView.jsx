@@ -14,11 +14,22 @@ export default function AssetChangeView({
     onOpenDetail,
     onCloseDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'asset-changes',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
         enabled: true,
     });
 
@@ -50,9 +61,19 @@ export default function AssetChangeView({
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
         };
-    }, [page.assetChange, rows, total, loading, error, reload]);
+    }, [page.assetChange, rows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     if (mode === 'table') {
         return <AssetChangeTableView config={config} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />;

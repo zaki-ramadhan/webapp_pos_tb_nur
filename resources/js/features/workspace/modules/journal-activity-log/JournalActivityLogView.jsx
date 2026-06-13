@@ -74,7 +74,7 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
 
         return config.table.rows.filter((row) => {
             const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -275,11 +275,22 @@ function JournalActivityLogDetailView({ config, activeLevel2Tab }) {
 }
 
 export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDetail }) {
-    const { rows: backendRows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows: backendRows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'journal-activity-logs',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const mappedRows = useMemo(() => mapJournalActivityRows(backendRows), [backendRows]);
     const config = useMemo(
@@ -293,6 +304,16 @@ export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDe
                 refreshLabel: loading ? 'Memuat data...' : page.journalActivityLog.table?.refreshLabel,
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
             rowMap: mappedRows.reduce((result, row) => {
                 result[row.id] = row;

@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
+
 
 import {
     DataTable,
@@ -49,7 +51,7 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -120,9 +122,11 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
-                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                {filteredRows.length > 0 ? (
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
+                        ) : null}
                                 {visibleColumns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
@@ -153,9 +157,11 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                                             })
                                         }
                                     >
+                                        {filteredRows.length > 0 ? (
                                         <DataTableCell className="px-3 text-center text-base text-[#646d83]">
                                             {index + 1}
                                         </DataTableCell>
+                                    ) : null}
                                         {visibleColumns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
@@ -169,7 +175,7 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                             ) : (
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
-                                        colSpan={visibleColumns.length + 1}
+                                        colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length}
                                         className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
                                         {table.emptyLabel}
@@ -180,6 +186,20 @@ export default function DepartmentTableView({ table, onCreate, onOpenDetail }) {
                     </DataTable>
                 </div>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

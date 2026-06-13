@@ -13,11 +13,22 @@ export default function ItemsServicesView({
     onOpenContent,
     onOpenDetail,
 }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'products',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
 
     const config = useMemo(() => {
@@ -28,10 +39,20 @@ export default function ItemsServicesView({
                 ...baseConfig.table,
                 rows: rows.map(mapProductRow),
                 pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
             },
         };
-    }, [loading, page.itemsServices, rows, total]);
+    }, [loading, page.itemsServices, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <ItemsServicesTableView

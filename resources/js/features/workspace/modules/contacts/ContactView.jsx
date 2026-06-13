@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import Pagination from '@/components/ui/Pagination';
 
 import {
     DataTable,
@@ -26,10 +27,17 @@ function FilterButton({ label }) {
     );
 }
 
-export default function ContactView({ page }) {
-    const table = page.table;
+export default function ContactView({ page: pageProp }) {
+    const table = pageProp.table;
     const [keyword, setKeyword] = useState('');
     const [typeFilter, setTypeFilter] = useState(table.filters?.[0]?.options?.[0]?.value ?? 'all');
+
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(25);
+
+    useEffect(() => {
+        setPage(1);
+    }, [keyword, typeFilter]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -44,13 +52,23 @@ export default function ContactView({ page }) {
             }
 
             const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 3).some((column) =>
+            return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
             );
         });
     }, [keyword, table.rows, typeFilter]);
+
+    const paginatedRows = useMemo(() => {
+        const start = (page - 1) * perPage;
+        return filteredRows.slice(start, start + perPage);
+    }, [filteredRows, page, perPage]);
+
+    const total = filteredRows.length;
+    const lastPage = Math.max(1, Math.ceil(total / perPage));
+    const from = total > 0 ? (page - 1) * perPage + 1 : 0;
+    const to = Math.min(total, page * perPage);
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
@@ -102,6 +120,11 @@ export default function ContactView({ page }) {
                 <DataTable className="min-w-[1280px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            {filteredRows.length > 0 ? (
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -117,31 +140,61 @@ export default function ContactView({ page }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row, index) => (
-                            <DataTableRow
-                                key={row.id}
-                                className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                            >
-                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
-                                    {formatTableTextValue(row.fullName)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
-                                    {formatTableTextValue(row.typeLabel)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
-                                    {formatTableTextValue(row.company)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
-                                    {formatTableTextValue(row.mobilePhone)}
-                                </DataTableCell>
-                                <DataTableCell className="px-2.5 text-base text-[#131a28]">
-                                    {formatTableTextValue(row.email)}
+                        {paginatedRows.length ? (
+                            paginatedRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                >
+                                    {filteredRows.length > 0 ? (
+                                        <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">
+                                            {from + index}
+                                        </DataTableCell>
+                                    ) : null}
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">
+                                        {formatTableTextValue(row.fullName)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">
+                                        {formatTableTextValue(row.typeLabel)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">
+                                        {formatTableTextValue(row.company)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">
+                                        {formatTableTextValue(row.mobilePhone)}
+                                    </DataTableCell>
+                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">
+                                        {formatTableTextValue(row.email)}
+                                    </DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                    Belum ada data
                                 </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {total > 0 ? (
+                <Pagination
+                    page={page}
+                    perPage={perPage}
+                    total={total}
+                    lastPage={lastPage}
+                    from={from}
+                    to={to}
+                    onPageChange={setPage}
+                    onPerPageChange={(nextPerPage) => {
+                        setPerPage(nextPerPage);
+                        setPage(1);
+                    }}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

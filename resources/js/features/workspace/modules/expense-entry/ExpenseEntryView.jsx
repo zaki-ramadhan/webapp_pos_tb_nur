@@ -10,11 +10,22 @@ import {
 } from './expenseEntryShared';
 
 export default function ExpenseEntryView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const { rows, total, loading, error, reload } = useBackendIndexResource({
+    const {
+        rows,
+        total,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to
+    } = useBackendIndexResource({
         resource: 'expense-entries',
-        filters: {
-            per_page: 100,
-        },
+        initialPerPage: 25,
     });
     const config = useMemo(() => {
         const mappedRows = rows.map(buildExpenseEntryRow);
@@ -30,11 +41,21 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, onOpenCo
                 rows: mappedRows,
                 filters: buildExpenseEntryFilters(page.expenseEntry.table?.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
                 emptyLabel: error || page.expenseEntry.table?.emptyLabel,
                 refreshLabel: loading ? 'Memuat data...' : page.expenseEntry.table?.refreshLabel,
             },
         };
-    }, [error, loading, page.expenseEntry, rows, total]);
+    }, [error, loading, page.expenseEntry, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <ExpenseEntryTableView
