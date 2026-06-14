@@ -6,7 +6,7 @@ import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import AttachmentDockButton from '@/features/workspace/shared/AttachmentDockButton';
 import { showCrudSuccessToast } from '@/features/workspace/shared/crudFeedback';
-import { CloseIcon, CogIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, CogIcon, FileIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 
 export function SuggestionTextInput({
@@ -147,20 +147,16 @@ export function SuggestionTextInput({
     );
 }
 
-export function AttachmentSelectButton({ label = 'Lampiran' }) {
+export function AttachmentSelectButton({ label = 'Lampiran', onOpen }) {
     return (
         <AttachmentDockButton
             label={label}
             items={[
                 {
-                    id: 'add-attachment',
-                    label: 'Tambah Lampiran',
-                    onClick: () => showCrudSuccessToast("Fitur tambah lampiran dokumen berhasil diproses."),
-                },
-                {
-                    id: 'manage-attachment',
-                    label: 'Kelola Lampiran',
-                    onClick: () => showCrudSuccessToast("Fitur kelola lampiran dokumen berhasil diproses."),
+                    id: 'document',
+                    label: 'Dokumen',
+                    icon: <FileIcon className="h-4.5 w-4.5" />,
+                    onClick: onOpen,
                 },
             ]}
         />

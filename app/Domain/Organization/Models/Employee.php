@@ -41,6 +41,7 @@ class Employee extends DomainModel
         'previous_income',
         'previous_tax',
         'is_salesperson',
+        'user_id',
         'notes',
         'is_active',
     ];
@@ -72,5 +73,15 @@ class Employee extends DomainModel
     public function bankAccounts(): HasMany
     {
         return $this->hasMany(EmployeeBankAccount::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
+    public function attachments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(\App\Domain\Support\Models\Attachment::class, 'attachable');
     }
 }

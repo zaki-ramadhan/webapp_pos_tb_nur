@@ -131,7 +131,7 @@ class OrganizationBackendResources
                 label: 'Employees',
                 searchColumns: ['employee_code', 'full_name', 'position', 'email', 'mobile_phone'],
                 modelClass: Employee::class,
-                with: ['branch', 'department', 'bankAccounts'],
+                with: ['branch', 'department', 'bankAccounts', 'user', 'attachments'],
                 storeRules: [
                     'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
                     'department_id' => ['nullable', 'integer', 'exists:departments,id'],
@@ -165,6 +165,7 @@ class OrganizationBackendResources
                     'previous_income' => ['nullable', 'numeric', 'min:0'],
                     'previous_tax' => ['nullable', 'numeric', 'min:0'],
                     'is_salesperson' => ['sometimes', 'boolean'],
+                    'user_id' => ['nullable', 'integer', 'exists:users,id'],
                     'notes' => ['nullable', 'string'],
                     'is_active' => ['sometimes', 'boolean'],
                     'bank_accounts' => ['sometimes', 'array'],
@@ -173,6 +174,8 @@ class OrganizationBackendResources
                     'bank_accounts.*.account_name' => ['required_with:bank_accounts', 'string', 'max:120'],
                     'bank_accounts.*.account_number' => ['required_with:bank_accounts', 'string', 'max:80'],
                     'bank_accounts.*.is_primary' => ['sometimes', 'boolean'],
+                    'attachment_ids' => ['sometimes', 'array'],
+                    'attachment_ids.*' => ['integer', 'exists:attachments,id'],
                 ],
                 updateRules: fn (Model $record) => [
                     'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
@@ -207,6 +210,7 @@ class OrganizationBackendResources
                     'previous_income' => ['nullable', 'numeric', 'min:0'],
                     'previous_tax' => ['nullable', 'numeric', 'min:0'],
                     'is_salesperson' => ['sometimes', 'boolean'],
+                    'user_id' => ['nullable', 'integer', 'exists:users,id'],
                     'notes' => ['nullable', 'string'],
                     'is_active' => ['sometimes', 'boolean'],
                     'bank_accounts' => ['sometimes', 'array'],
@@ -215,6 +219,8 @@ class OrganizationBackendResources
                     'bank_accounts.*.account_name' => ['required_with:bank_accounts', 'string', 'max:120'],
                     'bank_accounts.*.account_number' => ['required_with:bank_accounts', 'string', 'max:80'],
                     'bank_accounts.*.is_primary' => ['sometimes', 'boolean'],
+                    'attachment_ids' => ['sometimes', 'array'],
+                    'attachment_ids.*' => ['integer', 'exists:attachments,id'],
                 ],
                 syncUsing: function (Model $record, array $payload): void {
                     if (array_key_exists('bank_accounts', $payload)) {

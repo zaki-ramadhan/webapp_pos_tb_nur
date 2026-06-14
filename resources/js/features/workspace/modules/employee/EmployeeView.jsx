@@ -28,6 +28,11 @@ export default function EmployeeView({
         initialPerPage: 25,
         enabled: true,
     });
+    const userResource = useBackendIndexResource({
+        resource: 'users',
+        initialPerPage: 250,
+        enabled: true,
+    });
 
     const resolvedPage = useMemo(() => {
         const mappedRows = employeeResource.rows.map((record) => buildEmployeeRow(record));
@@ -53,6 +58,11 @@ export default function EmployeeView({
                         label: record.name ?? record.code ?? `Departemen #${record.id}`,
                         code: record.code ?? '',
                     })),
+                    users: userResource.rows.map((record) => ({
+                        id: record.id,
+                        label: record.name ?? '',
+                        email: record.email ?? '',
+                    })),
                 },
             },
             table: {
@@ -76,7 +86,7 @@ export default function EmployeeView({
                 },
             },
         };
-    }, [branchResource.rows, departmentResource.rows, employeeResource.error, employeeResource.loading, employeeResource.reload, employeeResource.rows, employeeResource.total, employeeResource.page, employeeResource.perPage, employeeResource.lastPage, employeeResource.from, employeeResource.to, employeeResource.setPage, employeeResource.setPerPage, page]);
+    }, [branchResource.rows, departmentResource.rows, userResource.rows, employeeResource.error, employeeResource.loading, employeeResource.reload, employeeResource.rows, employeeResource.total, employeeResource.page, employeeResource.perPage, employeeResource.lastPage, employeeResource.from, employeeResource.to, employeeResource.setPage, employeeResource.setPerPage, page]);
 
     return mode === 'table' ? (
         <EmployeeTableView

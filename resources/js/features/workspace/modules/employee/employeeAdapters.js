@@ -10,6 +10,8 @@ export function buildEmployeeFormValues(form, detailRow = null) {
         __backendRecordId: detailRow?.id ?? null,
         __branchId: detailRow?.branchId ?? null,
         __departmentId: detailRow?.departmentId ?? null,
+        __userId: detailRow?.userId ?? defaults.__userId ?? null,
+        user: detailRow?.user ?? defaults.user ?? '',
         salutation: detailRow?.salutation ?? defaults.salutation ?? '',
         fullName: detailRow?.fullName ?? defaults.fullName ?? '',
         position: detailRow?.position ?? defaults.position ?? '',
@@ -47,6 +49,7 @@ export function buildEmployeeFormValues(form, detailRow = null) {
         bankAccountNumber: primaryBankAccount?.account_number ?? primaryBankAccount?.accountNumber ?? detailRow?.bankAccountNumber ?? defaults.bankAccountNumber ?? '',
         bankAccountHolder: primaryBankAccount?.account_name ?? primaryBankAccount?.accountName ?? detailRow?.bankAccountHolder ?? defaults.bankAccountHolder ?? '',
         __bankAccountId: primaryBankAccount?.id ?? null,
+        attachments: detailRow?.attachments ?? defaults.attachments ?? [],
     };
 }
 
@@ -82,6 +85,8 @@ export function buildEmployeeRow(record) {
         branch: branchName,
         department: departmentName,
         isSalesperson: Boolean(record.is_salesperson),
+        userId: record.user_id ?? record.user?.id ?? null,
+        user: record.user ? (record.user.name && record.user.email ? `${record.user.name} (${record.user.email})` : (record.user.name ?? '')) : '',
         note: record.notes ?? '',
         street: record.street ?? '',
         city: record.city ?? '',
@@ -110,6 +115,7 @@ export function buildEmployeeRow(record) {
         branchValue: branchName.trim().toLowerCase().replace(/\s+/g, '-'),
         branchLabel: branchName,
         sellerValue: record.is_salesperson ? 'yes' : 'no',
+        attachments: record.attachments ?? [],
         tabLabel: record.full_name ?? record.employee_code ?? `Karyawan #${record.id}`,
     };
 }
@@ -196,7 +202,10 @@ export function buildEmployeeSnapshot(values) {
         bankAccountHolder: values.bankAccountHolder ?? '',
         __branchId: values.__branchId ?? null,
         __departmentId: values.__departmentId ?? null,
+        __userId: values.__userId ?? null,
+        user: values.user ?? '',
         __bankAccountId: values.__bankAccountId ?? null,
+        attachments: values.attachments ?? [],
     };
 }
 

@@ -36,6 +36,7 @@ export default function AttachmentDockButton({
                         {items.map((item) => (
                             <DropdownMenuItem
                                 key={item.id}
+                                icon={item.icon}
                                 onClick={() => {
                                     item.onClick?.();
                                     setOpen(false);

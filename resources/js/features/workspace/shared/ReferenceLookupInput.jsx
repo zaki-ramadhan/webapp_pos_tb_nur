@@ -96,7 +96,7 @@ export default function ReferenceLookupInput({
         });
     }, [getOptionLabel, getOptionSearchText, items, multiValueMode, query, selectedLabelSet]);
 
-    const showMenu = !disabled && open;
+    const showMenu = !disabled && open && (!selectedLabel || multiValueMode);
 
     function focusInput(event) {
         if (disabled) {
@@ -134,7 +134,9 @@ export default function ReferenceLookupInput({
         setOpen(false);
         onClear?.();
         clearError(contextKey);
-        inputRef.current?.focus();
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 0);
     }
 
     function handleRemove(item) {
@@ -181,19 +183,21 @@ export default function ReferenceLookupInput({
                         ))
                     ) : null}
 
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={query}
-                        disabled={disabled}
-                        placeholder={selectedLabel ? '' : placeholder}
-                        onFocus={() => {
-                            setOpen(true);
-                        }}
-                        onChange={handleChange}
-                        aria-label={searchLabel}
-                        className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-[#1f2436] outline-none placeholder:text-[#a1a8b7] disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
-                    />
+                    {!multiValueMode && selectedLabel ? null : (
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            value={query}
+                            disabled={disabled}
+                            placeholder={selectedLabel ? '' : placeholder}
+                            onFocus={() => {
+                                setOpen(true);
+                            }}
+                            onChange={handleChange}
+                            aria-label={searchLabel}
+                            className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-[#1f2436] outline-none placeholder:text-[#a1a8b7] disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                        />
+                    )}
                 </div>
 
                 <button

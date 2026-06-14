@@ -8,6 +8,7 @@ import {
     Download,
     EllipsisVertical,
     ExternalLink,
+    FileText,
     Funnel,
     Info,
     Link2,
@@ -77,6 +78,10 @@ export function PrintIcon({ className = 'h-4 w-4' }) {
 
 export function DownloadIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Download} className={className} />;
+}
+
+export function FileIcon({ className = 'h-4.5 w-4.5' }) {
+    return <AppIcon icon={FileText} className={className} />;
 }
 
 export function UploadIcon({ className = 'h-4 w-4' }) {

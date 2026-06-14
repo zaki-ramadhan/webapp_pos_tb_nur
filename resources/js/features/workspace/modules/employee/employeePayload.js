@@ -41,6 +41,7 @@ export function buildEmployeePayload(values) {
         previous_income: parseNullableCurrencyInput(values.previousIncome),
         previous_tax: parseNullableCurrencyInput(values.previousTax),
         is_salesperson: Boolean(values.isSalesperson),
+        user_id: values.isSalesperson ? (values.__userId ?? null) : null,
         notes: emptyStringToNull(values.note),
         is_active: true,
         bank_accounts: hasBankAccount
@@ -54,5 +55,6 @@ export function buildEmployeePayload(values) {
                 },
             ]
             : [],
+        attachment_ids: (values.attachments ?? []).map((att) => att.id),
     };
 }

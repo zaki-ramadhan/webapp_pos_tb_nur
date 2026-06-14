@@ -1,6 +1,9 @@
 export default function BrandMark({
     className = '',
     variant = 'default',
+    titleClassName = '',
+    subtitleClassName = '',
+    logoClassName = '',
 }) {
     const logoHeight = variant === 'decorative' ? 'h-[36px]' : 'h-[38px]';
     const isDarkText = variant === 'decorative';
@@ -14,13 +17,13 @@ export default function BrandMark({
             <img
                 src="/logo_icon.png"
                 alt="TB Nur Logo"
-                className={`${logoHeight} w-auto object-contain rounded-md select-none pointer-events-none`}
+                className={`${logoHeight} w-auto object-contain rounded-md select-none pointer-events-none ${logoClassName}`.trim()}
             />
             <div className="flex flex-col items-start text-left leading-tight select-none pointer-events-none">
-                <span className={`${titleSize} font-bold tracking-tight select-none pointer-events-none ${isDarkText ? 'text-[#1b315d]' : 'text-white'}`}>
+                <span className={`${titleSize} font-bold tracking-tight select-none pointer-events-none ${isDarkText ? 'text-[#1b315d]' : 'text-white'} ${titleClassName}`.trim()}>
                     TB Nur POS
                 </span>
-                <span className={`text-[9.5px] sm:text-xs md:text-[10.5px] font-medium tracking-normal select-none pointer-events-none ${isDarkText ? 'text-[#56607c]' : 'text-white/75'}`}>
+                <span className={`text-[9.5px] sm:text-xs md:text-[10.5px] font-medium tracking-normal select-none pointer-events-none ${isDarkText ? 'text-[#56607c]' : 'text-white/75'} ${subtitleClassName}`.trim()}>
                     Toko Bangunan dan Material
                 </span>
             </div>

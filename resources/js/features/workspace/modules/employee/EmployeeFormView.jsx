@@ -16,6 +16,7 @@ import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspac
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { AttachmentSelectButton } from './employeeControls';
+import EmployeeAttachmentModal from './EmployeeAttachmentModal';
 import {
     buildEmployeeFormValues,
     buildEmployeePayload,
@@ -65,6 +66,7 @@ export default function EmployeeFormView({
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const [attachmentModalOpen, setAttachmentModalOpen] = useState(false);
     const isDetailMode = Boolean(detailRow);
     const [errors, setErrors] = useState(() => ({
         website: validateEmployeeWebsite(initialValues.website ?? ''),
@@ -82,6 +84,7 @@ export default function EmployeeFormView({
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
+        setAttachmentModalOpen(false);
         setErrors({
             website: validateEmployeeWebsite(initialValues.website ?? ''),
         });
@@ -103,6 +106,15 @@ export default function EmployeeFormView({
                 ...currentErrors,
                 website: validateEmployeeWebsite(nextValue),
             }));
+        }
+
+        if (field === 'user') {
+            setValues((currentValues) => ({
+                ...currentValues,
+                user: nextValue ? (nextValue.label && nextValue.email ? `${nextValue.label} (${nextValue.email})` : (nextValue.label ?? '')) : '',
+                __userId: nextValue?.id ?? null,
+            }));
+            return;
         }
 
         if (field === 'branch') {
@@ -265,9 +277,16 @@ export default function EmployeeFormView({
                             onClick={requestDelete}
                         />
                     ) : null}
-                    <AttachmentSelectButton label={form.attachmentLabel} />
+                    <AttachmentSelectButton label={form.attachmentLabel} onOpen={() => setAttachmentModalOpen(true)} />
                 </div>
             </div>
+
+            <EmployeeAttachmentModal
+                open={attachmentModalOpen}
+                onClose={() => setAttachmentModalOpen(false)}
+                values={values}
+                setValues={setValues}
+            />
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}

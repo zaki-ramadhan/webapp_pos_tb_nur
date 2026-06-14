@@ -2,6 +2,7 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employeeViewShared';
 import {
@@ -79,6 +80,30 @@ export function EmployeeGeneralTab({ form, values, errors, onChange }) {
                 <EmployeeFieldRow label="Penjual">
                     <CheckboxField id="employee-seller" name="is_salesperson" label="Ya" checked={values.isSalesperson} onChange={(event) => onChange('isSalesperson', event.target.checked)} align="center" containerClassName="w-auto" labelClassName="text-base" inputClassName="mt-0 h-[18px] w-[18px]" />
                 </EmployeeFieldRow>
+
+                {values.isSalesperson && (
+                    <EmployeeFieldRow label="Login Penjual">
+                        <ReferenceLookupInput
+                            value={values.user}
+                            items={form.lookupOptions?.users ?? []}
+                            placeholder="Cari atau pilih..."
+                            searchLabel="Cari login penjual"
+                            className="w-full max-w-[430px]"
+                            getOptionLabel={(option) => option.label && option.email ? `${option.label} (${option.email})` : (option.label ?? '')}
+                            getOptionSearchText={(option) => `${option.label} ${option.email}`}
+                            renderOption={(option) => (
+                                <div className="min-w-0">
+                                    <div className="truncate text-xs sm:text-sm font-medium text-[#131a28]">{option.label}</div>
+                                    {option.email ? (
+                                        <div className="mt-0.5 truncate text-xs text-[#7d879a]">{option.email}</div>
+                                    ) : null}
+                                </div>
+                            )}
+                            onSelect={(option) => onChange('user', option)}
+                            onClear={() => onChange('user', null)}
+                        />
+                    </EmployeeFieldRow>
+                )}
 
                 <EmployeeFieldRow label="Catatan">
                     <TextareaField name="notes" value={values.note} onChange={(event) => onChange('note', event.target.value)} rows={4} className="rounded-[4px] border-[#cfd6e2] w-full max-w-[600px]" textareaClassName="min-h-[80px] px-3 py-3 text-xs sm:text-sm text-[#1f2436]" />
