@@ -211,6 +211,31 @@ class AuthFlowRegressionTest extends TestCase
         $this->assertAuthenticatedAs($user->fresh());
     }
 
+    public function test_google_callback_popup_success_with_state_parameter_only(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'google.popup.state@example.com',
+            'is_active' => true,
+        ]);
+
+        $this->mockGoogleUser(
+            id: 'google-popup-state-123',
+            email: 'google.popup.state@example.com',
+            name: 'Popup State User',
+            avatar: 'https://example.com/avatar.png',
+        );
+
+        // No session variable auth_use_popup is set here
+        $this->get('/auth/google/callback?code=fake-code&state=popup')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->assertSee('window.opener.postMessage')
+            ->assertSee('success')
+            ->assertSee('Berhasil masuk dengan Google.');
+
+        $this->assertAuthenticatedAs($user->fresh());
+    }
+
     public function test_google_callback_popup_error_inactive_user(): void
     {
         User::factory()->create([
@@ -246,6 +271,32 @@ class AuthFlowRegressionTest extends TestCase
             ->assertSee('window.opener.postMessage')
             ->assertSee('error')
             ->assertSee('Login Google belum dikonfigurasi.');
+    }
+
+    public function test_google_redirect_returns_popup_success_if_user_already_authenticated_via_popup(): void
+    {
+        $user = User::factory()->create([
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->get('/auth/google?popup=1')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->assertSee('window.opener.postMessage')
+            ->assertSee('success')
+            ->assertSee('Berhasil masuk dengan Google.');
+    }
+
+    public function test_google_redirect_redirects_to_dashboard_if_user_already_authenticated_via_standard(): void
+    {
+        $user = User::factory()->create([
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->get('/auth/google')
+            ->assertRedirect(route('dashboard'));
     }
 
     private function mockGoogleUser(string $id, string $email, string $name, string $avatar): void

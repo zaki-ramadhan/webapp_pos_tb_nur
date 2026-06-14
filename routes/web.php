@@ -18,10 +18,11 @@ Route::get('/', function () {
         : redirect()->route('login');
 })->name('home');
 
+Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
+
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', HomeController::class)->name('login');
-    Route::get('/auth/google', [GoogleLoginController::class, 'redirect'])->name('auth.google.redirect');
-    Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback'])->name('auth.google.callback');
     Route::post('/login', LoginController::class)->name('login.store')->middleware('throttle:5,1');
     Route::post('/forgot-password', ForgotPasswordLinkController::class)->name('password.email')->middleware('throttle:5,1');
     Route::get('/register', RegisterController::class)->name('register');

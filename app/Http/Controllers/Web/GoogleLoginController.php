@@ -20,6 +20,13 @@ class GoogleLoginController extends Controller
     {
         $usePopup = $request->query('popup') === '1';
 
+        if (Auth::check()) {
+            if ($usePopup) {
+                return $this->respondWithPopupSuccess('Berhasil masuk dengan Google.');
+            }
+            return redirect()->intended(route('dashboard'));
+        }
+
         if (! $this->hasGoogleCredentials()) {
             if ($usePopup) {
                 return $this->respondWithPopupError('Login Google belum dikonfigurasi.');
@@ -37,14 +44,25 @@ class GoogleLoginController extends Controller
             $request->session()->forget('auth_use_popup');
         }
 
+        $state = $usePopup ? 'popup' : 'standard';
+
         return Socialite::driver('google')
             ->stateless()
+            ->with(['state' => $state])
             ->redirect();
     }
 
     public function callback(Request $request): \Symfony\Component\HttpFoundation\Response
     {
-        $usePopup = $request->session()->pull('auth_use_popup', false);
+        $state = $request->query('state');
+        $usePopup = $state === 'popup' || $request->session()->pull('auth_use_popup', false);
+
+        if (Auth::check()) {
+            if ($usePopup) {
+                return $this->respondWithPopupSuccess('Berhasil masuk dengan Google.');
+            }
+            return redirect()->intended(route('dashboard'));
+        }
 
         if (! $this->hasGoogleCredentials()) {
             if ($usePopup) {
@@ -235,11 +253,17 @@ class GoogleLoginController extends Controller
                 <p>Autentikasi berhasil, mengalihkan...</p>
                 <script>
                     if (window.opener) {
-                        window.opener.postMessage({
-                            status: "success",
-                            message: %s
-                        }, window.location.origin);
-                        window.close();
+                        try {
+                            window.opener.postMessage({
+                                status: "success",
+                                message: %s
+                            }, "*");
+                        } catch (e) {
+                            console.error("Popup communication error:", e);
+                        }
+                        setTimeout(function() {
+                            window.close();
+                        }, 150);
                     } else {
                         window.location.href = %s;
                     }
@@ -269,11 +293,17 @@ class GoogleLoginController extends Controller
                 <p>Autentikasi gagal: %s. Menutup...</p>
                 <script>
                     if (window.opener) {
-                        window.opener.postMessage({
-                            status: "error",
-                            message: %s
-                        }, window.location.origin);
-                        window.close();
+                        try {
+                            window.opener.postMessage({
+                                status: "error",
+                                message: %s
+                            }, "*");
+                        } catch (e) {
+                            console.error("Popup communication error:", e);
+                        }
+                        setTimeout(function() {
+                            window.close();
+                        }, 150);
                     } else {
                         window.location.href = "/?error=" + encodeURIComponent(%s);
                     }

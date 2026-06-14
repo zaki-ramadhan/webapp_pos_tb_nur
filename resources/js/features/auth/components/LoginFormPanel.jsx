@@ -45,14 +45,18 @@ export default function LoginFormPanel({ login }) {
 
         const left = (containerWidth / 2) - (width / 2) + dualScreenLeft;
         const top = (containerHeight / 2) - (height / 2) + dualScreenTop;
-        const popupUrl = `${login.googleHref}?popup=1`;
+        const popupUrl = `${login.googleHref}${login.googleHref.includes('?') ? '&' : '?'}popup=1`;
 
         if (messageListenerRef.current) {
             window.removeEventListener('message', messageListenerRef.current);
         }
 
         const handleMessage = (event) => {
-            if (event.origin !== window.location.origin) return;
+            const isAuthorizedOrigin = event.origin === window.location.origin || 
+                (event.origin.includes('localhost') && window.location.origin.includes('127.0.0.1')) ||
+                (event.origin.includes('127.0.0.1') && window.location.origin.includes('localhost'));
+
+            if (!isAuthorizedOrigin) return;
 
             const data = event.data;
             if (data && (data.status === 'success' || data.status === 'error')) {
@@ -61,7 +65,9 @@ export default function LoginFormPanel({ login }) {
                         title: 'Berhasil',
                         message: data.message || 'Sedang mengalihkan ke dashboard...',
                     });
-                    window.location.href = '/dashboard';
+                    setTimeout(() => {
+                        window.location.href = `${event.origin}/dashboard`;
+                    }, 100);
                 } else {
                     showErrorToast({
                         title: 'Login gagal',
