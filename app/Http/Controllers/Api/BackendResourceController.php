@@ -295,17 +295,17 @@ class BackendResourceController extends Controller
         ];
 
         $messages = [
-            'required' => 'Kolom :attribute wajib diisi.',
-            'unique' => ':attribute sudah digunakan.',
-            'max' => ':attribute tidak boleh lebih dari :max karakter.',
-            'min' => ':attribute tidak boleh kurang dari :min.',
-            'numeric' => ':attribute harus berupa angka.',
-            'integer' => ':attribute harus berupa angka bulat.',
-            'email' => ':attribute harus berupa alamat email yang valid.',
-            'boolean' => ':attribute harus berupa status aktif/nonaktif (ya/tidak).',
-            'exists' => ':attribute yang dipilih tidak valid atau tidak terdaftar.',
-            'size' => ':attribute harus berukuran :size karakter.',
-            'date' => ':attribute harus berupa tanggal yang valid.',
+            'required' => 'Kolom :attribute tidak boleh kosong.',
+            'unique' => 'Kolom :attribute dengan nilai ini sudah terdaftar di sistem (harus unik).',
+            'max' => 'Kolom :attribute tidak boleh melebihi :max karakter.',
+            'min' => 'Kolom :attribute tidak boleh kurang dari :min.',
+            'numeric' => 'Kolom :attribute harus berisi angka (contoh: 15000 atau 12.5).',
+            'integer' => 'Kolom :attribute harus berisi angka bulat (contoh: 10).',
+            'email' => 'Kolom :attribute harus berisi format email yang valid (contoh: admin@domain.com).',
+            'boolean' => 'Kolom :attribute harus berisi nilai aktif/nonaktif (ya/tidak).',
+            'exists' => 'Nilai pada kolom :attribute tidak ditemukan dalam daftar pilihan sistem. Silakan pastikan data referensi tersebut sudah terdaftar.',
+            'size' => 'Kolom :attribute harus berukuran tepat :size karakter.',
+            'date' => 'Kolom :attribute harus berisi format tanggal yang valid (contoh: YYYY-MM-DD seperti 2026-06-14).',
         ];
 
         $created = 0;
@@ -341,6 +341,24 @@ class BackendResourceController extends Controller
 
                     $rules = $blueprint->storeRules();
                     unset($rules['attachment_ids'], $rules['attachment_ids.*']);
+
+                    // Verify if all required columns are present in the import data
+                    foreach ($rules as $ruleKey => $ruleList) {
+                        $isRequired = false;
+                        if (is_array($ruleList)) {
+                            $isRequired = in_array('required', $ruleList, true);
+                        } else if (is_string($ruleList)) {
+                            $isRequired = str_contains($ruleList, 'required');
+                        }
+
+                        if ($isRequired && !array_key_exists($ruleKey, $cleanRow)) {
+                            $friendlyKey = $attributeMap[$ruleKey]
+                                ?? $attributeMap[preg_replace('/_id$/', '', $ruleKey)]
+                                ?? str_replace('_', ' ', $ruleKey);
+                            $rowNum = $index + 2;
+                            throw new \Exception("Baris {$rowNum}: Kolom '{$friendlyKey}' tidak ditemukan di dalam file. Pastikan file Anda memiliki kolom dengan nama tersebut.");
+                        }
+                    }
 
                     $customAttributes = [];
                     foreach (array_keys($rules) as $ruleKey) {
