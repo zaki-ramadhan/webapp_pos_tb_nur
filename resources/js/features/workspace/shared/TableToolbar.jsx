@@ -473,6 +473,67 @@ function hasFunnelButton(node) {
     return false;
 }
 
+const PAGE_ID_TO_RESOURCE_MAP = {
+    'currency-master': 'currencies',
+    'warehouse-master': 'warehouses',
+    'items-services': 'products',
+    'item-unit': 'units',
+    'item-category': 'product-categories',
+    'customer-category': 'customer-categories',
+    'supplier-category': 'supplier-categories',
+    'sales-category': 'sales-categories',
+    'company-tax': 'taxes',
+    'group-access': 'access-groups',
+    'branch': 'branches',
+    'department': 'departments',
+    'shipping-master': 'shipping-methods',
+    'supplier-price': 'supplier-prices',
+    'numbering': 'numbering-sequences',
+    'activity-log': 'activity-logs',
+    'asset-change': 'asset-changes',
+    'asset-disposal': 'asset-disposals',
+    'bank-transfer': 'bank-transfers',
+    'budget': 'budgets',
+    'budget-transfer': 'budget-transfers',
+    'cash-payment': 'cash-payments',
+    'cash-receipt': 'cash-receipts',
+    'expense-entry': 'expense-entries',
+    'general-journal': 'general-journals',
+    'item-request': 'item-requests',
+    'material-addition': 'material-additions',
+    'payroll-entry': 'payroll-entries',
+    'period-end': 'period-ends',
+    'purchase-payment': 'purchase-payments',
+    'salary-allowance': 'salary-allowances',
+    'sales-checkin': 'sales-checkins',
+    'sales-commission': 'sales-commissions',
+    'sales-deposit': 'sales-deposits',
+    'sales-receipt': 'sales-receipts',
+    'sales-target': 'sales-targets',
+    'shipping': 'shipping-methods',
+    'stock-transfer': 'stock-transfers',
+    'fob-master': 'fob-terms',
+    'bank-statement': 'bank-statements',
+    'bank-history': 'bank-histories',
+    'bank-reconciliation': 'bank-reconciliations',
+    'journal-activity-log': 'journal-activity-logs',
+    'sales-quote': 'sales-quotes',
+    'sales-order': 'sales-orders',
+    'sales-delivery': 'sales-deliveries',
+    'sales-invoice': 'sales-invoices',
+    'sales-return': 'sales-returns',
+    'inventory-adjustment': 'inventory-adjustments',
+    'price-adjustment': 'price-adjustments',
+    'purchase-order': 'purchase-orders',
+    'purchase-invoice': 'purchase-invoices',
+    'purchase-return': 'purchase-returns',
+    'goods-receipt': 'goods-receipts',
+    'item-location': 'item-locations',
+    'minimum-stock': 'minimum-stocks',
+    'delivery-order': 'delivery-orders',
+    'report-list': 'report-lists',
+};
+
 export default function TableToolbar({
     size = 'default',
     filters = null,
@@ -513,7 +574,8 @@ export default function TableToolbar({
         });
     }, [rawResolvedColumns]);
     const resolvedRows = exportConfig?.rows ?? activeTableState?.rows ?? [];
-    const resolvedResourceName = resourceName ?? activeTableState?.resource ?? (typeof window !== 'undefined' ? window.__activePageId : null) ?? null;
+    const rawResourceName = resourceName ?? activeTableState?.resource ?? (typeof window !== 'undefined' ? window.__activePageId : null) ?? null;
+    const resolvedResourceName = PAGE_ID_TO_RESOURCE_MAP[rawResourceName] ?? rawResourceName;
 
     const schemaKey = getTableSchemaKey(resolvedColumns);
     const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, resolvedColumns);
@@ -578,7 +640,30 @@ export default function TableToolbar({
                     refreshButton.onClick();
                 }
             } catch (err) {
-                const msg = err.response?.data?.message || err.message || 'Gagal mengimpor data.';
+                let msg = 'Gagal mengimpor data.';
+                if (err.response) {
+                    const status = err.response.status;
+                    const backendMsg = err.response.data?.message;
+
+                    if (status === 404) {
+                        msg = 'Gagal mengimpor: Halaman ini tidak mendukung impor data atau alamat tujuan tidak ditemukan.';
+                    } else if (status === 403) {
+                        msg = 'Gagal mengimpor: Anda tidak memiliki izin untuk mengimpor data ke halaman ini.';
+                    } else if (status === 401) {
+                        msg = 'Gagal mengimpor: Sesi Anda telah berakhir, silakan login kembali.';
+                    } else if (status === 409) {
+                        msg = 'Gagal mengimpor: Terdapat duplikasi data atau pelanggaran relasi pada database.';
+                    } else if (status === 422) {
+                        msg = backendMsg || 'Format data tidak valid.';
+                    } else if (status === 500) {
+                        msg = 'Gagal mengimpor: Terjadi kesalahan internal pada server. Silakan hubungi admin.';
+                    } else {
+                        msg = backendMsg || `Gagal mengimpor data (Error ${status}).`;
+                    }
+                } else {
+                    msg = err.message || 'Gagal menghubungkan ke server. Pastikan koneksi internet Anda aktif.';
+                }
+
                 showErrorToast({
                     message: msg,
                 });

@@ -14,11 +14,19 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { PlusIcon, RefreshIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
+import { useColumnVisibility, getTableSchemaKey } from '@/features/workspace/shared/columnVisibility';
 
 export default function CurrencyTableView({ page, rows, total, loading, error, onCreate, onOpenDetail, onRefresh }) {
     const table = page.currency.table;
     const [keyword, setKeyword] = useState('');
     const [syncing, setSyncing] = useState(false);
+
+    const schemaKey = getTableSchemaKey(table.columns);
+    const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
+
+    const visibleColumns = useMemo(() => {
+        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
+    }, [table.columns, visibleColumnIds]);
 
     async function handleSync() {
         if (syncing) {
@@ -71,6 +79,25 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                     loading: syncing || loading,
                     icon: <RefreshIcon className="h-5 w-5" />,
                 }}
+                resourceName="currencies"
+                onRefresh={onRefresh}
+                exportConfig={{
+                    columns: table.columns,
+                    rows: filteredRows,
+                    filename: 'mata-uang',
+                    title: 'Laporan Kurs Mata Uang',
+                }}
+                columnSettings={{
+                    columns: table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
+                    visibleIds: visibleColumnIds,
+                    onToggle: (columnId) => {
+                        setVisibleColumnIds(prev =>
+                            prev.includes(columnId)
+                                ? prev.filter(id => id !== columnId)
+                                : [...prev, columnId]
+                        );
+                    }
+                }}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -89,7 +116,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                                 No.
                             </DataTableHead>
                         ) : null}
-                            {table.columns.map((column) => (
+                            {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
@@ -122,7 +149,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                                         {index + 1}
                                     </DataTableCell>
                                     ) : null}
-{table.columns.map((column) => (
+                                    {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-base text-[#131a28]`.trim()}
@@ -134,7 +161,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {error || (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
