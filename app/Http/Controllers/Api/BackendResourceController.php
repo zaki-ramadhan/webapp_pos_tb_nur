@@ -256,11 +256,63 @@ class BackendResourceController extends Controller
             'account_id' => \App\Domain\Finance\Models\Account::class,
         ];
 
+        $attributeMap = [
+            'code' => 'kode',
+            'name' => 'nama',
+            'symbol' => 'simbol',
+            'exchange_rate' => 'nilai kurs',
+            'rate' => 'tarif/nilai',
+            'percentage' => 'persentase',
+            'is_active' => 'status aktif',
+            'description' => 'deskripsi/keterangan',
+            'notes' => 'catatan',
+            'quantity' => 'kuantitas/jumlah',
+            'price' => 'harga',
+            'parent_id' => 'kategori induk',
+            'category_id' => 'kategori',
+            'unit_id' => 'satuan',
+            'base_unit_id' => 'satuan dasar',
+            'purchase_unit_id' => 'satuan pembelian',
+            'sales_unit_id' => 'satuan penjualan',
+            'supplier_id' => 'pemasok',
+            'product_id' => 'barang/jasa',
+            'tax_id' => 'pajak',
+            'branch_id' => 'cabang',
+            'department_id' => 'departemen',
+            'user_id' => 'pengguna',
+            'due_days' => 'jatuh tempo (hari)',
+            'allowance_type' => 'tipe tunjangan',
+            'account_id' => 'akun',
+            'output_account_id' => 'akun PPN Keluaran',
+            'input_account_id' => 'akun PPN Masukan',
+            'accounts_payable_account_id' => 'akun hutang usaha',
+            'accounts_receivable_account_id' => 'akun piutang usaha',
+            'purchase_advance_account_id' => 'akun uang muka pembelian',
+            'sales_advance_account_id' => 'akun uang muka penjualan',
+            'sales_discount_account_id' => 'akun diskon penjualan',
+            'realized_gain_loss_account_id' => 'akun laba rugi selisih kurs terealisasi',
+            'unrealized_gain_loss_account_id' => 'akun laba rugi selisih kurs belum terealisasi',
+        ];
+
+        $messages = [
+            'required' => 'Kolom :attribute wajib diisi.',
+            'unique' => ':attribute sudah digunakan.',
+            'max' => ':attribute tidak boleh lebih dari :max karakter.',
+            'min' => ':attribute tidak boleh kurang dari :min.',
+            'numeric' => ':attribute harus berupa angka.',
+            'integer' => ':attribute harus berupa angka bulat.',
+            'email' => ':attribute harus berupa alamat email yang valid.',
+            'boolean' => ':attribute harus berupa status aktif/nonaktif (ya/tidak).',
+            'exists' => ':attribute yang dipilih tidak valid atau tidak terdaftar.',
+            'size' => ':attribute harus berukuran :size karakter.',
+            'date' => ':attribute harus berupa tanggal yang valid.',
+        ];
+
         $created = 0;
         $errors = [];
 
         try {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($blueprint, $rows, $relationClassMap, &$created, &$errors) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($blueprint, $rows, $relationClassMap, $attributeMap, $messages, &$created, &$errors) {
                 foreach ($rows as $index => $row) {
                     if (!is_array($row)) continue;
 
@@ -280,7 +332,8 @@ class BackendResourceController extends Controller
                                     $cleanRow[$key] = $resolvedId;
                                 } else {
                                     $rowNum = $index + 2;
-                                    throw new \Exception("Baris {$rowNum}: Gagal mencocokkan '{$val}' untuk kolom '{$key}'. Pastikan data referensi tersebut sudah terdaftar.");
+                                    $friendlyKey = $attributeMap[$key] ?? str_replace('_', ' ', $key);
+                                    throw new \Exception("Baris {$rowNum}: Gagal mencocokkan '{$val}' untuk kolom '{$friendlyKey}'. Pastikan data referensi tersebut sudah terdaftar.");
                                 }
                             }
                         }
@@ -289,7 +342,15 @@ class BackendResourceController extends Controller
                     $rules = $blueprint->storeRules();
                     unset($rules['attachment_ids'], $rules['attachment_ids.*']);
 
-                    $validator = \Illuminate\Support\Facades\Validator::make($cleanRow, $rules);
+                    $customAttributes = [];
+                    foreach (array_keys($rules) as $ruleKey) {
+                        $cleanKey = preg_replace('/_id$/', '', $ruleKey);
+                        $customAttributes[$ruleKey] = $attributeMap[$ruleKey]
+                            ?? $attributeMap[$cleanKey]
+                            ?? str_replace('_', ' ', $ruleKey);
+                    }
+
+                    $validator = \Illuminate\Support\Facades\Validator::make($cleanRow, $rules, $messages, $customAttributes);
                     if ($validator->fails()) {
                         $rowNum = $index + 2;
                         $firstError = collect($validator->errors()->all())->first();
