@@ -375,7 +375,7 @@
    ========================================================================== */
 
 /* 1. Ubah pembungkus utama tabel view menjadi transparan dan tanpa border/shadow */
-.workspace-screen div.min-h-full.rounded-\[6px\].border.border-\[\#d6dce8\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] {
+.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -387,7 +387,7 @@
 }
 
 /* 2. Jadikan pembungkus tabel (div.min-h-0) transparan dan padding-nya kosong */
-.workspace-screen div.min-h-full.rounded-\[6px\].border.border-\[\#d6dce8\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] > div.min-h-0 {
+.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] > div.min-h-0 {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -397,7 +397,7 @@
 }
 
 /* 3. Berikan style kartu (card) putih padat langsung ke tabelnya */
-.workspace-screen div.min-h-full.rounded-\[6px\].border.border-\[\#d6dce8\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] div.min-h-0 > div {
+.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] div.min-h-0 > div {
     background-color: #ffffff !important;
     border: 1px solid #d6dce8 !important;
     border-radius: 6px !important;
@@ -405,7 +405,7 @@
 }
 
 /* 4. Buat pembungkus pagination transparan, tanpa border/shadow, dan hilangkan padding samping */
-.workspace-screen div.min-h-full.rounded-\[6px\].border.border-\[\#d6dce8\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] > .flex.flex-col.items-center.justify-between.gap-4.border-t {
+.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] > .flex.flex-col.items-center.justify-between.gap-4.border-t {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
