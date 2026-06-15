@@ -69,7 +69,7 @@ export function PayrollHeader({ config, values, setValues }) {
 
             <div className="flex flex-col gap-y-3 w-full lg:max-w-[480px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
-                    <TransactionFieldLabel label={config.labels.numbering} required />
+                    <TransactionFieldLabel label={config.labels.numbering} required htmlFor="numbering-type" />
                     <div className="flex items-center gap-3 w-full">
                         <TransactionSwitch
                             checked={values.autoNumber}
@@ -81,9 +81,11 @@ export function PayrollHeader({ config, values, setValues }) {
                             }
                         />
                         <SelectField
+                            id="numbering-type"
                             value={values.numberingType}
                             onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2] flex-1"
+                            containerClassName="flex-1 min-w-0"
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                             selectClassName="text-xs sm:text-sm text-[#1f2436]"
                         >
                             {config.numberingOptions.map((option) => (
