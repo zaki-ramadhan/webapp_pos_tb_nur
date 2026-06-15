@@ -8,6 +8,7 @@ import {
 } from '@/features/workspace/shared/formValidation';
 import { PayrollAdditionalInfoSection, PayrollEmployeeSection, PayrollHeader } from './PayrollEntrySections';
 import { buildDefaultValues } from './payrollEntryShared';
+import CopyEmployeesModal from './CopyEmployeesModal';
 import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 import {
     finishCrudLoadingToast,
@@ -21,6 +22,7 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
     const [values, setValues] = useState(() => buildDefaultValues(config));
     const [saving, setSaving] = useState(false);
     const [errors, setErrors] = useState({});
+    const [copyModalOpen, setCopyModalOpen] = useState(false);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'employees');
@@ -164,19 +166,27 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
     });
 
     return (
-        <TransactionFormLayout
-            header={<PayrollHeader config={{ ...config, errors }} values={values} setValues={setValues} />}
-            sectionTabs={config.sectionTabs}
-            activeSectionId={activeSectionId}
-            onSectionChange={setActiveSectionId}
-            footer={<TransactionDualTotalCard items={config.summaryItems} className="min-w-[360px] sm:min-w-[565px]" />}
-            dockActions={dockActions}
-        >
-            {activeSectionId === 'additional-info' ? (
-                <PayrollAdditionalInfoSection config={{ ...config, errors }} values={values} setValues={setValues} />
-            ) : (
-                <PayrollEmployeeSection config={config} values={values} setValues={setValues} />
-            )}
-        </TransactionFormLayout>
+        <>
+            <TransactionFormLayout
+                header={<PayrollHeader config={{ ...config, errors }} values={values} setValues={setValues} />}
+                sectionTabs={config.sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                footer={<TransactionDualTotalCard items={config.summaryItems} className="min-w-[360px] sm:min-w-[565px]" />}
+                dockActions={dockActions}
+            >
+                {activeSectionId === 'additional-info' ? (
+                    <PayrollAdditionalInfoSection config={{ ...config, errors }} values={values} setValues={setValues} />
+                ) : (
+                    <PayrollEmployeeSection
+                        config={config}
+                        values={values}
+                        setValues={setValues}
+                        onTake={() => setCopyModalOpen(true)}
+                    />
+                )}
+            </TransactionFormLayout>
+            <CopyEmployeesModal open={copyModalOpen} onClose={() => setCopyModalOpen(false)} />
+        </>
     );
 }

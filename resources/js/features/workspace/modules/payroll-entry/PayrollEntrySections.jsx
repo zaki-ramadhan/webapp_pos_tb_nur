@@ -128,7 +128,7 @@ export function PayrollHeader({ config, values, setValues }) {
     );
 }
 
-export function PayrollEmployeeSection({ config, values, setValues }) {
+export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
     return (
         <div className="flex min-h-[540px] flex-col">
             <div className="flex flex-col gap-3 pb-1.5 sm:flex-row sm:items-center sm:justify-between">
@@ -148,7 +148,11 @@ export function PayrollEmployeeSection({ config, values, setValues }) {
                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
 
-                    <TransactionHeaderButton label={config.takeButtonLabel} className="h-[38px] px-4 text-base" />
+                    <TransactionHeaderButton
+                        label={config.takeButtonLabel}
+                        className="h-[38px] px-4 text-base"
+                        onClick={onTake}
+                    />
                 </div>
 
                 <div className="text-right text-2xl font-normal text-[#1f2436]">
