@@ -1,11 +1,5 @@
 /**
- * Merge imported items into an existing items array.
- * Items are matched by product code (case-insensitive).
- * If a match exists, quantity is accumulated; otherwise the item is appended.
- *
- * @param {Array} existingItems - Current item rows in the form
- * @param {Array} importedItems - Items from CSV/Excel import
- * @returns {Array} Merged items array
+ * Gabungkan item impor ke array item yang ada.
  */
 export function mergeImportedItems(existingItems, importedItems) {
     const merged = existingItems.map(item => ({ ...item }));

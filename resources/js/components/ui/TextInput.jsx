@@ -6,7 +6,7 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
     
-    // Bypass sanitization for email, username, and general login identifier fields
+    // Lewati sanitasi untuk email/username
     if (
         searchStr.includes('email') || 
         searchStr.includes('username') || 
@@ -15,7 +15,7 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
         return val;
     }
     
-    // Check if it's a phone number or contact number
+    // Cek nomor telepon
     const isPhone = searchStr.includes('phone') || 
                     searchStr.includes('telp') || 
                     searchStr.includes('telepon') ||
@@ -26,7 +26,7 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                     searchStr.includes('kontak') || 
                     searchStr.includes('contact');
                     
-    // Check if it is a digit-only field like account number, tax number, postal code
+    // Cek jika kolom angka saja
     const isDigitOnly = (
                             searchStr.includes('rekening') || 
                             searchStr.includes('account_number') || 
@@ -43,12 +43,12 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                         ) && !searchStr.includes('note') && !searchStr.includes('document');
 
     if (isPhone) {
-        // Allow digits, spaces, plus sign, and hyphens
+        // Izinkan angka, spasi, plus, minus
         return val.replace(/[^0-9+\s-]/g, '');
     }
 
     if (isDigitOnly) {
-        // Strip out everything except digits (0-9)
+        // Bersihkan selain angka
         let clean = val.replace(/[^0-9]/g, '');
         if (searchStr.includes('npwp')) {
             clean = clean.slice(0, 16);
@@ -68,7 +68,7 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
         return clean;
     }
 
-    // Check if it's a letters-only field (locations, countries, cities, provinces, etc.)
+    // Cek jika kolom huruf saja
     const isLettersOnly = lettersOnly || 
                           (
                               (
@@ -82,7 +82,7 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                           );
 
     if (isLettersOnly) {
-        // Allow only letters, spaces, hyphens, dots, and apostrophes
+        // Izinkan huruf saja
         return val.replace(/[^a-zA-Z\s'.-]/g, '');
     }
 
@@ -115,14 +115,14 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
     }
 
     if (isNumeric) {
-        // Allow only digits and a single decimal point (no negative values)
+        // Izinkan angka desimal
         let clean = val.replace(/[^0-9.]/g, '');
-        // Ensure only one decimal point
+        // Pastikan hanya satu desimal
         const parts = clean.split('.');
         if (parts.length > 2) {
             clean = parts[0] + '.' + parts.slice(1).join('');
         }
-        // Remove leading zeros if not followed by a decimal point (e.g., "05" -> "5")
+        // Hapus nol di depan
         if (clean.length > 1 && clean.startsWith('0') && clean[1] !== '.') {
             clean = clean.replace(/^0+/, '');
         }

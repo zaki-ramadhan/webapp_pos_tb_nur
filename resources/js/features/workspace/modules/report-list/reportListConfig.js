@@ -27,7 +27,7 @@ const categories = [
 ];
 
 const reports = [
-    // Memorize
+    // Laporan tersimpan
     createReport(
         'memorize-sales-by-customer',
         'memorize',
@@ -36,7 +36,7 @@ const reports = [
         'Menampilkan nilai penjualan barang per pelanggan.',
         'ledger'
     ),
-    // Keuangan (Finance)
+    // Keuangan
     createReport(
         'finance-cashflow',
         'finance',
@@ -61,7 +61,7 @@ const reports = [
         'Menampilkan neraca saldo standar untuk menilai posisi keuangan.',
         'ledger'
     ),
-    // Pusat Laba & Biaya (Profit Center)
+    // Pusat laba & biaya
     createReport(
         'profit-center-summary',
         'profit-center',
@@ -78,7 +78,7 @@ const reports = [
         'Menganalisis distribusi beban operasional untuk setiap departemen.',
         'reports'
     ),
-    // Buku Besar (Ledger)
+    // Buku besar
     createReport(
         'ledger-account-mutation',
         'ledger',
@@ -103,7 +103,7 @@ const reports = [
         'Rincian mutasi debit dan kredit seluruh akun perkiraan secara kronologis.',
         'ledger'
     ),
-    // Kas & Bank (Cash & Bank)
+    // Kas & bank
     createReport(
         'cash-bank-daily-balance',
         'cash-bank',
@@ -120,7 +120,7 @@ const reports = [
         'Daftar mutasi kas masuk dan keluar secara rinci.',
         'document'
     ),
-    // Piutang (Receivable)
+    // Piutang
     createReport(
         'receivable-aging',
         'receivable',
@@ -137,7 +137,7 @@ const reports = [
         'Menampilkan daftar piutang aktif yang belum terselesaikan.',
         'document'
     ),
-    // Penjualan (Sales) - 22 reports matching Photo 2
+    // Penjualan
     createReport(
         'sales-by-customer',
         'sales',
@@ -314,7 +314,7 @@ const reports = [
         'Target Penjualan per Kategori',
         'document'
     ),
-    // Tenaga Penjual (Salesperson)
+    // Salesperson
     createReport(
         'salesperson-performance',
         'salesperson',
@@ -323,7 +323,7 @@ const reports = [
         'Menampilkan pencapaian omzet, margin, dan target per tenaga penjual.',
         'reports'
     ),
-    // Utang (Payable)
+    // Utang
     createReport(
         'payable-aging',
         'payable',
@@ -332,7 +332,7 @@ const reports = [
         'Membantu memetakan tagihan pemasok yang segera jatuh tempo.',
         'ledger'
     ),
-    // Pembelian (Purchase)
+    // Pembelian
     createReport(
         'purchase-by-supplier',
         'purchase',
@@ -341,7 +341,7 @@ const reports = [
         'Meringkas total pembelian, retur, dan saldo pembelian per pemasok.',
         'ledger'
     ),
-    // Persediaan (Inventory)
+    // Persediaan
     createReport(
         'inventory-movement',
         'inventory',
@@ -350,7 +350,7 @@ const reports = [
         'Melihat stok masuk, keluar, dan saldo akhir per barang.',
         'ledger'
     ),
-    // Gudang (Warehouse)
+    // Gudang
     createReport(
         'warehouse-stock-value',
         'warehouse',
@@ -359,7 +359,7 @@ const reports = [
         'Ringkasan kuantitas dan nilai stok per gudang.',
         'ledger'
     ),
-    // Aset Tetap (Fixed Assets)
+    // Aset tetap
     createReport(
         'fixed-assets-depreciation',
         'fixed-assets',
@@ -368,7 +368,7 @@ const reports = [
         'Menampilkan nilai buku, penyusutan, dan umur aset tetap.',
         'ledger'
     ),
-    // Pajak (Tax)
+    // Pajak
     createReport(
         'tax-vat-summary',
         'tax',
@@ -377,7 +377,7 @@ const reports = [
         'Meringkas perhitungan PPN untuk kebutuhan pelaporan pajak.',
         'ledger'
     ),
-    // Pemeriksaan (Inspection)
+    // Pemeriksaan
     createReport(
         'inspection-audit-trail',
         'inspection',
@@ -386,7 +386,7 @@ const reports = [
         'Menampilkan aktivitas perubahan transaksi untuk kebutuhan pemeriksaan.',
         'document'
     ),
-    // Lain-lain (Others)
+    // Lain-lain
     createReport(
         'others-custom-form',
         'others',

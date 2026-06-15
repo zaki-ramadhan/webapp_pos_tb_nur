@@ -7,7 +7,7 @@ import { importFromFile } from '@/features/workspace/shared/exportUtils';
 
 const DEFAULT_COLUMN_MAPPING = Object.freeze({ code: -1, quantity: -1, price: -1, notes: -1 });
 
-// ─── Column Mapping Select ────────────────────────────────────────────────────
+// Pilihan pemetaan kolom
 
 function ColumnMappingSelect({ label, fieldKey, mapping, setMapping, csvHeaders, defaultLabel = '-- Pilih Kolom --' }) {
     return (
@@ -27,7 +27,7 @@ function ColumnMappingSelect({ label, fieldKey, mapping, setMapping, csvHeaders,
     );
 }
 
-// ─── Auto-detect column mapping from header names ─────────────────────────────
+// Auto-detect pemetaan kolom
 
 function autoDetectMapping(headers) {
     const mapping = { ...DEFAULT_COLUMN_MAPPING };
@@ -46,7 +46,7 @@ function autoDetectMapping(headers) {
     return mapping;
 }
 
-// ─── Main Modal ───────────────────────────────────────────────────────────────
+// Modal utama
 
 export default function ImportItemsModal({ open, onClose, onImport, mode = 'sales' }) {
     const fileInputRef = useRef(null);
@@ -58,7 +58,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
     const [columnMapping, setColumnMapping] = useState({ ...DEFAULT_COLUMN_MAPPING });
     const [errorMessage, setErrorMessage] = useState('');
 
-    // Fetch product catalog
+    // Ambil katalog produk
     useEffect(() => {
         if (!open) return;
         setLoadingProducts(true);
@@ -71,7 +71,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             .finally(() => setLoadingProducts(false));
     }, [open]);
 
-    // Reset on close
+    // Reset saat tutup
     useEffect(() => {
         if (!open) {
             setFile(null);
@@ -82,7 +82,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
         }
     }, [open]);
 
-    // Handle file upload via SheetJS (supports .xlsx, .xls, .csv)
+    // Upload file via SheetJS
     async function handleFileChange(e) {
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
@@ -98,7 +98,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
 
             setFile(selectedFile);
             setCsvHeaders(headers);
-            // Convert object rows to array-indexed rows for mapping compatibility
+            // Konversi baris ke array
             setCsvRows(rows.map(row => headers.map(h => row[h] ?? '')));
             setColumnMapping(autoDetectMapping(headers));
         } catch {
@@ -108,7 +108,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
         if (fileInputRef.current) fileInputRef.current.value = '';
     }
 
-    // Resolve preview items from CSV rows + product catalog
+    // Sesuaikan item impor
     const previewItems = useMemo(() => {
         if (csvRows.length === 0 || columnMapping.code === -1 || columnMapping.quantity === -1) return [];
 
@@ -186,7 +186,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             className="bg-[rgba(15,23,42,0.72)] z-[9999]"
             panelClassName="max-w-[820px] w-full overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
         >
-            {/* Header */}
+            {}
             <div className="bg-[#173968] px-5 py-4 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                 </div>
             </div>
 
-            {/* Content */}
+            {}
             <div className="bg-white p-6">
                 {errorMessage && (
                     <div className="mb-4 rounded-[4px] bg-red-50 border border-red-200 p-3 text-sm text-red-700">
@@ -211,7 +211,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     </div>
                 )}
 
-                {/* Step 1: Upload File */}
+                {}
                 {!file ? (
                     <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#cfd6e2] rounded-[6px] p-8 bg-slate-50 hover:bg-slate-100 transition">
                         <TableActionIcon className="h-12 w-12 text-[#94a3b8] mb-3" />
@@ -232,7 +232,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {/* File info */}
+                        {}
                         <div className="flex items-center justify-between rounded-[4px] border border-slate-200 bg-slate-50 px-4 py-3">
                             <span className="text-sm font-medium text-slate-700">{file.name}</span>
                             <button
@@ -244,7 +244,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             </button>
                         </div>
 
-                        {/* Step 2: Column mapping */}
+                        {}
                         <div>
                             <h3 className="text-base font-semibold text-slate-800 mb-3 border-b pb-2">
                                 Sesuaikan Pemetaan Kolom
@@ -257,7 +257,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             </div>
                         </div>
 
-                        {/* Step 3: Preview */}
+                        {}
                         {columnMapping.code !== -1 && columnMapping.quantity !== -1 && (
                             <div>
                                 <div className="flex items-center justify-between border-b pb-2 mb-3">
@@ -312,7 +312,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     </div>
                 )}
 
-                {/* Footer */}
+                {}
                 <div className="flex items-center justify-end gap-3 border-t border-slate-200 mt-6 pt-4">
                     <button
                         type="button"

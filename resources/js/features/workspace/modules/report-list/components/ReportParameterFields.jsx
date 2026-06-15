@@ -146,7 +146,7 @@ export function ReportDateField({ type, value, onChange }) {
         );
     }
 
-    // Default: 'range'
+    // Default: range
     return (
         <div className="space-y-3">
             <ReportFormRow label="Dari">

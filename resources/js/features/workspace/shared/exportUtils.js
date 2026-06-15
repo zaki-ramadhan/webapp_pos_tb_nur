@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-// ─── Export ───────────────────────────────────────────────────────────────────
+// Ekspor
 
 function getFormattedFilename(filename) {
     let name = filename;
@@ -422,7 +422,7 @@ export function exportToExcelXML(columns, rows, filename = 'export') {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
 
-    // Calculate column widths (fit-content)
+    // Hitung lebar kolom
     const colWidths = [
         { wch: 6 },
         ...activeCols.map((col) => {
@@ -439,7 +439,7 @@ export function exportToExcelXML(columns, rows, filename = 'export') {
                 maxLen = Math.max(maxLen, cellStr.length);
             });
 
-            // Add padding, clamp between 12 and 50 characters
+            // Tambah padding nama
             const optimalWidth = Math.max(12, Math.min(50, maxLen + 4));
             return { wch: optimalWidth };
         })
@@ -451,11 +451,10 @@ export function exportToExcelXML(columns, rows, filename = 'export') {
     XLSX.writeFile(wb, `${formattedFilename}.xlsx`);
 }
 
-// ─── Import ───────────────────────────────────────────────────────────────────
+// Impor
 
 /**
- * Parse an Excel (.xlsx/.xls) or CSV file selected via <input type="file">.
- * Returns a Promise that resolves to { headers: string[], rows: Record<string, string>[] }.
+ * Parsing file Excel atau CSV.
  */
 export function importFromFile(file) {
     return new Promise((resolve, reject) => {
@@ -493,13 +492,10 @@ export function importFromFile(file) {
     });
 }
 
-// ─── Print ────────────────────────────────────────────────────────────────────
+// Cetak
 
 /**
- * Print the visible table data as a simple styled HTML page in a new window.
- * columns: { id, label }[]
- * rows: Record<string, any>[]
- * title: string
+ * Cetak data tabel ke HTML.
  */
 export function printTable(columns, rows, title = 'Laporan') {
     const cleanTitle = getFriendlyTitle(typeof window !== 'undefined' ? window.__activePageId : null, title);
@@ -530,7 +526,7 @@ export function printTable(columns, rows, title = 'Laporan') {
         format: 'a4',
     });
 
-    // Set metadata properties
+    // Atur properti metadata
     doc.setProperties({
         title: cleanTitle,
         subject: `Laporan ${cleanTitle} - TB Nur`,
@@ -538,25 +534,25 @@ export function printTable(columns, rows, title = 'Laporan') {
         author: 'TB Nur'
     });
 
-    // Draw page 1 branding header
+    // Gambar header halaman 1
     const width = doc.internal.pageSize.width;
 
-    // Company Title (TB Nur)
+    // Nama perusahaan
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.setTextColor(30, 58, 138); // Navy-900 (#1e3a8a)
+    doc.setTextColor(30, 58, 138);
     doc.text('TB Nur', 36, 45);
 
-    // Report Title
+    // Judul laporan
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(71, 85, 105); // Slate-600 (#475569)
+    doc.setTextColor(71, 85, 105);
     doc.text(cleanTitle, 36, 62);
 
-    // Timestamp & Stats on the right
+    // Tampilkan info waktu & statistik
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    doc.setTextColor(100, 116, 139); // Slate-500 (#64748b)
+    doc.setTextColor(100, 116, 139);
     
     const localeDate = new Date().toLocaleDateString('id-ID', {
         day: '2-digit',
@@ -573,12 +569,12 @@ export function printTable(columns, rows, title = 'Laporan') {
     doc.text(timestampStr, width - 36, 45, { align: 'right' });
     doc.text(statsStr, width - 36, 58, { align: 'right' });
 
-    // Header divider line
-    doc.setDrawColor(35, 83, 160); // Brand primary color (#2353a0)
+    // Garis pembatas header
+    doc.setDrawColor(35, 83, 160);
     doc.setLineWidth(2);
     doc.line(36, 75, width - 36, 75);
 
-    // Align column configurations
+    // Sesuaikan kolom
     const columnStyles = {
         0: { halign: 'center' }
     };
@@ -587,7 +583,7 @@ export function printTable(columns, rows, title = 'Laporan') {
         columnStyles[idx + 1] = { halign: align };
     });
 
-    // Generate AutoTable
+    // Buat AutoTable
     autoTable(doc, {
         head: headers,
         body: data,
@@ -598,44 +594,44 @@ export function printTable(columns, rows, title = 'Laporan') {
             fontSize: fontSize,
             cellPadding: cellPadding,
             valign: 'middle',
-            lineColor: [226, 232, 240], // Slate-200
+            lineColor: [226, 232, 240],
             lineWidth: 0.5,
         },
         headStyles: {
-            fillColor: [35, 83, 160], // Navy-600 (#2353a0)
+            fillColor: [35, 83, 160],
             textColor: [255, 255, 255],
             fontStyle: 'bold',
             halign: 'left',
         },
         alternateRowStyles: {
-            fillColor: [248, 250, 252], // Slate-50 (#f8fafc)
+            fillColor: [248, 250, 252],
         },
         columnStyles: columnStyles,
         theme: 'grid',
     });
 
-    // Add page numbers and headers/footers in post-processing
+    // Tambah nomor halaman & header/footer
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8);
-        doc.setTextColor(100, 116, 139); // Slate-500
+        doc.setTextColor(100, 116, 139);
 
-        // Footer Page Number
+        // Nomor halaman footer
         const footerText = `Halaman ${i} dari ${totalPages}`;
         doc.text(footerText, width - 36, doc.internal.pageSize.height - 20, { align: 'right' });
 
-        // Header (only for pages > 1)
+        // Header halaman > 1
         if (i > 1) {
             doc.text(`TB Nur — ${cleanTitle}`, 36, 25);
-            doc.setDrawColor(226, 232, 240); // Slate-200
+            doc.setDrawColor(226, 232, 240);
             doc.setLineWidth(0.5);
             doc.line(36, 28, width - 36, 28);
         }
     }
 
-    // Output PDF in a new window/tab as a Blob URL, falling back to direct save if blocked
+    // Buka PDF di window baru
     try {
         const blob = doc.output('blob');
         const url = URL.createObjectURL(blob);
@@ -649,7 +645,7 @@ export function printTable(columns, rows, title = 'Laporan') {
     }
 }
 
-// ─── Private ──────────────────────────────────────────────────────────────────
+// Private
 
 function triggerDownload(content, mimeType, filename) {
     const blob = new Blob([content], { type: mimeType });

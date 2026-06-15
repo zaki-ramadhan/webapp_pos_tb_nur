@@ -30,7 +30,7 @@ export default function BackendLookupField({
                     setItems(rows);
                 }
             } catch (err) {
-                // Ignore error
+                // Abaikan error
             } finally {
                 if (!ignore) {
                     setSearching(false);

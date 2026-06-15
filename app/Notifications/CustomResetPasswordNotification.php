@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 class CustomResetPasswordNotification extends ResetPasswordNotification
 {
     /**
-     * Build the mail representation of the notification.
+     * Kirim notifikasi via email.
      *
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage

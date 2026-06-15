@@ -119,7 +119,7 @@ export function saveWorkspacePageState({
             }),
         );
     } catch {
-        // Ignore persistence failures and keep workspace tabs usable.
+        // Abaikan gagal simpan tab
     }
 }
 
@@ -131,6 +131,6 @@ export function clearWorkspacePageState() {
     try {
         window.localStorage.removeItem(WORKSPACE_PAGE_STATE_STORAGE_KEY);
     } catch {
-        // Ignore persistence cleanup failures.
+        // Abaikan gagal hapus persistence
     }
 }

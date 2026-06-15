@@ -29,7 +29,7 @@ export default function ReportListView({ page }) {
     const backendConfig = buildResolvedReportConfig(rows, fallbackConfig);
     const baseConfig = backendConfig.reports.length ? backendConfig : fallbackConfig;
     
-    // Sort categories alphabetically by label
+    // Urutkan kategori
     const sortedCategories = [...baseConfig.categories].sort((a, b) => a.label.localeCompare(b.label, 'id'));
     const config = { ...baseConfig, categories: sortedCategories };
     

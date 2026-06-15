@@ -9,7 +9,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
     Route::get('/banks', function (): \Illuminate\Http\JsonResponse {
         try {
             $banks = \Illuminate\Support\Facades\Cache::rememberForever('indonesian_banks_list', function (): array {
-                // Fetch the list of banks from a public repository registry
+                // Ambil daftar bank dari API
                 $response = \Illuminate\Support\Facades\Http::timeout(10)
                     ->get('https://raw.githubusercontent.com/riod94/list-bank-indonesia/master/bank.json');
 
@@ -25,7 +25,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
                     }
                 }
 
-                // Fallback list of Indonesian banks in case the HTTP request fails
+                // Daftar bank fallback
                 return [
                     ['name' => 'Bank Mandiri', 'code' => '008'],
                     ['name' => 'Bank Central Asia (BCA)', 'code' => '014'],
@@ -42,7 +42,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
 
             return response()->json($banks);
         } catch (\Throwable $e) {
-            // Ultimate fallback
+            // Fallback terakhir
             return response()->json([
                 ['name' => 'Bank Mandiri', 'code' => '008'],
                 ['name' => 'Bank Central Asia (BCA)', 'code' => '014'],

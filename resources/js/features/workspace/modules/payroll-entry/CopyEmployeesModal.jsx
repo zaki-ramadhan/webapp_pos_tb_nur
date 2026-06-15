@@ -131,7 +131,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
             }
         >
             <div className="flex flex-col gap-4">
-                {/* Status Dropdown - leaves 1/4 spacing on the right */}
+                {}
                 <div className="w-full sm:max-w-[75%]">
                     <SelectField
                         value={selectedStatus}
@@ -148,7 +148,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                     </SelectField>
                 </div>
 
-                {/* Table with Checkbox, Karyawan, and Nilai */}
+                {}
                 <div className="mt-2">
                     <DataTable>
                         <DataTableHeader>

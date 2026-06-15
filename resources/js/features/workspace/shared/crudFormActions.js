@@ -70,10 +70,10 @@ export async function executeCrudFormAction({
     } catch (error) {
         const errorMessage = getErrorMessage?.(error) ?? error?.message ?? 'Terjadi kesalahan.';
 
-        // Surface server-side validation field errors (HTTP 422)
+        // Tampilkan error validasi
         const serverFieldErrors = error?.response?.data?.errors;
         if (serverFieldErrors && typeof serverFieldErrors === 'object') {
-            // Flatten first-error-per-field into { field: 'message' }
+            // Format error per field
             const flat = Object.fromEntries(
                 Object.entries(serverFieldErrors).map(([key, value]) => [
                     key,

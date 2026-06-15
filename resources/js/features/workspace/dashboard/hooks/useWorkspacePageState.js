@@ -45,7 +45,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
     const [activePageId, setActivePageId] = useState(initialWorkspacePageState.activePageId);
     const [pageOpeningLoading, setPageOpeningLoading] = useState(null);
     
-    // Delegate dirty tab state management to custom hook
+    // Kelola state tab kotor
     const {
         dirtyTabs,
         clearPageDirty,
@@ -65,7 +65,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         window.__activePageId = activePageId;
     }, [activePageId]);
 
-    // Hoisted helper closure for page closing
+    // Helper penutupan halaman
     function closePageNow(pageId) {
         if (pageId === dashboardPage.id) {
             return;
@@ -73,7 +73,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
         clearPageDirty(pageId);
 
-        // Clear cached resource data for this page when it is closed
+        // Hapus cache halaman saat ditutup
         if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
             window.__clearBackendCache(pageId);
         }

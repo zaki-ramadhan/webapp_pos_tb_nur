@@ -363,7 +363,7 @@ class DashboardBlueprintProvider
                 ->where('due_date', '<', date('Y-m-d'))
                 ->count();
 
-            // Calculate dynamic upcoming note
+            // Hitung catatan mendatang
             $today = Carbon::today();
             $targetDay = 15;
             $upcomingDate = $today->day <= $targetDay
@@ -381,7 +381,7 @@ class DashboardBlueprintProvider
 
             $upcomingNote = $upcomingDate->format('d') . ' ' . $targetMonthName . ' ' . $upcomingDate->format('Y') . " — Batas Akhir Pelaporan SPT PPh 21 Masa {$reportMonthName} " . $upcomingDate->copy()->subMonth()->format('Y');
 
-            // Calculate dynamic overdue note
+            // Hitung catatan jatuh tempo
             $overdueSalesInvoicesCount = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->where('status', 'Posted')
@@ -917,7 +917,7 @@ class DashboardBlueprintProvider
             'transactionTypeOptions' => $transactionTypeOptions,
         ];
 
-        // Merge ABC and Apriori data into the respective analytics widgets
+        // Gabung data ABC & Apriori
         foreach ($data['widgets'] as &$w) {
             if ($w['id'] === 'integrated-analysis' || str_starts_with($w['id'], 'integrated-analysis')) {
                 $combinedMetrics = [];

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class SecureHeaders
 {
     /**
-     * Handle an incoming request.
+     * Proses request masuk.
      */
     public function handle(Request $request, Closure $next): Response
     {

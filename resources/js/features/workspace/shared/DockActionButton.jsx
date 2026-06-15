@@ -15,7 +15,7 @@ export default function DockActionButton({
 
     let toneClassName = '';
     if (isDisabled) {
-        // Disabled state: static gray border/background, no hover/active effects, pointer-events-none blocks all cursor triggers
+        // State dinonaktifkan
         toneClassName = 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] cursor-default opacity-55 shadow-none pointer-events-none';
     } else {
         if (resolvedTone === 'danger') {

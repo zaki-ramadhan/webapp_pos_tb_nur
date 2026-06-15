@@ -44,19 +44,19 @@ const inactiveWorkspaceControlIds = new Set([
 ]);
 
 const pageToFeatureMap = {
-    // Basic Features
+    // Fitur dasar
     'branch': 'multi-branch',
     'currency-master': 'multi-currency',
     'company-tax': 'tax-feature',
     'transaction-approval': 'approval-feature',
     'department': 'department-center',
     
-    // Budgets
+    // Seed anggaran
     'budget': 'budget-feature',
     'budget-monitor': 'budget-feature',
     'budget-transfer': 'budget-feature',
 
-    // Sales
+    // Penjualan
     'sales-quote': 'sales-quote-order',
     'sales-order': 'sales-quote-order',
     'sales-delivery': 'sales-quote-order',
@@ -66,18 +66,18 @@ const pageToFeatureMap = {
     'sales-commission': 'salesman',
     'sales-target': 'salesman',
 
-    // Purchases
+    // Pembelian
     'purchase-order': 'purchase-order',
     'goods-receipt': 'purchase-order',
     'purchase-deposit': 'purchase-order',
     'supplier-price': 'supplier-price-list',
 
-    // Shipping
+    // Pengiriman
     'shipping-master': 'delivery-service',
     'fob-master': 'delivery-service',
     'payment-terms': 'payment-terms',
 
-    // Inventory
+    // Persediaan
     'item-request': 'item-request',
     'stock-transfer': 'multi-warehouse',
     'work-order': 'simple-production',

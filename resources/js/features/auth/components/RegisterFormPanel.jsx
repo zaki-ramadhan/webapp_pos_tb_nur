@@ -77,7 +77,7 @@ export default function RegisterFormPanel({ register }) {
         const cleanedEmail = form.data.email.trim();
         const cleanedPhone = form.data.phone.trim();
 
-        // Update form state so user sees cleaned values in inputs
+        // Perbarui input form
         form.setData(prev => ({
             ...prev,
             name: cleanedName,

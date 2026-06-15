@@ -160,7 +160,7 @@ export default function BudgetTransferFormView({
             setStatus,
             execute: async () => {
                 const payload = {
-                    branch_id: 1, // Default branch
+                    branch_id: 1,
                     document_number: values.autoNumber
                         ? (isDetail ? detailRow.__backendRecord.document_number : 'TRSF-' + Date.now())
                         : values.transferNumber,

@@ -1,5 +1,5 @@
 /**
- * @deprecated Use specific files (Constants, Adapters, Payload, Formatters) instead.
+ * @deprecated Gunakan file modular secara langsung
  */
 export * from './generalJournalConstants';
 export * from './generalJournalAdapters';

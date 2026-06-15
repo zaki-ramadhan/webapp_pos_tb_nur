@@ -114,7 +114,7 @@ export default function BudgetFormView({
             setStatus,
             execute: async () => {
                 const payload = {
-                    branch_id: 1, // Default branch
+                    branch_id: 1,
                     document_number: isDetail ? detailRow.__backendRecord.document_number : 'BDG-' + Date.now(),
                     entry_date: new Date().toISOString().split('T')[0],
                     is_closed: false,

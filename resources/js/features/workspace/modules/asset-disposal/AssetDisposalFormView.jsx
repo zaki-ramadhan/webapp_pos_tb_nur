@@ -50,7 +50,7 @@ export default function AssetDisposalFormView({ page, activeLevel2Tab, onOpenCon
     const [fixedAssets, setFixedAssets] = useState([]);
     const [accounts, setAccounts] = useState([]);
 
-    // Fetch lists for lookup
+    // Ambil data lookup
     useEffect(() => {
         listBackendResource('fixed-assets', { per_page: 200 }).then(res => {
             setFixedAssets(res?.data ?? res ?? []);

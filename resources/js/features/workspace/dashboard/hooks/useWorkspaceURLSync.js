@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 export default function useWorkspaceURLSync({ activePageId, dashboardPageId, pages, openPageById }) {
-    // Sync browser URL with the active page to support bookmarking/sharing links
+    // Sinkronkan URL aktif
     useEffect(() => {
         const url = new URL(window.location.href);
         if (activePageId && activePageId !== dashboardPageId) {
@@ -12,7 +12,7 @@ export default function useWorkspaceURLSync({ activePageId, dashboardPageId, pag
         window.history.replaceState({}, '', url.toString());
     }, [activePageId, dashboardPageId]);
 
-    // Initialize the active page from the URL query parameter on mount
+    // Ambil halaman aktif dari URL
     const hasInitializedFromUrl = useRef(false);
     useEffect(() => {
         if (hasInitializedFromUrl.current) {

@@ -380,10 +380,10 @@
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    padding-top: 6px !important; /* pt-1.5 */
+    padding-top: 6px !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important; /* gap-3 */
+    gap: 12px !important;
 }
 
 /* 2. Jadikan pembungkus tabel (div.min-h-0) transparan dan padding-nya kosong */
@@ -392,8 +392,8 @@
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin-top: 0 !important; /* diatur oleh flex gap parent */
-    overflow-x: visible !important; /* eliminasi double scrollbar */
+    margin-top: 0 !important;
+    overflow-x: visible !important;
 }
 
 /* 3. Berikan style kartu (card) putih padat langsung ke tabelnya */
@@ -413,6 +413,6 @@
     padding-right: 0 !important;
     padding-top: 4px !important;
     padding-bottom: 4px !important;
-    margin-top: 0 !important; /* gunakan gap flex parent */
+    margin-top: 0 !important;
 }
 

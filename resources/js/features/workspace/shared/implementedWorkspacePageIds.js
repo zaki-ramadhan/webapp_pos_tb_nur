@@ -41,7 +41,7 @@ const implementedWorkspacePageIds = new Set([
     'minimum-stock',
     'delivery-order',
     'report-list',
-    // Newly integrated Active modules
+    // Modul aktif baru
     'fixed-assets',
     'asset-category',
     'asset-tax-category',

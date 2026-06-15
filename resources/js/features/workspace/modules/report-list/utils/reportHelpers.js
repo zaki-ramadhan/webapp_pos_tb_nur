@@ -158,7 +158,7 @@ export function resolveReportParams(reportId, categoryId) {
         return reportParamsOverride[reportId];
     }
 
-    // Default heuristic rules:
+    // Aturan heuristic default
     let dateType = 'range';
     let hasBranch = true;
     let checkboxes = ['totalOnly'];
@@ -303,7 +303,7 @@ export function resolveReportColumns(reportId, categoryId) {
         };
     }
 
-    // Default Fallback
+    // Fallback default
     return {
         mandatory: [
             { id: 'date', label: 'Tanggal / Periode' },

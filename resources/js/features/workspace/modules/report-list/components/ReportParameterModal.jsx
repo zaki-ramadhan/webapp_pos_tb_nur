@@ -28,7 +28,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
         checkboxes: {}
     });
 
-    // States for columns management
+    // State pengelolaan kolom
     const [visibleColumns, setVisibleColumns] = useState([]);
     const [selectedColumnId, setSelectedColumnId] = useState(null);
     const [showAddMenu, setShowAddMenu] = useState(false);
@@ -65,7 +65,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
         });
         setActiveTab('umum');
 
-        // Initialize report specific columns
+        // Inisialisasi kolom laporan
         const cols = resolveReportColumns(report.id, report.categoryId);
         setVisibleColumns(
             cols.mandatory.map(c => ({ ...c, isMandatory: true, checked: true }))
@@ -125,7 +125,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
     const handleDeleteColumn = () => {
         if (!selectedColumnId) return;
         const col = visibleColumns.find(c => c.id === selectedColumnId);
-        if (col && col.isMandatory) return; // Cannot delete mandatory columns
+        if (col && col.isMandatory) return;
 
         setVisibleColumns(prev => prev.filter(c => c.id !== selectedColumnId));
         setSelectedColumnId(null);
@@ -134,7 +134,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
     const handleEditColumn = async () => {
         if (!selectedColumnId) return;
         const col = visibleColumns.find(c => c.id === selectedColumnId);
-        if (col && col.isMandatory) return; // Cannot edit mandatory columns
+        if (col && col.isMandatory) return;
 
         const result = await showPromptModal("Ubah Nama Kolom", [
             {
@@ -154,7 +154,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
     const handleTampilkan = (e) => {
         e.preventDefault();
 
-        // Simulate report generation
+        // Simulasi buat laporan
         showInfoToast({
             title: 'Laporan sedang disiapkan',
             message: `Menyiapkan ${report.title}...`
@@ -173,7 +173,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
     return (
         <ModalBase open={open} onBackdropClick={onClose} panelClassName="max-w-xl !bg-transparent !shadow-none !overflow-visible flex flex-col max-h-[90vh] sm:max-h-[85vh]">
             <div className="flex flex-col h-full bg-white rounded-[16px] sm:rounded-[12px] overflow-hidden border border-[#0d386c]/20 shadow-2xl">
-                {/* Header */}
+                {}
                 <div className="flex items-center justify-between px-5 py-3.5 bg-[#0d386c] text-white">
                     <h2 className="text-base font-medium tracking-wide">
                         Parameter Laporan
@@ -187,7 +187,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     </button>
                 </div>
 
-                {/* Tab Navigation */}
+                {}
                 <div className="flex border-b border-slate-200 bg-white">
                     <button
                         type="button"
@@ -213,11 +213,11 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     </button>
                 </div>
 
-                {/* Content */}
+                {}
                 <form onSubmit={handleTampilkan} className="flex-1 overflow-y-auto p-5 space-y-3 bg-white">
                     {activeTab === 'umum' ? (
                         <div className="space-y-3">
-                            {/* Date Field */}
+                            {}
                             <ReportSectionHeading title="Tanggal" />
                             {reportSchema && (
                                 <ReportDateField
@@ -227,7 +227,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                 />
                             )}
 
-                            {/* Parameter Tambahan */}
+                            {}
                             <ReportSectionHeading title="Parameter Tambahan" />
                             {reportSchema?.hasBranch && (
                                 <ReportBranchField
@@ -237,7 +237,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                 />
                             )}
 
-                            {/* Checkbox Parameters */}
+                            {}
                             {reportSchema?.checkboxes && reportSchema.checkboxes.length > 0 && (
                                 <ReportCheckboxList
                                     list={reportSchema.checkboxes}
@@ -275,7 +275,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                 })}
                             </div>
 
-                            {/* Action Buttons below listbox */}
+                            {}
                             <div className="relative flex items-center gap-1.5 pt-1">
                                 <button
                                     type="button"
@@ -304,7 +304,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                     <Minus className="h-5 w-5" strokeWidth={2.5} />
                                 </button>
 
-                                {/* Dropdown menu for adding optional columns */}
+                                {}
                                 {showAddMenu && (
                                     <div className="absolute left-0 bottom-[40px] z-20 w-[240px] bg-white border border-slate-200 rounded-md shadow-lg py-1 max-h-[160px] overflow-y-auto">
                                         {availableOptionalColumns.length > 0 ? (
@@ -330,7 +330,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     )}
                 </form>
 
-                {/* Footer */}
+                {}
                 <div className="flex items-center justify-end px-5 py-3.5 border-t border-slate-200 bg-white">
                     <button
                         type="submit"

@@ -169,8 +169,8 @@ class BackendResourceController extends Controller
     public function syncCurrencies(Request $request): JsonResponse
     {
         try {
-            // Cache the rates for 12 hours (43200 seconds) to prevent API rate limit exhaustion.
-            // Since the free API updates daily, hitting it more frequently is unnecessary.
+            // Cache rate 12 jam
+            // Cukup hit API sekali sehari
             $rates = \Illuminate\Support\Facades\Cache::remember('currency_rates_usd', 43200, function () {
                 $response = Http::timeout(10)->get('https://open.er-api.com/v6/latest/USD');
 
@@ -342,7 +342,7 @@ class BackendResourceController extends Controller
                     $rules = $blueprint->storeRules();
                     unset($rules['attachment_ids'], $rules['attachment_ids.*']);
 
-                    // Verify if all required columns are present in the import data
+                    // Cek kelengkapan kolom impor
                     foreach ($rules as $ruleKey => $ruleList) {
                         $isRequired = false;
                         if (is_array($ruleList)) {
@@ -449,21 +449,21 @@ class BackendResourceController extends Controller
     protected function allowedPreferenceKeys(): array
     {
         return [
-            // Info Perusahaan & Alamat
+            // Info & alamat perusahaan
             'company-name', 'business-category', 'business-field', 'phone', 'fax', 
             'email', 'start-date', 'accounting-period', 'currency', 'street', 
             'city', 'province', 'postal-code', 'country',
-            // Fitur Dasar
+            // Fitur dasar
             'multi-branch', 'multi-currency', 'tax-feature', 'approval-feature', 
             'asset-feature', 'budget-feature',
-            // Metode Biaya & Pusat Biaya
+            // Metode & pusat biaya
             'inventory-average', 'inventory-fifo', 'department-center',
             // Penjualan & Pembelian
             'sales-quote-order', 'sales-return', 'price-adjustment', 'salesman', 
             'delivery-service', 'payment-terms', 'purchase-order', 'supplier-price-list',
             // Persediaan
             'item-request', 'multi-warehouse', 'multi-unit', 'simple-production',
-            // Persetujuan Transaksi (Approvals)
+            // Persetujuan transaksi
             'approval-sales-quote', 'approval-sales-order', 'approval-sales-delivery', 
             'approval-sales-invoice', 'approval-sales-receipt', 'approval-sales-return', 
             'approval-sales-discount', 'approval-purchase-order', 'approval-purchase-receipt', 
@@ -473,7 +473,7 @@ class BackendResourceController extends Controller
             'approval-inventory-job-completion', 'approval-inventory-stock-opname', 'approval-other-payment', 
             'approval-other-receipt', 'approval-other-bank-transfer', 'approval-other-expense', 
             'approval-other-salary', 'approval-other-transfer-asset',
-            // Lampiran Transaksi (Attachments)
+            // Lampiran transaksi
             'attachments-sales-quote', 'attachments-sales-order', 'attachments-sales-delivery', 
             'attachments-sales-invoice', 'attachments-sales-receipt', 'attachments-sales-return', 
             'attachments-sales-discount', 'attachments-purchase-order', 'attachments-purchase-receipt', 
@@ -485,11 +485,11 @@ class BackendResourceController extends Controller
             'attachments-other-payment', 'attachments-other-receipt', 'attachments-other-bank-transfer', 
             'attachments-other-fixed-asset', 'attachments-other-fixed-asset-change', 'attachments-other-fixed-asset-disposal', 
             'attachments-other-fixed-asset-transfer',
-            // Pembatasan (Limitations)
+            // Batasan
             'limitations-operator-access-mode', 'limitations-transaction-date-mode', 
             'limitations-general-items', 'limitations-serial-items', 'limitations-return-form-items', 
             'limitations-period-end-items', 'limitations-advance-payment-items',
-            // Format & Lainnya
+            // Format & lainnya
             'others-decimal-format', 'others-decimal-option-value', 'others-decimal-option-condition', 
             'others-date-display', 'others-aging-ar-range', 'others-aging-ar-source', 
             'others-aging-inventory-range', 'others-sales-commission-source',

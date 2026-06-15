@@ -66,8 +66,7 @@ export function TransactionToolbarSplitButton({ label, icon, items = [] }) {
 }
 
 /**
- * Settings button for transaction toolbars.
- * Opens a search + checkbox column-visibility panel, reading columns from tableRegistry.
+ * Tombol pengaturan kolom tabel.
  */
 export function TransactionToolbarSettingsButton({ label = 'Pengaturan kolom', icon, columns: columnsProp }) {
     const [open, setOpen] = useState(false);
@@ -153,7 +152,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
             ref={panelRef}
             className="absolute right-0 top-[calc(100%+8px)] z-50 w-[240px] rounded-[6px] border border-[#d6deea] bg-white shadow-[0_6px_24px_rgba(15,23,42,0.14)] overflow-hidden"
         >
-            {/* Search */}
+            {}
             <div className="px-2 pt-2 pb-1.5 border-b border-[#edf0f5]">
                 <div className="flex items-center gap-1.5 rounded-[4px] border border-[#d0d7e3] bg-[#f7f9fc] px-2.5 py-1.5">
                     <SearchIcon className="h-3.5 w-3.5 shrink-0 text-[#9aa4b6]" />
@@ -175,7 +174,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
                 </div>
             </div>
 
-            {/* Column list */}
+            {}
             <div className="flex max-h-[280px] flex-col gap-0 overflow-y-auto py-1.5">
                 {filtered.length === 0 ? (
                     <p className="px-3 py-2 text-xs text-[#9aa4b6]">Tidak ada kolom ditemukan.</p>

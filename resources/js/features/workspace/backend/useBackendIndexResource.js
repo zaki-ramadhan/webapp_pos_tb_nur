@@ -13,9 +13,9 @@ function sanitizeFilters(filters = {}) {
     );
 }
 
-// Global cache for SWR (Stale-While-Revalidate) mechanism
+// Cache global SWR
 const globalCache = new Map();
-const CACHE_FRESH_THRESHOLD_MS = 5000; // 5 seconds freshness
+const CACHE_FRESH_THRESHOLD_MS = 5000;
 
 function getCacheKey(resource, filters) {
     return `${resource}::${JSON.stringify(filters)}`;
@@ -34,7 +34,7 @@ export default function useBackendIndexResource({
     const [reloadVersion, setReloadVersion] = useState(0);
     const serializedFilters = JSON.stringify(filters ?? {});
 
-    // Reset page to 1 when filters change (like search keywords)
+    // Reset ke halaman 1 jika filter berubah
     useEffect(() => {
         setPage(1);
     }, [serializedFilters]);
@@ -59,13 +59,13 @@ export default function useBackendIndexResource({
 
     const cacheKey = useMemo(() => getCacheKey(resource, requestFilters), [resource, requestFilters]);
 
-    // Initialize payload from cache if available
+    // Ambil cache awal jika ada
     const [payload, setPayload] = useState(() => {
         const cached = globalCache.get(cacheKey);
         return cached ? cached.payload : null;
     });
 
-    // Derive state from cacheKey during render to sync payload immediately when key changes
+    // Sinkronisasi state cacheKey
     const [prevCacheKey, setPrevCacheKey] = useState(cacheKey);
     if (cacheKey !== prevCacheKey) {
         setPrevCacheKey(cacheKey);
@@ -86,7 +86,7 @@ export default function useBackendIndexResource({
         const isForceRefresh = requestFilters._refresh !== undefined;
         const isFresh = cachedEntry && (now - cachedEntry.timestamp < CACHE_FRESH_THRESHOLD_MS);
 
-        // If force refresh is triggered, invalidate cache for this entire resource
+        // Hapus cache jika force refresh
         if (isForceRefresh) {
             for (const key of globalCache.keys()) {
                 if (key.startsWith(`${resource}::`)) {
@@ -95,7 +95,7 @@ export default function useBackendIndexResource({
             }
         }
 
-        // Skip fetch if cache is fresh and not forced
+        // Lewati fetch jika cache segar
         if (isFresh && !isForceRefresh) {
             setPayload(cachedEntry.payload);
             setLoading(false);
@@ -103,7 +103,7 @@ export default function useBackendIndexResource({
         }
 
         async function run() {
-            // Show loading spinner only if we don't have cached data OR it is a force refresh
+            // Tampilkan loading spinner
             if (!cachedEntry || isForceRefresh) {
                 setLoading(true);
             }
@@ -116,7 +116,7 @@ export default function useBackendIndexResource({
                     return;
                 }
 
-                // Update cache
+                // Perbarui cache
                 globalCache.set(currentCacheKey, {
                     payload: nextPayload,
                     timestamp: Date.now(),
@@ -176,8 +176,8 @@ if (typeof window !== 'undefined') {
         for (const key of globalCache.keys()) {
             const resourceName = key.split('::')[0].toLowerCase();
             
-            // Check if pageId is exactly the resource name,
-            // or if any of the significant tokens match the resource name
+            // Cek kecocokan nama resource
+            // atau jika token cocok
             const isMatch = resourceName.includes(normalizedPageId) || 
                             normalizedPageId.includes(resourceName) ||
                             tokens.some(token => {

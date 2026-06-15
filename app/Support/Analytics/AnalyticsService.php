@@ -8,7 +8,7 @@ class AnalyticsService
     protected AprioriAnalysisService $aprioriService;
 
     /**
-     * AnalyticsService Constructor with Auto-Wired Micro-Services.
+     * Konstruktor AnalyticsService.
      */
     public function __construct(
         AbcAnalysisService $abcService,
@@ -19,7 +19,7 @@ class AnalyticsService
     }
 
     /**
-     * Perform ABC Analysis on Sales Data.
+     * Jalankan Analisis ABC.
      *
      * @return array
      */
@@ -29,7 +29,7 @@ class AnalyticsService
     }
 
     /**
-     * Run Apriori Algorithm to find Association Rules.
+     * Jalankan Algoritma Apriori.
      *
      * @param float $minSupport
      * @param float $minConfidence

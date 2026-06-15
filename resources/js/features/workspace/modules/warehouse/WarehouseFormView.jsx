@@ -101,7 +101,7 @@ export default function WarehouseFormView({
             setStatus,
             execute: async () => {
                 const payload = {
-                    branch_id: detailRow?.branchId ?? 1, // Default branch
+                    branch_id: detailRow?.branchId ?? 1,
                     code: isDetail ? detailRow.code : 'WH-' + values.name.trim().replace(/\s+/g, '-').toUpperCase() + '-' + Date.now(),
                     name: values.name.trim(),
                     warehouse_type: values.isDamagedWarehouse ? 'damaged' : 'main',

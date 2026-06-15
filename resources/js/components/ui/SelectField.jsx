@@ -38,7 +38,7 @@ export default function SelectField({
     const [localValue, setLocalValue] = useState(defaultValue ?? '');
     const currentValue = isControlled ? value : localValue;
 
-    // Parse options from standard React children
+    // Ambil opsi dari children
     const options = useMemo(() => {
         const list = [];
         const traverse = (nodes) => {
@@ -70,7 +70,7 @@ export default function SelectField({
 
     const displayLabel = selectedOption ? selectedOption.label : (currentValue || placeholder);
 
-    // Keyboard selection highlight scroll tracking
+    // Track scroll keyboard
     useEffect(() => {
         if (open && highlightedIndex >= 0 && listRef.current) {
             const activeEl = listRef.current.children[highlightedIndex];
@@ -80,7 +80,7 @@ export default function SelectField({
         }
     }, [highlightedIndex, open]);
 
-    // Reset keyboard selection highlighted index on open/close
+    // Reset indeks sorot
     useEffect(() => {
         if (open) {
             const index = options.findIndex((opt) => String(opt.value) === String(currentValue));
@@ -147,7 +147,7 @@ export default function SelectField({
 
     return (
         <div className={`relative ${resolvedContainerClassName}`.trim()}>
-            {/* Real select element hidden for testing frameworks / accessibility */}
+            {}
             <select
                 id={id ? `${id}-select` : undefined}
                 name={props.name}

@@ -11,9 +11,7 @@ import {
 } from '@/features/workspace/dashboard/workspacePageRegistry';
 
 /**
- * Renders any generic workspace page component with a uniform prop set.
- * `onOpenDetail` and `onCloseDetail` are optional — components that don't need
- * them simply ignore the extras via prop spreading.
+ * Render komponen halaman workspace.
  */
 function renderPage(Component, props) {
     return <Component {...props} />;

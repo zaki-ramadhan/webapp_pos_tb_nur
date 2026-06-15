@@ -361,7 +361,7 @@ export function TransactionDock({ actions = [] }) {
         const userObj = pageProps.auth?.user || pageProps.user || pageProps.dashboard?.user || {};
         userKey = userObj.id || userObj.email || userObj.name || 'guest';
     } catch (e) {
-        // Safe fallback
+        // Fallback aman
     }
     const favoritesStorageKey = `pos_favorite_transactions_${userKey}`;
 

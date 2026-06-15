@@ -14,7 +14,7 @@ class BackendResourceSecurityValidator
     ) {}
 
     /**
-     * Validate that a non-super-admin does not spoof branch assignment.
+     * Validasi penugasan cabang.
      *
      * @param  User  $user
      * @param  array<string, mixed>  $payload
@@ -38,7 +38,7 @@ class BackendResourceSecurityValidator
     }
 
     /**
-     * Validate that a non-super-admin does not escalate privileges via roles or access groups.
+     * Validasi eskalasi wewenang.
      *
      * @param  User  $user
      * @param  string  $resource
@@ -52,7 +52,7 @@ class BackendResourceSecurityValidator
             return;
         }
 
-        // 1. Prevent non-super-admin from assigning super_admin role
+        // Cegah non-super-admin atur role super_admin
         if ($resource === 'users' && isset($payload['role_ids'])) {
             $superAdminRoleId = Role::where('code', 'super_admin')->value('id');
             if ($superAdminRoleId && in_array($superAdminRoleId, $payload['role_ids'])) {
@@ -60,7 +60,7 @@ class BackendResourceSecurityValidator
             }
         }
 
-        // 2. Prevent non-super-admin from granting permissions they do not possess
+        // Cegah non-super-admin beri izin ekstra
         if ($resource === 'access-groups' && isset($payload['permissions'])) {
             foreach ($payload['permissions'] as $perm) {
                 $menuKey = $perm['menu_key'] ?? '';

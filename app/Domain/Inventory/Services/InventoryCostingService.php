@@ -9,7 +9,7 @@ use Carbon\Carbon;
 class InventoryCostingService
 {
     /**
-     * Record a new incoming stock batch.
+     * Catat batch stok masuk.
      */
     public function recordStockEntry(
         string $sourceType,
@@ -21,7 +21,7 @@ class InventoryCostingService
         float $unitCost,
         Carbon $entryDate
     ): InventoryBatch {
-        // First delete if there's any existing batch for this exact source line
+        // Hapus batch lama jika ada
         $this->revertStockEntry($sourceType, $sourceLineId);
 
         return InventoryBatch::create([
@@ -38,7 +38,7 @@ class InventoryCostingService
     }
 
     /**
-     * Revert/remove an incoming stock batch.
+     * Hapus batch stok masuk.
      */
     public function revertStockEntry(string $sourceType, ?int $sourceLineId): void
     {
@@ -52,7 +52,7 @@ class InventoryCostingService
     }
 
     /**
-     * Consume stock using FIFO logic and return the cost breakdown.
+     * Kurangi stok menggunakan metode FIFO.
      */
     public function consumeStock(
         int $productId,
@@ -64,7 +64,7 @@ class InventoryCostingService
         $consumptions = [];
         $totalCost = 0.0;
 
-        // Fetch active batches ordered by entry_date ASC, then ID ASC
+        // Ambil batch aktif
         $batches = InventoryBatch::where('product_id', $productId)
             ->where('warehouse_id', $warehouseId)
             ->where('qty_remaining', '>', 0)
@@ -93,7 +93,7 @@ class InventoryCostingService
             $qtyNeeded -= $consumeQty;
         }
 
-        // Fallback for shortage
+        // Fallback jika kurang
         if ($qtyNeeded > 0) {
             $fallbackCost = $this->resolveProductCost($productId);
             $consumptions[] = [
@@ -111,7 +111,7 @@ class InventoryCostingService
     }
 
     /**
-     * Revert stock consumption (return quantity back to the batches).
+     * Batalkan konsumsi stok.
      */
     public function revertStockConsumption(array $consumptions): void
     {
@@ -132,7 +132,7 @@ class InventoryCostingService
     }
 
     /**
-     * Helper to resolve the cost of a product as a fallback.
+     * Ambil fallback harga produk.
      */
     protected function resolveProductCost(int $productId): float
     {

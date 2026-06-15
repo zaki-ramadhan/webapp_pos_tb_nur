@@ -27,7 +27,7 @@ export default function TextareaField({
 
     function handleChange(event) {
         if (!onChange) return;
-        // Strip HTML tags to prevent XSS-like input in plain-text fields
+        // Bersihkan tag HTML
         const sanitized = event.target.value.replace(/<[^>]*>/g, '');
         if (sanitized !== event.target.value) {
             event.target.value = sanitized;

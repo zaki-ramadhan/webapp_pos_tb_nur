@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 class AprioriAnalysisService
 {
     /**
-     * Run Apriori Algorithm to find Association Rules.
+     * Jalankan Algoritma Apriori.
      *
      * @param float $minSupport
      * @param float $minConfidence
@@ -15,7 +15,7 @@ class AprioriAnalysisService
      */
     public function calculate(float $minSupport = 0.05, float $minConfidence = 0.4): array
     {
-        // 1. Fetch all Posted sales invoices
+        // Ambil invoice penjualan
         $transactions = DB::table('operation_documents')
             ->where('document_type', 'sales_invoice')
             ->where('status', 'Posted')
@@ -37,7 +37,7 @@ class AprioriAnalysisService
             ];
         }
 
-        // 2. Build list of transactions with item sets
+        // Buat daftar transaksi item
         $transactionItems = [];
         $allProducts = [];
 
@@ -66,7 +66,7 @@ class AprioriAnalysisService
             }
         }
 
-        // 3. Compute Frequent 1-Itemsets (F1)
+        // Hitung itemset 1-frequent
         $frequent1 = [];
         foreach ($allProducts as $pid => $count) {
             $support = $count / $n;
@@ -75,7 +75,7 @@ class AprioriAnalysisService
             }
         }
 
-        // 4. Generate candidate 2-Itemsets and compute support
+        // Hitung itemset 2-frequent
         $frequent2 = [];
         $f1_keys = array_keys($frequent1);
         $num_f1 = count($f1_keys);
@@ -85,7 +85,7 @@ class AprioriAnalysisService
                 $pid1 = $f1_keys[$i];
                 $pid2 = $f1_keys[$j];
 
-                // Count co-occurrences
+                // Hitung kemunculan
                 $coCount = 0;
                 foreach ($transactionItems as $itemset) {
                     if (in_array($pid1, $itemset) && in_array($pid2, $itemset)) {
@@ -103,11 +103,11 @@ class AprioriAnalysisService
             }
         }
 
-        // 5. Generate Association Rules from Frequent 2-Itemsets with Integrated ABC Categories
+        // Buat aturan asosiasi
         $rules = [];
         $ruleId = 1;
 
-        // Build ABC category map for all products based on Posted sales invoices
+        // Peta kategori ABC
         $abcSalesData = DB::table('operation_document_lines')
             ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
             ->where('operation_documents.document_type', 'sales_invoice')
@@ -148,7 +148,7 @@ class AprioriAnalysisService
             ];
         }
 
-        // Fetch product names to make rules highly readable
+        // Ambil nama produk
         $productNames = DB::table('products')
             ->pluck('name', 'id')
             ->toArray();
@@ -158,7 +158,7 @@ class AprioriAnalysisService
             $pid2 = $f2['items'][1];
             $supportF2 = $f2['support'];
 
-            // Rule 1: pid1 -> pid2
+            // Aturan 1
             $support1 = $frequent1[$pid1];
             $support2 = $frequent1[$pid2];
             
@@ -182,7 +182,7 @@ class AprioriAnalysisService
                 ];
             }
 
-            // Rule 2: pid2 -> pid1
+            // Aturan 2
             $confidence2 = $supportF2 / $support2;
             $lift2 = $confidence2 / $support1;
 
@@ -204,12 +204,12 @@ class AprioriAnalysisService
             }
         }
 
-        // Sort rules by confidence descending
+        // Urutkan aturan dari confidence tertinggi
         usort($rules, function ($a, $b) {
             return $b['confidenceValue'] <=> $a['confidenceValue'];
         });
 
-        // Take top 7 rules to keep UI neat
+        // Ambil 7 aturan teratas
         $rules = array_slice($rules, 0, 7);
 
         $metrics = [

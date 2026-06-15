@@ -110,7 +110,7 @@ export default function BranchFormView({
                     province: values.province.trim() || null,
                     country: values.country.trim() || null,
                     is_active: true,
-                    user_ids: [], // Handled standardly
+                    user_ids: [],
                 };
 
                 const response = isDetailMode && values.__backendRecordId

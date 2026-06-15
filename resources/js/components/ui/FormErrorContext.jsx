@@ -55,13 +55,7 @@ export function FormErrorProvider({ children }) {
 }
 
 /**
- * Resolve the effective inline error for a field.
- * Priority: explicit `error` prop > context error by name > context error by id.
- *
- * @param {string|boolean|undefined} explicitError - error passed directly via prop
- * @param {string|undefined} name - input name attribute
- * @param {string|undefined} id - input id attribute
- * @returns {{ errorMessage: string, contextKey: string|null }}
+ * Ambil pesan error validasi field.
  */
 export function useFormError(explicitError, name, id) {
     const { errors, clearError } = useContext(FormErrorContext);
@@ -71,7 +65,7 @@ export function useFormError(explicitError, name, id) {
         ? (errors[name] ?? errors[id] ?? '')
         : '';
 
-    // Explicit string error takes priority; boolean signals error state only (no message)
+    // Prioritaskan error string
     const errorMessage =
         typeof explicitError === 'string' && explicitError
             ? explicitError
@@ -81,13 +75,12 @@ export function useFormError(explicitError, name, id) {
 }
 
 /**
- * Shared logic for toggle-style inputs (radio, checkbox).
- * Extracts error resolution + visual class derivation in one call.
+ * Logika input checkbox / radio.
  */
 export function useToggleFieldError({ error, name, id, size, align, containerClassName }) {
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
-    // resolvedError already contains the string message when present
+    // gunakan error message yang ada
     const feedbackMessage = typeof resolvedError === 'string' ? resolvedError : '';
 
     const sizeClassName = size === 'md' ? 'h-5 w-5' : 'h-4 w-4';

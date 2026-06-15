@@ -32,16 +32,16 @@ export default function Pagination({
 
     return (
         <div className={`flex flex-col items-center justify-between gap-4 border-t border-ui-border-light bg-white px-4 py-3 sm:flex-row ${className}`.trim()}>
-            {/* Info text */}
+            {}
             <div className="text-sm text-text-medium">
                 Menampilkan <span className="font-semibold text-text-dark">{from}</span> sampai{' '}
                 <span className="font-semibold text-text-dark">{to}</span> dari{' '}
                 <span className="font-semibold text-text-dark">{total}</span> data
             </div>
 
-            {/* Controls */}
+            {}
             <div className="flex flex-wrap items-center gap-3">
-                {/* Per Page Selector */}
+                {}
                 {onPerPageChange ? (
                     <div className="flex items-center gap-2 relative" ref={dropdownRef}>
                         <span className="text-sm text-text-muted">Tampilkan:</span>
@@ -76,9 +76,9 @@ export default function Pagination({
                     </div>
                 ) : null}
 
-                {/* Page Navigation */}
+                {}
                 <div className="flex items-center -space-x-px rounded-[4px] border border-ui-border-light">
-                    {/* Prev Button */}
+                    {}
                     <button
                         type="button"
                         disabled={page <= 1}
@@ -89,7 +89,7 @@ export default function Pagination({
                         <ChevronLeft className="h-4.5 w-4.5" />
                     </button>
 
-                    {/* Page numbers */}
+                    {}
                     {Array.from({ length: lastPage }, (_, i) => i + 1)
                         .filter((p) => p === 1 || p === lastPage || Math.abs(p - page) <= 1)
                         .map((p, index, arr) => {
@@ -116,7 +116,7 @@ export default function Pagination({
                             );
                         })}
 
-                    {/* Next Button */}
+                    {}
                     <button
                         type="button"
                         disabled={page >= lastPage}

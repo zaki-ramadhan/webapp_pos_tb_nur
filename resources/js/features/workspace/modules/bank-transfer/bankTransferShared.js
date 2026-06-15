@@ -1,5 +1,5 @@
 /**
- * @deprecated Use specific files (Calculations, Adapters, Validation, Payload, Formatters) instead.
+ * @deprecated Gunakan file modular secara langsung
  */
 export * from './bankTransferCalculations';
 export * from './bankTransferAdapters';

@@ -48,7 +48,7 @@ export default function AssetChangeFormView({ pageId, config, activeLevel2Tab, o
     const [accounts, setAccounts] = useState([]);
     const isDetail = Boolean(activeRecordId);
 
-    // Fetch lists for ID translation on save
+    // Ambil data untuk translasi ID
     useEffect(() => {
         listBackendResource('fixed-assets', { per_page: 200 }).then(res => {
             setFixedAssets(res?.data ?? res ?? []);

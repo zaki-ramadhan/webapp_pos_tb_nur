@@ -103,7 +103,7 @@ export default function SalesTargetFormView({
             setStatus,
             execute: async () => {
                 const payload = {
-                    branch_id: 1, // Default branch
+                    branch_id: 1,
                     document_number: isDetail ? detailRecord.document_number : 'TRG-' + Date.now(),
                     entry_date: new Date().toISOString().split('T')[0],
                     notes: values.notes || '',

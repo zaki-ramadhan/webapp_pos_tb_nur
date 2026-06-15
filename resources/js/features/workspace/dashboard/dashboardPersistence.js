@@ -107,7 +107,7 @@ export function saveDashboardPreferences(preferences) {
             }),
         );
     } catch {
-        // Ignore persistence failures and keep the dashboard usable.
+        // Abaikan gagal simpan dashboard
     }
 }
 
@@ -119,7 +119,7 @@ export function clearDashboardPreferences() {
     try {
         window.localStorage.removeItem(DASHBOARD_PREFERENCES_STORAGE_KEY);
     } catch {
-        // Ignore persistence cleanup failures.
+        // Abaikan gagal hapus persistence
     }
 }
 

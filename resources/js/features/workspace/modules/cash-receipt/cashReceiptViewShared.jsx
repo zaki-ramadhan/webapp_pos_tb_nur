@@ -1,5 +1,5 @@
 /**
- * @deprecated Use specific files (Adapters, Validation, Payload, Components, Toolbar, Formatters) instead.
+ * @deprecated Gunakan file modular secara langsung
  */
 export * from './cashReceiptAdapters';
 export * from './cashReceiptValidation';

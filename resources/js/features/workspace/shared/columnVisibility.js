@@ -22,7 +22,7 @@ export function useColumnVisibility(schemaKey, initialColumns = []) {
     const [visibleIds, setVisibleIds] = useState(getInitialVisibleIds);
     const [lastSchemaKey, setLastSchemaKey] = useState(schemaKey);
 
-    // Sync state if schemaKey changes (e.g. table loaded asynchronously)
+    // Sinkronkan kolom jika schema berubah
     if (schemaKey !== lastSchemaKey) {
         setLastSchemaKey(schemaKey);
         setVisibleIds(getInitialVisibleIds());
@@ -31,7 +31,7 @@ export function useColumnVisibility(schemaKey, initialColumns = []) {
     useEffect(() => {
         if (!schemaKey || !visibleIds || visibleIds.length === 0) return;
         localStorage.setItem(`col_vis_${schemaKey}`, JSON.stringify(visibleIds));
-        // Notify listeners
+        // Beritahu listener
         listeners.forEach(listener => listener(schemaKey, visibleIds));
     }, [schemaKey, visibleIds]);
 
@@ -59,7 +59,7 @@ export function getTableSchemaKey(columns = []) {
         .join('|');
 }
 
-// Global registry to link TableToolbar and DataTables dynamically
+// Registrasi global toolbar & tabel
 export const tableRegistry = {
     activeTable: null,
     listeners: new Set(),

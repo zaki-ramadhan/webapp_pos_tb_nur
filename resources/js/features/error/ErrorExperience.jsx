@@ -180,20 +180,20 @@ export default function ErrorExperience({
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#faf9f6] p-4 text-[#2f2419] overflow-hidden">
-            {/* Minimal Background Subtle Accent Lines */}
+            {}
             <div className="pointer-events-none absolute inset-0 opacity-30">
                 <div className="absolute -left-1/4 -top-1/4 h-[800px] w-[800px] rounded-full border border-slate-200/40" />
                 <div className="absolute -right-1/4 -bottom-1/4 h-[800px] w-[800px] rounded-full border border-slate-200/40" />
             </div>
 
-            {/* Top-Left Backdrop Text */}
+            {}
             <div className="pointer-events-none absolute left-0 top-0 select-none opacity-[0.04] leading-none z-0">
                 <span className="text-[35vw] font-serif font-black text-slate-400 tracking-[-0.06em] translate-x-[-15%] translate-y-[-40%] inline-block blur-[3px]">
                     {code}
                 </span>
             </div>
 
-            {/* Bottom-Right Backdrop Text */}
+            {}
             <div className="pointer-events-none absolute right-0 bottom-0 select-none opacity-[0.04] leading-none z-0">
                 <span className="text-[35vw] font-serif font-black text-slate-400 tracking-[-0.06em] translate-x-[15%] translate-y-[40%] inline-block blur-[3px]">
                     {code}
@@ -202,7 +202,7 @@ export default function ErrorExperience({
 
             <section className="relative z-10 w-full max-w-md rounded-lg border border-slate-200/80 bg-white p-8 shadow-sm">
                 <div className="flex flex-col items-center text-center">
-                    {/* Hero Error Code Display */}
+                    {}
                     <div className="relative mt-1 mb-5 flex items-center justify-center">
                         <span className="text-8xl font-serif font-extrabold tracking-normal text-slate-900 select-none">
                             {code}

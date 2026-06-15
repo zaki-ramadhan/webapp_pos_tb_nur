@@ -67,7 +67,7 @@ class BackendResourceWriter
     protected function persist(BackendResourceBlueprint $blueprint, Model $record, array $payload): Model
     {
         return DB::transaction(function () use ($blueprint, $record, $payload): Model {
-            // Custom Business Logic Integrity Checks
+            // Validasi logika bisnis
             if ($blueprint->key === 'general-journals') {
                 $lines = $payload['lines'] ?? [];
                 $totalDebit = 0;
@@ -114,7 +114,7 @@ class BackendResourceWriter
                 }
             }
 
-            // Enforce required attachments based on preference settings
+            // Validasi lampiran wajib
             $blueprintToPreferenceMap = [
                 'sales-quotes' => 'attachments-sales-quote',
                 'sales-orders' => 'attachments-sales-order',
@@ -180,7 +180,7 @@ class BackendResourceWriter
 
             $before = $record->exists ? $this->activityLogger->snapshot($record) : null;
 
-            // Revert costing for existing records before syncing updated lines
+            // Kembalikan costing lama
             $costingKeys = [
                 'goods-receipts',
                 'sales-deliveries',
@@ -202,7 +202,7 @@ class BackendResourceWriter
 
             $blueprint->sync($record, $payload);
 
-            // Apply costing for new/updated lines
+            // Terapkan costing baru
             if (in_array($blueprint->key, $costingKeys)) {
                 $this->applyCosting($record);
             }
@@ -242,7 +242,7 @@ class BackendResourceWriter
     }
 
     /**
-     * Revert costing for all lines of a document.
+     * Batalkan costing dokumen.
      */
     protected function revertCosting(Model $record): void
     {
@@ -258,10 +258,10 @@ class BackendResourceWriter
             $sourceType = get_class($record);
             $sourceLineId = $line->id;
 
-            // 1. Revert incoming batch (if any)
+            // Kembalikan batch masuk jika ada
             $costingService->revertStockEntry($sourceType, $sourceLineId);
 
-            // 2. Revert outgoing consumption (if any)
+            // Kembalikan konsumsi keluar jika ada
             $attributes = is_string($line->attributes) ? json_decode($line->attributes, true) : ($line->attributes ?? []);
             if (!empty($attributes['consumed_batches'])) {
                 $costingService->revertStockConsumption($attributes['consumed_batches']);
@@ -270,7 +270,7 @@ class BackendResourceWriter
     }
 
     /**
-     * Apply costing for all lines of a document.
+     * Terapkan costing untuk baris dokumen.
      */
     protected function applyCosting(Model $record): void
     {
@@ -306,7 +306,7 @@ class BackendResourceWriter
 
             $sourceLineId = $line->id;
 
-            // Resolve warehouse
+            // Cari gudang
             $warehouseId = null;
             if (isset($line->warehouse_id) && $line->warehouse_id) {
                 $warehouseId = $line->warehouse_id;
@@ -429,7 +429,7 @@ class BackendResourceWriter
     }
 
     /**
-     * Helper to handle stock entry logging with automatic fallback pricing resolving.
+     * Catat penambahan stok.
      */
     protected function recordEntryHelper(
         \App\Domain\Inventory\Services\InventoryCostingService $costingService,
@@ -458,7 +458,7 @@ class BackendResourceWriter
     }
 
     /**
-     * Helper to handle stock consumption logging and saving batch footprints.
+     * Catat konsumsi stok.
      */
     protected function consumeStockHelper(
         \App\Domain\Inventory\Services\InventoryCostingService $costingService,
@@ -480,7 +480,7 @@ class BackendResourceWriter
     }
 
     /**
-     * Helper to resolve the cost of a product as a fallback.
+     * Ambil fallback harga produk.
      */
     protected function resolveProductCost(int $productId): float
     {

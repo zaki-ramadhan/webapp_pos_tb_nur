@@ -10,7 +10,7 @@ class RealisticDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Clear existing data in correct order
+        // Hapus data lama
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('operation_document_user')->truncate();
         DB::table('operation_document_lines')->truncate();
@@ -51,7 +51,7 @@ class RealisticDataSeeder extends Seeder
         DB::table('report_catalogs')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // 2. Seed Organization & Finance
+        // Seed data organisasi & keuangan
         $branchId = DB::table('branches')->insertGetId([
             'code' => 'JKT-01',
             'name' => 'JAKARTA',
@@ -100,7 +100,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Seed multiple departments
+        // Seed departemen
         $deptId = DB::table('departments')->insertGetId([
             'code' => 'ACC',
             'name' => 'Accounting',
@@ -146,7 +146,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Seed multiple currencies
+        // Seed mata uang
         $currencyId = DB::table('currencies')->insertGetId([
             'code' => 'IDR',
             'name' => 'Rupiah',
@@ -196,7 +196,7 @@ class RealisticDataSeeder extends Seeder
             ]
         ]);
 
-        // Accounts Table
+        // Tabel Akun
         $accAssetId = DB::table('accounts')->insertGetId([
             'currency_id' => $currencyId,
             'code' => '121.200-04',
@@ -247,7 +247,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Seed Salary Allowances
+        // Seed tunjangan gaji
         DB::table('salary_allowances')->insert([
             [
                 'code' => 'ALL-TJ',
@@ -301,7 +301,7 @@ class RealisticDataSeeder extends Seeder
             ]
         ]);
 
-        // Seed Taxes
+        // Seed pajak
         $taxId = DB::table('taxes')->insertGetId([
             'code' => 'PPN-11',
             'name' => 'PPN 11%',
@@ -351,7 +351,7 @@ class RealisticDataSeeder extends Seeder
             ]
         ]);
 
-        // Seed Employees
+        // Seed karyawan
         $emp1Id = DB::table('employees')->insertGetId([
             'branch_id' => $branchId,
             'department_id' => $deptId,
@@ -496,7 +496,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Seed Employee Bank Accounts
+        // Seed bank karyawan
         DB::table('employee_bank_accounts')->insert([
             [
                 'employee_id' => $emp1Id,
@@ -554,7 +554,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Categories & Partner Master
+        // Seed kategori & mitra
         $custCatId = DB::table('customer_categories')->insertGetId([
             'code' => 'RET',
             'name' => 'Retail',
@@ -601,7 +601,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 3. Brand & Units
+        // Seed data brand & satuan
         $brandId = DB::table('brands')->insertGetId([
             'code' => 'TGA',
             'name' => 'Tiga Roda',
@@ -646,7 +646,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Product Category
+        // Kategori produk
         $prodCatId = DB::table('product_categories')->insertGetId([
             'code' => 'MAT-BGN',
             'name' => 'Material Bangunan',
@@ -656,7 +656,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 4. Products Master
+        // Seed data produk
         $pSemen = DB::table('products')->insertGetId([
             'category_id' => $prodCatId,
             'brand_id' => $brandId,
@@ -743,14 +743,14 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 5. Build Sales Transaction Patterns for Apriori Analysis (Support/Confidence)
-        // We will seed 15 sales invoices.
-        // Let's create transactions that form clear rules:
-        // Pattern 1: Semen (SMN-050) & Besi Hollow (BSH-404) -> Frequently bought together (6 times)
-        // Pattern 2: Cat Tembok (CAT-250) & Kuas Cat (KUS-300) -> Frequently bought together (4 times)
+        // Seed transaksi untuk Apriori
+        // Seed 15 invoice
+        // Transaksi untuk rule
+        // Pola 1: Semen & Besi
+        // Pola 2: Cat & Kuas
         
         $salesPattern = [
-            // Semen & Besi
+            // Semen & besi
             1 => [$pSemen => 10, $pBesi => 5],
             2 => [$pSemen => 15, $pBesi => 8, $pPaku => 2],
             3 => [$pSemen => 20, $pBesi => 12],
@@ -758,13 +758,13 @@ class RealisticDataSeeder extends Seeder
             5 => [$pSemen => 30, $pBesi => 15, $pPaku => 5],
             6 => [$pSemen => 12, $pBesi => 6],
             
-            // Cat & Kuas
+            // Cat & kuas
             7 => [$pCat => 2, $pKuas => 2],
             8 => [$pCat => 3, $pKuas => 3, $pPaku => 1],
             9 => [$pCat => 1, $pKuas => 1],
             10 => [$pCat => 5, $pKuas => 4],
             
-            // Misc
+            // Lain-lain
             11 => [$pSemen => 25, $pPaku => 3],
             12 => [$pBesi => 10, $pPaku => 4],
             13 => [$pCat => 2, $pPaku => 2],
@@ -831,8 +831,8 @@ class RealisticDataSeeder extends Seeder
             ]);
         }
 
-        // 6. Seed Advanced Finance Operational Documents (Budgets & Payroll)
-        // Budgets
+        // Seed anggaran & payroll
+        // Seed anggaran
         DB::table('operation_documents')->insertGetId([
             'document_type' => 'budget',
             'branch_id' => $branchId,
@@ -863,7 +863,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 7. Seed Fixed Assets
+        // Seed data aset tetap
         $assetCatId = DB::table('asset_categories')->insertGetId([
             'code' => 'OFF-EQP',
             'name' => 'Peralatan Kantor',
@@ -942,7 +942,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Seed some Asset Changes and Disposals to operation_documents
+        // Seed mutasi/pelepasan aset
         DB::table('operation_documents')->insertGetId([
             'document_type' => 'asset_change',
             'branch_id' => $branchId,
@@ -967,13 +967,13 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 9. Seed Preference Settings
+        // Seed pengaturan preferensi
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('preference_settings')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $settings = [
-            // Company Info
+            // Info perusahaan
             ['group_key' => 'company_info', 'setting_key' => 'company-name', 'value' => 'UD. TB Nur', 'label' => 'Nama Perusahaan'],
             ['group_key' => 'company_info', 'setting_key' => 'business-category', 'value' => 'GROSIR / WHOLESALER', 'label' => 'Kategori Usaha'],
             ['group_key' => 'company_info', 'setting_key' => 'business-field', 'value' => 'Bahan Bangunan', 'label' => 'Bidang Usaha'],
@@ -984,14 +984,14 @@ class RealisticDataSeeder extends Seeder
             ['group_key' => 'company_info', 'setting_key' => 'accounting-period', 'value' => 'Januari - Desember', 'label' => 'Periode Akuntansi'],
             ['group_key' => 'company_info', 'setting_key' => 'currency', 'value' => 'Indonesian Rupiah', 'label' => 'Mata Uang Dasar'],
 
-            // Company Address
+            // Alamat perusahaan
             ['group_key' => 'company_info', 'setting_key' => 'street', 'value' => 'Jl. Tomang Raya No. 35', 'label' => 'Jalan'],
             ['group_key' => 'company_info', 'setting_key' => 'city', 'value' => 'Kab. Badung', 'label' => 'Kota'],
             ['group_key' => 'company_info', 'setting_key' => 'province', 'value' => 'Bali', 'label' => 'Provinsi'],
             ['group_key' => 'company_info', 'setting_key' => 'postal-code', 'value' => '80361', 'label' => 'Kode Pos'],
             ['group_key' => 'company_info', 'setting_key' => 'country', 'value' => 'Indonesia', 'label' => 'Negara'],
 
-            // Basic Features
+            // Fitur dasar
             ['group_key' => 'features', 'setting_key' => 'multi-branch', 'value' => 'false', 'label' => 'Multi Cabang'],
             ['group_key' => 'features', 'setting_key' => 'multi-currency', 'value' => 'true', 'label' => 'Multi Mata Uang'],
             ['group_key' => 'features', 'setting_key' => 'tax-feature', 'value' => 'true', 'label' => 'Pajak'],
@@ -999,7 +999,7 @@ class RealisticDataSeeder extends Seeder
             ['group_key' => 'features', 'setting_key' => 'asset-feature', 'value' => 'true', 'label' => 'Pencatatan Aset'],
             ['group_key' => 'features', 'setting_key' => 'budget-feature', 'value' => 'true', 'label' => 'Anggaran'],
 
-            // Transaction Approval Features
+            // Fitur persetujuan transaksi
             ['group_key' => 'features', 'setting_key' => 'approval-sales-quote', 'value' => 'true', 'label' => 'Persetujuan Penawaran Penjualan'],
             ['group_key' => 'features', 'setting_key' => 'approval-sales-order', 'value' => 'true', 'label' => 'Persetujuan Pesanan Penjualan'],
             ['group_key' => 'features', 'setting_key' => 'approval-sales-delivery', 'value' => 'true', 'label' => 'Persetujuan Pengiriman Pesanan'],
@@ -1040,7 +1040,7 @@ class RealisticDataSeeder extends Seeder
             ]));
         }
 
-        // 10. Seed Roles
+        // Seed data role
         $superAdminRoleId = DB::table('roles')->insertGetId([
             'code' => 'super_admin',
             'name' => 'Super Admin',
@@ -1057,7 +1057,7 @@ class RealisticDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 11. Seed Access Groups & Permissions
+        // Seed data grup akses & izin
         $adminGroupId = DB::table('access_groups')->insertGetId([
             'code' => 'ADMIN',
             'name' => 'Administrator',
@@ -1124,7 +1124,7 @@ class RealisticDataSeeder extends Seeder
             ]);
         }
 
-        // 12. Seed Users
+        // Seed data user
         $usersData = [
             [
                 'name' => 'Zaki Ramadhan',
@@ -1182,7 +1182,7 @@ class RealisticDataSeeder extends Seeder
             $usersMap[$userData['email']] = $uId;
         }
 
-        // Attach Roles & Groups to Users
+        // Hubungkan role & grup ke user
         DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $adminGroupId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
 
@@ -1201,7 +1201,7 @@ class RealisticDataSeeder extends Seeder
         DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['rudi@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['rudi@tbnur.com']]);
 
-        // 13. Seed Activity Logs
+        // Seed data log aktivitas
         $logs = [
             [
                 'log_group' => 'general',
@@ -1260,7 +1260,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now()->subHours(3),
                 'updated_at' => now()->subHours(3),
             ],
-            // Journal Logs
+            // Log jurnal
             [
                 'log_group' => 'journal',
                 'resource_key' => 'general-journals',
@@ -1303,9 +1303,9 @@ class RealisticDataSeeder extends Seeder
 
         DB::table('activity_logs')->insert($logs);
 
-        // 14. Seed Report Catalogs
+        // Seed data katalog laporan
         $reportCatalogs = [
-            // Memorize
+            // Laporan tersimpan
             [
                 'category_key' => 'memorize',
                 'report_key' => 'memorize-sales-by-customer',
@@ -1317,7 +1317,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Keuangan (Finance)
+            // Keuangan
             [
                 'category_key' => 'finance',
                 'report_key' => 'finance-cashflow',
@@ -1351,7 +1351,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Pusat Laba & Biaya (Profit Center)
+            // Pusat laba & biaya
             [
                 'category_key' => 'profit-center',
                 'report_key' => 'profit-center-summary',
@@ -1374,7 +1374,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Buku Besar (Ledger)
+            // Buku besar
             [
                 'category_key' => 'ledger',
                 'report_key' => 'ledger-account-mutation',
@@ -1408,7 +1408,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Kas & Bank (Cash & Bank)
+            // Kas & bank
             [
                 'category_key' => 'cash-bank',
                 'report_key' => 'cash-bank-daily-balance',
@@ -1431,7 +1431,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Piutang (Receivable)
+            // Piutang
             [
                 'category_key' => 'receivable',
                 'report_key' => 'receivable-aging',
@@ -1454,7 +1454,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Penjualan (Sales) - 22 reports matching Photo 2
+            // Penjualan
             [
                 'category_key' => 'sales',
                 'report_key' => 'sales-by-customer',
@@ -1697,7 +1697,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Tenaga Penjual (Salesperson)
+            // Salesperson
             [
                 'category_key' => 'salesperson',
                 'report_key' => 'salesperson-performance',
@@ -1709,7 +1709,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Utang (Payable)
+            // Utang
             [
                 'category_key' => 'payable',
                 'report_key' => 'payable-aging',
@@ -1721,7 +1721,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Pembelian (Purchase)
+            // Pembelian
             [
                 'category_key' => 'purchase',
                 'report_key' => 'purchase-by-supplier',
@@ -1733,7 +1733,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Persediaan (Inventory)
+            // Persediaan
             [
                 'category_key' => 'inventory',
                 'report_key' => 'inventory-movement',
@@ -1745,7 +1745,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Gudang (Warehouse)
+            // Gudang
             [
                 'category_key' => 'warehouse',
                 'report_key' => 'warehouse-stock-value',
@@ -1757,7 +1757,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Aset Tetap (Fixed Assets)
+            // Aset tetap
             [
                 'category_key' => 'fixed-assets',
                 'report_key' => 'fixed-assets-depreciation',
@@ -1769,7 +1769,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Pajak (Tax)
+            // Pajak
             [
                 'category_key' => 'tax',
                 'report_key' => 'tax-vat-summary',
@@ -1781,7 +1781,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Pemeriksaan (Inspection)
+            // Pemeriksaan
             [
                 'category_key' => 'inspection',
                 'report_key' => 'inspection-audit-trail',
@@ -1793,7 +1793,7 @@ class RealisticDataSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // Lain-lain (Others)
+            // Lain-lain
             [
                 'category_key' => 'others',
                 'report_key' => 'others-custom-form',

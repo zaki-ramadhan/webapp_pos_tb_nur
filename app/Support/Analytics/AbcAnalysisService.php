@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\DB;
 class AbcAnalysisService
 {
     /**
-     * Perform ABC Analysis on Sales Data.
+     * Jalankan Analisis ABC.
      *
      * @return array
      */
     public function calculate(): array
     {
-        // 1. Query total sales amount and units sold per product
+        // Query total penjualan per produk
         $salesData = DB::table('operation_document_lines')
             ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
             ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
@@ -64,7 +64,7 @@ class AbcAnalysisService
             $cumulativeRevenue += $revenue;
             $cumulativeShare = ($cumulativeRevenue / $totalRevenue) * 100;
 
-            // ABC Classification: A (0-80%), B (80-95%), C (95-100%)
+            // Klasifikasi ABC
             if ($cumulativeShare <= 80 || $itemsA === 0) {
                 $category = 'A';
                 $color = '#2d77d1';
@@ -82,7 +82,7 @@ class AbcAnalysisService
                 $revenueC += $revenue;
             }
 
-            // Top items list
+            // Daftar item teratas
             if (count($topItems) < 5) {
                 $topItems[] = [
                     'name' => $row->product_name,
