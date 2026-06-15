@@ -10,7 +10,7 @@ export default function AuthLayout({ children, title }) {
     useEffect(() => {
         clearWorkspaceClientState();
 
-        // Lock html and body scrolling to ensure only inner panels handle overflow
+        // Kunci scroll halaman
         document.documentElement.classList.add('overflow-hidden');
         document.body.classList.add('overflow-hidden');
 

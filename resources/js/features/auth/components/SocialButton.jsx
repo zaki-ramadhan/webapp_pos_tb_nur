@@ -32,7 +32,7 @@ export default function SocialButton({ label, onClick, href = null, disabled = f
             onClick={onClick}
             disabled={disabled}
             variant="secondary"
-            size="md"
+            size="lg"
             fullWidth
         >
             <GoogleMark />
