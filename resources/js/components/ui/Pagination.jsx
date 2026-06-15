@@ -55,7 +55,7 @@ export default function Pagination({
                         </button>
                         
                         {isOpen && (
-                            <div className="absolute bottom-full mb-1.5 right-0 z-50 min-w-[70px] rounded-[4px] border border-ui-border-dark bg-white py-1 shadow-[0_4px_12px_rgba(15,23,42,0.08)]">
+                            <div className="absolute bottom-full mb-1.5 right-0 z-50 min-w-[70px] rounded-[4px] border border-ui-border-dark bg-white py-1 shadow-md">
                                 {perPageOptions.map((opt) => (
                                     <button
                                         key={opt}
