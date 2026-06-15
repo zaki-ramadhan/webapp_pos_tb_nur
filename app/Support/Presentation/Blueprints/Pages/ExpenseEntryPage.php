@@ -104,11 +104,11 @@ class ExpenseEntryPage
                 ],
                 'draft' => [
                     'liabilityAccounts' => [],
-                    'entryDate' => '25/04/2026',
+                    'entryDate' => date('d/m/Y'),
                     'autoNumber' => true,
                     'numberingType' => 'Pencatatan Beban',
                     'documentNumber' => '',
-                    'dueDate' => '25/04/2026',
+                    'dueDate' => date('d/m/Y'),
                     'branches' => ['JAKARTA'],
                     '__branchId' => 1,
                     'notes' => '',

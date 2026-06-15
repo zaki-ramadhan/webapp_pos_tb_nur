@@ -42,7 +42,7 @@ export function TransactionDataTable({
     const schemaKey = getTableSchemaKey(cleanedColumns);
     const [visibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
 
-    const activeShowNumbering = showNumbering;
+    const activeShowNumbering = showNumbering && rows.length > 0;
 
     const visibleColumns = useMemo(() => {
         const filtered = cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));

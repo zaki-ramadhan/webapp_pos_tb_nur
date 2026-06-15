@@ -44,12 +44,13 @@ const SIZE_STYLES = {
     },
 };
 
-function ToolbarIconButton({ label, onClick, className, children }) {
+function ToolbarIconButton({ label, onClick, className, children, disabled = false }) {
     return (
         <Tooltip content={label} portal>
             <button
                 type="button"
                 onClick={onClick}
+                disabled={disabled}
                 className={className}
                 aria-label={label}
             >
@@ -150,14 +151,9 @@ function ToolbarExportSplitButton({ exportConfig, sizeStyle, visibleColumnIds })
                 <button
                     ref={buttonRef}
                     type="button"
+                    disabled={disabled}
                     onClick={() => {
-                        if (disabled) {
-                            showWarningToast({
-                                title: 'Ekspor Gagal',
-                                message: 'Tidak ada data di tabel untuk diekspor.',
-                            });
-                            return;
-                        }
+                        if (disabled) return;
                         setOpen(current => !current);
                     }}
                     className={`inline-flex shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition ${
@@ -757,6 +753,7 @@ export default function TableToolbar({
                         <ToolbarIconButton
                             label={resolvedPrintButton.label}
                             onClick={resolvedPrintButton.onClick}
+                            disabled={resolvedRows.length === 0}
                             className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition ${
                                 resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-[#e8f2ff]'
                             } ${sizeStyle.utilityButton}`.trim()}

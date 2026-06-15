@@ -63,8 +63,12 @@ export function getTableSchemaKey(columns = []) {
 export const tableRegistry = {
     activeTable: null,
     listeners: new Set(),
+    lastActiveRows: {},
     setActiveTable(columns, rows, resource) {
         this.activeTable = { columns, rows, resource };
+        if (resource) {
+            this.lastActiveRows[resource] = rows;
+        }
         this.listeners.forEach(l => l(this.activeTable));
     },
     subscribe(listener) {

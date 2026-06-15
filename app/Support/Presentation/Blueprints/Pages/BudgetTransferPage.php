@@ -55,7 +55,7 @@ class BudgetTransferPage
                             'autoNumber' => true,
                             'numberingType' => 'Transfer Anggaran',
                             'transferNumber' => '',
-                            'date' => '25/04/2026',
+                            'date' => date('d/m/Y'),
                             'fromMonth' => 'Januari',
                             'fromBudget' => '',
                             'remainingBudget' => '-',

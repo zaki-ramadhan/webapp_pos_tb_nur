@@ -5,6 +5,9 @@ import { Printer, FileText, Star } from 'lucide-react';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
+import { showPromptModal } from '@/components/ui/promptModal';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+import { tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import {
     showCrudErrorToast,
     showCrudLoadingToast,
@@ -38,7 +41,7 @@ function getDocumentNumberFromDOM() {
     return 'TRX-DEFAULT';
 }
 
-function handleFallbackDockAction(item, action, templateLabel = 'transaksi', favoritesStorageKey = 'pos_favorite_transactions_guest') {
+async function handleFallbackDockAction(item, action, templateLabel = 'transaksi', favoritesStorageKey = 'pos_favorite_transactions_guest') {
     const itemId = item.id;
     if (itemId === 'print-default') {
         const toastId = showCrudLoadingToast(`Sedang mencetak ${templateLabel}...`);
@@ -55,12 +58,41 @@ function handleFallbackDockAction(item, action, templateLabel = 'transaksi', fav
         return;
     }
     if (itemId === 'add-favorite') {
-        const docNumber = getDocumentNumberFromDOM();
-        const defaultName = `Favorit ${templateLabel.toUpperCase()} - ${docNumber}`;
-        const favoriteName = window.prompt("Masukkan nama untuk transaksi favorit ini:", defaultName);
-        if (favoriteName === null) {
+        const params = new URLSearchParams(window.location.search);
+        const pageId = params.get('page') || 'purchase-payment';
+        const rows = tableRegistry.activeTable?.rows || tableRegistry.lastActiveRows?.[pageId] || [];
+
+        if (rows.length === 0) {
+            let errorMsg = `rincian ${templateLabel} harus diisi`;
+            if (pageId === 'general-journal') {
+                errorMsg = 'rincian jurnal harus diisi';
+            } else if (pageId === 'expense-entry') {
+                errorMsg = 'rincian beban harus diisi';
+            } else if (pageId === 'payroll-entry') {
+                errorMsg = 'rincian karyawan harus diisi';
+            }
+            await showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                messages: [errorMsg],
+            });
             return;
         }
+
+        const docNumber = getDocumentNumberFromDOM();
+        const defaultName = `Favorit ${templateLabel.toUpperCase()} - ${docNumber}`;
+        const result = await showPromptModal("Masukkan nama untuk transaksi favorit ini:", [
+            {
+                name: 'favoriteName',
+                label: 'Nama Favorit',
+                defaultValue: defaultName,
+                required: true,
+            }
+        ]);
+        if (!result) {
+            return;
+        }
+        const favoriteName = result.favoriteName;
         const trimmedName = favoriteName.trim();
         if (!trimmedName) {
             showCrudValidationToast("Nama favorit tidak boleh kosong.");
@@ -72,8 +104,6 @@ function handleFallbackDockAction(item, action, templateLabel = 'transaksi', fav
             try {
                 const localFavs = JSON.parse(localStorage.getItem(favoritesStorageKey) || '[]');
                 const newId = 'fav-' + Date.now();
-                const params = new URLSearchParams(window.location.search);
-                const pageId = params.get('page') || 'purchase-payment';
                 
                 const newFav = {
                     id: newId,
@@ -200,6 +230,8 @@ function TransactionDockIcon({ icon }) {
             return <PrintIcon className="h-7 w-7 sm:h-8 sm:w-8" />;
         case 'paperclip':
             return <PaperclipIcon className="h-7 w-7 sm:h-8 sm:w-8" />;
+        case 'star':
+            return <Star className="h-7 w-7 sm:h-8 sm:w-8" />;
         case 'kebab':
             return <KebabIcon className="h-7 w-7 sm:h-8 sm:w-8" />;
         case 'check':
@@ -383,6 +415,16 @@ export function TransactionDock({ actions = [] }) {
             };
         }
         if (action.id === 'attachment') {
+            if (pageId === 'general-journal') {
+                return {
+                    ...action,
+                    label: 'File',
+                    icon: 'paperclip',
+                    items: [
+                        { id: 'doc-default', label: 'dokumen', icon: 'document' }
+                    ],
+                };
+            }
             return {
                 ...action,
                 label: 'Dokumen',

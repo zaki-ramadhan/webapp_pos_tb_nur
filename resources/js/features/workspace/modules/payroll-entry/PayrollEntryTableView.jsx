@@ -86,7 +86,7 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
     );
 }
 
-export default function PayrollEntryTableView({ config, onCreate }) {
+export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -144,6 +144,14 @@ export default function PayrollEntryTableView({ config, onCreate }) {
                         rows={filteredRows}
                         emptyLabel={config.table.emptyLabel}
                         minWidthClassName="min-w-[1180px]"
+                        onRowClick={(row) =>
+                            onOpenDetail?.({
+                                recordId: row.id,
+                                label: row.number,
+                                tabLabel: row.number,
+                            })
+                        }
+                        getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
                         renderHeaderCell={(column) => (
                             <span
                                 className={`flex items-center gap-2 ${

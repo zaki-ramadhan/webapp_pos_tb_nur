@@ -59,6 +59,7 @@ const DETAIL_TAB_PAGE_IDS = [
     'branch',
     'shipping-master',
     'users',
+    'payroll-entry',
 ];
 
 export function buildInitialLevel2TabsState(pages) {

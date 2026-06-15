@@ -115,7 +115,7 @@ export default function GeneralJournalTableView({
                         columns={config.table.columns}
                         rows={filteredRows}
                         emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
-                        minWidthClassName="min-w-[1320px]"
+                        minWidthClassName="min-w-[1100px]"
                         onRowClick={(row) =>
                             onOpenDetail?.({
                                 recordId: row.id,

@@ -233,14 +233,20 @@ export default function GeneralJournalFormView({
                 ),
             onSelectLineAccount: (record) => applyLineItemUpdate(record),
             onEditLineItem: (item) => applyLineItemUpdate(null, item),
+            onTakeFavorite: () => {
+                setStatus({
+                    tone: 'info',
+                    message: 'Tidak ada transaksi favorit yang tersedia.',
+                });
+            },
         }),
-        [],
+        [selectLookup, setStatus],
     );
 
     return (
         <>
             <TransactionFormLayout
-                header={<GeneralJournalHeader config={config} values={values} setValues={setValues} activeRecordId={activeRecordId} />}
+                header={<GeneralJournalHeader config={config} values={values} setValues={setValues} activeRecordId={activeRecordId} handlers={handlers} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}

@@ -1,9 +1,12 @@
+import { useRef, useState } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { CloseIcon, FunnelIcon, SortIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -55,25 +58,10 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
 
 export function JournalAdditionalInfoSection({ config, values, setValues, handlers = {} }) {
     return (
-        <div className="min-h-[540px]">
+        <div className="min-h-0">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
             <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder={config.branchPlaceholder}
-                    onRemove={(value) =>
-                        setValues((current) => ({
-                            ...current,
-                            __branchId: current.branches.length <= 1 ? null : current.__branchId,
-                            branches: current.branches.filter((item) => item !== value),
-                        }))
-                    }
-                    searchLabel="Cari cabang"
-                    onSearch={handlers.onSelectBranch}
-                />
-
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField
                     value={values.notes}
@@ -92,86 +80,124 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
     );
 }
 
-export function GeneralJournalHeader({ config, values, setValues, activeRecordId }) {
+export function GeneralJournalHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
+    const [openAmbil, setOpenAmbil] = useState(false);
+    const ambilButtonRef = useRef(null);
+
     return (
-        <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.95fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.entryDate} required />
-                <TransactionDateInput
-                    value={values.entryDate}
-                    onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                    className="w-full max-w-full"
-                />
-
-                <TransactionFieldLabel label={config.labels.transactionType} />
-                <TextInput
-                    value={values.transactionType}
-                    readOnly
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                />
-            </div>
-
-            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <div className="flex items-center gap-4">
-                    <TransactionFieldLabel label={config.labels.documentNumber} required />
-                    {!activeRecordId ? (
-                        <TransactionSwitch
-                            checked={values.autoNumber}
-                            onChange={(nextChecked) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    autoNumber: nextChecked,
-                                }))
-                            }
-                        />
-                    ) : null}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.entryDate} required />
+                    <TransactionDateInput
+                        value={values.entryDate}
+                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
+                        className="w-full max-w-full"
+                    />
                 </div>
 
-                {values.autoNumber ? (
-                    <SelectField
-                        value={values.numberingType}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                numberingType: event.target.value,
-                            }))
-                        }
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                    >
-                        {config.numberingOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
-                ) : (
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.transactionType} />
                     <TextInput
-                        value={values.documentNumber}
+                        value={values.transactionType}
                         readOnly
-                        trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                        trailingClassName="px-3"
                     />
-                )}
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.documentNumber} required />
+
+                    <div className="flex items-center gap-2 w-full">
+                        {!activeRecordId ? (
+                            <div className="shrink-0">
+                                <TransactionSwitch
+                                    checked={values.autoNumber}
+                                    onChange={(nextChecked) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            autoNumber: nextChecked,
+                                        }))
+                                    }
+                                />
+                            </div>
+                        ) : null}
+                        <div className="flex-1 min-w-0">
+                            {values.autoNumber ? (
+                                <SelectField
+                                    value={values.numberingType}
+                                    onChange={(event) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            numberingType: event.target.value,
+                                        }))
+                                    }
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                >
+                                    {config.numberingOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </SelectField>
+                            ) : (
+                                <TextInput
+                                    value={values.documentNumber}
+                                    readOnly
+                                    trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    trailingClassName="px-3"
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
 
                 {values.transactionNumber ? (
-                    <TransactionFieldLabel label={config.labels.transactionNumber} />
+                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                        <TransactionFieldLabel label={config.labels.transactionNumber} />
+                        <TextInput
+                            value={values.transactionNumber}
+                            readOnly
+                            className="h-[40px] rounded-[4px] border-[#96d86d] bg-[#eef9e4]"
+                            inputClassName="text-xs sm:text-sm font-medium text-[#53a11f]"
+                        />
+                    </div>
                 ) : (
-                    <div />
-                )}
-                {values.transactionNumber ? (
-                    <TextInput
-                        value={values.transactionNumber}
-                        readOnly
-                        className="h-[40px] rounded-[4px] border-[#96d86d] bg-[#eef9e4]"
-                        inputClassName="text-xs sm:text-sm font-medium text-[#53a11f]"
-                    />
-                ) : (
-                    <div className="flex justify-end">
-                        <TransactionHeaderButton label={config.takeButtonLabel} trailingChevron />
+                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                        <div />
+                        <div className="flex justify-end relative">
+                            <button
+                                ref={ambilButtonRef}
+                                type="button"
+                                onClick={() => setOpenAmbil((o) => !o)}
+                                className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm font-medium text-[#21539b]"
+                            >
+                                <span>{config.takeButtonLabel}</span>
+                                <span className="text-xs text-[#21539b]/70 font-normal">⌄</span>
+                            </button>
+                            <DropdownMenu
+                                open={openAmbil}
+                                onClose={() => setOpenAmbil(false)}
+                                anchorRef={ambilButtonRef}
+                                align="end"
+                                widthClassName="w-[180px]"
+                            >
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        setOpenAmbil(false);
+                                        handlers.onTakeFavorite?.();
+                                    }}
+                                >
+                                    Favorit
+                                </DropdownMenuItem>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 )}
             </div>

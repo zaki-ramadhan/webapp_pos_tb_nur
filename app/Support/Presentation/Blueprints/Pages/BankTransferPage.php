@@ -98,7 +98,7 @@ class BankTransferPage
                     ],
                 ],
                 'draft' => [
-                    'entryDate' => '25/04/2026',
+                    'entryDate' => date('d/m/Y'),
                     'autoNumber' => true,
                     'numberingType' => 'Transfer Bank',
                     'documentNumber' => '',

@@ -101,7 +101,7 @@ class GeneralJournalPage
                 'defaults' => [
                     'documentNumber' => '',
                     'transactionNumber' => '',
-                    'entryDate' => '25/04/2026',
+                    'entryDate' => date('d/m/Y'),
                     'autoNumber' => true,
                     'numberingType' => 'Jurnal Umum',
                     'transactionType' => 'Jurnal Umum',

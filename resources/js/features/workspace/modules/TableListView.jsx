@@ -259,9 +259,11 @@ export default function TableListView({
                 >
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                            {paginatedRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
+                            )}
                             {visibleColumns.map((column) => (
                                 <SortableTableHeaderCell
                                     key={column.id}
@@ -276,7 +278,7 @@ export default function TableListView({
                             ))}
                         </tr>
                     </DataTableHeader>
- 
+
                     <DataTableBody>
                         {paginatedRows.length ? (
                             paginatedRows.map((row, index) => (
@@ -285,11 +287,11 @@ export default function TableListView({
                                     className={`border-[#dde1e8] ${onRowClick ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''} ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
-                                    {paginatedRows.length > 0 ? (
+                                    {paginatedRows.length > 0 && (
                                         <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">
                                             {paginationConfig ? (paginationConfig.from + index) : (index + 1)}
                                         </DataTableCell>
-                                    ) : null}
+                                    )}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
@@ -306,7 +308,7 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

@@ -379,8 +379,10 @@
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    padding: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
     padding-top: 6px !important;
+    padding-bottom: 6px !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 12px !important;
@@ -393,7 +395,7 @@
     box-shadow: none !important;
     padding: 0 !important;
     margin-top: 0 !important;
-    overflow-x: visible !important;
+    overflow-x: auto !important;
 }
 
 /* 3. Berikan style kartu (card) putih padat langsung ke tabelnya */
@@ -402,6 +404,7 @@
     border: 1px solid #d6dce8 !important;
     border-radius: 6px !important;
     box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08) !important;
+    padding: 12px !important;
 }
 
 /* 4. Buat pembungkus pagination transparan, tanpa border/shadow, dan hilangkan padding samping */

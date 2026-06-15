@@ -93,7 +93,7 @@ class DepartmentPage
                             'name' => '',
                             'description' => '',
                             'isSubDepartment' => false,
-                            'openingDate' => '25/04/2026',
+                            'openingDate' => date('d/m/Y'),
                         ],
                         'openingBalance' => [
                             'title' => 'Saldo Awal',

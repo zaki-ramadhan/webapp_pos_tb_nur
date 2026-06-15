@@ -5,7 +5,7 @@ import PayrollEntryFormView from './PayrollEntryFormView';
 import PayrollEntryTableView from './PayrollEntryTableView';
 import { mapPayrollEntryRow } from './payrollEntryShared';
 
-export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenContent }) {
+export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const {
         rows: backendRows,
         total,
@@ -50,8 +50,16 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenCo
     }), [error, loading, mappedRows, page.payrollEntry, reload, total]);
 
     return mode === 'table' ? (
-        <PayrollEntryTableView config={resolvedConfig} onCreate={onOpenContent} />
+        <PayrollEntryTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
     ) : (
-        <PayrollEntryFormView pageId={page.id} activeLevel2Tab={activeLevel2Tab} config={resolvedConfig} />
+        <PayrollEntryFormView
+            pageId={page.id}
+            activeLevel2Tab={activeLevel2Tab}
+            config={resolvedConfig}
+            onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            onCloseDetail={onCloseDetail}
+            onRefresh={reload}
+        />
     );
 }

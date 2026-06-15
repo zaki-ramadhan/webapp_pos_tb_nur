@@ -101,7 +101,7 @@ class CashReceiptPage
                 ],
                 'draft' => [
                     'bankAccounts' => [],
-                    'entryDate' => '25/04/2026',
+                    'entryDate' => date('d/m/Y'),
                     'autoNumber' => true,
                     'numberingType' => 'Bank BCA IDR Jakarta (069-773-3993)',
                     'documentNumber' => '',
