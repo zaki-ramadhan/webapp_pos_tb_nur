@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
 import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
@@ -181,3 +182,76 @@ export default function SystemErrorModal({
         </ModalBase>
     );
 }
+
+function SystemErrorModalContainer({
+    title,
+    description,
+    message,
+    messages,
+    confirmLabel,
+    copyLabel,
+    copiedLabel,
+    resolve,
+    onDestroy,
+}) {
+    const [open, setOpen] = useState(true);
+
+    function handleClose() {
+        setOpen(false);
+        setTimeout(() => {
+            resolve(false);
+            onDestroy();
+        }, 300);
+    }
+
+    function handleConfirm() {
+        setOpen(false);
+        setTimeout(() => {
+            resolve(true);
+            onDestroy();
+        }, 300);
+    }
+
+    return (
+        <SystemErrorModal
+            open={open}
+            title={title}
+            description={description}
+            message={message}
+            messages={messages}
+            confirmLabel={confirmLabel}
+            copyLabel={copyLabel}
+            copiedLabel={copiedLabel}
+            onClose={handleClose}
+            onConfirm={handleConfirm}
+        />
+    );
+}
+
+export function showSystemErrorModal(options = {}) {
+    return new Promise((resolve) => {
+        const div = document.createElement('div');
+        document.body.appendChild(div);
+        const root = createRoot(div);
+
+        function onDestroy() {
+            root.unmount();
+            div.remove();
+        }
+
+        root.render(
+            <SystemErrorModalContainer
+                title={options.title}
+                description={options.description}
+                message={options.message}
+                messages={options.messages}
+                confirmLabel={options.confirmLabel}
+                copyLabel={options.copyLabel}
+                copiedLabel={options.copiedLabel}
+                resolve={resolve}
+                onDestroy={onDestroy}
+            />
+        );
+    });
+}
+

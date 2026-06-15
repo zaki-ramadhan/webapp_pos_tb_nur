@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -115,6 +116,14 @@ export default function ExpenseEntryFormView({
     });
 
     async function applyLineItemUpdate(record, currentItem = null) {
+        if (!values.__liabilityAccountId || !values.liabilityAccounts?.length) {
+            await showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: 'Hutang beban harus diisi',
+            });
+            return;
+        }
         try {
             const nextItem = await promptExpenseLineItem(record, currentItem);
 
