@@ -155,7 +155,7 @@ export function SalesDocumentFooter({ values }) {
                                 </span>
                             </div>
                         ) : (
-                            <div className={`mt-2 text-lg font-semibold text-[#111827] ${part.align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+                            <div className={`mt-2 text-lg font-semibold text-[#111827] ${part.align === 'right' ? 'text-right' : (part.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>
                                 {part.value}
                             </div>
                         )}

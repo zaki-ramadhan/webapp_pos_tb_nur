@@ -153,7 +153,7 @@ export default function PaymentOrderTableView({ config, onCreate }) {
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'right' ? 'text-right' : 'text-left'
+                                        column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')
                                     }`.trim()}
                                 >
                                     <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
@@ -180,7 +180,7 @@ export default function PaymentOrderTableView({ config, onCreate }) {
 {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')} px-2.5 text-base text-[#131a28]`.trim()}
                                         >
                                             <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
                                         </DataTableCell>

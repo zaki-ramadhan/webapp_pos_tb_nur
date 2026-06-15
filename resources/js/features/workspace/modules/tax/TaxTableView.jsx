@@ -130,7 +130,7 @@ export default function TaxTableView({ page, rows, loading, error, onCreate, onO
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 py-2.5 text-base font-medium text-white text-center`}
+                                    className={`${column.widthClassName ?? ''} px-3 py-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`}
                                 >
                                     {column.label}
                                 </DataTableHead>

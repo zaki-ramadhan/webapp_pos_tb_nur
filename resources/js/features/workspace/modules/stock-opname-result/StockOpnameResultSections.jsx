@@ -22,10 +22,8 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import { SearchIcon } from '@/features/workspace/shared/Icons';
 
 function resolveAlignClassName(align) {
-    if (align === 'center') {
-        return 'text-center';
-    }
-
+    if (align === 'right') return 'text-right';
+    if (align === 'center') return 'text-center';
     return 'text-left';
 }
 

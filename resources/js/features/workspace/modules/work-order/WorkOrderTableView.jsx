@@ -163,7 +163,7 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                                 {config.table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`.trim()}
                                     >
                                         <span
                                             className={`flex items-center gap-2 justify-center`.trim()}

@@ -22,9 +22,7 @@ export function buildAssetMoveFormValues(source = {}) {
 }
 
 export function resolveAssetMoveAlignClassName(align) {
-    if (align === 'center') {
-        return 'text-center';
-    }
-
+    if (align === 'right') return 'text-right';
+    if (align === 'center') return 'text-center';
     return 'text-left';
 }

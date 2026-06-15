@@ -35,9 +35,11 @@ export function DataTableRow({ className = '', children, ...props }) {
 }
 
 export function DataTableHead({ className = '', children, ...props }) {
+    const hasAlign = /\btext-(left|center|right)\b/.test(className);
+    const alignClass = hasAlign ? '' : 'text-left';
     return (
         <th
-            className={`border-r border-[#d5d9df] px-3 py-2 text-center text-xs font-medium leading-5 last:border-r-0 sm:px-4 sm:text-sm whitespace-nowrap truncate ${className}`.trim()}
+            className={`border-r border-[#d5d9df] px-3 py-2 ${alignClass} text-xs font-medium leading-5 last:border-r-0 sm:px-4 sm:text-sm whitespace-nowrap truncate ${className}`.trim()}
             {...props}
         >
             <div className="w-full truncate block min-w-0">{children}</div>

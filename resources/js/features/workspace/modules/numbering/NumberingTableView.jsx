@@ -91,7 +91,7 @@ export default function NumberingTableView({ table, onCreate }) {
                                     No.
                                 </DataTableHead>
                             {table.columns.map((column) => (
-                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}>
+                                <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>
                                     {column.label}
                                 </DataTableHead>
                             ))}

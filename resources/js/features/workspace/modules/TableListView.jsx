@@ -293,7 +293,7 @@ export default function TableListView({
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
                                         >
                                             {column.truncate ? (
                                                 <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>

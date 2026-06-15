@@ -15,10 +15,8 @@ import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel
 import { TRANSACTION_LINE_TITLE_CLASS_NAME } from './transactionStyles';
 
 export function resolveTransactionAlignClassName(align) {
-    if (align === 'center') {
-        return 'text-center';
-    }
-
+    if (align === 'right') return 'text-right';
+    if (align === 'center') return 'text-center';
     return 'text-left';
 }
 
