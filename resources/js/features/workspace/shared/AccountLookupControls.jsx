@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { useFormError } from '@/components/ui/FormErrorContext';
 
@@ -42,11 +43,13 @@ export function AccountLookupField({
 
     const controller = useAccountLookupController({ value, values, disabled });
     const isMultiValue = Array.isArray(values);
+    const inputWrapperRef = useRef(null);
 
     return (
         <div ref={controller.rootRef} className="relative">
             {isMultiValue ? (
                 <ChipLookupField
+                    containerRef={inputWrapperRef}
                     id={id}
                     value={value}
                     values={values}
@@ -67,6 +70,7 @@ export function AccountLookupField({
                 />
             ) : (
                 <AccountLookupSearchInput
+                    containerRef={inputWrapperRef}
                     id={id}
                     value={controller.draftValue}
                     selectedValue={controller.selectedValue}
@@ -94,6 +98,7 @@ export function AccountLookupField({
             )}
 
             <AccountLookupSuggestions
+                anchorRef={inputWrapperRef}
                 open={controller.open}
                 query={controller.query}
                 onQueryChange={controller.setQuery}
@@ -130,10 +135,12 @@ export function AccountLookupTextInput({
     onSelectAccount = null,
 }) {
     const controller = useAccountLookupController({ value, disabled });
+    const inputWrapperRef = useRef(null);
 
     return (
         <div ref={controller.rootRef} className="relative">
             <AccountLookupSearchInput
+                containerRef={inputWrapperRef}
                 id={id}
                 value={normalizeInputValue(controller.draftValue)}
                 selectedValue={controller.selectedValue}
@@ -150,6 +157,7 @@ export function AccountLookupTextInput({
             />
 
             <AccountLookupSuggestions
+                anchorRef={inputWrapperRef}
                 open={controller.open}
                 searchLabel={searchLabel}
                 query={controller.query}

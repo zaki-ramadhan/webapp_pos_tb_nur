@@ -22,6 +22,7 @@ export default function CityAutocompleteInput({
 }) {
     const [open, setOpen] = useState(false);
     const inputRef = useRef(null);
+    const rootRef = useRef(null);
 
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
 
@@ -86,7 +87,7 @@ export default function CityAutocompleteInput({
     };
 
     return (
-        <div className="relative w-full">
+        <div ref={rootRef} className="relative w-full">
             <div
                 className={`group flex h-11 w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
             >
@@ -144,6 +145,7 @@ export default function CityAutocompleteInput({
                     onClose={() => setOpen(false)}
                     maxHeightLimit={220}
                     className="border-[#cad1dd] shadow-lg rounded-md"
+                    anchorRef={rootRef}
                 >
                     <div className="overflow-y-auto w-full flex-1 min-h-0">
                         {filteredOptions.length > 0 ? (

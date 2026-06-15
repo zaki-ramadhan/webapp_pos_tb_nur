@@ -216,7 +216,7 @@ export default function ReferenceLookupInput({
             </div>
 
             {showMenu ? (
-                <LookupDropdownSurface className={menuClassName}>
+                <LookupDropdownSurface className={menuClassName} anchorRef={rootRef}>
                     {filteredItems.length ? (
                         <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0">
                             {filteredItems.map((item) => (

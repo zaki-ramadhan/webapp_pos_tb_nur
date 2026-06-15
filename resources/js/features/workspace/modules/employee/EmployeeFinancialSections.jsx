@@ -1,8 +1,12 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employeeViewShared';
 import { SuggestionTextInput } from '@/features/workspace/modules/employee/employeeControls';
+import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 
 export function EmployeeTaxTab({ form, values, onChange }) {
     return (
@@ -50,10 +54,38 @@ export function EmployeeTaxTab({ form, values, onChange }) {
 }
 
 export function EmployeeBankTab({ form, values, onChange }) {
+    const [banks, setBanks] = useState([]);
+
+    useEffect(() => {
+        axios.get('/api/backend/banks')
+            .then((res) => {
+                setBanks(res.data || []);
+            })
+            .catch(() => {
+                setBanks([]);
+            });
+    }, []);
+
     return (
         <div className="max-w-[980px] space-y-3.5">
             <EmployeeFieldRow label="Nama Bank">
-                <SuggestionTextInput name="bank_accounts.0.bank_name" value={values.bankName} onChange={(nextValue) => onChange('bankName', nextValue)} options={form.bankOptions ?? []} placeholder="Cari/Pilih..." className="h-[40px] rounded-[4px] border-[#cfd6e2] md:max-w-[568px]" inputClassName="text-xs sm:text-sm text-[#1f2436]" searchLabel="Cari bank" emptyLabel="Nama bank tidak ditemukan." />
+                <ReferenceLookupInput
+                    value={values.bankName}
+                    items={banks}
+                    onSelect={(item) => onChange('bankName', item.name)}
+                    onClear={() => onChange('bankName', '')}
+                    placeholder="Cari/Pilih Bank..."
+                    searchLabel="Cari bank"
+                    className="w-full md:max-w-[568px]"
+                    getOptionLabel={(option) => option.name}
+                    getOptionSearchText={(option) => `${option.name} ${option.code}`}
+                    renderOption={(option) => (
+                        <div className="min-w-0">
+                            <div className="truncate text-xs sm:text-sm font-medium text-[#131a28]">{option.name}</div>
+                            <div className="mt-0.5 truncate text-xs text-[#7d879a]">Kode Transfer: {option.code}</div>
+                        </div>
+                    )}
+                />
             </EmployeeFieldRow>
             <EmployeeFieldRow label="No Rekening"><TextInput name="bank_accounts.0.account_number" value={values.bankAccountNumber} onChange={(event) => onChange('bankAccountNumber', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2] md:max-w-[568px]" inputClassName="text-xs sm:text-sm text-[#1f2436]" /></EmployeeFieldRow>
             <EmployeeFieldRow label="Atas Nama Rekening"><TextInput name="bank_accounts.0.account_name" value={values.bankAccountHolder} onChange={(event) => onChange('bankAccountHolder', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2] md:max-w-[568px]" inputClassName="text-xs sm:text-sm text-[#1f2436]" /></EmployeeFieldRow>

@@ -17,6 +17,7 @@ export default function ChipLookupField({
     searching = false,
     error = false,
     id,
+    containerRef = null,
 }) {
     const searchButtonRef = useRef(null);
     const items = Array.isArray(values) ? values.filter(Boolean) : value ? [value] : [];
@@ -52,6 +53,7 @@ export default function ChipLookupField({
 
     return (
         <div
+            ref={containerRef}
             onMouseDown={focusLookup}
             className={`group flex w-full items-center overflow-hidden rounded-[4px] border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100' : ''} ${heightClassName} ${className}`.trim()}
         >

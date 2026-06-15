@@ -17,6 +17,7 @@ export default function AccountLookupSearchInput({
     onClear,
     error = false,
     id,
+    containerRef = null,
 }) {
     const inputRef = useRef(null);
     const hasSelectedValue = Boolean(selectedValue);
@@ -44,6 +45,7 @@ export default function AccountLookupSearchInput({
 
     return (
         <div
+            ref={containerRef}
             onMouseDown={focusInputFromWrapper}
             className={`group flex w-full items-center overflow-hidden rounded-[4px] border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400' : 'bg-white'} ${className}`.trim()}
         >

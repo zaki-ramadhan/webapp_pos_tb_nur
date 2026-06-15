@@ -179,34 +179,37 @@ export default function ErrorExperience({
     const code = isClientCrash ? 'ERR' : String(status);
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center bg-[#faf9f6] p-4 text-[#2f2419]">
+        <div className="relative flex min-h-screen items-center justify-center bg-[#faf9f6] p-4 text-[#2f2419] overflow-hidden">
             {/* Minimal Background Subtle Accent Lines */}
-            <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+            <div className="pointer-events-none absolute inset-0 opacity-30">
                 <div className="absolute -left-1/4 -top-1/4 h-[800px] w-[800px] rounded-full border border-slate-200/40" />
                 <div className="absolute -right-1/4 -bottom-1/4 h-[800px] w-[800px] rounded-full border border-slate-200/40" />
             </div>
 
-            <section className="relative w-full max-w-md rounded-lg border border-slate-200/80 bg-white p-8 shadow-sm">
-                <div className="flex flex-col items-center text-center">
-                    <span className="font-mono text-xs font-bold tracking-[0.24em] text-slate-400 uppercase">
-                        {appName}
-                    </span>
+            {/* Top-Left Backdrop Text */}
+            <div className="pointer-events-none absolute left-0 top-0 select-none opacity-[0.04] leading-none z-0">
+                <span className="text-[35vw] font-serif font-black text-slate-400 tracking-[-0.06em] translate-x-[-15%] translate-y-[-40%] inline-block blur-[3px]">
+                    {code}
+                </span>
+            </div>
 
-                    {/* Minimal status circle and badge */}
-                    <div className="mt-6 flex flex-col items-center">
-                        <div className={`flex h-12 w-12 items-center justify-center rounded-lg border ${
-                            state.tone === 'danger'
-                                ? 'bg-red-50/50 border-red-100 text-red-600'
-                                : 'bg-amber-50/50 border-amber-100 text-amber-600'
-                        }`}>
-                            <Icon className="h-5 w-5" strokeWidth={2} />
-                        </div>
-                        <code className="mt-4 font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-500 border border-slate-200/60">
-                            HTTP {code}
-                        </code>
+            {/* Bottom-Right Backdrop Text */}
+            <div className="pointer-events-none absolute right-0 bottom-0 select-none opacity-[0.04] leading-none z-0">
+                <span className="text-[35vw] font-serif font-black text-slate-400 tracking-[-0.06em] translate-x-[15%] translate-y-[40%] inline-block blur-[3px]">
+                    {code}
+                </span>
+            </div>
+
+            <section className="relative z-10 w-full max-w-md rounded-lg border border-slate-200/80 bg-white p-8 shadow-sm">
+                <div className="flex flex-col items-center text-center">
+                    {/* Hero Error Code Display */}
+                    <div className="relative mt-1 mb-5 flex items-center justify-center">
+                        <span className="text-8xl font-serif font-extrabold tracking-normal text-slate-900 select-none">
+                            {code}
+                        </span>
                     </div>
 
-                    <h1 className="mt-5 text-xl font-bold tracking-tight text-slate-900">
+                    <h1 className="text-xl font-bold tracking-tight text-slate-900">
                         {state.title}
                     </h1>
 
@@ -220,13 +223,13 @@ export default function ErrorExperience({
                         </div>
                     )}
 
-                    <div className="mt-8 flex w-full flex-col gap-2">
+                    <div className="mt-6 flex w-full flex-col gap-2">
                         {actions.map((action) => (
                             <ActionButton key={action.label} action={action} />
                         ))}
                     </div>
 
-                    <p className="mt-6 text-xs text-slate-400 leading-relaxed">
+                    <p className="mt-4 text-xs text-slate-400 leading-relaxed">
                         Jika masalah berlanjut, hubungi administrator atau muat ulang halaman ini secara bertahap.
                     </p>
                 </div>

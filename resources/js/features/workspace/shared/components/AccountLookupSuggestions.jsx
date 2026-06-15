@@ -17,6 +17,7 @@ export default function AccountLookupSuggestions({
     className = '',
     showInlineSearch = false,
     onQueryChange = null,
+    anchorRef = null,
 }) {
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
     const emptyMessage = query.trim()
@@ -28,7 +29,7 @@ export default function AccountLookupSuggestions({
     }
 
     return (
-        <LookupDropdownSurface className={className}>
+        <LookupDropdownSurface className={className} anchorRef={anchorRef}>
             {showInlineSearch ? (
                 <div className="border-b border-[#e6ebf2] p-3">
                     <TextInput
