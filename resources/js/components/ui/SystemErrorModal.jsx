@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
-import { AlertTriangleIcon, CloseIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon } from '@/features/workspace/shared/Icons';
 
 function ErrorIllustration() {
     return (
@@ -25,10 +25,6 @@ function ErrorIllustration() {
             <circle cx="36" cy="56.5" r="2.2" fill="#143a70" />
         </svg>
     );
-}
-
-function HeaderIcon() {
-    return <AlertTriangleIcon className="h-5 w-5 text-white" />;
 }
 
 function normalizeMessages(messages = [], message = '') {

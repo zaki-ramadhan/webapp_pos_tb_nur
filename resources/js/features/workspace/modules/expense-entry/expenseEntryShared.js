@@ -120,14 +120,14 @@ export function buildExpenseEntryRecord(record = {}, config) {
         {
             __backendRecordId: record.id ?? null,
             __liabilityAccountId: record.primary_account_id ?? null,
-            __branchId: record.branch_id ?? null,
+            __branchId: null,
             liabilityAccounts: primaryAccountLabel ? [primaryAccountLabel] : [],
             entryDate: formatIsoDate(record.entry_date),
             autoNumber: false,
             numberingType: record.numbering_type ?? config.draft?.numberingType ?? 'Pencatatan Beban',
             documentNumber: record.document_number ?? '',
             dueDate: formatIsoDate(record.due_date),
-            branches: record.branch?.name ? [record.branch.name] : (record.metadata?.branch_label ? [record.metadata.branch_label] : []),
+            branches: [],
             notes: record.notes ?? '',
             lineLookup: '',
             paidAmount: formatCurrencyLabel(paidAmount),
@@ -143,14 +143,14 @@ export function buildFormState(source = {}) {
         {
             __backendRecordId: source.__backendRecordId ?? null,
             __liabilityAccountId: source.__liabilityAccountId ?? null,
-            __branchId: source.__branchId ?? null,
+            __branchId: null,
             liabilityAccounts: [...(source.liabilityAccounts ?? [])],
             entryDate: source.entryDate ?? '',
             autoNumber: source.autoNumber ?? true,
             numberingType: source.numberingType ?? '',
             documentNumber: source.documentNumber ?? '',
             dueDate: source.dueDate ?? '',
-            branches: [...(source.branches ?? [])],
+            branches: [],
             notes: source.notes ?? '',
             lineLookup: source.lineLookup ?? '',
             paidAmount: source.paidAmount ?? 'Rp 0',
@@ -184,7 +184,7 @@ export function buildExpenseEntryPayload(values) {
     const paidAmount = parseNumericInput(values.paidAmount);
 
     return {
-        branch_id: values.__branchId ?? null,
+        branch_id: null,
         primary_account_id: values.__liabilityAccountId ?? null,
         document_number: values.documentNumber?.trim() || buildGeneratedExpenseEntryNumber(),
         numbering_type: values.numberingType?.trim() || null,
@@ -196,7 +196,7 @@ export function buildExpenseEntryPayload(values) {
         total_amount: totalAmount,
         metadata: {
             liability_account_label: values.liabilityAccounts?.[0] ?? null,
-            branch_label: values.branches?.[0] ?? null,
+            branch_label: null,
         },
         lines: lineItems.filter(
             (item) => item.account_id || item.description || item.reference_code || item.total_amount > 0,

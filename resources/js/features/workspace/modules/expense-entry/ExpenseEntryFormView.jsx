@@ -72,7 +72,6 @@ export default function ExpenseEntryFormView({
         saving,
         deleteConfirmationOpen,
         setDeleteConfirmationOpen,
-        selectLookup,
         handleSave,
         requestDelete,
         handleDelete,
@@ -228,24 +227,10 @@ export default function ExpenseEntryFormView({
                     __liabilityAccountId: null,
                     liabilityAccounts: [],
                 })),
-            onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __branchId: record.id,
-                        branches: [buildLookupLabel(record)],
-                    })),
-                ),
-            onRemoveBranch: (value) =>
-                setValues((current) => ({
-                    ...current,
-                    __branchId: null,
-                    branches: (current.branches ?? []).filter((item) => item !== value),
-                })),
             onSelectLineAccount: (record) => applyLineItemUpdate(record),
             onEditLineItem: (item) => applyLineItemUpdate(null, item),
         }),
-        [selectLookup],
+        [],
     );
 
     return (
