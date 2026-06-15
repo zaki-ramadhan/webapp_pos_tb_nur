@@ -4,7 +4,7 @@ import { DataTableHead } from '@/components/ui/DataTable';
 import { getColumnMinWidth } from './columnVisibility';
 
 function resolveAlignClassName(align) {
-    return align === 'right' ? 'text-right' : align === 'left' ? 'text-left' : 'text-center';
+    return 'text-center';
 }
 
 function SortIcon({ direction }) {
@@ -24,7 +24,7 @@ export default function SortableTableHeaderCell({
     onSort = null,
 }) {
     const alignClass = resolveAlignClassName(align);
-    const textClass = `block ${noWrap ? 'whitespace-nowrap' : 'whitespace-normal break-words'}`;
+    const textClass = 'block whitespace-nowrap truncate min-w-0 flex-1';
     const minWidth = getColumnMinWidth(label);
 
     if (!sortable || !onSort) {
@@ -46,7 +46,7 @@ export default function SortableTableHeaderCell({
             <button
                 type="button"
                 onClick={onSort}
-                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 ${align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : 'justify-start'}`.trim()}
+                className="inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 justify-center min-w-0"
             >
                 <span className={textClass}>{label}</span>
                 <SortIcon direction={sortDirection} />

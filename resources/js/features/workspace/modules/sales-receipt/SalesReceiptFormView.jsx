@@ -198,7 +198,7 @@ export default function SalesReceiptFormView({
                         </div>
                     </div>
 
-                    <div className="shrink-0 lg:w-[104px]">
+                    <div className="shrink-0 lg:w-[96px]">
                         <TransactionDock actions={dockActions} />
                     </div>
                 </div>

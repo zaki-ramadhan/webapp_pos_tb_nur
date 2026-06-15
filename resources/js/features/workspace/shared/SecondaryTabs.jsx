@@ -8,11 +8,11 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
         : 'gap-2 px-3.5 md:gap-2.5 md:px-4.5';
     const className = isViewTab
         ? active
-            ? 'border-x-[1px] border-b-0 border-tab-view-active-border-x border-t-[3px] border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
-            : 'border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'
+            ? 'border-x-[1px] border-t-[3px] border-b-[2px] border-b-[#f2f2f2] -mb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
+            : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'
         : active
-          ? 'border-l-tab-active-border-x border-r-tab-active-border-x border-t-[3px] border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
-          : 'border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text';
+          ? 'border-l-[1px] border-r-[1px] border-t-[3px] border-b-[2px] border-b-[#f2f2f2] -mb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
+          : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text';
     const closeButtonClassName = active
         ? 'text-current hover:bg-white/20'
         : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200/70';
@@ -28,7 +28,7 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
                     onSelect(tab.id);
                 }
             }}
-            className={`relative -mb-px inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] border-x border-t-2 border-b-0 text-xs leading-normal whitespace-nowrap transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${className}`.trim()}
+            className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">

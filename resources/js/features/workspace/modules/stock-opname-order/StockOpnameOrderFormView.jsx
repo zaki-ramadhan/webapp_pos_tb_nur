@@ -40,7 +40,7 @@ export default function StockOpnameOrderFormView({ config, activeLevel2Tab }) {
             <TransactionSectionRail tabs={sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
 
             <div className="grid gap-4">
-                <StockOpnameOrderHeader config={config} values={values} isDetail={isDetail} />
+                <StockOpnameOrderHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />
 
                 {activeSectionId === 'results' ? (
                     <StockOpnameOrderResultsSection config={config} values={values} onOpenItem={setSelectedItem} />

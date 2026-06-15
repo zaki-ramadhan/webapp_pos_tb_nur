@@ -91,15 +91,13 @@ export default function BranchTableView({ table, onCreate, onOpenDetail }) {
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -142,7 +140,7 @@ export default function BranchTableView({ table, onCreate, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? 5 : 4} className="px-3 py-8 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={5} className="px-3 py-8 text-center text-base text-[#131a28]">
                                     {table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

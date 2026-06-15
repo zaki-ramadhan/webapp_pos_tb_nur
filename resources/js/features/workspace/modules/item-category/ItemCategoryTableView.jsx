@@ -68,11 +68,9 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
-                            {filteredRows.length > 0 ? (
-                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
-                            ) : null}
                                 {config.table.columns.map((column) => (
                                     <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveRowAlignClassName(column.align)}`.trim()}>
                                         {column.kind === 'spacer' ? (

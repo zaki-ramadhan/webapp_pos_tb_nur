@@ -238,11 +238,9 @@ export default function SavedTransactionsView({ page }) {
                 >
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
-                            ) : null}
                             {cleanedColumns.map((column) => {
                                 const minWidth = getColumnMinWidth(column.label);
                                 return (
@@ -288,7 +286,7 @@ export default function SavedTransactionsView({ page }) {
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell
-                                    colSpan={filteredRows.length > 0 ? cleanedColumns.length + 1 : cleanedColumns.length}
+                                    colSpan={cleanedColumns.length + 1}
                                     className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {table.emptyLabel ?? 'Belum ada data'}

@@ -34,7 +34,7 @@ export default function SupplierPriceFormView({ config }) {
                     </div>
                 </div>
 
-                <div className="shrink-0 lg:w-[104px]">
+                <div className="shrink-0 lg:w-[96px]">
                     <TransactionDock actions={config.dockActions} />
                 </div>
             </div>

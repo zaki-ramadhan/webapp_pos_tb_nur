@@ -149,7 +149,7 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
                                     <DataTableCell className="px-3 text-base text-[#131a28]">
                                         {formatTableTextValue(row.name)}
                                     </DataTableCell>
-                                    <DataTableCell className="px-3 text-right text-base text-[#131a28]">
+                                    <DataTableCell className="px-3 text-left text-base text-[#131a28]">
                                         {formatTableTextValue(row.value)}
                                     </DataTableCell>
                                 </DataTableRow>

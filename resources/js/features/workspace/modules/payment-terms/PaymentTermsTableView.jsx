@@ -91,11 +91,9 @@ export default function PaymentTermsTableView({ page, onCreate, onOpenDetail }) 
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
-                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
-                            ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
                                     <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : ''}`.trim()}>

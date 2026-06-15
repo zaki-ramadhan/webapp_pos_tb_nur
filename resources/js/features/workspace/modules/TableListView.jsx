@@ -37,7 +37,7 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                         disabled={Boolean(filter.disabled)}
                         containerClassName="w-auto shrink-0"
                         className={`h-[34px] min-w-[118px] rounded-[4px] sm:min-w-[138px] ${
-                            filter.disabled ? 'border-[#ead6a7] bg-[#fff8e9]' : 'border-[#cfd6e2]'
+                            filter.disabled ? 'border-[#ead6a7] bg-[#fff8e9]' : 'border-[#cfd6e2] bg-white'
                         }`.trim()}
                         selectClassName={`px-3 text-xs sm:text-sm ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#394157]'}`.trim()}
                         iconClassName={`mr-2 ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#6c7894]'}`.trim()}
@@ -259,11 +259,9 @@ export default function TableListView({
                 >
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {paginatedRows.length > 0 ? (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
-                            ) : null}
                             {visibleColumns.map((column) => (
                                 <SortableTableHeaderCell
                                     key={column.id}
@@ -295,7 +293,7 @@ export default function TableListView({
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
+                                            className={`${column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
                                         >
                                             {column.truncate ? (
                                                 <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
@@ -308,7 +306,7 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

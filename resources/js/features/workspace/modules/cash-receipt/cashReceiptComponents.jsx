@@ -35,7 +35,7 @@ export function ReceiptFilterBar({ table, filters, setFilters, SelectField }) {
 
 export function CashReceiptSortHeader({ column }) {
     return (
-        <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
+        <span className={`flex items-center gap-2 justify-center`.trim()}>
             <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
             <span>{column.label}</span>
         </span>

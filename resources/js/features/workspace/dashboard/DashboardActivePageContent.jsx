@@ -49,7 +49,7 @@ export default function DashboardActivePageContent({
                     }}
                 />
 
-                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[rgba(243,246,251,0.82)] px-2 py-2 sm:px-3 sm:py-3">
+                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#f2f2f2] px-2 py-2 sm:px-3 sm:py-3">
                     <DashboardWidgetGrid
                         widgets={activeDashboardWidgets}
                         onRefreshWidget={handleRefreshWidget}
@@ -62,7 +62,7 @@ export default function DashboardActivePageContent({
     }
 
     return (
-        <div className="min-h-0 flex-1 flex flex-col bg-[rgba(243,246,251,0.82)] px-2 pb-2 pt-1.5 sm:px-2.5 sm:pb-2.5 lg:px-3 lg:pb-3 overflow-y-auto">
+        <div className="min-h-0 flex-1 flex flex-col bg-[#f2f2f2] px-2 pb-2 pt-1.5 sm:px-2.5 sm:pb-2.5 lg:px-3 lg:pb-3 overflow-y-auto">
             <FormErrorProvider>
                 {renderWorkspaceActivePage({
                     activePage,

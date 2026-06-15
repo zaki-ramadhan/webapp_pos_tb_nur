@@ -157,24 +157,16 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                     <DataTable wrapperClassName="border-[#d1d8e4]">
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
-                            {rows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                                 {config.table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveWorkOrderCellAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
                                     >
                                         <span
-                                            className={`flex items-center gap-2 ${
-                                                column.align === 'right'
-                                                    ? 'justify-end'
-                                                    : column.align === 'center'
-                                                      ? 'justify-center'
-                                                      : 'justify-start'
-                                            }`.trim()}
+                                            className={`flex items-center gap-2 justify-center`.trim()}
                                         >
                                             <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                             <span>{column.label}</span>
@@ -216,7 +208,7 @@ export default function WorkOrderTableView({ config, onCreate, onOpenDetail }) {
                             ) : (
                                 <DataTableRow className="border-[#dde1e8] bg-white">
                                     <DataTableCell
-                                        colSpan={rows.length > 0 ? config.table.columns.length + 1 : config.table.columns.length}
+                                        colSpan={config.table.columns.length + 1}
                                         className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
                                         Belum ada data

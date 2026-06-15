@@ -3,29 +3,8 @@ import { createRoot } from 'react-dom/client';
 
 import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
+import ErrorIllustration from '@/components/ui/ErrorIllustration';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
-
-function ErrorIllustration() {
-    return (
-        <svg viewBox="0 0 72 72" className="h-16 w-16 shrink-0" aria-hidden="true">
-            <path
-                d="M36 8 61 54.5A4.6 4.6 0 0 1 56.95 61H15.05A4.6 4.6 0 0 1 11 54.5L36 8Z"
-                fill="#ff4b40"
-                stroke="#143a70"
-                strokeWidth="3"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M28 27.5 44 43.5M44 27.5 28 43.5"
-                fill="none"
-                stroke="#fff"
-                strokeWidth="5"
-                strokeLinecap="round"
-            />
-            <circle cx="36" cy="56.5" r="2.2" fill="#143a70" />
-        </svg>
-    );
-}
 
 function normalizeMessages(messages = [], message = '') {
     if (messages.length) {

@@ -55,11 +55,9 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                 <DataTable>
                     <DataTableHeader>
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -101,7 +99,7 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail, lo
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-3 py-8 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-8 text-center text-base text-[#131a28]">
                                     {loading ? 'Memuat data...' : (error || table.emptyLabel || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

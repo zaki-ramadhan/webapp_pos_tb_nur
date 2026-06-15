@@ -98,11 +98,9 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {visibleColumns.map((column) => (
                                 <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-3 py-2.5 text-base font-medium text-white`.trim()}>
                                     <span className="flex items-center gap-2">
@@ -140,7 +138,7 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

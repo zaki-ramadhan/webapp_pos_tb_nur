@@ -49,16 +49,10 @@ export function ReceiptLineItemsSection({ config, values, handlers = {} }) {
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
                                 {config.lineTable.columns.map((column) => (
-                                    <DataTableHead
-                                        key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${
-                                            column.align === 'right'
-                                                ? 'text-right'
-                                                : column.align === 'left'
-                                                  ? 'text-left'
-                                                  : 'text-center'
-                                        }`.trim()}
-                                    >
+                                     <DataTableHead
+                                         key={column.id}
+                                         className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
+                                     >
                                         {column.label}
                                     </DataTableHead>
                                 ))}
@@ -74,10 +68,10 @@ export function ReceiptLineItemsSection({ config, values, handlers = {} }) {
                                         onClick={handlers.onEditLineItem ? () => handlers.onEditLineItem(row) : undefined}
                                     >
                                         {config.lineTable.columns.map((column) => (
-                                            <DataTableCell
-                                                key={column.id}
-                                                className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-base text-[#131a28]`.trim()}
-                                            >
+                                             <DataTableCell
+                                                 key={column.id}
+                                                 className={`text-left px-3 text-base text-[#131a28]`.trim()}
+                                             >
                                                 {formatTableTextValue(row[column.id])}
                                             </DataTableCell>
                                         ))}

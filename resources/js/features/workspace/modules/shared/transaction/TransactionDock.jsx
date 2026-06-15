@@ -158,17 +158,17 @@ function handleFallbackDockAction(item, action, templateLabel = 'transaksi', fav
 function resolveDockToneClassName(tone) {
     switch (tone) {
         case 'muted':
-            return 'border-[#d3d7df] bg-[#e8e8e9] text-[#a7abb4] shadow-[0_5px_10px_rgba(15,23,42,0.08)]';
+            return 'border-[#d3d7df] bg-[#e8e8e9] text-[#a7abb4] shadow-[0_2px_5px_rgba(15,23,42,0.08)]';
         case 'blue':
         case 'secondary':
-            return 'border-[#4d94dd] bg-[#8fc0ef] text-[#0d4e96] shadow-[0_5px_10px_rgba(20,75,138,0.16)]';
+            return 'border-[#4d94dd] bg-[#8fc0ef] text-[#0d4e96] shadow-[0_4px_8px_rgba(20,75,138,0.18)]';
         case 'success':
-            return 'border-[#69cf7e] bg-[#9de29b] text-[#0b7b34] shadow-[0_5px_10px_rgba(27,104,53,0.14)]';
+            return 'border-[#69cf7e] bg-[#9de29b] text-[#0b7b34] shadow-[0_4px_8px_rgba(27,104,53,0.16)]';
         case 'danger':
-            return 'border-[#f08f92] bg-[#ffb2b5] text-[#e54854] shadow-[0_5px_10px_rgba(135,43,52,0.12)]';
+            return 'border-[#f08f92] bg-[#ffb2b5] text-[#e54854] shadow-[0_4px_8px_rgba(135,43,52,0.15)]';
         case 'primary':
         default:
-            return 'border-[#214d8d] bg-[#0f62b8] text-white shadow-[0_5px_10px_rgba(24,53,97,0.18)]';
+            return 'border-[#214d8d] bg-[#0f62b8] text-white shadow-[0_4px_8px_rgba(24,53,97,0.22)]';
     }
 }
 
@@ -241,16 +241,16 @@ function TransactionDockButton({ action, templateLabel, favoritesStorageKey }) {
 
                     action.onClick?.();
                 }}
-                className={`inline-flex h-[48px] w-[78px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[52px] sm:w-[88px] lg:h-[56px] lg:w-[96px] ${resolveDockToneClassName(action.tone)} ${isDisabled ? 'cursor-default opacity-55 pointer-events-none' : 'hover:brightness-105 active:brightness-95 cursor-pointer transition'}`.trim()}
+                className={`inline-flex h-[44px] w-[72px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[48px] sm:w-[80px] lg:h-[52px] lg:w-[88px] ${resolveDockToneClassName(action.tone)} ${isDisabled ? 'cursor-default opacity-55 pointer-events-none' : 'hover:brightness-105 active:brightness-95 cursor-pointer transition'}`.trim()}
             >
                 <span className="inline-flex flex-1 items-center justify-center">
                     <TransactionDockIcon icon={action.icon} />
                 </span>
                 {hasMenu ? (
                     <span
-                        className={`inline-flex w-[28px] items-center justify-center border-l sm:w-[32px] lg:w-[36px] ${resolveDockDividerClassName(action.tone)}`.trim()}
+                        className={`inline-flex w-[22px] items-center justify-center border-l sm:w-[26px] lg:w-[28px] ${resolveDockDividerClassName(action.tone)}`.trim()}
                     >
-                        <ChevronDownIcon className="h-5 w-5" />
+                        <ChevronDownIcon className="h-4 w-4" />
                     </span>
                 ) : null}
             </button>
@@ -451,7 +451,7 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
             {items.map((item, index) => (
                 <div
                     key={item.label}
-                    className={`p-4 ${index < items.length - 1 ? 'border-b border-[#d8dde7] sm:border-b-0 sm:border-r' : ''}`.trim()}
+                    className={`p-4 ${index < items.length - 1 ? 'border-b border-[#d8dde7] sm:border-b-0 sm:border-r border-[#d8dde7]' : ''}`.trim()}
                 >
                     <div className="text-xs sm:text-sm text-[#1f2436]">{item.label}</div>
                     <div className="mt-3 text-right text-lg font-semibold text-[#111827]">{item.value}</div>

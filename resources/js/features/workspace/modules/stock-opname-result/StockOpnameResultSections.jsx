@@ -22,10 +22,6 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import { SearchIcon } from '@/features/workspace/shared/Icons';
 
 function resolveAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
-
     if (align === 'center') {
         return 'text-center';
     }
@@ -206,7 +202,7 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                             {config.itemTable.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>

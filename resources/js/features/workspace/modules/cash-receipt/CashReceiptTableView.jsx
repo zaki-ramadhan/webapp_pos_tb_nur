@@ -81,17 +81,13 @@ export default function CashReceiptTableView({
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'right' ? 'text-right' : 'text-left'
-                                    }`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
                                 >
                                     <CashReceiptSortHeader column={column} />
                                 </DataTableHead>
@@ -116,7 +112,7 @@ export default function CashReceiptTableView({
 {config.table.columns.map((column) => (
                                     <DataTableCell
                                         key={column.id}
-                                        className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
+                                        className={`text-left px-2.5 text-base text-[#131a28]`.trim()}
                                     >
                                         {formatTableTextValue(row[column.id])}
                                     </DataTableCell>
@@ -124,7 +120,7 @@ export default function CashReceiptTableView({
                             </DataTableRow>
                         )) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? config.table.columns.length + 1 : config.table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

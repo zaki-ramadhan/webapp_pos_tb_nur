@@ -34,10 +34,6 @@ export function buildWorkOrderFormValues(source = {}) {
 }
 
 export function resolveWorkOrderCellAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
-
     if (align === 'center') {
         return 'text-center';
     }

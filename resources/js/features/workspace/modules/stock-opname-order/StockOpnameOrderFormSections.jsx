@@ -27,7 +27,7 @@ function SectionCard({ children, className = '' }) {
     );
 }
 
-export function StockOpnameOrderHeader({ config, values, isDetail }) {
+export function StockOpnameOrderHeader({ config, values, setValues, isDetail }) {
     return (
         <SectionCard>
             <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(320px,520px)] xl:items-start">
@@ -46,7 +46,15 @@ export function StockOpnameOrderHeader({ config, values, isDetail }) {
                 <div className="grid gap-2 xl:justify-self-end xl:min-w-[420px]">
                     <div className="flex flex-wrap items-center justify-start gap-3 xl:justify-end">
                         <TransactionFieldLabel label={config.labels.number} required />
-                        <TransactionSwitch checked={values.autoNumber} onChange={() => {}} />
+                        <TransactionSwitch
+                            checked={values.autoNumber}
+                            onChange={(nextChecked) =>
+                                setValues?.((current) => ({
+                                    ...current,
+                                    autoNumber: nextChecked,
+                                }))
+                            }
+                        />
                         {values.autoNumber && !isDetail ? (
                             <SelectField value={values.numberingType} containerClassName="w-full xl:w-[350px]" className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
                                 {config.numberingOptions.map((option) => <option key={option} value={option}>{option}</option>)}

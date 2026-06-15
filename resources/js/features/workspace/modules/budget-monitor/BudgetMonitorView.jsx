@@ -120,9 +120,7 @@ export default function BudgetMonitorView({ page }) {
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${
-                                        column.align === 'right' ? 'text-right' : 'text-center'
-                                    }`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>

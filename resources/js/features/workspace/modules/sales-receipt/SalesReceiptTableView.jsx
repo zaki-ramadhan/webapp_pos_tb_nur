@@ -151,11 +151,9 @@ export default function SalesReceiptTableView({
                 <DataTable className="min-w-[1520px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -203,7 +201,7 @@ export default function SalesReceiptTableView({
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? config.table.columns.length + 1 : config.table.columns.length} className="px-2.5 py-6 text-center text-base text-[#7d879a]">
+                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-2.5 py-6 text-center text-base text-[#7d879a]">
                                     {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

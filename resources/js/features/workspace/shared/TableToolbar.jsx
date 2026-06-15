@@ -777,6 +777,23 @@ export default function TableToolbar({
                         const computedSearchPlaceholder = primaryColumnLabels.length > 0
                             ? `Cari ${primaryColumnLabels.join(', ')}...`
                             : 'Cari data...';
+
+                        const resolvedSearchWidthClass = (search.widthClassName ?? 'sm:max-w-[248px]')
+                            .split(' ')
+                            .map(c => {
+                                if (c.startsWith('sm:w-[') || c.startsWith('w-[') || c.startsWith('sm:max-w-[') || c.startsWith('max-w-[')) {
+                                    const numMatch = c.match(/\d+/);
+                                    if (numMatch) {
+                                        const widthNum = parseInt(numMatch[0]);
+                                        if (widthNum >= 300) {
+                                            return c.replace(/\d+/, '240');
+                                        }
+                                    }
+                                }
+                                return c;
+                            })
+                            .join(' ');
+
                         return (
                             <TextInput
                                 value={search.value}
@@ -784,7 +801,7 @@ export default function TableToolbar({
                                 placeholder={computedSearchPlaceholder}
                                 trailing={searchTrailing}
                                 aria-label={computedSearchPlaceholder}
-                                className={`${sizeStyle.searchInput} w-full rounded-[4px] border-[#cfd6e2] ${search.widthClassName ?? 'sm:max-w-[248px]'}`.trim()}
+                                className={`${sizeStyle.searchInput} w-full rounded-[4px] border-[#cfd6e2] ${resolvedSearchWidthClass}`.trim()}
                                 inputClassName={search.inputClassName ?? `${sizeStyle.searchText} text-[#1f2436]`}
                                 trailingClassName={search.trailingClassName ?? 'px-3'}
                             />

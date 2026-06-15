@@ -181,7 +181,7 @@ export default function SelectField({
                     </span>
                     <ChevronDown
                         aria-hidden="true"
-                        className={`h-4 w-4 shrink-0 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-300 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName}`.trim()}
+                        className={`h-4 w-4 shrink-0 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-300 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName.split(' ').filter(c => !c.startsWith('mr-') && !c.startsWith('mx-')).join(' ')}`.trim()}
                         strokeWidth={2.2}
                         absoluteStrokeWidth
                     />

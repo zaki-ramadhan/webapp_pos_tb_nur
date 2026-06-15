@@ -15,10 +15,6 @@ import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel
 import { TRANSACTION_LINE_TITLE_CLASS_NAME } from './transactionStyles';
 
 export function resolveTransactionAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
-
     if (align === 'center') {
         return 'text-center';
     }
@@ -48,7 +44,7 @@ export function TransactionDataTable({
     const schemaKey = getTableSchemaKey(cleanedColumns);
     const [visibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
 
-    const activeShowNumbering = showNumbering && rows.length > 0;
+    const activeShowNumbering = showNumbering;
 
     const visibleColumns = useMemo(() => {
         const filtered = cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
@@ -85,7 +81,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-sm font-medium text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-sm font-medium text-white text-center`.trim()}
                                     style={minWidth ? { minWidth } : undefined}
                                 >
                                     {renderHeaderCell ? renderHeaderCell(column) : column.label}
@@ -172,7 +168,7 @@ export function TransactionLineItemsSection({
     const hasRows = rows.length > 0;
 
     return (
-        <div className={`flex flex-col ${hasRows ? 'min-h-[540px]' : 'min-h-[240px]'}`.trim()}>
+        <div className="flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0 flex-1 sm:max-w-[560px]">
                     {searchInput ?? (

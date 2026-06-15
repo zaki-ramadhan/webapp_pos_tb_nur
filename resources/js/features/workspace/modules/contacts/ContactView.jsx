@@ -120,17 +120,15 @@ export default function ContactView({ page: pageProp }) {
                 <DataTable className="min-w-[1280px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
-                            ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
                                 >
-                                    <span className={`flex items-center gap-2 ${column.align === 'left' ? '' : 'justify-center'}`.trim()}>
+                                    <span className={`flex items-center gap-2 justify-center`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span>{column.label}</span>
                                     </span>
@@ -170,7 +168,7 @@ export default function ContactView({ page: pageProp }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     Belum ada data
                                 </DataTableCell>
                             </DataTableRow>

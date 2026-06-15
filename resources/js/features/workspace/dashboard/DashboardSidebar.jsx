@@ -183,7 +183,7 @@ export default function DashboardSidebar({
             }
         >
             {mobileMenuOpen ? (
-                <div className="border-b border-[#d7ddea] bg-[rgba(243,246,251,0.96)] px-2 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.08)] lg:hidden">
+                <div className="border-b border-[#d7ddea] bg-[#f2f2f2]/96 px-2 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.08)] lg:hidden">
                     <div className="rounded-[10px] border border-[#d7ddea] bg-white p-2 shadow-[0_10px_24px_rgba(15,23,42,0.12)]">
                         <div className="flex items-center justify-between gap-3 border-b border-[#edf0f6] pb-2">
                             <div className="min-w-0">

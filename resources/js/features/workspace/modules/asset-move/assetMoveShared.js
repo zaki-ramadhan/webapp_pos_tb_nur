@@ -22,10 +22,6 @@ export function buildAssetMoveFormValues(source = {}) {
 }
 
 export function resolveAssetMoveAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
-
     if (align === 'center') {
         return 'text-center';
     }

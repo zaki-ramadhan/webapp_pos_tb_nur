@@ -105,13 +105,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                             {discountColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'right'
-                                            ? 'text-right'
-                                            : column.align === 'center'
-                                              ? 'text-center'
-                                              : 'text-left'
-                                    }`.trim()}
+                                    className={`${column.widthClassName} px-2.5 text-base font-medium text-white text-center`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -134,7 +128,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                                     <DataTableCell className="px-2.5 text-base text-[#131a28]">
                                         <span className="block truncate">{row.account}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-right text-base text-[#131a28]">
+                                    <DataTableCell className="px-2.5 text-left text-base text-[#131a28]">
                                         <span className="block truncate">{row.amount}</span>
                                     </DataTableCell>
                                 </DataTableRow>

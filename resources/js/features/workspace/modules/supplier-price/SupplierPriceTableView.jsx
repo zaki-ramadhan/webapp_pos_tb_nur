@@ -140,19 +140,15 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                 <DataTable className="min-w-[1280px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'right' ? 'text-right' : 'text-left'
-                                    }`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
                                 >
-                                    <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
+                                    <span className={`flex items-center gap-2 justify-center`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span>{column.label}</span>
                                     </span>
@@ -176,7 +172,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
 {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
+                                            className={`text-left px-2.5 text-base text-[#131a28]`.trim()}
                                         >
                                             <span className="block truncate">{row[column.id] ?? ''}</span>
                                         </DataTableCell>
@@ -186,7 +182,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell
-                                    colSpan={filteredRows.length > 0 ? config.table.columns.length + 1 : config.table.columns.length}
+                                    colSpan={config.table.columns.length + 1}
                                     className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {config.table.emptyLabel}

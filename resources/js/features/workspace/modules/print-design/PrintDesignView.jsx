@@ -186,11 +186,9 @@ function PrintDesignTableView({ table, onCreate }) {
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
-                                <DataTableHead className="w-[50px] px-3 py-2 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
-                            ) : null}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -227,7 +225,7 @@ function PrintDesignTableView({ table, onCreate }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? table.columns.length + 1 : table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     Belum ada data
                                 </DataTableCell>
                             </DataTableRow>

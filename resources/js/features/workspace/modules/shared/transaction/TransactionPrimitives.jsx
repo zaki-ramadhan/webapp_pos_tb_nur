@@ -73,11 +73,12 @@ export function TransactionSectionHeading({ title, icon }) {
     );
 }
 
-export function TransactionHeaderButton({ label, trailingChevron = false, className = '' }) {
+export function TransactionHeaderButton({ label, trailingChevron = false, className = '', ...props }) {
     return (
         <button
             type="button"
             className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm text-[#21539b] ${className}`.trim()}
+            {...props}
         >
             <span>{label}</span>
             {trailingChevron ? <ChevronDownIcon className="h-4 w-4" /> : null}

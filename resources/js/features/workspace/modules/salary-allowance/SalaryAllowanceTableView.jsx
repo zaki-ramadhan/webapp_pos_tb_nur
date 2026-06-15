@@ -133,11 +133,9 @@ export default function SalaryAllowanceTableView({
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -172,7 +170,7 @@ export default function SalaryAllowanceTableView({
                             ))
                         ) : (
                             <DataTableRow>
-                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="py-6 text-center text-base text-[#6b7280]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="py-6 text-center text-base text-[#6b7280]">
                                     {loading ? 'Memuat data...' : config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

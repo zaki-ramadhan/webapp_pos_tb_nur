@@ -111,17 +111,15 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : 'text-left'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
                                 >
-                                    <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : ''}`.trim()}>
+                                    <span className={`flex items-center gap-2 justify-center`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span>{column.label}</span>
                                     </span>
@@ -152,7 +150,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : 'text-left'} px-3 text-base text-[#131a28]`.trim()}
+                                            className={`text-left px-3 text-base text-[#131a28]`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -161,7 +159,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {error || (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

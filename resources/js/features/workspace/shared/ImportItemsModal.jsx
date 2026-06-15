@@ -270,10 +270,10 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                     <table className="w-full border-collapse text-left text-sm">
                                         <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
                                             <tr>
-                                                <th className="px-3 py-2 font-semibold">Kode Input</th>
-                                                <th className="px-3 py-2 font-semibold">Hasil Pencocokan</th>
-                                                <th className="px-3 py-2 font-semibold text-right">Qty</th>
-                                                {columnMapping.price !== -1 && <th className="px-3 py-2 font-semibold text-right">Harga</th>}
+                                                <th className="px-3 py-2 font-semibold text-center">Kode Input</th>
+                                                <th className="px-3 py-2 font-semibold text-center">Hasil Pencocokan</th>
+                                                <th className="px-3 py-2 font-semibold text-center">Qty</th>
+                                                {columnMapping.price !== -1 && <th className="px-3 py-2 font-semibold text-center">Harga</th>}
                                                 <th className="px-3 py-2 font-semibold text-center">Status</th>
                                             </tr>
                                         </thead>
@@ -289,9 +289,9 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                                             </div>
                                                         )}
                                                     </td>
-                                                    <td className="px-3 py-2 text-right font-mono">{item.rawQty}</td>
+                                                    <td className="px-3 py-2 text-left font-mono">{item.rawQty}</td>
                                                     {columnMapping.price !== -1 && (
-                                                        <td className="px-3 py-2 text-right font-mono">
+                                                        <td className="px-3 py-2 text-left font-mono">
                                                             {item.price ? `Rp ${Number(item.price).toLocaleString('id-ID')}` : '-'}
                                                         </td>
                                                     )}

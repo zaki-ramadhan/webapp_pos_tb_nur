@@ -185,7 +185,7 @@ export default function ActivityLogView({ page }) {
                                 return (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
                                         <span className="block whitespace-nowrap">{column.label}</span>

@@ -20,6 +20,7 @@ import {
     Pencil,
     Plus,
     Printer,
+    Loader2,
     RefreshCw,
     Rows3,
     Save,
@@ -57,7 +58,7 @@ export function CloseIcon({ className = 'h-4 w-4', strokeWidth = 1.9 }) {
 }
 
 export function RefreshIcon({ className = 'h-4 w-4' }) {
-    return <AppIcon icon={RefreshCw} className={className} />;
+    return <AppIcon icon={Loader2} className={className} />;
 }
 
 export function CalendarIcon({ className = 'h-4 w-4' }) {

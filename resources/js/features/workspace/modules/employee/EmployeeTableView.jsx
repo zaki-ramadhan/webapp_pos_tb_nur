@@ -118,15 +118,13 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                 <DataTable className="min-w-[1460px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
                             <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                 No.
                             </DataTableHead>
-                        ) : null}
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -148,7 +146,7 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-base text-[#131a28] ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
+                                            className={`px-2.5 text-base text-[#131a28] ${column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -157,7 +155,7 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={filteredRows.length > 0 ? visibleColumns.length + 1 : visibleColumns.length} className="px-2.5 py-4 text-center text-base text-[#6b7280]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-4 text-center text-base text-[#6b7280]">
                                     {table.loading ? 'Memuat data...' : table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

@@ -61,7 +61,7 @@ export default function PurchaseDepositFormView({ config, activeLevel2Tab }) {
                     </div>
                 </div>
 
-                <div className="shrink-0 lg:w-[104px]">
+                <div className="shrink-0 lg:w-[96px]">
                     <TransactionDock actions={values.dockActions} />
                 </div>
             </div>

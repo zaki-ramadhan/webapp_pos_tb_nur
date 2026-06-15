@@ -130,7 +130,7 @@ export function PayrollHeader({ config, values, setValues }) {
 
 export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
     return (
-        <div className="flex min-h-[540px] flex-col">
+        <div className="flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-1.5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <TextInput
@@ -184,7 +184,7 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
 
 export function PayrollAdditionalInfoSection({ config, values, setValues }) {
     return (
-        <div className="min-h-[540px]">
+        <div className="min-h-0">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="form" />
 
             <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">

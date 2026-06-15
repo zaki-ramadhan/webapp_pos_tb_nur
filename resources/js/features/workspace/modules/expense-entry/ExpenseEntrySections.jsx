@@ -57,7 +57,7 @@ export function ExpenseLineItemsSection({ config, values, setValues, handlers = 
 
 export function ExpenseAdditionalInfoSection({ config, values, setValues, handlers = {} }) {
     return (
-        <div className="min-h-[540px]">
+        <div className="min-h-0">
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
             <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] lg:items-start">
@@ -88,7 +88,7 @@ export function ExpenseAdditionalInfoSection({ config, values, setValues, handle
 
 export function ExpenseSummarySection({ config, values }) {
     return (
-        <div className="min-h-[540px]">
+        <div className="min-h-0">
             <TransactionSectionHeading title={config.summaryTitle} icon="document" />
 
             <div className="mt-4 max-w-[860px] overflow-hidden rounded-[4px] border border-[#d2d8e3] bg-white shadow-[0_4px_10px_rgba(15,23,42,0.08)]">
@@ -189,7 +189,7 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                         ) : null}
                     </div>
 
-                    <div className="max-w-[240px] w-full">
+                    <div className="max-w-[320px] w-full justify-self-end">
                         {values.autoNumber ? (
                             <SelectField
                                 id="documentNumber"
@@ -225,7 +225,7 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
-                    <div className="flex justify-start gap-2 w-full max-w-[250px] md:max-w-none">
+                    <div className="flex justify-end gap-2 w-full max-w-[320px] justify-self-end">
                         <div className="relative flex-1 max-w-[120px]">
                             <button
                                 ref={takeAnchorRef}
