@@ -17,129 +17,132 @@ import TextareaField from '@/components/ui/TextareaField';
 
 export function PayrollHeader({ config, values, setValues }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.paymentType} />
-                <SelectField
-                    value={values.paymentType}
-                    onChange={(event) => setValues((current) => ({ ...current, paymentType: event.target.value }))}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                >
-                    {config.paymentTypeOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </SelectField>
-
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder={config.branchPlaceholder}
-                    onRemove={(value) =>
-                        setValues((current) => ({
-                            ...current,
-                            branches: current.branches.filter((item) => item !== value),
-                        }))
-                    }
-                    searchLabel="Cari cabang"
-                />
-
-                <TransactionFieldLabel label={config.labels.periodMonth} />
-                <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_158px]">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-y-4 gap-x-8">
+            <div className="flex flex-col gap-y-3 w-full lg:max-w-[480px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.paymentType} />
                     <SelectField
-                        value={values.month}
-                        onChange={(event) => setValues((current) => ({ ...current, month: event.target.value }))}
+                        value={values.paymentType}
+                        onChange={(event) => setValues((current) => ({ ...current, paymentType: event.target.value }))}
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         selectClassName="text-xs sm:text-sm text-[#1f2436]"
                     >
-                        {config.monthOptions.map((option) => (
+                        {config.paymentTypeOptions.map((option) => (
                             <option key={option} value={option}>
                                 {option}
                             </option>
                         ))}
                     </SelectField>
+                </div>
 
-                    <SelectField
-                        value={values.year}
-                        onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                    >
-                        {config.yearOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.periodMonth} />
+                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_96px]">
+                        <SelectField
+                            value={values.month}
+                            onChange={(event) => setValues((current) => ({ ...current, month: event.target.value }))}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        >
+                            {config.monthOptions.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </SelectField>
+
+                        <SelectField
+                            value={values.year}
+                            onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        >
+                            {config.yearOptions.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </SelectField>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-y-3 w-full lg:max-w-[480px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.numbering} required />
-                    <TransactionSwitch
-                        checked={values.autoNumber}
-                        onChange={(nextChecked) =>
-                            setValues((current) => ({
-                                ...current,
-                                autoNumber: nextChecked,
-                            }))
-                        }
-                    />
+                    <div className="flex items-center gap-3 w-full">
+                        <TransactionSwitch
+                            checked={values.autoNumber}
+                            onChange={(nextChecked) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    autoNumber: nextChecked,
+                                }))
+                            }
+                        />
+                        <SelectField
+                            value={values.numberingType}
+                            onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2] flex-1"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        >
+                            {config.numberingOptions.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </SelectField>
+                    </div>
                 </div>
-                <SelectField
-                    value={values.numberingType}
-                    onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                >
-                    {config.numberingOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </SelectField>
 
-                <TransactionFieldLabel label={config.labels.entryDate} required />
-                <TransactionDateInput
-                    value={values.entryDate}
-                    onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                    className="w-full max-w-full"
-                />
-
-                <TransactionFieldLabel label={config.labels.dueDate} required />
-                <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_88px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.entryDate} required />
                     <TransactionDateInput
-                        value={values.dueDate}
-                        onChange={(nextValue) => setValues((current) => ({ ...current, dueDate: nextValue }))}
+                        value={values.entryDate}
+                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
                         className="w-full max-w-full"
                     />
-                    <button
-                        type="button"
-                        disabled
-                        className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#d3d7df] bg-[#f3f3f4] px-3 text-base text-[#b1b5be]"
-                    >
-                        {config.processButtonLabel}
-                    </button>
+                </div>
+
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.dueDate} required />
+                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_88px]">
+                        <TransactionDateInput
+                            value={values.dueDate}
+                            onChange={(nextValue) => setValues((current) => ({ ...current, dueDate: nextValue }))}
+                            className="w-full max-w-full"
+                        />
+                        <button
+                            type="button"
+                            disabled
+                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#d3d7df] bg-[#f3f3f4] px-3 text-base text-[#b1b5be]"
+                        >
+                            {config.processButtonLabel}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
 
-export function PayrollEmployeeSection({ config, values }) {
+export function PayrollEmployeeSection({ config, values, setValues }) {
     return (
         <div className="flex min-h-[540px] flex-col">
             <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <TextInput
                         value={values.employeeLookup}
-                        readOnly
+                        onChange={(event) =>
+                            setValues?.((current) => ({
+                                ...current,
+                                employeeLookup: event.target.value,
+                            }))
+                        }
                         placeholder={config.employeeLookupPlaceholder}
                         trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2] sm:max-w-[590px]"
+                        containerClassName="w-full sm:max-w-[360px]"
+                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
 
@@ -168,10 +171,6 @@ export function PayrollEmployeeSection({ config, values }) {
                     }
                     renderCell={({ row, column }) => (column.kind === 'spacer' ? '' : formatTableTextValue(row[column.id]))}
                 />
-            </div>
-
-            <div className="mt-5 flex justify-end">
-                <TransactionDualTotalCard items={config.summaryItems} className="min-w-[360px] sm:min-w-[565px]" />
             </div>
         </div>
     );

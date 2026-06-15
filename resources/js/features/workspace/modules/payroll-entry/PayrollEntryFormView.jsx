@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { TransactionFormLayout, TransactionDualTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     resolveDocumentRequirementValue,
     resolveSaveDisabledState,
@@ -33,7 +33,6 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
 
         return {
             paymentType: initialValues.paymentType,
-            branches: initialValues.branches,
             month: initialValues.month,
             year: initialValues.year,
             autoNumber: initialValues.autoNumber,
@@ -49,7 +48,6 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
     const currentComparable = useMemo(
         () => ({
             paymentType: values.paymentType,
-            branches: values.branches,
             month: values.month,
             year: values.year,
             autoNumber: values.autoNumber,
@@ -67,7 +65,6 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
         () =>
             resolveSaveDisabledState({
                 checks: [
-                    { label: config.labels.branch, type: 'array', value: values.branches },
                     {
                         label: config.labels.numbering,
                         value: resolveDocumentRequirementValue(values.autoNumber, values.numberingType, ''),
@@ -85,14 +82,12 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
             }),
         [
             config.additionalInfoFields.liabilityAccountLabel,
-            config.labels.branch,
             config.labels.dueDate,
             config.labels.entryDate,
             config.labels.numbering,
             currentComparable,
             initialComparable,
             values.autoNumber,
-            values.branches,
             values.dueDate,
             values.entryDate,
             values.liabilityAccounts,
@@ -156,11 +151,6 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
                           })) ?? [],
                           onClick: handleSave
                       }
-                    : action.id === 'document'
-                    ? {
-                          ...action,
-                          icon: 'form',
-                      }
                     : action,
             ),
         [config.dockActions, handleSave, saveDisabled, saving],
@@ -179,12 +169,13 @@ export default function PayrollEntryFormView({ pageId, activeLevel2Tab, config, 
             sectionTabs={config.sectionTabs}
             activeSectionId={activeSectionId}
             onSectionChange={setActiveSectionId}
+            footer={<TransactionDualTotalCard items={config.summaryItems} className="min-w-[360px] sm:min-w-[565px]" />}
             dockActions={dockActions}
         >
             {activeSectionId === 'additional-info' ? (
                 <PayrollAdditionalInfoSection config={{ ...config, errors }} values={values} setValues={setValues} />
             ) : (
-                <PayrollEmployeeSection config={config} values={values} />
+                <PayrollEmployeeSection config={config} values={values} setValues={setValues} />
             )}
         </TransactionFormLayout>
     );

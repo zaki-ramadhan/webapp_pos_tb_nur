@@ -50,7 +50,7 @@ class PayrollEntryPage
                             'November',
                             'Desember',
                         ],
-                        'yearOptions' => ['2026', '2025', '2024'],
+                        'yearOptions' => ['2027', '2026', '2025', '2024', '2023', '2022', '2021'],
                         'numberingOptions' => ['Pencatatan Gaji'],
                         'processButtonLabel' => 'Proses',
                         'takeButtonLabel' => 'Ambil',
@@ -61,7 +61,7 @@ class PayrollEntryPage
                             [
                                 'id' => 'employees',
                                 'label' => 'Rincian Karyawan',
-                                'icon' => 'form',
+                                'icon' => 'document',
                             ],
                             [
                                 'id' => 'additional-info',
