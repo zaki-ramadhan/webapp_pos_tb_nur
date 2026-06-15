@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import TextInput from '@/components/ui/TextInput';
-import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { buildAccountLookupLabel, buildAccountLookupMeta } from '@/features/workspace/shared/hooks/useAccountLookupController';
 
@@ -41,7 +41,7 @@ export default function AccountLookupSuggestions({
                         spellCheck={false}
                         trailing={
                             loading ? (
-                                <RefreshIcon className="h-5 w-5 animate-spin text-[#1f2436]" />
+                                <LoadingIcon className="h-5 w-5 animate-spin text-[#1f2436]" />
                             ) : (
                                 <SearchIcon className="h-5 w-5 text-[#1f2436]" />
                             )

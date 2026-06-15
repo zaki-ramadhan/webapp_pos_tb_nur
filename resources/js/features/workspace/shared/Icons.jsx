@@ -58,6 +58,10 @@ export function CloseIcon({ className = 'h-4 w-4', strokeWidth = 1.9 }) {
 }
 
 export function RefreshIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={RefreshCw} className={className} />;
+}
+
+export function LoadingIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Loader2} className={className} />;
 }
 

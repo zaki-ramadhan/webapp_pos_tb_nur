@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { CloseIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 export default function ChipLookupField({
     value = '',
@@ -95,7 +95,7 @@ export default function ChipLookupField({
                 className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none"
             >
                 {searching ? (
-                    <RefreshIcon className="h-5 w-5 animate-spin text-[#111827]" />
+                    <LoadingIcon className="h-5 w-5 animate-spin text-[#111827]" />
                 ) : (
                     <SearchIcon className="h-5 w-5 text-[#111827]" />
                 )}

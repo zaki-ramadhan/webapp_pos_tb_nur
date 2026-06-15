@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import TextInput from '@/components/ui/TextInput';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
-import { DownloadIcon, PaperclipIcon, RefreshIcon, TrashIcon } from '@/features/workspace/shared/Icons';
+import { DownloadIcon, PaperclipIcon, LoadingIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import { uploadBackendAttachment } from '@/features/workspace/backend/workspaceBackendApi';
 
 function formatAttachmentDate(dateString) {
@@ -111,7 +111,7 @@ export default function EmployeeAttachmentModal({
                     }`}>
                         {uploadingDoc ? (
                             <span className="flex items-center gap-2">
-                                <RefreshIcon className="h-5 w-5 animate-spin" />
+                                <LoadingIcon className="h-5 w-5 animate-spin" />
                                 <span>Mengunggah Dokumen...</span>
                             </span>
                         ) : (

@@ -11,6 +11,7 @@ import {
     PlusIcon,
     PrintIcon,
     RefreshIcon,
+    LoadingIcon,
     SearchIcon,
     UploadIcon,
     CogIcon,
@@ -58,7 +59,7 @@ function ToolbarIconButton({ label, onClick, className, children }) {
     );
 }
 
-// ─── Import Button ────────────────────────────────────────────────────────────
+// Tombol impor
 
 function ToolbarImportButton({ importConfig, sizeStyle }) {
     const fileInputRef = useRef(null);
@@ -73,10 +74,10 @@ function ToolbarImportButton({ importConfig, sizeStyle }) {
             const result = await importFromFile(file);
             importConfig.onImport?.(result);
         } catch {
-            // silently ignore — consumer may handle via onImport error shape
+            // abaikan error
         } finally {
             setLoading(false);
-            // reset so same file can be re-selected
+            // reset pilihan file
             event.target.value = '';
         }
     }
@@ -96,7 +97,7 @@ function ToolbarImportButton({ importConfig, sizeStyle }) {
                 className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] ${sizeStyle.utilityButton} ${loading ? 'pointer-events-none opacity-70' : ''}`.trim()}
             >
                 {loading
-                    ? <RefreshIcon className="h-4 w-4 animate-spin" />
+                    ? <LoadingIcon className="h-4 w-4 animate-spin" />
                     : <UploadIcon className="h-4 w-4" />
                 }
             </ToolbarIconButton>
@@ -104,7 +105,7 @@ function ToolbarImportButton({ importConfig, sizeStyle }) {
     );
 }
 
-// ─── Export Split Button ──────────────────────────────────────────────────────
+// Tombol split ekspor
 
 function ToolbarExportSplitButton({ exportConfig, sizeStyle, visibleColumnIds }) {
     const [open, setOpen] = useState(false);
@@ -188,21 +189,20 @@ function ToolbarExportSplitButton({ exportConfig, sizeStyle, visibleColumnIds })
     );
 }
 
-// ─── Settings Menu (Column Settings Panel) ────────────────────────────────────
+// Menu pengaturan kolom
 
 /**
- * Unified settings button: CogIcon opens a search + checkbox column panel.
- * Falls back to a no-op if no columns are available.
+ * Tombol pengaturan kolom.
  */
 function ToolbarSettingsMenu({ menuButton, columnSettings, sizeStyle }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
 
-    // Prefer columnSettings from toolbar; fall through if neither exist
+    // Ambil seting kolom
     const colSettings = columnSettings;
     const hasColumns = colSettings?.columns?.length > 0;
 
-    // Only render if there's a menu button config or columns to show
+    // Render menu jika ada kolom
     if (!menuButton && !hasColumns) return null;
 
     return (
@@ -264,7 +264,7 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
             ref={panelRef}
             className="absolute right-0 top-[calc(100%+8px)] z-50 w-[240px] rounded-[6px] border border-[#d6deea] bg-white shadow-[0_6px_24px_rgba(15,23,42,0.14)] overflow-hidden"
         >
-            {/* Search */}
+            {}
             <div className="px-2 pt-2 pb-1.5 border-b border-[#edf0f5]">
                 <div className="flex items-center gap-1.5 rounded-[4px] border border-[#d0d7e3] bg-[#f7f9fc] px-2.5 py-1.5">
                     <SearchIcon className="h-3.5 w-3.5 shrink-0 text-[#9aa4b6]" />
@@ -286,7 +286,7 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
                 </div>
             </div>
 
-            {/* Column list */}
+            {}
             <div className="flex max-h-[280px] flex-col gap-0 overflow-y-auto py-1.5">
                 {filtered.length === 0 ? (
                     <p className="px-3 py-2 text-xs text-[#9aa4b6]">Tidak ada kolom ditemukan.</p>
@@ -332,16 +332,10 @@ function ColumnSettingsPanel({ anchorRef, columns, visibleIds, onToggle, onClose
 
 
 
-// ─── TableToolbar ─────────────────────────────────────────────────────────────
+// Toolbar tabel
 
 /**
- * Shared table toolbar.
- *
- * New props:
- *   importButton  – { label?, onImport(result: { headers, rows }) }
- *   columnSettings – { columns: {id, label}[], visibleIds: string[], onToggle(id) }
- *
- * exportConfig gains an optional `title` field for print headers.
+ * Toolbar tabel bersama.
  */
 function mapImportRow(row, columns) {
     const mapped = {};
@@ -681,7 +675,7 @@ export default function TableToolbar({
     const sizeStyle = SIZE_STYLES[size] ?? SIZE_STYLES.default;
     const searchLoading = Boolean(search?.loading ?? refreshButton?.loading);
     const searchTrailing = searchLoading
-        ? <RefreshIcon className={`${sizeStyle.searchIcon} animate-spin`.trim()} />
+        ? <LoadingIcon className={`${sizeStyle.searchIcon} animate-spin`.trim()} />
         : (search?.trailing ?? <SearchIcon className={sizeStyle.searchIcon} />);
 
     const cleanedRightControls = cleanRightControls(rightControls);

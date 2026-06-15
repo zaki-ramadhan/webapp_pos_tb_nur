@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import TextInput from '@/components/ui/TextInput';
-import { CloseIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 export default function AccountLookupSearchInput({
     value,
@@ -94,7 +94,7 @@ export default function AccountLookupSearchInput({
             >
                 <div className="flex items-center gap-1">
                     {loading ? (
-                        <RefreshIcon className="h-5 w-5 animate-spin text-[#1f2436]" />
+                        <LoadingIcon className="h-5 w-5 animate-spin text-[#1f2436]" />
                     ) : (
                         <SearchIcon className="h-5 w-5 text-[#1f2436]" />
                     )}

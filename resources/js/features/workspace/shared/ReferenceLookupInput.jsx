@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { CloseIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { useFormError } from '@/components/ui/FormErrorContext';
 
@@ -208,7 +208,7 @@ export default function ReferenceLookupInput({
                     className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:text-slate-300"
                 >
                     {searching ? (
-                        <RefreshIcon className="h-5 w-5 animate-spin" />
+                        <LoadingIcon className="h-5 w-5 animate-spin" />
                     ) : (
                         <SearchIcon className="h-5 w-5" />
                     )}
