@@ -117,11 +117,10 @@ export default function SystemErrorModal({
             className="bg-[rgba(20,30,49,0.58)] px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_14px_30px_rgba(15,23,42,0.2)]`.trim()}
         >
-            <div className="border-b border-[#133663] bg-[#163a6d] px-4 py-3 text-white sm:px-5 sm:py-3">
+            <div className="border-b border-[#133663] bg-[#163a6d] px-4 py-2 text-white sm:px-5 sm:py-2">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-3">
-                        <HeaderIcon />
-                        <h2 className="truncate text-base font-medium sm:text-base">{title}</h2>
+                        <h2 className="truncate text-base font-normal sm:text-base">{title}</h2>
                     </div>
 
                     {dismissible ? (
@@ -137,7 +136,7 @@ export default function SystemErrorModal({
                 </div>
             </div>
 
-            <div className="bg-white px-4 py-5 sm:px-5 sm:py-6">
+            <div className="bg-white px-4 pt-5 pb-3 sm:px-5 sm:pt-6 sm:pb-3">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
                     <div className="flex justify-center sm:justify-start">
                         <ErrorIllustration />
@@ -156,7 +155,7 @@ export default function SystemErrorModal({
                     </div>
                 </div>
 
-                <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <Button
                             variant="secondary"
@@ -172,7 +171,7 @@ export default function SystemErrorModal({
                         <Button
                             size="md"
                             onClick={handleConfirm}
-                            className="h-10 min-w-[98px] rounded-[6px] bg-[#1f57a9] px-5 text-base shadow-none hover:bg-[#1a4c95]"
+                            className="h-10 min-w-[98px] rounded-[6px] bg-[#1f57a9] text-white px-5 text-base shadow-none hover:bg-[#1a4c95]"
                         >
                             {confirmLabel}
                         </Button>

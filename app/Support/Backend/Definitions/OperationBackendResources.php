@@ -114,7 +114,7 @@ class OperationBackendResources
             'budgets' => self::documentResource('budgets', 'Budgets', 'budget', Budget::class, self::accountingRules(requireLines: false)),
             'budget-monitors' => self::documentResource('budget-monitors', 'Budget Monitors', 'budget-monitor', Budget::class, self::accountingRules(requireLines: false)),
             'budget-transfers' => self::documentResource('budget-transfers', 'Budget Transfers', 'budget-transfer', BudgetTransfer::class, self::accountingRules(requireLines: false)),
-            'expense-entries' => self::documentResource('expense-entries', 'Expense Entries', 'expense-entry', ExpenseEntry::class, self::accountingRules()),
+            'expense-entries' => self::documentResource('expense-entries', 'Expense Entries', 'expense-entry', ExpenseEntry::class, self::expenseEntryRules()),
             'payroll-entries' => self::documentResource('payroll-entries', 'Payroll Entries', 'payroll-entry', PayrollEntry::class, self::accountingRules()),
             'general-journals' => self::documentResource('general-journals', 'General Journals', 'general-journal', GeneralJournal::class, self::journalRules()),
             'period-ends' => self::documentResource('period-ends', 'Period Ends', 'period-end', PeriodEnd::class, self::journalRules()),
@@ -311,6 +311,19 @@ class OperationBackendResources
             [
                 'primary_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
                 'secondary_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
+            ],
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function expenseEntryRules(): array
+    {
+        return array_merge(
+            self::accountingRules(requireLines: true),
+            [
+                'primary_account_id' => ['required', 'integer', 'exists:accounts,id'],
             ],
         );
     }
