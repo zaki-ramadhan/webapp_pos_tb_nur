@@ -1,9 +1,20 @@
 import { Head, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
 
 import GlobalBackgroundArt from '@/components/shared/GlobalBackgroundArt';
 
 export default function WorkspaceLayout({ children, title = 'Workspace' }) {
     const appName = usePage().props.app?.name ?? 'TB Nur POS';
+
+    useEffect(() => {
+        document.documentElement.classList.add('overflow-hidden');
+        document.body.classList.add('overflow-hidden');
+
+        return () => {
+            document.documentElement.classList.remove('overflow-hidden');
+            document.body.classList.remove('overflow-hidden');
+        };
+    }, []);
 
     return (
         <>
