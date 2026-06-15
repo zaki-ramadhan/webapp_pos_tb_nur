@@ -1,9 +1,13 @@
+import { useRef, useState } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { CloseIcon, FunnelIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, FunnelIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -64,22 +68,6 @@ export function ExpenseAdditionalInfoSection({ config, values, setValues, handle
                     className="w-full max-w-full"
                 />
 
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder={config.branchPlaceholder}
-                    onRemove={(value) =>
-                        handlers.onRemoveBranch
-                            ? handlers.onRemoveBranch(value)
-                            : setValues((current) => ({
-                                  ...current,
-                                  branches: current.branches.filter((item) => item !== value),
-                              }))
-                    }
-                    searchLabel="Cari cabang"
-                    onSearch={handlers.onSelectBranch}
-                />
-
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField
                     value={values.notes}
@@ -118,6 +106,37 @@ export function ExpenseSummarySection({ config, values }) {
 }
 
 export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSwitch, handlers = {} }) {
+    const takeAnchorRef = useRef(null);
+    const [takeOpen, setTakeOpen] = useState(false);
+    const processAnchorRef = useRef(null);
+    const [processOpen, setProcessOpen] = useState(false);
+
+    const handleTakeFavorit = async () => {
+        setTakeOpen(false);
+        if (!values.__liabilityAccountId || !values.liabilityAccounts?.length) {
+            await showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: 'Hutang beban harus diisi',
+            });
+            return;
+        }
+        await showSystemErrorModal({
+            title: 'Terjadi Permasalahan pada Pemrosesan',
+            description: 'Silakan perbaiki permasalahan berikut ini:',
+            message: 'Data tidak ditemukan atau sudah dihapus',
+        });
+    };
+
+    const handleProcessPembayaran = async () => {
+        setProcessOpen(false);
+        await showSystemErrorModal({
+            title: 'Terjadi Permasalahan pada Pemrosesan',
+            description: 'Silakan perbaiki permasalahan berikut ini:',
+            message: 'Data tidak ditemukan atau sudah dihapus',
+        });
+    };
+
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
@@ -207,8 +226,51 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
                     <div className="flex justify-start gap-2 w-full max-w-[250px] md:max-w-none">
-                        <TransactionHeaderButton label={config.takeButtonLabel} trailingChevron className="flex-1 max-w-[120px]" />
-                        <TransactionHeaderButton label={config.processButtonLabel} trailingChevron className="flex-1 max-w-[120px]" />
+                        <div className="relative flex-1 max-w-[120px]">
+                            <button
+                                ref={takeAnchorRef}
+                                type="button"
+                                onClick={() => setTakeOpen(prev => !prev)}
+                                className="inline-flex h-[34px] w-full items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm text-[#21539b]"
+                            >
+                                <span>{config.takeButtonLabel || 'Ambil'}</span>
+                                <ChevronDownIcon className="h-4 w-4" />
+                            </button>
+                            <DropdownMenu
+                                open={takeOpen}
+                                onClose={() => setTakeOpen(false)}
+                                anchorRef={takeAnchorRef}
+                                align="start"
+                                widthClassName="w-[140px]"
+                            >
+                                <DropdownMenuItem onClick={handleTakeFavorit}>
+                                    Favorit
+                                </DropdownMenuItem>
+                            </DropdownMenu>
+                        </div>
+
+                        <div className="relative flex-1 max-w-[120px]">
+                            <button
+                                ref={processAnchorRef}
+                                type="button"
+                                onClick={() => setProcessOpen(prev => !prev)}
+                                className="inline-flex h-[34px] w-full items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm text-[#21539b]"
+                            >
+                                <span>{config.processButtonLabel || 'Proses'}</span>
+                                <ChevronDownIcon className="h-4 w-4" />
+                            </button>
+                            <DropdownMenu
+                                open={processOpen}
+                                onClose={() => setProcessOpen(false)}
+                                anchorRef={processAnchorRef}
+                                align="start"
+                                widthClassName="w-[140px]"
+                            >
+                                <DropdownMenuItem onClick={handleProcessPembayaran}>
+                                    Pembayaran
+                                </DropdownMenuItem>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 </div>
             </div>

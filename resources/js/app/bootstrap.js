@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { clearWorkspaceClientState } from '@/features/workspace/dashboard/workspaceClientState';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 window.axios = axios;
 
@@ -30,6 +31,12 @@ window.axios.interceptors.response.use(
 
         if (status === 401 || status === 419) {
             redirectToLogin();
+        } else if (status === 404) {
+            showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: 'Data tidak ditemukan atau sudah dihapus',
+            });
         }
 
         return Promise.reject(error);

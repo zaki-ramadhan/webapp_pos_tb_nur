@@ -65,6 +65,9 @@ export function extractBackendTotal(payload) {
 }
 
 export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan backend gagal diproses.') {
+    if (error?.response?.status === 404) {
+        return 'Data tidak ditemukan atau sudah dihapus';
+    }
     const validationErrors = error?.response?.data?.errors;
 
     if (validationErrors && typeof validationErrors === 'object') {
