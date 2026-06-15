@@ -4,42 +4,39 @@ Aplikasi POS (Point of Sale) dan ERP (Enterprise Resource Planning) berbasis web
 
 ---
 
-## 💡 CONTEKAN SIDANG TUGAS AKHIR (CHEAT SHEET)
+## 🌐 Arsitektur Integrasi API & Strategi Optimasi (Upstream APIs)
 
-Bagian ini dirancang khusus untuk membantu Anda menjawab pertanyaan dosen penguji dengan jawaban teknis yang berbobot dan profesional.
+Aplikasi ini melakukan pemanggilan (fetch) data ke API pihak ketiga eksternal secara teratur dengan optimasi ketat di sisi server guna memastikan efisiensi request dan kepatuhan terhadap rate limit:
 
-### 1. Daftar Integrasi API Eksternal & Optimasi (Upstream API)
-Aplikasi ini melakukan pemanggilan (fetch) ke API luar, tetapi **dioptimalkan secara ketat** agar hemat kuota request dan tidak terkena rate limit:
+*   **API Daftar Bank Indonesia**
+    *   **Endpoint Upstream (GitHub Raw)**: `https://raw.githubusercontent.com/riod94/list-bank-indonesia/master/bank.json`
+    *   **Endpoint Lokal (Backend Wrapper)**: `/api/backend/banks`
+    *   **Metode & Performa**: Server backend mengambil data bank dari repositori open-source GitHub tersebut secara berkala dan menyimpannya ke memori cache server menggunakan `Cache::rememberForever('indonesian_banks_list', ...)`.
+    *   **Keuntungan Teknis**: Meniadakan latensi jaringan (0ms response untuk frontend), bebas dari risiko server eksternal down, dan memiliki sistem *Fail-Safe Fallback* (jika koneksi internet terputus, backend otomatis memuat cadangan data lokal agar aplikasi tetap berfungsi normal).
 
-*   **API Daftar Bank Indonesia (Upstream API)**
-    *   **Endpoint Asli (GitHub Raw)**: `https://raw.githubusercontent.com/riod94/list-bank-indonesia/master/bank.json`
-    *   **Endpoint Lokal Backend**: `/api/backend/banks`
-    *   **Metode & Optimasi**: Backend Laravel mengambil data bank dari repositori open-source GitHub tersebut secara berkala dan menyimpannya ke memori cache server menggunakan `Cache::rememberForever('indonesian_banks_list', ...)`. 
-    *   **Keuntungan (Alasan Sidang)**: Menghindari network latency (0ms response untuk frontend), bebas dari risiko server luar down, dan memiliki sistem *Fail-Safe Fallback* (jika koneksi internet terputus, backend otomatis memuat cadangan data lokal agar aplikasi tidak crash).
-
-*   **API Nilai Tukar Mata Uang (Upstream API)**
-    *   **Endpoint Asli (ExchangeRate-API)**: `https://open.er-api.com/v6/latest/USD`
-    *   **Endpoint Lokal Backend**: `/api/backend/currencies/sync`
-    *   **Metode & Optimasi**: Menggunakan `Cache::remember` dengan durasi **12 jam** (43.200 detik).
-    *   **Keuntungan (Alasan Sidang)**: Karena kurs harian hanya diperbarui sekali sehari oleh penyedia API, membatasi request hanya setiap 12 jam sekali sangat menghemat resource server dan menjamin limit API gratis tidak akan pernah habis.
+*   **API Nilai Tukar Kurs Mata Uang**
+    *   **Endpoint Upstream (ExchangeRate-API)**: `https://open.er-api.com/v6/latest/USD`
+    *   **Endpoint Lokal (Backend Wrapper)**: `/api/backend/currencies/sync`
+    *   **Metode & Performa**: Menggunakan `Cache::remember` dengan durasi **12 jam** (43.200 detik).
+    *   **Keuntungan Teknis**: Karena nilai tukar diperbarui harian oleh penyedia API, pembatasan request setiap 12 jam sekali sangat menghemat pemakaian resource server dan menjamin kelangsungan kuota API gratis.
 
 ---
 
-### 2. Fitur Unggulan & Algoritma Utama
+## ⚡ Fitur Utama & Deskripsi Algoritma
 
-#### A. Penilaian Persediaan & HPP (FIFO Costing Engine)
+### A. Penilaian Persediaan & HPP (FIFO Costing Engine)
 Aplikasi menggunakan metode **FIFO (First-In-First-Out)** untuk pencatatan arus barang dan perhitungan Harga Pokok Penjualan (HPP/COGS):
 *   **Pencatatan Batch (Stock Entry)**: Setiap barang masuk (Faktur Pembelian, Retur Penjualan, Penyesuaian Positif) mendaftarkan batch baru di database lengkap dengan harga beli asli (`unit_cost`) dan tanggal masuk.
 *   **Konsumsi FIFO (Stock Consumption)**: Ketika terjadi barang keluar (Faktur Penjualan, Retur Pembelian, Penyesuaian Negatif), sistem otomatis memotong stok dari batch tertua terlebih dahulu. HPP dihitung secara dinamis berdasarkan nilai beli batch yang terpotong tersebut.
 *   **Rollback Costing**: Jika dokumen transaksi diperbarui (update) atau dibatalkan (void), sistem secara otomatis mengembalikan status konsumsi batch ke kondisi semula untuk mencegah ketidaksesuaian nilai buku stok.
 
-#### B. Unified Document Model (Pola Desain Database)
+### B. Unified Document Model (Pola Desain Database)
 Untuk transaksi keuangan dan stok, kami tidak membuat puluhan tabel transaksi terpisah. Kami menerapkan pola **Unified Document Model**:
 *   Semua transaksi keuangan (Penawaran, Sales Order, Invoice, Pembayaran Kas/Bank) disimpan dalam tabel terpadu `operation_documents` dan detail item di `operation_document_lines`. Kolom `document_type` bertindak sebagai pembeda.
 *   Semua pergerakan barang non-keuangan (Mutasi barang antar-gudang, stock opname, koreksi penyesuaian) disimpan dalam tabel `inventory_documents` dan `inventory_document_lines`.
 *   **Alasan Teknis**: Mengurangi jumlah table join di database, menyederhanakan query, serta mempercepat proses audit transaksi.
 
-#### C. Multitab Workspace SPA (Single Page Application)
+### C. Multitab Workspace SPA (Single Page Application)
 *   Menggunakan **Inertia.js + React 19**.
 *   Sistem tab workspace di frontend memungkinkan pengguna membuka banyak modul sekaligus (seperti browser tab di dalam aplikasi) tanpa melakukan reload halaman penuh. State form dan input yang sedang dikerjakan tidak akan hilang jika pengguna berpindah tab.
 
