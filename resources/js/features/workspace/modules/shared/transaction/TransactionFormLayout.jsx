@@ -23,7 +23,7 @@ export default function TransactionFormLayout({
                             onSelectTab={onSectionChange}
                         />
 
-                        <div className="min-w-0 flex-1 overflow-y-auto px-3 py-3 flex flex-col">
+                        <div className="min-w-0 flex-1 overflow-y-auto px-3 pt-1 pb-3 flex flex-col">
                             {children}
                         </div>
                     </div>

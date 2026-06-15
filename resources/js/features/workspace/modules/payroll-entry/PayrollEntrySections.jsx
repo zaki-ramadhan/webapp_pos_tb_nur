@@ -129,7 +129,7 @@ export function PayrollHeader({ config, values, setValues }) {
 export function PayrollEmployeeSection({ config, values, setValues }) {
     return (
         <div className="flex min-h-[540px] flex-col">
-            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 pb-1.5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <TextInput
                         value={values.employeeLookup}
@@ -154,7 +154,7 @@ export function PayrollEmployeeSection({ config, values, setValues }) {
                 </div>
             </div>
 
-            <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
+            <div className="mt-1.5 min-h-0 flex-1 overflow-x-auto">
                 <TransactionDataTable
                     columns={config.employeeTable.columns}
                     rows={config.employeeTable.rows}
