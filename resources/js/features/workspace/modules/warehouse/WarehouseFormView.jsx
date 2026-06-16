@@ -161,16 +161,17 @@ export default function WarehouseFormView({
 
     return (
         <>
-            <div className="flex h-full min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden">
-                <div className="shrink-0">
-                    <PreferencesTabs
-                        tabs={config.tabs}
-                        activeTabId={activeTabId}
-                        onSelectTab={setActiveTabId}
-                    />
-                </div>
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
+            <div className="shrink-0">
+                <PreferencesTabs
+                    tabs={config.tabs}
+                    activeTabId={activeTabId}
+                    onSelectTab={setActiveTabId}
+                />
+            </div>
 
-                <div className="flex flex-1 min-h-0 flex-col gap-5 px-4 py-4 lg:flex-row lg:items-stretch overflow-hidden">
+            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
+                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
                     <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
                         <CrudStatusMessage status={status} className="mb-4 shrink-0" />
                         {activeTabId === 'warehouse-address' ? (
@@ -181,26 +182,26 @@ export default function WarehouseFormView({
                             <WarehouseGeneralTab config={config} values={values} onChange={handleChange} isDetail={isDetail} />
                         )}
                     </div>
+                </div>
 
-                    <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
-                        <div className="flex flex-row gap-3 lg:flex-col">
-                            {dockActions.map((action) => (
-                                <DockActionButton
-                                    key={action.id}
-                                    label={action.label}
-                                    tone={action.tone}
-                                    icon={renderDockIcon(action.icon)}
-                                    loading={saving && (action.id === 'save' || action.id === 'delete')}
-                                    onClick={() => {
-                                        if (action.id === 'save') {
-                                            handleSave();
-                                        } else if (action.id === 'delete') {
-                                            requestDelete();
-                                        }
-                                    }}
-                                />
-                            ))}
-                        </div>
+                <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
+                    <div className="flex flex-row gap-3 lg:flex-col">
+                        {dockActions.map((action) => (
+                            <DockActionButton
+                                key={action.id}
+                                label={action.label}
+                                tone={action.tone}
+                                icon={renderDockIcon(action.icon)}
+                                loading={saving && (action.id === 'save' || action.id === 'delete')}
+                                onClick={() => {
+                                    if (action.id === 'save') {
+                                        handleSave();
+                                    } else if (action.id === 'delete') {
+                                        requestDelete();
+                                    }
+                                }}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>
@@ -216,7 +217,8 @@ export default function WarehouseFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </>
-    );
+        </div>
+    </>
+);
 }
 

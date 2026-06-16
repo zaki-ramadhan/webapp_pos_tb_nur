@@ -7,6 +7,16 @@ export function normalizeComparableValue(value) {
         return Object.keys(value)
             .sort()
             .reduce((result, key) => {
+                const lowerKey = key.toLowerCase();
+                if (
+                    lowerKey === 'linelookup' ||
+                    lowerKey === 'lookup' ||
+                    lowerKey === 'search' ||
+                    lowerKey === 'keyword' ||
+                    lowerKey.endsWith('lookup')
+                ) {
+                    return result;
+                }
                 result[key] = normalizeComparableValue(value[key]);
                 return result;
             }, {});

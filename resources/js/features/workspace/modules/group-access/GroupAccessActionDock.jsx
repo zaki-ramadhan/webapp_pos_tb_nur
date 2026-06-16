@@ -11,7 +11,7 @@ import {
 
 export function resolveActionToneClass(action, disabled) {
     if (disabled) {
-        return 'border-[#bcc2cc] bg-[#e7e7e8] text-[#9fa6b2] shadow-[0_5px_10px_rgba(15,23,42,0.14)]';
+        return 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] shadow-none opacity-55 pointer-events-none cursor-default';
     }
 
     switch (action.tone) {

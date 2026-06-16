@@ -148,9 +148,9 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
     }
 
     return (
-        <div className="flex min-h-full flex-col">
-            <div className="border-b border-[#d5d9e1] bg-[#f4f4f5] px-2 pt-1.5 sm:px-2.5">
-                <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
+            <div className="shrink-0 border-b border-[#d5d9e1] bg-transparent pl-0 pr-2 pt-0 sm:pl-0 sm:pr-2.5">
+                <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
                     <SecondaryTabs
                         tabs={innerTabs}
                         activeTabId={activeInnerTabId}
@@ -159,11 +159,11 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
                         className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                     />
 
-                    <PanelActions actions={config.tipActions} />
+                    <PanelActions actions={config.tipActions} className="pb-1" />
                 </div>
             </div>
 
-            <div className="min-h-0 flex-1">
+            <div className="flex-1 min-h-0 pt-0">
                 {isViewMode ? (
                     <SalaryAllowanceTableView
                         config={resolvedConfig}

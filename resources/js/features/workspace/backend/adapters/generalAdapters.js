@@ -180,6 +180,7 @@ export function toUserPayload(values) {
         password: values.password || undefined,
         is_active: values.isActive !== false,
         access_group_ids: values.accessGroupIds ?? [],
+        role_ids: values.roleIds ?? [],
     };
 }
 

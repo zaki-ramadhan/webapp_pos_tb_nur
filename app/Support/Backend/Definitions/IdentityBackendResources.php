@@ -106,7 +106,7 @@ class IdentityBackendResources
                 with: ['roles', 'accessGroups', 'branches'],
                 storeRules: [
                     'name' => ['required', 'string', 'max:160'],
-                    'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+                    'email' => ['required', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255', 'unique:users,email'],
                     'phone' => ['nullable', 'string', 'max:50'],
                     'password' => ['required', 'string', 'min:8'],
                     'is_active' => ['sometimes', 'boolean'],
@@ -119,7 +119,7 @@ class IdentityBackendResources
                 ],
                 updateRules: fn (Model $record) => [
                     'name' => ['required', 'string', 'max:160'],
-                    'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($record)],
+                    'email' => ['required', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255', Rule::unique('users', 'email')->ignore($record)],
                     'phone' => ['nullable', 'string', 'max:50'],
                     'password' => ['nullable', 'string', 'min:8'],
                     'is_active' => ['sometimes', 'boolean'],

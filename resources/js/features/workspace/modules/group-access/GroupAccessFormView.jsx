@@ -195,99 +195,108 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
     }
 
     return (
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_110px] lg:items-start">
-            <div className="rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
+            <div className="shrink-0">
                 <PreferencesTabs
                     tabs={form.tabs}
                     activeTabId={activeTabId}
                     onSelectTab={setActiveTabId}
                 />
-
-                <div className="p-4 md:p-5">
-                    <CrudStatusMessage status={status} className="mb-4" />
-                    {activeTabId === 'general' ? (
-                        <GroupAccessGeneralSection
-                            general={form.general}
-                            values={generalValues}
-                            onChangeName={(nextValue) =>
-                                setGeneralValues((currentValues) => ({
-                                    ...currentValues,
-                                    groupName: nextValue,
-                                }))
-                            }
-                            onChangeAccessLimitation={(nextValue) =>
-                                setGeneralValues((currentValues) => ({
-                                    ...currentValues,
-                                    accessLimitationId: nextValue,
-                                }))
-                            }
-                            onChangeAccessLimitDays={(nextValue) =>
-                                setGeneralValues((currentValues) => ({
-                                    ...currentValues,
-                                    accessLimitDays: nextValue,
-                                }))
-                            }
-                            onChangeAccessLimitStartHour={(nextValue) =>
-                                setGeneralValues((currentValues) => ({
-                                    ...currentValues,
-                                    accessLimitStartHour: nextValue,
-                                }))
-                            }
-                            onChangeAccessLimitEndHour={(nextValue) =>
-                                setGeneralValues((currentValues) => ({
-                                    ...currentValues,
-                                    accessLimitEndHour: nextValue,
-                                }))
-                            }
-                            onAddUser={(nextUser) =>
-                                setGeneralValues((currentValues) => {
-                                    const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
-
-                                    if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
-                                        return currentValues;
-                                    }
-
-                                    return {
-                                        ...currentValues,
-                                        selectedUsers: [...currentUsers, nextUser],
-                                    };
-                                })
-                            }
-                            onRemoveUser={(selectedUser) =>
-                                setGeneralValues((currentValues) => ({
-                                    ...currentValues,
-                                    selectedUsers: normalizeSelectedUsers(currentValues.selectedUsers).filter((item) =>
-                                        selectedUser?.id != null
-                                            ? String(item.id ?? '') !== String(selectedUser.id)
-                                            : item.label !== selectedUser?.label,
-                                    ),
-                                }))
-                            }
-                            textInput={TextInput}
-                        />
-                    ) : (
-                        <GroupAccessRightsView
-                            permissions={form.permissions}
-                            categories={permissionCategories}
-                            onUpdateCategories={setPermissionCategories}
-                        />
-                    )}
-                </div>
             </div>
 
-            <GroupAccessActionDock
-                actions={form.actions
-                    .filter((action) => action.id === 'save')
-                    .map((action) => ({
-                        ...action,
-                        loading: saving,
-                        disabled: saving || Boolean(validationMessage),
-                    }))
-                }
-                isDirty={isDirty && !validationMessage}
-                onSave={handleSave}
-                onDelete={requestDelete}
-            />
+            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
+                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
+                    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                        <CrudStatusMessage status={status} className="shrink-0 mb-4" />
+
+                        <div className="flex-1 min-h-0 overflow-y-auto">
+                            {activeTabId === 'general' ? (
+                                <GroupAccessGeneralSection
+                                    general={form.general}
+                                    values={generalValues}
+                                    onChangeName={(nextValue) =>
+                                        setGeneralValues((currentValues) => ({
+                                            ...currentValues,
+                                            groupName: nextValue,
+                                        }))
+                                    }
+                                    onChangeAccessLimitation={(nextValue) =>
+                                        setGeneralValues((currentValues) => ({
+                                            ...currentValues,
+                                            accessLimitationId: nextValue,
+                                        }))
+                                    }
+                                    onChangeAccessLimitDays={(nextValue) =>
+                                        setGeneralValues((currentValues) => ({
+                                            ...currentValues,
+                                            accessLimitDays: nextValue,
+                                        }))
+                                    }
+                                    onChangeAccessLimitStartHour={(nextValue) =>
+                                        setGeneralValues((currentValues) => ({
+                                            ...currentValues,
+                                            accessLimitStartHour: nextValue,
+                                        }))
+                                    }
+                                    onChangeAccessLimitEndHour={(nextValue) =>
+                                        setGeneralValues((currentValues) => ({
+                                            ...currentValues,
+                                            accessLimitEndHour: nextValue,
+                                        }))
+                                    }
+                                    onAddUser={(nextUser) =>
+                                        setGeneralValues((currentValues) => {
+                                            const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
+
+                                            if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
+                                                return currentValues;
+                                            }
+
+                                            return {
+                                                ...currentValues,
+                                                selectedUsers: [...currentUsers, nextUser],
+                                            };
+                                        })
+                                    }
+                                    onRemoveUser={(selectedUser) =>
+                                        setGeneralValues((currentValues) => ({
+                                            ...currentValues,
+                                            selectedUsers: normalizeSelectedUsers(currentValues.selectedUsers).filter((item) =>
+                                                selectedUser?.id != null
+                                                    ? String(item.id ?? '') !== String(selectedUser.id)
+                                                    : item.label !== selectedUser?.label,
+                                            ),
+                                        }))
+                                    }
+                                    textInput={TextInput}
+                                />
+                            ) : (
+                                <GroupAccessRightsView
+                                    permissions={form.permissions}
+                                    categories={permissionCategories}
+                                    onUpdateCategories={setPermissionCategories}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
+                    <GroupAccessActionDock
+                        actions={form.actions
+                            .filter((action) => action.id === 'save')
+                            .map((action) => ({
+                                ...action,
+                                loading: saving,
+                                disabled: saving || Boolean(validationMessage),
+                            }))
+                        }
+                        isDirty={isDirty && !validationMessage}
+                        onSave={handleSave}
+                        onDelete={requestDelete}
+                    />
+                </div>
+            </div>
 
             <ConfirmationModal
                 open={isDeleteConfirmationOpen}

@@ -15,8 +15,8 @@ function OthersRowNote({ note }) {
     }
 
     return (
-        <div className="flex items-start gap-3 pt-0.5">
-            <span className="mt-1 block h-6 w-[5px] rounded-[2px] bg-[#9a9a9a]" aria-hidden="true" />
+        <div className="flex items-center gap-3 pt-0.5">
+            <span className="block h-6 w-[5px] rounded-[2px] bg-[#9a9a9a]" aria-hidden="true" />
             <p className="text-xs sm:text-sm italic leading-6 text-[#ff4b2b]">{note}</p>
         </div>
     );

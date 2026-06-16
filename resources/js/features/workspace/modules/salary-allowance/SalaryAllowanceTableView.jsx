@@ -73,7 +73,7 @@ export default function SalaryAllowanceTableView({
     }, [filters.inactive, filters.type, keyword, rows]);
 
     return (
-        <div className="min-h-full rounded-[4px] border border-[#d3d9e5] bg-white px-3 pb-3 pt-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-[#cfd6e2] bg-white px-4 pb-4 pt-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] -mt-px">
             <TableToolbar
                 size="compact"
                 filters={

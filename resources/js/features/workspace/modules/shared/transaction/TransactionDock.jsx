@@ -185,7 +185,10 @@ async function handleFallbackDockAction(item, action, templateLabel = 'transaksi
     showCrudSuccessToast(`Aksi "${item.label || itemId}" berhasil dijalankan.`);
 }
 
-function resolveDockToneClassName(tone) {
+function resolveDockToneClassName(tone, isDisabled = false) {
+    if (isDisabled) {
+        return 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] shadow-none';
+    }
     switch (tone) {
         case 'muted':
             return 'border-[#d3d7df] bg-[#e8e8e9] text-[#a7abb4] shadow-[0_2px_5px_rgba(15,23,42,0.08)]';
@@ -202,7 +205,10 @@ function resolveDockToneClassName(tone) {
     }
 }
 
-function resolveDockDividerClassName(tone) {
+function resolveDockDividerClassName(tone, isDisabled = false) {
+    if (isDisabled) {
+        return 'border-l-[#c8ccd4]';
+    }
     switch (tone) {
         case 'blue':
         case 'secondary':
@@ -273,14 +279,14 @@ function TransactionDockButton({ action, templateLabel, favoritesStorageKey }) {
 
                     action.onClick?.();
                 }}
-                className={`inline-flex h-[44px] w-[72px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[48px] sm:w-[80px] lg:h-[52px] lg:w-[88px] ${resolveDockToneClassName(action.tone)} ${isDisabled ? 'cursor-default opacity-55 pointer-events-none' : 'hover:brightness-105 active:brightness-95 cursor-pointer transition'}`.trim()}
+                className={`inline-flex h-[44px] w-[72px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[48px] sm:w-[80px] lg:h-[52px] lg:w-[88px] ${resolveDockToneClassName(action.tone, isDisabled)} ${isDisabled ? 'cursor-default opacity-55 pointer-events-none' : 'hover:brightness-105 active:brightness-95 cursor-pointer transition'}`.trim()}
             >
                 <span className="inline-flex flex-1 items-center justify-center">
                     <TransactionDockIcon icon={action.icon} />
                 </span>
                 {hasMenu ? (
                     <span
-                        className={`inline-flex w-[22px] items-center justify-center border-l sm:w-[26px] lg:w-[28px] ${resolveDockDividerClassName(action.tone)}`.trim()}
+                        className={`inline-flex w-[22px] items-center justify-center border-l sm:w-[26px] lg:w-[28px] ${resolveDockDividerClassName(action.tone, isDisabled)}`.trim()}
                     >
                         <ChevronDownIcon className="h-4 w-4" />
                     </span>

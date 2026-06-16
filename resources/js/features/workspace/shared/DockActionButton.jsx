@@ -11,7 +11,7 @@ export default function DockActionButton({
 }) {
     const isDisabled = disabled || loading;
     const isSaveButton = typeof label === 'string' && label.toLowerCase().includes('simpan');
-    const resolvedTone = isSaveButton ? 'primary' : tone;
+    const resolvedTone = (tone === 'muted' || tone === 'danger') ? tone : (isSaveButton ? 'primary' : tone);
 
     let toneClassName = '';
     if (isDisabled) {

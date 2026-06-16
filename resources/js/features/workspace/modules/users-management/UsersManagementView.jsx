@@ -11,14 +11,13 @@ import {
 import Pagination from '@/components/ui/Pagination';
 import TextInput from '@/components/ui/TextInput';
 import SectionTab from '@/features/workspace/shared/SectionTab';
-import PanelActions from '@/features/workspace/shared/PanelActions';
+import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { SearchIcon } from '@/features/workspace/shared/Icons';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { mapUserRow, toUserPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
-import SelectField from '@/components/ui/SelectField';
+import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
@@ -39,10 +38,11 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
     const [values, setValues] = useState({
         name: detailRow?.name ?? '',
         email: detailRow?.email ?? '',
-        phone: detailRow?.phone ?? '',
+        phone: detailRow?.phone || detailRow?.email || '',
         password: '',
         isActive: detailRow?.isActive ?? true,
         accessGroupIds: detailRow?.accessGroupIds ?? [],
+        accessType: (detailRow?.roleIds?.includes(1) || detailRow?.roleIds?.includes(2) || detailRow?.accessType?.toLowerCase()?.includes('admin')) ? 'administrator' : 'operator',
     });
 
     const [status, setStatus] = useState({ tone: '', message: '' });
@@ -51,10 +51,11 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
         setValues({
             name: detailRow?.name ?? '',
             email: detailRow?.email ?? '',
-            phone: detailRow?.phone ?? '',
+            phone: detailRow?.phone || detailRow?.email || '',
             password: '',
             isActive: detailRow?.isActive ?? true,
             accessGroupIds: detailRow?.accessGroupIds ?? [],
+            accessType: (detailRow?.roleIds?.includes(1) || detailRow?.roleIds?.includes(2) || detailRow?.accessType?.toLowerCase()?.includes('admin')) ? 'administrator' : 'operator',
         });
         setStatus({ tone: '', message: '' });
     }, [detailRow]);
@@ -63,22 +64,62 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
     const { store, update } = useBackendResource({ resource: 'users' });
 
     const handleSave = async () => {
-        if (!values.name.trim()) {
-            setStatus({ tone: 'error', message: 'Nama Lengkap wajib diisi.' });
-            return;
-        }
-        if (!values.email.trim()) {
-            setStatus({ tone: 'error', message: 'Email wajib diisi.' });
+        const inputVal = values.phone.trim();
+        if (!inputVal) {
+            setStatus({ tone: 'error', message: 'No Handphone/Email wajib diisi.' });
             return;
         }
 
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(values.email.trim())) {
-            setStatus({ tone: 'error', message: 'Format email tidak valid.' });
-            return;
+        const isEmailInput = inputVal.includes('@');
+        let name = '';
+        let email = '';
+        let phone = '';
+
+        if (isEmailInput) {
+            email = inputVal;
+            const matchingEmployee = lookupData.employees?.find(
+                (emp) => emp.email?.toLowerCase() === inputVal.toLowerCase()
+            );
+
+            if (matchingEmployee) {
+                name = matchingEmployee.full_name;
+                phone = matchingEmployee.mobile_phone || matchingEmployee.whatsapp_phone || matchingEmployee.office_phone || '';
+            } else {
+                const prefix = inputVal.split('@')[0];
+                name = `User ${prefix}`;
+                phone = '';
+            }
+        } else {
+            phone = inputVal;
+            const normalizedPhone = inputVal.replace(/[^0-9]/g, '');
+            const matchingEmployee = lookupData.employees?.find((emp) => {
+                const empPhone = (emp.mobile_phone || emp.whatsapp_phone || emp.office_phone || '').replace(/[^0-9]/g, '');
+                return empPhone && empPhone === normalizedPhone;
+            });
+
+            if (matchingEmployee) {
+                name = matchingEmployee.full_name;
+                email = matchingEmployee.email || `${normalizedPhone || 'user'}@example.com`;
+            } else {
+                name = `User ${inputVal}`;
+                email = `${normalizedPhone || 'user'}@example.com`;
+            }
         }
 
-        const payload = toUserPayload(values);
+        const password = values.password || (isDetail ? undefined : 'password');
+        const adminRole = lookupData.roles?.find(role => role.code === 'admin' || role.name?.toLowerCase()?.includes('admin'));
+        const adminRoleId = adminRole ? adminRole.id : 2;
+        const roleIds = values.accessType === 'administrator' ? [adminRoleId] : [];
+
+        const payload = toUserPayload({
+            ...values,
+            name,
+            email,
+            phone,
+            password,
+            roleIds,
+        });
+
         const { ok, result, errorMessage } = await executeCrudFormAction({
             loadingMessage: isDetail ? 'Sedang memperbarui pengguna.' : 'Sedang menyimpan pengguna baru.',
             successMessage: isDetail ? 'Pengguna berhasil diperbarui.' : 'Pengguna berhasil disimpan.',
@@ -92,144 +133,123 @@ function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpen
                 if (!isDetail && record?.id && onOpenDetail) {
                     onOpenDetail({
                         recordId: String(record.id),
-                        label: record.name ?? values.name.trim(),
-                        tabLabel: record.name ?? values.name.trim(),
+                        label: record.name ?? inputVal,
+                        tabLabel: record.name ?? inputVal,
                     });
                 }
             },
         });
     };
 
-    const actions = [
-        {
-            id: 'save',
-            label: form.saveLabel,
-            icon: 'save',
-            tone: 'primary',
-            onClick: handleSave,
-            loading: saving,
-            disabled: saving,
-            showLabel: true,
-        },
-    ];
-
     return (
-        <div className="relative flex min-h-full flex-col">
-            <div className="px-1 pt-0.5">
-                <SectionTab
-                    label={form.sectionLabel}
-                    tone="accent"
-                    className="h-[34px]"
-                />
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
+            <div className="shrink-0 px-1 pt-0.5">
+                <div className="overflow-x-auto overflow-y-hidden border-b border-[#d5d9e1] bg-transparent pl-0 pr-2 pt-0">
+                    <div className="flex w-max min-w-full items-end gap-[5px]">
+                        <button
+                            type="button"
+                            className="relative -mb-px -mr-px inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] border border-b-0 px-3 text-sm transition sm:h-8 sm:px-4 sm:text-sm md:h-8.5 md:text-base border-[#bcc4d0] border-t-[3px] border-t-[#ED3969] bg-white font-normal text-[#475569]"
+                        >
+                            <span className="block truncate">Pengguna</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div className="flex-1 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-5 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-                <div className="flex flex-wrap items-start justify-between gap-6">
-                    <div className="space-y-1">
-                        <h2 className="max-w-[1100px] text-xl font-medium leading-8 text-[#111827]">
-                            {isDetail ? `Ubah Pengguna: ${values.name}` : form.title}
-                        </h2>
-                        {isDetail && (
-                            <p className="text-sm text-slate-500">ID Pengguna: {recordId}</p>
-                        )}
+            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
+                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
+                    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
+
+                        <div className="flex-1 min-h-0 overflow-y-auto pr-1.5 pt-2">
+                            <h2 className="text-[15px] text-[#111827] leading-normal font-normal mb-8">
+                                Tambahkan pengguna untuk mengakses database ini dengan memasukkan no handphone/emailnya
+                            </h2>
+
+                            <div className="grid gap-x-8 gap-y-5 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start">
+                                <label className="pt-2 text-xs sm:text-sm text-[#20273b] font-normal">
+                                    No Handphone/Email <span className="text-[#ED3969]">*</span>
+                                </label>
+                                <div className="max-w-[420px] w-full">
+                                    <TextInput
+                                        value={values.phone}
+                                        onChange={(e) => setValues({ ...values, phone: e.target.value })}
+                                        placeholder=""
+                                        className="h-[36px] w-full rounded-[4px] border-[#cfd6e2]"
+                                        inputClassName="text-xs sm:text-sm"
+                                    />
+                                </div>
+
+                                <label className="pt-1.5 text-xs sm:text-sm text-[#20273b] font-normal">
+                                    Jenis Akses
+                                </label>
+                                <div className="grid gap-3">
+                                    <div className="flex items-center gap-16 pt-0.5">
+                                        <RadioField
+                                            id="access-operator"
+                                            name="access-type"
+                                            label="Operator"
+                                            checked={values.accessType === 'operator'}
+                                            onChange={() => setValues({ ...values, accessType: 'operator' })}
+                                            inputClassName="h-5 w-5"
+                                            containerClassName="w-auto inline-flex items-center"
+                                        />
+                                        <RadioField
+                                            id="access-admin"
+                                            name="access-type"
+                                            label="Administrator"
+                                            checked={values.accessType === 'administrator'}
+                                            onChange={() => setValues({ ...values, accessType: 'administrator' })}
+                                            inputClassName="h-5 w-5"
+                                            containerClassName="w-auto inline-flex items-center"
+                                        />
+                                    </div>
+                                    {values.accessType === 'operator' && (
+                                        <div className="flex items-center gap-3 pt-0.5 mt-1">
+                                            <span className="block h-6 w-[5px] rounded-[2px] bg-[#9a9a9a]" aria-hidden="true" />
+                                            <p className="text-xs sm:text-sm italic leading-6 text-[#ED3969]">
+                                                Pengguna tipe Operator dapat melihat dan membuka database. Hak menunya ditentukan melalui Akses grup.
+                                            </p>
+                                        </div>
+                                    )}
+                                    {values.accessType === 'administrator' && (
+                                        <div className="flex items-center gap-3 pt-0.5 mt-1">
+                                            <span className="block h-6 w-[5px] rounded-[2px] bg-[#9a9a9a]" aria-hidden="true" />
+                                            <p className="text-xs sm:text-sm italic leading-6 text-[#ED3969]">
+                                                Administrator dapat mengelola pengaturan dan akses pengguna lain pada database ini.
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <label className="pt-2 text-xs sm:text-sm text-[#20273b] font-normal">
+                                    Akses Grup
+                                </label>
+                                <div className="max-w-[420px] w-full">
+                                    <ReferenceLookupInput
+                                        value={lookupData.groups?.find(g => g.id === values.accessGroupIds[0])?.name ?? ''}
+                                        items={lookupData.groups ?? []}
+                                        placeholder="Cari/Pilih..."
+                                        searchLabel="Cari grup akses"
+                                        getOptionLabel={(option) => option.name ?? ''}
+                                        getOptionSearchText={(option) => option.name ?? ''}
+                                        onSelect={(group) => setValues({ ...values, accessGroupIds: [group.id] })}
+                                        onClear={() => setValues({ ...values, accessGroupIds: [] })}
+                                        className="w-full"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <PanelActions actions={actions} />
                 </div>
 
-                <CrudStatusMessage status={status} className="mb-6 mt-4" />
-
-                <div className="mt-8 grid gap-x-8 gap-y-6 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start">
-                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
-                        Nama Lengkap <span className="text-[#ED3969]">*</span>
-                    </label>
-                    <TextInput
-                        value={values.name}
-                        onChange={(e) => setValues({ ...values, name: e.target.value })}
-                        placeholder="Masukkan nama lengkap"
-                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm"
+                <div className="flex shrink-0 flex-row justify-start gap-3 self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
+                    <DockSaveButton
+                        label={saving ? 'Memproses...' : form.saveLabel}
+                        disabled={saving}
+                        onClick={handleSave}
+                        tone="muted"
                     />
-
-                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
-                        Email <span className="text-[#ED3969]">*</span>
-                    </label>
-                    <TextInput
-                        value={values.email}
-                        onChange={(e) => setValues({ ...values, email: e.target.value })}
-                        placeholder="email@contoh.com"
-                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm"
-                        disabled={isDetail}
-                    />
-
-                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
-                        No. Telepon
-                    </label>
-                    <TextInput
-                        value={values.phone}
-                        onChange={(e) => setValues({ ...values, phone: e.target.value })}
-                        placeholder="Contoh: 08123456789"
-                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm"
-                    />
-
-                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
-                        Kata Sandi {isDetail && '(Kosongkan jika tidak diubah)'}
-                    </label>
-                    <TextInput
-                        type="password"
-                        value={values.password}
-                        onChange={(e) => setValues({ ...values, password: e.target.value })}
-                        placeholder="Min. 8 karakter"
-                        className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm"
-                    />
-
-                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
-                        Grup Akses
-                    </label>
-                    <div className="grid gap-3">
-                        <SelectField
-                            value={values.accessGroupIds[0] ?? ''}
-                            onChange={(e) => setValues({ ...values, accessGroupIds: e.target.value ? [parseInt(e.target.value)] : [] })}
-                            className="h-[42px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm"
-                        >
-                            <option value="">Pilih Grup Akses...</option>
-                            {lookupData.groups.map((group) => (
-                                <option key={group.id} value={group.id}>
-                                    {group.name}
-                                </option>
-                            ))}
-                        </SelectField>
-                        <p className="text-sm italic text-slate-500">
-                            Pengguna akan mendapatkan hak akses sesuai dengan grup yang dipilih.
-                        </p>
-                    </div>
-
-                    <label className="pt-3 text-xs sm:text-sm text-[#20273b]">
-                        Status Akun
-                    </label>
-                    <div className="flex items-center gap-6 pt-3">
-                        <RadioField
-                            id="user-active"
-                            name="user-status"
-                            label="Aktif"
-                            checked={values.isActive}
-                            onChange={() => setValues({ ...values, isActive: true })}
-                            inputClassName="h-5 w-5"
-                            containerClassName="w-auto inline-flex items-center"
-                        />
-                        <RadioField
-                            id="user-inactive"
-                            name="user-status"
-                            label="Nonaktif"
-                            checked={!values.isActive}
-                            onChange={() => setValues({ ...values, isActive: false })}
-                            inputClassName="h-5 w-5"
-                            containerClassName="w-auto inline-flex items-center"
-                        />
-                    </div>
                 </div>
             </div>
         </div>
@@ -379,20 +399,30 @@ export default function UsersManagementView({
         initialPerPage: 25,
     });
 
+    const rolesResource = useBackendIndexResource({
+        resource: 'roles',
+        initialPerPage: 25,
+    });
+
+    const employeesResource = useBackendIndexResource({
+        resource: 'employees',
+        initialPerPage: 250,
+    });
+
     const resolvedTable = useMemo(() => ({
         ...page.table,
         rows: rows.map(mapUserRow),
         pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+        pagination: {
+            page: currentPage,
+            perPage,
+            total,
+            lastPage,
+            from,
+            to,
+            onPageChange: setPage,
+            onPerPageChange: setPerPage,
+        },
         refreshLabel: loading ? 'Memuat...' : page.table.refreshLabel,
     }), [loading, page.table, rows, total]);
 
@@ -412,6 +442,8 @@ export default function UsersManagementView({
             onOpenDetail={onOpenDetail}
             lookupData={{
                 groups: groupsResource.rows,
+                roles: rolesResource.rows,
+                employees: employeesResource.rows,
             }}
         />
     );

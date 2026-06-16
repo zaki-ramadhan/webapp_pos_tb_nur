@@ -149,111 +149,113 @@ export default function SalaryAllowanceFormView({
     }
 
     return (
-        <>
-            <div className="min-h-full rounded-[4px] border border-[#d3d9e5] bg-[#f4f4f5] px-3 pb-3 pt-2">
-                <SectionTab label={config.sectionLabel} />
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
+            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
+                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
+                    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                        <CrudStatusMessage status={status} className="shrink-0 mb-4" />
 
-                <div className="flex min-h-[598px] items-start rounded-[4px] border border-[#d3d9e5] bg-white px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-                    <div className="w-full">
-                        <CrudStatusMessage status={status} className="mb-4" />
-                        <div className="grid content-start gap-x-7 gap-y-4 lg:grid-cols-[160px_minmax(0,640px)] lg:items-start">
-                            <label className="pt-2 text-lg text-[#1f2436]">
-                                {fields.nameLabel} <span className="text-[#ED3969]">*</span>
-                            </label>
-                            <TextInput
-                                value={name}
-                                onChange={(event) => setName(event.target.value)}
-                                trailing={isDetail ? <CloseIcon className="h-4.5 w-4.5" /> : null}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            />
-
-                            <div className="pt-2 text-lg text-[#1f2436]">{fields.typeLabel}</div>
-                            {isDetail && !editableDetail ? (
+                        <div className="flex-1 min-h-0 overflow-y-auto">
+                            <div className="grid content-start gap-x-7 gap-y-4 lg:grid-cols-[160px_minmax(0,640px)] lg:items-center">
+                                <label className="text-xs sm:text-sm text-[#1f2436]">
+                                    {fields.nameLabel} <span className="text-[#ED3969]">*</span>
+                                </label>
                                 <TextInput
-                                    value={entry.type}
+                                    value={name}
+                                    onChange={(event) => setName(event.target.value)}
+                                    trailing={isDetail ? <CloseIcon className="h-4.5 w-4.5" /> : null}
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                />
+
+                                <div className="text-xs sm:text-sm text-[#1f2436]">{fields.typeLabel}</div>
+                                {isDetail && !editableDetail ? (
+                                    <TextInput
+                                        value={entry.type}
+                                        readOnly
+                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
+                                        inputClassName="text-xs sm:text-sm text-[#6a7286]"
+                                    />
+                                ) : (
+                                    <SelectField
+                                        value={type}
+                                        onChange={(event) => setType(event.target.value)}
+                                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    >
+                                        {config.typeOptions.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </SelectField>
+                                )}
+
+                                <div className="text-xs sm:text-sm text-[#1f2436]">{fields.payDeductLabel}</div>
+                                <TextInput
+                                    value={entry.payDeduct}
                                     readOnly
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
+                                    className="h-[40px] max-w-[390px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
                                     inputClassName="text-xs sm:text-sm text-[#6a7286]"
                                 />
-                            ) : (
-                                <SelectField
-                                    value={type}
-                                    onChange={(event) => setType(event.target.value)}
-                                    className="h-[42px] rounded-[4px] border-[#7fb0ee] shadow-[0_0_0_3px_rgba(127,176,238,0.12)]"
-                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                                >
-                                    {config.typeOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </SelectField>
-                            )}
 
-                            <div className="pt-2 text-lg text-[#1f2436]">{fields.payDeductLabel}</div>
-                            <TextInput
-                                value={entry.payDeduct}
-                                readOnly
-                                className="h-[40px] max-w-[390px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
-                                inputClassName="text-xs sm:text-sm text-[#6a7286]"
-                            />
+                                <label className="text-xs sm:text-sm text-[#1f2436]">
+                                    {fields.expenseAccountLabel} <span className="text-[#ED3969]">*</span>
+                                </label>
+                                <AccountLookupField
+                                    value={expenseAccount}
+                                    placeholder="Cari/Pilih Akun Perkiraan..."
+                                    disabled={isDetail}
+                                    searchLabel="Cari akun beban"
+                                    dialogTitle="Pilih Akun Beban"
+                                    heightClassName="min-h-[38px]"
+                                    className="rounded-[4px] border-[#cfd6e2]"
+                                    contentClassName="px-3 py-1.5"
+                                    chipClassName="text-[#24324a]"
+                                    onRemove={() => {
+                                        setExpenseAccount('');
+                                        setExpenseAccountId(null);
+                                    }}
+                                    onSelectAccount={(record, label) => {
+                                        setExpenseAccount(label);
+                                        setExpenseAccountId(record?.id ?? null);
+                                    }}
+                                />
 
-                            <label className="pt-2 text-lg text-[#1f2436]">
-                                {fields.expenseAccountLabel} <span className="text-[#ED3969]">*</span>
-                            </label>
-                            <AccountLookupField
-                                value={expenseAccount}
-                                placeholder="Cari/Pilih Akun Perkiraan..."
-                                disabled={isDetail}
-                                searchLabel="Cari akun beban"
-                                dialogTitle="Pilih Akun Beban"
-                                heightClassName="min-h-[38px]"
-                                className="rounded-[4px] border-[#cfd6e2]"
-                                contentClassName="px-3 py-1.5"
-                                chipClassName="text-[#24324a]"
-                                onRemove={() => {
-                                    setExpenseAccount('');
-                                    setExpenseAccountId(null);
-                                }}
-                                onSelectAccount={(record, label) => {
-                                    setExpenseAccount(label);
-                                    setExpenseAccountId(record?.id ?? null);
-                                }}
-                            />
-
-                            {isDetail ? (
-                                <>
-                                    <div className="pt-2 text-lg text-[#1f2436]">{fields.inactiveLabel}</div>
-                                    <CheckboxField
-                                        id="inactive"
-                                        label={fields.inactiveOptionLabel}
-                                        checked={inactive}
-                                        onChange={(event) => setInactive(event.target.checked)}
-                                        inputClassName="h-6 w-6 rounded-[4px]"
-                                        containerClassName="w-auto inline-flex items-center h-[40px]"
-                                        labelClassName="text-lg"
-                                    />
-                                </>
-                            ) : null}
+                                {isDetail ? (
+                                    <>
+                                        <div className="text-xs sm:text-sm text-[#1f2436]">{fields.inactiveLabel}</div>
+                                        <CheckboxField
+                                            id="inactive"
+                                            label={fields.inactiveOptionLabel}
+                                            checked={inactive}
+                                            onChange={(event) => setInactive(event.target.checked)}
+                                            inputClassName="h-6 w-6 rounded-[4px]"
+                                            containerClassName="w-auto inline-flex items-center h-[40px]"
+                                            labelClassName="text-xs sm:text-sm text-[#1f2436]"
+                                        />
+                                    </>
+                                ) : null}
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div className="ml-5 flex w-[96px] shrink-0 flex-col gap-3">
-                        {actions.map((action) => (
-                            <DockActionButton
-                                key={action.id}
-                                label={action.label}
-                                tone={action.tone === 'danger' ? 'danger' : 'primary'}
-                                disabled={action.id === 'save' ? resolvedSaveDisabled : saving}
-                                loading={saving && (action.id === 'save' || action.id === 'delete')}
-                                onClick={action.id === 'save' ? handleSave : action.id === 'delete' ? requestDelete : undefined}
-                                icon={action.icon === 'trash' ? <TrashIcon className="h-7 w-7 sm:h-8 sm:w-8" /> : <SaveIcon className="h-7 w-7 sm:h-8 sm:w-8" />}
-                            />
-                        ))}
-                    </div>
+                <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
+                    {actions.map((action) => (
+                        <DockActionButton
+                            key={action.id}
+                            label={action.label}
+                            tone={action.tone === 'danger' ? 'danger' : 'primary'}
+                            disabled={action.id === 'save' ? resolvedSaveDisabled : saving}
+                            loading={saving && (action.id === 'save' || action.id === 'delete')}
+                            onClick={action.id === 'save' ? handleSave : action.id === 'delete' ? requestDelete : undefined}
+                            icon={action.icon === 'trash' ? <TrashIcon className="h-7 w-7 sm:h-8 sm:w-8" /> : <SaveIcon className="h-7 w-7 sm:h-8 sm:w-8" />}
+                        />
+                    ))}
                 </div>
             </div>
+
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
@@ -265,6 +267,6 @@ export default function SalaryAllowanceFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </>
+        </div>
     );
 }
