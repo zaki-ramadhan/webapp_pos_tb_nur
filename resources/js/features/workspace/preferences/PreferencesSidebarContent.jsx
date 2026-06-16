@@ -137,7 +137,7 @@ export default function PreferencesSidebarContent({
                     activeTabClassName="font-medium text-[#374056]"
                 />
 
-                <div className="mx-2 mb-2 min-h-0 flex-1 overflow-y-auto rounded-[4px] border border-[#d3d9e5] bg-white px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] sm:mx-3 sm:mb-3 sm:px-4">
+                <div className="mx-2 mb-2 min-h-0 flex-1 overflow-y-auto bg-transparent px-3 py-3 sm:mx-3 sm:mb-3 sm:px-4">
                     {activeProfileTabId === 'company-info' ? (
                         <div className="max-w-[980px] space-y-4">
                             <div className="grid gap-x-6 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
