@@ -8,6 +8,7 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
+import Pagination from '@/components/ui/Pagination';
 import TextInput from '@/components/ui/TextInput';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import PanelActions from '@/features/workspace/shared/PanelActions';
@@ -255,7 +256,7 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
     }, [keyword, table.rows]);
 
     return (
-        <div className="min-h-full rounded-[4px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
                 size="compact"
                 createButton={{ label: table.createLabel, onClick: onCreate }}
@@ -277,10 +278,13 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
                 pageValue={table.pageValue}
             />
 
-            <div className="mt-3">
+            <div className="mt-3 min-h-0">
                 <DataTable>
                     <DataTableHeader>
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead key={column}>{column}</DataTableHead>
                             ))}
@@ -288,34 +292,59 @@ function UserTableView({ table, onRefresh, onCreate, onOpenDetail }) {
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.map((row) => (
-                            <DataTableRow
-                                key={row.id}
-                                className="cursor-pointer"
-                                onClick={() =>
-                                    onOpenDetail?.({
-                                        recordId: String(row.id),
-                                        label: row.name,
-                                        tabLabel: row.tabLabel,
-                                    })
-                                }
-                            >
-                                <DataTableCell>{formatTableTextValue(row.name)}</DataTableCell>
-                                <DataTableCell>{formatTableTextValue(row.phone)}</DataTableCell>
-                                <DataTableCell>{formatTableTextValue(row.email)}</DataTableCell>
-                                <DataTableCell className="text-center">
-                                    {row.isActive ? (
-                                        <span className="text-[#1f9d55] font-medium">Aktif</span>
-                                    ) : (
-                                        <span className="text-slate-400">Nonaktif</span>
-                                    )}
+                        {filteredRows.length ? (
+                            filteredRows.map((row, index) => (
+                                <DataTableRow
+                                    key={row.id}
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                        onOpenDetail?.({
+                                            recordId: String(row.id),
+                                            label: row.name,
+                                            tabLabel: row.tabLabel,
+                                        })
+                                    }
+                                >
+                                    <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                        {index + 1}
+                                    </DataTableCell>
+                                    <DataTableCell>{formatTableTextValue(row.name)}</DataTableCell>
+                                    <DataTableCell>{formatTableTextValue(row.phone)}</DataTableCell>
+                                    <DataTableCell>{formatTableTextValue(row.email)}</DataTableCell>
+                                    <DataTableCell className="text-center">
+                                        {row.isActive ? (
+                                            <span className="text-[#1f9d55] font-medium">Aktif</span>
+                                        ) : (
+                                            <span className="text-slate-400">Nonaktif</span>
+                                        )}
+                                    </DataTableCell>
+                                    <DataTableCell>{formatTableTextValue(row.accessType)}</DataTableCell>
+                                </DataTableRow>
+                            ))
+                        ) : (
+                            <DataTableRow className="bg-white">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-8 text-center text-base text-[#131a28]">
+                                    Belum ada data
                                 </DataTableCell>
-                                <DataTableCell>{formatTableTextValue(row.accessType)}</DataTableCell>
                             </DataTableRow>
-                        ))}
+                        )}
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

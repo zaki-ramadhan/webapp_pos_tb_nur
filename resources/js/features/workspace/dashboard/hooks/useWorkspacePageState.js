@@ -299,6 +299,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         dashboardPageId: dashboardPage.id,
         pages,
         openPageById,
+        setActivePageId,
     });
 
     return {

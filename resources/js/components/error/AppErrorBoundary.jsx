@@ -34,7 +34,6 @@ export default class AppErrorBoundary extends Component {
                 status={500}
                 appName={appName}
                 isClientCrash
-                subtitle="Client Runtime Error"
                 actions={buildErrorActions({
                     hasAuthSession,
                     status: 500,

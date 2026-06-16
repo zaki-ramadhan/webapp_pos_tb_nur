@@ -1,29 +1,48 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
-export default function useWorkspaceURLSync({ activePageId, dashboardPageId, pages, openPageById }) {
-    // Sinkronkan URL aktif
+export default function useWorkspaceURLSync({
+    activePageId,
+    dashboardPageId,
+    pages,
+    openPageById,
+    setActivePageId,
+}) {
+    // Sinkronkan state React -> URL Path
     useEffect(() => {
         const url = new URL(window.location.href);
         if (activePageId && activePageId !== dashboardPageId) {
-            url.searchParams.set('page', activePageId);
+            url.pathname = `/${activePageId}`;
         } else {
-            url.searchParams.delete('page');
+            url.pathname = '/dashboard';
         }
-        window.history.replaceState({}, '', url.toString());
+        window.history.replaceState({ activePageId }, '', url.toString());
     }, [activePageId, dashboardPageId]);
 
-    // Ambil halaman aktif dari URL
+    // Sinkronkan URL Path -> state React (load awal & back/forward)
+    const restoreStateFromUrl = useCallback(() => {
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        // pathParts = ['dashboard', 'pageId'] atau ['pageId']
+        const urlPageId = pathParts[0] === 'dashboard' ? pathParts[1] : pathParts[0];
+
+        if (urlPageId && pages[urlPageId]) {
+            openPageById(urlPageId);
+        } else {
+            setActivePageId(dashboardPageId);
+        }
+    }, [pages, openPageById, dashboardPageId, setActivePageId]);
+
+    // Load awal
     const hasInitializedFromUrl = useRef(false);
     useEffect(() => {
-        if (hasInitializedFromUrl.current) {
-            return;
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        const urlPageId = params.get('page');
-        if (urlPageId && pages[urlPageId]) {
+        if (!hasInitializedFromUrl.current) {
             hasInitializedFromUrl.current = true;
-            openPageById(urlPageId);
+            restoreStateFromUrl();
         }
-    }, [pages, openPageById]);
+    }, [restoreStateFromUrl]);
+
+    // Listener popstate (tombol back/forward browser)
+    useEffect(() => {
+        window.addEventListener('popstate', restoreStateFromUrl);
+        return () => window.removeEventListener('popstate', restoreStateFromUrl);
+    }, [restoreStateFromUrl]);
 }

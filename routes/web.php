@@ -34,4 +34,8 @@ Route::middleware('guest')->group(function (): void {
 Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard/{sample?}', DashboardController::class)->name('dashboard');
     Route::post('/logout', LogoutController::class)->name('logout');
+    Route::get('/{sample}', DashboardController::class)
+        ->whereIn('sample', collect(\App\Support\Presentation\PosBlueprint::navigationModules())
+            ->flatMap(fn ($module) => collect($module['items'])->pluck('id'))
+            ->all());
 });

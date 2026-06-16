@@ -47,7 +47,7 @@ export default function ShippingTableView({ table, onCreate, onOpenDetail, onRef
     }, [inactiveFilter, keyword, table.rows]);
 
     return (
-        <div className="min-h-full rounded-[4px] border border-[#d3d9e5] bg-white px-3 pb-3 pt-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-[#d3d9e5] bg-white px-3 pb-3 pt-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
                 size="compact"
                 className="space-y-3"

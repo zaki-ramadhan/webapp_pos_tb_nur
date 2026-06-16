@@ -176,7 +176,7 @@ export default function ErrorExperience({
 }) {
     const state = resolveState(status, isClientCrash);
     const Icon = state.icon;
-    const code = isClientCrash ? 'ERR' : String(status);
+    const code = String(status);
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-[#faf9f6] p-4 text-[#2f2419] overflow-hidden">

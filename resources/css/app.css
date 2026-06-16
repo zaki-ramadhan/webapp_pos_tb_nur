@@ -404,7 +404,7 @@
     border: 1px solid #d6dce8 !important;
     border-radius: 6px !important;
     box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08) !important;
-    padding: 12px !important;
+    padding: 0 !important;
 }
 
 /* 4. Buat pembungkus pagination transparan, tanpa border/shadow, dan hilangkan padding samping */
