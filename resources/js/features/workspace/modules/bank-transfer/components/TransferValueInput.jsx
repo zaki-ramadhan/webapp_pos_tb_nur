@@ -10,6 +10,7 @@ export default function TransferValueInput({
     return (
         <div className={maxWidthClassName}>
             <TextInput
+                type="number"
                 value={value}
                 onChange={onChange}
                 readOnly={readOnly}

@@ -1,4 +1,5 @@
 import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 
 export function formatCurrencyValue(value) {
@@ -213,12 +214,11 @@ export async function applyPromptItemUpdate(item, updateItems, setStatus) {
         updateItems((items) =>
             item ? items.map((entry) => (entry.id === item.id ? nextItem : entry)) : [...items, nextItem],
         );
-        setStatus({
-            tone: 'success',
+        showSuccessToast({
             message: item ? 'Item diperbarui.' : 'Item ditambahkan ke dokumen.',
         });
     } catch (error) {
-        setStatus({ tone: 'error', message: error.message });
+        showErrorToast({ message: error.message });
     }
 }
 

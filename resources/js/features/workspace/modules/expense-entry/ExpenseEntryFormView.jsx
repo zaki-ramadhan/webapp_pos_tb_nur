@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import {
     createBackendResource,
@@ -77,7 +78,7 @@ export default function ExpenseEntryFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty;
 
     const dockActions = useMemo(() => {
         const baseActions = config.dockActions ?? [];
@@ -141,13 +142,11 @@ export default function ExpenseEntryFormView({
                         : [...(current.lineItems ?? []), nextItem],
                 ),
             );
-            setStatus({
-                tone: 'success',
+            showSuccessToast({
                 message: currentItem ? 'Rincian beban diperbarui.' : 'Rincian beban ditambahkan.',
             });
         } catch (error) {
-            setStatus({
-                tone: 'error',
+            showErrorToast({
                 message: error?.message ?? 'Rincian beban tidak valid.',
             });
         }

@@ -46,7 +46,7 @@ export function DocumentModalCurrencyReadonlyField({
                 trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
                 prefixClassName="min-w-[48px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                inputClassName="text-right text-xs sm:text-sm font-semibold text-[#111827]"
+                inputClassName="text-right text-xs sm:text-sm font-normal text-[#111827]"
                 trailingClassName="px-3"
             />
         </div>

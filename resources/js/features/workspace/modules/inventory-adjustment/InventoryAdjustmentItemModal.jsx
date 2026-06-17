@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 
-import ModalBase from '@/components/ui/ModalBase';
+import DocumentModalLayout, {
+    DocumentModalFooter,
+} from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { CloseIcon, PencilIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+import { TableActionIcon } from '@/features/workspace/shared/Icons';
 
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -30,24 +32,10 @@ function buildInitialValues(item = {}) {
     };
 }
 
-function ModalTabButton({ active, label, onClick }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className={`border-b-2 px-3 py-2 text-base ${
-                active ? 'border-[#ff4836] text-[#ff4836]' : 'border-transparent text-[#5f6980]'
-            }`.trim()}
-        >
-            {label}
-        </button>
-    );
-}
-
 function ModalFieldRow({ label, required = false, children }) {
     return (
         <div className="grid gap-3 sm:grid-cols-[156px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-            <TransactionFieldLabel label={label} required={required} className="pt-2 text-base" />
+            <TransactionFieldLabel label={label} required={required} className="pt-2 text-xs font-normal text-slate-700" />
             <div>{children}</div>
         </div>
     );
@@ -57,16 +45,16 @@ function DetailTab({ values, setValues, modal }) {
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Kode #">
-                <div className="flex h-[36px] items-center text-base font-semibold text-[#22a3f2]">{values.code}</div>
+                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{values.code}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Nama Barang" required>
                 <TextInput
                     value={values.name}
                     readOnly
-                    trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
+                    trailing={<span className="text-xl font-semibold text-[#1f2436]">×</span>}
                     className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    inputClassName="text-xs text-[#1f2436]"
                     trailingClassName="px-3"
                 />
             </ModalFieldRow>
@@ -81,7 +69,7 @@ function DetailTab({ values, setValues, modal }) {
                         }))
                     }
                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                    selectClassName="text-xs text-[#1f2436]"
                     containerClassName="max-w-[204px]"
                 >
                     {(modal.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan']).map((option) => (
@@ -104,7 +92,7 @@ function DetailTab({ values, setValues, modal }) {
                         }
                         trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
                         className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+                        inputClassName="text-right text-xs text-[#1f2436]"
                         trailingClassName="px-3"
                     />
                     <ChipLookupField
@@ -135,7 +123,7 @@ function DetailTab({ values, setValues, modal }) {
                     trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
                     className="h-[34px] rounded-[4px] border-[#cfd6e2]"
                     prefixClassName="min-w-[36px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+                    inputClassName="text-right text-xs text-[#1f2436]"
                     trailingClassName="px-3"
                     containerClassName="max-w-[204px]"
                 />
@@ -146,7 +134,7 @@ function DetailTab({ values, setValues, modal }) {
                     value={values.totalCost}
                     readOnly
                     className="h-[34px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                    inputClassName="text-right text-xs sm:text-sm text-[#6b7280]"
+                    inputClassName="text-right text-xs text-[#6b7280]"
                     containerClassName="max-w-[204px]"
                 />
             </ModalFieldRow>
@@ -199,7 +187,7 @@ function InfoTab({ values, setValues }) {
                     }
                     rows={4}
                     className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[92px] text-xs sm:text-sm text-[#1f2436]"
+                    textareaClassName="min-h-[92px] text-xs text-[#1f2436]"
                 />
             </ModalFieldRow>
         </div>
@@ -220,66 +208,33 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         return null;
     }
 
+    const activeTabIdSafe = tabs.some((tab) => tab.id === activeTabId) ? activeTabId : tabs[0]?.id ?? 'details';
+
     return (
-        <ModalBase
+        <DocumentModalLayout
             open={open}
-            onBackdropClick={onClose}
-            className="bg-[rgba(15,23,42,0.72)]"
+            onClose={onClose}
+            title={modal.title}
+            tabs={tabs}
+            activeTabId={activeTabIdSafe}
+            onTabChange={setActiveTabId}
+            closeAriaLabel="Tutup rincian barang"
             panelClassName="max-w-[540px] overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
+            bodyClassName="min-h-[360px] py-4"
+            footer={
+                <DocumentModalFooter
+                    deleteLabel={modal.deleteLabel}
+                    submitLabel={modal.submitLabel}
+                    onDelete={onClose}
+                    onSubmit={onClose}
+                />
+            }
         >
-            <div className="bg-[#173968] px-4 py-3 text-white">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <PencilIcon className="h-5 w-5 text-white" />
-                        <h2 className="text-base font-medium">{modal.title}</h2>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-white transition hover:bg-white/10"
-                        aria-label="Tutup rincian barang"
-                    >
-                        <CloseIcon className="h-5 w-5 text-white" />
-                    </button>
-                </div>
-            </div>
-
-            <div className="bg-white px-4 pb-4 pt-3">
-                <div className="flex items-end gap-1 border-b border-[#d8dde7]">
-                    {tabs.map((tab) => (
-                        <ModalTabButton
-                            key={tab.id}
-                            active={tab.id === activeTabId}
-                            label={tab.label}
-                            onClick={() => setActiveTabId(tab.id)}
-                        />
-                    ))}
-                </div>
-
-                <div className="min-h-[360px] py-4">
-                    {activeTabId === 'info' ? (
-                        <InfoTab values={values} setValues={setValues} />
-                    ) : (
-                        <DetailTab values={values} setValues={setValues} modal={modal} />
-                    )}
-                </div>
-
-                <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
-                    <button
-                        type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-lg text-[#21539b]"
-                    >
-                        {modal.deleteLabel ?? 'Hapus'}
-                    </button>
-                    <button
-                        type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-lg text-white"
-                    >
-                        {modal.submitLabel ?? 'Lanjut'}
-                    </button>
-                </div>
-            </div>
-        </ModalBase>
+            {activeTabIdSafe === 'info' ? (
+                <InfoTab values={values} setValues={setValues} />
+            ) : (
+                <DetailTab values={values} setValues={setValues} modal={modal} />
+            )}
+        </DocumentModalLayout>
     );
 }

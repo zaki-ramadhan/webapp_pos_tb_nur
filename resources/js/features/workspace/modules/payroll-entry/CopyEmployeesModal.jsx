@@ -115,13 +115,13 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
             title="Salin Karyawan"
             maxWidthClassName="max-w-[720px]"
             footer={
-                <div className="flex justify-end gap-3">
-                    <Button variant="secondary" size="md" onClick={onClose}>
+                <div className="flex justify-end gap-2.5">
+                    <Button variant="secondary" size="sm" onClick={onClose}>
                         Batal
                     </Button>
                     <Button
                         variant="primary"
-                        size="md"
+                        size="sm"
                         onClick={handleConfirm}
                         disabled={loading || selectedIds.length === 0}
                     >
@@ -137,8 +137,8 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
                         placeholder="Pilih Kategori Karyawan..."
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-9 rounded-[4px] border-[#cfd6e2]"
+                        selectClassName="text-xs text-[#1f2436]"
                     >
                         {STATUS_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -212,7 +212,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                                     placeholder="0"
                                                     value={valuesMap[emp.id] ?? ''}
                                                     onChange={(e) => handleValueChange(emp.id, e.target.value)}
-                                                    className="w-full h-8 px-2 border border-slate-300 rounded-[4px] text-right text-xs sm:text-sm focus:outline-none focus:border-[#21539b]"
+                                                    className="w-full h-8 px-2 border border-slate-300 rounded-[4px] text-right text-xs focus:outline-none focus:border-[#21539b]"
                                                 />
                                             </DataTableCell>
                                         </DataTableRow>

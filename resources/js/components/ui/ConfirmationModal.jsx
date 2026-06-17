@@ -50,22 +50,22 @@ export default function ConfirmationModal({
             <div className="flex items-center justify-end gap-2.5">
                     <Button
                         variant="secondary"
-                        size="md"
+                        size="sm"
                         onClick={onClose}
                         disabled={cancelDisabled || confirmLoading}
-                        className="h-10 min-w-[60px] rounded-[4px] border-brand-blue-border-light px-4 text-base text-brand-blue-dark shadow-none"
+                        className="min-w-[60px] rounded-[4px] border-brand-blue-border-light text-brand-blue-dark shadow-none"
                     >
                         {cancelLabel}
                     </Button>
 
                     <Button
                         variant={confirmVariant}
-                        size="md"
+                        size="sm"
                         onClick={onConfirm}
                         disabled={confirmDisabled}
                         loading={confirmLoading}
                         loadingLabel={confirmLabel}
-                        className="h-10 min-w-[60px] rounded-[4px] px-5 text-base shadow-none"
+                        className="min-w-[60px] rounded-[4px] shadow-none"
                     >
                         {confirmLabel}
                     </Button>
@@ -76,7 +76,7 @@ export default function ConfirmationModal({
                 <ConfirmationIllustration />
 
                 <div className="min-w-0 flex-1 pt-2">
-                    <p className="text-base leading-6 text-danger sm:text-base">{message}</p>
+                    <p className="text-xs sm:text-sm leading-6 text-danger">{message}</p>
                 </div>
             </div>
         </WorkspaceDialog>

@@ -1,33 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import ModalBase from '@/components/ui/ModalBase';
+import DocumentModalLayout, {
+    DocumentModalFooter,
+} from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { CloseIcon, PencilIcon } from '@/features/workspace/shared/Icons';
-
-function ModalTabButton({ active, label, onClick }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className={`border-b-2 px-3 py-2 text-base ${
-                active ? 'border-[#ff4836] text-[#ff4836]' : 'border-transparent text-[#5f6980]'
-            }`.trim()}
-        >
-            {label}
-        </button>
-    );
-}
-
-function ModalFieldRow({ label, children }) {
-    return (
-        <div className="grid gap-3 sm:grid-cols-[154px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-            <TransactionFieldLabel label={label} className="pt-2 text-base" />
-            <div>{children}</div>
-        </div>
-    );
-}
 
 function buildInitialValues(item = {}) {
     return {
@@ -39,15 +17,24 @@ function buildInitialValues(item = {}) {
     };
 }
 
+function ModalFieldRow({ label, children }) {
+    return (
+        <div className="grid gap-3 sm:grid-cols-[154px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+            <TransactionFieldLabel label={label} className="pt-2 text-xs font-normal text-slate-700" />
+            <div>{children}</div>
+        </div>
+    );
+}
+
 function ExpenseTab({ values, setValues }) {
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Akun Pengeluaran">
-                <div className="pt-2 text-xs sm:text-sm text-[#1f2436]">{values.accountName}</div>
+                <div className="pt-2 text-xs text-[#1f2436] font-medium">{values.accountName}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Tanggal">
-                <div className="pt-2 text-xs sm:text-sm text-[#1f2436]">{values.date}</div>
+                <div className="pt-2 text-xs text-[#1f2436] font-medium">{values.date}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Deskripsi">
@@ -59,15 +46,15 @@ function ExpenseTab({ values, setValues }) {
                             description: event.target.value,
                         }))
                     }
-                    trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
+                    trailing={<span className="text-xl font-semibold text-[#1f2436]">×</span>}
                     className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    inputClassName="text-xs text-[#1f2436]"
                     trailingClassName="px-3"
                 />
             </ModalFieldRow>
 
             <ModalFieldRow label="Jumlah">
-                <div className="pt-2 text-right text-xs sm:text-sm text-[#1f2436]">{values.amount}</div>
+                <div className="pt-2 text-right text-xs text-[#1f2436] font-medium">{values.amount}</div>
             </ModalFieldRow>
         </div>
     );
@@ -86,7 +73,7 @@ function NotesTab({ values, setValues }) {
                 }
                 rows={4}
                 className="rounded-[4px] border-[#cfd6e2]"
-                textareaClassName="min-h-[92px] text-xs sm:text-sm text-[#1f2436]"
+                textareaClassName="min-h-[92px] text-xs text-[#1f2436]"
             />
         </ModalFieldRow>
     );
@@ -106,68 +93,33 @@ export default function FixedAssetExpenseModal({ open, onClose, modal, item }) {
         return null;
     }
 
+    const activeTabIdSafe = tabs.some((tab) => tab.id === activeTabId) ? activeTabId : tabs[0]?.id ?? 'expense';
+
     return (
-        <ModalBase
+        <DocumentModalLayout
             open={open}
-            onBackdropClick={onClose}
-            className="bg-[rgba(15,23,42,0.72)]"
+            onClose={onClose}
+            title={modal.title}
+            tabs={tabs}
+            activeTabId={activeTabIdSafe}
+            onTabChange={setActiveTabId}
+            closeAriaLabel="Tutup pengeluaran aset"
             panelClassName="max-w-[540px] overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
+            bodyClassName="min-h-[220px] py-4"
+            footer={
+                <DocumentModalFooter
+                    deleteLabel={modal.deleteLabel}
+                    submitLabel={modal.submitLabel}
+                    onDelete={onClose}
+                    onSubmit={onClose}
+                />
+            }
         >
-            <div className="bg-[#173968] px-4 py-3 text-white">
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <PencilIcon className="h-5 w-5 text-white" />
-                        <h2 className="text-base font-medium">{modal.title}</h2>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-white transition hover:bg-white/10"
-                        aria-label="Tutup pengeluaran aset"
-                    >
-                        <CloseIcon className="h-5 w-5 text-white" />
-                    </button>
-                </div>
-            </div>
-
-            <div className="bg-white px-4 pb-4 pt-3 sm:px-5">
-                <div className="flex items-end gap-1 border-b border-[#d8dde7]">
-                    {tabs.map((tab) => (
-                        <ModalTabButton
-                            key={tab.id}
-                            active={tab.id === activeTabId}
-                            label={tab.label}
-                            onClick={() => setActiveTabId(tab.id)}
-                        />
-                    ))}
-                </div>
-
-                <div className="py-4">
-                    {activeTabId === 'notes' ? (
-                        <NotesTab values={values} setValues={setValues} />
-                    ) : (
-                        <ExpenseTab values={values} setValues={setValues} />
-                    )}
-                </div>
-
-                <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
-                    <button
-                        type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-lg text-[#21539b]"
-                        onClick={onClose}
-                    >
-                        {modal.deleteLabel ?? 'Hapus'}
-                    </button>
-                    <button
-                        type="button"
-                        className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-lg text-white"
-                        onClick={onClose}
-                    >
-                        {modal.submitLabel ?? 'Lanjut'}
-                    </button>
-                </div>
-            </div>
-        </ModalBase>
+            {activeTabIdSafe === 'notes' ? (
+                <NotesTab values={values} setValues={setValues} />
+            ) : (
+                <ExpenseTab values={values} setValues={setValues} />
+            )}
+        </DocumentModalLayout>
     );
 }

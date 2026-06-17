@@ -13,7 +13,7 @@ export function ItemDetailTab({ detail }) {
     return (
         <div className="grid gap-y-4 sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-x-4">
             <TransactionFieldLabel label="Kode #" />
-            <div className="flex h-[36px] items-center text-base font-semibold text-[#22a3f2]">{detail.code ?? ''}</div>
+            <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{detail.code ?? ''}</div>
 
             <TransactionFieldLabel label="Nama Barang" required />
             <TextInput
@@ -68,7 +68,7 @@ export function ItemDetailTab({ detail }) {
                 value={detail.total ?? ''}
                 readOnly
                 className="h-[34px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                inputClassName="text-right text-xs sm:text-sm font-semibold text-[#111827]"
+                inputClassName="text-right text-xs sm:text-sm font-normal text-[#111827]"
             />
 
             <TransactionFieldLabel label="Pajak" />

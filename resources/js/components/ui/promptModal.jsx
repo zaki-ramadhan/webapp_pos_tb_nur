@@ -52,9 +52,9 @@ function PromptModalContainer({ title, fields, resolve, onDestroy }) {
             title={title}
             maxWidthClassName="max-w-[480px]"
             footer={
-                <div className="flex justify-end gap-3">
-                    <Button onClick={handleClose} variant="secondary" size="md">Batal</Button>
-                    <Button onClick={handleSave} variant="primary" size="md">Simpan</Button>
+                <div className="flex justify-end gap-2.5">
+                    <Button onClick={handleClose} variant="secondary" size="sm">Batal</Button>
+                    <Button onClick={handleSave} variant="primary" size="sm">Simpan</Button>
                 </div>
             }
         >
@@ -63,7 +63,7 @@ function PromptModalContainer({ title, fields, resolve, onDestroy }) {
                     if (f.type === 'select') {
                         return (
                             <div key={f.name} className="space-y-1">
-                                <label className="text-xs sm:text-sm font-medium text-slate-700">{f.label}</label>
+                                <label className="text-xs font-normal text-slate-700">{f.label}</label>
                                 <SelectField
                                     value={values[f.name]}
                                     onChange={(e) => setValues(c => ({ ...c, [f.name]: e.target.value }))}
@@ -78,12 +78,13 @@ function PromptModalContainer({ title, fields, resolve, onDestroy }) {
 
                     return (
                         <div key={f.name} className="space-y-1">
-                            <label className="text-xs sm:text-sm font-medium text-slate-700">{f.label}</label>
+                            <label className="text-xs font-normal text-slate-700">{f.label}</label>
                             <TextInput
                                 type={f.type ?? 'text'}
                                 value={values[f.name]}
                                 error={errors[f.name]}
                                 onChange={(e) => setValues(c => ({ ...c, [f.name]: e.target.value }))}
+                                inputClassName="text-xs"
                             />
                         </div>
                     );

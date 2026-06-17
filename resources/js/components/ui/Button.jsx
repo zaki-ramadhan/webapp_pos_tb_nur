@@ -20,6 +20,7 @@ const activeVariantClasses = {
 const disabledClasses = 'cursor-default opacity-55 shadow-none pointer-events-none';
 
 const sizeClasses = {
+    sm: 'h-8 px-3 text-xs',
     md: 'h-9 px-4 text-xs sm:text-sm',
     lg: 'h-11 px-5 text-xs sm:text-sm',
 };

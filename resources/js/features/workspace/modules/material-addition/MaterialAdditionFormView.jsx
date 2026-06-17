@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -125,12 +126,11 @@ export default function MaterialAdditionFormView({
                         : [...(current.items ?? []), nextItem],
                 ),
             );
-            setStatus({
-                tone: 'success',
+            showSuccessToast({
                 message: currentItem ? 'Rincian barang diperbarui.' : 'Rincian barang ditambahkan.',
             });
         } catch (error) {
-            setStatus({ tone: 'error', message: error?.message ?? 'Rincian barang tidak valid.' });
+            showErrorToast({ message: error?.message ?? 'Rincian barang tidak valid.' });
         }
     }
 
@@ -150,12 +150,11 @@ export default function MaterialAdditionFormView({
                         : [...(current.additionalCosts ?? []), nextCharge],
                 ),
             );
-            setStatus({
-                tone: 'success',
+            showSuccessToast({
                 message: currentCharge ? 'Biaya lainnya diperbarui.' : 'Biaya lainnya ditambahkan.',
             });
         } catch (error) {
-            setStatus({ tone: 'error', message: error?.message ?? 'Biaya lainnya tidak valid.' });
+            showErrorToast({ message: error?.message ?? 'Biaya lainnya tidak valid.' });
         }
     }
 

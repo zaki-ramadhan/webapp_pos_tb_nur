@@ -219,6 +219,76 @@ export default function TextInput({
         }
     }
 
+    function handleWrappedKeyDown(event) {
+        const name = props.name ?? '';
+        const prefixVal = typeof prefix === 'string' ? prefix : '';
+        const searchStr = `${id || ''} ${name} ${placeholder} ${prefixVal}`.toLowerCase();
+        
+        const isNumeric = type === 'number' || 
+                          searchStr.includes('price') || 
+                          searchStr.includes('amount') || 
+                          searchStr.includes('percentage') || 
+                          searchStr.includes('rate') || 
+                          searchStr.includes('limit') || 
+                          searchStr.includes('age') || 
+                          searchStr.includes('range') || 
+                          searchStr.includes('days') || 
+                          searchStr.includes('qty') || 
+                          searchStr.includes('quantity') || 
+                          searchStr.includes('value') ||
+                          searchStr.includes('kurs') ||
+                          searchStr.includes('jumlah') ||
+                          searchStr.includes('persen') ||
+                          searchStr.includes('nominal') ||
+                          searchStr.includes('cost') ||
+                          searchStr.includes('piutang') ||
+                          searchStr.includes('utang');
+
+        const isDigitOnly = (
+                                searchStr.includes('rekening') || 
+                                searchStr.includes('account_number') || 
+                                searchStr.includes('bank_number') || 
+                                searchStr.includes('tax_number') || 
+                                searchStr.includes('npwp') || 
+                                searchStr.includes('nitku') || 
+                                searchStr.includes('postal') || 
+                                searchStr.includes('kodepos') || 
+                                searchStr.includes('zip') ||
+                                searchStr.includes('k.pos') ||
+                                searchStr.includes('kode pos') ||
+                                /\bno\.?\b/.test(searchStr)
+                            ) && !searchStr.includes('note') && !searchStr.includes('document');
+
+        if (isNumeric || isDigitOnly) {
+            const allowedKeys = [
+                'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'Enter', 'Home', 'End'
+            ];
+
+            if (event.ctrlKey || event.metaKey) {
+                const key = event.key.toLowerCase();
+                if (key === 'a' || key === 'c' || key === 'v' || key === 'x' || key === 'z') {
+                    props.onKeyDown?.(event);
+                    return;
+                }
+            }
+
+            if (allowedKeys.includes(event.key)) {
+                props.onKeyDown?.(event);
+                return;
+            }
+
+            const isDigit = /^[0-9]$/.test(event.key);
+            const isSeparator = event.key === '.' || event.key === ',';
+
+            if (!isDigit && (!isNumeric || !isSeparator)) {
+                event.preventDefault();
+                return;
+            }
+        }
+
+        props.onKeyDown?.(event);
+    }
+
     function handleWrappedBlur(event) {
         if (readOnly || disabled) {
             props.onBlur?.(event);
@@ -283,6 +353,8 @@ export default function TextInput({
     const prefixMinWClass = hasPrefixMinW ? '' : 'min-w-[86px]';
     const hasPrefixPx = prefixClassName.includes('px-') || prefixClassName.includes('pl-') || prefixClassName.includes('pr-');
     const prefixPxClass = hasPrefixPx ? '' : 'px-5';
+    const hasPrefixColor = prefixClassName.includes('text-');
+    const prefixColorClass = hasPrefixColor ? '' : 'text-slate-500';
 
     const name = props.name ?? '';
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
@@ -309,7 +381,7 @@ export default function TextInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-[#f5f5f5] text-gray-500' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm ${prefixColorClass} transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-[#f5f5f5] text-gray-500' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -331,6 +403,7 @@ export default function TextInput({
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}
                     {...props}
+                    onKeyDown={handleWrappedKeyDown}
                 />
 
                 {showTrailing ? (

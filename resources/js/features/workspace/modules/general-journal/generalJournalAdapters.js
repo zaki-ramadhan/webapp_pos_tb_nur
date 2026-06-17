@@ -91,6 +91,7 @@ export function buildJournalRecordFromBackend(record = {}, config) {
         accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
         debit: formatCurrencyValue(line.debit_amount ?? 0),
         credit: formatCurrencyValue(line.credit_amount ?? 0),
+        notes: line.description && line.description !== line.account?.name ? line.description : '',
     }));
     const metadata = record.metadata ?? {};
 
@@ -125,6 +126,7 @@ export function buildDerivedJournalLines(source = {}) {
         __accountId: null,
         debit: side === 'debit' ? amount : '0',
         credit: side === 'credit' ? amount : '0',
+        notes: '',
     }));
 }
 
@@ -174,49 +176,39 @@ export function buildFormState(source = {}, config) {
     );
 }
 
-import { showPromptModal } from '@/components/ui/promptModal';
+import { showAccountDetailModal } from '@/components/ui/AccountDetailModal';
 
 export async function promptJournalLineItem(record, currentItem = null) {
-    const label = buildLookupLabel(record ?? currentItem ?? {});
-    const result = await showPromptModal(`Input Debit/Kredit - ${label}`, [
-        {
-            name: 'debit',
-            label: 'Nilai Debit',
-            type: 'number',
-            defaultValue: currentItem?.debit ?? '0',
-            required: true,
-        },
-        {
-            name: 'credit',
-            label: 'Nilai Kredit',
-            type: 'number',
-            defaultValue: currentItem?.credit ?? '0',
-            required: true,
-        },
-    ]);
+    const accountCode = record?.code ?? currentItem?.accountCode ?? '';
+    const accountName = record?.name ?? currentItem?.accountName ?? '';
+
+    const isCredit = currentItem ? parseNumericInput(currentItem.credit) > 0 : false;
+    const defaultSide = isCredit ? 'credit' : 'debit';
+    const defaultAmount = isCredit ? currentItem.credit : (currentItem?.debit ?? '0');
+    const defaultNotes = currentItem?.notes ?? '';
+
+    const result = await showAccountDetailModal({
+        accountCode,
+        accountName,
+        defaultSide,
+        defaultAmount,
+        defaultNotes,
+    });
 
     if (!result) {
         return null;
     }
 
-    const debitAmount = parseNumericInput(result.debit);
-    const creditAmount = parseNumericInput(result.credit);
-
-    if (debitAmount <= 0 && creditAmount <= 0) {
-        throw new Error('Debit atau kredit harus lebih dari 0.');
-    }
-
-    if (debitAmount > 0 && creditAmount > 0) {
-        throw new Error('Baris jurnal hanya boleh berisi debit atau kredit, tidak keduanya sekaligus.');
-    }
+    const amount = result.amount;
 
     return {
         id: currentItem?.id ?? `draft-line-${Date.now()}`,
         __lineId: currentItem?.__lineId ?? null,
         __accountId: record?.id ?? currentItem?.__accountId ?? null,
-        accountCode: record?.code ?? currentItem?.accountCode ?? '',
-        accountName: record?.name ?? currentItem?.accountName ?? '',
-        debit: formatCurrencyValue(debitAmount),
-        credit: formatCurrencyValue(creditAmount),
+        accountCode,
+        accountName,
+        debit: result.side === 'debit' ? formatCurrencyValue(amount) : '0',
+        credit: result.side === 'credit' ? formatCurrencyValue(amount) : '0',
+        notes: result.notes,
     };
 }

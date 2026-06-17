@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -65,7 +66,7 @@ export default function GeneralJournalFormView({
 
     const validationMessage = useMemo(() => validateJournalValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty;
 
     const dockActions = useMemo(
         () =>
@@ -136,13 +137,11 @@ export default function GeneralJournalFormView({
                         : [...(current.lineItems ?? []), nextItem],
                 ),
             );
-            setStatus({
-                tone: 'success',
+            showSuccessToast({
                 message: currentItem ? 'Baris jurnal diperbarui.' : 'Baris jurnal ditambahkan.',
             });
         } catch (error) {
-            setStatus({
-                tone: 'error',
+            showErrorToast({
                 message: error?.message ?? 'Baris jurnal tidak valid.',
             });
         }

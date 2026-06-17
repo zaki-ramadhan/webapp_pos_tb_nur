@@ -70,19 +70,20 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
     return (
         <ModalBase
             open={open}
+            onBackdropClick={onClose}
             className="bg-[rgba(22,31,52,0.62)]"
             panelClassName="max-w-[676px] overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
         >
-            <div className="border-b border-[#0f366d] bg-[#163a6d] px-4 py-2 text-white">
+            <div className="border-b border-[#0f366d] bg-[#163a6d] px-4 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-base font-medium">{modal.title}</h2>
+                    <h2 className="text-sm font-medium">{modal.title}</h2>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-white/90"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white/90"
                         aria-label={modal.closeLabel}
                     >
-                        <CloseIcon className="h-5 w-5" />
+                        <CloseIcon className="h-4 w-4" />
                     </button>
                 </div>
             </div>

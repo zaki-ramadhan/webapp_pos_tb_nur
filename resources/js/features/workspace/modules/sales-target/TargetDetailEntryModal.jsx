@@ -25,13 +25,13 @@ function ModalFooter({ modal }) {
         <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
             <button
                 type="button"
-                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-lg text-[#21539b]"
+                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs font-medium text-[#21539b]"
             >
                 {modal?.deleteLabel ?? 'Hapus'}
             </button>
             <button
                 type="button"
-                className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-6 text-lg text-white"
+                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-4 text-xs font-medium text-white"
             >
                 {modal?.submitLabel ?? 'Lanjut'}
             </button>
@@ -49,7 +49,7 @@ function ModalField({ field, value }) {
                 trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
                 className="h-[34px] rounded-[4px] border-[#cfd6e2]"
                 prefixClassName="min-w-[48px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                inputClassName="text-right text-xs sm:text-sm font-semibold text-[#111827]"
+                inputClassName="text-right text-xs font-normal text-[#111827]"
                 trailingClassName="px-3"
             />
         );
@@ -75,13 +75,13 @@ export default function TargetDetailEntryModal({ open, modal, row, onClose }) {
     return (
         <ModalBase open={open} onBackdropClick={onClose} panelClassName={modal?.panelClassName ?? 'max-w-[540px]'}>
             <div className="overflow-hidden rounded-[12px]">
-                <div className="flex items-center justify-between bg-[#12356d] px-4 py-3 text-white">
-                    <div className="flex items-center gap-3 text-lg">
-                        <span className="text-lg">{modal?.title ?? 'Rincian'}</span>
+                <div className="flex items-center justify-between bg-[#12356d] px-4 py-2.5 text-white">
+                    <div className="flex items-center gap-2.5">
+                        <span className="text-sm font-medium">{modal?.title ?? 'Rincian'}</span>
                     </div>
 
                     <button type="button" onClick={onClose} aria-label="Tutup modal rincian">
-                        <CloseIcon className="h-5 w-5 text-white" strokeWidth={2.4} />
+                        <CloseIcon className="h-4 w-4 text-white" strokeWidth={2.4} />
                     </button>
                 </div>
 

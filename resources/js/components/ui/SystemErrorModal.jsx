@@ -89,23 +89,24 @@ export default function SystemErrorModal({
     return (
         <ModalBase
             open={open}
+            onBackdropClick={dismissible ? onClose : undefined}
             className="bg-[rgba(20,30,49,0.58)] px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_14px_30px_rgba(15,23,42,0.2)]`.trim()}
         >
-            <div className="border-b border-[#133663] bg-[#163a6d] px-4 py-2 text-white sm:px-5 sm:py-2">
+            <div className="border-b border-[#133663] bg-[#163a6d] px-4 py-2.5 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
-                    <div className="flex min-w-0 items-center gap-3">
-                        <h2 className="truncate text-base font-normal sm:text-base">{title}</h2>
+                    <div className="flex min-w-0 items-center gap-2.5">
+                        <h2 className="truncate text-sm font-medium">{title}</h2>
                     </div>
 
                     {dismissible ? (
                         <button
                             type="button"
                             onClick={onClose}
-                            className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition hover:bg-white/10"
+                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition hover:bg-white/10"
                             aria-label={closeLabel}
                         >
-                            <CloseIcon className="h-5 w-5" />
+                            <CloseIcon className="h-4 w-4" />
                         </button>
                     ) : null}
                 </div>
@@ -118,11 +119,11 @@ export default function SystemErrorModal({
                     </div>
 
                     <div className="min-w-0 flex-1 space-y-2.5">
-                        <p className="text-base leading-6 text-[#1f2436] sm:text-base">{description}</p>
+                        <p className="text-xs sm:text-sm leading-6 text-[#1f2436]">{description}</p>
 
                         <div className="space-y-1.5">
                             {normalizedMessages.map((item, index) => (
-                                <p key={`${item}-${index}`} className="text-base leading-6 text-[#db2347] sm:text-base">
+                                <p key={`${item}-${index}`} className="text-xs sm:text-sm leading-6 text-[#db2347]">
                                     {item}
                                 </p>
                             ))}
@@ -134,9 +135,9 @@ export default function SystemErrorModal({
                     <div>
                         <Button
                             variant="secondary"
-                            size="md"
+                            size="sm"
                             onClick={handleCopy}
-                            className="h-10 min-w-[96px] rounded-[6px] border-[#9ec0ec] px-4 text-base text-[#1a63b3] shadow-none"
+                            className="min-w-[80px] rounded-[6px] border-[#9ec0ec] text-[#1a63b3] shadow-none"
                         >
                             {copyState === 'copied' ? copiedLabel : copyLabel}
                         </Button>
@@ -144,9 +145,9 @@ export default function SystemErrorModal({
 
                     <div className="flex justify-end">
                         <Button
-                            size="md"
+                            size="sm"
                             onClick={handleConfirm}
-                            className="h-10 min-w-[98px] rounded-[6px] bg-[#1f57a9] text-white px-5 text-base shadow-none hover:bg-[#1a4c95]"
+                            className="min-w-[80px] rounded-[6px] bg-[#1f57a9] text-white shadow-none hover:bg-[#1a4c95]"
                         >
                             {confirmLabel}
                         </Button>

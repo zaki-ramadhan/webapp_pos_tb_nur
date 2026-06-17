@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -137,13 +138,11 @@ export default function BankTransferFormView({
                     ? (current.feeRows ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
                     : [...(current.feeRows ?? []), nextItem],
             }));
-            setStatus({
-                tone: 'success',
+            showSuccessToast({
                 message: currentItem ? 'Biaya transfer diperbarui.' : 'Biaya transfer ditambahkan.',
             });
         } catch (error) {
-            setStatus({
-                tone: 'error',
+            showErrorToast({
                 message: error?.message ?? 'Biaya transfer tidak valid.',
             });
         }

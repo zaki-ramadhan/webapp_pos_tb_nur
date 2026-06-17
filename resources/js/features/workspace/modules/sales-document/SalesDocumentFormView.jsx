@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import ImportItemsModal from '@/features/workspace/shared/ImportItemsModal';
 import {
     createBackendResource,
@@ -260,7 +261,7 @@ export default function SalesDocumentFormView({
                         };
                     });
                 });
-                setStatus({ tone: 'success', message: `${importedItems.length} item berhasil diimpor.` });
+                showSuccessToast({ message: `${importedItems.length} item berhasil diimpor.` });
             },
         }),
         [selectLookup, updateItems, setStatus],

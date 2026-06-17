@@ -12,7 +12,7 @@ export function buildGeneralJournalPayload(values) {
     const lineItems = (values.lineItems ?? []).map((item, index) => ({
         id: item.__lineId ?? undefined,
         account_id: item.__accountId ?? null,
-        description: item.accountName?.trim() || null,
+        description: item.notes?.trim() || item.accountName?.trim() || null,
         reference_code: item.accountCode?.trim() || null,
         debit_amount: parseNumericInput(item.debit),
         credit_amount: parseNumericInput(item.credit),

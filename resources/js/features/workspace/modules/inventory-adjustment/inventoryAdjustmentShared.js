@@ -1,4 +1,5 @@
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { buildAccountLookupLabel } from '@/features/workspace/shared/AccountLookupControls';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 
@@ -227,12 +228,11 @@ export async function applyInventoryPromptItemUpdate(item, setValues, setStatus)
                     : [...(current.items ?? []), nextItem],
             ),
         );
-        setStatus({
-            tone: 'success',
+        showSuccessToast({
             message: item ? 'Item diperbarui.' : 'Item ditambahkan.',
         });
     } catch (error) {
-        setStatus({ tone: 'error', message: error.message });
+        showErrorToast({ message: error.message });
     }
 }
 

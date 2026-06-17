@@ -63,19 +63,20 @@ export default function DashboardFormModal({
     return (
         <ModalBase
             open={open}
+            onBackdropClick={isSubmitting || isDeleting ? undefined : onClose}
             className="bg-[rgba(22,31,52,0.62)]"
             panelClassName="max-w-[602px] overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
         >
-            <div className="border-b border-[#0f366d] bg-[#163a6d] px-3 py-2 text-white">
+            <div className="border-b border-[#0f366d] bg-[#163a6d] px-3 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
-                    <h2 className="text-base font-medium">{modal.title}</h2>
+                    <h2 className="text-sm font-medium">{modal.title}</h2>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-white/90"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white/90"
                         aria-label={modal.closeLabel}
                     >
-                        <CloseIcon className="h-5 w-5" />
+                        <CloseIcon className="h-4 w-4" />
                     </button>
                 </div>
             </div>
@@ -92,7 +93,7 @@ export default function DashboardFormModal({
                             type="text"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
-                            className="h-10 w-full rounded-[4px] border border-[#cdd4e3] px-3 pr-9 text-base text-[#2c344a] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                            className="h-9 w-full rounded-[4px] border border-[#cdd4e3] px-3 pr-9 text-xs sm:text-sm text-[#2c344a] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
                             autoFocus
                         />
 
@@ -100,10 +101,10 @@ export default function DashboardFormModal({
                             <button
                                 type="button"
                                 onClick={() => setName('')}
-                                className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-[4px] text-[#2c344a]"
+                                className="absolute right-2 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-[4px] text-[#2c344a]"
                                 aria-label={modal.clearLabel}
                             >
-                                <CloseIcon />
+                                <CloseIcon className="h-3.5 w-3.5" />
                             </button>
                         ) : null}
                     </div>
@@ -115,12 +116,12 @@ export default function DashboardFormModal({
                             <Button
                                 type="button"
                                 variant="ghost"
-                                size="md"
+                                size="sm"
                                 onClick={handleDelete}
                                 disabled={isDeleting}
                                 loading={isDeleting}
                                 loadingLabel="Memproses..."
-                                className="rounded-[4px] px-3 text-base font-medium text-[#1f63ad] hover:no-underline"
+                                className="rounded-[4px] px-3 font-medium text-[#1f63ad] hover:no-underline"
                             >
                                 {modal.deleteLabel}
                             </Button>
@@ -129,10 +130,11 @@ export default function DashboardFormModal({
 
                     <Button
                         type="submit"
+                        size="sm"
                         disabled={!trimmedName || isSubmitting}
                         loading={isSubmitting}
                         loadingLabel="Memproses..."
-                        className="min-w-[88px] rounded-[4px] bg-[#234d97] px-5 text-base hover:bg-[#1d4386]"
+                        className="min-w-[88px] rounded-[4px] bg-[#234d97] px-4 hover:bg-[#1d4386]"
                     >
                         {modal.submitLabel}
                     </Button>

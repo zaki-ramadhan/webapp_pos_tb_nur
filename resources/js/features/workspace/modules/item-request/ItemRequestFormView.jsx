@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import ImportItemsModal from '@/features/workspace/shared/ImportItemsModal';
 import {
     createBackendResource,
@@ -119,12 +120,11 @@ export default function ItemRequestFormView({
                         : [...(current.items ?? []), nextItem],
                 ),
             );
-            setStatus({
-                tone: 'success',
+            showSuccessToast({
                 message: currentItem ? 'Rincian permintaan diperbarui.' : 'Rincian permintaan ditambahkan.',
             });
         } catch (error) {
-            setStatus({ tone: 'error', message: error?.message ?? 'Rincian permintaan tidak valid.' });
+            showErrorToast({ message: error?.message ?? 'Rincian permintaan tidak valid.' });
         }
     }
 
@@ -213,7 +213,7 @@ export default function ItemRequestFormView({
                     );
                     return applyItemRequestItems(current, mergedItems);
                 });
-                setStatus({ tone: 'success', message: `${importedItems.length} barang berhasil diimpor.` });
+                showSuccessToast({ message: `${importedItems.length} barang berhasil diimpor.` });
             },
         }),
         [selectLookup, values.requestDate],

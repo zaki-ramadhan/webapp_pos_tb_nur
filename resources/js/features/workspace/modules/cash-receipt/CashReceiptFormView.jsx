@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -134,13 +135,11 @@ export default function CashReceiptFormView({
                         : [...(current.lineItems ?? []), nextItem],
                 ),
             );
-            setStatus({
-                tone: 'success',
+            showSuccessToast({
                 message: currentItem ? 'Rincian penerimaan diperbarui.' : 'Rincian penerimaan ditambahkan.',
             });
         } catch (error) {
-            setStatus({
-                tone: 'error',
+            showErrorToast({
                 message: error?.message ?? 'Rincian penerimaan tidak valid.',
             });
         }
