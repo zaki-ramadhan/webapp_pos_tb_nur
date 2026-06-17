@@ -306,7 +306,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
 
                                 {}
                                 {showAddMenu && (
-                                    <div className="absolute left-0 bottom-[40px] z-20 w-[240px] bg-white border border-slate-200 rounded-md shadow-lg py-1 max-h-[160px] overflow-y-auto">
+                                    <div className="absolute left-0 bottom-[40px] z-20 w-[240px] bg-white border border-slate-200 rounded-[4px] shadow-lg py-1 max-h-[160px] overflow-y-auto">
                                         {availableOptionalColumns.length > 0 ? (
                                             availableOptionalColumns.map(opt => (
                                                 <button

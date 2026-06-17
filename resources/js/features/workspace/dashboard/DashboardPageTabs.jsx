@@ -5,6 +5,7 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import { ChevronDownIcon, CloseIcon, CogIcon, IdeaIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import SecondaryTabs from '@/features/workspace/shared/SecondaryTabs';
 import { renderTabLabel } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { getPagePath } from '@/features/workspace/dashboard/workspaceUrls';
 
 function PrimaryTab({ tab, active, onSelect, onClose }) {
     const spacingClassName = tab.closable
@@ -12,22 +13,16 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
         : 'gap-1.5 px-3 sm:gap-2 sm:px-3.5 md:gap-2.5 md:px-4.5';
 
     return (
-        <div
-            role="button"
-            tabIndex={0}
-            onClick={() => onSelect(tab.id)}
-            onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    onSelect(tab.id);
-                }
-            }}
+        <a
+            href={getPagePath(tab.id)}
+            onClick={(e) => { e.preventDefault(); onSelect(tab.id); }}
             className={`relative -mb-px inline-flex h-7.5 items-center rounded-t-[5px] border text-xs leading-normal transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
                     ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-medium text-white'
                     : 'border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
             } shrink-0 whitespace-nowrap`.trim()}
             aria-label={tab.label}
+            aria-current={active ? 'page' : undefined}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[90px] sm:max-w-[120px] md:max-w-[150px]">
                 <span className="block truncate py-1">{renderTabLabel(tab.label, active, true)}</span>
@@ -35,11 +30,8 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
             {tab.closable ? (
                 <button
                     type="button"
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        onClose(tab.id);
-                    }}
-                className={`inline-flex h-5 w-5 items-center justify-center rounded-[3px] sm:h-6 sm:w-6 ${
+                    onClick={(e) => { e.stopPropagation(); onClose(tab.id); }}
+                    className={`inline-flex h-5 w-5 items-center justify-center rounded-[3px] sm:h-6 sm:w-6 ${
                         active ? 'text-white/95 hover:bg-white/15' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200/70'
                     }`.trim()}
                     aria-label={`Tutup tab ${tab.label}`}
@@ -47,7 +39,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
                     <CloseIcon className="h-4 w-4" strokeWidth={2.6} />
                 </button>
             ) : null}
-        </div>
+        </a>
     );
 }
 

@@ -118,7 +118,7 @@ export function TrashIcon({ className = 'h-7 w-7' }) {
 }
 
 export function ChevronDownIcon({ className = 'h-4 w-4' }) {
-    return <AppIcon icon={ChevronDown} className={className} />;
+    return <AppIcon icon={ChevronDown} className={`shrink-0 ${className}`.trim()} />;
 }
 
 export function SortIcon({ className = 'h-3 w-3 text-white/55' }) {

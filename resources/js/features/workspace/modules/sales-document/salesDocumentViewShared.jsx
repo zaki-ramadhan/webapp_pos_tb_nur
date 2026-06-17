@@ -10,6 +10,7 @@ import {
     PrintIcon,
     SearchIcon,
     SortIcon,
+    ChevronDownIcon,
 } from '@/features/workspace/shared/Icons';
 
 export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
@@ -40,14 +41,14 @@ export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
                 <button
                     type="button"
                     disabled={values.processDisabled}
-                    className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-base ${
+                    className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-base ${
                         values.processDisabled
                             ? 'border-[#d4d7de] bg-[#f0f0f1] text-[#b1b5bf]'
                             : 'border-[#7aa2d5] bg-white text-[#21539b]'
                     }`.trim()}
                 >
-                    {config.processButtonLabel}
-                    {!values.processDisabled ? <span className="ml-1">⌄</span> : null}
+                    <span>{config.processButtonLabel}</span>
+                    {!values.processDisabled ? <ChevronDownIcon className="h-4 w-4" /> : null}
                 </button>
             ) : null}
         </div>

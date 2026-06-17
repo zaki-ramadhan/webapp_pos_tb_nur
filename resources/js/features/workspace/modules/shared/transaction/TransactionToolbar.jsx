@@ -150,7 +150,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
     return (
         <div
             ref={panelRef}
-            className="absolute right-0 top-[calc(100%+8px)] z-50 w-[240px] rounded-[6px] border border-[#d6deea] bg-white shadow-[0_6px_24px_rgba(15,23,42,0.14)] overflow-hidden"
+            className="absolute right-0 top-[calc(100%+8px)] z-50 w-[240px] rounded-[4px] border border-[#d6deea] bg-white shadow-[0_6px_24px_rgba(15,23,42,0.14)] overflow-hidden"
         >
             {}
             <div className="px-2 pt-2 pb-1.5 border-b border-[#edf0f5]">

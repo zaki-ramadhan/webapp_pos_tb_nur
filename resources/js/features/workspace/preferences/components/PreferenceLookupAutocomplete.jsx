@@ -67,7 +67,7 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
                 <LookupDropdownSurface
                     onClose={() => setOpen(false)}
                     maxHeightLimit={220}
-                    className="border-[#cad1dd] shadow-lg rounded-md"
+                    className="border-[#cad1dd] shadow-lg rounded-[4px]"
                 >
                     <div className="overflow-y-auto w-full flex-1 min-h-0">
                         {filteredOptions.length > 0 ? (

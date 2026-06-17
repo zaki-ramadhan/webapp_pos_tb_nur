@@ -11,6 +11,7 @@ import {
     TextInput,
     TransactionSwitch,
 } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
+import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
 
 export function GeneralTab({ config, values, isDetail, onChange }) {
     return (
@@ -272,8 +273,9 @@ export function ShippingTab({ config, values, onChange }) {
                     <button type="button" className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]">
                         <PlusIcon className="h-5 w-5" />
                     </button>
-                    <button type="button" className="inline-flex h-[34px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#2353a0]">
-                        Ambil<span className="ml-1">⌄</span>
+                    <button type="button" className="inline-flex h-[34px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#2353a0]">
+                        <span>Ambil</span>
+                        <ChevronDownIcon className="h-4 w-4" />
                     </button>
                 </div>
                 <EmptyDataTable columns={config.shippingTable.columns} emptyLabel={config.shippingTable.emptyLabel} />

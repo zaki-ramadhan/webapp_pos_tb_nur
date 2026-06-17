@@ -14,7 +14,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { CloseIcon, PinIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, PinIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import CheckboxField from '@/components/ui/CheckboxField';
 
 function PurchaseDepositCheckbox({ checked, label }) {
@@ -35,14 +35,14 @@ export function PurchaseDepositProcessButton({ label, disabled = false }) {
         <button
             type="button"
             disabled={disabled}
-            className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-base ${
+            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-base ${
                 disabled
                     ? 'border-[#d8dbe2] bg-[#f3f3f4] text-[#a6adba]'
                     : 'border-[#7aa2d5] bg-white text-[#21539b]'
             }`.trim()}
         >
-            {label}
-            <span className="ml-1">⌄</span>
+            <span>{label}</span>
+            <ChevronDownIcon className="h-4 w-4" />
         </button>
     );
 }

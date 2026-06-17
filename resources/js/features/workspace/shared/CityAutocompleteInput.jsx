@@ -144,7 +144,7 @@ export default function CityAutocompleteInput({
                 <LookupDropdownSurface
                     onClose={() => setOpen(false)}
                     maxHeightLimit={220}
-                    className="border-[#cad1dd] shadow-lg rounded-md"
+                    className="border-[#cad1dd] shadow-lg rounded-[4px]"
                     anchorRef={rootRef}
                 >
                     <div className="overflow-y-auto w-full flex-1 min-h-0">

@@ -162,7 +162,7 @@ export default function SelectField({
             </select>
 
             <div
-                className={`group flex h-11 w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''} ${className}`.trim()}
+                className={`group flex h-11 w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-[#f5f5f5]' : ''} ${className}`.trim()}
             >
                 <button
                     ref={triggerRef}
@@ -171,7 +171,7 @@ export default function SelectField({
                     disabled={disabled}
                     onClick={() => setOpen((o) => !o)}
                     onKeyDown={handleKeyDown}
-                    className={`h-full w-full bg-transparent px-4 text-left text-xs sm:text-sm outline-none disabled:cursor-default disabled:pointer-events-none flex items-center justify-between ${disabled ? 'text-slate-400' : 'text-slate-700'} ${selectClassName}`.trim()}
+                    className={`h-full w-full bg-transparent px-4 text-left text-xs sm:text-sm outline-none disabled:cursor-default disabled:pointer-events-none flex items-center justify-between ${disabled ? 'text-gray-500' : 'text-slate-700'} ${selectClassName}`.trim()}
                     aria-haspopup="listbox"
                     aria-expanded={open}
                     {...props}
@@ -181,7 +181,7 @@ export default function SelectField({
                     </span>
                     <ChevronDown
                         aria-hidden="true"
-                        className={`h-4 w-4 shrink-0 transition-colors duration-150 ${disabled ? 'text-slate-300' : 'text-slate-300 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName.split(' ').filter(c => !c.startsWith('mr-') && !c.startsWith('mx-')).join(' ')}`.trim()}
+                        className={`h-4 w-4 shrink-0 transition-colors duration-150 ${disabled ? 'text-gray-400' : 'text-slate-300 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName.split(' ').filter(c => !c.startsWith('mr-') && !c.startsWith('mx-')).join(' ')}`.trim()}
                         strokeWidth={2.2}
                         absoluteStrokeWidth
                     />

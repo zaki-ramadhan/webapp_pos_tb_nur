@@ -18,7 +18,7 @@ import {
     TransactionToolbarIconButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { SearchIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 
 function FormFieldRow({ label, required = false, children }) {
     return (
@@ -125,9 +125,10 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
 
                     <button
                         type="button"
-                        className="inline-flex h-[36px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                        className="inline-flex h-[36px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                     >
-                        {config.takeButtonLabel} <span className="ml-1 text-xs">⌄</span>
+                        <span>{config.takeButtonLabel}</span>
+                        <ChevronDownIcon className="h-4 w-4" />
                     </button>
                 </div>
 

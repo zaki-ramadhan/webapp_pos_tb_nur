@@ -46,15 +46,15 @@ export default function RadioField({
                     type="radio"
                     disabled={disabled}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`${inputOffsetClassName} shrink-0 border border-slate-400 text-input-brand focus:ring-2 focus:ring-input-focus/30 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${sizeClassName} ${resolvedError ? 'border-error-border' : ''} ${inputClassName}`.trim()}
+                    className={`${inputOffsetClassName} shrink-0 border border-slate-400 text-input-brand focus:ring-2 focus:ring-input-focus/30 disabled:border-gray-200 disabled:bg-[#f5f5f5] disabled:text-gray-400 ${sizeClassName} ${resolvedError ? 'border-error-border' : ''} ${inputClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
                 />
                 <label
                     htmlFor={id}
-                    className={`min-w-0 ${disabled ? 'cursor-default text-slate-400 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
+                    className={`min-w-0 ${disabled ? 'cursor-default text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
                 >
-                    <span className={`${disabled ? 'text-slate-400' : 'text-brand-dark'}`.trim()}>
+                    <span className={`${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
                         {label}
                         {children}
                     </span>

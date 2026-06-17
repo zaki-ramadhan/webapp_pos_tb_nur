@@ -8,6 +8,7 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import {
     CloseIcon,
     FunnelIcon,
+    ChevronDownIcon,
 } from '@/features/workspace/shared/Icons';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -238,7 +239,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                             className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm font-medium text-[#21539b]"
                         >
                             <span>{config.takeButtonLabel}</span>
-                            <span className="text-xs text-[#21539b]/70 font-normal">⌄</span>
+                            <ChevronDownIcon className="h-4 w-4" />
                         </button>
                         <DropdownMenu
                             open={openAmbil}

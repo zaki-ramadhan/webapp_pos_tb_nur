@@ -16,7 +16,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { PinIcon } from '@/features/workspace/shared/Icons';
+import { PinIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
 
 export { DepositAmountField, DepositStamp };
@@ -208,10 +208,10 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                     <div className="flex justify-end">
                         <button
                             type="button"
-                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                            className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
                         >
-                            {values.processButtonLabel}
-                            <span className="ml-1">⌄</span>
+                            <span>{values.processButtonLabel}</span>
+                            <ChevronDownIcon className="h-4 w-4" />
                         </button>
                     </div>
                 ) : null}

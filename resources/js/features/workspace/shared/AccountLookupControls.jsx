@@ -101,7 +101,6 @@ export function AccountLookupField({
                 anchorRef={inputWrapperRef}
                 open={controller.open}
                 query={controller.query}
-                onQueryChange={controller.setQuery}
                 loading={controller.loading}
                 error={controller.error}
                 rows={controller.rows}
@@ -110,7 +109,6 @@ export function AccountLookupField({
                     controller.handleSelect(record, label, onSelectAccount);
                     clearError(contextKey);
                 }}
-                showInlineSearch={isMultiValue}
             />
 
             {feedbackMessage ? (

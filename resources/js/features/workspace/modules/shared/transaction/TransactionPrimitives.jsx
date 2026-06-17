@@ -1,6 +1,7 @@
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 
 import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
+import Tooltip from '@/components/ui/Tooltip';
 
 import { TRANSACTION_SECTION_TITLE_CLASS_NAME } from './transactionStyles';
 
@@ -19,21 +20,23 @@ export function TransactionFieldLabel({ label, required = false, className = '',
 
 export function TransactionSwitch({ checked, onChange }) {
     return (
-        <button
-            type="button"
-            role="switch"
-            aria-checked={checked}
-            onClick={() => onChange(!checked)}
-            className={`relative inline-flex h-[22px] w-[34px] items-center rounded-full transition ${
-                checked ? 'bg-[#376eb1]' : 'bg-[#c7cfdd]'
-            }`.trim()}
-        >
-            <span
-                className={`inline-block h-[16px] w-[16px] rounded-full bg-white shadow transition ${
-                    checked ? 'translate-x-[16px]' : 'translate-x-[3px]'
+        <Tooltip content="ON/OFF Penomoran Otomatis" portal>
+            <button
+                type="button"
+                role="switch"
+                aria-checked={checked}
+                onClick={() => onChange(!checked)}
+                className={`relative inline-flex h-[22px] w-[34px] items-center rounded-full transition ${
+                    checked ? 'bg-[#376eb1]' : 'bg-[#c7cfdd]'
                 }`.trim()}
-            />
-        </button>
+            >
+                <span
+                    className={`inline-block h-[16px] w-[16px] rounded-full bg-white shadow transition ${
+                        checked ? 'translate-x-[16px]' : 'translate-x-[3px]'
+                    }`.trim()}
+                />
+            </button>
+        </Tooltip>
     );
 }
 

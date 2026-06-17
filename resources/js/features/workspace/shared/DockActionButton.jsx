@@ -35,7 +35,7 @@ export default function DockActionButton({
             aria-disabled={isDisabled}
             aria-label={label}
             title={label}
-            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] shadow-[0_5px_10px_rgba(24,53,97,0.18)] ${toneClassName} ${className}`.trim()}
+            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] shadow-[0_3px_5px_rgba(24,53,97,0.15)] ${toneClassName} ${className}`.trim()}
         >
             {loading ? (
                 <Spinner className="h-8 w-8 text-current animate-spin" />

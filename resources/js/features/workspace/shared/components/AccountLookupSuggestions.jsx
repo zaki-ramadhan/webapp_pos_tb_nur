@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import TextInput from '@/components/ui/TextInput';
 import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { buildAccountLookupLabel, buildAccountLookupMeta } from '@/features/workspace/shared/hooks/useAccountLookupController';
@@ -15,8 +14,6 @@ export default function AccountLookupSuggestions({
     emptyLabel = 'Belum ada data akun perkiraan.',
     loadingLabel = 'Memuat akun perkiraan...',
     className = '',
-    showInlineSearch = false,
-    onQueryChange = null,
     anchorRef = null,
 }) {
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
@@ -30,29 +27,6 @@ export default function AccountLookupSuggestions({
 
     return (
         <LookupDropdownSurface className={className} anchorRef={anchorRef}>
-            {showInlineSearch ? (
-                <div className="border-b border-[#e6ebf2] p-3">
-                    <TextInput
-                        value={query}
-                        onChange={(event) => onQueryChange?.(event.target.value)}
-                        placeholder="Cari kode atau nama akun..."
-                        autoComplete="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        trailing={
-                            loading ? (
-                                <LoadingIcon className="h-5 w-5 animate-spin text-[#1f2436]" />
-                            ) : (
-                                <SearchIcon className="h-5 w-5 text-[#1f2436]" />
-                            )
-                        }
-                        className="h-[38px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                        autoFocus
-                    />
-                </div>
-            ) : null}
-
             <div className="max-h-[280px] overflow-y-auto bg-white flex-1 min-h-0">
                 {loading ? (
                     <div className="px-4 py-5 text-center text-sm text-[#5f6779]">{loadingLabel}</div>
