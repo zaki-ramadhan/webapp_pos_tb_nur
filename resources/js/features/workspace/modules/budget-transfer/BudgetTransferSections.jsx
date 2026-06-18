@@ -1,7 +1,7 @@
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import {
     TransactionDateInput,
@@ -41,8 +41,9 @@ function TransferBudgetPanel({ title, children }) {
 
 export function BudgetTransferHeader({ config, values, setValues }) {
     return (
-        <div className="grid gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className="grid gap-x-8 gap-y-3 xl:grid-cols-2">
+            {/* Left side: Year and Type */}
+            <div className="grid gap-y-3 sm:grid-cols-2 sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.year} required />
                 <SelectField
                     value={values.year}
@@ -70,22 +71,10 @@ export function BudgetTransferHeader({ config, values, setValues }) {
                         </option>
                     ))}
                 </SelectField>
-
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder={config.branchPlaceholder}
-                    onRemove={(value) =>
-                        setValues((current) => ({
-                            ...current,
-                            branches: current.branches.filter((item) => item !== value),
-                        }))
-                    }
-                    searchLabel="Cari cabang"
-                />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            {/* Right side: Transfer Number and Date */}
+            <div className="grid gap-y-3 sm:grid-cols-2 sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.transferNumber} required className="sm:text-right" />
                     <TransactionSwitch

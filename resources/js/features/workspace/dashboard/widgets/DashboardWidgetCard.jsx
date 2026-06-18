@@ -28,6 +28,7 @@ export default function DashboardWidgetCard({
     onRemove,
     isRefreshing = false,
     refreshError = null,
+    showRefresh = false,
 }) {
     const [actionsOpen, setActionsOpen] = useState(false);
     const actionsButtonRef = useRef(null);
@@ -43,13 +44,15 @@ export default function DashboardWidgetCard({
                     {refreshError ? <p className="mt-1 text-sm text-[#b45309]">{refreshError}</p> : null}
                 </div>
                 <div className="flex shrink-0 items-center gap-1 self-end sm:self-auto">
-                    <WidgetHeaderAction
-                        label={isRefreshing ? `Memuat ulang widget ${widget.title}` : `Refresh widget ${widget.title}`}
-                        onClick={() => onRefresh?.(widget)}
-                        disabled={isRefreshing}
-                    >
-                        <RefreshIcon className={`h-5 w-5 ${isRefreshing ? 'animate-spin text-[#2353a0]' : ''}`.trim()} />
-                    </WidgetHeaderAction>
+                    {showRefresh && (
+                        <WidgetHeaderAction
+                            label={isRefreshing ? `Memuat ulang widget ${widget.title}` : `Refresh widget ${widget.title}`}
+                            onClick={() => onRefresh?.(widget)}
+                            disabled={isRefreshing}
+                        >
+                            <RefreshIcon className={`h-5 w-5 ${isRefreshing ? 'animate-spin text-[#2353a0]' : ''}`} />
+                        </WidgetHeaderAction>
+                    )}
                     <div className="relative">
                         <WidgetHeaderAction
                             label={`Opsi widget ${widget.title}`}
