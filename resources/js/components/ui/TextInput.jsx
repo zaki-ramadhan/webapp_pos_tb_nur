@@ -179,7 +179,12 @@ export default function TextInput({
     ...props
 }) {
     const inputRef = useRef(null);
-    const [localValue, setLocalValue] = useState(value ?? defaultValue ?? '');
+    const [localValue, setLocalValue] = useState(() => {
+        if (type === 'number') {
+            return value ?? defaultValue ?? '0';
+        }
+        return value ?? defaultValue ?? '';
+    });
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
 
     useEffect(() => {
@@ -202,6 +207,7 @@ export default function TextInput({
 
     const resolvedType = type === 'number' ? 'text' : type;
     const resolvedInputMode = props.inputMode ?? (type === 'number' ? 'decimal' : undefined);
+    const resolvedMin = type === 'number' ? 0 : undefined;
 
     function handleWrappedChange(event) {
         const originalValue = event.target.value;
@@ -402,6 +408,7 @@ export default function TextInput({
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}
+                    min={resolvedMin}
                     {...props}
                     onKeyDown={handleWrappedKeyDown}
                 />
