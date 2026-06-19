@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import DepartmentFormView from '@/features/workspace/modules/department/DepartmentFormView';
 import DepartmentTableView from '@/features/workspace/modules/department/DepartmentTableView';
 
@@ -27,9 +28,10 @@ function mapDepartmentRow(record) {
 }
 
 export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const departmentResource = useBackendIndexResource({
+    const departmentResource = useWorkspaceResource({
         resource: 'departments',
         initialPerPage: 25,
+        mapRow: mapDepartmentRow,
         enabled: true,
     });
     const userResource = useBackendIndexResource({
@@ -44,7 +46,7 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenCont
     });
 
     const resolvedPage = useMemo(() => {
-        const mappedRows = departmentResource.rows.map((row) => mapDepartmentRow(row));
+        const mappedRows = departmentResource.mappedRows;
         const userOptions = userResource.rows.map((row) => ({
             id: row.id,
             label: row.name ?? row.email ?? `User #${row.id}`,
@@ -72,25 +74,13 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenCont
             },
             table: {
                 ...page.table,
-                rows: mappedRows,
+                ...departmentResource.tableProps,
                 pageValue: departmentResource.total.toLocaleString('id-ID'),
-                loading: departmentResource.loading,
                 refreshLabel: departmentResource.loading ? 'Memuat data...' : page.table?.refreshLabel,
                 emptyLabel: departmentResource.error || page.table?.emptyLabel || 'Tidak ada data',
-                onRefresh: departmentResource.reload,
-                pagination: {
-                    page: departmentResource.page,
-                    perPage: departmentResource.perPage,
-                    total: departmentResource.total,
-                    lastPage: departmentResource.lastPage,
-                    from: departmentResource.from,
-                    to: departmentResource.to,
-                    onPageChange: departmentResource.setPage,
-                    onPerPageChange: departmentResource.setPerPage,
-                },
             },
         };
-    }, [branchResource.rows, departmentResource.error, departmentResource.loading, departmentResource.reload, departmentResource.rows, departmentResource.total, departmentResource.page, departmentResource.perPage, departmentResource.lastPage, departmentResource.from, departmentResource.to, departmentResource.setPage, departmentResource.setPerPage, page, userResource.rows]);
+    }, [branchResource.rows, departmentResource.error, departmentResource.loading, departmentResource.mappedRows, departmentResource.tableProps, departmentResource.total, page, userResource.rows]);
 
     return mode === 'table' ? (
         <DepartmentTableView

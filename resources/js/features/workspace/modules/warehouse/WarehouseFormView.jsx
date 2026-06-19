@@ -1,32 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
-import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import { SaveIcon, TrashIcon } from '@/features/workspace/shared/Icons';
-import {
-    WarehouseAddressTab,
-    WarehouseGeneralTab,
-    WarehouseUsersTab,
-} from './WarehouseSections';
-import { buildFormValues } from './warehouseShared';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import {
     createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-
-function renderDockIcon(icon) {
-    if (icon === 'trash') {
-        return <TrashIcon className="h-9 w-9" />;
-    }
-
-    return <SaveIcon className="h-9 w-9" />;
-}
+import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
+import {
+    WarehouseAddressTab,
+    WarehouseGeneralTab,
+    WarehouseUsersTab,
+} from './WarehouseSections';
+import { buildFormValues } from './warehouseShared';
 
 export default function WarehouseFormView({
     config,
@@ -157,54 +148,37 @@ export default function WarehouseFormView({
         });
     }
 
-    const dockActions = isDetail ? config.detailDockActions : config.createDockActions;
-
     return (
-        <>
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0">
-                <PreferencesTabs
-                    tabs={config.tabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                />
-            </div>
-
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                    <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                        {activeTabId === 'warehouse-address' ? (
-                            <WarehouseAddressTab config={config} values={values} onChange={handleChange} />
-                        ) : activeTabId === 'warehouse-users' ? (
-                            <WarehouseUsersTab config={config} values={values} onChange={handleChange} isDetail={isDetail} />
-                        ) : (
-                            <WarehouseGeneralTab config={config} values={values} onChange={handleChange} isDetail={isDetail} />
-                        )}
-                    </div>
-                </div>
-
-                <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                    <div className="flex flex-row gap-3 lg:flex-col">
-                        {dockActions.map((action) => (
-                            <DockActionButton
-                                key={action.id}
-                                label={action.label}
-                                tone={action.tone}
-                                icon={renderDockIcon(action.icon)}
-                                loading={saving && (action.id === 'save' || action.id === 'delete')}
-                                onClick={() => {
-                                    if (action.id === 'save') {
-                                        handleSave();
-                                    } else if (action.id === 'delete') {
-                                        requestDelete();
-                                    }
-                                }}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
+        <ModuleFormTemplate
+            form={{
+                tabs: config.tabs,
+                saveLabel: config.saveLabel,
+            }}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={saving}
+            saveDisabled={saving || !isDirty}
+            onSave={handleSave}
+            actionsSlot={
+                isDetail && config.deleteLabel ? (
+                    <DockActionButton
+                        label={saving ? 'Memproses...' : config.deleteLabel}
+                        tone="danger"
+                        icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                        disabled={saving}
+                        onClick={requestDelete}
+                    />
+                ) : null
+            }
+        >
+            {activeTabId === 'warehouse-address' ? (
+                <WarehouseAddressTab config={config} values={values} onChange={handleChange} />
+            ) : activeTabId === 'warehouse-users' ? (
+                <WarehouseUsersTab config={config} values={values} onChange={handleChange} isDetail={isDetail} />
+            ) : (
+                <WarehouseGeneralTab config={config} values={values} onChange={handleChange} isDetail={isDetail} />
+            )}
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}
@@ -217,8 +191,7 @@ export default function WarehouseFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
-    </>
-);
+        </ModuleFormTemplate>
+    );
 }
 

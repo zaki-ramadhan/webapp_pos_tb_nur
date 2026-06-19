@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
-import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import {
     ItemGeneralTab,
     ItemSalesPurchaseTab,
@@ -24,9 +22,11 @@ import {
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
+import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
 
 export default function ItemsServicesFormView({
     pageId,
@@ -80,6 +80,8 @@ export default function ItemsServicesFormView({
             [field]: nextValue,
         }));
     }
+
+    const saveDisabled = saving || !isDirty || !values.name?.trim();
 
     useWorkspaceDirtyRegistration({
         pageId,
@@ -174,72 +176,54 @@ export default function ItemsServicesFormView({
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0 flex flex-col gap-2 pl-0 pr-2 pt-0 sm:pl-0 lg:flex-row lg:items-end lg:justify-between">
-                <PreferencesTabs
-                    tabs={config.tabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                    className="flex-1 border-none bg-transparent pt-0"
-                />
-
-                {isDetail ? (
-                    <div className="flex flex-wrap items-center gap-1.5 pb-[1px]">
-                        {config.detailQuickActions.map((label) => (
-                            <DetailActionButton key={label} label={label} />
-                        ))}
-                    </div>
-                ) : null}
-            </div>
-
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                    <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-
-                        <div className="flex-1 min-h-0 flex flex-col">
-                            {activeTabId === 'sales-purchase' ? (
-                                <ItemSalesPurchaseTab config={config} values={values} onChange={handleChange} />
-                            ) : activeTabId === 'stock' ? (
-                                <ItemStockTab config={config} values={values} />
-                            ) : activeTabId === 'accounts' ? (
-                                <ItemAccountsTab config={config} values={values} onChange={handleChange} />
-                            ) : activeTabId === 'images' ? (
-                                <ItemImagesTab values={values} onChange={handleChange} />
-                            ) : activeTabId === 'other' ? (
-                                <ItemOtherTab config={config} values={values} onChange={handleChange} />
-                            ) : (
-                                <ItemGeneralTab
-                                    config={config}
-                                    values={values}
-                                    onChange={handleChange}
-                                    isDetail={isDetail}
-                                />
-                            )}
-                        </div>
-                    </div>
+        <ModuleFormTemplate
+            form={config}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                <>
+                    {isDetail ? (
+                        <DockActionButton
+                            label={saving ? 'Memproses...' : 'Hapus'}
+                            tone="danger"
+                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                            disabled={saving}
+                            onClick={requestDelete}
+                        />
+                    ) : null}
+                </>
+            }
+        >
+            {isDetail && config.detailQuickActions?.length > 0 ? (
+                <div className="flex flex-wrap items-center gap-1.5 mb-4 shrink-0 pb-[1px]">
+                    {config.detailQuickActions.map((label) => (
+                        <DetailActionButton key={label} label={label} />
+                    ))}
                 </div>
-
-                <div className="flex shrink-0 flex-row justify-start gap-3 self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                    <div className="flex flex-row gap-3 lg:flex-col">
-                        {(isDetail ? config.detailDockActions : config.createDockActions).map((action) => (
-                            <DockActionButton
-                                key={action.id}
-                                label={action.label}
-                                tone={action.tone}
-                                icon={renderItemsServicesDockIcon(action.icon)}
-                                loading={saving && action.id === 'save'}
-                                onClick={() => {
-                                    if (action.id === 'save') {
-                                        handleSave();
-                                    } else if (action.id === 'delete') {
-                                        requestDelete();
-                                    }
-                                }}
-                            />
-                        ))}
-                    </div>
-                </div>
+            ) : null}
+            <div className="flex-1 min-h-0">
+                {activeTabId === 'sales-purchase' ? (
+                    <ItemSalesPurchaseTab config={config} values={values} onChange={handleChange} />
+                ) : activeTabId === 'stock' ? (
+                    <ItemStockTab config={config} values={values} />
+                ) : activeTabId === 'accounts' ? (
+                    <ItemAccountsTab config={config} values={values} onChange={handleChange} />
+                ) : activeTabId === 'images' ? (
+                    <ItemImagesTab values={values} onChange={handleChange} />
+                ) : activeTabId === 'other' ? (
+                    <ItemOtherTab config={config} values={values} onChange={handleChange} />
+                ) : (
+                    <ItemGeneralTab
+                        config={config}
+                        values={values}
+                        onChange={handleChange}
+                        isDetail={isDetail}
+                    />
+                )}
             </div>
 
             <ConfirmationModal
@@ -271,6 +255,7 @@ export default function ItemsServicesFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
+        </ModuleFormTemplate>
     );
 }
+

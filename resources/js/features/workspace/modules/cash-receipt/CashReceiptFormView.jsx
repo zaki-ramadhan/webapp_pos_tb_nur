@@ -249,7 +249,7 @@ export default function CashReceiptFormView({
                     <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
                         <div className="border-b border-[#d8dde7] px-4 py-4">
                             <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
-                                <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                                <div className="flex flex-col gap-y-3 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                                     <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                                         <TransactionFieldLabel label={config.labels.cashBank} required htmlFor="cashBank" />
                                         <div className="max-w-[320px] w-full">
@@ -274,7 +274,7 @@ export default function CashReceiptFormView({
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col gap-y-3 w-full md:max-w-[480px]">
+                                <div className="flex flex-col gap-y-3 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                                     <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                                         <div className="flex items-center justify-start gap-4">
                                             <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />

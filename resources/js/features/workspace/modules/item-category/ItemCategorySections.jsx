@@ -80,7 +80,7 @@ export function ItemCategoryAccountsTab({ config, values, onAccountChange }) {
         <div className="max-w-[1180px] space-y-3">
             <p className="pt-1 text-base italic leading-7 text-[#1f2436]">{config.accountIntro}</p>
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
                 {config.accountFields.map((field) => (
                     <ItemCategoryFieldRow key={field.id} label={field.label}>
                         <AccountLookupField
@@ -90,7 +90,6 @@ export function ItemCategoryAccountsTab({ config, values, onAccountChange }) {
                             onRemove={() => onAccountChange(field.id, '')}
                             onSelectAccount={(_, label) => onAccountChange(field.id, label)}
                             dialogTitle={`Pilih ${field.label}`}
-                            className="max-w-[640px]"
                         />
                     </ItemCategoryFieldRow>
                 ))}

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import NumberingFormView from './NumberingFormView';
 import NumberingTableView from './NumberingTableView';
 
@@ -34,48 +34,23 @@ function mapNumberingRow(record) {
 
 export default function NumberingView({ page, mode, onOpenContent }) {
     const {
-        rows: backendRows,
-        total,
-        loading,
-        error,
-        reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+        mappedRows,
+        tableProps,
+    } = useWorkspaceResource({
         resource: 'numbering-sequences',
         initialPerPage: 25,
-        enabled: true,
+        mapRow: mapNumberingRow,
     });
-
-    const mappedRows = useMemo(() => backendRows.map((row) => mapNumberingRow(row)), [backendRows]);
 
     const resolvedPage = useMemo(() => ({
         ...page,
         table: {
             ...page.table,
-            rows: mappedRows,
-            pageValue: total.toLocaleString('id-ID'),
-            loading,
-            refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
-            emptyLabel: error || 'Belum ada data',
-            onRefresh: reload,
-            pagination: {
-                page: currentPage,
-                perPage,
-                total,
-                lastPage,
-                from,
-                to,
-                onPageChange: setPage,
-                onPerPageChange: setPerPage,
-            },
+            ...tableProps,
+            pageValue: tableProps.total.toLocaleString('id-ID'),
+            filterOptions: page.table.filters?.[0]?.options ?? [],
         },
-    }), [page, mappedRows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, loading, error, reload]);
+    }), [page, mappedRows, tableProps]);
 
     return mode === 'table' ? (
         <NumberingTableView table={resolvedPage.table} onCreate={onOpenContent} />
@@ -83,3 +58,4 @@ export default function NumberingView({ page, mode, onOpenContent }) {
         <NumberingFormView form={resolvedPage.form} />
     );
 }
+

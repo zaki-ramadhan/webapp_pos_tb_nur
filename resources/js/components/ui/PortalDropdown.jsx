@@ -149,7 +149,7 @@ export default function PortalDropdown({
                     style={positionStyle}
                     className={`flex flex-col min-h-0 overflow-hidden rounded-[4px] border border-[#d6deea] bg-white shadow-md ${className}`.trim()}
                 >
-                    <div className={`flex flex-col overflow-hidden w-full min-h-0 ${panelClassName}`.trim()}>
+                    <div className={`flex flex-col overflow-y-auto w-full min-h-0 ${panelClassName}`.trim()}>
                         {children}
                     </div>
                 </Panel>,

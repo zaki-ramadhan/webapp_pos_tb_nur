@@ -11,14 +11,13 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import SectionTab from '@/features/workspace/shared/SectionTab';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
-import { CloseIcon, SaveIcon, TrashIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import { buildSalaryAllowancePayload } from './salaryAllowanceShared';
 import CheckboxField from '@/components/ui/CheckboxField';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 
 export default function SalaryAllowanceFormView({
     pageId,
@@ -148,113 +147,128 @@ export default function SalaryAllowanceFormView({
         });
     }
 
+    const deleteAction = useMemo(() => {
+        return actions.find((action) => action.id === 'delete');
+    }, [actions]);
+
+    const actionsSlot = deleteAction ? (
+        <DockActionButton
+            label={deleteAction.label}
+            tone="danger"
+            disabled={saving}
+            onClick={requestDelete}
+            icon={<TrashIcon className="h-7 w-7 sm:h-8 sm:w-8" />}
+        />
+    ) : null;
+
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                        <CrudStatusMessage status={status} className="shrink-0 mb-4" />
+        <>
+            <ModuleFormTemplate
+                form={config}
+                status={status}
+                saving={saving}
+                saveDisabled={resolvedSaveDisabled}
+                onSave={handleSave}
+                actionsSlot={actionsSlot}
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5">
+                    {/* Column 1 */}
+                    <div className="space-y-3.5">
+                        <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
+                            <label className="text-xs sm:text-sm text-[#1f2436]">
+                                {fields.nameLabel} <span className="text-[#ED3969]">*</span>
+                            </label>
+                            <TextInput
+                                value={name}
+                                onChange={(event) => setName(event.target.value)}
+                                trailing={isDetail ? <CloseIcon className="h-4.5 w-4.5" /> : null}
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            />
+                        </div>
 
-                        <div className="flex-1 min-h-0 overflow-y-auto">
-                            <div className="grid content-start gap-x-7 gap-y-4 lg:grid-cols-[160px_minmax(0,640px)] lg:items-center">
-                                <label className="text-xs sm:text-sm text-[#1f2436]">
-                                    {fields.nameLabel} <span className="text-[#ED3969]">*</span>
-                                </label>
+                        <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
+                            <div className="text-xs sm:text-sm text-[#1f2436]">{fields.typeLabel}</div>
+                            {isDetail && !editableDetail ? (
                                 <TextInput
-                                    value={name}
-                                    onChange={(event) => setName(event.target.value)}
-                                    trailing={isDetail ? <CloseIcon className="h-4.5 w-4.5" /> : null}
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                                />
-
-                                <div className="text-xs sm:text-sm text-[#1f2436]">{fields.typeLabel}</div>
-                                {isDetail && !editableDetail ? (
-                                    <TextInput
-                                        value={entry.type}
-                                        readOnly
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
-                                        inputClassName="text-xs sm:text-sm text-[#6a7286]"
-                                    />
-                                ) : (
-                                    <SelectField
-                                        value={type}
-                                        onChange={(event) => setType(event.target.value)}
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                                    >
-                                        {config.typeOptions.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        ))}
-                                    </SelectField>
-                                )}
-
-                                <div className="text-xs sm:text-sm text-[#1f2436]">{fields.payDeductLabel}</div>
-                                <TextInput
-                                    value={entry.payDeduct}
+                                    value={entry.type}
                                     readOnly
-                                    className="h-[40px] max-w-[390px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
                                     inputClassName="text-xs sm:text-sm text-[#6a7286]"
                                 />
+                            ) : (
+                                <SelectField
+                                    value={type}
+                                    onChange={(event) => setType(event.target.value)}
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                >
+                                    {config.typeOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </SelectField>
+                            )}
+                        </div>
 
-                                <label className="text-xs sm:text-sm text-[#1f2436]">
-                                    {fields.expenseAccountLabel} <span className="text-[#ED3969]">*</span>
-                                </label>
-                                <AccountLookupField
-                                    value={expenseAccount}
-                                    placeholder="Cari/Pilih Akun Perkiraan..."
-                                    disabled={isDetail}
-                                    searchLabel="Cari akun beban"
-                                    dialogTitle="Pilih Akun Beban"
-                                    heightClassName="min-h-[38px]"
-                                    className="rounded-[4px] border-[#cfd6e2]"
-                                    contentClassName="px-3 py-1.5"
-                                    chipClassName="text-[#24324a]"
-                                    onRemove={() => {
-                                        setExpenseAccount('');
-                                        setExpenseAccountId(null);
-                                    }}
-                                    onSelectAccount={(record, label) => {
-                                        setExpenseAccount(label);
-                                        setExpenseAccountId(record?.id ?? null);
-                                    }}
-                                />
-
-                                {isDetail ? (
-                                    <>
-                                        <div className="text-xs sm:text-sm text-[#1f2436]">{fields.inactiveLabel}</div>
-                                        <CheckboxField
-                                            id="inactive"
-                                            label={fields.inactiveOptionLabel}
-                                            checked={inactive}
-                                            onChange={(event) => setInactive(event.target.checked)}
-                                            inputClassName="h-6 w-6 rounded-[4px]"
-                                            containerClassName="w-auto inline-flex items-center h-[40px]"
-                                            labelClassName="text-xs sm:text-sm text-[#1f2436]"
-                                        />
-                                    </>
-                                ) : null}
-                            </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
+                            <div className="text-xs sm:text-sm text-[#1f2436]">{fields.payDeductLabel}</div>
+                            <TextInput
+                                value={entry.payDeduct}
+                                readOnly
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
+                                inputClassName="text-xs sm:text-sm text-[#6a7286]"
+                            />
                         </div>
                     </div>
-                </div>
 
-                <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                    {actions.map((action) => (
-                        <DockActionButton
-                            key={action.id}
-                            label={action.label}
-                            tone={action.tone === 'danger' ? 'danger' : 'primary'}
-                            disabled={action.id === 'save' ? resolvedSaveDisabled : saving}
-                            loading={saving && (action.id === 'save' || action.id === 'delete')}
-                            onClick={action.id === 'save' ? handleSave : action.id === 'delete' ? requestDelete : undefined}
-                            icon={action.icon === 'trash' ? <TrashIcon className="h-7 w-7 sm:h-8 sm:w-8" /> : <SaveIcon className="h-7 w-7 sm:h-8 sm:w-8" />}
-                        />
-                    ))}
+                    {/* Column 2 */}
+                    <div className="space-y-3.5">
+                        <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
+                            <label className="text-xs sm:text-sm text-[#1f2436]">
+                                {fields.expenseAccountLabel} <span className="text-[#ED3969]">*</span>
+                            </label>
+                            <AccountLookupField
+                                value={expenseAccount}
+                                placeholder="Cari/Pilih Akun Perkiraan..."
+                                disabled={isDetail}
+                                searchLabel="Cari akun beban"
+                                dialogTitle="Pilih Akun Beban"
+                                heightClassName="min-h-[38px]"
+                                className="rounded-[4px] border-[#cfd6e2]"
+                                contentClassName="px-3 py-1.5"
+                                chipClassName="text-[#24324a]"
+                                onRemove={() => {
+                                    setExpenseAccount('');
+                                    setExpenseAccountId(null);
+                                }}
+                                onSelectAccount={(record, label) => {
+                                    setExpenseAccount(label);
+                                    setExpenseAccountId(record?.id ?? null);
+                                }}
+                            />
+                        </div>
+
+                        {isDetail ? (
+                            <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
+                                <div className="text-xs sm:text-sm text-[#1f2436]">{fields.inactiveLabel}</div>
+                                <div className="flex items-center h-[40px]">
+                                    <CheckboxField
+                                        id="inactive"
+                                        label={fields.inactiveOptionLabel}
+                                        checked={inactive}
+                                        onChange={(event) => setInactive(event.target.checked)}
+                                        inputClassName="h-6 w-6 rounded-[4px]"
+                                        containerClassName="w-auto inline-flex items-center"
+                                        labelClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
-            </div>
+            </ModuleFormTemplate>
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}
@@ -267,6 +281,6 @@ export default function SalaryAllowanceFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
+        </>
     );
 }

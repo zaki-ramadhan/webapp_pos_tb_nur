@@ -8,8 +8,6 @@ import {
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { buildAccountDetailRecord } from './accountsConfig';
@@ -25,7 +23,9 @@ import {
     buildComparableFormValues,
     buildFormState,
 } from './accountsShared';
-import { AccountsDockActions } from './accountsViewShared';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
+import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
 
 export default function AccountsFormView({ config, backendRows, activeLevel2Tab, onOpenDetail, onCloseDetail, onReload }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -74,7 +74,6 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
         }));
     }
 
-    const dockActions = isDetail ? config.dock.detailActions : config.dock.createActions;
     const validationMessage = useMemo(
         () =>
             validateRequiredChecks([
@@ -156,45 +155,41 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
     }
 
     return (
-        <>
-            <div className="flex h-full min-h-0 flex-col overflow-hidden">
-                <div className="shrink-0">
-                    <PreferencesTabs
-                        tabs={tabs}
-                        activeTabId={activeTabId}
-                        onSelectTab={setActiveTabId}
+        <ModuleFormTemplate
+            form={{
+                tabs: tabs,
+                saveLabel: 'Simpan',
+            }}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                isDetail ? (
+                    <DockActionButton
+                        label={saving ? 'Memproses...' : 'Hapus'}
+                        tone="danger"
+                        icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                        disabled={saving}
+                        onClick={() => setDeleteModalOpen(true)}
                     />
-                </div>
-
-                <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                    <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                        <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col lg:order-1">
-                            <div className="max-w-[1260px]">
-                                <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                                {activeTabId === 'opening-balance' ? (
-                                    <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
-                                ) : activeTabId === 'others' ? (
-                                    <AccountsOthersTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
-                                ) : activeTabId === 'children' ? (
-                                    <AccountsChildrenTab values={values} />
-                                ) : (
-                                    <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                        <AccountsDockActions
-                            actions={dockActions}
-                            onSave={handleSave}
-                            onDelete={() => setDeleteModalOpen(true)}
-                            saveDisabled={saveDisabled}
-                            saving={saving}
-                        />
-                    </div>
-                </div>
+                ) : null
+            }
+        >
+            <div className="flex-1 min-h-0">
+                {activeTabId === 'opening-balance' ? (
+                    <AccountsOpeningBalanceTab config={config} values={values} onChange={handleChange} />
+                ) : activeTabId === 'others' ? (
+                    <AccountsOthersTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
+                ) : activeTabId === 'children' ? (
+                    <AccountsChildrenTab values={values} />
+                ) : (
+                    <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
+                )}
             </div>
+
             <ConfirmationModal
                 open={deleteModalOpen}
                 title="Hapus akun perkiraan"
@@ -223,6 +218,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={handleDelete}
             />
-        </>
+        </ModuleFormTemplate>
     );
 }
+

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -8,10 +9,7 @@ import {
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
@@ -101,6 +99,10 @@ export default function EmployeeFormView({
     }, [initialValues, isDirty]);
 
     function handleChange(field, nextValue) {
+        if (errors[field]) {
+            setErrors((prev) => ({ ...prev, [field]: null }));
+        }
+
         if (field === 'website') {
             setErrors((currentErrors) => ({
                 ...currentErrors,
@@ -176,7 +178,8 @@ export default function EmployeeFormView({
     async function handleSave() {
         const fieldErrors = validateEmployeeFields(values);
         if (Object.keys(fieldErrors).length > 0) {
-            rejectCrudFormAction(validationMessage, { setStatus, fieldErrors });
+            setErrors(fieldErrors);
+            rejectCrudFormAction(validationMessage || 'Tolong lengkapi semua kolom yang wajib diisi.', { setStatus });
             return;
         }
 
@@ -238,40 +241,19 @@ export default function EmployeeFormView({
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0">
-                <PreferencesTabs
-                    tabs={tabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                />
-            </div>
-
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                        <CrudStatusMessage status={status} className="shrink-0 mb-4" />
-
-                        <div className="flex-1 min-h-0 overflow-y-auto">
-                            {activeTabId === 'employee-address' ? (
-                                <EmployeeAddressTab values={values} onChange={handleChange} />
-                            ) : activeTabId === 'employee-tax' ? (
-                                <EmployeeTaxTab form={form} values={values} onChange={handleChange} />
-                            ) : activeTabId === 'employee-bank' ? (
-                                <EmployeeBankTab form={form} values={values} onChange={handleChange} />
-                            ) : (
-                                <EmployeeGeneralTab form={form} values={values} errors={errors} onChange={handleChange} />
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex shrink-0 flex-row justify-start gap-3 self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                    <DockSaveButton
-                        label={saving ? 'Memproses...' : form.saveLabel}
-                        disabled={saveDisabled}
-                        onClick={handleSave}
-                    />
+        <ModuleFormTemplate
+            form={{
+                tabs: tabs,
+                saveLabel: form.saveLabel,
+            }}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                <>
                     {isDetailMode ? (
                         <DockActionButton
                             label={saving ? 'Memproses...' : 'Hapus'}
@@ -282,7 +264,19 @@ export default function EmployeeFormView({
                         />
                     ) : null}
                     <AttachmentSelectButton label={form.attachmentLabel} onOpen={() => setAttachmentModalOpen(true)} />
-                </div>
+                </>
+            }
+        >
+            <div className="flex-1 min-h-0">
+                {activeTabId === 'employee-address' ? (
+                    <EmployeeAddressTab values={values} onChange={handleChange} />
+                ) : activeTabId === 'employee-tax' ? (
+                    <EmployeeTaxTab form={form} values={values} onChange={handleChange} />
+                ) : activeTabId === 'employee-bank' ? (
+                    <EmployeeBankTab form={form} values={values} onChange={handleChange} />
+                ) : (
+                    <EmployeeGeneralTab form={form} values={values} errors={errors} onChange={handleChange} />
+                )}
             </div>
 
             <EmployeeAttachmentModal
@@ -303,6 +297,6 @@ export default function EmployeeFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
+        </ModuleFormTemplate>
     );
 }

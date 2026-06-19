@@ -1,37 +1,13 @@
-import { useMemo, useState } from 'react';
-import Pagination from '@/components/ui/Pagination';
-
-
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
-import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { PlusIcon, RefreshIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { useState } from 'react';
+import ModuleTableTemplate from '@/components/ui/ModuleTableTemplate';
+import { RefreshIcon } from '@/features/workspace/shared/Icons';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
-import { useColumnVisibility, getTableSchemaKey } from '@/features/workspace/shared/columnVisibility';
 
-export default function CurrencyTableView({ page, rows, total, loading, error, onCreate, onOpenDetail, onRefresh }) {
-    const table = page.currency.table;
-    const [keyword, setKeyword] = useState('');
+function SyncRateButton({ onRefresh, loading }) {
     const [syncing, setSyncing] = useState(false);
 
-    const schemaKey = getTableSchemaKey(table.columns);
-    const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, table.columns);
-
-    const visibleColumns = useMemo(() => {
-        return table.columns.filter((column) => visibleColumnIds.includes(column.id));
-    }, [table.columns, visibleColumnIds]);
-
     async function handleSync() {
-        if (syncing) {
-            return;
-        }
+        if (syncing || loading) return;
 
         setSyncing(true);
         try {
@@ -47,140 +23,49 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
         }
     }
 
-    const filteredRows = useMemo(() => {
-        const normalizedKeyword = keyword.trim().toLowerCase();
-
-        return rows.filter((row) => {
-            if (!normalizedKeyword) {
-                return true;
-            }
-
-            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 2).some((column) =>
-                String(row[column.id] ?? '')
-                    .toLowerCase()
-                    .includes(normalizedKeyword),
-            );
-        });
-    }, [keyword, rows]);
+    const busy = syncing || loading;
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-            <TableToolbar
-                size="compact"
-                createButton={{
-                    label: table.createLabel,
-                    onClick: onCreate,
-                    icon: <PlusIcon className="h-6 w-6" />,
-                }}
-                refreshButton={{
-                    label: syncing || loading ? 'Sinkronisasi Kurs...' : 'Sinkronisasi Kurs API',
-                    onClick: handleSync,
-                    loading: syncing || loading,
-                    icon: <RefreshIcon className="h-5 w-5" />,
-                }}
-                resourceName="currencies"
-                onRefresh={onRefresh}
-                exportConfig={{
-                    columns: table.columns,
-                    rows: filteredRows,
-                    filename: 'mata-uang',
-                    title: 'Laporan Kurs Mata Uang',
-                }}
-                columnSettings={{
-                    columns: table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
-                    visibleIds: visibleColumnIds,
-                    onToggle: (columnId) => {
-                        setVisibleColumnIds(prev =>
-                            prev.includes(columnId)
-                                ? prev.filter(id => id !== columnId)
-                                : [...prev, columnId]
-                        );
-                    }
-                }}
-                search={{
-                    value: keyword,
-                    onChange: (event) => setKeyword(event.target.value),
-                    placeholder: table.searchPlaceholder,
-                    widthClassName: 'sm:w-[340px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
-                }}
-                />
+        <button
+            type="button"
+            onClick={handleSync}
+            disabled={busy}
+            aria-label={busy ? 'Sinkronisasi Kurs...' : 'Sinkronisasi Kurs API'}
+            title={busy ? 'Sinkronisasi Kurs...' : 'Sinkronisasi Kurs API'}
+            className={`inline-flex h-[34px] shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-[#7aa2d5] bg-white px-3 text-sm text-[#2353a0] transition hover:bg-[#e8f2ff] ${busy ? 'pointer-events-none opacity-70' : ''}`.trim()}
+        >
+            <RefreshIcon className={`h-4 w-4 ${busy ? 'animate-spin' : ''}`.trim()} />
+            <span className="hidden sm:inline">{busy ? 'Sinkronisasi...' : 'Sinkronisasi Kurs'}</span>
+        </button>
+    );
+}
 
-            <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
-                        <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
-                            {visibleColumns.map((column) => (
-                                <DataTableHead
-                                    key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`.trim()}
-                                >
-                                    <span className={`flex items-center gap-2 justify-center`.trim()}>
-                                        <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                        <span>{column.label}</span>
-                                    </span>
-                                </DataTableHead>
-                            ))}
-                        </tr>
-                    </DataTableHeader>
+export default function CurrencyTableView({ page, rows, total, loading, error, onCreate, onOpenDetail, onRefresh }) {
+    const table = page.currency.table;
 
-                    <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
-                                <DataTableRow
-                                    key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
-                                    onClick={() =>
-                                        onOpenDetail?.({
-                                            recordId: row.id,
-                                            label: row.countryName,
-                                            tabLabel: row.tabLabel ?? row.countryName,
-                                        })
-                                    }
-                                >
-                                                                        {filteredRows.length > 0 ? (
-                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
-                                        {index + 1}
-                                    </DataTableCell>
-                                    ) : null}
-                                    {visibleColumns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className={`text-left px-3 text-base text-[#131a28]`.trim()}
-                                        >
-                                            {formatTableTextValue(row[column.id])}
-                                        </DataTableCell>
-                                    ))}
-                                </DataTableRow>
-                            ))
-                        ) : (
-                            <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
-                                    {error || (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : 'Belum ada data')}
-                                </DataTableCell>
-                            </DataTableRow>
-                        )}
-                    </DataTableBody>
-                </DataTable>
-            </div>
+    const resolvedTable = {
+        ...table,
+        rows,
+        emptyLabel: error || (rows.length === 0 ? 'Belum ada data' : undefined),
+        onRefresh,
+        loading,
+    };
 
-            {table.pagination ? (
-                <Pagination
-                    page={table.pagination.page}
-                    perPage={table.pagination.perPage}
-                    total={table.pagination.total}
-                    lastPage={table.pagination.lastPage}
-                    from={table.pagination.from}
-                    to={table.pagination.to}
-                    onPageChange={table.pagination.onPageChange}
-                    onPerPageChange={table.pagination.onPerPageChange}
-                    className="mt-3"
-                />
-            ) : null}
-        </div>
+    return (
+        <ModuleTableTemplate
+            table={resolvedTable}
+            resourceName="currencies"
+            exportFilename="mata-uang"
+            exportTitle="Laporan Kurs Mata Uang"
+            onCreate={onCreate}
+            onOpenDetail={(item) =>
+                onOpenDetail?.({
+                    recordId: item.recordId,
+                    label: item.label,
+                    tabLabel: item.tabLabel ?? item.label,
+                })
+            }
+            extraToolbarSlot={<SyncRateButton onRefresh={onRefresh} loading={loading} />}
+        />
     );
 }

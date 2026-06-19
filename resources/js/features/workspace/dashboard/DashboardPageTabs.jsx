@@ -73,9 +73,9 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                 anchorRef={buttonRef}
                 widthClassName="w-[min(18rem,calc(100vw-1rem))]"
                 className="z-[60]"
-                panelClassName="rounded-none border-tab-overflow-panel-border p-0 shadow-[0_8px_18px_rgba(15,23,42,0.14)]"
+                noPadding
             >
-                <div className="py-1">
+                <div className="max-h-[280px] overflow-y-auto py-1 [scrollbar-width:thin] [scrollbar-color:#c7d0e0_transparent]">
                     {tabs.map((tab) => (
                         <DropdownMenuItem
                             key={tab.id}

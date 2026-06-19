@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import SalesCommissionFormView from './SalesCommissionFormView';
 import SalesCommissionTableView from './SalesCommissionTableView';
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 
 export default function SalesCommissionView({
     page,
@@ -12,26 +12,13 @@ export default function SalesCommissionView({
     onCloseDetail,
 }) {
     const {
-        rows,
-        total,
-        loading,
-        error,
+        mappedRows,
+        tableProps,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to,
-    } = useBackendIndexResource({
+    } = useWorkspaceResource({
         resource: 'sales-commissions',
         initialPerPage: 25,
-    });
-
-    const config = useMemo(() => {
-        const baseConfig = page.salesCommission;
-        const mappedRows = rows.map((row) => {
+        mapRow: (row) => {
             let meta = {};
             try {
                 if (typeof row.metadata === 'object' && row.metadata !== null) {
@@ -62,35 +49,26 @@ export default function SalesCommissionView({
                 inactive: Boolean(row.is_closed),
                 document_number: row.document_number,
             };
-        });
+        }
+    });
 
+    const config = useMemo(() => {
+        const baseConfig = page.salesCommission;
         return {
             ...baseConfig,
             table: {
                 ...baseConfig.table,
-                rows: mappedRows,
-                pageValue: total.toLocaleString('id-ID'),
-                refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...tableProps,
+                pageValue: tableProps.total.toLocaleString('id-ID'),
             },
         };
-    }, [loading, page.salesCommission, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [page.salesCommission, tableProps]);
 
     return mode === 'table' ? (
         <SalesCommissionTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
-            onRefresh={reload}
         />
     ) : (
         <SalesCommissionFormView
@@ -103,3 +81,4 @@ export default function SalesCommissionView({
         />
     );
 }
+

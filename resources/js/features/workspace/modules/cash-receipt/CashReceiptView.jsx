@@ -1,68 +1,41 @@
 import { useMemo } from 'react';
-
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import CashReceiptFormView from '@/features/workspace/modules/cash-receipt/CashReceiptFormView';
 import CashReceiptTableView from '@/features/workspace/modules/cash-receipt/CashReceiptTableView';
 import { buildCashReceiptFilters, buildCashReceiptRow } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
 
 export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const {
-        rows,
-        total,
-        loading,
-        error,
-        reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+    const resource = useWorkspaceResource({
         resource: 'cash-receipts',
         initialPerPage: 25,
+        mapRow: buildCashReceiptRow,
     });
-    const config = useMemo(
-        () => {
-            const mappedRows = rows.map(buildCashReceiptRow);
 
-            return {
-                ...page.cashReceipt,
-                rowMap: mappedRows.reduce((result, row) => {
-                    result[row.id] = row;
-                    return result;
-                }, {}),
-                table: {
-                    ...page.cashReceipt.table,
-                    rows: mappedRows,
-                    filters: buildCashReceiptFilters(page.cashReceipt.table?.filters, mappedRows),
-                    pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
-                    refreshLabel: loading ? 'Memuat data...' : page.cashReceipt.table?.refreshLabel,
-                },
-            };
-        },
-        [loading, page.cashReceipt, rows, total],
-    );
+    const config = useMemo(() => {
+        const rows = resource.mappedRows;
+        return {
+            ...page.cashReceipt,
+            rowMap: rows.reduce((result, row) => {
+                result[row.id] = row;
+                return result;
+            }, {}),
+            table: {
+                ...page.cashReceipt.table,
+                ...resource.tableProps,
+                filters: buildCashReceiptFilters(page.cashReceipt.table?.filters, rows),
+                pageValue: resource.total.toLocaleString('id-ID'),
+            },
+        };
+    }, [page.cashReceipt, resource]);
 
     return mode === 'table' ? (
         <CashReceiptTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
-            loading={loading}
-            error={error}
-            onRefresh={reload}
+            loading={resource.loading}
+            error={resource.error}
+            onRefresh={resource.reload}
         />
     ) : (
         <CashReceiptFormView
@@ -72,7 +45,7 @@ export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenCon
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
-            onRefresh={reload}
+            onRefresh={resource.reload}
         />
     );
 }

@@ -5,7 +5,7 @@ import { currencyReferenceOptions } from '@/features/workspace/shared/referenceL
 
 function CurrencyFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,570px)] lg:items-start">
+        <div className="grid gap-3 lg:grid-cols-[180px_1fr] lg:items-start">
             <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
@@ -17,7 +17,7 @@ function CurrencyFieldRow({ label, required = false, children }) {
 
 export function CurrencyDefaultAccountsSection({ config, values, setValues }) {
     return (
-        <div className="max-w-[1180px] space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[1180px]">
             {config.accountFields.map((field) => (
                 <CurrencyFieldRow key={field.id} label={field.label}>
                     <AccountLookupField
@@ -60,7 +60,7 @@ export function CurrencyDefaultAccountsSection({ config, values, setValues }) {
 
 export function CurrencyGeneralSection({ config, values, setValues, isDetailMode }) {
     return (
-        <div className="max-w-[1180px] space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[1180px]">
             <CurrencyFieldRow label={config.labels.countryName} required>
                 {isDetailMode ? (
                     <ChipLookupField

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import { buildAccountsConfig } from './accountsConfig';
 import AccountsFormView from './AccountsFormView';
 import AccountsTableView from './AccountsTableView';
@@ -8,22 +8,18 @@ import { mapAccountRow } from './accountsShared';
 
 export default function AccountsView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const {
+        mappedRows,
         rows: backendRows,
+        tableProps,
+        reload,
         loading,
         error,
-        reload,
-        total,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+    } = useWorkspaceResource({
         resource: 'accounts',
         initialPerPage: 25,
+        mapRow: mapAccountRow,
     });
+
     const config = useMemo(() => {
         const baseConfig = buildAccountsConfig(page.accounts);
 
@@ -31,21 +27,12 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
             ...baseConfig,
             table: {
                 ...baseConfig.table,
-                rows: backendRows.map(mapAccountRow),
-                pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                ...tableProps,
+                rows: mappedRows,
+                pageValue: tableProps.total.toLocaleString('id-ID'),
             },
         };
-    }, [backendRows, page.accounts, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [mappedRows, page.accounts, tableProps]);
 
     return mode === 'table' ? (
         <AccountsTableView
@@ -67,3 +54,4 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
         />
     );
 }
+

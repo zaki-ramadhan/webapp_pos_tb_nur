@@ -7,14 +7,12 @@ import {
     DockIcon,
 } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
 import { renderPartnerTab } from '@/features/workspace/modules/business-partner/BusinessPartnerFormSections';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
-import Spinner from '@/components/ui/Spinner';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 
 function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
@@ -113,79 +111,46 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         }));
     }
 
-    const dockActions = isDetail
-        ? [
-              {
-                  id: 'save',
-                  label: 'Simpan',
-                  tone: 'primary',
-                  icon: 'save',
-                  onClick: handleSave,
-                  disabled: processing,
-              },
-              { id: 'attachment', label: 'Lampiran', tone: 'primary', icon: 'attachment' },
-              {
-                  id: 'delete',
-                  label: 'Hapus',
-                  tone: 'danger',
-                  icon: 'trash',
-                  onClick: handleDelete,
-                  disabled: processing,
-              },
-          ]
-        : [
-              {
-                  id: 'save',
-                  label: 'Simpan',
-                  tone: 'primary',
-                  icon: 'save',
-                  onClick: handleSave,
-                  disabled: processing,
-              },
-              { id: 'attachment', label: 'Lampiran', tone: 'primary', icon: 'attachment' },
-          ];
+    const saveDisabled = processing || !values.name?.trim();
 
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0">
-                <PreferencesTabs
-                    tabs={config.tabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                />
+        <ModuleFormTemplate
+            form={config}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={processing}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                <>
+                    <DockActionButton
+                        label="Lampiran"
+                        tone="primary"
+                        icon={<DockIcon icon="attachment" />}
+                    />
+                    {isDetail ? (
+                        <DockActionButton
+                            label={processing ? 'Memproses...' : 'Hapus'}
+                            tone="danger"
+                            icon={<DockIcon icon="trash" />}
+                            disabled={processing}
+                            onClick={handleDelete}
+                        />
+                    ) : null}
+                </>
+            }
+        >
+            <div className="flex-1 min-h-0">
+                {renderPartnerTab({
+                    config,
+                    values,
+                    isDetail,
+                    activeTabId,
+                    onChange: handleChange,
+                })}
             </div>
-
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                    <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                        {renderPartnerTab({
-                            config,
-                            values,
-                            isDetail,
-                            activeTabId,
-                            onChange: handleChange,
-                        })}
-                    </div>
-                </div>
-
-                <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                    <div className="flex flex-row gap-3 lg:flex-col">
-                        {dockActions.map((action) => (
-                            <DockActionButton
-                                key={action.id}
-                                label={action.label}
-                                tone={action.tone}
-                                icon={<DockIcon icon={action.icon} />}
-                                onClick={action.onClick}
-                                disabled={action.disabled}
-                                loading={processing && (action.id === 'save' || action.id === 'delete')}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
+        </ModuleFormTemplate>
     );
 }
 
@@ -199,21 +164,13 @@ export default function BusinessPartnerView({
 }) {
     const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
     const {
-        rows,
-        total,
-        loading,
-        error,
+        mappedRows,
+        tableProps,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+    } = useWorkspaceResource({
         resource: resourceName,
         initialPerPage: 25,
+        mapRow: mapPartnerRow,
     });
 
     const pageConfig = partnerType === 'supplier' ? page.suppliers ?? {} : page.customers ?? {};
@@ -223,22 +180,12 @@ export default function BusinessPartnerView({
             ...baseConfig,
             table: {
                 ...baseConfig.table,
-                rows: rows.map(mapPartnerRow),
-                pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
-                refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
+                ...tableProps,
+                rows: mappedRows,
+                pageValue: tableProps.total.toLocaleString('id-ID'),
             },
         };
-    }, [loading, pageConfig, partnerType, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [pageConfig, partnerType, mappedRows, tableProps]);
 
     return mode === 'table' ? (
         <BusinessPartnerTableView
@@ -256,3 +203,4 @@ export default function BusinessPartnerView({
         />
     );
 }
+

@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import TextInput from '@/components/ui/TextInput';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import SectionTab from '@/features/workspace/shared/SectionTab';
-import { SaveIcon, TrashIcon } from '@/features/workspace/shared/Icons';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { PrefixedInput, PrefixedTextArea, ShippingFieldRow } from './ShippingSections';
 import { buildDefaultValues } from './shippingShared';
 import {
@@ -12,42 +11,11 @@ import {
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteInput';
-
-function renderDockIcon(icon) {
-    if (icon === 'trash') {
-        return <TrashIcon className="h-9 w-9" />;
-    }
-    return <SaveIcon className="h-9 w-9" />;
-}
-
-const createDockActions = [
-    {
-        id: 'save',
-        label: 'Simpan',
-        icon: 'save',
-        tone: 'muted',
-    },
-];
-
-const detailDockActions = [
-    {
-        id: 'save',
-        label: 'Simpan',
-        icon: 'save',
-        tone: 'muted',
-    },
-    {
-        id: 'delete',
-        label: 'Hapus',
-        icon: 'trash',
-        tone: 'danger',
-    },
-];
 
 export default function ShippingFormView({
     form,
@@ -84,13 +52,7 @@ export default function ShippingFormView({
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [activeTabInstanceId]);
-
-    useEffect(() => {
-        if (!isDirty) {
-            setValues(initialValues);
-        }
-    }, [initialValues, isDirty]);
+    }, [activeTabInstanceId, initialValues]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -110,7 +72,6 @@ export default function ShippingFormView({
         if (!values.name?.trim()) {
             rejectCrudFormAction('Nama Pengiriman wajib diisi.', {
                 setStatus,
-                fieldErrors: { name: 'Nama Pengiriman wajib diisi.' },
             });
             return;
         }
@@ -187,14 +148,41 @@ export default function ShippingFormView({
         });
     }
 
-    const dockActions = isDetail ? detailDockActions : createDockActions;
+    const actionsSlot = isDetail ? (
+        <DockActionButton
+            label="Hapus"
+            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+            tone="danger"
+            disabled={saving}
+            onClick={requestDelete}
+        />
+    ) : null;
+
+    const resolvedForm = useMemo(() => {
+        return {
+            ...form,
+            tabs: [{ id: 'shipping-general', label: 'Metode Pengiriman' }],
+        };
+    }, [form]);
 
     return (
         <>
-            <div className="flex flex-1 min-h-0 flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden">
-                <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                    <div className="space-y-3">
+            <ModuleFormTemplate
+                form={resolvedForm}
+                activeTabId="shipping-general"
+                setActiveTabId={() => {}}
+                status={status}
+                saving={saving}
+                saveDisabled={saving || !isDirty}
+                onSave={handleSave}
+                actionsSlot={actionsSlot}
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-[980px]">
+                    <div className="space-y-3.5">
+                        <div className="border-b border-[#d9dee8] pb-1.5 mb-2">
+                            <h3 className="text-base font-semibold text-[#1f2436]">Informasi Pengiriman</h3>
+                        </div>
+
                         <ShippingFieldRow label={form.labels.name} required>
                             <TextInput
                                 id="name"
@@ -223,6 +211,12 @@ export default function ShippingFormView({
                                 inputClassName="text-xs sm:text-sm text-[#1f2436]"
                             />
                         </ShippingFieldRow>
+                    </div>
+
+                    <div className="space-y-3.5">
+                        <div className="border-b border-[#d9dee8] pb-1.5 mb-2">
+                            <h3 className="text-base font-semibold text-[#1f2436]">Alamat</h3>
+                        </div>
 
                         <ShippingFieldRow label={form.labels.address}>
                             <div className="space-y-3">
@@ -269,28 +263,7 @@ export default function ShippingFormView({
                         </ShippingFieldRow>
                     </div>
                 </div>
-
-                <div className="order-1 flex justify-end lg:order-2 lg:shrink-0 lg:self-start">
-                    <div className="flex flex-row gap-3 lg:flex-col">
-                        {dockActions.map((action) => (
-                            <DockActionButton
-                                key={action.id}
-                                label={action.label}
-                                tone={action.tone}
-                                icon={renderDockIcon(action.icon)}
-                                loading={saving && (action.id === 'save' || action.id === 'delete')}
-                                onClick={() => {
-                                    if (action.id === 'save') {
-                                        handleSave();
-                                    } else if (action.id === 'delete') {
-                                        requestDelete();
-                                    }
-                                }}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
+            </ModuleFormTemplate>
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}

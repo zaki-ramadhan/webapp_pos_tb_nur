@@ -1,30 +1,21 @@
 import { useMemo } from 'react';
-
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import CurrencyFormView from './CurrencyFormView';
 import CurrencyTableView from './CurrencyTableView';
 import { mapCurrencyRow } from './currencyShared';
 
 export default function CurrencyView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const {
-        rows: backendRows,
-        total,
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+        mappedRows,
+        tableProps,
+    } = useWorkspaceResource({
         resource: 'currencies',
         initialPerPage: 25,
-        enabled: true,
+        mapRow: (row) => mapCurrencyRow(row),
     });
-    const mappedRows = useMemo(() => backendRows.map((row) => mapCurrencyRow(row)), [backendRows]);
 
     const resolvedPage = useMemo(() => ({
         ...page,
@@ -32,26 +23,16 @@ export default function CurrencyView({ page, mode, activeLevel2Tab, onOpenConten
             ...page.currency,
             table: {
                 ...page.currency?.table,
+                ...tableProps,
                 rows: mappedRows,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
             },
         },
-    }), [page, mappedRows, currentPage, perPage, total, lastPage, from, to, setPage, setPerPage]);
+    }), [page, mappedRows, tableProps]);
 
     return mode === 'table' ? (
         <CurrencyTableView
             page={resolvedPage}
             rows={mappedRows}
-            total={total}
             loading={loading}
             error={error}
             onCreate={onOpenContent}

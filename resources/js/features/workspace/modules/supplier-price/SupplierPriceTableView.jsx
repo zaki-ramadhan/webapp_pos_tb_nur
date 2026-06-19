@@ -50,16 +50,16 @@ function SupplierPriceFilterBar({ table, filters, setFilters }) {
                 <FunnelIcon className="h-4.5 w-4.5" />
             </button>
 
-            {config.table.pagination ? (
+            {table.pagination ? (
                 <Pagination
-                    page={config.table.pagination.page}
-                    perPage={config.table.pagination.perPage}
-                    total={config.table.pagination.total}
-                    lastPage={config.table.pagination.lastPage}
-                    from={config.table.pagination.from}
-                    to={config.table.pagination.to}
-                    onPageChange={config.table.pagination.onPageChange}
-                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
                     className="mt-3"
                 />
             ) : null}

@@ -89,53 +89,56 @@ export function PrefixedInput({ prefix, value, onChange, className = '', ...prop
 
 export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
     return (
-        <div className="space-y-3">
-            <WarehouseFieldRow label={config.labels.name} required>
-                <ClearableTextInput id="name" name="name" value={values.name} onChange={(event) => onChange('name', event.target.value)} />
-            </WarehouseFieldRow>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
+            <div className="space-y-3">
+                <WarehouseFieldRow label={config.labels.name} required>
+                    <ClearableTextInput id="name" name="name" value={values.name} onChange={(event) => onChange('name', event.target.value)} />
+                </WarehouseFieldRow>
 
-            <WarehouseFieldRow label={config.labels.description}>
-                <TextareaField
-                    value={values.description}
-                    onChange={(event) => onChange('description', event.target.value)}
-                    rows={4}
-                    className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[76px] text-xs sm:text-sm text-[#1f2436]"
-                />
-            </WarehouseFieldRow>
+                <WarehouseFieldRow label={config.labels.responsiblePerson}>
+                    <ClearableTextInput
+                        value={values.responsiblePerson}
+                        onChange={(event) => onChange('responsiblePerson', event.target.value)}
+                    />
+                </WarehouseFieldRow>
 
-            <WarehouseFieldRow label={config.labels.responsiblePerson}>
-                <ClearableTextInput
-                    value={values.responsiblePerson}
-                    onChange={(event) => onChange('responsiblePerson', event.target.value)}
-                    className="max-w-[420px]"
-                />
-            </WarehouseFieldRow>
-
-            <div className="space-y-3 lg:pl-[182px]">
-                <CheckboxField
-                    id="warehouse-damaged"
-                    label={config.labels.damagedWarehouse}
-                    checked={values.isDamagedWarehouse}
-                    onChange={(event) => onChange('isDamagedWarehouse', event.target.checked)}
-                    align="center"
-                    labelClassName="text-base"
-                    inputClassName="mt-0 h-[18px] w-[18px]"
-                    containerClassName="w-auto"
-                />
-
-                {isDetail ? (
+                <div className="space-y-3 lg:pl-[172px]">
                     <CheckboxField
-                        id="warehouse-inactive"
-                        label={config.labels.inactive}
-                        checked={values.inactive}
-                        onChange={(event) => onChange('inactive', event.target.checked)}
+                        id="warehouse-damaged"
+                        label={config.labels.damagedWarehouse}
+                        checked={values.isDamagedWarehouse}
+                        onChange={(event) => onChange('isDamagedWarehouse', event.target.checked)}
                         align="center"
                         labelClassName="text-base"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
-                ) : null}
+
+                    {isDetail ? (
+                        <CheckboxField
+                            id="warehouse-inactive"
+                            label={config.labels.inactive}
+                            checked={values.inactive}
+                            onChange={(event) => onChange('inactive', event.target.checked)}
+                            align="center"
+                            labelClassName="text-base"
+                            inputClassName="mt-0 h-[18px] w-[18px]"
+                            containerClassName="w-auto"
+                        />
+                    ) : null}
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                <WarehouseFieldRow label={config.labels.description}>
+                    <TextareaField
+                        value={values.description}
+                        onChange={(event) => onChange('description', event.target.value)}
+                        rows={6}
+                        className="rounded-[4px] border-[#cfd6e2]"
+                        textareaClassName="min-h-[148px] text-xs sm:text-sm text-[#1f2436]"
+                    />
+                </WarehouseFieldRow>
             </div>
         </div>
     );

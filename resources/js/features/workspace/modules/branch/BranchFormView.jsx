@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import {
     createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import DockSaveButton from '@/features/workspace/shared/DockSaveButton';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { BranchGeneralTab, BranchUsersTab } from './BranchSections';
@@ -164,45 +162,31 @@ export default function BranchFormView({
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0">
-                <PreferencesTabs
-                    tabs={form.tabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                />
-            </div>
-
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                    <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-
-                        {activeTabId === 'branch-users' ? (
-                            <BranchUsersTab form={form} values={values} onChange={handleChange} />
-                        ) : (
-                            <BranchGeneralTab values={values} onChange={handleChange} />
-                        )}
-                    </div>
-                </div>
-
-                <div className="flex shrink-0 flex-row justify-start gap-3 lg:shrink-0 lg:flex-col lg:self-start lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                    <DockSaveButton
-                        label={saving ? 'Memproses...' : form.saveLabel}
-                        disabled={saveDisabled}
-                        onClick={handleSave}
+        <ModuleFormTemplate
+            form={form}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                isDetailMode ? (
+                    <DockActionButton
+                        label={saving ? 'Memproses...' : 'Hapus'}
+                        tone="danger"
+                        icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                        disabled={saving}
+                        onClick={requestDelete}
                     />
-                    {isDetailMode ? (
-                        <DockActionButton
-                            label={saving ? 'Memproses...' : 'Hapus'}
-                            tone="danger"
-                            icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                            disabled={saving}
-                            onClick={requestDelete}
-                        />
-                    ) : null}
-                </div>
-            </div>
+                ) : null
+            }
+        >
+            {activeTabId === 'branch-users' ? (
+                <BranchUsersTab form={form} values={values} onChange={handleChange} />
+            ) : (
+                <BranchGeneralTab values={values} onChange={handleChange} />
+            )}
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}
@@ -215,6 +199,6 @@ export default function BranchFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
+        </ModuleFormTemplate>
     );
 }

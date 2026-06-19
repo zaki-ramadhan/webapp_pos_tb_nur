@@ -23,7 +23,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
     }, [values.parentId, values.parentAccountLabel, values.parentAccountCode, values.parentAccountName, values.parentAccount]);
 
     return (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
             <AccountsFormFieldRow label={config.labels.type}>
                 <SelectField
                     value={values.type}
@@ -39,7 +39,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                 </SelectField>
             </AccountsFormFieldRow>
 
-            <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
+            <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start">
                 <div className="pt-2 lg:pt-1.5 flex items-center">
                     <CheckboxField
                         id="accounts-sub-account"
@@ -98,13 +98,15 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
             </AccountsFormFieldRow>
  
             <AccountsFormFieldRow label={config.labels.name} required>
-                <TextInput
-                    value={values.name}
-                    onChange={(event) => onChange('name', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                />
-                <p className="mt-2 pl-4 text-sm italic text-[#8a91a8]">{config.helperText.nameExample}</p>
+                <div>
+                    <TextInput
+                        value={values.name}
+                        onChange={(event) => onChange('name', event.target.value)}
+                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    />
+                    <p className="mt-2 pl-4 text-sm italic text-[#8a91a8]">{config.helperText.nameExample}</p>
+                </div>
             </AccountsFormFieldRow>
  
             {isDetail ? (
@@ -121,24 +123,26 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
         <div className="space-y-4">
             <h3 className="text-2xl font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
 
-            <AccountsFormFieldRow label={config.labels.openingBalanceValue}>
-                <FormattedAmountInput
-                    value={values.openingBalanceValue}
-                    onChange={(event) => onChange('openingBalanceValue', sanitizeNumericInput(event.target.value))}
-                    prefix="Rp"
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    prefixClassName="min-w-[34px] bg-[#f5f6f8] px-3 text-[#9aa3b1]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                />
-            </AccountsFormFieldRow>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
+                <AccountsFormFieldRow label={config.labels.openingBalanceValue}>
+                    <FormattedAmountInput
+                        value={values.openingBalanceValue}
+                        onChange={(event) => onChange('openingBalanceValue', sanitizeNumericInput(event.target.value))}
+                        prefix="Rp"
+                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                        prefixClassName="min-w-[34px] bg-[#f5f6f8] px-3 text-[#9aa3b1]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    />
+                </AccountsFormFieldRow>
 
-            <AccountsFormFieldRow label={config.labels.openingBalanceDate}>
-                <TransactionDateInput
-                    value={values.openingBalanceDate}
-                    onChange={(nextValue) => onChange('openingBalanceDate', nextValue)}
-                    className="max-w-[430px]"
-                />
-            </AccountsFormFieldRow>
+                <AccountsFormFieldRow label={config.labels.openingBalanceDate}>
+                    <TransactionDateInput
+                        value={values.openingBalanceDate}
+                        onChange={(nextValue) => onChange('openingBalanceDate', nextValue)}
+                        className="max-w-[430px]"
+                    />
+                </AccountsFormFieldRow>
+            </div>
         </div>
     );
 }

@@ -105,7 +105,13 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                       searchStr.includes('nominal') ||
                       searchStr.includes('cost') ||
                       searchStr.includes('piutang') ||
-                      searchStr.includes('utang');
+                      searchStr.includes('utang') ||
+                      searchStr.includes('years') || 
+                      searchStr.includes('months') || 
+                      searchStr.includes('tahun') || 
+                      searchStr.includes('bulan') || 
+                      searchStr.includes('hari') || 
+                      searchStr.includes('umur');
 
     const isAgeOrRange = searchStr.includes('age') || searchStr.includes('range');
     if (isAgeOrRange) {
@@ -248,7 +254,13 @@ export default function TextInput({
                           searchStr.includes('nominal') ||
                           searchStr.includes('cost') ||
                           searchStr.includes('piutang') ||
-                          searchStr.includes('utang');
+                          searchStr.includes('utang') ||
+                          searchStr.includes('years') || 
+                          searchStr.includes('months') || 
+                          searchStr.includes('tahun') || 
+                          searchStr.includes('bulan') || 
+                          searchStr.includes('hari') || 
+                          searchStr.includes('umur');
 
         const isDigitOnly = (
                                 searchStr.includes('rekening') || 
@@ -322,7 +334,13 @@ export default function TextInput({
                           searchStr.includes('nominal') ||
                           searchStr.includes('cost') ||
                           searchStr.includes('piutang') ||
-                          searchStr.includes('utang');
+                          searchStr.includes('utang') ||
+                          searchStr.includes('years') || 
+                          searchStr.includes('months') || 
+                          searchStr.includes('tahun') || 
+                          searchStr.includes('bulan') || 
+                          searchStr.includes('hari') || 
+                          searchStr.includes('umur');
 
         if (isNumeric) {
             const numVal = parseFloat(val);

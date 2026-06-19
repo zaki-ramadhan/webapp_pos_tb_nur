@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
 import { CloseIcon } from '@/features/workspace/shared/Icons';
+import TextInput from '@/components/ui/TextInput';
 
 export default function DashboardFormModal({
     open,
@@ -88,7 +89,7 @@ export default function DashboardFormModal({
                     </label>
 
                     <div className="relative">
-                        <input
+                        <TextInput
                             id="dashboard-name"
                             type="text"
                             value={name}

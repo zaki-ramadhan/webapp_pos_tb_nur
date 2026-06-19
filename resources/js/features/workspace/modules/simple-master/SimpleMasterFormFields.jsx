@@ -38,7 +38,7 @@ export function MasterFieldRow({ field, value, onChange }) {
 
     if (field.type === 'checkbox') {
         return (
-            <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-center">
+            <div className="grid gap-3 lg:grid-cols-[170px_1fr] lg:items-center">
                 <FieldLabel field={field} />
                 <CheckboxField
                     id={field.id}
@@ -56,7 +56,7 @@ export function MasterFieldRow({ field, value, onChange }) {
 
     if (field.type === 'textarea') {
         return (
-            <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-start">
+            <div className="grid gap-3 lg:grid-cols-[170px_1fr] lg:items-start">
                 <FieldLabel field={field} className="pt-2" />
                 <div>
                     <TextareaField
@@ -76,7 +76,7 @@ export function MasterFieldRow({ field, value, onChange }) {
 
     if (field.type === 'lookup') {
         return (
-            <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-center">
+            <div className="grid gap-3 lg:grid-cols-[170px_1fr] lg:items-center">
                 <FieldLabel field={field} />
                 <div>
                     <TextInput
@@ -97,7 +97,7 @@ export function MasterFieldRow({ field, value, onChange }) {
     }
 
     return (
-        <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,420px)] lg:items-center">
+        <div className="grid gap-3 lg:grid-cols-[170px_1fr] lg:items-center">
             <FieldLabel field={field} />
             <div>
                 <TextInput

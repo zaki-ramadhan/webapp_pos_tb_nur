@@ -263,6 +263,7 @@ export function buildGroupAccessRow(record, baseForm = {}) {
 
     return {
         id: String(record.id),
+        name: record.name ?? '',
         groupName: record.name ?? '',
         userList: users.length
             ? users

@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import {
     createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
+
 import {
     finishCrudLoadingToast,
     showCrudErrorToast,
@@ -189,45 +191,42 @@ export default function SimpleMasterFormView({
     }
 
     return (
-        <>
-            <div className="flex flex-1 min-h-0 flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden xl:px-4 xl:py-4">
-                <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-
-                    <div className="space-y-3">
-                        {(form.fields ?? []).map((field) => (
-                            field.standalone ? (
-                                <StandaloneCheckboxField
-                                    key={field.id}
-                                    field={field}
-                                    value={values[field.id]}
-                                    onChange={handleChange}
-                                />
-                            ) : (
-                                <MasterFieldRow
-                                    key={field.id}
-                                    field={field}
-                                    value={values[field.id] ?? ''}
-                                    onChange={handleChange}
-                                />
-                            )
-                        ))}
-                    </div>
-                </div>
-
-                <div className="flex shrink-0 flex-row justify-end gap-3 lg:flex-col lg:self-start">
-                    {buildSimpleMasterDockActions(form, isDetailMode).map((action) => (
-                        <DockActionButton
-                            key={action.id}
-                            label={action.label}
-                            tone={action.tone}
-                            icon={renderSimpleMasterDockIcon(action.icon)}
-                            onClick={() => handleAction(action.id)}
-                            loading={saving && (action.id === 'save' || action.id === 'delete')}
-                            disabled={action.id === 'save' ? saveDisabled : saving}
+        <ModuleFormTemplate
+            form={form}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={() => handleAction('save')}
+            actionsSlot={
+                isDetailMode && form.deleteLabel ? (
+                    <DockActionButton
+                        label={saving ? 'Memproses...' : form.deleteLabel}
+                        tone="danger"
+                        icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                        disabled={saving}
+                        onClick={() => handleAction('delete')}
+                    />
+                ) : null
+            }
+        >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
+                {(form.fields ?? []).map((field) => (
+                    field.standalone ? (
+                        <StandaloneCheckboxField
+                            key={field.id}
+                            field={field}
+                            value={values[field.id]}
+                            onChange={handleChange}
                         />
-                    ))}
-                </div>
+                    ) : (
+                        <MasterFieldRow
+                            key={field.id}
+                            field={field}
+                            value={values[field.id] ?? ''}
+                            onChange={handleChange}
+                        />
+                    )
+                ))}
             </div>
 
             <ConfirmationModal
@@ -240,6 +239,6 @@ export default function SimpleMasterFormView({
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
             />
-        </>
+        </ModuleFormTemplate>
     );
 }

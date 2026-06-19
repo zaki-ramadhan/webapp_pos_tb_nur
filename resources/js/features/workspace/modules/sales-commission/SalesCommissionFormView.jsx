@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
-import { SaveIcon, TrashIcon } from '@/features/workspace/shared/Icons';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { SalesCommissionCommissionTab, SalesCommissionOtherTab } from './SalesCommissionSections';
 import { buildCommissionFormValues } from './salesCommissionShared';
 import {
@@ -11,10 +10,10 @@ import {
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 
 export default function SalesCommissionFormView({
     config,
@@ -58,6 +57,8 @@ export default function SalesCommissionFormView({
             setValues(initialValues);
         }
     }, [initialValues, isDirty]);
+
+    const saveDisabled = saving || !isDirty || !values.name?.trim();
 
     useWorkspaceDirtyRegistration({
         pageId: 'sales-commission',
@@ -152,51 +153,36 @@ export default function SalesCommissionFormView({
         });
     }
 
-    const dockActions = isDetail ? config.detailDockActions : config.createDockActions;
-
     return (
-        <>
-            <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
-                <div className="shrink-0 px-1 pt-0.5">
-                    <PreferencesTabs
-                        tabs={config.formTabs}
-                        activeTabId={activeTabId}
-                        onSelectTab={setActiveTabId}
-                        className="pt-0"
+        <ModuleFormTemplate
+            form={{
+                tabs: config.formTabs,
+                saveLabel: 'Simpan',
+            }}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                isDetail ? (
+                    <DockActionButton
+                        label={saving ? 'Memproses...' : 'Hapus'}
+                        tone="danger"
+                        icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                        disabled={saving}
+                        onClick={requestDelete}
                     />
-                </div>
-
-                <div className="flex flex-1 min-h-0 flex-col gap-4 rounded-[4px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch xl:px-4 xl:py-4 overflow-hidden">
-                    <div className="order-2 min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col lg:order-1">
-                        <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                        <div className="flex-1 min-h-0 flex flex-col">
-                            {activeTabId === 'others' ? (
-                                <SalesCommissionOtherTab config={config} values={values} setValues={setValues} />
-                            ) : (
-                                <SalesCommissionCommissionTab config={config} values={values} setValues={setValues} />
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="order-1 flex shrink-0 flex-row justify-end gap-3 lg:order-2 lg:flex-col lg:self-start">
-                        {dockActions.map((action) => (
-                            <DockActionButton
-                                key={action.id}
-                                label={action.label}
-                                tone={action.tone}
-                                icon={action.icon === 'trash' ? <TrashIcon className="h-9 w-9" /> : <SaveIcon className="h-9 w-9" />}
-                                loading={saving && (action.id === 'save' || action.id === 'delete')}
-                                onClick={() => {
-                                    if (action.id === 'save') {
-                                        handleSave();
-                                    } else if (action.id === 'delete') {
-                                        requestDelete();
-                                    }
-                                }}
-                            />
-                        ))}
-                    </div>
-                </div>
+                ) : null
+            }
+        >
+            <div className="flex-1 min-h-0">
+                {activeTabId === 'others' ? (
+                    <SalesCommissionOtherTab config={config} values={values} setValues={setValues} />
+                ) : (
+                    <SalesCommissionCommissionTab config={config} values={values} setValues={setValues} />
+                )}
             </div>
 
             <ConfirmationModal
@@ -210,6 +196,7 @@ export default function SalesCommissionFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </>
+        </ModuleFormTemplate>
     );
 }
+

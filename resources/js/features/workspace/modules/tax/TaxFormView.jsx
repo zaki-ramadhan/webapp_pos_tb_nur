@@ -10,14 +10,13 @@ import {
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
-import SectionTab from '@/features/workspace/shared/SectionTab';
-import { SaveIcon, TrashIcon } from '@/features/workspace/shared/Icons';
-import { buildFormValues, mapTaxRow } from './taxShared';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
+import { buildFormValues } from './taxShared';
 
 function TaxFieldRow({ label, required = false, children }) {
     return (
@@ -100,16 +99,9 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
             if (!values.description?.trim()) {
                 fieldErrors.description = `${form.labels.description} wajib diisi.`;
             }
-            if (!values.percentage || isNaN(Number(values.percentage)) || Number(values.percentage) < 0) {
-                fieldErrors.percentage = `${form.labels.percentage} wajib diisi dan harus bernilai 0 atau lebih.`;
+            if (values.percentage == null || values.percentage === '') {
+                fieldErrors.percentage = `${form.labels.percentage} wajib diisi.`;
             }
-            if (!values.salesAccount) {
-                fieldErrors.salesAccount = `${form.labels.salesAccount} wajib diisi.`;
-            }
-            if (!values.purchaseAccount) {
-                fieldErrors.purchaseAccount = `${form.labels.purchaseAccount} wajib diisi.`;
-            }
-
             rejectCrudFormAction(validationMessage, { setStatus, fieldErrors });
             return;
         }
@@ -121,12 +113,11 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
             setStatus,
             execute: async () => {
                 const payload = {
-                    code: null,
-                    name: values.description.trim(),
-                    tax_type: values.type,
-                    rate: Number(values.percentage),
-                    output_account_id: values.salesAccountId,
-                    input_account_id: values.purchaseAccountId,
+                    type: values.type,
+                    description: values.description.trim(),
+                    rate_percent: parseFloat(values.percentage),
+                    receivable_account_id: values.salesAccountId,
+                    payable_account_id: values.purchaseAccountId,
                     is_active: true,
                 };
                 const response = isDetailMode && values.__backendRecordId
@@ -137,16 +128,8 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
-                await page.onRefresh?.();
-
-                if (!isDetailMode && record?.id && page.onOpenDetail) {
-                    const row = mapTaxRow(record);
-
-                    page.onOpenDetail({
-                        recordId: row.id,
-                        label: row.description,
-                        tabLabel: row.tabLabel,
-                    });
+                if (typeof window !== 'undefined' && typeof window.__triggerRefreshWorkspaceTable === 'function') {
+                    window.__triggerRefreshWorkspaceTable('taxes');
                 }
             },
         });
@@ -174,127 +157,117 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
             execute: () => deleteBackendResource('taxes', values.__backendRecordId),
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async () => {
-                await page.onRefresh?.();
-                page.onCloseDetail?.(values.__backendRecordId);
-                page.onOpenContent?.();
+                if (typeof window !== 'undefined' && typeof window.__triggerRefreshWorkspaceTable === 'function') {
+                    window.__triggerRefreshWorkspaceTable('taxes');
+                }
             },
         });
     }
 
     return (
-        <>
-            <div className="flex flex-1 min-h-0 flex-col gap-5 rounded-[4px] border border-[#cfd6e2] bg-white px-4 py-4 shadow-[0_2px_10px_rgba(15,23,42,0.08)] lg:flex-row lg:items-stretch overflow-hidden">
-                <div className="min-w-0 flex-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                    <CrudStatusMessage status={status} className="mb-4 shrink-0" />
+        <ModuleFormTemplate
+            form={form}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                isDetailMode ? (
+                    <DockActionButton
+                        label={saving ? 'Memproses...' : form.deleteLabel}
+                        tone="danger"
+                        icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                        disabled={saving}
+                        onClick={requestDelete}
+                    />
+                ) : null
+            }
+        >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
+                <TaxFieldRow label={form.labels.type} required>
+                    <SelectField
+                        id="type"
+                        name="type"
+                        value={values.type}
+                        onChange={(event) => handleChange('type', event.target.value)}
+                        className="h-[34px] rounded-[4px] border-slate-400"
+                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                    >
+                        {form.typeOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </SelectField>
+                </TaxFieldRow>
 
-                    <div className="max-w-[980px] space-y-3">
-                        <TaxFieldRow label={form.labels.type} required>
-                            <SelectField
-                                id="type"
-                                name="type"
-                                value={values.type}
-                                onChange={(event) => handleChange('type', event.target.value)}
-                                className="h-[34px] rounded-[4px] border-slate-400"
-                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                            >
-                                {form.typeOptions.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </SelectField>
-                        </TaxFieldRow>
+                <TaxFieldRow label={form.labels.description} required>
+                    <TextInput
+                        id="description"
+                        name="description"
+                        value={values.description}
+                        onChange={(event) => handleChange('description', event.target.value)}
+                        className="h-[34px] rounded-[4px] border-slate-400"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    />
+                </TaxFieldRow>
 
-                        <TaxFieldRow label={form.labels.description} required>
-                            <TextInput
-                                id="description"
-                                name="description"
-                                value={values.description}
-                                onChange={(event) => handleChange('description', event.target.value)}
-                                className="h-[34px] rounded-[4px] border-slate-400"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            />
-                        </TaxFieldRow>
-
-                        <TaxFieldRow label={form.labels.percentage} required>
-                            <div className="flex items-center gap-3">
-                                <TextInput
-                                    id="percentage"
-                                    name="percentage"
-                                    value={values.percentage}
-                                    onChange={(event) =>
-                                        handleChange('percentage', event.target.value.replace(/[^\d.]/g, ''))
-                                    }
-                                    containerClassName="w-[120px]"
-                                    className="h-[34px] rounded-[4px] border-slate-400"
-                                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
-                                />
-                                <span className="text-xs sm:text-sm text-[#1f2436]">%</span>
-                            </div>
-                        </TaxFieldRow>
-
-                        <TaxFieldRow label={form.labels.salesAccount} required>
-                            <AccountLookupField
-                                id="salesAccount"
-                                name="salesAccount"
-                                value={values.salesAccount}
-                                placeholder={form.accountPlaceholder}
-                                searchLabel={form.salesAccountSearchLabel}
-                                dialogTitle="Pilih Akun Penjualan"
-                                onRemove={() => {
-                                    handleChange('salesAccount', '');
-                                    handleChange('salesAccountId', null);
-                                }}
-                                onSelectAccount={(record, label) => {
-                                    handleChange('salesAccount', label);
-                                    handleChange('salesAccountId', record?.id ?? null);
-                                }}
-                                heightClassName="h-[34px]"
-                            />
-                        </TaxFieldRow>
-
-                        <TaxFieldRow label={form.labels.purchaseAccount} required>
-                            <AccountLookupField
-                                id="purchaseAccount"
-                                name="purchaseAccount"
-                                value={values.purchaseAccount}
-                                placeholder={form.accountPlaceholder}
-                                searchLabel={form.purchaseAccountSearchLabel}
-                                dialogTitle="Pilih Akun Pembelian"
-                                onRemove={() => {
-                                    handleChange('purchaseAccount', '');
-                                    handleChange('purchaseAccountId', null);
-                                }}
-                                onSelectAccount={(record, label) => {
-                                    handleChange('purchaseAccount', label);
-                                    handleChange('purchaseAccountId', record?.id ?? null);
-                                }}
-                                heightClassName="h-[34px]"
-                            />
-                        </TaxFieldRow>
-                    </div>
-                </div>
-
-                <div className="flex justify-end lg:shrink-0 lg:self-start">
-                    <div className="flex flex-row gap-3 lg:flex-col">
-                        <DockActionButton
-                            label={saving ? 'Memproses...' : form.saveLabel}
-                            tone="primary"
-                            icon={<SaveIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                            onClick={handleSave}
-                            disabled={saveDisabled}
+                <TaxFieldRow label={form.labels.percentage} required>
+                    <div className="flex items-center gap-3">
+                        <TextInput
+                            id="percentage"
+                            name="percentage"
+                            value={values.percentage}
+                            onChange={(event) =>
+                                handleChange('percentage', event.target.value.replace(/[^\d.]/g, ''))
+                            }
+                            containerClassName="w-[120px]"
+                            className="h-[34px] rounded-[4px] border-slate-400"
+                            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
                         />
-                        {isDetailMode ? (
-                            <DockActionButton
-                                label={saving ? 'Memproses...' : form.deleteLabel}
-                                tone="danger"
-                                icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
-                                disabled={saving}
-                                onClick={requestDelete}
-                            />
-                        ) : null}
+                        <span className="text-xs sm:text-sm text-[#1f2436]">%</span>
                     </div>
-                </div>
+                </TaxFieldRow>
+
+                <TaxFieldRow label={form.labels.salesAccount} required>
+                    <AccountLookupField
+                        id="salesAccount"
+                        name="salesAccount"
+                        value={values.salesAccount}
+                        placeholder={form.accountPlaceholder}
+                        searchLabel={form.salesAccountSearchLabel}
+                        dialogTitle="Pilih Akun Penjualan"
+                        onRemove={() => {
+                            handleChange('salesAccount', '');
+                            handleChange('salesAccountId', null);
+                        }}
+                        onSelectAccount={(record, label) => {
+                            handleChange('salesAccount', label);
+                            handleChange('salesAccountId', record?.id ?? null);
+                        }}
+                        heightClassName="h-[34px]"
+                    />
+                </TaxFieldRow>
+
+                <TaxFieldRow label={form.labels.purchaseAccount} required>
+                    <AccountLookupField
+                        id="purchaseAccount"
+                        name="purchaseAccount"
+                        value={values.purchaseAccount}
+                        placeholder={form.accountPlaceholder}
+                        searchLabel={form.purchaseAccountSearchLabel}
+                        dialogTitle="Pilih Akun Pembelian"
+                        onRemove={() => {
+                            handleChange('purchaseAccount', '');
+                            handleChange('purchaseAccountId', null);
+                        }}
+                        onSelectAccount={(record, label) => {
+                            handleChange('purchaseAccount', label);
+                            handleChange('purchaseAccountId', record?.id ?? null);
+                        }}
+                        heightClassName="h-[34px]"
+                    />
+                </TaxFieldRow>
             </div>
 
             <ConfirmationModal
@@ -308,6 +281,6 @@ export default function TaxFormView({ page, activeLevel2Tab }) {
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </>
+        </ModuleFormTemplate>
     );
 }

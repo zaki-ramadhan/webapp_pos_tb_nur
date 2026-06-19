@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import PanelActions from '@/features/workspace/shared/PanelActions';
 import SecondaryTabs from '@/features/workspace/shared/SecondaryTabs';
 import SalaryAllowanceFormView from './SalaryAllowanceFormView';
@@ -10,23 +10,23 @@ import { buildSalaryAllowanceEntry, buildSalaryAllowanceRow } from './salaryAllo
 export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
     const config = page.salaryAllowance;
     const {
-        rows: backendRows,
-        total,
         loading,
         error,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+        mappedRows: mappedBackendRows,
+        tableProps,
+    } = useWorkspaceResource({
         resource: 'salary-allowances',
         initialPerPage: 25,
+        mapRow: (row) => {
+            const mapped = buildSalaryAllowanceRow(row);
+            return {
+                ...mapped,
+                inactiveValue: mapped.inactive ? 'yes' : 'no',
+            };
+        },
     });
-    const mappedBackendRows = useMemo(() => backendRows.map(buildSalaryAllowanceRow), [backendRows]);
+
     const [optimisticRows, setOptimisticRows] = useState({});
     const resolvedRows = useMemo(() => {
         const mergedMap = {};
@@ -40,6 +40,7 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
 
         return Object.values(mergedMap);
     }, [mappedBackendRows, optimisticRows]);
+
     const [isNewTabOpen, setIsNewTabOpen] = useState(true);
     const [activeInnerTabId, setActiveInnerTabId] = useState('new');
     const [openDetailTabIds, setOpenDetailTabIds] = useState([]);
@@ -76,7 +77,8 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
         setActiveInnerTabId('new');
     }
 
-    function handleOpenDetail(tabId) {
+    function handleOpenDetail(item) {
+        const tabId = typeof item === 'object' && item !== null ? item.recordId : item;
         setOpenDetailTabIds((current) => (current.includes(tabId) ? current : [...current, tabId]));
         setActiveInnerTabId(tabId);
     }
@@ -105,23 +107,13 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
             rows: resolvedRows,
             table: {
                 ...config.table,
-                pageValue: total.toLocaleString('id-ID'),
-                loading,
+                ...tableProps,
+                rows: resolvedRows,
+                pageValue: tableProps.total.toLocaleString('id-ID'),
                 emptyLabel: error || 'Belum ada data',
-                onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
             },
         }),
-        [config, error, loading, reload, resolvedRows, total],
+        [config, error, tableProps, resolvedRows],
     );
 
     function handlePersist(record) {

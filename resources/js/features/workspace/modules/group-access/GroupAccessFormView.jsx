@@ -9,7 +9,6 @@ import {
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import {
     buildGroupAccessComparableState,
@@ -20,8 +19,10 @@ import {
     resolveDeleteConfirmationMessage,
 } from './groupAccessUtils';
 import GroupAccessRightsView from '@/features/workspace/modules/group-access/GroupAccessRightsView';
-import { GroupAccessActionDock, GroupAccessGeneralSection } from '@/features/workspace/modules/group-access/groupAccessViewShared';
-import PreferencesTabs from '@/features/workspace/preferences/PreferencesTabs';
+import { GroupAccessGeneralSection } from '@/features/workspace/modules/group-access/groupAccessViewShared';
+import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
+import DockActionButton from '@/features/workspace/shared/DockActionButton';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
 
 export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onOpenDetail, onCloseDetail, onRefresh }) {
     const [activeTabId, setActiveTabId] = useState(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
@@ -66,6 +67,8 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         return '';
     }, [generalValues.groupName]);
 
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+
     useWorkspaceDirtyRegistration({
         pageId,
         tabId: activeLevel2Tab?.id,
@@ -77,9 +80,6 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         deleteConfirmation.messageTemplate,
         generalValues.groupName,
     );
-
-
-
 
     async function handleSave() {
         if (validationMessage) {
@@ -120,52 +120,6 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         });
     }
 
-    function handleDuplicate() {
-        setIsDuplicated(true);
-        setGeneralValues((current) => ({
-            ...current,
-            groupName: current.groupName ? `${current.groupName} - Copy` : 'Copy',
-        }));
-        setStatus({
-            tone: 'success',
-            message: 'Akses grup berhasil diduplikasi. Silakan ubah nama dan simpan sebagai grup baru.',
-        });
-    }
-
-    function handleResetPermissions() {
-        setPermissionCategories((current) =>
-            current.map((category) => ({
-                ...category,
-                sections: (category.sections ?? []).map((section) => ({
-                    ...section,
-                    rows: (section.rows ?? []).map((row) => ({
-                        ...row,
-                        permissions: {
-                            active: false,
-                            create: false,
-                            update: false,
-                            delete: false,
-                            view: false,
-                        },
-                    })),
-                })),
-            }))
-        );
-        setStatus({
-            tone: 'success',
-            message: 'Seluruh checklist hak akses telah dikosongkan. Klik Simpan untuk memperbarui.',
-        });
-    }
-
-    function handleExportUsers() {
-        const users = normalizeSelectedUsers(generalValues.selectedUsers);
-        const usersText = users.map((u) => u.label).join(', ');
-        setStatus({
-            tone: 'success',
-            message: `Ekspor data pengguna grup (${users.length} orang) berhasil diproses. Pengguna: ${usersText || 'Tidak ada pengguna'}.`,
-        });
-    }
-
     function requestDelete() {
         if (!isDetail || saving) {
             return;
@@ -195,107 +149,94 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0">
-                <PreferencesTabs
-                    tabs={form.tabs}
-                    activeTabId={activeTabId}
-                    onSelectTab={setActiveTabId}
-                />
-            </div>
-
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
-                    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                        <CrudStatusMessage status={status} className="shrink-0 mb-4" />
-
-                        <div className="flex-1 min-h-0 overflow-y-auto">
-                            {activeTabId === 'general' ? (
-                                <GroupAccessGeneralSection
-                                    general={form.general}
-                                    values={generalValues}
-                                    onChangeName={(nextValue) =>
-                                        setGeneralValues((currentValues) => ({
-                                            ...currentValues,
-                                            groupName: nextValue,
-                                        }))
-                                    }
-                                    onChangeAccessLimitation={(nextValue) =>
-                                        setGeneralValues((currentValues) => ({
-                                            ...currentValues,
-                                            accessLimitationId: nextValue,
-                                        }))
-                                    }
-                                    onChangeAccessLimitDays={(nextValue) =>
-                                        setGeneralValues((currentValues) => ({
-                                            ...currentValues,
-                                            accessLimitDays: nextValue,
-                                        }))
-                                    }
-                                    onChangeAccessLimitStartHour={(nextValue) =>
-                                        setGeneralValues((currentValues) => ({
-                                            ...currentValues,
-                                            accessLimitStartHour: nextValue,
-                                        }))
-                                    }
-                                    onChangeAccessLimitEndHour={(nextValue) =>
-                                        setGeneralValues((currentValues) => ({
-                                            ...currentValues,
-                                            accessLimitEndHour: nextValue,
-                                        }))
-                                    }
-                                    onAddUser={(nextUser) =>
-                                        setGeneralValues((currentValues) => {
-                                            const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
-
-                                            if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
-                                                return currentValues;
-                                            }
-
-                                            return {
-                                                ...currentValues,
-                                                selectedUsers: [...currentUsers, nextUser],
-                                            };
-                                        })
-                                    }
-                                    onRemoveUser={(selectedUser) =>
-                                        setGeneralValues((currentValues) => ({
-                                            ...currentValues,
-                                            selectedUsers: normalizeSelectedUsers(currentValues.selectedUsers).filter((item) =>
-                                                selectedUser?.id != null
-                                                    ? String(item.id ?? '') !== String(selectedUser.id)
-                                                    : item.label !== selectedUser?.label,
-                                            ),
-                                        }))
-                                    }
-                                    textInput={TextInput}
-                                />
-                            ) : (
-                                <GroupAccessRightsView
-                                    permissions={form.permissions}
-                                    categories={permissionCategories}
-                                    onUpdateCategories={setPermissionCategories}
-                                />
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="order-1 flex shrink-0 flex-row justify-start gap-3 lg:order-2 lg:shrink-0 lg:self-start lg:flex-col lg:w-[112px] lg:items-center pt-3 lg:pt-4">
-                    <GroupAccessActionDock
-                        actions={form.actions
-                            .filter((action) => action.id === 'save')
-                            .map((action) => ({
-                                ...action,
-                                loading: saving,
-                                disabled: saving || Boolean(validationMessage),
+        <ModuleFormTemplate
+            form={form}
+            activeTabId={activeTabId}
+            setActiveTabId={setActiveTabId}
+            status={status}
+            saving={saving}
+            saveDisabled={saveDisabled}
+            onSave={handleSave}
+            actionsSlot={
+                isDetail ? (
+                    <DockActionButton
+                        label={saving ? 'Memproses...' : 'Hapus'}
+                        tone="danger"
+                        icon={<TrashIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+                        disabled={saving}
+                        onClick={requestDelete}
+                    />
+                ) : null
+            }
+        >
+            <div className="flex-1 min-h-0">
+                {activeTabId === 'general' ? (
+                    <GroupAccessGeneralSection
+                        general={form.general}
+                        values={generalValues}
+                        onChangeName={(nextValue) =>
+                            setGeneralValues((currentValues) => ({
+                                ...currentValues,
+                                groupName: nextValue,
                             }))
                         }
-                        isDirty={isDirty && !validationMessage}
-                        onSave={handleSave}
-                        onDelete={requestDelete}
+                        onChangeAccessLimitation={(nextValue) =>
+                            setGeneralValues((currentValues) => ({
+                                ...currentValues,
+                                accessLimitationId: nextValue,
+                            }))
+                        }
+                        onChangeAccessLimitDays={(nextValue) =>
+                            setGeneralValues((currentValues) => ({
+                                ...currentValues,
+                                accessLimitDays: nextValue,
+                            }))
+                        }
+                        onChangeAccessLimitStartHour={(nextValue) =>
+                            setGeneralValues((currentValues) => ({
+                                ...currentValues,
+                                accessLimitStartHour: nextValue,
+                            }))
+                        }
+                        onChangeAccessLimitEndHour={(nextValue) =>
+                            setGeneralValues((currentValues) => ({
+                                ...currentValues,
+                                accessLimitEndHour: nextValue,
+                            }))
+                        }
+                        onAddUser={(nextUser) =>
+                            setGeneralValues((currentValues) => {
+                                const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
+
+                                if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
+                                    return currentValues;
+                                }
+
+                                return {
+                                    ...currentValues,
+                                    selectedUsers: [...currentUsers, nextUser],
+                                };
+                            })
+                        }
+                        onRemoveUser={(selectedUser) =>
+                            setGeneralValues((currentValues) => ({
+                                ...currentValues,
+                                selectedUsers: normalizeSelectedUsers(currentValues.selectedUsers).filter((item) =>
+                                    selectedUser?.id != null
+                                        ? String(item.id ?? '') !== String(selectedUser.id)
+                                        : item.label !== selectedUser?.label,
+                                ),
+                            }))
+                        }
+                        textInput={TextInput}
                     />
-                </div>
+                ) : (
+                    <GroupAccessRightsView
+                        permissions={form.permissions}
+                        categories={permissionCategories}
+                        onUpdateCategories={setPermissionCategories}
+                    />
+                )}
             </div>
 
             <ConfirmationModal
@@ -328,6 +269,6 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
-        </div>
+        </ModuleFormTemplate>
     );
 }

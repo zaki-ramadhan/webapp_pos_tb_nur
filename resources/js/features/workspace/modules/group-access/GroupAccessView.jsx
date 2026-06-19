@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import {
     buildGroupAccessRow,
     mergeGroupAccessForm,
@@ -19,26 +19,15 @@ export default function GroupAccessView({
     onCloseDetail,
 }) {
     const {
-        rows: backendRows,
-        total,
-        loading,
-        error,
+        mappedRows: resolvedRows,
+        tableProps,
         reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+    } = useWorkspaceResource({
         resource: 'access-groups',
         initialPerPage: 25,
+        mapRow: (record) => buildGroupAccessRow(record, page.form),
     });
-    const resolvedRows = useMemo(
-        () => backendRows.map((record) => buildGroupAccessRow(record, page.form)),
-        [backendRows, page.form],
-    );
+
     const rowMap = useMemo(
         () =>
             resolvedRows.reduce((result, row) => {
@@ -55,22 +44,10 @@ export default function GroupAccessView({
     const resolvedTable = useMemo(
         () => ({
             ...page.table,
-            rows: resolvedRows,
-            pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
-            emptyLabel: error || page.table?.emptyLabel || 'Belum ada data',
-            refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
+            ...tableProps,
+            pageValue: tableProps.total.toLocaleString('id-ID'),
         }),
-        [error, loading, page.table, resolvedRows, total],
+        [page.table, tableProps],
     );
 
     return mode === 'table' ? (
@@ -78,9 +55,6 @@ export default function GroupAccessView({
             table={resolvedTable}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
-            loading={loading}
-            error={error}
-            onRefresh={reload}
         />
     ) : (
         <GroupAccessFormView

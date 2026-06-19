@@ -1,68 +1,41 @@
 import { useMemo } from 'react';
-
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import CashPaymentFormView from './CashPaymentFormView';
 import CashPaymentTableView from './CashPaymentTableView';
 import { buildCashPaymentFilters, buildCashPaymentRow } from './cashPaymentShared';
 
 export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
-    const {
-        rows,
-        total,
-        loading,
-        error,
-        reload,
-        page: currentPage,
-        perPage,
-        setPage,
-        setPerPage,
-        lastPage,
-        from,
-        to
-    } = useBackendIndexResource({
+    const resource = useWorkspaceResource({
         resource: 'cash-payments',
         initialPerPage: 25,
+        mapRow: buildCashPaymentRow,
     });
-    const config = useMemo(
-        () => {
-            const mappedRows = rows.map(buildCashPaymentRow);
 
-            return {
-                ...page.cashPayment,
-                rowMap: mappedRows.reduce((result, row) => {
-                    result[row.id] = row;
-                    return result;
-                }, {}),
-                table: {
-                    ...page.cashPayment.table,
-                    rows: mappedRows,
-                    filters: buildCashPaymentFilters(page.cashPayment.table?.filters, mappedRows),
-                    pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
-                    refreshLabel: loading ? 'Memuat data...' : page.cashPayment.table?.refreshLabel,
-                },
-            };
-        },
-        [loading, page.cashPayment, rows, total],
-    );
+    const config = useMemo(() => {
+        const rows = resource.mappedRows;
+        return {
+            ...page.cashPayment,
+            rowMap: rows.reduce((result, row) => {
+                result[row.id] = row;
+                return result;
+            }, {}),
+            table: {
+                ...page.cashPayment.table,
+                ...resource.tableProps,
+                filters: buildCashPaymentFilters(page.cashPayment.table?.filters, rows),
+                pageValue: resource.total.toLocaleString('id-ID'),
+            },
+        };
+    }, [page.cashPayment, resource]);
 
     return mode === 'table' ? (
         <CashPaymentTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
-            loading={loading}
-            error={error}
-            onRefresh={reload}
+            loading={resource.loading}
+            error={resource.error}
+            onRefresh={resource.reload}
         />
     ) : (
         <CashPaymentFormView
@@ -72,7 +45,7 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenCon
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
-            onRefresh={reload}
+            onRefresh={resource.reload}
         />
     );
 }
