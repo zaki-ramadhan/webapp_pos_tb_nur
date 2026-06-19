@@ -94,6 +94,8 @@ export default function PeriodEndTableView({ config, onCreate, onOpenDetail }) {
                 refreshButton={{
                     label: table.refreshLabel,
                     icon: <RefreshIcon className="h-5 w-5" />,
+                    onClick: table.onRefresh,
+                    loading: table.loading,
                 }}
                 menuButton={{
                     label: table.actionsLabel,

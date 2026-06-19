@@ -9,17 +9,17 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
+import DockActionButton from '@/features/workspace/shared/DockActionButton';
 
-export function PeriodDockButton({ label }) {
+export function PeriodDockButton({ label, onClick, disabled, loading }) {
     return (
-        <button
-            type="button"
-            aria-label={label}
-            title={label}
-            className="inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] shadow-[0_4px_10px_rgba(15,23,42,0.08)] sm:h-[54px] sm:w-[92px] md:h-[58px] md:w-[96px]"
-        >
-            <SaveIcon className="h-9 w-9" />
-        </button>
+        <DockActionButton
+            label={label}
+            onClick={onClick}
+            disabled={disabled}
+            loading={loading}
+            icon={<SaveIcon className="h-8 w-8 sm:h-9 sm:w-9" />}
+        />
     );
 }
 
@@ -35,7 +35,19 @@ export function PeriodFieldRow({ label, required = false, children }) {
     );
 }
 
-export function PeriodEndRatesSection({ config, month, setMonth, year, setYear, monthOptions, yearOptions, ratesRows }) {
+export function PeriodEndRatesSection({
+    config,
+    month,
+    setMonth,
+    year,
+    setYear,
+    monthOptions,
+    yearOptions,
+    ratesRows,
+    onSave,
+    saveDisabled,
+    saving,
+}) {
     return (
         <>
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -72,7 +84,12 @@ export function PeriodEndRatesSection({ config, month, setMonth, year, setYear, 
                 </div>
 
                 <div className="flex justify-end">
-                    <PeriodDockButton label={config.saveLabel} />
+                    <PeriodDockButton
+                        label={config.saveLabel}
+                        onClick={onSave}
+                        disabled={saveDisabled}
+                        loading={saving}
+                    />
                 </div>
             </div>
 

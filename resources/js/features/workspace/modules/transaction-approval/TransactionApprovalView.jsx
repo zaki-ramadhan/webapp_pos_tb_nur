@@ -4,7 +4,7 @@ import { mapApprovalRuleRow } from '@/features/workspace/backend/workspaceBacken
 import TransactionApprovalFormView from './TransactionApprovalFormView';
 import TransactionApprovalTableView from './TransactionApprovalTableView';
 
-export default function TransactionApprovalView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
+export default function TransactionApprovalView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const {
         rows,
         total,
@@ -41,6 +41,9 @@ export default function TransactionApprovalView({ page, mode, activeLevel2Tab, o
             pageId={page.id}
             form={page.form}
             activeLevel2Tab={activeLevel2Tab}
+            onCloseDetail={onCloseDetail}
+            onRefresh={reload}
+            backendRows={rows}
         />
     );
 }

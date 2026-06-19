@@ -39,11 +39,46 @@ export default function PeriodEndView({ page, mode, activeLevel2Tab, onOpenConte
 
     const resolvedConfig = useMemo(() => {
         const baseConfig = page.periodEnd ?? {};
+        const baseFilters = baseConfig.historyTable?.filters ?? [];
+        const baseMonthOptions = baseFilters[0]?.options ?? [];
+        const baseYearOptions = baseFilters[1]?.options ?? [];
+
+        const existingMonths = new Set(baseMonthOptions.map(o => o.value));
+        const existingYears = new Set(baseYearOptions.map(o => o.value));
+
+        const monthFilterOptions = [...baseMonthOptions];
+        mappedRows.forEach((row) => {
+            if (row.monthValue && !existingMonths.has(row.monthValue)) {
+                existingMonths.add(row.monthValue);
+                monthFilterOptions.push({
+                    value: row.monthValue,
+                    label: `Bulan: ${row.name}`,
+                });
+            }
+        });
+
+        const yearFilterOptions = [...baseYearOptions];
+        mappedRows.forEach((row) => {
+            if (row.yearValue && !existingYears.has(row.yearValue)) {
+                existingYears.add(row.yearValue);
+                yearFilterOptions.push({
+                    value: row.yearValue,
+                    label: `Tahun: ${row.yearValue}`,
+                });
+            }
+        });
+
+        const filters = [
+            { ...(baseFilters[0] ?? {}), options: monthFilterOptions },
+            { ...(baseFilters[1] ?? {}), options: yearFilterOptions },
+        ];
+
         return {
             ...baseConfig,
             historyTable: {
                 ...baseConfig.historyTable,
                 rows: mappedRows,
+                filters,
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.historyTable?.refreshLabel,
@@ -66,6 +101,13 @@ export default function PeriodEndView({ page, mode, activeLevel2Tab, onOpenConte
     return mode === 'table' ? (
         <PeriodEndTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
     ) : (
-        <PeriodEndFormView config={resolvedConfig} activeLevel2Tab={activeLevel2Tab} />
+        <PeriodEndFormView
+            config={resolvedConfig}
+            activeLevel2Tab={activeLevel2Tab}
+            onRefresh={reload}
+            onOpenContent={onOpenContent}
+            onOpenDetail={onOpenDetail}
+            backendRows={backendRows}
+        />
     );
 }

@@ -210,15 +210,16 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                                 ))}
                             </SelectField>
                         ) : (
-                            <TextInput
-                                id="documentNumber"
-                                value={values.documentNumber}
-                                readOnly
-                                trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                                trailingClassName="px-3"
-                            />
+                             <TextInput
+                                 id="documentNumber"
+                                 value={values.documentNumber}
+                                 onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
+                                 readOnly={!showAutoNumberSwitch}
+                                 trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
+                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                 inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                 trailingClassName="px-3"
+                             />
                         )}
                     </div>
                 </div>

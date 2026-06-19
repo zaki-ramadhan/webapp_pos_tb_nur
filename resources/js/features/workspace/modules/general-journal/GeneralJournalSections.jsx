@@ -147,7 +147,8 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                             ) : (
                                 <TextInput
                                     value={values.documentNumber}
-                                    readOnly
+                                    onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
+                                    readOnly={Boolean(activeRecordId)}
                                     trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                                     inputClassName="text-xs sm:text-sm text-[#1f2436]"

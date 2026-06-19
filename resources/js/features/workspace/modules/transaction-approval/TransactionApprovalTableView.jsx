@@ -86,8 +86,8 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    onClick={() => onOpenDetail?.(row)}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    onClick={() => onOpenDetail?.({ recordId: row.id, label: row.ruleName, tabLabel: row.tabLabel })}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} cursor-pointer hover:bg-[#f3f6fa]`}
                                 >
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.valueLabel)}</DataTableCell>

@@ -205,7 +205,7 @@ class IdentityBackendResources
                 label: 'Transaction Approval Rules',
                 searchColumns: ['rule_name', 'transaction_type'],
                 modelClass: TransactionApprovalRule::class,
-                with: ['branch', 'steps'],
+                with: ['branch', 'steps', 'steps.approverUser', 'steps.approverRole'],
                 storeRules: self::transactionApprovalRuleRules(),
                 updateRules: fn (Model $record) => self::transactionApprovalRuleRules(),
                 syncUsing: function (Model $record, array $payload): void {

@@ -305,7 +305,8 @@ export default function CashReceiptFormView({
                                                 <TextInput
                                                     id="documentNumber"
                                                     value={values.documentNumber}
-                                                    readOnly
+                                                    onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
+                                                    readOnly={Boolean(activeRecordId)}
                                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                                                     inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                                 />
