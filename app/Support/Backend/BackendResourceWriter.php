@@ -72,9 +72,7 @@ class BackendResourceWriter
             );
 
             // Invalidate dashboard caches on mutation
-            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
-            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
-            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_manufacture');
+            $this->invalidateDashboardCache();
         });
     }
 
@@ -297,9 +295,7 @@ class BackendResourceWriter
             );
 
             // Invalidate dashboard caches on mutation
-            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
-            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
-            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_manufacture');
+            $this->invalidateDashboardCache();
 
             return $freshRecord;
         });
@@ -594,5 +590,15 @@ class BackendResourceWriter
         } catch (\Throwable $e) {
             return false;
         }
+    }
+
+    /**
+     * Hapus seluruh cache widget dashboard.
+     */
+    protected function invalidateDashboardCache(): void
+    {
+        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
+        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
+        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_manufacture');
     }
 }
