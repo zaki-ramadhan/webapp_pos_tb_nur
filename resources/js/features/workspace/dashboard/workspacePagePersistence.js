@@ -1,4 +1,5 @@
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
+import { resolvePageIdFromPath } from './workspaceUrls';
 
 const WORKSPACE_PAGE_STATE_STORAGE_KEY = 'pos-workspace-open-pages:v2';
 
@@ -71,17 +72,26 @@ export function loadWorkspacePageState({
 
     try {
         const rawValue = window.localStorage.getItem(WORKSPACE_PAGE_STATE_STORAGE_KEY);
-
-        if (!rawValue) {
-            return fallbackState;
+        const parsedValue = rawValue ? JSON.parse(rawValue) : null;
+        
+        const pageIds = normalizePageIds(parsedValue?.openPageIds, pages, dashboardPage, preferences);
+        
+        // Cek URL pathname untuk deep-linking langsung
+        const urlPageId = typeof window !== 'undefined' ? resolvePageIdFromPath(window.location.pathname) : null;
+        
+        if (urlPageId && pages[urlPageId] && (urlPageId === dashboardPage.id || !isWorkspacePageInactive(urlPageId, preferences))) {
+            if (!pageIds.includes(urlPageId)) {
+                pageIds.push(urlPageId);
+            }
         }
 
-        const parsedValue = JSON.parse(rawValue);
-        const pageIds = normalizePageIds(parsedValue?.openPageIds, pages, dashboardPage, preferences);
         const openPages = pageIds.map((pageId) => pages[pageId]).filter(Boolean);
-        const activePageId = openPages.some((page) => page.id === parsedValue?.activePageId)
-            ? parsedValue.activePageId
-            : dashboardPage.id;
+        
+        const activePageId = (urlPageId && pages[urlPageId] && (urlPageId === dashboardPage.id || !isWorkspacePageInactive(urlPageId, preferences)))
+            ? urlPageId
+            : (parsedValue && openPages.some((page) => page.id === parsedValue.activePageId)
+                ? parsedValue.activePageId
+                : dashboardPage.id);
 
         return {
             openPages: openPages.length ? openPages : fallbackState.openPages,

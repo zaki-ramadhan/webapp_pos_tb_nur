@@ -40,6 +40,7 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
                     type="button"
                     onClick={(event) => {
                         event.stopPropagation();
+                        event.preventDefault();
                         onClose?.(tab.id);
                     }}
                     className={`inline-flex h-6 w-6 items-center justify-center rounded-[3px] ${closeButtonClassName}`.trim()}

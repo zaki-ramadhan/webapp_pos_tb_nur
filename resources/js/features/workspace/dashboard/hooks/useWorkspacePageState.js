@@ -160,11 +160,9 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
     }, [activeLevel2Tabs, activePageId, openPages, pageLevel2ContentTabs]);
 
     useEffect(() => {
-        if (openPages.some((page) => page.id === activePageId)) {
-            return;
+        if (!pages[activePageId]) {
+            setActivePageId(dashboardPage.id);
         }
-
-        setActivePageId(dashboardPage.id);
     }, [activePageId, dashboardPage.id, openPages]);
 
     function handleTogglePanel(panelId) {
