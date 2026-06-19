@@ -255,6 +255,7 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
         await new Promise((resolve, reject) => {
             router.reload({
                 only: ['widgets'],
+                data: { force_refresh: 1 },
                 showProgress: false,
                 onSuccess: (page) => {
                     resolve(page);

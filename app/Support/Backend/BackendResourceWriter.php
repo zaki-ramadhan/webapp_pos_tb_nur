@@ -70,6 +70,11 @@ class BackendResourceWriter
                 $before,
                 null,
             );
+
+            // Invalidate dashboard caches on mutation
+            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
+            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
+            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_manufacture');
         });
     }
 
@@ -290,6 +295,11 @@ class BackendResourceWriter
                 $before,
                 $this->activityLogger->snapshot($freshRecord),
             );
+
+            // Invalidate dashboard caches on mutation
+            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
+            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
+            \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_manufacture');
 
             return $freshRecord;
         });

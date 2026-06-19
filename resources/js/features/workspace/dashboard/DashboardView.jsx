@@ -121,6 +121,8 @@ const DashboardView = forwardRef(function DashboardView(
 
                     <DashboardActivePageContent
                         dashboard={dashboard}
+                        widgets={widgets}
+                        isLoading={!widgets}
                         dashboardItems={dashboardItems}
                         selectedDashboardId={selectedDashboardId}
                         isDashboardActionsOpen={isDashboardActionsOpen}

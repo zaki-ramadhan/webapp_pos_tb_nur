@@ -15,6 +15,7 @@ export default function DashboardWidgetGrid({
     onRefreshWidget = null,
     onRenameWidget = null,
     onRemoveWidget = null,
+    isLoading = false,
 }) {
     const [analyticsDetailsExpanded, setAnalyticsDetailsExpanded] = useState(false);
     const [refreshingByWidgetId, setRefreshingByWidgetId] = useState({});
@@ -96,6 +97,7 @@ export default function DashboardWidgetGrid({
                                     widget={widget}
                                     analyticsDetailsExpanded={analyticsDetailsExpanded}
                                     onToggleAnalyticsDetails={handleToggleAnalyticsDetails}
+                                    isLoading={isLoading}
                                 />
                             </DashboardWidgetCard>
                         </div>

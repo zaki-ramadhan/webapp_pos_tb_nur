@@ -28,11 +28,79 @@ function WidgetEmptyState({ widget }) {
         />
     );
 }
+function WidgetSkeleton({ widget }) {
+    if (widget.type === 'line' || widget.type === 'cash-availability') {
+        return (
+            <div className="flex flex-1 flex-col gap-4 animate-pulse">
+                <div className="h-6 w-1/4 rounded bg-slate-200" />
+                <div className="flex-1 rounded-[6px] bg-slate-100 min-h-[180px] flex items-center justify-center">
+                    <svg className="h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                </div>
+            </div>
+        );
+    }
+
+    if (widget.type === 'ring-breakdown' || widget.type === 'expense') {
+        return (
+            <div className="flex flex-1 flex-col sm:flex-row items-center gap-6 animate-pulse">
+                <div className="relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full border-8 border-slate-100 bg-transparent" />
+                <div className="flex-1 w-full space-y-3">
+                    <div className="h-4 w-3/4 rounded bg-slate-200" />
+                    <div className="h-3 w-1/2 rounded bg-slate-200" />
+                    <div className="h-3 w-2/3 rounded bg-slate-200" />
+                </div>
+            </div>
+        );
+    }
+
+    if (widget.type === 'sales-team' || widget.type === 'top-products' || widget.type === 'recent-activity') {
+        return (
+            <div className="flex flex-1 flex-col gap-3 animate-pulse">
+                <div className="h-8 rounded bg-slate-100" />
+                <div className="h-8 rounded bg-slate-100" />
+                <div className="h-8 rounded bg-slate-100" />
+                <div className="h-8 rounded bg-slate-100" />
+            </div>
+        );
+    }
+
+    if (widget.type === 'integrated-analysis') {
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
+                <div className="md:col-span-1 space-y-4">
+                    <div className="h-16 rounded bg-slate-100" />
+                    <div className="h-16 rounded bg-slate-100" />
+                    <div className="h-16 rounded bg-slate-100" />
+                </div>
+                <div className="md:col-span-2 space-y-4">
+                    <div className="h-6 w-1/3 rounded bg-slate-200" />
+                    <div className="h-32 rounded bg-slate-100" />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-1 flex-col gap-4 animate-pulse">
+            <div className="h-4 w-1/2 rounded bg-slate-200" />
+            <div className="h-12 rounded bg-slate-100" />
+            <div className="h-8 w-3/4 rounded bg-slate-100" />
+        </div>
+    );
+}
+
 export default function DashboardWidgetBody({
     widget,
     analyticsDetailsExpanded,
     onToggleAnalyticsDetails,
+    isLoading = false,
 }) {
+    if (isLoading) {
+        return <WidgetSkeleton widget={widget} />;
+    }
+
     if (widget.emptyState?.enabled) {
         return <WidgetEmptyState widget={widget} />;
     }

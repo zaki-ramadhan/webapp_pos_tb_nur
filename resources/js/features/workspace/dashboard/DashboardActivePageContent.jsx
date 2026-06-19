@@ -5,6 +5,8 @@ import { FormErrorProvider } from '@/components/ui/FormErrorContext';
 
 export default function DashboardActivePageContent({
     dashboard,
+    widgets,
+    isLoading = false,
     dashboardItems,
     selectedDashboardId,
     isDashboardActionsOpen,
@@ -55,6 +57,7 @@ export default function DashboardActivePageContent({
                         onRefreshWidget={handleRefreshWidget}
                         onRenameWidget={handleRenameWidget}
                         onRemoveWidget={handleRemoveWidget}
+                        isLoading={isLoading}
                     />
                 </div>
             </>
