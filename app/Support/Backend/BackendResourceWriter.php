@@ -37,6 +37,15 @@ class BackendResourceWriter
     public function delete(BackendResourceBlueprint $blueprint, Model $record): void
     {
         DB::transaction(function () use ($blueprint, $record): void {
+            if ($blueprint->key !== 'period-ends' && $record instanceof \App\Domain\Support\Models\OperationDocument) {
+                if ($record->entry_date && $this->isPeriodClosed($record->entry_date)) {
+                    $formattedDate = \Carbon\Carbon::parse($record->entry_date)->format('d/m/Y');
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'entry_date' => ["Transaksi tidak dapat dihapus karena periode tanggal tersebut ({$formattedDate}) sudah ditutup oleh Proses Akhir Bulan."]
+                    ]);
+                }
+            }
+
             $costingKeys = [
                 'goods-receipts',
                 'sales-deliveries',
@@ -67,6 +76,51 @@ class BackendResourceWriter
     protected function persist(BackendResourceBlueprint $blueprint, Model $record, array $payload): Model
     {
         return DB::transaction(function () use ($blueprint, $record, $payload): Model {
+            // 1. Validasi Periode Ditutup (Period Lock)
+            if ($blueprint->key !== 'period-ends' && is_subclass_of($blueprint->modelClass(), \App\Domain\Support\Models\OperationDocument::class)) {
+                $targetDate = $payload['entry_date'] ?? ($record->exists ? $record->entry_date : null);
+                if ($targetDate && $this->isPeriodClosed($targetDate)) {
+                    $formattedDate = \Carbon\Carbon::parse($targetDate)->format('d/m/Y');
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'entry_date' => ["Transaksi tidak dapat disimpan karena periode untuk tanggal tersebut ({$formattedDate}) sudah ditutup oleh Proses Akhir Bulan."]
+                    ]);
+                }
+            }
+
+            // 2. Rekalkulasi & Validasi Total di Sisi Backend (Price/Total Manipulation Protection)
+            if ($blueprint->key !== 'period-ends' && is_subclass_of($blueprint->modelClass(), \App\Domain\Support\Models\OperationDocument::class)) {
+                if (isset($payload['lines']) && is_array($payload['lines'])) {
+                    $subtotal = 0.0;
+                    $discountTotal = 0.0;
+                    $taxTotal = 0.0;
+
+                    foreach ($payload['lines'] as &$line) {
+                        $qty = (float)($line['quantity'] ?? 0.0);
+                        $price = (float)($line['unit_price'] ?? 0.0);
+                        $discount = (float)($line['discount_amount'] ?? 0.0);
+
+                        $lineTotal = max(0.0, ($qty * $price) - $discount);
+                        $line['total_amount'] = $lineTotal;
+
+                        $subtotal += $lineTotal;
+                        $discountTotal += $discount;
+                    }
+                    unset($line);
+
+                    $taxId = $payload['tax_id'] ?? null;
+                    if ($taxId) {
+                        $taxTotal = max(0.0, ($subtotal - $discountTotal) * 0.1);
+                    }
+
+                    $totalAmount = max(0.0, $subtotal - $discountTotal + $taxTotal);
+
+                    $payload['subtotal'] = $subtotal;
+                    $payload['discount_total'] = $discountTotal;
+                    $payload['tax_total'] = $taxTotal;
+                    $payload['total_amount'] = $totalAmount;
+                }
+            }
+
             // Validasi logika bisnis
             if ($blueprint->key === 'general-journals') {
                 $lines = $payload['lines'] ?? [];
@@ -486,5 +540,49 @@ class BackendResourceWriter
     {
         $product = \App\Domain\Catalog\Models\Product::find($productId);
         return $product ? (float) ($product->default_purchase_price ?? 0) : 0.0;
+    }
+
+    /**
+     * Memeriksa apakah periode tanggal yang diberikan sudah ditutup.
+     */
+    protected function isPeriodClosed(mixed $date): bool
+    {
+        if (empty($date)) {
+            return false;
+        }
+
+        try {
+            $dt = \Carbon\Carbon::parse($date);
+            $year = (string) $dt->format('Y');
+            $monthNum = (int) $dt->format('n');
+
+            $monthsMap = [
+                1 => 'Januari',
+                2 => 'Februari',
+                3 => 'Maret',
+                4 => 'April',
+                5 => 'Mei',
+                6 => 'Juni',
+                7 => 'Juli',
+                8 => 'Agustus',
+                9 => 'September',
+                10 => 'Oktober',
+                11 => 'November',
+                12 => 'Desember',
+            ];
+
+            $monthName = $monthsMap[$monthNum] ?? '';
+            if (empty($monthName)) {
+                return false;
+            }
+
+            return DB::table('operation_documents')
+                ->where('document_type', 'period_end')
+                ->where('metadata->month', $monthName)
+                ->where('metadata->year', $year)
+                ->exists();
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }

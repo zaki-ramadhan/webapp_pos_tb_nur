@@ -46,10 +46,13 @@ class BackendResourcePayloadSanitizer
             return null;
         }
 
+        // Strip HTML/PHP tags to prevent XSS / HTML Injection
+        $cleaned = strip_tags($trimmed);
+
         if ($key !== null && Str::endsWith($key, 'email')) {
-            return Str::lower($trimmed);
+            return Str::lower($cleaned);
         }
 
-        return $trimmed;
+        return $cleaned;
     }
 }
