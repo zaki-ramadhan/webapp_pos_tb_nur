@@ -64,15 +64,7 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                     <ReadonlyTransactionTextarea value={values.address} className="min-h-[84px]" />
                 )}
 
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder="Cari/Pilih..."
-                    onRemove={(value) => handlers.onRemoveBranch?.(value)}
-                    searchLabel="Cari cabang"
-                    onSearch={handlers.onSelectBranch}
-                    heightClassName="h-[34px]"
-                />
+
 
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField

@@ -77,7 +77,7 @@ export default function DashboardWidgetGrid({
 
     return (
         <>
-            <div className="grid min-w-0 grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid min-w-0 grid-cols-1 gap-1.5 sm:gap-2 md:grid-cols-2 xl:grid-cols-3">
                 {widgets.map((widget) => {
                     const isWide = widget.id === 'integrated-analysis' || 
                                    widget.type === 'integrated-analysis';

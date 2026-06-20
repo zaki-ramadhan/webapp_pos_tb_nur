@@ -130,14 +130,7 @@ export function ReceiptInfoSection({ config, values, isDetail, handlers = {} }) 
                     </>
                 ) : null}
 
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder={config.branchPlaceholder}
-                    onRemove={(value) => handlers.onRemoveBranch?.(value)}
-                    searchLabel="Cari cabang"
-                    onSearch={handlers.onSelectBranch}
-                />
+
 
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField

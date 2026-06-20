@@ -163,12 +163,12 @@ final class PosBlueprint
             ],
             [
                 'id' => 'trade-portal',
-                'label' => 'TB Nur Cabang Jakarta',
+                'label' => 'TB Nur Grosir',
                 'icon' => 'trade',
             ],
             [
                 'id' => 'manufacture',
-                'label' => 'TB Nur Cabang Surabaya',
+                'label' => 'TB Nur Produksi',
                 'icon' => 'manufacture',
             ],
         ];
@@ -265,7 +265,7 @@ final class PosBlueprint
             ]),
             self::navModule('company', 'Perusahaan', 'building', [
                 self::navItem('currency-master', 'Mata Uang', 'currency', 'blue'),
-                self::navItem('branch', 'Cabang', 'branch', 'blue'),
+                // self::navItem('branch', 'Cabang', 'branch', 'blue'),
                 self::navItem('department', 'Departemen', 'department', 'blue'),
                 self::navItem('company-tax', 'Pajak', 'tax', 'blue'),
                 self::navItem('payment-terms', 'Syarat Pembayaran', 'terms', 'blue'),

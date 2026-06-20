@@ -231,10 +231,7 @@ export default function TransactionApprovalFormView({
                             inputClassName="text-xs sm:text-sm text-[#9299aa]"
                         />
 
-                        <ApprovalFieldLabel label="Cabang" />
-                        <SelectField value={values.branch} onChange={set('branch')} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
-                            {resolvedBranchOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                        </SelectField>
+
                     </div>
                 </div>
 

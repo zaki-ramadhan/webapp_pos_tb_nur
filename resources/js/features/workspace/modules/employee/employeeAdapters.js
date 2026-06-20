@@ -8,7 +8,7 @@ export function buildEmployeeFormValues(form, detailRow = null) {
     return {
         ...defaults,
         __backendRecordId: detailRow?.id ?? null,
-        __branchId: detailRow?.branchId ?? null,
+        __branchId: detailRow?.branchId ?? 1,
         __departmentId: detailRow?.departmentId ?? null,
         __userId: detailRow?.userId ?? defaults.__userId ?? null,
         user: detailRow?.user ?? defaults.user ?? '',

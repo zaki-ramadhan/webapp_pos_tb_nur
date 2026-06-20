@@ -98,7 +98,7 @@ export function buildInventoryAdjustmentPayload(values) {
         .filter((item) => item.description || item.reference_code || item.quantity > 0);
 
     return {
-        branch_id: values.__branchId ?? null,
+        branch_id: values.__branchId ?? 1,
         primary_account_id: values.__adjustmentAccountId ?? null,
         document_number: values.documentNumber?.trim(),
         numbering_type: values.numberingType?.trim() || null,

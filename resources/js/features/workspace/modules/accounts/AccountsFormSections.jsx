@@ -248,30 +248,7 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                             Isikan pengguna-pengguna yang bisa menggunakan akun ini
                         </div>
 
-                        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
-                            <div className="pt-2 lg:pt-1.5">
-                                <AccountsFieldLabel label="Grup/Cabang" />
-                            </div>
-                            <div>
-                                <BackendLookupField
-                                    resource="branches"
-                                    values={selectedBranches}
-                                    placeholder="Cari/Pilih..."
-                                    searchLabel="Cari grup/cabang"
-                                    getOptionLabel={(option) => option?.name ?? ''}
-                                    onSelect={(option) => {
-                                        if (!(values.branchIds ?? []).includes(option.id)) {
-                                            onChange('branchIds', [...(values.branchIds ?? []), option.id]);
-                                            onChange('branch', [...(values.branch ?? []), option.name]);
-                                        }
-                                    }}
-                                    onRemove={(option) => {
-                                        onChange('branchIds', (values.branchIds ?? []).filter((id) => id !== option.id));
-                                        onChange('branch', (values.branch ?? []).filter((name) => name !== option.name));
-                                    }}
-                                />
-                            </div>
-                        </div>
+
 
                         <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
                             <div className="pt-2 lg:pt-1.5">

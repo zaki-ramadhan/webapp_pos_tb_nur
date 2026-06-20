@@ -51,7 +51,7 @@ export default function DashboardActivePageContent({
                     }}
                 />
 
-                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#f2f2f2] px-2 py-2 sm:px-3 sm:py-3">
+                <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#f2f2f2] px-1.5 py-1.5 sm:px-2 sm:py-2">
                     <DashboardWidgetGrid
                         widgets={activeDashboardWidgets}
                         onRefreshWidget={handleRefreshWidget}

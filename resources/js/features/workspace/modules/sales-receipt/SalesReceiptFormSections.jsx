@@ -258,15 +258,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                     </>
                 ) : null}
 
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder="Cari/Pilih..."
-                    onRemove={(value) => handlers.onRemoveBranch?.(value)}
-                    searchLabel="Cari cabang"
-                    onSearch={handlers.onSelectBranch}
-                    heightClassName="h-[34px]"
-                />
+
 
                 <TransactionFieldLabel label={config.labels.notes} />
                 <textarea

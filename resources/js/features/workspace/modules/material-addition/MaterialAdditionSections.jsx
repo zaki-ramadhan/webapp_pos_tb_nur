@@ -296,17 +296,7 @@ export function MaterialAdditionAdditionalInfoSection({ config, values, setValue
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
             <div className="mt-4 space-y-3">
-                <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
-                    <TransactionFieldLabel label={config.labels.branch} required />
-                    <ChipLookupField
-                        values={values.branches}
-                        placeholder="Cari/Pilih..."
-                        searchLabel="Cari cabang"
-                        onRemove={(branchValue) => handlers.onRemoveBranch?.(branchValue)}
-                        onSearch={handlers.onSelectBranch}
-                        heightClassName="h-[36px]"
-                    />
-                </div>
+
 
                 <div className="grid gap-4 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
                     <TransactionFieldLabel label={config.labels.notes} />

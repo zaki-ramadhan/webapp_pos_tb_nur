@@ -227,15 +227,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                 />
                             )}
 
-                            {}
-                            <ReportSectionHeading title="Parameter Tambahan" />
-                            {reportSchema?.hasBranch && (
-                                <ReportBranchField
-                                    value={params.branch}
-                                    onSelect={handleSelectBranch}
-                                    onRemove={handleRemoveBranch}
-                                />
-                            )}
+
 
                             {}
                             {reportSchema?.checkboxes && reportSchema.checkboxes.length > 0 && (

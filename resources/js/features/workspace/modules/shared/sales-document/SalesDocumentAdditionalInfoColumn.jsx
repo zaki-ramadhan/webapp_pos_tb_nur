@@ -195,21 +195,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                     />
                 )}
 
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder="Cari/Pilih..."
-                    onRemove={(value) =>
-                        setValues?.((current) => ({
-                            ...current,
-                            branches: current.branches.filter((item) => item !== value),
-                            __branchId: current.branches.filter((item) => item !== value).length ? current.__branchId : null,
-                        }))
-                    }
-                    onSearch={handlers?.onSelectBranch}
-                    searchLabel="Cari cabang"
-                    heightClassName="h-[34px]"
-                />
+
 
                 <TransactionFieldLabel label={config.labels.notes} />
                 <TextareaField

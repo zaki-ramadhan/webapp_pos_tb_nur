@@ -211,13 +211,7 @@ export function DepartmentOpeningBalanceTab({ form, values, onChange }) {
 }
 
 export function DepartmentUsersTab({ form, values, onChange, branchOptions, userOptions }) {
-    const filteredUserOptions = useMemo(() => {
-        if (!values.userScopeBranchId) {
-            return userOptions;
-        }
-
-        return userOptions.filter((option) => option.branchIds.includes(values.userScopeBranchId));
-    }, [userOptions, values.userScopeBranchId]);
+    const filteredUserOptions = userOptions;
 
     return (
         <div className="space-y-4">
@@ -244,20 +238,6 @@ export function DepartmentUsersTab({ form, values, onChange, branchOptions, user
                         </h3>
                     </div>
 
-                    <DepartmentFieldRow label={form.userAccess.groupBranchLabel ?? 'Grup/Cabang'}>
-                        <ReferenceLookupInput
-                            value={values.userScopeBranchLabel}
-                            items={branchOptions}
-                            placeholder={form.userAccess.groupBranchPlaceholder ?? 'Cari/Pilih...'}
-                            searchLabel="Cari grup atau cabang"
-                            className="max-w-[1220px]"
-                            getOptionLabel={(option) => option.label}
-                            getOptionSearchText={(option) => option.searchText}
-                            renderOption={(option) => renderReferenceOptionPrimary(option, option.code)}
-                            onSelect={(option) => onChange('userScopeBranch', option)}
-                            onClear={() => onChange('userScopeBranch', null)}
-                        />
-                    </DepartmentFieldRow>
 
                     <DepartmentFieldRow label={form.userAccess.userLabel ?? 'Pengguna'}>
                         <div className="space-y-2">

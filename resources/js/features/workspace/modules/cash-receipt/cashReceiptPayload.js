@@ -22,7 +22,7 @@ export function buildCashReceiptPayload(values) {
     const totalAmount = buildCashReceiptTotal(values.lineItems ?? []);
 
     return {
-        branch_id: values.__branchId ?? null,
+        branch_id: values.__branchId ?? 1,
         primary_account_id: values.__primaryAccountId ?? null,
         document_number: values.documentNumber?.trim() || buildGeneratedCashReceiptNumber(),
         numbering_type: values.numberingType?.trim() || null,

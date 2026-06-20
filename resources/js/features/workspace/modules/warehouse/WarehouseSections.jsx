@@ -200,16 +200,7 @@ export function WarehouseUsersTab({ config, values, onChange, isDetail }) {
                         <h3 className="text-lg font-medium text-[#1f2436]">{config.userAccess.limitedTitle}</h3>
                     </div>
 
-                    <WarehouseFieldRow label={config.labels.groupBranch}>
-                        <ChipLookupField
-                            values={values.groupBranch}
-                            placeholder={config.userAccess.groupBranchPlaceholder}
-                            searchLabel="Cari grup/cabang"
-                            onRemove={(value) => onChange('groupBranch', values.groupBranch.filter((item) => item !== value))}
-                            className="max-w-[1320px]"
-                            contentClassName="items-start"
-                        />
-                    </WarehouseFieldRow>
+
 
                     <WarehouseFieldRow label={config.labels.user}>
                         <ChipLookupField

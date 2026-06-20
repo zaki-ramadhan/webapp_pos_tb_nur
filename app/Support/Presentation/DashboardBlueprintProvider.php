@@ -714,7 +714,7 @@ class DashboardBlueprintProvider
                 ],
                 [
                     'id' => 'sales-trend',
-                    'title' => 'Tren Penjualan (Semua Cabang)',
+                    'title' => 'Tren Penjualan',
                     'type' => 'line',
                     'labels' => $salesTrendLabels,
                     'series' => [
@@ -757,7 +757,7 @@ class DashboardBlueprintProvider
                 ],
                 [
                     'id' => 'cash-flow',
-                    'title' => 'Arus Kas (Semua Cabang)',
+                    'title' => 'Arus Kas',
                     'type' => 'line',
                     'labels' => $cashFlowLabels,
                     'series' => [
@@ -876,7 +876,7 @@ class DashboardBlueprintProvider
                 ],
                 [
                     'id' => 'cash-availability',
-                    'title' => 'Ketersediaan Kas (Semua Cabang)',
+                    'title' => 'Ketersediaan Kas',
                     'type' => 'cash-availability',
                     'balanceLabel' => 'Estimasi Saldo Kas Berjalan',
                     'balanceValue' => $cashAvailabilitySeries !== [] ? 'Rp ' . number_format(end($cashAvailabilitySeries), 0, ',', '.') : 'Rp -',
@@ -892,7 +892,7 @@ class DashboardBlueprintProvider
                 ],
                 [
                     'id' => 'sales-order-status',
-                    'title' => 'Pesanan Penjualan (Semua Cabang)',
+                    'title' => 'Pesanan Penjualan',
                     'type' => 'order-status',
                     'primaryLabel' => 'Menunggu diproses',
                     'primaryValue' => (string) $pendingSalesOrders,

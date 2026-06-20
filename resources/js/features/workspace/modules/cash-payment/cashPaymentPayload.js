@@ -23,7 +23,7 @@ export function buildCashPaymentPayload(values) {
     const totalAmount = buildPaymentTotalAmount(values.lineItems ?? []);
 
     return {
-        branch_id: values.__branchId ?? null,
+        branch_id: values.__branchId ?? 1,
         primary_account_id: values.__primaryAccountId ?? null,
         document_number: values.documentNumber?.trim() || buildGeneratedCashPaymentNumber(),
         numbering_type: values.numberingType?.trim() || null,

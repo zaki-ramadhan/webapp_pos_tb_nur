@@ -53,21 +53,7 @@ export default function InventoryAdjustmentInfoSection({ config, values, setValu
                     textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder="Cari/Pilih..."
-                    searchLabel="Cari cabang"
-                    onRemove={(branchValue) =>
-                        setValues((current) => ({
-                            ...current,
-                            branches: current.branches.filter((item) => item !== branchValue),
-                            __branchId: current.branches.filter((item) => item !== branchValue).length ? current.__branchId : null,
-                        }))
-                    }
-                    onSearch={handlers?.onSelectBranch}
-                    heightClassName="h-[34px]"
-                />
+
             </div>
         </div>
     );

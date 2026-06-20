@@ -154,16 +154,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                         />
                     </FormFieldRow>
 
-                    <FormFieldRow label={config.labels.branchUsage}>
-                        <SelectField
-                            value={values.branchUsage}
-                            onChange={(event) => onChange('branchUsage', event.target.value)}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                        >
-                            <option value={values.branchUsage}>{values.branchUsage}</option>
-                        </SelectField>
-                    </FormFieldRow>
+
 
                     <FormFieldRow label={config.labels.currency} required>
                         <ChipLookupField

@@ -22,7 +22,7 @@ export function buildGeneralJournalPayload(values) {
     const totals = buildJournalTotals(values.lineItems ?? []);
 
     return {
-        branch_id: values.__branchId ?? null,
+        branch_id: values.__branchId ?? 1,
         document_number: values.documentNumber?.trim() || buildGeneratedJournalNumber(),
         reference_number: values.transactionNumber?.trim() || null,
         numbering_type: values.numberingType?.trim() || null,

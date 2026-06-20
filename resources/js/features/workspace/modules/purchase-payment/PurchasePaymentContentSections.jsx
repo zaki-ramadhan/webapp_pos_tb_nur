@@ -119,15 +119,7 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                     </>
                 ) : null}
 
-                <TransactionFieldLabel label={config.labels.branch} required />
-                <ChipLookupField
-                    values={values.branches}
-                    placeholder="Cari/Pilih..."
-                    onRemove={(value) => handlers.onRemoveBranch?.(value)}
-                    searchLabel="Cari cabang"
-                    heightClassName="h-[34px]"
-                    onSearch={handlers.onSelectBranch}
-                />
+
 
                 {isDetail ? (
                     <>

@@ -268,16 +268,7 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                     </div>
                 ) : null}
 
-                <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
-                    <TransactionFieldLabel label={config.labels.branch} required />
-                    <ChipLookupField
-                        values={values.branches}
-                        placeholder="Cari/Pilih..."
-                        searchLabel="Cari cabang"
-                        onRemove={(branchValue) => handlers.onRemoveBranch?.(branchValue)}
-                        onSearch={handlers.onSelectBranch}
-                    />
-                </div>
+
             </div>
         </div>
     );
