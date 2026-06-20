@@ -1,7 +1,7 @@
 import {
     buildSalesDocumentRecord,
     mergeSalesDocumentConfigWithPage,
-} from '@/features/workspace/modules/sales-document/salesOrderConfig';
+} from '@/features/workspace/modules/sales-document/salesDocumentConfigCore';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import {
     createAttachmentDockAction,
@@ -81,8 +81,6 @@ const salesReturnDraft = {
     items: [],
     itemCountLabel: 'Rincian Barang',
     address: '',
-    branches: ['JAKARTA'],
-    __branchId: 1,
     notes: '',
     returnItemMode: 'returned',
     printedBy: '',

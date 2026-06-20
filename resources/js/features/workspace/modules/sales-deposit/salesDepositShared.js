@@ -109,8 +109,8 @@ export function buildSalesDepositRecord(record = {}, config) {
     return {
         __backendRecordId: record.id ?? null,
         __customerId: record.customer_id ?? null,
-        __paymentTermId: record.payment_term_id ?? null,
-        __branchId: record.branch_id ?? null,
+        __paymentTermId: null,
+        __branchId: null,
         customer: record.customer?.name ? [buildLookupLabel(record.customer)] : [],
         entryDate: formatIsoDate(record.entry_date),
         autoNumber: false,
@@ -121,9 +121,9 @@ export function buildSalesDepositRecord(record = {}, config) {
         purchaseOrderNumber: record.reference_number ?? '',
         taxEnabled: Boolean(record.tax_id),
         taxIncluded: Boolean(record.metadata?.tax_included),
-        paymentTerms: record.paymentTerm?.name ? [record.paymentTerm.name] : [],
+        paymentTerms: [],
         address: record.metadata?.address ?? '',
-        branches: record.branch?.name ? [record.branch.name] : (record.metadata?.branch_label ? [record.metadata.branch_label] : []),
+        branches: [],
         notes: record.notes ?? '',
         summary: buildSummaryRows(totalAmount, status, printStatus),
         usedDepositRows: [],
@@ -147,8 +147,8 @@ export function buildSalesDepositFormState(source = {}, config) {
     return {
         __backendRecordId: source.__backendRecordId ?? null,
         __customerId: source.__customerId ?? null,
-        __paymentTermId: source.__paymentTermId ?? null,
-        __branchId: source.__branchId ?? null,
+        __paymentTermId: null,
+        __branchId: null,
         customer: [...(source.customer ?? config.draft?.customer ?? [])],
         entryDate: source.entryDate ?? config.draft?.entryDate ?? '',
         autoNumber: source.autoNumber ?? config.draft?.autoNumber ?? true,
@@ -159,9 +159,9 @@ export function buildSalesDepositFormState(source = {}, config) {
         purchaseOrderNumber: source.purchaseOrderNumber ?? config.draft?.purchaseOrderNumber ?? '',
         taxEnabled: source.taxEnabled ?? config.draft?.taxEnabled ?? false,
         taxIncluded: source.taxIncluded ?? config.draft?.taxIncluded ?? false,
-        paymentTerms: [...(source.paymentTerms ?? config.draft?.paymentTerms ?? [])],
+        paymentTerms: [],
         address: source.address ?? config.draft?.address ?? '',
-        branches: [...(source.branches ?? config.draft?.branches ?? [])],
+        branches: [],
         notes: source.notes ?? config.draft?.notes ?? '',
         summary: source.summary ?? buildSummaryRows(totalAmount, status, printStatus),
         usedDepositRows: [...(source.usedDepositRows ?? config.draft?.usedDepositRows ?? [])],
@@ -191,8 +191,8 @@ export function buildSalesDepositPayload(values) {
 
     return {
         customer_id: values.__customerId ?? null,
-        payment_term_id: values.__paymentTermId ?? null,
-        branch_id: values.__branchId ?? null,
+        payment_term_id: null,
+        branch_id: null,
         document_number: values.documentNumber?.trim() || buildGeneratedSalesDepositNumber(),
         numbering_type: values.numberingType?.trim() || null,
         reference_number: values.purchaseOrderNumber?.trim() || null,
@@ -205,7 +205,7 @@ export function buildSalesDepositPayload(values) {
         notes: values.notes?.trim() || null,
         metadata: {
             address: values.address?.trim() || null,
-            branch_label: values.branches?.[0] ?? null,
+            branch_label: null,
             print_status: values.printStatus ?? 'Belum cetak/email',
             tax_included: Boolean(values.taxIncluded),
         },
@@ -220,7 +220,6 @@ export function validateSalesDepositValues(values, config) {
             ? [{ label: 'Tipe penomoran', value: values.numberingType }]
             : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
         { label: config.labels.depositAmount, value: values.depositAmount },
-        { label: config.labels.branch, value: values.branches, type: 'array' },
     ];
 
     for (const check of requiredChecks) {

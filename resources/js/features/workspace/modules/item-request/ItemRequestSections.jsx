@@ -230,45 +230,45 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
 export function ItemRequestAdditionalInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="min-h-[520px]">
-            <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 space-y-3">
-                <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,560px)] lg:items-start">
-                    <TransactionFieldLabel label={config.labels.notes} />
-                    <TextareaField
-                        value={values.notes}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                notes: event.target.value,
-                            }))
-                        }
-                        rows={4}
-                        className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
-                    />
-                </div>
-
-                {isDetail ? (
-                    <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-                        <TransactionFieldLabel label={config.labels.closeRequest} />
-                        <CheckboxField
-                            id="closeRequest"
-                            label="Ya (Tidak dapat diproses lagi)"
-                            checked={values.closeRequest}
+                <div className="mt-4 space-y-3">
+                    <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
+                        <TransactionFieldLabel label={config.labels.notes} />
+                        <TextareaField
+                            value={values.notes}
                             onChange={(event) =>
                                 setValues((current) => ({
                                     ...current,
-                                    closeRequest: event.target.checked,
+                                    notes: event.target.value,
                                 }))
                             }
-                            inputClassName="h-[20px] w-[20px] rounded"
-                            containerClassName="w-auto inline-flex items-center"
+                            rows={4}
+                            className="rounded-[4px] border-[#cfd6e2]"
+                            textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
                         />
                     </div>
-                ) : null}
 
-
+                    {isDetail ? (
+                        <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
+                            <TransactionFieldLabel label={config.labels.closeRequest} />
+                            <CheckboxField
+                                id="closeRequest"
+                                label="Ya (Tidak dapat diproses lagi)"
+                                checked={values.closeRequest}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        closeRequest: event.target.checked,
+                                    }))
+                                }
+                                inputClassName="h-[20px] w-[20px] rounded"
+                                containerClassName="w-auto inline-flex items-center"
+                            />
+                        </div>
+                    ) : null}
+                </div>
             </div>
         </div>
     );

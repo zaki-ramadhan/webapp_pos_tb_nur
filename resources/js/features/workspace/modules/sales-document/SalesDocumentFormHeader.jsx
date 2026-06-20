@@ -87,24 +87,7 @@ export default function SalesDocumentFormHeader({
                         </>
                     ) : null}
 
-                    {config.headerLookupField ? (
-                        <>
-                            <TransactionFieldLabel label={config.headerLookupField.label} />
-                            <ChipLookupField
-                                values={values[config.headerLookupField.valueKey] ?? []}
-                                placeholder={config.headerLookupField.placeholder ?? 'Cari/Pilih...'}
-                                onRemove={(value) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        [config.headerLookupField.valueKey]: current[config.headerLookupField.valueKey].filter((item) => item !== value),
-                                    }))
-                                }
-                                onSearch={handlers.onSelectShippingMethod}
-                                searchLabel={config.headerLookupField.searchLabel ?? config.headerLookupField.label}
-                            />
-                            {isDetail ? <div /> : null}
-                        </>
-                    ) : null}
+
 
                     {config.headerTextField ? (
                         <>

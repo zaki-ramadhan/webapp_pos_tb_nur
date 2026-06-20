@@ -113,10 +113,6 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                 <SectionHeading title={purchaseConfig.titleLeft} />
 
                 <div className="mt-4 space-y-3">
-                    <FormFieldRow label={purchaseConfig.paymentTermsLabel}>
-                        <ChipLookupField values={values.paymentTerms} placeholder={config.lookupPlaceholders.default} onRemove={() => {}} searchLabel="Cari syarat pembayaran" />
-                    </FormFieldRow>
-
                     <FormFieldRow label={purchaseConfig.discountLabel}>
                         <TextInput
                             value={values.defaultDiscountPercent}

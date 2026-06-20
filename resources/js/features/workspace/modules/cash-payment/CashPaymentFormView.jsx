@@ -328,12 +328,6 @@ export default function CashPaymentFormView({
                         });
                     }
                 }),
-            onTakeFavorite: () => {
-                setStatus({
-                    tone: 'info',
-                    message: 'Tidak ada transaksi favorit yang tersedia.',
-                });
-            },
         }),
         [selectLookup, setStatus],
     );

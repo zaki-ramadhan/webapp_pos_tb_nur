@@ -85,56 +85,56 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
 export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail, handlers = {} }) {
     return (
         <div className="min-h-[540px]">
-            <TransactionSectionHeading title={config.infoTitle} icon="document" />
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-            <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.paymentMethod} />
-                <div className="max-w-[276px]">
-                    <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
-                        <option value={values.paymentMethod}>{values.paymentMethod || 'Tunai'}</option>
-                    </SelectField>
+                <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                    <TransactionFieldLabel label={config.labels.paymentMethod} />
+                    <div className="max-w-[276px]">
+                        <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
+                            <option value={values.paymentMethod}>{values.paymentMethod || 'Tunai'}</option>
+                        </SelectField>
+                    </div>
+
+                    {isDetail ? (
+                        <>
+                            <TransactionFieldLabel label={config.labels.dueDatePph} />
+                            <div className="max-w-[276px]">
+                                <TextInput
+                                    value={values.dueDatePph}
+                                    readOnly
+                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                />
+                            </div>
+
+                            <TransactionFieldLabel label={config.labels.voided} />
+                            <CheckboxField
+                                id="voided"
+                                label="Ya"
+                                checked={values.voided}
+                                disabled
+                                inputClassName="h-[24px] w-[24px] rounded-[4px]"
+                                containerClassName="w-auto inline-flex items-center"
+                            />
+                        </>
+                    ) : null}
+
+                    <TransactionFieldLabel label={config.labels.notes} />
+                    <TransactionReadonlyTextarea value={values.notes} rows={4} className="min-h-[70px]" />
+
+                    {isDetail ? (
+                        <>
+                            <TransactionFieldLabel label={config.labels.printStatus} />
+                            <TextInput
+                                value={values.printStatus}
+                                readOnly
+                                className="h-[34px] max-w-[262px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-xs sm:text-sm text-[#5f6779]"
+                            />
+                        </>
+                    ) : null}
                 </div>
-
-                {isDetail ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.dueDatePph} />
-                        <TransactionDateInput value={values.dueDatePph} className="max-w-[276px]" />
-                    </>
-                ) : null}
-
-                <TransactionFieldLabel label={config.labels.notes} />
-                <TransactionReadonlyTextarea value={values.notes} rows={3} className="min-h-[70px]" />
-
-                {isDetail ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.voided} />
-                        <CheckboxField
-                            id="voided"
-                            label="Ya"
-                            checked={values.voided}
-                            disabled
-                            inputClassName="h-[24px] w-[24px] rounded-[4px]"
-                            containerClassName="w-auto inline-flex items-center"
-                        />
-                    </>
-                ) : null}
-
-
-
-                {isDetail ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                        <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus}</div>
-
-                        <TransactionFieldLabel label={config.labels.printStatus} />
-                        <TextInput
-                            value={values.printStatus}
-                            readOnly
-                            className="h-[34px] max-w-[262px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#5f6779]"
-                        />
-                    </>
-                ) : null}
             </div>
         </div>
     );

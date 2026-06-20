@@ -120,25 +120,6 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                     </>
                 ) : null}
 
-                {config.showPaymentTerms !== false ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.paymentTerms} />
-                        <ChipLookupField
-                            values={values.paymentTerms}
-                            placeholder="Cari/Pilih..."
-                            onRemove={(value) =>
-                                setValues?.((current) => ({
-                                    ...current,
-                                    paymentTerms: current.paymentTerms.filter((item) => item !== value),
-                                    __paymentTermId: current.paymentTerms.filter((item) => item !== value).length ? current.__paymentTermId : null,
-                                }))
-                            }
-                            onSearch={handlers?.onSelectPaymentTerm}
-                            searchLabel="Cari syarat pembayaran"
-                            heightClassName="h-[34px]"
-                        />
-                    </>
-                ) : null}
 
                 {additionalLookupFields.map((field, index) => renderAdditionalField(field, `${field.valueKey ?? field.label}-${index}`))}
 

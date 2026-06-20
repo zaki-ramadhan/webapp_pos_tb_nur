@@ -127,7 +127,6 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
                     : 'border-[#d7ddea] bg-white hover:bg-[#f8fbff]'
             }`.trim()}
             aria-disabled={isInactive || !isImplemented}
-            title={statusLabel}
         >
             <span
                 className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] ${

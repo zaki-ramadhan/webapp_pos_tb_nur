@@ -94,9 +94,10 @@ export function ReceiptLineItemsSection({ config, values, handlers = {} }) {
 export function ReceiptInfoSection({ config, values, isDetail, handlers = {} }) {
     return (
         <div className="min-h-[540px]">
-            <TransactionSectionHeading title={config.infoTitle} icon="document" />
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.checkNumber} />
                 <div className="max-w-[276px]">
                     <TextInput
@@ -158,6 +159,7 @@ export function ReceiptInfoSection({ config, values, isDetail, handlers = {} }) 
                         />
                     </>
                 ) : null}
+            </div>
             </div>
         </div>
     );

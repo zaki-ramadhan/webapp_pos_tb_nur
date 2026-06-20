@@ -182,34 +182,6 @@ export default function SalesDepositFormView({
                     __customerId: null,
                     customer: [],
                 })),
-            onSelectPaymentTerm: () =>
-                selectLookup('payment-terms', 'syarat pembayaran', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __paymentTermId: record.id,
-                        paymentTerms: [buildLookupLabel(record)],
-                    })),
-                ),
-            onRemovePaymentTerm: (value) =>
-                setValues((current) => ({
-                    ...current,
-                    __paymentTermId: null,
-                    paymentTerms: (current.paymentTerms ?? []).filter((item) => item !== value),
-                })),
-            onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __branchId: record.id,
-                        branches: [buildLookupLabel(record)],
-                    })),
-                ),
-            onRemoveBranch: (value) =>
-                setValues((current) => ({
-                    ...current,
-                    __branchId: null,
-                    branches: (current.branches ?? []).filter((item) => item !== value),
-                })),
         }),
         [selectLookup],
     );

@@ -2,7 +2,7 @@ import {
     buildSalesDocumentRecord,
     mergeSalesDocumentConfigWithPage,
     sharedDetailDockActions,
-} from '@/features/workspace/modules/sales-document/salesOrderConfig';
+} from '@/features/workspace/modules/sales-document/salesDocumentConfigCore';
 
 import {
     defaultPurchaseInvoiceConfig,

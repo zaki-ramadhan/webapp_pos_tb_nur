@@ -35,10 +35,6 @@ export function SalesTab({ config, values, onChange }) {
                         <ChipLookupField values={values.discountCategory} placeholder={config.lookupPlaceholders.default} onRemove={() => {}} searchLabel="Cari kategori diskon" />
                     </FormFieldRow>
 
-                    <FormFieldRow label={config.labels.paymentTerms}>
-                        <ChipLookupField values={values.paymentTerms} placeholder={config.lookupPlaceholders.default} onRemove={() => {}} searchLabel="Cari syarat pembayaran" />
-                    </FormFieldRow>
-
                     <FormFieldRow label={config.labels.defaultSalesPerson}>
                         <ChipLookupField values={values.defaultSalesPerson} placeholder={config.lookupPlaceholders.default} onRemove={() => {}} searchLabel="Cari penjual" />
                     </FormFieldRow>

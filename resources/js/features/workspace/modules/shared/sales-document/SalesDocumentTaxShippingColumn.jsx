@@ -47,10 +47,6 @@ function SalesDocumentInvoiceTaxSection({ values }) {
                 <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label="Tgl Pengiriman" />
                     <TransactionDateInput value={values.shippingDate} onChange={(nextDisplayValue) => values.setValues?.((current) => ({ ...current, shippingDate: nextDisplayValue }))} className="max-w-[272px]" />
-                    <TransactionFieldLabel label="Pengiriman" />
-                    <ChipLookupField values={values.shippingMethod} placeholder="Cari/Pilih..." onRemove={(value) => values.setValues?.((current) => ({ ...current, shippingMethod: current.shippingMethod.filter((item) => item !== value), __shippingMethodId: current.shippingMethod.filter((item) => item !== value).length ? current.__shippingMethodId : null }))} onSearch={values.handlers?.onSelectShippingMethod} searchLabel="Cari pengiriman" heightClassName="h-[34px]" />
-                    <TransactionFieldLabel label="FOB" />
-                    <ChipLookupField values={values.fob} placeholder="Cari/Pilih..." onRemove={(value) => values.setValues?.((current) => ({ ...current, fob: current.fob.filter((item) => item !== value), __fobId: current.fob.filter((item) => item !== value).length ? current.__fobId : null }))} onSearch={values.handlers?.onSelectFob} searchLabel="Cari FOB" heightClassName="h-[34px]" />
                 </div>
             </div>
             <div className="mt-7">
@@ -88,23 +84,6 @@ export default function SalesDocumentTaxShippingColumn({ config, values, setValu
                     <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.shippingDate} />
                         <TransactionDateInput value={values.shippingDate} onChange={(nextDisplayValue) => setValues?.((current) => ({ ...current, shippingDate: nextDisplayValue }))} className="max-w-[272px]" />
-                        <TransactionFieldLabel label={config.labels.shippingMethod} />
-                        <ChipLookupField values={values.shippingMethod} placeholder="Cari/Pilih..." onRemove={(value) => setValues?.((current) => ({ ...current, shippingMethod: current.shippingMethod.filter((item) => item !== value), __shippingMethodId: current.shippingMethod.filter((item) => item !== value).length ? current.__shippingMethodId : null }))} onSearch={handlers?.onSelectShippingMethod} searchLabel="Cari pengiriman" heightClassName="h-[34px]" />
-                        {config.showFobInShippingInfo ? (
-                            <>
-                                <TransactionFieldLabel label={config.labels.fob} />
-                                <ChipLookupField values={values.fob} placeholder="Cari/Pilih..." onRemove={(value) => setValues?.((current) => ({ ...current, fob: current.fob.filter((item) => item !== value), __fobId: current.fob.filter((item) => item !== value).length ? current.__fobId : null }))} onSearch={handlers?.onSelectFob} searchLabel="Cari FOB" heightClassName="h-[34px]" />
-                            </>
-                        ) : null}
-                    </div>
-                </div>
-            ) : null}
-            {config.showExtraInfo !== false && !config.showFobInShippingInfo && config.taxInfoMode !== 'invoice' ? (
-                <div className={config.showTaxInfo === false && config.showShippingInfo === false ? '' : 'mt-7'}>
-                    <TransactionSectionHeading title={config.extraInfoTitle} icon="payment" />
-                    <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-                        <TransactionFieldLabel label={config.labels.fob} />
-                        <ChipLookupField values={values.fob} placeholder="Cari/Pilih..." onRemove={(value) => setValues?.((current) => ({ ...current, fob: current.fob.filter((item) => item !== value), __fobId: current.fob.filter((item) => item !== value).length ? current.__fobId : null }))} onSearch={handlers?.onSelectFob} searchLabel="Cari FOB" heightClassName="h-[34px]" />
                     </div>
                 </div>
             ) : null}

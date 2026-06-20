@@ -59,30 +59,31 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
 export function JournalAdditionalInfoSection({ config, values, setValues, handlers = {} }) {
     return (
         <div className="min-h-0">
-            <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] xl:grid-cols-[160px_minmax(0,680px)] 2xl:grid-cols-[160px_minmax(0,800px)] lg:items-start">
-                <TransactionFieldLabel label={config.labels.notes} />
-                <TextareaField
-                    value={values.notes}
-                    onChange={(event) =>
-                        setValues((current) => ({
-                            ...current,
-                            notes: event.target.value,
-                        }))
-                    }
-                    rows={4}
-                    className="border-[#cfd6e2]"
-                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
-                />
+                <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
+                    <TransactionFieldLabel label={config.labels.notes} />
+                    <TextareaField
+                        value={values.notes}
+                        onChange={(event) =>
+                            setValues((current) => ({
+                                ...current,
+                                notes: event.target.value,
+                            }))
+                        }
+                        rows={4}
+                        className="border-[#cfd6e2]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                    />
+                </div>
             </div>
         </div>
     );
 }
 
 export function GeneralJournalHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
-    const [openAmbil, setOpenAmbil] = useState(false);
-    const ambilButtonRef = useRef(null);
+
 
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
@@ -169,38 +170,7 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                             inputClassName="text-xs sm:text-sm font-medium text-[#53a11f]"
                         />
                     </div>
-                ) : (
-                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
-                        <div />
-                        <div className="flex justify-end relative">
-                            <button
-                                ref={ambilButtonRef}
-                                type="button"
-                                onClick={() => setOpenAmbil((o) => !o)}
-                                className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm font-medium text-[#21539b]"
-                            >
-                                <span>{config.takeButtonLabel || 'Ambil'}</span>
-                                <ChevronDownIcon className="h-4 w-4" />
-                            </button>
-                            <DropdownMenu
-                                open={openAmbil}
-                                onClose={() => setOpenAmbil(false)}
-                                anchorRef={ambilButtonRef}
-                                align="end"
-                                widthClassName="w-[180px]"
-                            >
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setOpenAmbil(false);
-                                        handlers.onTakeFavorite?.();
-                                    }}
-                                >
-                                    Favorit
-                                </DropdownMenuItem>
-                            </DropdownMenu>
-                        </div>
-                    </div>
-                )}
+                ) : null}
             </div>
         </div>
     );

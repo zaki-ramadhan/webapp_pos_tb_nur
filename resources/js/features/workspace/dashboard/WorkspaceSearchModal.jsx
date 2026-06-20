@@ -70,7 +70,6 @@ function SearchMenuCard({ item, onSelect }) {
             className={`flex min-h-[108px] flex-col items-center justify-center gap-2.5 rounded-[8px] border px-5 py-5 text-center transition ${
                 isSelectable ? '' : 'cursor-not-allowed'
             } ${className}`.trim()}
-            title={statusLabel || item.label}
             aria-disabled={!isSelectable}
         >
             <NavigationIcon type={item.icon} className={`h-7 w-7 ${iconClassName}`.trim()} strokeWidth={1.65} />
@@ -173,7 +172,6 @@ export default function WorkspaceSearchModal({
                         onClick={onClose}
                         className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2436] transition hover:bg-[#f4f6fa] cursor-pointer"
                         aria-label={modal.closeLabel ?? 'Tutup pencarian menu'}
-                        title={modal.closeLabel ?? 'Tutup pencarian menu'}
                     >
                         <CloseIcon className="h-5 w-5" />
                     </button>

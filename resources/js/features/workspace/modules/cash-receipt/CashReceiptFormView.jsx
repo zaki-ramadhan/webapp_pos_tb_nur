@@ -286,7 +286,7 @@ export default function CashReceiptFormView({
                                             ) : null}
                                         </div>
 
-                                        <div className="max-w-[240px] w-full">
+                                        <div className="max-w-[240px] w-full justify-self-end">
                                             {values.autoNumber ? (
                                                 <SelectField
                                                     id="documentNumber"

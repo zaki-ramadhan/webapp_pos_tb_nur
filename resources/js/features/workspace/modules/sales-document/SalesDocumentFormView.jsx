@@ -208,38 +208,6 @@ export default function SalesDocumentFormView({
             openItemModal: () => setItemModalOpen(true),
             onCreateItem: handleCreateItem,
             onEditItem: handleEditItem,
-            onSelectPaymentTerm: () =>
-                selectLookup('payment-terms', 'syarat pembayaran', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __paymentTermId: record.id,
-                        paymentTerms: [buildLookupLabel(record)],
-                    })),
-                ),
-            onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __branchId: record.id,
-                        branches: [buildLookupLabel(record)],
-                    })),
-                ),
-            onSelectShippingMethod: () =>
-                selectLookup('shipping-methods', 'metode pengiriman', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __shippingMethodId: record.id,
-                        shippingMethod: [buildLookupLabel(record)],
-                    })),
-                ),
-            onSelectFob: () =>
-                selectLookup('fob-terms', 'FOB', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __fobId: record.id,
-                        fob: [buildLookupLabel(record)],
-                    })),
-                ),
             onImportClick: () => setImportModalOpen(true),
             onImportItems: (importedItems) => {
                 updateItems((existingItems) => {

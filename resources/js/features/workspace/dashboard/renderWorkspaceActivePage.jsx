@@ -1,6 +1,5 @@
 import BusinessPartnerView from '@/features/workspace/modules/business-partner/BusinessPartnerView';
 import ModulePageView from '@/features/workspace/modules/ModulePageView';
-import WorkCompletionView from '@/features/workspace/modules/inventory-fulfillment/WorkCompletionView';
 import {
     BANK_INQUIRY_PAGE_IDS,
     BankInquiryView,
@@ -77,13 +76,6 @@ export default function renderWorkspaceActivePage({
                     {...sharedProps}
                     onOpenDetail={detailTabOpeners.suppliers}
                     partnerType="supplier"
-                />
-            );
-        case 'work-completion':
-            return (
-                <WorkCompletionView
-                    {...sharedProps}
-                    onOpenDetail={createDetailTabOpener('work-completion')}
                 />
             );
         default:

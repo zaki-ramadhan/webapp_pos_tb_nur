@@ -1,8 +1,5 @@
-import { buildAssetChangeConfig } from '@/features/workspace/modules/asset-change/assetChangeConfig';
-import { assetLocationConfig } from '@/features/workspace/modules/asset-location/assetLocationConfig';
 import { buildReportListConfig } from '@/features/workspace/modules/report-list/reportListConfig';
 import { buildSalesReturnConfig } from '@/features/workspace/modules/sales-document/salesReturnConfig';
-import { supplierTransferConfig } from '@/features/workspace/modules/supplier-transfer/supplierTransferConfig';
 
 const TRANSACTION_TOP_ACTIONS = [
     {
@@ -29,20 +26,6 @@ const HELP_ONLY_TOP_ACTION = [
 ];
 
 const workspacePageOverrides = {
-    'asset-change': {
-        subtab: {
-            id: 'asset-change-create',
-            label: 'Data Baru',
-        },
-        viewModes: {
-            form: 'Form',
-            table: 'Tabel',
-        },
-        assetChange: {
-            ...buildAssetChangeConfig(),
-            topActions: HELP_ONLY_TOP_ACTION,
-        },
-    },
     'sales-return': {
         subtab: {
             id: 'sales-return-create',
@@ -54,13 +37,6 @@ const workspacePageOverrides = {
         },
         salesReturn: {
             ...buildSalesReturnConfig(),
-            topActions: TRANSACTION_TOP_ACTIONS,
-        },
-    },
-    'supplier-transfer': {
-        showViewIndicator: true,
-        supplierTransfer: {
-            ...supplierTransferConfig,
             topActions: TRANSACTION_TOP_ACTIONS,
         },
     },
@@ -81,13 +57,6 @@ const workspacePageOverrides = {
             table: 'Tabel',
         },
         suppliers: {
-            topActions: HELP_ONLY_TOP_ACTION,
-        },
-    },
-    'asset-location': {
-        showViewIndicator: true,
-        assetLocation: {
-            ...assetLocationConfig,
             topActions: HELP_ONLY_TOP_ACTION,
         },
     },

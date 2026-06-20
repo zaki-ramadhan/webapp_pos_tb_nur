@@ -59,7 +59,6 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
                 isSelectable ? '' : 'cursor-not-allowed'
             }`.trim()}
             aria-disabled={!isSelectable}
-            title={hintLabel || item.label}
         >
             <NavigationIcon type={item.icon} className={`${iconSizeClassName} ${iconClassName}`.trim()} strokeWidth={1.65} />
             <span className={`${labelSizeClassName} font-normal leading-[1.2] ${labelClassName}`.trim()}>

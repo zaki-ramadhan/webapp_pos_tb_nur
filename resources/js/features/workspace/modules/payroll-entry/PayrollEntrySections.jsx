@@ -185,42 +185,44 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
 export function PayrollAdditionalInfoSection({ config, values, setValues }) {
     return (
         <div className="min-h-0">
-            <TransactionSectionHeading title={config.additionalInfoTitle} icon="form" />
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.additionalInfoTitle} icon="form" />
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,570px)] xl:grid-cols-[160px_minmax(0,680px)] 2xl:grid-cols-[160px_minmax(0,800px)] lg:items-start">
-                <TransactionFieldLabel label={config.additionalInfoFields.liabilityAccountLabel} required />
-                <AccountLookupField
-                    values={values.liabilityAccounts}
-                    placeholder={config.additionalInfoFields.liabilityAccountPlaceholder}
-                    dialogTitle="Pilih Akun Hutang Beban"
-                    onRemove={(value) =>
-                        setValues((current) => ({
-                            ...current,
-                            liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
-                        }))
-                    }
-                    searchLabel="Cari akun hutang beban"
-                    onSelectAccount={(_, label) =>
-                        setValues((current) => ({
-                            ...current,
-                            liabilityAccounts: label ? [label] : [],
-                        }))
-                    }
-                />
+                <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
+                    <TransactionFieldLabel label={config.additionalInfoFields.liabilityAccountLabel} required />
+                    <AccountLookupField
+                        values={values.liabilityAccounts}
+                        placeholder={config.additionalInfoFields.liabilityAccountPlaceholder}
+                        dialogTitle="Pilih Akun Hutang Beban"
+                        onRemove={(value) =>
+                            setValues((current) => ({
+                                ...current,
+                                liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
+                            }))
+                        }
+                        searchLabel="Cari akun hutang beban"
+                        onSelectAccount={(_, label) =>
+                            setValues((current) => ({
+                                ...current,
+                                liabilityAccounts: label ? [label] : [],
+                            }))
+                        }
+                    />
 
-                <TransactionFieldLabel label={config.additionalInfoFields.noteLabel} />
-                <TextareaField
-                    value={values.notes}
-                    onChange={(event) =>
-                        setValues((current) => ({
-                            ...current,
-                            notes: event.target.value,
-                        }))
-                    }
-                    rows={4}
-                    className="border-[#cfd6e2]"
-                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
-                />
+                    <TransactionFieldLabel label={config.additionalInfoFields.noteLabel} />
+                    <TextareaField
+                        value={values.notes}
+                        onChange={(event) =>
+                            setValues((current) => ({
+                                ...current,
+                                notes: event.target.value,
+                            }))
+                        }
+                        rows={4}
+                        className="border-[#cfd6e2]"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                    />
+                </div>
             </div>
         </div>
     );

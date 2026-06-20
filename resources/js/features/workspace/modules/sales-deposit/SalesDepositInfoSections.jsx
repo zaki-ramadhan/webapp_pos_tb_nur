@@ -35,50 +35,42 @@ export function DepositFooter({ values }) {
 export function DepositInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <section>
-            <TransactionSectionHeading title={config.infoTitle} icon="info" />
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.infoTitle} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.paymentTerms} />
-                <ChipLookupField
-                    values={values.paymentTerms}
-                    placeholder="Cari/Pilih..."
-                    onRemove={(value) => handlers.onRemovePaymentTerm?.(value)}
-                    searchLabel="Cari syarat pembayaran"
-                    onSearch={handlers.onSelectPaymentTerm}
-                    heightClassName="h-[34px]"
-                />
-
-                <TransactionFieldLabel label={config.labels.address} />
-                {isDetail ? (
-                    <div className="flex items-start gap-4">
-                        <button
-                            type="button"
-                            className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#21539b]"
-                            aria-label="Lihat alamat"
-                        >
-                            <PinIcon className="h-[18px] w-[18px] text-[#21539b]" />
-                        </button>
-                        <ReadonlyTransactionTextarea value={values.address} className="min-h-[86px] flex-1" />
-                    </div>
-                ) : (
-                    <ReadonlyTransactionTextarea value={values.address} className="min-h-[84px]" />
-                )}
+                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                    <TransactionFieldLabel label={config.labels.address} />
+                    {isDetail ? (
+                        <div className="flex items-start gap-4">
+                            <button
+                                type="button"
+                                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#21539b]"
+                                aria-label="Lihat alamat"
+                            >
+                                <PinIcon className="h-[18px] w-[18px] text-[#21539b]" />
+                            </button>
+                            <ReadonlyTransactionTextarea value={values.address} className="min-h-[86px] flex-1" />
+                        </div>
+                    ) : (
+                        <ReadonlyTransactionTextarea value={values.address} className="min-h-[84px]" />
+                    )}
 
 
 
-                <TransactionFieldLabel label={config.labels.notes} />
-                <TextareaField
-                    value={values.notes}
-                    onChange={(event) =>
-                        setValues((current) => ({
-                            ...current,
-                            notes: event.target.value,
-                        }))
-                    }
-                    rows={4}
-                    className="border-[#cfd6e2]"
-                    textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
-                />
+                    <TransactionFieldLabel label={config.labels.notes} />
+                    <TextareaField
+                        value={values.notes}
+                        onChange={(event) =>
+                            setValues((current) => ({
+                                ...current,
+                                notes: event.target.value,
+                            }))
+                        }
+                        rows={4}
+                        className="border-[#cfd6e2]"
+                        textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
+                    />
+                </div>
             </div>
         </section>
     );

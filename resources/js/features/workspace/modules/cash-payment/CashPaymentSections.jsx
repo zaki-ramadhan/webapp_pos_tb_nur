@@ -60,7 +60,7 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
     return (
         <div className="min-h-[540px]">
             <div className={`grid gap-8 ${isDetail ? 'xl:grid-cols-2' : ''}`.trim()}>
-                <section className="min-w-0">
+                <section className={`min-w-0 ${!isDetail ? 'lg:max-w-[50%] w-full' : ''}`.trim()}>
                     <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
                     <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
@@ -195,7 +195,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                         ) : null}
                     </div>
 
-                    <div className="max-w-[240px] w-full">
+                    <div className="max-w-[240px] w-full justify-self-end">
                         {values.autoNumber ? (
                             <SelectField
                                 id="documentNumber"
@@ -232,7 +232,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
 
                 <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
-                    <div className="flex justify-start relative">
+                    <div className="flex justify-end relative justify-self-end">
                         <button
                             ref={ambilButtonRef}
                             type="button"
@@ -249,14 +249,6 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                             align="start"
                             widthClassName="w-[180px]"
                         >
-                            <DropdownMenuItem
-                                onClick={() => {
-                                    setOpenAmbil(false);
-                                    handlers.onTakeFavorite?.();
-                                }}
-                            >
-                                Favorit
-                            </DropdownMenuItem>
                             <DropdownMenuItem
                                 onClick={() => {
                                     setOpenAmbil(false);

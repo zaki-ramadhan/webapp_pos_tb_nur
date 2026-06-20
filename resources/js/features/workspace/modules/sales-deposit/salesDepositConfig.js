@@ -1,4 +1,4 @@
-import { sharedDetailDockActions } from '@/features/workspace/modules/sales-document/salesOrderConfig';
+import { sharedDetailDockActions } from '@/features/workspace/modules/sales-document/salesDocumentConfigCore';
 import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import {
     createAttachmentDockAction,
@@ -61,10 +61,7 @@ const salesDepositDraft = {
     purchaseOrderNumber: '',
     taxEnabled: false,
     taxIncluded: true,
-    paymentTerms: [],
     address: '',
-    branches: ['JAKARTA'],
-    __branchId: 1,
     notes: '',
     summary: [],
     usedDepositRows: [],

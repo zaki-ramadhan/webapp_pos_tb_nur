@@ -74,8 +74,7 @@ function getFormattedFilename(filename) {
         'department': 'departemen',
         'employees': 'karyawan',
         'employee': 'karyawan',
-        'favorite-transactions': 'transaksi-favorit',
-        'favorite-transaction': 'transaksi-favorit',
+
         'fixed-assets': 'aset-tetap',
         'fixed-asset': 'aset-tetap',
         'fob-masters': 'fob-master',
@@ -247,8 +246,7 @@ export function getFriendlyTitle(name, fallbackTitle = 'Laporan') {
         'department': 'Departemen',
         'employees': 'Karyawan',
         'employee': 'Karyawan',
-        'favorite-transactions': 'Transaksi Favorit',
-        'favorite-transaction': 'Transaksi Favorit',
+
         'fixed-assets': 'Aset Tetap',
         'fixed-asset': 'Aset Tetap',
         'fob-masters': 'FOB Master',

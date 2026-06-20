@@ -155,7 +155,7 @@ export default function SalesReceiptFormView({
                                     )}
 
                                     <TransactionFieldLabel label={config.labels.entryDate} required className="sm:text-right" />
-                                    <div className="max-w-[236px]">
+                                    <div className="max-w-[236px] justify-self-end w-full">
                                         <TransactionDateInput
                                             value={values.entryDate}
                                             onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}

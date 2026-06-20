@@ -78,7 +78,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                 {isDetail && values.currency ? (
                     <>
                         <div />
-                        <div className="max-w-[180px]">
+                        <div className="max-w-[180px] justify-self-end w-full">
                             <TextInput
                                 value={values.currency}
                                 readOnly
@@ -137,7 +137,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                 <TransactionDateInput
                     value={values.entryDate}
                     onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                    className="max-w-[238px]"
+                    className="max-w-[238px] justify-self-end w-full"
                 />
             </div>
         </div>

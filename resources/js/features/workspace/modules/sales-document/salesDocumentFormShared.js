@@ -99,7 +99,6 @@ export function validateSalesDocumentValues(values, config) {
         ...(values.autoNumber
             ? [{ label: 'Tipe penomoran', value: values.numberingType }]
             : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
-        { label: config.labels.branch, value: values.__branchId, type: 'lookup' },
         { label: 'Rincian barang', value: values.items, type: 'array' },
         ...(config.headerTextField?.required ? [{ label: config.headerTextField.label, value: values[config.headerTextField.valueKey] }] : []),
     ]);

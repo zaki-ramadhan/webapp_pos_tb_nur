@@ -54,8 +54,8 @@ export function mapPartnerRow(record) {
         tabLabel: record.name ?? '',
         categoryId: record.category_id ?? record.category?.id ?? null,
         currencyId: record.currency_id ?? record.currency?.id ?? null,
-        paymentTermId: record.payment_term_id ?? record.payment_term?.id ?? null,
-        branchIds: (record.branches ?? []).map((branch) => branch.id),
+        paymentTermId: null,
+        branchIds: [],
         billingAddress: record.billing_address ?? '',
         shippingAddress: record.shipping_address ?? '',
         taxNumber: record.tax_number ?? '',
@@ -70,7 +70,7 @@ export function toPartnerPayload(values) {
         name: values.name?.trim() ?? '',
         category_id: values.categoryId ?? null,
         currency_id: values.currencyId ?? null,
-        payment_term_id: values.paymentTermId ?? null,
+        payment_term_id: null,
         business_phone: values.phone?.trim() ?? '',
         email: values.email?.trim() ?? '',
         website: values.website?.trim() ?? '',
@@ -80,7 +80,7 @@ export function toPartnerPayload(values) {
         notes: values.notes ?? '',
         credit_limit: values.creditLimit ?? 0,
         is_active: values.isActive !== false,
-        branch_ids: values.branchIds ?? [],
+        branch_ids: [],
     };
 }
 

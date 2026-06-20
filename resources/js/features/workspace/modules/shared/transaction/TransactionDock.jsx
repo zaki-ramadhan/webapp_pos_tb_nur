@@ -57,71 +57,7 @@ async function handleFallbackDockAction(item, action, templateLabel = 'transaksi
         }, 1000);
         return;
     }
-    if (itemId === 'add-favorite') {
-        const params = new URLSearchParams(window.location.search);
-        const pageId = params.get('page') || 'purchase-payment';
-        const rows = tableRegistry.activeTable?.rows || tableRegistry.lastActiveRows?.[pageId] || [];
 
-        if (rows.length === 0) {
-            let errorMsg = `rincian ${templateLabel} harus diisi`;
-            if (pageId === 'general-journal') {
-                errorMsg = 'rincian jurnal harus diisi';
-            } else if (pageId === 'expense-entry') {
-                errorMsg = 'rincian beban harus diisi';
-            } else if (pageId === 'payroll-entry') {
-                errorMsg = 'rincian karyawan harus diisi';
-            }
-            await showSystemErrorModal({
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                description: 'Silakan perbaiki permasalahan berikut ini:',
-                messages: [errorMsg],
-            });
-            return;
-        }
-
-        const docNumber = getDocumentNumberFromDOM();
-        const defaultName = `Favorit ${templateLabel.toUpperCase()} - ${docNumber}`;
-        const result = await showPromptModal("Masukkan nama untuk transaksi favorit ini:", [
-            {
-                name: 'favoriteName',
-                label: 'Nama Favorit',
-                defaultValue: defaultName,
-                required: true,
-            }
-        ]);
-        if (!result) {
-            return;
-        }
-        const favoriteName = result.favoriteName;
-        const trimmedName = favoriteName.trim();
-        if (!trimmedName) {
-            showCrudValidationToast("Nama favorit tidak boleh kosong.");
-            return;
-        }
-
-        const toastId = showCrudLoadingToast("Menambahkan transaksi ke favorit...");
-        setTimeout(() => {
-            try {
-                const localFavs = JSON.parse(localStorage.getItem(favoritesStorageKey) || '[]');
-                const newId = 'fav-' + Date.now();
-                
-                const newFav = {
-                    id: newId,
-                    favoriteName: trimmedName,
-                    transactionTypeLabel: templateLabel.charAt(0).toUpperCase() + templateLabel.slice(1),
-                    transactionTypeValue: pageId,
-                    userList: 'Administrator',
-                };
-                localFavs.unshift(newFav);
-                localStorage.setItem(favoritesStorageKey, JSON.stringify(localFavs));
-                finishCrudLoadingToast(toastId, "Transaksi berhasil ditambahkan ke favorit.");
-            } catch (err) {
-                finishCrudLoadingToast(toastId, "Gagal menyimpan transaksi ke favorit.");
-                showCrudErrorToast("Terjadi kesalahan saat menyimpan ke favorit.");
-            }
-        }, 800);
-        return;
-    }
     if (itemId === 'save-now') {
         const saveBtn = document.querySelector('button[aria-label="Simpan"]');
         if (saveBtn) {
@@ -403,7 +339,7 @@ export function TransactionDock({ actions = [] }) {
     }
     const favoritesStorageKey = `pos_favorite_transactions_${userKey}`;
 
-    const resolvedActions = actions.map((action) => {
+    const resolvedActions = actions.filter((action) => action.id !== 'more').map((action) => {
         if (action.id === 'save') {
             return {
                 ...action,
@@ -437,16 +373,6 @@ export function TransactionDock({ actions = [] }) {
                 icon: 'paperclip',
                 items: [
                     { id: 'doc-default', label: 'dokumen', icon: 'document' }
-                ],
-            };
-        }
-        if (action.id === 'more') {
-            return {
-                ...action,
-                label: 'Lain-lain',
-                icon: 'kebab',
-                items: [
-                    { id: 'add-favorite', label: 'Tambah ke favorit', icon: 'star' }
                 ],
             };
         }

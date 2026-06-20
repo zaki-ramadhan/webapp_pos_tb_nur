@@ -229,8 +229,8 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
 
     return {
         [backendConfig.partnerField]: values.__partnerId,
-        payment_term_id: values.__paymentTermId ?? null,
-        branch_id: values.__branchId ?? null,
+        payment_term_id: null,
+        branch_id: null,
         document_number: values.documentNumber?.trim() || buildGeneratedDocumentNumber(pageId),
         reference_number: values.purchaseOrderNumber?.trim() || null,
         numbering_type: values.numberingType?.trim() || null,
@@ -247,10 +247,10 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
         },
         metadata: {
             address: values.address?.trim() || null,
-            shipping_method_id: values.__shippingMethodId ?? null,
-            shipping_method_name: values.shippingMethod?.[0] ?? null,
-            fob_id: values.__fobId ?? null,
-            fob_name: values.fob?.[0] ?? null,
+            shipping_method_id: null,
+            shipping_method_name: null,
+            fob_id: null,
+            fob_name: null,
         },
         lines,
     };

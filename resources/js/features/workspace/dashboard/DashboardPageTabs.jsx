@@ -110,7 +110,6 @@ function HeaderActionButton({ action }) {
         <button
             type="button"
             aria-label={action.label}
-            title={action.label}
             className={`inline-flex h-[34px] w-[42px] items-center justify-center rounded-[4px] border ${toneClassName}`.trim()}
         >
             {icon}

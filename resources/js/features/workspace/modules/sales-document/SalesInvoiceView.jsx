@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import SalesDocumentView from '@/features/workspace/modules/sales-document/SalesDocumentView';
-import { buildSalesInvoiceConfig, buildSalesInvoiceRecord } from '@/features/workspace/modules/sales-document/salesOrderConfig';
+import { buildSalesInvoiceConfig, buildSalesInvoiceRecord } from '@/features/workspace/modules/sales-document/salesInvoiceModuleConfig';
 
 export default function SalesInvoiceView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
     const config = useMemo(() => buildSalesInvoiceConfig(page.salesInvoice), [page.salesInvoice]);

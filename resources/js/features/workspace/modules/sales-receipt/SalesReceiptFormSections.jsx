@@ -190,103 +190,105 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
 
     return (
         <section className="min-h-[540px]">
-            <TransactionSectionHeading title={config.sectionTabs?.find((tab) => tab.id === 'additional-info')?.label ?? 'Info lainnya'} icon="info" />
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.sectionTabs?.find((tab) => tab.id === 'additional-info')?.label ?? 'Info lainnya'} icon="info" />
 
-            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.paymentMethod} />
-                <div className={`grid gap-4 ${isCheckPayment ? 'lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]' : ''}`.trim()}>
-                    <SelectField
-                        value={values.paymentMethod}
+                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                    <TransactionFieldLabel label={config.labels.paymentMethod} />
+                    <div className={`grid gap-4 ${isCheckPayment ? 'lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]' : ''}`.trim()}>
+                        <SelectField
+                            value={values.paymentMethod}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    paymentMethod: event.target.value,
+                                }))
+                            }
+                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        >
+                            {['Tunai', 'Cek/Giro'].map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </SelectField>
+
+                        {isCheckPayment ? (
+                            <TextInput
+                                value={values.checkNumber}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        checkNumber: event.target.value,
+                                    }))
+                                }
+                                trailing={isDetail ? <span className="text-lg font-semibold text-[#1f2436]">×</span> : null}
+                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                trailingClassName="px-3"
+                            />
+                        ) : null}
+                    </div>
+
+                    {isCheckPayment ? (
+                        <>
+                            <TransactionFieldLabel label={config.labels.checkDate} required />
+                            <div className="max-w-[276px]">
+                                <TransactionDateInput value={values.checkDate} className="max-w-none" />
+                            </div>
+                        </>
+                    ) : null}
+
+                    {isDetail ? (
+                        <>
+                            <TransactionFieldLabel label={config.labels.voided} />
+                            <CheckboxField
+                                id="voided"
+                                label="Ya"
+                                checked={values.voided}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        voided: event.target.checked,
+                                    }))
+                                }
+                                inputClassName="h-[24px] w-[24px] rounded-[4px]"
+                                containerClassName="w-auto inline-flex items-center h-[34px]"
+                            />
+                        </>
+                    ) : null}
+
+
+
+                    <TransactionFieldLabel label={config.labels.notes} />
+                    <textarea
+                        value={values.notes}
                         onChange={(event) =>
                             setValues((current) => ({
                                 ...current,
-                                paymentMethod: event.target.value,
+                                notes: event.target.value,
                             }))
                         }
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                    >
-                        {['Tunai', 'Cek/Giro'].map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
+                        rows={4}
+                        className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                    />
 
-                    {isCheckPayment ? (
-                        <TextInput
-                            value={values.checkNumber}
-                            onChange={(event) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    checkNumber: event.target.value,
-                                }))
-                            }
-                            trailing={isDetail ? <span className="text-lg font-semibold text-[#1f2436]">×</span> : null}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            trailingClassName="px-3"
-                        />
+                    {isDetail ? (
+                        <>
+                            <TransactionFieldLabel label={config.labels.reconcileStatus} />
+                            <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus || 'Belum'}</div>
+
+                            <TransactionFieldLabel label={config.labels.printStatus} />
+                            <TextInput
+                                value={values.printStatus}
+                                readOnly
+                                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-xs sm:text-sm text-[#5f6779]"
+                            />
+                        </>
                     ) : null}
                 </div>
-
-                {isCheckPayment ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.checkDate} required />
-                        <div className="max-w-[276px]">
-                            <TransactionDateInput value={values.checkDate} className="max-w-none" />
-                        </div>
-                    </>
-                ) : null}
-
-                {isDetail ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.voided} />
-                        <CheckboxField
-                            id="voided"
-                            label="Ya"
-                            checked={values.voided}
-                            onChange={(event) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    voided: event.target.checked,
-                                }))
-                            }
-                            inputClassName="h-[24px] w-[24px] rounded-[4px]"
-                            containerClassName="w-auto inline-flex items-center h-[34px]"
-                        />
-                    </>
-                ) : null}
-
-
-
-                <TransactionFieldLabel label={config.labels.notes} />
-                <textarea
-                    value={values.notes}
-                    onChange={(event) =>
-                        setValues((current) => ({
-                            ...current,
-                            notes: event.target.value,
-                        }))
-                    }
-                    rows={4}
-                    className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
-                />
-
-                {isDetail ? (
-                    <>
-                        <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                        <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus || 'Belum'}</div>
-
-                        <TransactionFieldLabel label={config.labels.printStatus} />
-                        <TextInput
-                            value={values.printStatus}
-                            readOnly
-                            className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#5f6779]"
-                        />
-                    </>
-                ) : null}
             </div>
         </section>
     );

@@ -5,7 +5,7 @@ import {
     createMoreDockAction,
     createSaveDockAction,
 } from '@/features/workspace/modules/shared/workspaceDockActions';
-import { sharedDetailDockActions } from '@/features/workspace/modules/sales-document/salesOrderConfig';
+import { sharedDetailDockActions } from '@/features/workspace/modules/sales-document/salesDocumentConfigCore';
 
 const todayDisplayDate = buildTodayDisplayDate();
 
@@ -71,18 +71,13 @@ const defaultPurchaseInvoiceDraft = {
     items: [],
     itemCountLabel: 'Rincian Barang',
     preInvoice: false,
-    paymentTerms: [],
     bankAccounts: [],
     purchaseOrderNumber: '',
     address: '',
-    branches: ['JAKARTA'],
-    __branchId: 1,
     notes: '',
     taxEnabled: false,
     taxIncluded: false,
     shippingDate: todayDisplayDate,
-    shippingMethod: [],
-    fob: [],
     costSearch: '',
     additionalCosts: [],
     summary: [
