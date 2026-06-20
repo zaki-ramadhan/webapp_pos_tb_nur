@@ -6,8 +6,7 @@ function DocumentModalTabButton({ active, label, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            title={label}
-            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs font-medium max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
+            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs font-medium cursor-pointer select-none max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
                 active ? 'border-[#ff4836] text-[#ff4836]' : 'border-transparent text-[#5f6980]'
             }`.trim()}
         >
@@ -67,7 +66,7 @@ export default function DocumentModalLayout({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white transition hover:bg-white/10"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white transition hover:bg-white/10 cursor-pointer"
                         aria-label={closeAriaLabel}
                     >
                         <CloseIcon className="h-4 w-4 text-white" />

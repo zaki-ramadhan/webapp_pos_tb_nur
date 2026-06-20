@@ -21,9 +21,7 @@ import {
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
 
-function resolveAlignClassName(align) {
-    if (align === 'right') return 'text-right';
-    if (align === 'center') return 'text-center';
+function resolveCellAlignClassName(align) {
     return 'text-left';
 }
 
@@ -213,13 +211,13 @@ export function StockOpnameResultItemsSection({ config, values, setValues, onOpe
                             rows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} hover:bg-[#eef3fb]`.trim()}
+                                    className={`cursor-pointer border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} hover:bg-[#eef3fb]`.trim()}
                                     onClick={() => onOpenItem(row)}
                                 >
                                     {config.itemTable.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-3 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                            className={`px-3 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>

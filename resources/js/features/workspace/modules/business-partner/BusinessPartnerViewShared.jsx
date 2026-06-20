@@ -101,21 +101,21 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 value={values.street}
                 onChange={(event) => onChange?.('street', event.target.value)}
                 readOnly={readOnly}
-                rows={3}
+                rows={4}
                 prefix={prefixValue}
-                className="rounded-[4px] border-[#cfd6e2]"
-                prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
-                textareaClassName="min-h-[78px] text-xs sm:text-sm text-[#1f2436]"
+                className="rounded-[4px] border-slate-400"
+                prefixClassName="min-w-[92px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
+                textareaClassName="min-h-[112px] text-xs sm:text-sm text-[#1f2436]"
             />
 
-            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_240px]">
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
                 {readOnly ? (
                     <TextInput
                         value={values.city}
                         readOnly
                         prefix="Kota"
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
+                        className="h-[40px] rounded-[4px] border-slate-400"
+                        prefixClassName="min-w-[62px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
                 ) : (
@@ -124,8 +124,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                         onChange={(nextValue) => onChange?.('city', nextValue)}
                         onSelectCity={handleSelectCity}
                         prefix="Kota"
-                        prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1] border-[#cfd6e2] border-r"
-                        dropdownLeftOffsetClassName="left-[64px]"
+                        prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
+                        dropdownLeftOffsetClassName="left-[62px]"
                     />
                 )}
                 <TextInput
@@ -133,8 +133,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                     onChange={(event) => onChange?.('postalCode', event.target.value)}
                     readOnly={readOnly}
                     prefix="K.Pos"
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
+                    className="h-[40px] rounded-[4px] border-slate-400"
+                    prefixClassName="min-w-[62px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
                     inputClassName="text-xs sm:text-sm text-[#1f2436]"
                 />
             </div>
@@ -144,8 +144,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 onChange={(event) => onChange?.('province', event.target.value)}
                 readOnly={readOnly}
                 prefix="Provinsi"
-                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
+                className="h-[40px] rounded-[4px] border-slate-400"
+                prefixClassName="min-w-[92px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
                 inputClassName="text-xs sm:text-sm text-[#1f2436]"
             />
 
@@ -154,8 +154,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 onChange={(event) => onChange?.('country', event.target.value)}
                 readOnly={readOnly}
                 prefix="Negara"
-                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                prefixClassName="min-w-[64px] bg-[#f5f6f8] px-2.5 text-[#9aa3b1]"
+                className="h-[40px] rounded-[4px] border-slate-400"
+                prefixClassName="min-w-[92px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
                 inputClassName="text-xs sm:text-sm text-[#1f2436]"
             />
         </div>

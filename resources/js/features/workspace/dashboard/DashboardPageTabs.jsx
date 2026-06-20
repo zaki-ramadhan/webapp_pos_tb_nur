@@ -19,7 +19,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
             aria-label={tab.label}
             tabIndex={0}
             onClick={() => onSelect(tab.id)}
-            className={`relative -mb-px inline-flex h-7.5 items-center rounded-t-[5px] border text-xs leading-normal transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
+            className={`relative -mb-px inline-flex h-7.5 items-center rounded-t-[5px] border text-xs leading-normal cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
                     ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-medium text-white'
                     : 'border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
@@ -130,8 +130,8 @@ export default function DashboardPageTabs({
     onCloseLevel2Tab,
 }) {
     return (
-        <div className="border-b border-ui-border-medium bg-ui-bg-panel pt-0.5 sm:pt-1">
-            <div className="border-t border-ui-border-medium bg-ui-bg-panel-light px-1 pt-0.5 sm:px-1.5 sm:pt-1">
+        <div className="border-b border-ui-border-medium bg-ui-bg-panel pt-[3px]">
+            <div className="bg-ui-bg-panel-light px-1 pt-0 sm:px-1.5">
                 <div className="flex items-stretch justify-between gap-1 sm:gap-2">
                     <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                         <div className="flex w-max min-w-full items-end gap-[5px]">
@@ -156,8 +156,7 @@ export default function DashboardPageTabs({
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <div
                             aria-disabled="true"
-                            title="Mode daftar tidak dapat diubah pada halaman ini"
-                            className="relative -mb-px inline-flex h-9 cursor-not-allowed items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-disabled-border border-r-disabled-border border-t-disabled-border-t bg-disabled-bg px-3 text-disabled-text sm:h-9.5 sm:px-4"
+                            className="relative -mb-px inline-flex h-9 cursor-default select-none items-center rounded-t-[5px] border-x border-t-2 border-b-0 border-l-disabled-border border-r-disabled-border border-t-disabled-border-t bg-disabled-bg px-3 text-disabled-text sm:h-9.5 sm:px-4"
                         >
                             <ViewModeIcon />
                         </div>

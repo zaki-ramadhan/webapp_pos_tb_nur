@@ -4,15 +4,11 @@ import { DataTableHead } from '@/components/ui/DataTable';
 import { getColumnMinWidth } from './columnVisibility';
 
 function resolveAlignClassName(align) {
-    if (align === 'right') return 'text-right';
-    if (align === 'center') return 'text-center';
-    return 'text-left';
+    return 'text-center';
 }
 
 function resolveJustifyClassName(align) {
-    if (align === 'right') return 'justify-end';
-    if (align === 'center') return 'justify-center';
-    return 'justify-start';
+    return 'justify-center';
 }
 
 function SortIcon({ direction }) {
@@ -39,7 +35,7 @@ export default function SortableTableHeaderCell({
     if (!sortable || !onSort) {
         return (
             <DataTableHead
-                className={`${widthClassName} px-2.5 py-1.5 text-base font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
+                className={`${widthClassName} px-2.5 py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
                 style={minWidth ? { minWidth } : undefined}
             >
                 <span className={textClass}>{label}</span>
@@ -49,7 +45,7 @@ export default function SortableTableHeaderCell({
 
     return (
         <DataTableHead
-            className={`${widthClassName} px-2.5 py-1.5 text-base font-medium leading-4 text-white ${alignClass} ${className}`.trim()}
+            className={`${widthClassName} px-2.5 py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
             style={minWidth ? { minWidth } : undefined}
         >
             <button

@@ -155,7 +155,7 @@ export function FixedAssetsExpenseSection({ config, values, setValues, onOpenExp
                             values.expenseRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} hover:bg-[#eef3fb]`.trim()}
+                                    className={`cursor-pointer border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} hover:bg-[#eef3fb]`.trim()}
                                     onClick={() => onOpenExpense(row)}
                                 >
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{row.code}</DataTableCell>
@@ -208,7 +208,7 @@ export function FixedAssetsLocationSection({ config, values }) {
                     <DataTableBody>
                         {values.locationRows.length ? (
                             values.locationRows.map((row, index) => (
-                                <DataTableRow key={row.id} className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8]`.trim()}>
+                                <DataTableRow key={row.id} className={`${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} border-[#dde1e8]`.trim()}>
                                     <DataTableCell className="px-3 text-center text-base text-[#a0a7b6]">{row.symbol}</DataTableCell>
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{row.name}</DataTableCell>
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{row.address}</DataTableCell>

@@ -160,7 +160,7 @@ export function AssetMoveDetailsSection({ config, values, setValues, isDetail, o
                                 values.items.map((item, index) => (
                                     <DataTableRow
                                         key={item.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${isDetail ? 'cursor-pointer hover:bg-[#eef3fb]' : ''}`.trim()}
+                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${isDetail ? 'cursor-pointer hover:bg-[#eef3fb]' : ''}`.trim()}
                                         onClick={isDetail ? () => onOpenItem(item) : undefined}
                                     >
                                         {config.itemTable.columns.map((column) => (

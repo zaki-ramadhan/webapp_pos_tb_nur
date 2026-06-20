@@ -495,4 +495,27 @@ class BackendResourceController extends Controller
             'others-aging-inventory-range', 'others-sales-commission-source',
         ];
     }
+
+    public function reconcileDocuments(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'document_numbers' => ['required', 'array'],
+            'document_numbers.*' => ['required', 'string'],
+            'is_closed' => ['required', 'boolean'],
+        ]);
+
+        $affected = \App\Domain\Support\Models\OperationDocument::whereIn('document_number', $validated['document_numbers'])
+            ->update(['is_closed' => $validated['is_closed']]);
+
+        // Invalidate dashboard caches on mutation
+        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_retail');
+        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_trade-portal');
+        \Illuminate\Support\Facades\Cache::forget('dashboard_widgets_manufacture');
+
+        return response()->json([
+            'success' => true,
+            'message' => "Berhasil memperbarui status rekonsiliasi untuk {$affected} dokumen.",
+        ]);
+    }
 }
+

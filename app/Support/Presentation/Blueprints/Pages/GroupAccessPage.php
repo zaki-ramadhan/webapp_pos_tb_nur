@@ -251,7 +251,7 @@ class GroupAccessPage
                                         \App\Support\Presentation\PosBlueprint::accessRow('print-design', 'Desain Cetakan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('favorite-transactions', 'Transaksi Favorit', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('recurring-transactions', 'Transaksi Berulang', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('activity-log', 'Log Aktifitas', ['active' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('activity-log', 'Log Aktivitas', ['active' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('preferences', 'Preferensi', ['active' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('transaction-approval', 'Penyetuju Transaksi', ['active' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('period-end', 'Proses Akhir Bulan', ['create' => true, 'update' => true, 'delete' => true]),

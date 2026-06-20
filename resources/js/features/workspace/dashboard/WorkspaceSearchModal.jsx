@@ -171,7 +171,7 @@ export default function WorkspaceSearchModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2436] transition hover:bg-[#f4f6fa]"
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2436] transition hover:bg-[#f4f6fa] cursor-pointer"
                         aria-label={modal.closeLabel ?? 'Tutup pencarian menu'}
                         title={modal.closeLabel ?? 'Tutup pencarian menu'}
                     >

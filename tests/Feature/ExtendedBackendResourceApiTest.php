@@ -91,4 +91,104 @@ class ExtendedBackendResourceApiTest extends TestCase
             'name' => 'Mesin Potong Keramik',
         ]);
     }
+
+    public function test_account_auto_code_generation(): void
+    {
+        $user = \App\Models\User::factory()->create();
+
+        $parent = \App\Domain\Finance\Models\Account::query()->create([
+            'code' => '111.001-01',
+            'name' => 'Kas Utama',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        $response1 = $this->actingAs($user)->postJson('/api/backend/accounts', [
+            'parent_id' => $parent->id,
+            'auto_code' => true,
+            'name' => 'Kas Kecil A',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        $response1->assertCreated();
+        $this->assertDatabaseHas('accounts', [
+            'name' => 'Kas Kecil A',
+            'code' => '111.001-01.01',
+            'parent_id' => $parent->id,
+            'auto_code' => 1,
+        ]);
+
+        $response2 = $this->actingAs($user)->postJson('/api/backend/accounts', [
+            'parent_id' => $parent->id,
+            'auto_code' => true,
+            'name' => 'Kas Kecil B',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        $response2->assertCreated();
+        $this->assertDatabaseHas('accounts', [
+            'name' => 'Kas Kecil B',
+            'code' => '111.001-01.02',
+            'parent_id' => $parent->id,
+            'auto_code' => 1,
+        ]);
+
+        $response3 = $this->actingAs($user)->postJson('/api/backend/accounts', [
+            'parent_id' => $parent->id,
+            'auto_code' => false,
+            'code' => '111.001-01.custom',
+            'name' => 'Kas Kecil Custom',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        $response3->assertCreated();
+        $this->assertDatabaseHas('accounts', [
+            'name' => 'Kas Kecil Custom',
+            'code' => '111.001-01.custom',
+            'parent_id' => $parent->id,
+            'auto_code' => 0,
+        ]);
+
+        $childId = $response1->json('data.id');
+        $responseUpdate1 = $this->actingAs($user)->putJson("/api/backend/accounts/{$childId}", [
+            'parent_id' => $parent->id,
+            'auto_code' => true,
+            'name' => 'Kas Kecil A Edited',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        $responseUpdate1->assertOk();
+        $this->assertDatabaseHas('accounts', [
+            'id' => $childId,
+            'name' => 'Kas Kecil A Edited',
+            'code' => '111.001-01.01',
+        ]);
+
+        $newParent = \App\Domain\Finance\Models\Account::query()->create([
+            'code' => '222.002-02',
+            'name' => 'Kewajiban Baru',
+            'account_type' => 'Liability',
+            'is_active' => true,
+        ]);
+
+        $responseUpdate2 = $this->actingAs($user)->putJson("/api/backend/accounts/{$childId}", [
+            'parent_id' => $newParent->id,
+            'auto_code' => true,
+            'name' => 'Kas Kecil A Moved',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        $responseUpdate2->assertOk();
+        $this->assertDatabaseHas('accounts', [
+            'id' => $childId,
+            'name' => 'Kas Kecil A Moved',
+            'code' => '222.002-02.01',
+            'parent_id' => $newParent->id,
+        ]);
+    }
 }

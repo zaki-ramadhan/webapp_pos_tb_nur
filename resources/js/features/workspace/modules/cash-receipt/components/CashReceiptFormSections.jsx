@@ -64,7 +64,7 @@ export function ReceiptLineItemsSection({ config, values, handlers = {} }) {
                                 values.lineItems.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${handlers.onEditLineItem ? 'cursor-pointer' : ''}`.trim()}
+                                        className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${handlers.onEditLineItem ? 'cursor-pointer' : ''}`.trim()}
                                         onClick={handlers.onEditLineItem ? () => handlers.onEditLineItem(row) : undefined}
                                     >
                                         {config.lineTable.columns.map((column) => (

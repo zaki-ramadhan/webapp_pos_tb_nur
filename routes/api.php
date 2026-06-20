@@ -52,6 +52,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
         }
     });
     Route::get('/resources', [BackendResourceController::class, 'resources']);
+    Route::post('/bank-reconciliations/reconcile', [BackendResourceController::class, 'reconcileDocuments']);
     Route::post('/{resource}/import', [BackendResourceController::class, 'import']);
     Route::get('/{resource}', [BackendResourceController::class, 'index']);
     Route::post('/{resource}', [BackendResourceController::class, 'store']);

@@ -139,7 +139,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                 <DataTableRow
                                     key={invoice.id}
                                     className={`border-[#dde1e8] transition ${invoice.modal ? 'cursor-pointer hover:bg-[#eef3fb]' : ''} ${
-                                        index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
+                                        index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'
                                     }`.trim()}
                                     onClick={() => {
                                         if (invoice.modal) {

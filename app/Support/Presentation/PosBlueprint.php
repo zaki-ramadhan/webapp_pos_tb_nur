@@ -277,7 +277,7 @@ final class PosBlueprint
                 self::navItem('period-end', 'Proses Akhir Bulan', 'calendar', 'green'),
                 self::navItem('contacts', 'Kontak', 'contact', 'purple'),
                 self::navItem('favorite-transactions', 'Transaksi Favorit', 'favorite', 'purple'),
-                self::navItem('activity-log', 'Log Aktifitas', 'activity', 'purple'),
+                self::navItem('activity-log', 'Log Aktivitas', 'activity', 'purple'),
             ]),
             self::navModule('general-ledger', 'Buku Besar', 'ledger', [
                 self::navItem('accounts', 'Akun Perkiraan', 'account', 'blue'),
@@ -288,7 +288,7 @@ final class PosBlueprint
                 self::navItem('budget-transfer', 'Transfer Anggaran', 'transfer', 'green'),
                 self::navItem('budget', 'Anggaran', 'budget', 'amber'),
                 self::navItem('account-history', 'Histori Akun', 'history', 'purple'),
-                self::navItem('journal-activity-log', 'Log Aktifitas Jurnal', 'activity', 'purple'),
+                self::navItem('journal-activity-log', 'Log Aktivitas', 'activity', 'purple'),
             ]),
             self::navModule('cash-bank', 'Kas & Bank', 'bank', [
                 self::navItem('cash-payment', 'Pembayaran', 'payment', 'green'),

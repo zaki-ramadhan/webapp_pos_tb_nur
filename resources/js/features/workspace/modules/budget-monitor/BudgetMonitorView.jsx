@@ -117,6 +117,9 @@ export default function BudgetMonitorView({ page }) {
                 <DataTable className="min-w-[1180px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -130,7 +133,7 @@ export default function BudgetMonitorView({ page }) {
 
                     <DataTableBody>
                         <DataTableRow className="bg-white">
-                            <DataTableCell colSpan={config.table.columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                            <DataTableCell colSpan={config.table.columns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
                                 {config.table.emptyLabel}
                             </DataTableCell>
                         </DataTableRow>

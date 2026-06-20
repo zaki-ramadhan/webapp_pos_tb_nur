@@ -14,6 +14,7 @@ import useBackendResource from '@/features/workspace/backend/useBackendResource'
 import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
@@ -26,6 +27,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     const [activeTabId, setActiveTabId] = useState(config.tabs[0]?.id ?? 'general');
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     const [status, setStatus] = useState({ tone: '', message: '' });
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     useEffect(() => {
         setActiveTabId(config.tabs[0]?.id ?? 'general');
@@ -81,26 +83,29 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         }
     };
 
-    const handleDelete = async () => {
-        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-            const loadingToastId = showLoadingToast({
-                title: 'Memproses',
-                message: 'Sedang menghapus mitra bisnis.',
+    const handleDelete = () => {
+        setShowDeleteConfirm(true);
+    };
+
+    const performDelete = async () => {
+        setShowDeleteConfirm(false);
+        const loadingToastId = showLoadingToast({
+            title: 'Memproses',
+            message: 'Sedang menghapus mitra bisnis.',
+        });
+        try {
+            await remove(recordId);
+            dismissToast(loadingToastId);
+            showSuccessToast({
+                title: 'Berhasil',
+                message: 'Mitra bisnis berhasil dihapus.',
             });
-            try {
-                await remove(recordId);
-                dismissToast(loadingToastId);
-                showSuccessToast({
-                    title: 'Berhasil',
-                    message: 'Mitra bisnis berhasil dihapus.',
-                });
-            } catch (err) {
-                dismissToast(loadingToastId);
-                showErrorToast({
-                    title: 'Gagal menghapus',
-                    message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menghapus data.'),
-                });
-            }
+        } catch (err) {
+            dismissToast(loadingToastId);
+            showErrorToast({
+                title: 'Gagal menghapus',
+                message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menghapus data.'),
+            });
         }
     };
 
@@ -114,43 +119,56 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     const saveDisabled = processing || !values.name?.trim();
 
     return (
-        <ModuleFormTemplate
-            form={config}
-            activeTabId={activeTabId}
-            setActiveTabId={setActiveTabId}
-            status={status}
-            saving={processing}
-            saveDisabled={saveDisabled}
-            onSave={handleSave}
-            actionsSlot={
-                <>
-                    <DockActionButton
-                        label="Lampiran"
-                        tone="primary"
-                        icon={<DockIcon icon="attachment" />}
-                    />
-                    {isDetail ? (
+        <>
+            <ModuleFormTemplate
+                form={config}
+                activeTabId={activeTabId}
+                setActiveTabId={setActiveTabId}
+                status={status}
+                saving={processing}
+                saveDisabled={saveDisabled}
+                onSave={handleSave}
+                actionsSlot={
+                    <>
                         <DockActionButton
-                            label={processing ? 'Memproses...' : 'Hapus'}
-                            tone="danger"
-                            icon={<DockIcon icon="trash" />}
-                            disabled={processing}
-                            onClick={handleDelete}
+                            label="Lampiran"
+                            tone="primary"
+                            icon={<DockIcon icon="attachment" />}
                         />
-                    ) : null}
-                </>
-            }
-        >
-            <div className="flex-1 min-h-0">
-                {renderPartnerTab({
-                    config,
-                    values,
-                    isDetail,
-                    activeTabId,
-                    onChange: handleChange,
-                })}
-            </div>
-        </ModuleFormTemplate>
+                        {isDetail ? (
+                            <DockActionButton
+                                label={processing ? 'Memproses...' : 'Hapus'}
+                                tone="danger"
+                                icon={<DockIcon icon="trash" />}
+                                disabled={processing}
+                                onClick={handleDelete}
+                            />
+                        ) : null}
+                    </>
+                }
+            >
+                <div className="flex-1 min-h-0">
+                    {renderPartnerTab({
+                        config,
+                        values,
+                        isDetail,
+                        activeTabId,
+                        onChange: handleChange,
+                    })}
+                </div>
+            </ModuleFormTemplate>
+
+            <ConfirmationModal
+                open={showDeleteConfirm}
+                title="Konfirmasi Hapus"
+                message="Apakah Anda yakin ingin menghapus data ini?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={performDelete}
+            />
+        </>
     );
 }
 

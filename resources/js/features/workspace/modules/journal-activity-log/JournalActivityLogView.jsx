@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -10,13 +10,13 @@ import {
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
-import { mapJournalActivityRows } from '@/features/workspace/backend/workspaceBackendAdapters';
+import Pagination from '@/components/ui/Pagination';
+import { mapJournalActivityRows, buildActivityLogFilters } from '@/features/workspace/backend/workspaceBackendAdapters';
 import SectionTab from '@/features/workspace/shared/SectionTab';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CogIcon, LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
+import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 
 function buildFallbackDetailRecord(row, config) {
     return {
@@ -48,8 +48,37 @@ function buildFallbackDetailRecord(row, config) {
     };
 }
 
+function matchesFilter(row, filter, selectedValue) {
+    if (!filter.rowKey || selectedValue === 'all') {
+        return true;
+    }
+
+    return row[filter.rowKey] === selectedValue;
+}
+
 function JournalActivityLogTableView({ config, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
+
+    const filtersConfig = useMemo(() => buildActivityLogFilters(config.table.rows), [config.table.rows]);
+    const [filters, setFilters] = useState(() =>
+        filtersConfig.reduce((result, filter) => {
+            result[filter.id] = filter.options?.[0]?.value ?? 'all';
+            return result;
+        }, {}),
+    );
+
+    useEffect(() => {
+        setFilters((currentFilters) =>
+            filtersConfig.reduce((result, filter) => {
+                const currentValue = currentFilters[filter.id];
+                const optionExists = filter.options.some((option) => option.value === currentValue);
+
+                result[filter.id] = optionExists ? currentValue : (filter.options?.[0]?.value ?? 'all');
+
+                return result;
+            }, {}),
+        );
+    }, [filtersConfig]);
 
     const cleanedColumns = useMemo(() => {
         return (config.table.columns ?? []).map(col => ({
@@ -68,11 +97,19 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
 
-        if (!normalizedKeyword) {
-            return config.table.rows;
-        }
-
         return config.table.rows.filter((row) => {
+            const passesFilters = filtersConfig.every((filter) =>
+                matchesFilter(row, filter, filters[filter.id] ?? 'all'),
+            );
+
+            if (!passesFilters) {
+                return false;
+            }
+
+            if (!normalizedKeyword) {
+                return true;
+            }
+
             const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
             return searchCols.slice(0, 2).some((column) =>
                 String(row[column.id] ?? '')
@@ -80,24 +117,52 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                     .includes(normalizedKeyword),
             );
         });
-    }, [config.table.rows, keyword]);
+    }, [config.table.rows, keyword, filters, filtersConfig]);
+
+    useEffect(() => {
+        tableRegistry.setActiveTable(cleanedColumns, filteredRows, 'journal-activity-log');
+        return () => {
+            if (tableRegistry.activeTable?.columns === cleanedColumns) {
+                tableRegistry.setActiveTable(null, null, null);
+            }
+        };
+    }, [cleanedColumns, filteredRows]);
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
+                resourceName="journal-activity-log"
                 size="compact"
+                filters={filtersConfig.map((filter) => (
+                    <SelectField
+                        key={filter.id}
+                        value={filters[filter.id]}
+                        onChange={(event) =>
+                            setFilters((currentFilters) => ({
+                                ...currentFilters,
+                                [filter.id]: event.target.value,
+                            }))
+                        }
+                        containerClassName="w-auto shrink-0"
+                        className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2] sm:min-w-[138px]"
+                        selectClassName="text-xs sm:text-sm text-[#394157]"
+                    >
+                        {filter.options.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </SelectField>
+                ))}
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
                     onClick: config.table.onRefresh,
                     loading: Boolean(config.table.loading),
                 }}
-                exportConfig={{
-                    columns: cleanedColumns,
-                    rows: filteredRows,
-                    filename: 'jurnal-aktivitas',
-                    title: 'Laporan Jurnal Aktivitas',
-                }}
+                exportConfig={false}
+                importButton={false}
+                printButton={false}
                 columnSettings={{
                     columns: cleanedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
                     visibleIds: visibleColumnIds,
@@ -116,19 +181,20 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
                 }}
-                pageValue={config.table.pageValue}
+                pageValue={filteredRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'right' ? 'text-right' : 'text-center'
-                                    }`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -142,7 +208,7 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                                 <DataTableRow
                                     key={row.id}
                                     className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                        index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
+                                        index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'
                                     }`.trim()}
                                     onClick={() =>
                                         onOpenDetail?.({
@@ -152,6 +218,9 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                                         })
                                     }
                                 >
+                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                        {config.table.pagination ? (config.table.pagination.from + index) : (index + 1)}
+                                    </DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
@@ -164,7 +233,7 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>
@@ -172,6 +241,20 @@ function JournalActivityLogTableView({ config, onOpenDetail }) {
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }
@@ -187,7 +270,7 @@ function SummaryField({ label, value, align = 'left' }) {
 
 function AmountColumn({ label, align = 'right' }) {
     return (
-        <div className={`px-2 py-2 text-xs sm:text-sm text-[#1f2436] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+        <div className="px-2 py-2 text-xs sm:text-sm text-[#1f2436] text-center">
             {label}
         </div>
     );
@@ -250,8 +333,8 @@ function JournalActivityLogDetailView({ config, activeLevel2Tab }) {
                             <div key={entry.id} className="grid grid-cols-[160px_minmax(0,1fr)_220px_220px] gap-x-3">
                                 <div className="text-xs sm:text-sm text-[#1f2436]">{entry.accountCode}</div>
                                 <div className="text-xs sm:text-sm text-[#1f2436]">{entry.accountName}</div>
-                                <div className="text-right text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.debit)}</div>
-                                <div className="text-right text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.credit)}</div>
+                                <div className="text-left text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.debit)}</div>
+                                <div className="text-left text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.credit)}</div>
                             </div>
                         ))}
                     </div>
@@ -259,12 +342,12 @@ function JournalActivityLogDetailView({ config, activeLevel2Tab }) {
                     <div className="mt-2 grid grid-cols-[160px_minmax(0,1fr)_220px_220px] gap-x-3">
                         <div />
                         <div />
-                        <div className="pt-1 text-right">
-                            <div className="ml-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
+                        <div className="pt-1 text-left">
+                            <div className="mr-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
                             <div className="pt-1 text-lg font-semibold text-[#111827]">{detail.totalDebit}</div>
                         </div>
-                        <div className="pt-1 text-right">
-                            <div className="ml-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
+                        <div className="pt-1 text-left">
+                            <div className="mr-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
                             <div className="pt-1 text-lg font-semibold text-[#111827]">{detail.totalCredit}</div>
                         </div>
                     </div>

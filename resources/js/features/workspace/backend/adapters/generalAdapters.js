@@ -91,14 +91,23 @@ export function buildActivityLogFilters(rows) {
 }
 
 export function mapJournalActivityRows(records) {
-    return records.map((record) => ({
-        id: record.id,
-        date: formatIsoDate(record.occurred_at),
-        number: record.document_number ?? `LOG-${record.id}`,
-        transactionNumber: record.subject_label ?? record.description ?? '-',
-        typeLabel: record.resource_label ?? titleizeKey(record.permission_key ?? record.resource_key),
-        amount: record.metadata?.amount ?? '',
-    }));
+    return records.map((record) => {
+        const transactionDate = normalizeDisplayDate(record.metadata?.transaction_date) || normalizeDisplayDate(record.occurred_at);
+
+        return {
+            id: record.id,
+            date: formatIsoDate(record.occurred_at),
+            number: record.document_number ?? `LOG-${record.id}`,
+            transactionNumber: record.subject_label ?? record.description ?? '-',
+            typeLabel: record.resource_label ?? titleizeKey(record.permission_key ?? record.resource_key),
+            amount: record.metadata?.amount ?? '',
+            dateValue: normalizeDisplayDate(record.occurred_at),
+            transactionDateValue: transactionDate || 'empty',
+            transactionTypeValue: record.resource_key ?? '',
+            userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
+            actionTypeValue: record.action ?? '',
+        };
+    });
 }
 
 export function buildReportListConfig(records, fallbackConfig) {

@@ -11,6 +11,7 @@ import {
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { PlusIcon, RefreshIcon, CogIcon } from '@/features/workspace/shared/Icons';
+import Pagination from '@/components/ui/Pagination';
 
 function ApprovalFilterSlot({ filters: filterDefs, values, onChange }) {
     return (
@@ -70,10 +71,13 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
+                                No.
+                            </DataTableHead>
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-normal text-white ${column.align === 'left' ? 'text-left' : 'text-center'}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -87,8 +91,11 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                                 <DataTableRow
                                     key={row.id}
                                     onClick={() => onOpenDetail?.({ recordId: row.id, label: row.ruleName, tabLabel: row.tabLabel })}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} cursor-pointer hover:bg-[#f3f6fa]`}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} cursor-pointer hover:bg-[#f3f6fa]`}
                                 >
+                                    <DataTableCell className="px-3 text-center text-base text-[#646d83] whitespace-nowrap">
+                                        {table.pagination ? (table.pagination.from + index) : (index + 1)}
+                                    </DataTableCell>
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.valueLabel)}</DataTableCell>
                                     <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.approvedBy)}</DataTableCell>
@@ -98,7 +105,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-3 py-8 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-8 text-center text-base text-[#131a28]">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
@@ -106,6 +113,20 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

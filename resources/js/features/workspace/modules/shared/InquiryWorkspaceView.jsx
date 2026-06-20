@@ -33,9 +33,7 @@ function buildInitialControlValues(controls) {
     }, {});
 }
 
-function resolveAlignClassName(align) {
-    if (align === 'right') return 'text-right';
-    if (align === 'center') return 'text-center';
+function resolveCellAlignClassName(align) {
     return 'text-left';
 }
 
@@ -210,6 +208,9 @@ export default function InquiryWorkspaceView({
                         <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="rounded-none border-0">
                             <DataTableHeader className="bg-[#5f7690]">
                                 <tr>
+                                    <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                        No.
+                                    </DataTableHead>
                                     {config.table.columns.map((column) => (
                                         <SortableTableHeaderCell
                                             key={column.id}
@@ -228,12 +229,15 @@ export default function InquiryWorkspaceView({
                                     filteredRows.map((row, index) => (
                                         <DataTableRow
                                             key={row.id ?? `row-${index}`}
-                                            className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                            className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                         >
+                                            <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                                {pagination ? (pagination.from + index) : (index + 1)}
+                                            </DataTableCell>
                                             {config.table.columns.map((column) => (
                                                 <DataTableCell
                                                     key={column.id}
-                                                    className={`${resolveAlignClassName(column.align)} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
+                                                    className={`${resolveCellAlignClassName(column.align)} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
                                                 >
                                                     {column.truncate ? (
                                                         <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
@@ -247,7 +251,7 @@ export default function InquiryWorkspaceView({
                                 ) : (
                                     <DataTableRow className="bg-white">
                                         <DataTableCell
-                                            colSpan={config.table.columns.length}
+                                            colSpan={config.table.columns.length + 1}
                                             className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                         >
                                             {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}

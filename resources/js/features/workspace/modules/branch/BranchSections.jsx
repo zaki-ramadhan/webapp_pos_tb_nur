@@ -17,8 +17,8 @@ export function BranchFieldRow({ label, required = false, children }) {
 
 export function PrefixedTextArea({ value, onChange, prefix, className = '', textareaClassName = '' }) {
     return (
-        <div className={`flex overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white ${className}`.trim()}>
-            <div className="flex min-w-[88px] items-start justify-start border-r border-[#cfd6e2] bg-[#f3f3f4] px-3 py-3 text-xs sm:text-sm text-[#8b94a7]">
+        <div className={`flex overflow-hidden rounded-[4px] border border-slate-400 bg-white ${className}`.trim()}>
+            <div className="flex min-w-[92px] items-start justify-start border-r border-slate-400 bg-[#f3f3f4] px-3 py-3 text-xs sm:text-sm text-[#8b94a7]">
                 {prefix}
             </div>
             <textarea
@@ -31,14 +31,14 @@ export function PrefixedTextArea({ value, onChange, prefix, className = '', text
     );
 }
 
-export function PrefixedInput({ value, onChange, prefix, className = '', inputClassName = '', ...props }) {
+export function PrefixedInput({ value, onChange, prefix, className = '', prefixClassName = '', inputClassName = '', ...props }) {
     return (
         <TextInput
             value={value}
             onChange={onChange}
             prefix={prefix}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName="min-w-[92px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
+            className={`h-[40px] rounded-[4px] border-slate-400 ${className}`.trim()}
+            prefixClassName={prefixClassName || "min-w-[92px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"}
             inputClassName={`text-xs sm:text-sm text-[#1f2436] ${inputClassName}`.trim()}
             {...props}
         />
@@ -91,19 +91,20 @@ export function BranchGeneralTab({ values, onChange }) {
                             prefix="Jalan"
                         />
 
-                        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_184px]">
+                        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
                             <CityAutocompleteInput
                                 value={values.city}
                                 onChange={(nextValue) => onChange('city', nextValue)}
                                 onSelectCity={handleSelectCity}
                                 prefix="Kota"
-                                prefixClassName="min-w-[92px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
-                                dropdownLeftOffsetClassName="left-[92px]"
+                                prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
+                                dropdownLeftOffsetClassName="left-[62px]"
                             />
                             <PrefixedInput
                                 value={values.postalCode}
                                 onChange={(event) => onChange('postalCode', event.target.value)}
                                 prefix="K.Pos"
+                                prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
                             />
                         </div>
 

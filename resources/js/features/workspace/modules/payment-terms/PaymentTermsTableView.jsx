@@ -12,6 +12,7 @@ import SelectField from '@/components/ui/SelectField';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CogIcon, PlusIcon, PrintIcon, RefreshIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import Pagination from '@/components/ui/Pagination';
 
 export default function PaymentTermsTableView({ page, onCreate, onOpenDetail }) {
     const table = page.paymentTerms.table;
@@ -110,7 +111,7 @@ export default function PaymentTermsTableView({ page, onCreate, onOpenDetail }) 
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                     onClick={() =>
                                         onOpenDetail?.({
                                             recordId: row.id,
@@ -141,6 +142,20 @@ export default function PaymentTermsTableView({ page, onCreate, onOpenDetail }) 
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

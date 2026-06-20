@@ -89,7 +89,7 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                                 <DataTableRow
                                     key={row.id}
                                     className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                        index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'
+                                        index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'
                                     }`.trim()}
                                     onClick={() => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                                 >

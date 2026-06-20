@@ -181,7 +181,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-white/80 hover:text-white transition-colors p-1 rounded hover:bg-white/10"
+                        className="text-white/80 hover:text-white transition-colors p-1 rounded hover:bg-white/10 cursor-pointer"
                     >
                         <X className="h-4 w-4" />
                     </button>

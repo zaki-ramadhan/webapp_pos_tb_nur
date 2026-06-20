@@ -24,6 +24,20 @@ export default function CityAutocompleteInput({
     const inputRef = useRef(null);
     const rootRef = useRef(null);
 
+    function focusInputFromWrapper(event) {
+        if (disabled) {
+            return;
+        }
+        const target = event.target;
+        if (
+            target instanceof HTMLElement &&
+            (target.closest('input, button, a, select, textarea, [role="button"]') !== null)
+        ) {
+            return;
+        }
+        inputRef.current?.focus();
+    }
+
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
 
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
@@ -86,14 +100,20 @@ export default function CityAutocompleteInput({
         );
     };
 
+    const hasPrefixMinW = prefixClassName.includes('min-w-');
+    const prefixMinWClass = hasPrefixMinW ? '' : 'min-w-[86px]';
+    const hasPrefixPx = prefixClassName.includes('px-') || prefixClassName.includes('pl-') || prefixClassName.includes('pr-');
+    const prefixPxClass = hasPrefixPx ? '' : 'px-5';
+
     return (
-        <div ref={rootRef} className="relative w-full">
+        <div ref={rootRef} className="relative w-full min-w-0">
             <div
-                className={`group flex h-11 w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
+                onMouseDown={focusInputFromWrapper}
+                className={`group flex h-11 w-full min-w-0 items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full min-w-[86px] items-center border-r border-slate-400 px-5 text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -114,7 +134,7 @@ export default function CityAutocompleteInput({
                         placeholder={placeholder}
                         disabled={disabled}
                         autoComplete="off"
-                        className={`h-full flex-1 bg-transparent text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                        className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                         {...props}
                     />
                 </div>

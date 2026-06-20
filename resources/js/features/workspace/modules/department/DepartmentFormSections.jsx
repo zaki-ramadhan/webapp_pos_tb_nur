@@ -141,7 +141,7 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} border-[#dde1e8]`.trim()}
+                                    className={`${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} border-[#dde1e8]`.trim()}
                                 >
                                     <DataTableCell className="px-3 text-base text-[#131a28]">
                                         {formatTableTextValue(row.code)}

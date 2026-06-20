@@ -44,15 +44,6 @@ export default function ModuleTableTemplate({
         return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
     }, [cleanedColumns, visibleColumnIds]);
 
-    useEffect(() => {
-        tableRegistry.setActiveTable(cleanedColumns, filteredRows, resourceName);
-        return () => {
-            if (tableRegistry.activeTable?.resource === resourceName) {
-                tableRegistry.setActiveTable(null, null, null);
-            }
-        };
-    }, [cleanedColumns, filteredRows, resourceName]);
-
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
 
@@ -79,6 +70,15 @@ export default function ModuleTableTemplate({
             );
         });
     }, [customFiltersSlot, customRowFilter, inactiveFilter, inactiveFilterKey, keyword, table.rows, table.columns]);
+
+    useEffect(() => {
+        tableRegistry.setActiveTable(cleanedColumns, filteredRows, resourceName);
+        return () => {
+            if (tableRegistry.activeTable?.resource === resourceName) {
+                tableRegistry.setActiveTable(null, null, null);
+            }
+        };
+    }, [cleanedColumns, filteredRows, resourceName]);
 
     const filters = useMemo(() => {
         if (customFiltersSlot) {
@@ -178,7 +178,7 @@ export default function ModuleTableTemplate({
                                 filteredRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''}`.trim()}
+                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''}`.trim()}
                                         onClick={() =>
                                             onOpenDetail?.({
                                                 recordId: String(row.id),

@@ -525,7 +525,7 @@ class DashboardBlueprintProvider
                         ],
                         [
                             'id' => 'recent-activity',
-                            'title' => 'Aktifitas Terakhir Anda',
+                            'title' => 'Aktivitas Terakhir Anda',
                             'description' => 'Menampilkan riwayat aktivitas terakhir pengguna.',
                             'icon' => 'activity',
                         ],
@@ -700,7 +700,7 @@ class DashboardBlueprintProvider
                 ],
                 [
                     'id' => 'recent-activity',
-                    'title' => 'Aktifitas Terakhir Anda',
+                    'title' => 'Aktivitas Terakhir Anda',
                     'type' => 'recent-activity',
                     'items' => $userActivities,
                     'heightClass' => 'min-h-[310px]',

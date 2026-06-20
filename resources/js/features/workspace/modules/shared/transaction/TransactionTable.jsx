@@ -70,7 +70,7 @@ export function TransactionDataTable({
                 <DataTableHeader className="bg-[#5f7690]">
                     <tr>
                         {activeShowNumbering && (
-                            <DataTableHead className="w-[50px] px-3 text-center text-sm font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 text-center text-sm font-normal text-white">
                                 No.
                             </DataTableHead>
                         )}
@@ -79,7 +79,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-sm font-medium text-white text-center`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-sm font-normal text-white text-center`.trim()}
                                     style={minWidth ? { minWidth } : undefined}
                                 >
                                     {renderHeaderCell ? renderHeaderCell(column) : column.label}
@@ -98,7 +98,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${customRowClassName}`.trim()}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${customRowClassName}`.trim()}
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {activeShowNumbering && (

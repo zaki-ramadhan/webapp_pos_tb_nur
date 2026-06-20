@@ -45,8 +45,8 @@ export function ClearableTextInput({ id, name, value, onChange, placeholder = ''
 
 export function PrefixedTextArea({ prefix, value, onChange }) {
     return (
-        <div className="flex overflow-hidden rounded-[4px] border border-[#cfd6e2] bg-white">
-            <div className="flex min-w-[40px] items-start justify-start border-r border-[#cfd6e2] bg-[#f3f3f4] px-2 py-3 text-xs sm:text-sm text-[#8b94a7]">
+        <div className="flex overflow-hidden rounded-[4px] border border-slate-400 bg-white">
+            <div className="flex min-w-[92px] items-start justify-start border-r border-slate-400 bg-[#f3f3f4] px-3 py-3 text-xs sm:text-sm text-[#8b94a7]">
                 {prefix}
             </div>
             <TextareaField
@@ -54,20 +54,20 @@ export function PrefixedTextArea({ prefix, value, onChange }) {
                 onChange={onChange}
                 rows={4}
                 className="border-none"
-                textareaClassName="min-h-[74px] text-[#1f2436]"
+                textareaClassName="min-h-[112px] text-[#1f2436]"
             />
         </div>
     );
 }
 
-export function PrefixedInput({ prefix, value, onChange, className = '', ...props }) {
+export function PrefixedInput({ prefix, value, onChange, className = '', prefixClassName = '', ...props }) {
     return (
         <TextInput
             value={value}
             onChange={onChange}
             prefix={prefix}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName="min-w-[48px] border-[#cfd6e2] bg-[#f3f3f4] px-2 text-xs sm:text-sm text-[#8b94a7]"
+            className={`h-[40px] rounded-[4px] border-slate-400 ${className}`.trim()}
+            prefixClassName={prefixClassName || "min-w-[92px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"}
             inputClassName="text-xs sm:text-sm text-[#1f2436]"
             {...props}
             trailing={
@@ -163,10 +163,10 @@ export function WarehouseAddressTab({ config, values, onChange }) {
                         onChange={(nextValue) => onChange('city', nextValue)}
                         onSelectCity={handleSelectCity}
                         prefix="Kota"
-                        prefixClassName="min-w-[48px] border-[#cfd6e2] bg-[#f3f3f4] px-2 text-xs sm:text-sm text-[#8b94a7]"
-                        dropdownLeftOffsetClassName="left-[48px]"
+                        prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
+                        dropdownLeftOffsetClassName="left-[62px]"
                     />
-                    <PrefixedInput prefix="K.Pos" value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} />
+                    <PrefixedInput prefix="K.Pos" prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]" value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} />
                 </div>
 
                 <PrefixedInput prefix="Provinsi" value={values.province} onChange={(event) => onChange('province', event.target.value)} />

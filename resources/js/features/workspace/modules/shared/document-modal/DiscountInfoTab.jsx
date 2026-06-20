@@ -118,7 +118,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                             values.discountRows.map((row, index) => (
                                 <DataTableRow
                                     key={`${row.account}-${row.amount}-${index}`}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
                                     <DataTableCell className="px-2.5 text-center text-[#a8afbe]">
                                         <span className="inline-flex items-center justify-center">

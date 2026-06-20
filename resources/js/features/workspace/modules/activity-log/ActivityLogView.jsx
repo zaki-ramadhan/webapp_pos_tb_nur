@@ -9,6 +9,7 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
+import Pagination from '@/components/ui/Pagination';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import {
     buildActivityLogFilters,
@@ -17,7 +18,7 @@ import {
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CogIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
+import { cleanHeaderLabel, getColumnMinWidth, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -120,11 +121,21 @@ export default function ActivityLogView({ page }) {
         });
     }, [filters, keyword, table.filters, table.rows]);
 
+    useEffect(() => {
+        tableRegistry.setActiveTable(table.columns, filteredRows, 'activity-log');
+        return () => {
+            if (tableRegistry.activeTable?.resource === 'activity-log') {
+                tableRegistry.setActiveTable(null, null, null);
+            }
+        };
+    }, [table.columns, filteredRows]);
+
     const emptyLabel = loading ? 'Memuat data...' : (error || 'Belum ada data');
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
+                resourceName="activity-log"
                 filters={table.filters.map((filter) => (
                     <SelectField
                         key={filter.id}
@@ -154,12 +165,9 @@ export default function ActivityLogView({ page }) {
                     onClick: reload,
                     loading,
                 }}
-                exportConfig={{
-                    columns: table.columns,
-                    rows: filteredRows,
-                    filename: 'log-aktivitas',
-                    title: 'Log Aktivitas',
-                }}
+                exportConfig={false}
+                importButton={false}
+                printButton={false}
                 menuButton={{
                     label: 'Pengaturan',
                     icon: <CogIcon className="h-5 w-5" />,
@@ -180,6 +188,9 @@ export default function ActivityLogView({ page }) {
                 <DataTable className="min-w-[1320px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {table.columns.map((column) => {
                                 const minWidth = getColumnMinWidth(column.label);
                                 return (
@@ -200,8 +211,11 @@ export default function ActivityLogView({ page }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
+                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                        {table.pagination ? (table.pagination.from + index) : (index + 1)}
+                                    </DataTableCell>
                                     <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.transactionDateLabel)}</span>
                                     </DataTableCell>
@@ -230,7 +244,7 @@ export default function ActivityLogView({ page }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
@@ -238,6 +252,20 @@ export default function ActivityLogView({ page }) {
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {table.pagination ? (
+                <Pagination
+                    page={table.pagination.page}
+                    perPage={table.pagination.perPage}
+                    total={table.pagination.total}
+                    lastPage={table.pagination.lastPage}
+                    from={table.pagination.from}
+                    to={table.pagination.to}
+                    onPageChange={table.pagination.onPageChange}
+                    onPerPageChange={table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

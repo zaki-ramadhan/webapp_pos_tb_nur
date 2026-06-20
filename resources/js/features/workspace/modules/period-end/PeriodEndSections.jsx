@@ -122,7 +122,7 @@ export function PeriodEndRatesSection({
                                 {ratesRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                     >
                                         <DataTableCell className="w-[36px] px-3 text-center text-[#a4acbc]">≡</DataTableCell>
                                         <DataTableCell className="px-3 text-base text-[#131a28]">{row.currencyName}</DataTableCell>

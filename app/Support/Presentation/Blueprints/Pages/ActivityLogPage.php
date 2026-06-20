@@ -8,11 +8,11 @@ class ActivityLogPage
     {
         return [
                     'id' => 'activity-log',
-                    'label' => 'Log Aktifitas',
+                    'label' => 'Log Aktivitas',
                     'showViewIndicator' => true,
                     'table' => [
                         'refreshLabel' => 'Muat ulang',
-                        'actionsLabel' => 'Aksi log aktifitas',
+                        'actionsLabel' => 'Aksi log aktivitas',
                         'searchPlaceholder' => '',
                         'pageValue' => '2,286',
                         'filters' => [

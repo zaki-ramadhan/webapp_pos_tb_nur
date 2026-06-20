@@ -7,6 +7,8 @@ export function buildFormState(source = {}) {
         branch: [...(source.branch ?? [])],
         parentAccount: [...(source.parentAccount ?? [])],
         childAccounts: [...(source.childAccounts ?? [])],
+        users: [...(source.users ?? [])],
+        autoCode: source.autoCode ?? true,
     };
 }
 
@@ -114,8 +116,12 @@ export function buildAccountSourceRecord(record, config) {
         currencyId: record.currency_id ?? record.currency?.id ?? null,
         branchIds: Array.isArray(record.branches) ? record.branches.map((branch) => branch.id) : [],
         userIds: Array.isArray(record.users) ? record.users.map((user) => user.id) : [],
+        users: Array.isArray(record.users) && record.users.length
+            ? record.users.map((user) => user.name).filter(Boolean)
+            : [],
         type: record.account_type ?? config.createValues.type,
         isSubAccount: Boolean(record.parent_id),
+        autoCode: record.auto_code !== false,
         code: record.code ?? '',
         name: record.name ?? '',
         currency: record.currency?.name ? [record.currency.name] : [...(config.createValues.currency ?? [])],
@@ -137,11 +143,13 @@ export function buildComparableFormValues(values) {
     return {
         type: String(values.type ?? '').trim(),
         isSubAccount: Boolean(values.isSubAccount),
+        autoCode: Boolean(values.autoCode),
         parentId: values.parentId ?? null,
         code: String(values.code ?? '').trim(),
         name: String(values.name ?? '').trim(),
         currencyId: values.currencyId ?? null,
         branchIds: Array.isArray(values.branchIds) ? [...values.branchIds].sort() : [],
+        userIds: Array.isArray(values.userIds) ? [...values.userIds].sort() : [],
         openingBalanceValue: normalizeNumericValue(values.openingBalanceValue),
         openingBalanceDate: normalizeDateForPayload(values.openingBalanceDate),
         notes: String(values.notes ?? '').trim(),
@@ -153,7 +161,8 @@ export function buildAccountPayload(values) {
     return {
         parent_id: values.isSubAccount ? (values.parentId ?? null) : null,
         currency_id: values.currencyId ?? null,
-        code: String(values.code ?? '').trim(),
+        code: values.isSubAccount && values.autoCode ? null : String(values.code ?? '').trim(),
+        auto_code: values.isSubAccount ? Boolean(values.autoCode) : false,
         name: String(values.name ?? '').trim(),
         account_type: String(values.type ?? '').trim(),
         notes: String(values.notes ?? '').trim() || null,
@@ -161,7 +170,7 @@ export function buildAccountPayload(values) {
         opening_balance_date: normalizeDateForPayload(values.openingBalanceDate),
         cash_bank_reference: String(values.cashBankReference ?? '').trim() || null,
         is_active: true,
-        branch_ids: Array.isArray(values.branchIds) ? values.branchIds : [],
+        branch_ids: values.allUsers ? [] : (Array.isArray(values.branchIds) ? values.branchIds : []),
         user_ids: values.allUsers ? [] : (Array.isArray(values.userIds) ? values.userIds : []),
     };
 }

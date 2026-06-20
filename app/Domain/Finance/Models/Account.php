@@ -22,6 +22,7 @@ class Account extends DomainModel
         'opening_balance_date',
         'cash_bank_reference',
         'is_active',
+        'auto_code',
     ];
 
     protected array $searchable = ['code', 'name', 'account_type', 'notes'];
@@ -32,6 +33,7 @@ class Account extends DomainModel
             'opening_balance' => 'decimal:2',
             'opening_balance_date' => 'date',
             'is_active' => 'boolean',
+            'auto_code' => 'boolean',
         ];
     }
 

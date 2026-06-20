@@ -26,13 +26,13 @@ class JournalActivityLogPage
                 ],
                 'displayOptions' => ['Semua Perubahan', 'Perubahan Aktif', 'Perubahan Sebelumnya'],
                 'table' => [
-                    'refreshLabel' => 'Muat ulang log aktifitas jurnal',
-                    'settingsLabel' => 'Pengaturan log aktifitas jurnal',
+                    'refreshLabel' => 'Muat ulang log aktivitas',
+                    'settingsLabel' => 'Pengaturan log aktivitas',
                     'searchPlaceholder' => 'Cari...',
                     'pageValue' => '632',
                     'menuItems' => [
                         ['id' => 'journal-log-columns', 'label' => 'Atur kolom'],
-                        ['id' => 'journal-log-export', 'label' => 'Ekspor log aktifitas jurnal'],
+                        ['id' => 'journal-log-export', 'label' => 'Ekspor log aktivitas'],
                     ],
                     'columns' => [
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[150px]'],

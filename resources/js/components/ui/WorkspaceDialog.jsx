@@ -34,7 +34,7 @@ export default function WorkspaceDialog({
                         type="button"
                         onClick={onClose}
                         disabled={disableClose}
-                        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition hover:bg-white/10"
+                        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition hover:bg-white/10 cursor-pointer"
                         aria-label={closeLabel}
                     >
                         <CloseIcon className="h-4 w-4" />

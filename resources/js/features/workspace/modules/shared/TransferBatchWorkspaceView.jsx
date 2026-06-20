@@ -22,17 +22,14 @@ function buildInitialValues(config) {
     }, {});
 }
 
-function resolveAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
+function resolveHeaderAlignClassName(align) {
+    return 'text-center';
+}
 
-    if (align === 'center') {
-        return 'text-center';
-    }
-
+function resolveCellAlignClassName(align) {
     return 'text-left';
 }
+
 
 function ToolbarIconButton({ action }) {
     const icon =
@@ -136,10 +133,13 @@ export default function TransferBatchWorkspaceView({ config }) {
                     >
                         <DataTableHeader className="bg-[#5f7690]">
                             <tr>
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
                                 {config.table.columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveHeaderAlignClassName(column.align)}`.trim()}
                                     >
                                         {column.kind === 'checkbox' ? (
                                             <span className="inline-flex h-[22px] w-[22px] rounded-[4px] border border-[#d8dde7] bg-white" />
@@ -156,12 +156,15 @@ export default function TransferBatchWorkspaceView({ config }) {
                                 filteredRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                     >
+                                        <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                            {index + 1}
+                                        </DataTableCell>
                                         {config.table.columns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`px-2.5 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                                className={`px-2.5 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
                                             >
                                                 {column.kind === 'checkbox' ? (
                                                     <span className="inline-flex h-[18px] w-[18px] rounded-[4px] border border-[#cfd6e2] bg-white" />
@@ -176,7 +179,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                 <DataTableRow className="bg-white">
                                     {firstColumnIsCheckbox ? <DataTableCell className="px-2.5" /> : null}
                                     <DataTableCell
-                                        colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
+                                        colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0) + 1}
                                         className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                     >
                                         {config.table.emptyLabel ?? 'Belum ada data'}

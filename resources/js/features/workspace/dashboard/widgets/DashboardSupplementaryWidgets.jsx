@@ -186,7 +186,7 @@ export function RecentActivityWidget({ widget }) {
     const items = widget.items ?? [];
 
     if (!items.length) {
-        return <DashboardWidgetEmptyState description="Belum ada riwayat aktifitas." />;
+        return <DashboardWidgetEmptyState description="Belum ada riwayat aktivitas." />;
     }
 
     return (

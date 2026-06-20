@@ -74,15 +74,26 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
         }));
     }
 
-    const validationMessage = useMemo(
-        () =>
-            validateRequiredChecks([
-                { label: config.labels.type, value: values.type },
-                { label: config.labels.code, value: values.code },
-                { label: config.labels.name, value: values.name },
-            ]),
-        [config.labels.code, config.labels.name, config.labels.type, values.code, values.name, values.type],
-    );
+    const validationMessage = useMemo(() => {
+        const isCodeRequired = !values.isSubAccount || !values.autoCode;
+        const checks = [
+            { label: config.labels.type, value: values.type },
+            { label: config.labels.name, value: values.name },
+        ];
+        if (isCodeRequired) {
+            checks.push({ label: config.labels.code, value: values.code });
+        }
+        return validateRequiredChecks(checks);
+    }, [
+        config.labels.code,
+        config.labels.name,
+        config.labels.type,
+        values.code,
+        values.name,
+        values.type,
+        values.isSubAccount,
+        values.autoCode,
+    ]);
     const saveDisabled = saving || Boolean(validationMessage) || !hasChanges;
 
     useWorkspaceDirtyRegistration({

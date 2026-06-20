@@ -170,7 +170,7 @@ export default function PaymentOrderTableView({ config, onCreate }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
                                                                         {filteredRows.length > 0 ? (
                                         <DataTableCell className="px-3 text-center text-base text-[#646d83]">

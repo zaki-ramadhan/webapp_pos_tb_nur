@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import Pagination from '@/components/ui/Pagination';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
@@ -27,17 +28,14 @@ function buildInitialValues(config) {
     }, {});
 }
 
-function resolveAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
+function resolveHeaderAlignClassName(align) {
+    return 'text-center';
+}
 
-    if (align === 'center') {
-        return 'text-center';
-    }
-
+function resolveCellAlignClassName(align) {
     return 'text-left';
 }
+
 
 function InquiryIconButton({ icon, label, onClick }) {
     const IconComponent = icon === 'external-link' ? ExternalLinkIcon : LinkIcon;
@@ -213,12 +211,15 @@ export default function InventoryInquiryView({
                 <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                No.
+                            </DataTableHead>
                             {cleanedColumns.map((column) => {
                                 const minWidth = column.kind !== 'checkbox' ? getColumnMinWidth(column.label) : undefined;
                                 return (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveHeaderAlignClassName(column.align)}`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
                                         {column.kind === 'checkbox' ? (
@@ -237,12 +238,15 @@ export default function InventoryInquiryView({
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
+                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                        {config.table.pagination ? (config.table.pagination.from + index) : (index + 1)}
+                                    </DataTableCell>
                                     {cleanedColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                            className={`px-2.5 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
                                         >
                                             {column.kind === 'checkbox' ? (
                                                 <span className="inline-flex h-[18px] w-[18px] rounded-[4px] border border-[#cfd6e2] bg-white" />
@@ -259,7 +263,7 @@ export default function InventoryInquiryView({
                                     <DataTableCell className="px-2.5" />
                                 ) : null}
                                 <DataTableCell
-                                    colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
+                                    colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0) + 1}
                                     className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
@@ -269,6 +273,20 @@ export default function InventoryInquiryView({
                     </DataTableBody>
                 </DataTable>
             </div>
+
+            {config.table.pagination ? (
+                <Pagination
+                    page={config.table.pagination.page}
+                    perPage={config.table.pagination.perPage}
+                    total={config.table.pagination.total}
+                    lastPage={config.table.pagination.lastPage}
+                    from={config.table.pagination.from}
+                    to={config.table.pagination.to}
+                    onPageChange={config.table.pagination.onPageChange}
+                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    className="mt-3"
+                />
+            ) : null}
         </div>
     );
 }

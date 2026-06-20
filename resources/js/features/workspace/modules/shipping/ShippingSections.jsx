@@ -8,7 +8,7 @@ export function ShippingFieldRow({ label, required = false, children }) {
                 {label}
                 {required ? <span className="text-[#ED3969]"> *</span> : null}
             </label>
-            <div>{children}</div>
+            <div className="min-w-0 w-full">{children}</div>
         </div>
     );
 }

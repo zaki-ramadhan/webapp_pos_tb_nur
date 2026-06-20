@@ -50,7 +50,7 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
                                 values.feeRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${handlers.onEditFeeItem ? 'cursor-pointer' : ''}`.trim()}
+                                        className={`border-[#dde1e8] transition hover:bg-[#eef3fb] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${handlers.onEditFeeItem ? 'cursor-pointer' : ''}`.trim()}
                                         onClick={handlers.onEditFeeItem ? () => handlers.onEditFeeItem(row) : undefined}
                                     >
                                         {config.feeTable.columns.map((column) => (

@@ -177,91 +177,79 @@ export default function ShippingFormView({
                 onSave={handleSave}
                 actionsSlot={actionsSlot}
             >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-[980px]">
-                    <div className="space-y-3.5">
-                        <div className="border-b border-[#d9dee8] pb-1.5 mb-2">
-                            <h3 className="text-base font-semibold text-[#1f2436]">Informasi Pengiriman</h3>
-                        </div>
+                <div className="space-y-3.5 max-w-[680px]">
+                    <ShippingFieldRow label={form.labels.name} required>
+                        <TextInput
+                            id="name"
+                            name="name"
+                            value={values.name}
+                            onChange={(event) => handleChange('name', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-slate-400"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        />
+                    </ShippingFieldRow>
 
-                        <ShippingFieldRow label={form.labels.name} required>
-                            <TextInput
-                                id="name"
-                                name="name"
-                                value={values.name}
-                                onChange={(event) => handleChange('name', event.target.value)}
-                                className="h-[40px] rounded-[4px] border-slate-400"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    <ShippingFieldRow label={form.labels.pic}>
+                        <TextInput
+                            value={values.pic}
+                            onChange={(event) => handleChange('pic', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-slate-400"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        />
+                    </ShippingFieldRow>
+
+                    <ShippingFieldRow label={form.labels.phone}>
+                        <TextInput
+                            value={values.phone}
+                            onChange={(event) => handleChange('phone', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-slate-400"
+                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        />
+                    </ShippingFieldRow>
+
+                    <ShippingFieldRow label={form.labels.address}>
+                        <div className="space-y-3">
+                            <PrefixedTextArea
+                                value={values.street}
+                                onChange={(event) => handleChange('street', event.target.value)}
+                                prefix="Jalan"
                             />
-                        </ShippingFieldRow>
 
-                        <ShippingFieldRow label={form.labels.pic}>
-                            <TextInput
-                                value={values.pic}
-                                onChange={(event) => handleChange('pic', event.target.value)}
-                                className="h-[40px] rounded-[4px] border-slate-400"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            />
-                        </ShippingFieldRow>
-
-                        <ShippingFieldRow label={form.labels.phone}>
-                            <TextInput
-                                value={values.phone}
-                                onChange={(event) => handleChange('phone', event.target.value)}
-                                className="h-[40px] rounded-[4px] border-slate-400"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            />
-                        </ShippingFieldRow>
-                    </div>
-
-                    <div className="space-y-3.5">
-                        <div className="border-b border-[#d9dee8] pb-1.5 mb-2">
-                            <h3 className="text-base font-semibold text-[#1f2436]">Alamat</h3>
-                        </div>
-
-                        <ShippingFieldRow label={form.labels.address}>
-                            <div className="space-y-3">
-                                <PrefixedTextArea
-                                    value={values.street}
-                                    onChange={(event) => handleChange('street', event.target.value)}
-                                    prefix="Jalan"
+                            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+                                <CityAutocompleteInput
+                                    value={values.city}
+                                    onChange={(nextValue) => handleChange('city', nextValue)}
+                                    onSelectCity={(item) => {
+                                        handleChange('city', item.city);
+                                        handleChange('province', item.province);
+                                        handleChange('postalCode', item.postalCode);
+                                        handleChange('country', item.country);
+                                    }}
+                                    prefix="Kota"
+                                    prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
+                                    dropdownLeftOffsetClassName="left-[62px]"
                                 />
-
-                                <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
-                                    <CityAutocompleteInput
-                                        value={values.city}
-                                        onChange={(nextValue) => handleChange('city', nextValue)}
-                                        onSelectCity={(item) => {
-                                            handleChange('city', item.city);
-                                            handleChange('province', item.province);
-                                            handleChange('postalCode', item.postalCode);
-                                            handleChange('country', item.country);
-                                        }}
-                                        prefix="Kota"
-                                        prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
-                                        dropdownLeftOffsetClassName="left-[62px]"
-                                    />
-                                    <PrefixedInput
-                                        value={values.postalCode}
-                                        onChange={(event) => handleChange('postalCode', event.target.value)}
-                                        prefix="K.Pos"
-                                        prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
-                                    />
-                                </div>
-
                                 <PrefixedInput
-                                    value={values.province}
-                                    onChange={(event) => handleChange('province', event.target.value)}
-                                    prefix="Provinsi"
-                                />
-
-                                <PrefixedInput
-                                    value={values.country}
-                                    onChange={(event) => handleChange('country', event.target.value)}
-                                    prefix="Negara"
+                                    value={values.postalCode}
+                                    onChange={(event) => handleChange('postalCode', event.target.value)}
+                                    prefix="K.Pos"
+                                    prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
                                 />
                             </div>
-                        </ShippingFieldRow>
-                    </div>
+
+                            <PrefixedInput
+                                value={values.province}
+                                onChange={(event) => handleChange('province', event.target.value)}
+                                prefix="Provinsi"
+                            />
+
+                            <PrefixedInput
+                                value={values.country}
+                                onChange={(event) => handleChange('country', event.target.value)}
+                                prefix="Negara"
+                            />
+                        </div>
+                    </ShippingFieldRow>
                 </div>
             </ModuleFormTemplate>
 

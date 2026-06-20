@@ -13,17 +13,14 @@ import SelectField from '@/components/ui/SelectField';
 import { buildOrderFulfillmentConfig } from './inventoryFulfillmentConfig';
 import { LinkIcon } from '@/features/workspace/shared/Icons';
 
-function resolveAlignClassName(align) {
-    if (align === 'right') {
-        return 'text-right';
-    }
+function resolveHeaderAlignClassName(align) {
+    return 'text-center';
+}
 
-    if (align === 'center') {
-        return 'text-center';
-    }
-
+function resolveCellAlignClassName(align) {
     return 'text-left';
 }
+
 
 export default function OrderFulfillmentView({ page }) {
     const config = useMemo(() => buildOrderFulfillmentConfig(page.orderFulfillment), [page.orderFulfillment]);
@@ -113,7 +110,7 @@ export default function OrderFulfillmentView({ page }) {
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveAlignClassName(column.align)}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveHeaderAlignClassName(column.align)}`.trim()}
                                 >
                                     {column.label}
                                 </DataTableHead>
@@ -126,7 +123,7 @@ export default function OrderFulfillmentView({ page }) {
                             paginatedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
                                     {filteredRows.length > 0 ? (
                                         <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">
@@ -136,7 +133,7 @@ export default function OrderFulfillmentView({ page }) {
                                     {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-base text-[#131a28] ${resolveAlignClassName(column.align)}`.trim()}
+                                            className={`px-2.5 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
                                         >
                                             {row[column.id] ?? ''}
                                         </DataTableCell>

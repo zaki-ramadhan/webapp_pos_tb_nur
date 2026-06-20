@@ -127,6 +127,50 @@ class WorkspaceBackendResourceApiTest extends TestCase
             ->assertJsonPath('data.0.account_id', $account->id);
     }
 
+    public function test_bank_reconciliation_can_reconcile_documents(): void
+    {
+        $user = User::factory()->create();
+        $account = Account::query()->create([
+            'code' => '111.102-02',
+            'name' => 'Bank Rekonsiliasi',
+            'account_type' => 'bank',
+            'opening_balance' => 0,
+        ]);
+
+        $this->actingAs($user)->postJson('/api/backend/cash-receipts', [
+            'primary_account_id' => $account->id,
+            'document_number' => 'CR.2026.05.00002',
+            'entry_date' => '2026-05-13',
+            'paid_amount' => 1500000,
+            'total_amount' => 1500000,
+            'status' => 'Posted',
+            'lines' => [
+                [
+                    'description' => 'Penerimaan kas',
+                    'total_amount' => 1500000,
+                ],
+            ],
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('operation_documents', [
+            'document_number' => 'CR.2026.05.00002',
+            'is_closed' => false,
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/api/backend/bank-reconciliations/reconcile', [
+            'document_numbers' => ['CR.2026.05.00002'],
+            'is_closed' => true,
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('operation_documents', [
+            'document_number' => 'CR.2026.05.00002',
+            'is_closed' => true,
+        ]);
+    }
+
     public function test_item_location_and_minimum_stock_resources_can_return_inventory_inquiry_rows(): void
     {
         $user = User::factory()->create();

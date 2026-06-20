@@ -9,6 +9,7 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { sanitizeNumericInput } from './accountsShared';
 import {
+    AccountsFieldLabel,
     AccountsFormFieldRow,
     AccountsReadonlyTrailingIcon,
 } from './accountsViewShared';
@@ -23,7 +24,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
     }, [values.parentId, values.parentAccountLabel, values.parentAccountCode, values.parentAccountName, values.parentAccount]);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
+        <div className="grid grid-cols-1 gap-y-3.5 max-w-[980px]">
             <AccountsFormFieldRow label={config.labels.type}>
                 <SelectField
                     value={values.type}
@@ -39,15 +40,18 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                 </SelectField>
             </AccountsFormFieldRow>
 
-            <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start">
+            <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
                 <div className="pt-2 lg:pt-1.5 flex items-center">
                     <CheckboxField
                         id="accounts-sub-account"
                         label={config.labels.isSubAccount}
                         checked={Boolean(values.isSubAccount)}
                         onChange={(event) => {
-                            onChange('isSubAccount', event.target.checked);
-                            if (!event.target.checked) {
+                            const isChecked = event.target.checked;
+                            onChange('isSubAccount', isChecked);
+                            if (isChecked) {
+                                onChange('autoCode', true);
+                            } else {
                                 onChange('parentId', null);
                                 onChange('parentAccount', []);
                                 onChange('parentAccountLabel', '');
@@ -56,7 +60,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             }
                         }}
                         align="center"
-                        labelClassName="text-base font-normal text-[#1f2436]"
+                        labelClassName="text-xs sm:text-sm font-normal text-[#1f2436]"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
@@ -87,17 +91,42 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                     )}
                 </div>
             </div>
- 
-            <AccountsFormFieldRow label={config.labels.code} required>
-                <TextInput
-                    value={values.code}
-                    onChange={(event) => onChange('code', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                />
-            </AccountsFormFieldRow>
- 
-            <AccountsFormFieldRow label={config.labels.name} required>
+
+            {(!values.isSubAccount || !values.autoCode) && (
+                <AccountsFormFieldRow label={config.labels.code} required>
+                    <TextInput
+                        value={values.code}
+                        onChange={(event) => onChange('code', event.target.value)}
+                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    />
+                </AccountsFormFieldRow>
+            )}
+
+            {Boolean(values.isSubAccount) && (
+                <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
+                    <div className="lg:col-span-2 flex items-center pt-1 pb-1">
+                        <CheckboxField
+                            id="accounts-auto-code"
+                            label="Pengkodean otomatis dengan prefix kode akun induk"
+                            checked={Boolean(values.autoCode)}
+                            onChange={(event) => onChange('autoCode', event.target.checked)}
+                            align="center"
+                            labelClassName="text-xs sm:text-sm text-[#1f2436] font-normal select-none"
+                            inputClassName="mt-0 h-[18px] w-[18px]"
+                            containerClassName="w-auto"
+                        />
+                    </div>
+                </div>
+            )}
+
+            <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
+                <div className="pt-2 lg:pt-1.5">
+                    <AccountsFieldLabel label={config.labels.name} required />
+                    <p className="mt-2 text-xs sm:text-sm font-normal italic text-[#8a91a8] leading-relaxed whitespace-nowrap">
+                        {config.helperText.nameExample}
+                    </p>
+                </div>
                 <div>
                     <TextInput
                         value={values.name}
@@ -105,10 +134,9 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
-                    <p className="mt-2 pl-4 text-sm italic text-[#8a91a8]">{config.helperText.nameExample}</p>
                 </div>
-            </AccountsFormFieldRow>
- 
+            </div>
+
             {isDetail ? (
                 <AccountsFormFieldRow label={config.labels.balance}>
                     <div className="pt-1 text-lg text-[#1f2436]">{values.balanceLabel}</div>
@@ -148,6 +176,24 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
 }
 
 export function AccountsOthersTab({ config, values, isDetail, onChange }) {
+    const selectedBranches = useMemo(() => {
+        const ids = values.branchIds ?? [];
+        const names = values.branch ?? [];
+        return ids.map((id, index) => ({
+            id,
+            name: names[index] ?? `Cabang ${id}`,
+        }));
+    }, [values.branchIds, values.branch]);
+
+    const selectedUsers = useMemo(() => {
+        const ids = values.userIds ?? [];
+        const names = values.users ?? [];
+        return ids.map((id, index) => ({
+            id,
+            name: names[index] ?? `User ${id}`,
+        }));
+    }, [values.userIds, values.users]);
+
     return (
         <div className="space-y-4">
             <AccountsFormFieldRow label={config.labels.notes} className="lg:grid-cols-[180px_minmax(0,570px)]">
@@ -175,16 +221,85 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                 <h3 className="text-lg font-medium text-[#1f2436]">{config.headingLabels.userAccess}</h3>
             </div>
 
-            <CheckboxField
-                id="accounts-all-users"
-                label={config.labels.allUsers}
-                checked={Boolean(values.allUsers)}
-                onChange={(event) => onChange('allUsers', event.target.checked)}
-                align="center"
-                labelClassName="text-base"
-                inputClassName="mt-0 h-[18px] w-[18px]"
-                containerClassName="w-auto"
-            />
+            <div className="space-y-3">
+                <CheckboxField
+                    id="accounts-all-users"
+                    label={config.labels.allUsers}
+                    checked={Boolean(values.allUsers)}
+                    onChange={(event) => {
+                        const isChecked = event.target.checked;
+                        onChange('allUsers', isChecked);
+                        if (isChecked) {
+                            onChange('branchIds', []);
+                            onChange('branch', []);
+                            onChange('userIds', []);
+                            onChange('users', []);
+                        }
+                    }}
+                    align="center"
+                    labelClassName="text-xs sm:text-sm font-normal text-[#1f2436]"
+                    inputClassName="mt-0 h-[18px] w-[18px]"
+                    containerClassName="w-auto"
+                />
+
+                {!values.allUsers && (
+                    <div className="space-y-3 pt-2">
+                        <div className="text-xs sm:text-sm font-medium text-[#1f2436]">
+                            Isikan pengguna-pengguna yang bisa menggunakan akun ini
+                        </div>
+
+                        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
+                            <div className="pt-2 lg:pt-1.5">
+                                <AccountsFieldLabel label="Grup/Cabang" />
+                            </div>
+                            <div>
+                                <BackendLookupField
+                                    resource="branches"
+                                    values={selectedBranches}
+                                    placeholder="Cari/Pilih..."
+                                    searchLabel="Cari grup/cabang"
+                                    getOptionLabel={(option) => option?.name ?? ''}
+                                    onSelect={(option) => {
+                                        if (!(values.branchIds ?? []).includes(option.id)) {
+                                            onChange('branchIds', [...(values.branchIds ?? []), option.id]);
+                                            onChange('branch', [...(values.branch ?? []), option.name]);
+                                        }
+                                    }}
+                                    onRemove={(option) => {
+                                        onChange('branchIds', (values.branchIds ?? []).filter((id) => id !== option.id));
+                                        onChange('branch', (values.branch ?? []).filter((name) => name !== option.name));
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
+                            <div className="pt-2 lg:pt-1.5">
+                                <AccountsFieldLabel label="Pengguna" />
+                            </div>
+                            <div>
+                                <BackendLookupField
+                                    resource="users"
+                                    values={selectedUsers}
+                                    placeholder="Cari/Pilih..."
+                                    searchLabel="Cari pengguna"
+                                    getOptionLabel={(option) => option?.name ?? ''}
+                                    onSelect={(option) => {
+                                        if (!(values.userIds ?? []).includes(option.id)) {
+                                            onChange('userIds', [...(values.userIds ?? []), option.id]);
+                                            onChange('users', [...(values.users ?? []), option.name]);
+                                        }
+                                    }}
+                                    onRemove={(option) => {
+                                        onChange('userIds', (values.userIds ?? []).filter((id) => id !== option.id));
+                                        onChange('users', (values.users ?? []).filter((name) => name !== option.name));
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

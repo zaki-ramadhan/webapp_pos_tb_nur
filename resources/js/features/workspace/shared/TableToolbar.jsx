@@ -525,7 +525,7 @@ const PAGE_ID_TO_RESOURCE_MAP = {
 };
 
 export default function TableToolbar({
-    size = 'default',
+    size = 'compact',
     filters = null,
     createButton = null,
     refreshButton = null,
@@ -600,73 +600,79 @@ export default function TableToolbar({
         printTable(activeCols, resolvedRows, exportConfig?.title || activeTableState?.title || 'Laporan');
     };
 
-    const resolvedPrintButton = printButton
-        ? {
-              ...printButton,
-              onClick: printButton.onClick ?? defaultPrintHandler,
-          }
-        : (resolvedColumns.length ? {
-              label: 'Cetak data',
-              onClick: defaultPrintHandler,
-          } : null);
+    const resolvedPrintButton = printButton === false
+        ? null
+        : (printButton
+            ? {
+                  ...printButton,
+                  onClick: printButton.onClick ?? defaultPrintHandler,
+              }
+            : (resolvedColumns.length ? {
+                  label: 'Cetak data',
+                  onClick: defaultPrintHandler,
+              } : null));
 
-    const resolvedImportButton = importButton || (resolvedResourceName ? {
-        label: 'Impor data',
-        onImport: async ({ headers, rows }) => {
-            if (!rows.length) return;
-            try {
-                const mappedRows = rows.map(row => mapImportRow(row, resolvedColumns));
+    const resolvedImportButton = importButton === false
+        ? null
+        : (importButton || (resolvedResourceName ? {
+            label: 'Impor data',
+            onImport: async ({ headers, rows }) => {
+                if (!rows.length) return;
+                try {
+                    const mappedRows = rows.map(row => mapImportRow(row, resolvedColumns));
 
-                const response = await window.axios.post(`/api/backend/${resolvedResourceName}/import`, {
-                    rows: mappedRows,
-                });
+                    const response = await window.axios.post(`/api/backend/${resolvedResourceName}/import`, {
+                        rows: mappedRows,
+                    });
 
-                 showSuccessToast({
-                    message: response.data?.message || 'Berhasil mengimpor data.',
-                });
-                if (typeof onRefresh === 'function') {
-                    onRefresh();
-                } else if (typeof refreshButton?.onClick === 'function') {
-                    refreshButton.onClick();
-                }
-            } catch (err) {
-                let msg = 'Gagal mengimpor data.';
-                if (err.response) {
-                    const status = err.response.status;
-                    const backendMsg = err.response.data?.message;
-
-                    if (status === 404) {
-                        msg = 'Gagal mengimpor: Halaman ini tidak mendukung impor data atau alamat tujuan tidak ditemukan.';
-                    } else if (status === 403) {
-                        msg = 'Gagal mengimpor: Anda tidak memiliki izin untuk mengimpor data ke halaman ini.';
-                    } else if (status === 401) {
-                        msg = 'Gagal mengimpor: Sesi Anda telah berakhir, silakan login kembali.';
-                    } else if (status === 409) {
-                        msg = 'Gagal mengimpor: Terdapat duplikasi data atau pelanggaran relasi pada database.';
-                    } else if (status === 422) {
-                        msg = backendMsg || 'Format data tidak valid.';
-                    } else if (status === 500) {
-                        msg = 'Gagal mengimpor: Terjadi kesalahan internal pada server. Silakan hubungi admin.';
-                    } else {
-                        msg = backendMsg || `Gagal mengimpor data (Error ${status}).`;
+                     showSuccessToast({
+                        message: response.data?.message || 'Berhasil mengimpor data.',
+                    });
+                    if (typeof onRefresh === 'function') {
+                        onRefresh();
+                    } else if (typeof refreshButton?.onClick === 'function') {
+                        refreshButton.onClick();
                     }
-                } else {
-                    msg = err.message || 'Gagal menghubungkan ke server. Pastikan koneksi internet Anda aktif.';
+                } catch (err) {
+                    let msg = 'Gagal mengimpor data.';
+                    if (err.response) {
+                        const status = err.response.status;
+                        const backendMsg = err.response.data?.message;
+
+                        if (status === 404) {
+                            msg = 'Gagal mengimpor: Halaman ini tidak mendukung impor data atau alamat tujuan tidak ditemukan.';
+                        } else if (status === 403) {
+                            msg = 'Gagal mengimpor: Anda tidak memiliki izin untuk mengimpor data ke halaman ini.';
+                        } else if (status === 401) {
+                            msg = 'Gagal mengimpor: Sesi Anda telah berakhir, silakan login kembali.';
+                        } else if (status === 409) {
+                            msg = 'Gagal mengimpor: Terdapat duplikasi data atau pelanggaran relasi pada database.';
+                        } else if (status === 422) {
+                            msg = backendMsg || 'Format data tidak valid.';
+                        } else if (status === 500) {
+                            msg = 'Gagal mengimpor: Terjadi kesalahan internal pada server. Silakan hubungi admin.';
+                        } else {
+                            msg = backendMsg || `Gagal mengimpor data (Error ${status}).`;
+                        }
+                    } else {
+                        msg = err.message || 'Gagal menghubungkan ke server. Pastikan koneksi internet Anda aktif.';
+                    }
+
+                    showErrorToast({
+                        message: msg,
+                    });
                 }
-
-                showErrorToast({
-                    message: msg,
-                });
             }
-        }
-    } : null);
+        } : null));
 
-    const resolvedExportConfig = exportConfig || (resolvedColumns.length ? {
-        columns: resolvedColumns,
-        rows: resolvedRows,
-        filename: resolvedResourceName ? resolvedResourceName.replace(/\s+/g, '-') : 'export',
-        title: exportConfig?.title || activeTableState?.title || 'Laporan',
-    } : null);
+    const resolvedExportConfig = exportConfig === false
+        ? null
+        : (exportConfig || (resolvedColumns.length ? {
+            columns: resolvedColumns,
+            rows: resolvedRows,
+            filename: resolvedResourceName ? resolvedResourceName.replace(/\s+/g, '-') : 'export',
+            title: exportConfig?.title || activeTableState?.title || 'Laporan',
+        } : null));
 
     const sizeStyle = SIZE_STYLES[size] ?? SIZE_STYLES.default;
     const searchLoading = Boolean(search?.loading ?? refreshButton?.loading);

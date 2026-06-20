@@ -140,13 +140,13 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                 <DataTable className="min-w-[1280px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
                                 No.
                             </DataTableHead>
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-normal text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`.trim()}
                                 >
                                     <span className={`flex items-center gap-2 justify-center`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
@@ -162,7 +162,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'}`.trim()}
+                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
                                                                         {filteredRows.length > 0 ? (
                                         <DataTableCell className="px-3 text-center text-base text-[#646d83]">

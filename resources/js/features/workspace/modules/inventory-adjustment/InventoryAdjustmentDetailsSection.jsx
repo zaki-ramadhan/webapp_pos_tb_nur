@@ -40,7 +40,7 @@ function InventoryAdjustmentTableSection({ columns, items, emptyLabel, isDetail,
                             items.map((item, index) => (
                                 <DataTableRow
                                     key={item.id}
-                                    className={`border-[#dde1e8] transition ${index % 2 === 1 ? 'bg-[#f3f3f4]' : 'bg-white'} ${isDetail ? 'cursor-pointer hover:bg-[#eef3fb]' : ''}`.trim()}
+                                    className={`border-[#dde1e8] transition ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${isDetail ? 'cursor-pointer hover:bg-[#eef3fb]' : ''}`.trim()}
                                     onClick={isDetail ? () => onOpenItem(item) : undefined}
                                 >
                                     {columns.map((column) => (

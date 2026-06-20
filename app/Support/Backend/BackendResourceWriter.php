@@ -254,6 +254,33 @@ class BackendResourceWriter
                 $this->revertCosting($record);
             }
 
+            if ($blueprint->key === 'accounts') {
+                $autoCode = filter_var($payload['auto_code'] ?? false, FILTER_VALIDATE_BOOLEAN);
+                if ($autoCode && !empty($payload['parent_id'])) {
+                    $parent = \App\Domain\Finance\Models\Account::find($payload['parent_id']);
+                    if ($parent) {
+                        $parentCode = $parent->code;
+                        $needsGeneration = !$record->exists 
+                            || $record->parent_id != $payload['parent_id'] 
+                            || empty($record->code);
+
+                        if ($needsGeneration) {
+                            $existingChildren = \App\Domain\Finance\Models\Account::where('parent_id', $parent->id)->get();
+                            $index = count($existingChildren) + 1;
+                            do {
+                                $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
+                                $generatedCode = $parentCode . '.' . $suffix;
+                                $index++;
+                            } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->exists());
+
+                            $payload['code'] = $generatedCode;
+                        } else {
+                            $payload['code'] = $record->code;
+                        }
+                    }
+                }
+            }
+
             $record->fill(Arr::only($payload, $record->getFillable()));
             $record->save();
 
