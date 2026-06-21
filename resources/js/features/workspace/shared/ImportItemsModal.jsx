@@ -5,48 +5,9 @@ import ModalBase from '@/components/ui/ModalBase';
 import { CloseIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 
-const DEFAULT_COLUMN_MAPPING = Object.freeze({ code: -1, quantity: -1, price: -1, notes: -1 });
-
-// Pilihan pemetaan kolom
-
-function ColumnMappingSelect({ label, fieldKey, mapping, setMapping, csvHeaders, defaultLabel = '-- Pilih Kolom --' }) {
-    return (
-        <div>
-            <label className="block text-xs font-normal text-slate-600 mb-1">{label}</label>
-            <select
-                value={mapping[fieldKey]}
-                onChange={(e) => setMapping(prev => ({ ...prev, [fieldKey]: parseInt(e.target.value) }))}
-                className="w-full h-[32px] rounded-[4px] border border-[#cfd6e2] px-2 text-xs outline-none focus:border-[#1d52a5]"
-            >
-                <option value="-1">{defaultLabel}</option>
-                {csvHeaders.map((header, idx) => (
-                    <option key={idx} value={idx}>{header}</option>
-                ))}
-            </select>
-        </div>
-    );
-}
-
-// Auto-detect pemetaan kolom
-
-function autoDetectMapping(headers) {
-    const mapping = { ...DEFAULT_COLUMN_MAPPING };
-    headers.forEach((header, index) => {
-        const h = header.toLowerCase();
-        if (mapping.code === -1 && (h.includes('kode') || h.includes('code') || h.includes('sku') || h.includes('barcode') || h.includes('id'))) {
-            mapping.code = index;
-        } else if (mapping.quantity === -1 && (h.includes('qty') || h.includes('jumlah') || h.includes('quantity') || h.includes('kuantitas'))) {
-            mapping.quantity = index;
-        } else if (mapping.price === -1 && (h.includes('harga') || h.includes('price') || h.includes('rate'))) {
-            mapping.price = index;
-        } else if (mapping.notes === -1 && (h.includes('note') || h.includes('ket') || h.includes('catatan') || h.includes('deskripsi'))) {
-            mapping.notes = index;
-        }
-    });
-    return mapping;
-}
-
-// Modal utama
+// Modular Imports
+import { DEFAULT_COLUMN_MAPPING, autoDetectMapping } from './importMappingConstants';
+import ColumnMappingSelect from './ImportColumnMappingSelect';
 
 export default function ImportItemsModal({ open, onClose, onImport, mode = 'sales' }) {
     const fileInputRef = useRef(null);
@@ -186,7 +147,6 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             className="bg-[rgba(15,23,42,0.72)] z-[9999]"
             panelClassName="max-w-[820px] w-full overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
         >
-            {}
             <div className="bg-[#173968] px-5 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
@@ -203,7 +163,6 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                 </div>
             </div>
 
-            {}
             <div className="bg-white p-6">
                 {errorMessage && (
                     <div className="mb-4 rounded-[4px] bg-red-50 border border-red-200 p-3 text-sm text-red-700">
@@ -211,7 +170,6 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     </div>
                 )}
 
-                {}
                 {!file ? (
                     <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#cfd6e2] rounded-[6px] p-8 bg-slate-50 hover:bg-slate-100 transition">
                         <TableActionIcon className="h-12 w-12 text-[#94a3b8] mb-3" />
@@ -232,7 +190,6 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {}
                         <div className="flex items-center justify-between rounded-[4px] border border-slate-200 bg-slate-50 px-4 py-3">
                             <span className="text-sm font-medium text-slate-700">{file.name}</span>
                             <button
@@ -244,7 +201,6 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             </button>
                         </div>
 
-                        {}
                         <div>
                             <h3 className="text-base font-semibold text-slate-800 mb-3 border-b pb-2">
                                 Sesuaikan Pemetaan Kolom
@@ -257,7 +213,6 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             </div>
                         </div>
 
-                        {}
                         {columnMapping.code !== -1 && columnMapping.quantity !== -1 && (
                             <div>
                                 <div className="flex items-center justify-between border-b pb-2 mb-3">
@@ -312,7 +267,6 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     </div>
                 )}
 
-                {}
                 <div className="flex items-center justify-end gap-2.5 border-t border-slate-200 mt-6 pt-3">
                     <button
                         type="button"

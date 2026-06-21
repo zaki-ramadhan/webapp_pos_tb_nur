@@ -6,16 +6,16 @@ import { AbcContributionChart } from '@/features/workspace/dashboard/analytics/A
 export default function AbcAnalysisWidget({ widget, expanded = false, onToggle }) {
     if (!widget.metrics || widget.metrics.length === 0) {
         return (
-            <div className="flex h-full min-h-[380px] flex-col justify-between rounded-[8px] bg-slate-50 p-5 border border-slate-100 animate-pulse">
-                <div className="space-y-3">
-                    <div className="flex justify-between gap-4">
-                        <div className="h-14 w-1/3 rounded bg-slate-200" />
-                        <div className="h-14 w-1/3 rounded bg-slate-200" />
-                        <div className="h-14 w-1/3 rounded bg-slate-200" />
-                    </div>
-                    <div className="h-[180px] w-full rounded bg-slate-200" />
+            <div className="flex h-full min-h-0 flex-col gap-3 rounded-[8px] p-2 bg-[linear-gradient(180deg,#f8fbfe_0%,#f1f5fa_100%)] border border-slate-200 animate-pulse">
+                <div className="grid grid-cols-3 gap-2">
+                    <div className="h-16 rounded bg-slate-300 p-2" />
+                    <div className="h-16 rounded bg-slate-300 p-2" />
+                    <div className="h-16 rounded bg-slate-300 p-2" />
                 </div>
-                <div className="h-8 w-full rounded bg-slate-200 mt-4" />
+                <div className="min-h-0 flex-1 space-y-3 pr-1">
+                    <div className="h-14 rounded-lg bg-slate-200 px-3 py-3" />
+                    <div className="h-14 rounded-lg bg-slate-200 px-3 py-3" />
+                </div>
             </div>
         );
     }
