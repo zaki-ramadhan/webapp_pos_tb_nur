@@ -137,7 +137,7 @@ const defaultPurchaseReturnConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: purchaseReturnSectionTabs,
-    itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    itemSearchPlaceholder: 'Cari/Pilih Barang dan Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemSectionLeadingAction: { label: 'Ambil' },
     showItemTitleSearchButton: true,

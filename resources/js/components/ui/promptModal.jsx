@@ -53,8 +53,8 @@ function PromptModalContainer({ title, fields, resolve, onDestroy }) {
             maxWidthClassName="max-w-[480px]"
             footer={
                 <div className="flex justify-end gap-2.5">
-                    <Button onClick={handleClose} variant="secondary" size="sm">Batal</Button>
-                    <Button onClick={handleSave} variant="primary" size="sm">Simpan</Button>
+                    <Button onClick={handleClose} variant="secondary" size="md">Batal</Button>
+                    <Button onClick={handleSave} variant="primary" size="md">Simpan</Button>
                 </div>
             }
         >

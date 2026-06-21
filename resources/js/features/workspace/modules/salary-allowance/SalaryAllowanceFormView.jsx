@@ -94,8 +94,8 @@ export default function SalaryAllowanceFormView({
         }
 
         await executeCrudFormAction({
-            loadingMessage: isDetail ? 'Sedang memperbarui gaji/tunjangan.' : 'Sedang menyimpan gaji/tunjangan.',
-            successMessage: isDetail ? 'Gaji/tunjangan berhasil diperbarui.' : 'Gaji/tunjangan berhasil dibuat.',
+            loadingMessage: isDetail ? 'Sedang memperbarui gaji atau tunjangan.' : 'Sedang menyimpan gaji atau tunjangan.',
+            successMessage: isDetail ? 'Gaji atau tunjangan berhasil diperbarui.' : 'Gaji atau tunjangan berhasil dibuat.',
             setSaving,
             setStatus,
             getErrorMessage: getBackendErrorMessage,
@@ -133,8 +133,8 @@ export default function SalaryAllowanceFormView({
         }
 
         await executeCrudFormAction({
-            loadingMessage: 'Sedang menghapus gaji/tunjangan.',
-            successMessage: 'Gaji/tunjangan berhasil dihapus.',
+            loadingMessage: 'Sedang menghapus gaji atau tunjangan.',
+            successMessage: 'Gaji atau tunjangan berhasil dihapus.',
             setSaving,
             setStatus,
             getErrorMessage: getBackendErrorMessage,
@@ -268,8 +268,8 @@ export default function SalaryAllowanceFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
-                title="Hapus Gaji/Tunjangan"
-                message="Data gaji/tunjangan ini akan dihapus permanen. Lanjutkan?"
+                title="Hapus Gaji atau Tunjangan"
+                message="Data gaji atau tunjangan ini akan dihapus permanen. Lanjutkan?"
                 confirmLabel="Hapus"
                 cancelLabel="Batal"
                 confirmVariant="danger"

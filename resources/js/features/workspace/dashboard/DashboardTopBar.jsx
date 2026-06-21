@@ -58,10 +58,11 @@ export default function DashboardTopBar({
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center">
                     <BrandMark
-                        className="shrink-0 scale-[0.76] origin-left sm:scale-[0.82]"
-                        titleClassName="!text-sm md:!text-sm !font-semibold"
-                        subtitleClassName="!text-[9.5px] md:!text-[9.5px]"
+                        className="shrink-0 scale-[0.85] origin-left sm:scale-[0.9]"
+                        titleClassName="!text-sm sm:!text-[15px] md:!text-base !font-semibold"
+                        subtitleClassName="!text-[11px] sm:!text-[11.5px] md:!text-xs"
                     />
+
                 </div>
 
                 <div className="ml-auto flex items-center gap-1 sm:gap-1.5 lg:gap-1.5">
@@ -86,10 +87,9 @@ export default function DashboardTopBar({
                             aria-label="Buka menu pengguna"
                         >
                             <div className="hidden min-w-0 text-right leading-tight lg:block">
-                                <p className="truncate text-sm font-medium text-white md:text-sm">{contextLabel}</p>
+                                <p className="truncate text-sm font-medium text-white md:text-sm">{user.name}</p>
                                 <p className="truncate text-xs font-light text-white/70 md:text-xs">
-                                    {user.name}
-                                    {user.role ? ` • ${user.role}` : ''}
+                                    {user.role || 'Pengguna'}
                                 </p>
                             </div>
 

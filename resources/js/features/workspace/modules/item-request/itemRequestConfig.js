@@ -140,7 +140,7 @@ const defaultItemRequestConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: itemRequestSectionTabs,
-    detailSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    detailSearchPlaceholder: 'Cari/Pilih Barang dan Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: itemRequestDetailColumns,

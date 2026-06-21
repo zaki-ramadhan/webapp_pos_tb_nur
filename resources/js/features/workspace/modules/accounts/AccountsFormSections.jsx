@@ -123,9 +123,6 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
             <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
                 <div className="pt-2 lg:pt-1.5">
                     <AccountsFieldLabel label={config.labels.name} required />
-                    <p className="mt-2 text-xs sm:text-sm font-normal italic text-[#8a91a8] leading-relaxed whitespace-nowrap">
-                        {config.helperText.nameExample}
-                    </p>
                 </div>
                 <div>
                     <TextInput
@@ -134,6 +131,9 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                         className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     />
+                    <p className="mt-2.5 text-xs sm:text-sm font-normal italic text-[#8a91a8] leading-relaxed">
+                        {config.helperText.nameExample}
+                    </p>
                 </div>
             </div>
 

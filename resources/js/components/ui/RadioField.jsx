@@ -39,8 +39,9 @@ export default function RadioField({
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <div className={`flex ${alignClassName} gap-2.5 text-xs sm:text-sm leading-6`.trim()}>
+            <div className={`flex ${alignClassName} gap-3.5 text-xs sm:text-sm leading-6`.trim()}>
                 <input
+
                     id={id}
                     name={name}
                     type="radio"

@@ -135,7 +135,7 @@ export default function SystemErrorModal({
                     <div>
                         <Button
                             variant="secondary"
-                            size="sm"
+                            size="md"
                             onClick={handleCopy}
                             className="min-w-[80px] rounded-[6px] border-[#9ec0ec] text-[#1a63b3] shadow-none"
                         >
@@ -145,7 +145,7 @@ export default function SystemErrorModal({
 
                     <div className="flex justify-end">
                         <Button
-                            size="sm"
+                            size="md"
                             onClick={handleConfirm}
                             className="min-w-[80px] rounded-[6px] bg-[#1f57a9] text-white shadow-none hover:bg-[#1a4c95]"
                         >

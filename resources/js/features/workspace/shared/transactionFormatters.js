@@ -39,3 +39,12 @@ export function buildFilterOptions(labelPrefix, rows, rowKey, labelKey = rowKey)
         })),
     ];
 }
+
+export function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return '';
+    const numBytes = Number(bytes);
+    if (numBytes < 1024) return `${numBytes} B`;
+    if (numBytes < 1024 * 1024) return `${(numBytes / 1024).toFixed(1)} KB`;
+    return `${(numBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+

@@ -26,7 +26,7 @@ export default function ModulePageView({ page }) {
                         <NavigationIcon type={page.icon} className="h-10 w-10 sm:h-12 sm:w-12" />
                     </span>
 
-                    <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-[#8a91a8]">
+                    <p className="mt-6 text-xs font-semibold text-[#8a91a8]">
                         {page.moduleLabel}
                     </p>
                     <h2 className="mt-3 text-xl font-semibold text-[#1f2536] sm:text-2xl md:text-2xl xl:text-3xl 2xl:text-3xl">{page.label}</h2>

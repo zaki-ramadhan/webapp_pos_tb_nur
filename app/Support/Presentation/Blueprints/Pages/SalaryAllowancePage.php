@@ -8,10 +8,10 @@ class SalaryAllowancePage
     {
         return [
                     'id' => 'salary-allowance',
-                    'label' => 'Gaji/Tunjangan',
+                    'label' => 'Gaji atau Tunjangan',
                     'salaryAllowance' => [
                         'newTabLabel' => 'Data Baru',
-                        'sectionLabel' => 'Gaji/Tunjangan',
+                        'sectionLabel' => 'Gaji atau Tunjangan',
                         'tipActions' => [],
                         'formActions' => [
                             [
@@ -37,7 +37,7 @@ class SalaryAllowancePage
                         ],
                         'fields' => [
                             'nameLabel' => 'Nama',
-                            'typeLabel' => 'Tipe Gaji/Tunjangan',
+                            'typeLabel' => 'Tipe Gaji atau Tunjangan',
                             'payDeductLabel' => 'Bayar/Potong',
                             'expenseAccountLabel' => 'Akun Beban',
                             'inactiveLabel' => 'Non Aktif',
@@ -74,7 +74,7 @@ class SalaryAllowancePage
                             'inactive' => false,
                         ],
                         'table' => [
-                            'createLabel' => 'Tambah Gaji/Tunjangan',
+                            'createLabel' => 'Tambah Gaji atau Tunjangan',
                             'refreshLabel' => 'Muat ulang',
                             'printLabel' => 'Cetak atau ekspor',
                             'searchPlaceholder' => 'Cari...',
@@ -84,9 +84,9 @@ class SalaryAllowancePage
                                     'id' => 'type',
                                     'defaultValue' => 'all',
                                     'options' => [
-                                        ['value' => 'all', 'label' => 'Tipe Gaji/Tunjangan: Semua'],
-                                        ['value' => 'salary', 'label' => 'Tipe Gaji/Tunjangan: Gaji/Pensiun atau THT/JHT'],
-                                        ['value' => 'allowance', 'label' => 'Tipe Gaji/Tunjangan: Tunjangan'],
+                                        ['value' => 'all', 'label' => 'Tipe Gaji atau Tunjangan: Semua'],
+                                        ['value' => 'salary', 'label' => 'Tipe Gaji atau Tunjangan: Gaji/Pensiun atau THT/JHT'],
+                                        ['value' => 'allowance', 'label' => 'Tipe Gaji atau Tunjangan: Tunjangan'],
                                     ],
                                 ],
                                 [
@@ -101,7 +101,7 @@ class SalaryAllowancePage
                             ],
                             'columns' => [
                                 'Nama',
-                                'Tipe Gaji/Tunjangan',
+                                'Tipe Gaji atau Tunjangan',
                                 'Non Aktif',
                             ],
                         ],

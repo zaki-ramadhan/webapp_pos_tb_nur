@@ -31,11 +31,17 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
                             (w) => w.type === widget.type || w.id === widget.id || w.id === widget.sourceWidgetId
                         );
                         if (computed) {
+                            const oldTitles = [
+                                'Matrix Analysis Penjualan',
+                                'Matrix Analysis Penjualan A Priori dan ABC Integrasi Pola',
+                                'Matrix Analysis Penjualan A Priori & ABC Integrasi Pola',
+                            ];
+                            const useNewTitle = !widget.title || oldTitles.includes(widget.title);
                             return {
                                 ...widget,
                                 ...computed,
                                 id: widget.id,
-                                title: widget.title,
+                                title: useNewTitle ? computed.title : widget.title,
                                 gridClass: widget.gridClass,
                                 heightClass: widget.heightClass,
                                 sourceWidgetId: widget.sourceWidgetId || widget.id,

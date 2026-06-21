@@ -23,10 +23,16 @@ export function normalizeComparableValue(value) {
     }
 
     if (typeof value === 'string') {
-        return value.trim();
+        const trimmed = value.trim();
+        if (trimmed === 'true' || trimmed === '1') return true;
+        if (trimmed === 'false' || trimmed === '0' || trimmed === '') return false;
+        return trimmed;
     }
 
-    return value ?? null;
+    if (value === 1) return true;
+    if (value === 0 || value === null || value === undefined || value === false) return false;
+
+    return value;
 }
 
 export function areComparableValuesEqual(left, right) {

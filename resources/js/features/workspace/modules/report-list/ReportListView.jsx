@@ -105,7 +105,7 @@ export default function ReportListView({ page }) {
                                     {visibleSections.map((section) => (
                                         <div key={section.title} className="space-y-3">
                                             {visibleSections.length > 1 && (
-                                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#9ca3af]">
+                                                <h3 className="text-sm font-semibold text-[#9ca3af]">
                                                     {section.title}
                                                 </h3>
                                             )}

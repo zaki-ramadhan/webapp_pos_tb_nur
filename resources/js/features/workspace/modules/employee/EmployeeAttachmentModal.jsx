@@ -4,27 +4,9 @@ import TextInput from '@/components/ui/TextInput';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { DownloadIcon, PaperclipIcon, LoadingIcon, TrashIcon } from '@/features/workspace/shared/Icons';
 import { uploadBackendAttachment } from '@/features/workspace/backend/workspaceBackendApi';
+import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { formatFileSize } from '@/features/workspace/shared/transactionFormatters';
 
-function formatAttachmentDate(dateString) {
-    if (!dateString) return '';
-    try {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    } catch (e) {
-        return '';
-    }
-}
-
-function formatAttachmentSize(bytes) {
-    if (!bytes || isNaN(bytes)) return '';
-    const numBytes = Number(bytes);
-    if (numBytes < 1024) return `${numBytes} B`;
-    if (numBytes < 1024 * 1024) return `${(numBytes / 1024).toFixed(1)} KB`;
-    return `${(numBytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 export default function EmployeeAttachmentModal({
     open,
@@ -144,8 +126,8 @@ export default function EmployeeAttachmentModal({
                     ) : (
                         <div className="max-h-[260px] overflow-y-auto space-y-2 pr-1">
                             {values.attachments.map((item) => {
-                                const dateStr = formatAttachmentDate(item.created_at);
-                                const sizeStr = formatAttachmentSize(item.file_size);
+                                const dateStr = formatIsoDate(item.created_at);
+                                const sizeStr = formatFileSize(item.file_size);
 
                                 return (
                                     <div

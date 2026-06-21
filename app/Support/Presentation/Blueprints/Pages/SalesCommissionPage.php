@@ -99,8 +99,10 @@ class SalesCommissionPage
                     'refreshLabel' => 'Muat ulang',
                     'settingsLabel' => 'Pengaturan tabel',
                     'searchPlaceholder' => 'Cari...',
+                    'emptyLabel' => 'Belum ada data',
                     'pageValue' => '1',
                     'columns' => [
+
                         ['id' => 'notes', 'label' => 'Catatan', 'widthClassName' => 'w-[42%]'],
                         ['id' => 'name', 'label' => 'Nama', 'widthClassName' => 'w-[18%]'],
                         ['id' => 'periodLabel', 'label' => 'Periode Berlaku', 'widthClassName' => 'w-[40%]'],

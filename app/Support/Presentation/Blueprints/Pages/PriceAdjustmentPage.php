@@ -48,7 +48,7 @@ class PriceAdjustmentPage
                     ['id' => 'details', 'label' => 'Rincian Barang', 'icon' => 'document'],
                     ['id' => 'additional-info', 'label' => 'Info lainnya', 'icon' => 'info'],
                 ],
-                'itemSearchPlaceholder' => 'Cari/Pilih Barang & Jasa...',
+                'itemSearchPlaceholder' => 'Cari/Pilih Barang dan Jasa...',
                 'detailModeLabel' => 'Rincian',
                 'detailViewLabel' => 'Tampilan rincian',
                 'itemLookupLabel' => 'Cari rincian barang',
@@ -106,7 +106,7 @@ class PriceAdjustmentPage
                     'itemSearch' => '',
                 ],
                 'table' => [
-                    'createLabel' => 'Tambah Penyesuaian Harga/Diskon',
+                    'createLabel' => 'Tambah Penyesuaian Harga atau Diskon',
                     'refreshLabel' => 'Muat ulang',
                     'filterButtonLabel' => 'Filter lanjutan',
                     'printLabel' => 'Cetak',

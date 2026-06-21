@@ -103,7 +103,7 @@ const defaultConfig = {
         ],
     },
     sectionTabs: priceAdjustmentSectionTabs,
-    detailSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    detailSearchPlaceholder: 'Cari/Pilih Barang dan Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: priceAdjustmentDetailColumns,

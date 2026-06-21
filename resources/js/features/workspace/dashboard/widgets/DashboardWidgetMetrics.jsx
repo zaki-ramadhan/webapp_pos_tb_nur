@@ -167,7 +167,7 @@ export function SummaryMetric({ sections = [], headline }) {
     return (
         <div className="flex h-full flex-col gap-3">
             <div className="flex flex-col gap-3 2xl:flex-row 2xl:items-start 2xl:justify-between 2xl:gap-4">
-                <div className="grid flex-1 gap-3 lg:grid-cols-2">
+                <div className="grid flex-1 gap-x-8 gap-y-3.5 lg:grid-cols-2">
                     {sections.map((section) => (
                         <div key={section.title}>
                             <h4 className="text-sm font-semibold text-[#1f2536] md:text-base xl:text-base">{section.title}</h4>

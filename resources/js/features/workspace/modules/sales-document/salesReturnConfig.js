@@ -140,7 +140,7 @@ const defaultSalesReturnConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: salesReturnSectionTabs,
-    itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    itemSearchPlaceholder: 'Cari/Pilih Barang dan Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemSectionLeadingAction: { label: 'Ambil' },
     itemSectionLeadingActionDetailOnly: true,

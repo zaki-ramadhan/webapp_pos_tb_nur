@@ -165,7 +165,7 @@ const defaultSalesOrderConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: salesOrderSectionTabs,
-    itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    itemSearchPlaceholder: 'Cari/Pilih Barang dan Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: salesOrderItemColumns,

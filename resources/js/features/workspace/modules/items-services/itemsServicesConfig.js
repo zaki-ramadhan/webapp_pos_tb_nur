@@ -102,7 +102,7 @@ const defaultConfig = {
     kindOptions: ['Persediaan', 'Jasa'],
     branchOptions: ['[Semua Cabang]', 'JAKARTA', 'SURABAYA'],
     labels: {
-        generalInfo: 'Informasi Barang & Jasa',
+        generalInfo: 'Informasi Barang dan Jasa',
         moreInfo: 'Informasi Lainnya',
         salesInfo: 'Informasi Penjualan',
         purchaseInfo: 'Informasi Pembelian',
@@ -114,7 +114,7 @@ const defaultConfig = {
         dimensionInfo: 'Dimensi & Berat',
     },
     table: {
-        createLabel: 'Tambah Barang & Jasa',
+        createLabel: 'Tambah Barang dan Jasa',
         refreshLabel: 'Muat ulang',
         searchPlaceholder: 'Cari...',
         searchWidthClassName: 'sm:w-[342px]',

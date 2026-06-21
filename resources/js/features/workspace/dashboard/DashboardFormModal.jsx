@@ -88,26 +88,15 @@ export default function DashboardFormModal({
                         {modal.nameLabel}
                     </label>
 
-                    <div className="relative">
+                    <div>
                         <TextInput
                             id="dashboard-name"
                             type="text"
                             value={name}
                             onChange={(event) => setName(event.target.value)}
-                            className="h-9 w-full rounded-[4px] border border-[#cdd4e3] px-3 pr-9 text-xs sm:text-sm text-[#2c344a] outline-none transition-[border-color,box-shadow] duration-150 focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)]"
+                            className="w-full"
                             autoFocus
                         />
-
-                        {isEditMode && trimmedName ? (
-                            <button
-                                type="button"
-                                onClick={() => setName('')}
-                                className="absolute right-2 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-[4px] text-[#2c344a]"
-                                aria-label={modal.clearLabel}
-                            >
-                                <CloseIcon className="h-3.5 w-3.5" />
-                            </button>
-                        ) : null}
                     </div>
                 </div>
 
@@ -117,7 +106,7 @@ export default function DashboardFormModal({
                             <Button
                                 type="button"
                                 variant="ghost"
-                                size="sm"
+                                size="md"
                                 onClick={handleDelete}
                                 disabled={isDeleting}
                                 loading={isDeleting}
@@ -131,7 +120,7 @@ export default function DashboardFormModal({
 
                     <Button
                         type="submit"
-                        size="sm"
+                        size="md"
                         disabled={!trimmedName || isSubmitting}
                         loading={isSubmitting}
                         loadingLabel="Memproses..."

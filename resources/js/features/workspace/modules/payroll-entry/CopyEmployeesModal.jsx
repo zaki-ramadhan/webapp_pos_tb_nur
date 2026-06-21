@@ -116,12 +116,12 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
             maxWidthClassName="max-w-[720px]"
             footer={
                 <div className="flex justify-end gap-2.5">
-                    <Button variant="secondary" size="sm" onClick={onClose}>
+                    <Button variant="secondary" size="md" onClick={onClose}>
                         Batal
                     </Button>
                     <Button
                         variant="primary"
-                        size="sm"
+                        size="md"
                         onClick={handleConfirm}
                         disabled={loading || selectedIds.length === 0}
                     >

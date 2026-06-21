@@ -308,6 +308,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         setActivePageId,
         pageOpeningLoading,
         pendingCloseRequest,
+        setPendingCloseRequest,
         handleTogglePanel,
         openPageById,
         handleSelectPanelItem,

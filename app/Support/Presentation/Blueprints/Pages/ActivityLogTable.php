@@ -68,7 +68,7 @@ class ActivityLogTable
                                 'dateValue' => '2026-04-18',
                                 'transactionDateValue' => 'empty',
                                 'transactionDateLabel' => '',
-                                'referenceName' => 'Check In',
+                                'referenceName' => 'Check-in',
                                 'actionTypeValue' => 'create',
                                 'actionLabel' => 'Buat',
                                 'transactionTypeValue' => 'numbering',

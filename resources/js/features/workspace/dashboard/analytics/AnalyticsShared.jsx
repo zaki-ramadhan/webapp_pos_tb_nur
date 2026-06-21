@@ -1,15 +1,41 @@
-export function WidgetSection({ title, caption = null, children }) {
+export function WidgetSection({ title, caption = null, collapsible = false, expanded = true, onToggle = null, children }) {
     return (
         <section className="min-w-0 rounded-[8px] border border-[#e0e6ef] bg-white px-3 py-3 shadow-[0_4px_12px_rgba(15,23,42,0.03)]">
-            <div className="border-b border-[#e6ebf2] pb-2.5">
-                <div className="min-w-0 border-l-[3px] border-l-[#5f8fd5] pl-3">
-                    <h4 className="text-base font-semibold leading-tight text-[#1f2536] md:text-base">{title}</h4>
-                    {caption ? (
-                        <p className="mt-1.5 break-words text-sm leading-5 text-[#7c839b]">{caption}</p>
-                    ) : null}
+            <div 
+                className={`border-b border-[#e6ebf2] pb-2.5 ${collapsible ? 'cursor-pointer select-none hover:bg-slate-50/50 transition-colors' : ''}`}
+                onClick={collapsible && onToggle ? onToggle : undefined}
+            >
+                <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 border-l-[3px] border-l-[#5f8fd5] pl-3 pr-2">
+                        <h4 className="text-base font-semibold leading-tight text-[#1f2536] md:text-base">{title}</h4>
+                        {caption ? (
+                            <p className="mt-1.5 break-words text-sm leading-5 text-[#7c839b]">{caption}</p>
+                        ) : null}
+                    </div>
+                    {collapsible && (
+                        <button
+                            type="button"
+                            className="shrink-0 rounded-md p-1.5 hover:bg-slate-100 transition-colors text-[#61718f] mr-1.5 sm:mr-3"
+                            aria-label={expanded ? "Sembunyikan detail" : "Tampilkan detail"}
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.8"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className={`h-5 w-5 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                            >
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
             </div>
-            <div className="pt-3">{children}</div>
+            {(!collapsible || expanded) && (
+                <div className="pt-3">{children}</div>
+            )}
         </section>
     );
 }
@@ -76,7 +102,7 @@ export function SummaryStrip({ items }) {
             <div className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
                 {items.map((item) => (
                     <div key={item.label} title="" className="rounded-[7px] border border-[#dce3ed] bg-white px-3 py-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)]">
-                        <p title="" className="text-sm font-medium uppercase tracking-[0.08em] text-[#7d88a2]">
+                        <p title="" className="text-sm font-medium text-[#7d88a2]">
                             {item.label}
                         </p>
                         <p title="" className="mt-2 text-xl font-semibold leading-none text-[#1f2536] md:text-2xl 2xl:text-3xl">
@@ -113,4 +139,38 @@ export function ActionList({ items }) {
             ))}
         </div>
     );
+}
+
+export function getProductImageUrl(name, size = 120) {
+    const lowerName = String(name ?? '').toLowerCase();
+    
+    if (lowerName.includes('semen') || lowerName.includes('cement') || lowerName.includes('portland') || lowerName.includes('mu-')) {
+        return `https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('cat') || lowerName.includes('paint') || lowerName.includes('nippon') || lowerName.includes('dulux') || lowerName.includes('kuas')) {
+        return `https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('kayu') || lowerName.includes('triplek') || lowerName.includes('papan') || lowerName.includes('lumber') || lowerName.includes('balok')) {
+        return `https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('besi') || lowerName.includes('baja') || lowerName.includes('seng') || lowerName.includes('paku') || lowerName.includes('kawat') || lowerName.includes('rebar')) {
+        return `https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('bata') || lowerName.includes('batako') || lowerName.includes('roster') || lowerName.includes('paving') || lowerName.includes('brick')) {
+        return `https://images.unsplash.com/photo-1590069261209-f8e9b8642343?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('pipa') || lowerName.includes('pvc') || lowerName.includes('selang') || lowerName.includes('kran') || lowerName.includes('fitting')) {
+        return `https://images.unsplash.com/photo-1542013936693-8848e574047a?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('palu') || lowerName.includes('obeng') || lowerName.includes('tang') || lowerName.includes('meteran') || lowerName.includes('gergaji') || lowerName.includes('alat') || lowerName.includes('tool')) {
+        return `https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('genteng') || lowerName.includes('seng') || lowerName.includes('asbes') || lowerName.includes('atap')) {
+        return `https://images.unsplash.com/photo-1632759162444-1107ffa59790?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    if (lowerName.includes('pasir') || lowerName.includes('batu') || lowerName.includes('kerikil') || lowerName.includes('seplit')) {
+        return `https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=${size}&h=${size}&fit=crop&q=80`;
+    }
+    
+    return `https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=${size}&h=${size}&fit=crop&q=80`;
 }

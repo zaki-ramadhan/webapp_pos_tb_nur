@@ -34,7 +34,7 @@ class ItemCategoryPage
                     'isSubCategory' => 'Sub Kategori',
                     'yes' => 'Ya',
                 ],
-                'accountIntro' => 'Tentukan default akun perkiraan yang akan digunakan pada barang & jasa kategori ini',
+                'accountIntro' => 'Tentukan default akun perkiraan yang akan digunakan pada barang dan jasa kategori ini',
                 'accountPlaceholder' => 'Cari/Pilih...',
                 'accountNote' => 'Akun-akun yang dapat dipilih sesuai dengan akun-akun yang dimasukkan pada formulir Preferensi bagian akun default barang',
                 'accountFields' => [

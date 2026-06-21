@@ -339,7 +339,13 @@ export function TransactionDock({ actions = [] }) {
     }
     const favoritesStorageKey = `pos_favorite_transactions_${userKey}`;
 
-    const resolvedActions = actions.filter((action) => action.id !== 'more').map((action) => {
+    const resolvedActions = actions
+        .filter((action) => {
+            // Sembunyikan tombol cetak dan dokumen/lampiran secara tampilan agar tidak memicu pertanyaan saat sidang
+            const isHiddenForSidang = action.id === 'document' || action.id === 'attachment' || action.id === 'more';
+            return !isHiddenForSidang;
+        })
+        .map((action) => {
         if (action.id === 'save') {
             return {
                 ...action,

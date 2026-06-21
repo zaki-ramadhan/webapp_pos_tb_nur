@@ -29,6 +29,7 @@ const DashboardView = forwardRef(function DashboardView(
         setActivePageId,
         pageOpeningLoading,
         pendingCloseRequest,
+        setPendingCloseRequest,
         handleTogglePanel,
         openPageById,
         handleSelectPanelItem,

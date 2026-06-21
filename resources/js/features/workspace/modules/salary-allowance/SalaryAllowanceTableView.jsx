@@ -4,7 +4,7 @@ import SelectField from '@/components/ui/SelectField';
 
 const SALARY_COLUMNS = [
     { id: 'name', label: 'Nama', align: 'left' },
-    { id: 'type', label: 'Tipe Gaji/Tunjangan', align: 'left' },
+    { id: 'type', label: 'Tipe Gaji atau Tunjangan', align: 'left' },
     { id: 'inactiveLabel', label: 'Non Aktif', align: 'center', widthClassName: 'w-[120px]' },
 ];
 

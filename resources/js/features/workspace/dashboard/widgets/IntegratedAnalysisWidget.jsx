@@ -1,5 +1,5 @@
-import { getMetric, WidgetSection } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
-import { DetailToggleButton } from '@/features/workspace/dashboard/analytics/AnalyticsWidgetLayout';
+import { useState } from 'react';
+import { getMetric, WidgetSection, getProductImageUrl } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
 
 const LightbulbIcon = ({ className = "h-4 w-4" }) => (
@@ -30,7 +30,11 @@ const MegaphoneIcon = ({ className = "h-4 w-4" }) => (
     </svg>
 );
 
+
+
 export default function IntegratedAnalysisWidget({ widget, expanded = false, onToggle }) {
+    const [chartExpanded, setChartExpanded] = useState(false);
+
     if (!widget.metrics || widget.metrics.length === 0) {
         return (
             <div className="flex h-full min-h-[380px] flex-col justify-between rounded-[8px] bg-slate-50 p-5 border border-slate-100 animate-pulse">
@@ -126,107 +130,148 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
     };
 
     return (
-        <div className="flex h-full min-h-0 flex-col gap-5 rounded-[8px] p-2 bg-[linear-gradient(180deg,#fcfdfe_0%,#f5f8fc_100%)]">
+        <div className="flex h-full min-h-0 flex-col gap-2 rounded-[8px] p-2 bg-[linear-gradient(180deg,#fcfdfe_0%,#f5f8fc_100%)]">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {summaryItems.map((item, idx) => (
                     <div key={idx} title="" className="rounded-[6px] border border-[#e2e8f0] bg-white p-2.5 shadow-[0_2px_6px_rgba(15,23,42,0.02)]">
-                        <p title="" className="text-sm font-semibold uppercase tracking-wider text-[#64748b]">{item.label}</p>
+                        <p title="" className="text-sm font-semibold text-[#64748b]">{item.label}</p>
                         <p title="" className="mt-1 text-base sm:text-lg lg:text-xl font-bold text-[#0f172a] truncate">{item.value}</p>
                         <p title="" className="mt-0.5 text-sm text-[#64748b]">{item.helper}</p>
                     </div>
                 ))}
             </div>
 
-            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
                 <WidgetSection
-                    title="Peta Kekuatan Hubungan & Kategori Produk"
+                    title="Peta Hubungan Belanja & Prioritas Stok"
                     caption="Grafik interaktif menunjukkan seberapa kuat kecenderungan produk dibeli bersamaan (Confidence) dikombinasikan dengan prioritas omzet produk tersebut."
+                    collapsible={true}
+                    expanded={chartExpanded}
+                    onToggle={() => setChartExpanded(!chartExpanded)}
                 >
                     <IntegratedMatrixChart rules={widget.rules ?? []} />
                 </WidgetSection>
 
-                <DetailToggleButton 
-                    expanded={expanded} 
-                    onToggle={onToggle} 
-                    summary="Buka daftar rekomendasi taktis kombinasi produk, rencana display rak, dan panduan penawaran kasir." 
-                />
+                <WidgetSection
+                    title="Rekomendasi Taktik Penjualan & Pajangan Toko"
+                    caption="Daftar rekomendasi taktis kombinasi produk, rencana display rak, dan panduan penawaran kasir berdasarkan Apriori & ABC."
+                    collapsible={true}
+                    expanded={expanded}
+                    onToggle={onToggle}
+                >
+                    <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50/20 p-3 shadow-[0_1px_2px_rgba(0,0,0,0.01)] select-none">
+                        <h5 className="text-sm font-semibold text-blue-900 mb-2">Petunjuk Kategori Prioritas Barang (Analisis ABC):</h5>
+                        <div className="grid gap-2 sm:grid-cols-3">
+                            <div className="rounded-md border border-blue-100 bg-white p-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: '#2d77d1' }}>
+                                        Kat. A
+                                    </span>
+                                    <span className="text-xs font-bold text-[#1f2536]">(Utama)</span>
+                                </div>
+                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
+                            </div>
+                            <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: '#4caf50' }}>
+                                        Kat. B
+                                    </span>
+                                    <span className="text-xs font-bold text-[#1f2536]">(Stabil)</span>
+                                </div>
+                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
+                            </div>
+                            <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: '#f4a62a' }}>
+                                        Kat. C
+                                    </span>
+                                    <span className="text-xs font-bold text-[#1f2536]">(Tambahan)</span>
+                                </div>
+                                <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">5% omzet</span> toko. Produk pelengkap/aksesoris penunjang.</p>
+                            </div>
+                        </div>
+                    </div>
 
-                {expanded && (
-                    <WidgetSection 
-                        title="Rekomendasi Taktik Penjualan & Pajangan Toko" 
-                        caption="Strategi kombinasi produk siap pakai berdasarkan kecenderungan pola belanja (Apriori) dan prioritas omzet toko (ABC)."
-                    >
-                        <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
-                            {(widget.rules ?? []).map((rule, idx) => {
-                                const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc);
-                                return (
-                                    <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-[0_2px_8px_rgba(29,78,216,0.04)] transition-all duration-150">
-                                        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                                            
-                                            <div className="flex flex-wrap items-center gap-2 min-w-0 flex-[2]">
-                                                <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-2 py-1">
-                                                    <span className="text-sm font-bold text-slate-800 truncate max-w-[240px] sm:max-w-[440px] lg:max-w-[520px]" title={rule.antecedent}>
-                                                        {rule.antecedent}
+                    <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+                        {(widget.rules ?? []).map((rule, idx) => {
+                            const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc);
+                            return (
+                                <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-[0_2px_8px_rgba(29,78,216,0.04)] transition-all duration-150">
+                                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+
+                                        <div className="flex flex-wrap items-center gap-2 min-w-0 flex-[2]">
+                                            <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-1.5 py-1">
+                                                <img
+                                                    src={getProductImageUrl(rule.antecedent)}
+                                                    alt=""
+                                                    className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
+                                                />
+                                                <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.antecedent}>
+                                                    {rule.antecedent}
+                                                </span>
+                                                {rule.antecedentAbc && (
+                                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.antecedentColor }} title={rule.antecedentAbc === 'A' ? 'Omzet Utama' : rule.antecedentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
+                                                        Kat. {rule.antecedentAbc}
                                                     </span>
-                                                    {rule.antecedentAbc && (
-                                                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-extrabold text-white shrink-0" style={{ backgroundColor: rule.antecedentColor }} title={rule.antecedentAbc === 'A' ? 'Omzet Utama' : rule.antecedentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
-                                                            Kat {rule.antecedentAbc}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                
-                                                <span className="text-blue-500 font-extrabold text-base px-1">+</span>
-                                                
-                                                <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-2 py-1">
-                                                    <span className="text-sm font-bold text-slate-800 truncate max-w-[240px] sm:max-w-[440px] lg:max-w-[520px]" title={rule.consequent}>
-                                                        {rule.consequent}
-                                                    </span>
-                                                    {rule.consequentAbc && (
-                                                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-extrabold text-white shrink-0" style={{ backgroundColor: rule.consequentColor }} title={rule.consequentAbc === 'A' ? 'Omzet Utama' : rule.consequentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
-                                                            Kat {rule.consequentAbc}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                                )}
                                             </div>
 
-                                            <div className="flex flex-wrap items-center gap-2 shrink-0">
-                                                <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-bold border shrink-0 ${tactic.bg}`}>
-                                                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tactic.badgeBg }}></span>
-                                                    {tactic.title}
+                                            <span className="text-blue-500 font-extrabold text-base px-1">+</span>
+
+                                            <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-1.5 py-1">
+                                                <img
+                                                    src={getProductImageUrl(rule.consequent)}
+                                                    alt=""
+                                                    className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
+                                                />
+                                                <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.consequent}>
+                                                    {rule.consequent}
                                                 </span>
-                                                
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50/50 border border-blue-100 px-2 py-1 text-sm font-bold text-blue-700 shrink-0">
-                                                    Peluang: {rule.confidence}
-                                                </span>
-                                                
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-100 px-2 py-1 text-sm font-medium text-slate-500 shrink-0" title="Hubungan Pola (Lift Ratio)">
-                                                    Kekuatan: {rule.lift}
-                                                </span>
+                                                {rule.consequentAbc && (
+                                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.consequentColor }} title={rule.consequentAbc === 'A' ? 'Omzet Utama' : rule.consequentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
+                                                        Kat. {rule.consequentAbc}
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
 
-                                        <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-600 bg-emerald-50/10 rounded-md p-2.5 border border-emerald-100/30">
-                                            <div className="flex items-start gap-2">
-                                                <PinIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
-                                                <div className="min-w-0 flex-1">
-                                                    <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
-                                                    <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
-                                                </div>
+                                        <div className="flex flex-wrap items-center gap-2 shrink-0">
+                                            <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-semibold border shrink-0 ${tactic.bg}`}>
+                                                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tactic.badgeBg }}></span>
+                                                {tactic.title}
+                                            </span>
+
+                                            <span className="inline-flex items-center gap-1 rounded-md bg-blue-50/50 border border-blue-100 px-2 py-1 text-sm font-semibold text-blue-700 shrink-0">
+                                                Peluang: {rule.confidence}
+                                            </span>
+
+                                            <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-100 px-2 py-1 text-sm font-normal text-slate-500 shrink-0" title="Hubungan Pola (Lift Ratio)">
+                                                Kekuatan: {rule.lift}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-600 bg-emerald-50/10 rounded-md p-2.5 border border-emerald-100/30">
+                                        <div className="flex items-start gap-2">
+                                            <PinIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                            <div className="min-w-0 flex-1">
+                                                <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
+                                                <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
                                             </div>
-                                            <div className="flex items-start gap-2 border-t border-emerald-100/30 pt-2">
-                                                <ChatIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
-                                                <div className="min-w-0 flex-1">
-                                                    <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
-                                                    <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
-                                                </div>
+                                        </div>
+                                        <div className="flex items-start gap-2 border-t border-emerald-100/30 pt-2">
+                                            <ChatIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                            <div className="min-w-0 flex-1">
+                                                <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
+                                                <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
                                             </div>
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
-                    </WidgetSection>
-                )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </WidgetSection>
 
                 {widget.insight && (
                     <div className="rounded-[8px] border border-blue-200 bg-blue-50/40 p-3 text-sm text-blue-800 leading-6 flex items-start gap-2.5">

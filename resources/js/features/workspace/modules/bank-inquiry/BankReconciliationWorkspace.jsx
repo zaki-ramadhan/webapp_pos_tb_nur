@@ -411,7 +411,7 @@ export default function BankReconciliationWorkspace({
                                 : 'bg-white border-slate-200 hover:border-slate-300'
                         }`}
                     >
-                        <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Cocok</div>
+                        <div className="text-[10px] font-bold text-slate-500">Cocok</div>
                         <div className="text-lg font-bold text-emerald-600 mt-1 flex items-center justify-between">
                             <span>{summary.matched}</span>
                             <span className="text-[10px] font-normal text-slate-400">Klik filter</span>
@@ -426,7 +426,7 @@ export default function BankReconciliationWorkspace({
                                 : 'bg-white border-slate-200 hover:border-slate-300'
                         }`}
                     >
-                        <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Selisih Nominal</div>
+                        <div className="text-[10px] font-bold text-slate-500">Selisih Nominal</div>
                         <div className="text-xl font-bold text-amber-600 mt-1 flex items-center justify-between">
                             <span>{summary.discrepancy}</span>
                             <span className="text-[10px] font-normal text-slate-400">Klik filter</span>
@@ -441,7 +441,7 @@ export default function BankReconciliationWorkspace({
                                 : 'bg-white border-slate-200 hover:border-slate-300'
                         }`}
                     >
-                        <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider font-semibold">Hanya di Excel</div>
+                        <div className="text-[10px] font-bold text-slate-500">Hanya di Excel</div>
                         <div className="text-xl font-bold text-sky-600 mt-1 flex items-center justify-between">
                             <span>{summary.excelOnly}</span>
                             <span className="text-[10px] font-normal text-slate-400">Klik filter</span>
@@ -456,7 +456,7 @@ export default function BankReconciliationWorkspace({
                                 : 'bg-white border-slate-200 hover:border-slate-300'
                         }`}
                     >
-                        <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Hanya di Sistem</div>
+                        <div className="text-[10px] font-bold text-slate-500">Hanya di Sistem</div>
                         <div className="text-xl font-bold text-slate-600 mt-1 flex items-center justify-between">
                             <span>{summary.systemOnly}</span>
                             <span className="text-[10px] font-normal text-slate-400">Klik filter</span>

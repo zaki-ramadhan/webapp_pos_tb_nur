@@ -206,7 +206,7 @@ export default function ModuleTableTemplate({
                                         colSpan={visibleColumns.length + 1}
                                         className="px-3 py-3 text-center text-base text-[#131a28]"
                                     >
-                                        {table.emptyLabel}
+                                        {table.emptyLabel ?? 'Belum ada data'}
                                     </DataTableCell>
                                 </DataTableRow>
                             )}

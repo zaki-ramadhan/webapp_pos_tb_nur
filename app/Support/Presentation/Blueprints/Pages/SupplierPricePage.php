@@ -39,7 +39,7 @@ class SupplierPricePage
                     ['id' => 'details', 'label' => 'Rincian Barang', 'icon' => 'document'],
                     ['id' => 'additional-info', 'label' => 'Info lainnya', 'icon' => 'info'],
                 ],
-                'itemSearchPlaceholder' => 'Cari/Pilih Barang & Jasa...',
+                'itemSearchPlaceholder' => 'Cari/Pilih Barang dan Jasa...',
                 'takeButtonLabel' => 'Ambil',
                 'itemSectionTitle' => 'Rincian Barang',
                 'additionalInfoTitle' => 'Info lainnya',

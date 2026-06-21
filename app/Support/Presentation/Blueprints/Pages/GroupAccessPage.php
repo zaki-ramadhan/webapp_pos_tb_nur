@@ -243,7 +243,7 @@ class GroupAccessPage
                                         \App\Support\Presentation\PosBlueprint::accessRow('tax-master', 'Pajak', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('payment-terms', 'Syarat Pembayaran', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('employees', 'Karyawan', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('salary-allowance', 'Gaji/Tunjangan', ['create' => true, 'update' => true, 'delete' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('salary-allowance', 'Gaji atau Tunjangan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('shipping', 'Pengiriman', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('fob', 'FOB', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('contacts', 'Kontak', ['active' => true, 'update' => true]),
@@ -289,7 +289,7 @@ class GroupAccessPage
                                         \App\Support\Presentation\PosBlueprint::accessRow('sales-receipt', 'Penerimaan Penjualan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('sales-return', 'Retur Penjualan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('customers', 'Pelanggan', ['active' => true, 'create' => true, 'update' => true, 'view' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('price-adjustment', 'Penyesuaian Harga/Diskon', ['create' => true, 'update' => true, 'delete' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('price-adjustment', 'Penyesuaian Harga atau Diskon', ['create' => true, 'update' => true, 'delete' => true]),
                                     ]),
                                 ]),
                                 \App\Support\Presentation\PosBlueprint::accessCategory('purchase', 'Pembelian', 'purchase', [

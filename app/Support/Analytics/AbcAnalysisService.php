@@ -121,7 +121,7 @@ class AbcAnalysisService
             ],
             [
                 'label' => 'Nilai Analisis',
-                'value' => 'Rp ' . number_format($totalRevenue / 1000000, 1, ',', '.') . ' jt',
+                'value' => \App\Support\Presentation\PosBlueprint::formatCurrencyShort($totalRevenue),
                 'helper' => 'Berdasarkan penjualan material dan perlengkapan bangunan',
                 'tone' => 'rose',
             ],

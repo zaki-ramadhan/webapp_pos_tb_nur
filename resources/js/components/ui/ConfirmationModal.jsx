@@ -50,7 +50,7 @@ export default function ConfirmationModal({
             <div className="flex items-center justify-end gap-2.5">
                     <Button
                         variant="secondary"
-                        size="sm"
+                        size="md"
                         onClick={onClose}
                         disabled={cancelDisabled || confirmLoading}
                         className="min-w-[60px] rounded-[4px] border-brand-blue-border-light text-brand-blue-dark shadow-none"
@@ -60,7 +60,7 @@ export default function ConfirmationModal({
 
                     <Button
                         variant={confirmVariant}
-                        size="sm"
+                        size="md"
                         onClick={onConfirm}
                         disabled={confirmDisabled}
                         loading={confirmLoading}

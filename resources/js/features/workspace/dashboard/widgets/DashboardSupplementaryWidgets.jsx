@@ -77,12 +77,21 @@ export function SalesTeamWidget({ widget }) {
     );
 }
 
+import { getProductImageUrl } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
+
 function TopProductRow({ item, index }) {
     return (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-[8px] border border-[#e6ebf3] bg-[#fbfcfe] px-3 py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
-            <span className="inline-flex h-7 min-w-[28px] items-center justify-center rounded-full bg-[#e7eef9] px-2 text-sm font-semibold text-[#456293]">
-                {index + 1}
-            </span>
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-2.5 rounded-[8px] border border-[#e6ebf3] bg-[#fbfcfe] px-2.5 py-2 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
+            <div className="relative h-12 w-12 shrink-0">
+                <img
+                    src={getProductImageUrl(item.name)}
+                    alt={item.name}
+                    className="h-12 w-12 rounded-[6px] border border-[#e2e8f0] object-cover"
+                />
+                <span className="absolute -left-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#234d97] text-[10px] font-bold text-white shadow-sm">
+                    {index + 1}
+                </span>
+            </div>
             <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-[#1f2536]">{item.name}</p>
                 <p className="mt-1 text-sm text-[#7b8398]">

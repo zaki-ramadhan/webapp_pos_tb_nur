@@ -271,7 +271,7 @@ final class PosBlueprint
                 // self::navItem('payment-terms', 'Syarat Pembayaran', 'terms', 'blue'),
                 // self::navItem('shipping-master', 'Pengiriman', 'truck', 'blue'),
                 // self::navItem('fob-master', 'FOB', 'invoice', 'blue'),
-                self::navItem('salary-allowance', 'Gaji/Tunjangan', 'salary', 'blue'),
+                self::navItem('salary-allowance', 'Gaji atau Tunjangan', 'salary', 'blue'),
                 self::navItem('employees', 'Karyawan', 'employee', 'blue'),
                 // self::navItem('recurring-transactions', 'Transaksi Berulang', 'recurring', 'green'),
                 // self::navItem('period-end', 'Proses Akhir Bulan', 'calendar', 'green'),
@@ -309,10 +309,10 @@ final class PosBlueprint
                 // self::navItem('customer-category', 'Kategori Pelanggan', 'group', 'blue'),
                 // self::navItem('sales-category', 'Kategori Penjualan', 'category', 'blue'),
                 self::navItem('customers', 'Pelanggan', 'customer', 'blue'),
-                self::navItem('price-adjustment', 'Penyesuaian Harga/Diskon', 'category', 'amber'),
+                self::navItem('price-adjustment', 'Penyesuaian Harga atau Diskon', 'category', 'amber'),
                 self::navItem('sales-commission', 'Komisi Penjual', 'employee', 'amber'),
                 // self::navItem('sales-target', 'Target Penjualan', 'budget', 'amber'),
-                self::navItem('sales-checkin', 'Check In', 'checkin', 'purple'),
+                self::navItem('sales-checkin', 'Check-in', 'checkin', 'purple'),
             ]),
             self::navModule('purchases', 'Pembelian', 'purchase', [
                 // self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
@@ -336,13 +336,13 @@ final class PosBlueprint
                 // self::navItem('work-completion', 'Penyelesaian Pesanan', 'stock', 'green'),
                 // self::navItem('stock-opname-order', 'Perintah Stok Opname', 'expense', 'green'),
                 // self::navItem('stock-opname-result', 'Hasil Stok Opname', 'stock', 'green'),
-                self::navItem('items-services', 'Barang & Jasa', 'box', 'blue'),
+                self::navItem('items-services', 'Barang dan Jasa', 'box', 'blue'),
                 self::navItem('warehouse-master', 'Gudang', 'warehouse', 'blue'),
                 self::navItem('item-unit', 'Satuan Barang', 'unit', 'blue'),
                 self::navItem('item-category', 'Kategori Barang', 'category', 'blue'),
                 // self::navItem('order-fulfillment', 'Pemenuhan Pesanan', 'inventory', 'purple'),
-                self::navItem('item-location', 'Barang per Gudang', 'location', 'purple'),
-                self::navItem('minimum-stock', 'Barang Stok Minimum', 'box', 'purple'),
+                self::navItem('item-location', 'Barang pergudang', 'location', 'purple'),
+                self::navItem('minimum-stock', 'Barang stok minimum', 'box', 'purple'),
             ]),
             // self::navModule('fixed-assets', 'Aset Tetap', 'asset', [
             //     self::navItem('fixed-assets', 'Aset Tetap', 'asset', 'blue'),
@@ -504,5 +504,21 @@ final class PosBlueprint
         } catch (Throwable) {
             return false;
         }
+    }
+
+    public static function formatCurrencyShort(float|int $value): string
+    {
+        $abs = abs($value);
+        $sign = $value < 0 ? '-' : '';
+        if ($abs >= 1000000000) {
+            return $sign . 'Rp ' . number_format($abs / 1000000000, 2, ',', '.') . ' M';
+        }
+        if ($abs >= 1000000) {
+            return $sign . 'Rp ' . number_format($abs / 1000000, 1, ',', '.') . ' jt';
+        }
+        if ($abs >= 1000) {
+            return $sign . 'Rp ' . number_format($abs / 1000, 0, ',', '.') . ' rb';
+        }
+        return $sign . 'Rp ' . number_format($abs, 0, ',', '.');
     }
 }

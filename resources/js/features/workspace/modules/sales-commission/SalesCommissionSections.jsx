@@ -47,7 +47,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
     return (
         <div className="space-y-3">
             <FormFieldRow label={config.labels.period}>
-                <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
                     {config.periodOptions.map((option) => (
                         <RadioOption
                             key={option.id}
@@ -69,7 +69,7 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
             </FormFieldRow>
 
             <FormFieldRow label={config.labels.salespeople} required>
-                <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
                     {config.salespeopleOptions.map((option) => (
                         <RadioOption
                             key={option.id}

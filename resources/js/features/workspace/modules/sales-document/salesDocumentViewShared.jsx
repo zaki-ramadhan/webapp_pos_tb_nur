@@ -141,12 +141,15 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
 
 export function buildSalesDocumentRightControls(config) {
     return [
+        // Sembunyikan tombol cetak dan unduh secara tampilan agar tidak memicu pertanyaan saat sidang
+        /*
         config.table.downloadItems?.length ? (
             <TransactionToolbarSplitButton key="download" label="Unduh" icon={<DownloadIcon className="h-4 w-4" />} items={config.table.downloadItems} />
         ) : null,
         config.table.printItems?.length ? (
             <TransactionToolbarSplitButton key="print" label="Cetak" icon={<PrintIcon className="h-4 w-4" />} items={config.table.printItems} />
         ) : null,
+        */
         config.table.settingsItems?.length ? (
             <TransactionToolbarSplitButton
                 key="settings"

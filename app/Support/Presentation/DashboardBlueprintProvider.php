@@ -74,20 +74,7 @@ class DashboardBlueprintProvider
             ];
         }
 
-        $formatCurrencyShort = function ($value) {
-            $abs = abs($value);
-            $sign = $value < 0 ? '-' : '';
-            if ($abs >= 1000000000) {
-                return $sign . 'Rp ' . number_format($abs / 1000000000, 2, ',', '.') . ' M';
-            }
-            if ($abs >= 1000000) {
-                return $sign . 'Rp ' . number_format($abs / 1000000, 1, ',', '.') . ' jt';
-            }
-            if ($abs >= 1000) {
-                return $sign . 'Rp ' . number_format($abs / 1000, 0, ',', '.') . ' rb';
-            }
-            return $sign . 'Rp ' . number_format($abs, 0, ',', '.');
-        };
+        $formatCurrencyShort = fn ($value) => PosBlueprint::formatCurrencyShort($value);
 
         $userActivities = [];
         if ($loadData) {
@@ -96,7 +83,7 @@ class DashboardBlueprintProvider
                 $logs = DB::table('activity_logs')
                     ->where('actor_user_id', $user->id)
                     ->orderBy('occurred_at', 'desc')
-                    ->limit(4)
+                    ->limit(3)
                     ->get();
 
                 $daysIndo = [
@@ -519,9 +506,10 @@ class DashboardBlueprintProvider
                     'items' => [
                         [
                             'id' => 'integrated-analysis',
-                            'title' => 'Matrix Analisis Penjualan (Apriori & ABC)',
-                            'description' => 'Integrasi pola belanja bersama (Apriori) dan prioritas nilai penjualan (ABC).',
+                            'title' => 'Analisis Kombinasi Produk & Prioritas Omzet (Metode Apriori & ABC)',
+                            'description' => 'Strategi display produk sering dibeli bersama (Apriori) & prioritas stok penyumbang omzet (ABC).',
                             'icon' => 'asset',
+
                         ],
                         [
                             'id' => 'recent-activity',
@@ -638,8 +626,8 @@ class DashboardBlueprintProvider
             'widgets' => [
                 [
                     'id' => 'integrated-analysis',
-                    'title' => 'Matrix Analisis Penjualan (Apriori & ABC)',
-                    'subtitle' => 'Integrasi pola belanja bersama (Apriori) dan prioritas nilai penjualan (ABC)',
+                    'title' => 'Analisis Kombinasi Produk & Prioritas Omzet (Metode Apriori & ABC)',
+                    'subtitle' => 'Strategi display produk sering dibeli bersama (Apriori) & prioritas stok penyumbang omzet (ABC)',
                     'type' => 'integrated-analysis',
                     'metrics' => [
                         [
