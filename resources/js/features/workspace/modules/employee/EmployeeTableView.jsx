@@ -55,11 +55,13 @@ export default function EmployeeTableView({ table, onCreate, onOpenDetail }) {
             onOpenDetail={onOpenDetail}
             customRowFilter={customRowFilter}
             customFiltersSlot={
-                <EmployeeFilterSlot
-                    filters={table.filters}
-                    values={filterValues}
-                    onChange={handleFilterChange}
-                />
+                table.filters?.length ? (
+                    <EmployeeFilterSlot
+                        filters={table.filters}
+                        values={filterValues}
+                        onChange={handleFilterChange}
+                    />
+                ) : null
             }
         />
     );

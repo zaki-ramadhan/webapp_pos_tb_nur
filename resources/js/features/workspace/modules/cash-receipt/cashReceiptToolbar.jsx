@@ -29,7 +29,7 @@ export function cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, 
     return {
         size: 'compact',
         className: 'space-y-3',
-        filters: <ReceiptFilterBar table={config.table} filters={filters} setFilters={setFilters} SelectField={SelectField} />,
+        filters: config.table.filters?.length ? <ReceiptFilterBar table={config.table} filters={filters} setFilters={setFilters} SelectField={SelectField} /> : null,
         createButton: { label: config.table.createLabel, onClick: onCreate, icon: <PlusIcon className="h-6 w-6" /> },
         refreshButton: { label: config.table.refreshLabel, icon: <LinkIcon className="h-4.5 w-4.5" /> },
         rightControls: cashReceiptToolbarRightControls(config),

@@ -63,18 +63,18 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            )}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'right'
-                                            ? 'text-right'
-                                            : column.align === 'center'
-                                              ? 'text-center'
-                                              : 'text-left'
+                                        column.align === 'center'
+                                            ? 'text-center'
+                                            : 'text-left'
                                     }`.trim()}
                                 >
                                     <SalesDocumentSortHeader column={column} />
@@ -113,7 +113,7 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
                                 <DataTableCell
-                                    colSpan={config.table.columns.length + 1}
+                                    colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)}
                                     className="px-2.5 py-6 text-center text-base text-[#7d879a]"
                                 >
                                     {config.table.emptyLabel ?? 'Belum ada data'}

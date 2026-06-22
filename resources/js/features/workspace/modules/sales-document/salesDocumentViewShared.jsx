@@ -165,7 +165,7 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
     return {
         size: 'compact',
         className: 'space-y-3',
-        filters: <SalesDocumentFilterBar config={config} filters={filters} setFilters={setFilters} />,
+        filters: config.table.filters?.length ? <SalesDocumentFilterBar config={config} filters={filters} setFilters={setFilters} /> : null,
         createButton: {
             label: config.table.createLabel,
             onClick: onCreate,
@@ -205,11 +205,9 @@ export function SalesDocumentSortHeader({ column }) {
     return (
         <span
             className={`flex items-center gap-2 ${
-                column.align === 'right'
-                    ? 'justify-end'
-                    : column.align === 'center'
-                      ? 'justify-center'
-                      : 'justify-start'
+                column.align === 'center'
+                    ? 'justify-center'
+                    : 'justify-start'
             }`.trim()}
         >
             <SortIcon className="h-3 w-3 shrink-0 text-white/55" />

@@ -119,7 +119,7 @@ export default function SalesReceiptTableView({
             <TableToolbar
                 size="compact"
                 className="space-y-3"
-                filters={<SalesReceiptFilterBar config={config} filters={filters} setFilters={setFilters} />}
+                filters={config.table.filters?.length ? <SalesReceiptFilterBar config={config} filters={filters} setFilters={setFilters} /> : null}
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,
@@ -151,21 +151,21 @@ export default function SalesReceiptTableView({
                 <DataTable className="min-w-[1520px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            )}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'right'
-                                            ? 'text-right'
-                                            : column.align === 'center'
-                                              ? 'text-center'
-                                              : 'text-left'
+                                        column.align === 'center'
+                                            ? 'text-center'
+                                            : 'text-left'
                                     }`.trim()}
                                 >
-                                    <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start'}`.trim()}>
+                                    <span className={`flex items-center gap-2 ${column.align === 'center' ? 'justify-center' : 'justify-start'}`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span>{column.label}</span>
                                     </span>
@@ -201,7 +201,7 @@ export default function SalesReceiptTableView({
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-2.5 py-6 text-center text-base text-[#7d879a]">
+                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-6 text-center text-base text-[#7d879a]">
                                     {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

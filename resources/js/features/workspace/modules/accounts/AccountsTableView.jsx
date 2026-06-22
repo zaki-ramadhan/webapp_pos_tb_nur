@@ -53,30 +53,32 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
             <TableToolbar
                 size="compact"
                 filters={
-                    <div className="flex flex-wrap items-center gap-2">
-                        {config.table.filters.map((filter) => (
-                            <SelectField
-                                key={filter.id}
-                                value={filters[filter.id]}
-                                onChange={(event) =>
-                                    setFilters((current) => ({
-                                        ...current,
-                                        [filter.id]: event.target.value,
-                                    }))
-                                }
-                                containerClassName="w-auto shrink-0"
-                                className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                                iconClassName="mr-2 text-[#6c7894]"
-                            >
-                                {filter.options.map((option, index) => (
-                                    <option key={`${filter.id}-${option.value}-${index}`} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </SelectField>
-                        ))}
-                    </div>
+                    config.table.filters?.length ? (
+                        <div className="flex flex-wrap items-center gap-2">
+                            {config.table.filters.map((filter) => (
+                                <SelectField
+                                    key={filter.id}
+                                    value={filters[filter.id]}
+                                    onChange={(event) =>
+                                        setFilters((current) => ({
+                                            ...current,
+                                            [filter.id]: event.target.value,
+                                        }))
+                                    }
+                                    containerClassName="w-auto shrink-0"
+                                    className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
+                                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
+                                    iconClassName="mr-2 text-[#6c7894]"
+                                >
+                                    {filter.options.map((option, index) => (
+                                        <option key={`${filter.id}-${option.value}-${index}`} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </SelectField>
+                            ))}
+                        </div>
+                    ) : null
                 }
                 createButton={{
                     label: config.table.createLabel,

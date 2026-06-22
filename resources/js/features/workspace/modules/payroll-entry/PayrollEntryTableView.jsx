@@ -49,38 +49,40 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
             pageValue={table.pageValue}
             className="space-y-3"
             filters={
-                <div className="flex flex-wrap items-center gap-2">
-                    {table.filters.map((filter) => (
-                        <SelectField
-                            key={filter.id}
-                            value={filters[filter.id]}
-                            onChange={(event) =>
-                                setFilters((current) => ({
-                                    ...current,
-                                    [filter.id]: event.target.value,
-                                }))
-                            }
-                            containerClassName="w-auto"
-                            className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                            iconClassName="mr-2 text-[#6c7894]"
-                        >
-                            {filter.options.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </SelectField>
-                    ))}
+                table.filters?.length ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                        {table.filters.map((filter) => (
+                            <SelectField
+                                key={filter.id}
+                                value={filters[filter.id]}
+                                onChange={(event) =>
+                                    setFilters((current) => ({
+                                        ...current,
+                                        [filter.id]: event.target.value,
+                                    }))
+                                }
+                                containerClassName="w-auto"
+                                className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
+                                selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
+                                iconClassName="mr-2 text-[#6c7894]"
+                            >
+                                {filter.options.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        ))}
 
-                    <button
-                        type="button"
-                        className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
-                        aria-label={table.filterButtonLabel}
-                    >
-                        <FunnelIcon className="h-5 w-5" />
-                    </button>
-                </div>
+                        <button
+                            type="button"
+                            className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                            aria-label={table.filterButtonLabel}
+                        >
+                            <FunnelIcon className="h-5 w-5" />
+                        </button>
+                    </div>
+                ) : null
             }
         />
     );

@@ -81,13 +81,15 @@ export default function CashReceiptTableView({
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            )}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
                                 >
                                     <CashReceiptSortHeader column={column} />
                                 </DataTableHead>
@@ -120,7 +122,7 @@ export default function CashReceiptTableView({
                             </DataTableRow>
                         )) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-3 py-3 text-center text-base text-[#131a28]">
                                     {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

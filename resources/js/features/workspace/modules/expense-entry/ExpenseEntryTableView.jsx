@@ -72,7 +72,7 @@ export default function ExpenseEntryTableView({
                 <TableToolbar
                     size="compact"
                     className="space-y-3"
-                    filters={<ExpenseTableFilters table={config.table} filters={filters} setFilters={setFilters} />}
+                    filters={config.table.filters?.length ? <ExpenseTableFilters table={config.table} filters={filters} setFilters={setFilters} /> : null}
                     createButton={{
                         label: config.table.createLabel,
                         onClick: onCreate,

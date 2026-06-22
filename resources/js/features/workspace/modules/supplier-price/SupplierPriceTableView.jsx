@@ -108,7 +108,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
             <TableToolbar
                 size="compact"
                 className="space-y-3"
-                filters={<SupplierPriceFilterBar table={config.table} filters={filters} setFilters={setFilters} />}
+                filters={config.table.filters?.length ? <SupplierPriceFilterBar table={config.table} filters={filters} setFilters={setFilters} /> : null}
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,
@@ -140,15 +140,17 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                 <DataTable className="min-w-[1280px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
+                                    No.
+                                </DataTableHead>
+                            )}
                             {config.table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-normal text-white ${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')}`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-normal text-white ${column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
                                 >
-                                    <span className={`flex items-center gap-2 justify-center`.trim()}>
+                                    <span className={`flex items-center gap-2 ${column.align === 'center' ? 'justify-center' : 'justify-start'}`.trim()}>
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
                                         <span>{column.label}</span>
                                     </span>
@@ -182,7 +184,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell
-                                    colSpan={config.table.columns.length + 1}
+                                    colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)}
                                     className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {config.table.emptyLabel}

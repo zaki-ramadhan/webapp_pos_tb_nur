@@ -101,27 +101,33 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
             <TableToolbar
                 resourceName="journal-activity-log"
                 size="compact"
-                filters={filtersConfig.map((filter) => (
-                    <SelectField
-                        key={filter.id}
-                        value={filters[filter.id]}
-                        onChange={(event) =>
-                            setFilters((currentFilters) => ({
-                                ...currentFilters,
-                                [filter.id]: event.target.value,
-                            }))
-                        }
-                        containerClassName="w-auto shrink-0"
-                        className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2] sm:min-w-[138px]"
-                        selectClassName="text-xs sm:text-sm text-[#394157]"
-                    >
-                        {filter.options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </SelectField>
-                ))}
+                filters={
+                    filtersConfig.length ? (
+                        <>
+                            {filtersConfig.map((filter) => (
+                                <SelectField
+                                    key={filter.id}
+                                    value={filters[filter.id]}
+                                    onChange={(event) =>
+                                        setFilters((currentFilters) => ({
+                                            ...currentFilters,
+                                            [filter.id]: event.target.value,
+                                        }))
+                                    }
+                                    containerClassName="w-auto shrink-0"
+                                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2] sm:min-w-[138px]"
+                                    selectClassName="text-xs sm:text-sm text-[#394157]"
+                                >
+                                    {filter.options.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </SelectField>
+                            ))}
+                        </>
+                    ) : null
+                }
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <LinkIcon className="h-4.5 w-4.5" />,
@@ -156,9 +162,11 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            )}
                             {visibleColumns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -201,7 +209,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-3 text-center text-base text-[#131a28]">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

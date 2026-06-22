@@ -58,7 +58,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
-                filters={<ApprovalFilterSlot filters={table.filters} values={filterValues} onChange={handleFilterChange} />}
+                filters={table.filters?.length ? <ApprovalFilterSlot filters={table.filters} values={filterValues} onChange={handleFilterChange} /> : null}
                 topRowClassName="mb-4"
                 size="compact"
                 createButton={{ label: table.createLabel, onClick: onCreate, icon: <PlusIcon className="h-6 w-6" /> }}
@@ -71,9 +71,11 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                 <DataTable wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
+                                    No.
+                                </DataTableHead>
+                            )}
                             {table.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
@@ -105,7 +107,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                             ))
                         ) : (
                             <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-8 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-3 py-8 text-center text-base text-[#131a28]">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

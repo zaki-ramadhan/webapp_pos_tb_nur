@@ -69,7 +69,7 @@ export default function SalesDepositTableView({
             <TableToolbar
                 size="compact"
                 className="space-y-3"
-                filters={<SalesDepositFilterBar config={config} filters={filters} setFilters={setFilters} />}
+                filters={config.table.filters?.length ? <SalesDepositFilterBar config={config} filters={filters} setFilters={setFilters} /> : null}
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,

@@ -72,7 +72,7 @@ export default function GeneralJournalTableView({
                 <TableToolbar
                     size="compact"
                     className="space-y-3"
-                    filters={<JournalTableFilters table={config.table} filters={filters} setFilters={setFilters} />}
+                    filters={config.table.filters?.length ? <JournalTableFilters table={config.table} filters={filters} setFilters={setFilters} /> : null}
                     createButton={{
                         label: config.table.createLabel,
                         onClick: onCreate,

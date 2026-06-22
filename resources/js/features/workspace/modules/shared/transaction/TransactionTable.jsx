@@ -47,7 +47,7 @@ export function TransactionDataTable({
     const visibleColumns = useMemo(() => {
         const filtered = cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
         if (rows.length === 0) {
-            return filtered.filter(col => col.kind !== 'spacer' && col.id !== 'spacer');
+            return filtered.filter(col => col.kind !== 'spacer' && col.id !== 'spacer' && col.id !== 'statusIcon' && col.id !== 'number');
         }
         return filtered;
     }, [cleanedColumns, visibleColumnIds, rows.length]);
@@ -82,7 +82,12 @@ export function TransactionDataTable({
                                     className={`${column.widthClassName ?? ''} px-3 text-sm font-normal text-white text-center`.trim()}
                                     style={minWidth ? { minWidth } : undefined}
                                 >
-                                    {renderHeaderCell ? renderHeaderCell(column) : column.label}
+                                    {renderHeaderCell
+                                        ? renderHeaderCell({
+                                              ...column,
+                                              align: column.align === 'right' ? 'left' : column.align,
+                                          })
+                                        : column.label}
                                 </DataTableHead>
                             );
                         })}

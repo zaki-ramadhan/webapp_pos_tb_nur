@@ -117,16 +117,18 @@ export default function ItemRequestTableView({
         <div className="flex min-h-full flex-col gap-3 rounded-[6px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] sm:px-4">
             <TableToolbar
                 filters={
-                    <>
-                        {(config.table.filters ?? []).map((filter) => (
-                            <TableFilterField
-                                key={filter.id}
-                                filter={filter}
-                                value={filters[filter.id] ?? filter.value ?? 'all'}
-                                onChange={handleChangeFilter}
-                            />
-                        ))}
-                    </>
+                    config.table.filters?.length ? (
+                        <>
+                            {(config.table.filters ?? []).map((filter) => (
+                                <TableFilterField
+                                    key={filter.id}
+                                    filter={filter}
+                                    value={filters[filter.id] ?? filter.value ?? 'all'}
+                                    onChange={handleChangeFilter}
+                                />
+                            ))}
+                        </>
+                    ) : null
                 }
                 createButton={{
                     label: config.table.createLabel,
