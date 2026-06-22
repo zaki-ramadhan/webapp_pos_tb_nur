@@ -18,6 +18,7 @@ const DashboardView = forwardRef(function DashboardView(
         topbarHeight = 0,
         mobileWorkspaceMenuOpen = false,
         onCloseMobileWorkspaceMenu,
+        user,
     },
     ref,
 ) {
@@ -87,6 +88,7 @@ const DashboardView = forwardRef(function DashboardView(
         dashboard,
         widgets,
         widgetTemplateMap,
+        user,
     });
 
     return (
@@ -103,6 +105,7 @@ const DashboardView = forwardRef(function DashboardView(
                         mobileMenuOpen={mobileWorkspaceMenuOpen}
                         onCloseMobileMenu={onCloseMobileWorkspaceMenu}
                         preferences={dashboard.preferences}
+                        user={dashboard.user}
                     />
                 </div>
 

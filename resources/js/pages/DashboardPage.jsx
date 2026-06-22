@@ -52,6 +52,7 @@ export default function DashboardPage({ dashboard, widgets }) {
                     <DashboardView
                         dashboard={dashboard.sampleDashboard}
                         widgets={widgets}
+                        user={dashboard.user}
                         topbarHeight={topbarHeight}
                         mobileWorkspaceMenuOpen={isWorkspaceMenuOpen}
                         onCloseMobileWorkspaceMenu={() => setIsWorkspaceMenuOpen(false)}

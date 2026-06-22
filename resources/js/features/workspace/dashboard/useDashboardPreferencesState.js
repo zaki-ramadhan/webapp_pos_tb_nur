@@ -8,15 +8,16 @@ import {
     saveDashboardPreferences,
 } from '@/features/workspace/dashboard/dashboardPersistence';
 
-export default function useDashboardPreferencesState({ dashboard, widgets, widgetTemplateMap }) {
+export default function useDashboardPreferencesState({ dashboard, widgets, widgetTemplateMap, user }) {
     const [isWidgetLibraryLoading, setIsWidgetLibraryLoading] = useState(false);
     const [isWidgetLibraryOpen, setIsWidgetLibraryOpen] = useState(false);
+    const userSuffix = user?.id ? String(user.id) : '';
     const [dashboardPreferences, setDashboardPreferences] = useState(() =>
         loadDashboardPreferences({
             dashboards: dashboard.toolbar.dashboards,
             selectedDashboardId: dashboard.toolbar.selectedDashboardId,
             widgets: dashboard.widgets ?? [],
-        }),
+        }, userSuffix),
     );
     const [isDashboardActionsOpen, setIsDashboardActionsOpen] = useState(false);
     const [activeDashboardModal, setActiveDashboardModal] = useState(null);
@@ -73,11 +74,11 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            saveDashboardPreferences(dashboardPreferences);
+            saveDashboardPreferences(dashboardPreferences, userSuffix);
         }, 120);
 
         return () => clearTimeout(timeoutId);
-    }, [dashboardPreferences]);
+    }, [dashboardPreferences, userSuffix]);
 
     const dashboardItems = dashboardPreferences.dashboards;
     const selectedDashboardId = dashboardPreferences.selectedDashboardId;
