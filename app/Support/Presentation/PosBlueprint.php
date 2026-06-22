@@ -264,7 +264,7 @@ final class PosBlueprint
                 // self::navItem('transaction-approval', 'Penyetuju Transaksi', 'users', 'amber'),
             ]),
             self::navModule('company', 'Perusahaan', 'building', [
-                self::navItem('currency-master', 'Mata Uang', 'currency', 'blue'),
+                // self::navItem('currency-master', 'Mata Uang', 'currency', 'blue'),
                 // self::navItem('branch', 'Cabang', 'branch', 'blue'),
                 self::navItem('department', 'Departemen', 'department', 'blue'),
                 // self::navItem('company-tax', 'Pajak', 'tax', 'blue'),
@@ -418,7 +418,7 @@ final class PosBlueprint
             'expense-entry',
             'general-journal',
             'activity-log',
-            'currency-master',
+            // 'currency-master',
             'bank-transfer',
             'bank-statement',
             'bank-history',

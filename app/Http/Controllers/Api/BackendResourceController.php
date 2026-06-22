@@ -148,6 +148,10 @@ class BackendResourceController extends Controller
 
     protected function resolveBlueprint(string $resource): BackendResourceBlueprint
     {
+        if ($resource === 'currencies') {
+            abort(403, 'Modul mata uang (Currencies) saat ini dinonaktifkan.');
+        }
+
         $blueprint = BackendResourceRegistry::find($resource);
 
         if ($blueprint === null) {
@@ -168,6 +172,7 @@ class BackendResourceController extends Controller
 
     public function syncCurrencies(Request $request): JsonResponse
     {
+        abort(403, 'Modul mata uang (Currencies) saat ini dinonaktifkan.');
         try {
             // Cache rate 12 jam
             // Cukup hit API sekali sehari
