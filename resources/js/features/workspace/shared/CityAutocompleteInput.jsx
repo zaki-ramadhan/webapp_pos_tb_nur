@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFormError } from '@/components/ui/FormErrorContext';
 import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { INDONESIAN_CITIES } from '@/features/workspace/shared/indonesianCities';
@@ -21,8 +21,14 @@ export default function CityAutocompleteInput({
     ...props
 }) {
     const [open, setOpen] = useState(false);
+    const [searchVal, setSearchVal] = useState(value);
     const inputRef = useRef(null);
     const rootRef = useRef(null);
+    const isSelectingRef = useRef(false);
+
+    useEffect(() => {
+        setSearchVal(value);
+    }, [value]);
 
     function focusInputFromWrapper(event) {
         if (disabled) {
@@ -54,7 +60,7 @@ export default function CityAutocompleteInput({
     const disabledClassName = isNonInteractive ? 'bg-slate-100 text-slate-400' : 'bg-white';
 
     const filteredOptions = useMemo(() => {
-        const normalized = String(value ?? '').trim().toLowerCase();
+        const normalized = String(searchVal ?? '').trim().toLowerCase();
         if (!normalized) {
             return INDONESIAN_CITIES.slice(0, 50);
         }
@@ -65,19 +71,33 @@ export default function CityAutocompleteInput({
                     item.province.toLowerCase().includes(normalized)
             )
             .slice(0, 50);
-    }, [value]);
+    }, [searchVal]);
 
     const handleSelect = (item) => {
+        isSelectingRef.current = true;
         onSelectCity?.(item);
+        setSearchVal(item.city);
         setOpen(false);
         clearError(contextKey);
+        setTimeout(() => {
+            isSelectingRef.current = false;
+        }, 200);
     };
 
     const handleClear = () => {
+        setSearchVal('');
         onSelectCity?.({ city: '', province: '', postalCode: '', country: '' });
         setOpen(false);
         clearError(contextKey);
         setTimeout(() => inputRef.current?.focus(), 50);
+    };
+
+    const handleBlur = () => {
+        setTimeout(() => {
+            if (!isSelectingRef.current) {
+                onChange?.(searchVal);
+            }
+        }, 150);
     };
 
     const highlightText = (text, highlight) => {
@@ -124,13 +144,14 @@ export default function CityAutocompleteInput({
                         ref={inputRef}
                         id={id}
                         type="text"
-                        value={value}
+                        value={searchVal}
                         onChange={(e) => {
                             const cleanedVal = e.target.value.replace(/[^a-zA-Z\s'.-]/g, '');
-                            onChange?.(cleanedVal);
+                            setSearchVal(cleanedVal);
                             setOpen(true);
                         }}
                         onFocus={() => setOpen(true)}
+                        onBlur={handleBlur}
                         placeholder={placeholder}
                         disabled={disabled}
                         autoComplete="off"
@@ -140,7 +161,7 @@ export default function CityAutocompleteInput({
                 </div>
 
                 <div className="flex h-full items-center gap-1.5 pr-3 pl-1 shrink-0">
-                    {value && !disabled ? (
+                    {searchVal && !disabled ? (
                         <button
                             type="button"
                             onClick={handleClear}
@@ -177,10 +198,10 @@ export default function CityAutocompleteInput({
                                     className="flex w-full flex-col px-4 py-2 text-left hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
                                 >
                                     <span className="text-xs sm:text-sm font-medium text-[#131a28]">
-                                        {highlightText(item.city, value)}
+                                        {highlightText(item.city, searchVal)}
                                     </span>
                                     <span className="text-[10px] sm:text-xs text-[#7b8597]">
-                                        {highlightText(item.province, value)}
+                                        {highlightText(item.province, searchVal)}
                                     </span>
                                 </button>
                             ))
