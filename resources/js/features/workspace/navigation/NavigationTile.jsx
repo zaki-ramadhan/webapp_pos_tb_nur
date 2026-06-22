@@ -7,22 +7,30 @@ import {
     WORKSPACE_INACTIVE_HINT,
 } from '@/features/workspace/shared/workspaceAvailability';
 
-const toneClasses = {
+export const toneClasses = {
     amber: {
         button: 'border-[#ff8b34] bg-[#ffeddc] hover:bg-[#ffe3cd]',
         icon: 'text-[#de6f13]',
+        iconBg: 'bg-[#ffeddc]',
+        iconText: 'text-[#de6f13]',
     },
     blue: {
         button: 'border-[#3d9ff2] bg-[#dcedff] hover:bg-[#d0e6ff]',
         icon: 'text-[#1472b6]',
+        iconBg: 'bg-[#dcedff]',
+        iconText: 'text-[#1472b6]',
     },
     green: {
         button: 'border-[#81c442] bg-[#ddf7d2] hover:bg-[#d3f0c4]',
         icon: 'text-[#5d930f]',
+        iconBg: 'bg-[#ddf7d2]',
+        iconText: 'text-[#5d930f]',
     },
     purple: {
         button: 'border-[#b56dff] bg-[#ecddff] hover:bg-[#e3d1ff]',
         icon: 'text-[#681db1]',
+        iconBg: 'bg-[#ecddff]',
+        iconText: 'text-[#681db1]',
     },
 };
 

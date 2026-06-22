@@ -112,6 +112,10 @@ export default function DashboardTopBar({
                             widthClassName="w-[min(180px,calc(100vw-1rem))]"
                             className="z-[70]"
                         >
+                            <div className="border-b border-[#edf1f6] px-3 py-2 text-left lg:hidden">
+                                <p className="truncate text-xs font-semibold text-[#1f2536]">{user.name}</p>
+                                <p className="truncate text-[10px] text-[#7b849c]">{user.role || 'Pengguna'}</p>
+                            </div>
                             <DropdownMenuItem
                                 onClick={handleLogout}
                                 icon={isLoggingOut ? <Spinner className="h-4 w-4 text-[#1f63ad]" /> : <LogoutIcon />}
