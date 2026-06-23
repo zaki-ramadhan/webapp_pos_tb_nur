@@ -104,7 +104,7 @@ class BackendActivityLogger
 
     protected function resolveDocumentNumber(Model $record): ?string
     {
-        foreach (['document_number', 'checkin_number', 'code', 'report_key', 'setting_key', 'name'] as $field) {
+        foreach (['document_number', 'checkin_number', 'employee_code', 'code', 'rule_name', 'report_key', 'setting_key', 'name'] as $field) {
             $value = $record->getAttribute($field);
 
             if (filled($value)) {
@@ -117,7 +117,7 @@ class BackendActivityLogger
 
     protected function resolveSubjectLabel(Model $record): ?string
     {
-        foreach (['name', 'title', 'label', 'document_number', 'checkin_number', 'code', 'report_key', 'setting_key'] as $field) {
+        foreach (['full_name', 'name', 'rule_name', 'title', 'label', 'document_number', 'checkin_number', 'employee_code', 'code', 'report_key', 'setting_key'] as $field) {
             $value = $record->getAttribute($field);
 
             if (filled($value)) {
