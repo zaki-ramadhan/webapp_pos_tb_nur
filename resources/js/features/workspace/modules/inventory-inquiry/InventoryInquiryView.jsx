@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -20,6 +20,12 @@ import {
 } from '@/features/workspace/shared/Icons';
 
 import { cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
+import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import {
+    BACKEND_INVENTORY_RESOURCES,
+    buildInventoryFilters,
+    mapInventoryRows,
+} from '@/features/workspace/backend/workspaceBackendAdapters';
 
 function buildInitialValues(config) {
     return (config.controls ?? []).reduce((result, control) => {
@@ -120,23 +126,28 @@ function InquiryControl({ control, value, onChange, onRefresh }) {
     );
 }
 
-export default function InventoryInquiryView({
-    config,
-    rows = null,
-    loading = false,
-    error = '',
-    onRefresh = null,
-    onFiltersChange = null,
-}) {
+export default function InventoryInquiryView({ config, pageId }) {
+    const resource = BACKEND_INVENTORY_RESOURCES[pageId];
     const [values, setValues] = useState(() => buildInitialValues(config));
     const [keyword, setKeyword] = useState(config.search?.value ?? '');
+    const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, {}));
 
-    useEffect(() => {
-        onFiltersChange?.({
-            ...values,
-            keyword,
-        });
-    }, [keyword, onFiltersChange, values]);
+    const {
+        rows: rawRows,
+        loading,
+        error,
+        reload,
+        page: currentPage,
+        perPage,
+        setPage,
+        setPerPage,
+        lastPage,
+        from,
+        to,
+        total,
+    } = useBackendIndexResource({ resource, filters });
+
+    const tableRows = useMemo(() => mapInventoryRows(pageId, rawRows), [pageId, rawRows]);
 
     const cleanedColumns = useMemo(() => {
         return (config.table.columns ?? []).map(col => ({
@@ -146,31 +157,24 @@ export default function InventoryInquiryView({
     }, [config.table.columns]);
 
     const filteredRows = useMemo(() => {
-        const sourceRows = rows ?? config.table.rows ?? [];
         const normalizedKeyword = keyword.trim().toLowerCase();
-
-        if (!normalizedKeyword) {
-            return sourceRows;
-        }
+        if (!normalizedKeyword) return tableRows;
 
         const searchKeys = config.table.searchKeys?.length
             ? config.table.searchKeys
-            : cleanedColumns.filter((column) => column.kind !== 'checkbox').map((column) => column.id);
+            : cleanedColumns.filter((col) => col.kind !== 'checkbox').map((col) => col.id);
 
-        return sourceRows.filter((row) =>
+        return tableRows.filter((row) =>
             searchKeys.some((key) =>
-                String(row[key] ?? '')
-                    .toLowerCase()
-                    .includes(normalizedKeyword),
+                String(row[key] ?? '').toLowerCase().includes(normalizedKeyword),
             ),
         );
-    }, [cleanedColumns, config.table.rows, config.table.searchKeys, keyword, rows]);
+    }, [cleanedColumns, config.table.searchKeys, keyword, tableRows]);
 
     function handleChange(controlId, nextValue) {
-        setValues((currentValues) => ({
-            ...currentValues,
-            [controlId]: nextValue,
-        }));
+        const nextValues = { ...values, [controlId]: nextValue };
+        setValues(nextValues);
+        setFilters(buildInventoryFilters(pageId, nextValues));
     }
 
     const firstColumnIsCheckbox = cleanedColumns[0]?.kind === 'checkbox';
@@ -181,7 +185,7 @@ export default function InventoryInquiryView({
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                     {(config.controls ?? []).map((control) => (
                         <div key={control.id} className={control.wrapperClassName ?? ''}>
-                            <InquiryControl control={control} value={values[control.id] ?? ''} onChange={handleChange} onRefresh={onRefresh} />
+                            <InquiryControl control={control} value={values[control.id] ?? ''} onChange={handleChange} onRefresh={reload} />
                         </div>
                     ))}
                 </div>
@@ -243,7 +247,7 @@ export default function InventoryInquiryView({
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
                                     <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
-                                        {config.table.pagination ? (config.table.pagination.from + index) : (index + 1)}
+                                        {from > 0 ? (from + index) : (index + 1)}
                                     </DataTableCell>
                                     {cleanedColumns.map((column) => (
                                         <DataTableCell
@@ -276,16 +280,16 @@ export default function InventoryInquiryView({
                 </DataTable>
             </div>
 
-            {config.table.pagination ? (
+            {total > 0 ? (
                 <Pagination
-                    page={config.table.pagination.page}
-                    perPage={config.table.pagination.perPage}
-                    total={config.table.pagination.total}
-                    lastPage={config.table.pagination.lastPage}
-                    from={config.table.pagination.from}
-                    to={config.table.pagination.to}
-                    onPageChange={config.table.pagination.onPageChange}
-                    onPerPageChange={config.table.pagination.onPerPageChange}
+                    page={currentPage}
+                    perPage={perPage}
+                    total={total}
+                    lastPage={lastPage}
+                    from={from}
+                    to={to}
+                    onPageChange={setPage}
+                    onPerPageChange={setPerPage}
                     className="mt-3"
                 />
             ) : null}
