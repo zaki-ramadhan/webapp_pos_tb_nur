@@ -92,30 +92,6 @@ export default function TransferMoneySection({ config, values, setValues, handle
                         searchLabel="Cari cabang asal"
                     />
 
-                    <TransactionFieldLabel label={config.labels.exchangeRate} />
-                    <div className="max-w-[276px]">
-                        {values.exchangeRateLabel ? (
-                            <div className="mb-1 text-sm text-slate-500 font-medium">{values.exchangeRateLabel}</div>
-                        ) : null}
-                        <div className="flex gap-2 items-center">
-                            <div className="flex-1">
-                                <TransferValueInput
-                                    prefix="Rp"
-                                    value={values.exchangeRate}
-                                    onChange={(event) => setValues((current) => applyBankTransferComputedValues({ ...current, exchangeRate: event.target.value }))}
-                                />
-                            </div>
-                            <button
-                                type="button"
-                                onClick={handleFetchRate}
-                                disabled={fetchingRate}
-                                className="inline-flex shrink-0 items-center justify-center h-[34px] px-3 rounded-[4px] border border-slate-200 bg-white text-sm font-semibold text-[#ED3969] shadow-sm transition hover:bg-slate-50 disabled:opacity-60 disabled:pointer-events-none"
-                            >
-                                {fetchingRate ? '...' : 'Ambil Kurs API'}
-                            </button>
-                        </div>
-                    </div>
-
                     <TransactionFieldLabel label={config.labels.transferValue} required />
                     <div className="max-w-[276px]">
                         <TransferValueInput

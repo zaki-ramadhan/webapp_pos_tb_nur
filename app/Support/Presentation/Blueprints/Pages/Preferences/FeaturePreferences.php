@@ -8,45 +8,6 @@ class FeaturePreferences
     {
         return [
             [
-                'id' => 'feature-company',
-                'label' => 'Perusahaan',
-                'sections' => [
-                    [
-                        'id' => 'basic-features',
-                        'title' => 'Fitur Dasar',
-                        'icon' => 'settings',
-                        'column' => 1,
-                        'items' => [
-                            ['id' => 'multi-branch', 'label' => 'Multi Cabang', 'checked' => false],
-                            ['id' => 'multi-currency', 'label' => 'Multi Mata Uang', 'checked' => false],
-                            ['id' => 'tax-feature', 'label' => 'Pajak', 'checked' => true],
-                            ['id' => 'approval-feature', 'label' => 'Persetujuan (Approval)', 'checked' => true],
-                            ['id' => 'asset-feature', 'label' => 'Pencatatan Aset', 'checked' => true],
-                            ['id' => 'budget-feature', 'label' => 'Anggaran dan Target', 'checked' => true],
-                        ],
-                    ],
-                    [
-                        'id' => 'inventory-cost-method',
-                        'title' => 'Metode Biaya Persediaan',
-                        'icon' => 'inventory',
-                        'column' => 1,
-                        'radioItems' => [
-                            ['id' => 'inventory-average', 'label' => 'Rata-rata', 'checked' => false],
-                            ['id' => 'inventory-fifo', 'label' => 'FIFO (First In First Out)', 'checked' => true],
-                        ],
-                    ],
-                    [
-                        'id' => 'profit-cost-center',
-                        'title' => 'Pusat Laba & Biaya',
-                        'icon' => 'department',
-                        'column' => 2,
-                        'items' => [
-                            ['id' => 'department-center', 'label' => 'Departemen', 'checked' => true],
-                        ],
-                    ],
-                ],
-            ],
-            [
                 'id' => 'feature-sales',
                 'label' => 'Penjualan',
                 'sections' => [
@@ -56,7 +17,7 @@ class FeaturePreferences
                         'icon' => 'sales',
                         'column' => 1,
                         'items' => [
-                            ['id' => 'sales-quote-order', 'label' => 'Penawaran dan Pesanan Penjualan', 'checked' => true],
+                            ['id' => 'sales-quote-order', 'label' => 'Penawaran dan Pesanan Penjualan', 'checked' => false],
                             ['id' => 'sales-return', 'label' => 'Retur Penjualan', 'checked' => true],
                             ['id' => 'price-adjustment', 'label' => 'Penyesuaian Harga atau Diskon', 'checked' => true],
                             ['id' => 'salesman', 'label' => 'Tenaga Penjual (Salesman)', 'checked' => true],
@@ -68,8 +29,8 @@ class FeaturePreferences
                         'icon' => 'numbering',
                         'column' => 2,
                         'items' => [
-                            ['id' => 'delivery-service', 'label' => 'Jasa Pengiriman', 'checked' => true],
-                            ['id' => 'payment-terms', 'label' => 'Syarat Pembayaran', 'checked' => true],
+                            ['id' => 'delivery-service', 'label' => 'Jasa Pengiriman', 'checked' => false],
+                            ['id' => 'payment-terms', 'label' => 'Syarat Pembayaran', 'checked' => false],
                         ],
                     ],
                 ],
@@ -84,7 +45,7 @@ class FeaturePreferences
                         'icon' => 'purchase',
                         'column' => 1,
                         'items' => [
-                            ['id' => 'purchase-order', 'label' => 'Pesanan Pembelian', 'checked' => true],
+                            ['id' => 'purchase-order', 'label' => 'Pesanan Pembelian', 'checked' => false],
                             ['id' => 'supplier-price-list', 'label' => 'Daftar Harga Pemasok', 'checked' => true],
                         ],
                     ],
@@ -102,8 +63,8 @@ class FeaturePreferences
                         'items' => [
                             ['id' => 'item-request', 'label' => 'Permintaan Barang', 'checked' => true],
                             ['id' => 'multi-warehouse', 'label' => 'Multi Gudang', 'checked' => true],
-                            ['id' => 'multi-unit', 'label' => 'Multi Satuan Barang', 'checked' => true],
-                            ['id' => 'simple-production', 'label' => 'Produksi Sederhana', 'checked' => true],
+                            ['id' => 'multi-unit', 'label' => 'Multi Satuan Barang', 'checked' => false],
+                            ['id' => 'simple-production', 'label' => 'Produksi Sederhana', 'checked' => false],
                         ],
                     ],
                 ],

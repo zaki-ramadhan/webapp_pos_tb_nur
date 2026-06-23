@@ -122,6 +122,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                 disabled={field.disabled}
                 error={field.error}
                 message={field.message}
+                clearable={field.clearable ?? false}
                 trailing={
                     field.clearable && hasValue ? (
                         <button

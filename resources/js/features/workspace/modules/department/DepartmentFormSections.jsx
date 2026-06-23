@@ -178,28 +178,30 @@ export function DepartmentOpeningBalanceTab({ form, values, onChange }) {
         <div className="space-y-4">
             <h3 className="text-2xl font-normal leading-none text-[#1f2436]">{openingBalance.title}</h3>
 
-            <div className="grid gap-3 sm:grid-cols-[140px_266px] sm:items-center">
-                <label className="text-xs sm:text-sm text-[#1f2436]">{openingBalance.dateLabel}</label>
-                <TransactionDateInput
-                    value={values.openingDate}
-                    onChange={(nextValue) => onChange('openingDate', nextValue)}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                    trailingClassName="w-[42px] shrink-0 justify-center px-0"
-                />
-            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+                <div className="flex items-center gap-3">
+                    <label className="text-xs sm:text-sm text-[#1f2436] shrink-0">{openingBalance.dateLabel}</label>
+                    <TransactionDateInput
+                        value={values.openingDate}
+                        onChange={(nextValue) => onChange('openingDate', nextValue)}
+                        className="h-[40px] w-[180px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        trailingClassName="w-[42px] shrink-0 justify-center px-0"
+                    />
+                </div>
 
-            <div className="max-w-[420px]">
-                <AccountLookupTextInput
-                    value={values.openingBalanceKeyword}
-                    placeholder={openingBalance.accountPlaceholder}
-                    searchLabel="Cari akun perkiraan saldo awal"
-                    dialogTitle="Pilih Akun Perkiraan Saldo Awal"
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                    trailingClassName="px-2.5"
-                    onSelectAccount={(_, label) => onChange('openingBalanceKeyword', label ?? '')}
-                />
+                <div className="w-full sm:w-[360px]">
+                    <AccountLookupTextInput
+                        value={values.openingBalanceKeyword}
+                        placeholder={openingBalance.accountPlaceholder}
+                        searchLabel="Cari akun perkiraan saldo awal"
+                        dialogTitle="Pilih Akun Perkiraan Saldo Awal"
+                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        trailingClassName="px-2.5"
+                        onSelectAccount={(_, label) => onChange('openingBalanceKeyword', label ?? '')}
+                    />
+                </div>
             </div>
 
             <DepartmentOpeningBalanceTable

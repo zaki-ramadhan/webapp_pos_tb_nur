@@ -51,12 +51,12 @@ function SearchMenuCard({ item, onSelect }) {
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
     const isSelectable = isImplemented && !isInactive;
     const className = isInactive
-        ? 'border-[#f0d9a3] bg-[#fff8e9] text-[#9d7a24]'
+        ? 'border-[#d1d5db] bg-[#f3f4f6] text-[#6b7280] opacity-80 saturate-0'
         : isImplemented
           ? `${toneClassName.border} ${toneClassName.hover}`
           : 'border-[#d6d9e2] bg-[#eef0f4] text-[#9aa3b1] opacity-80 saturate-0';
-    const iconClassName = isInactive ? 'text-[#b67d12]' : isImplemented ? toneClassName.icon : 'text-[#9aa3b1]';
-    const labelClassName = isInactive ? 'text-[#7d6220]' : isImplemented ? 'text-[#495164]' : 'text-[#8f97a7]';
+    const iconClassName = isInactive ? 'text-[#9ca3af]' : isImplemented ? toneClassName.icon : 'text-[#9aa3b1]';
+    const labelClassName = isInactive ? 'text-[#4b5563]' : isImplemented ? 'text-[#495164]' : 'text-[#8f97a7]';
     const statusLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
     return (
@@ -76,8 +76,8 @@ function SearchMenuCard({ item, onSelect }) {
             <span className={`text-sm font-medium leading-5 ${labelClassName}`.trim()}>{item.label}</span>
             {statusLabel ? (
                 <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] ${
-                        isInactive ? 'bg-[#f6dfab] text-[#8b6511]' : 'bg-[#dde2ea] text-[#7d8698]'
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
+                        isInactive ? 'bg-[#e5e7eb] text-[#5e6678]' : 'bg-[#dde2ea] text-[#7d8698]'
                     }`.trim()}
                 >
                     {isInactive ? WORKSPACE_INACTIVE_BADGE_LABEL : 'Draft'}

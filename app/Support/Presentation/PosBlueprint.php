@@ -124,6 +124,12 @@ final class PosBlueprint
             ->where('scope_key', 'default')
             ->pluck('value', 'setting_key')
             ->map(function ($value) {
+                if (is_bool($value)) {
+                    return $value;
+                }
+                if (!is_string($value)) {
+                    return $value;
+                }
                 $decoded = json_decode($value, true);
                 if ($decoded === 'true' || $decoded === true) {
                     return true;
@@ -131,7 +137,7 @@ final class PosBlueprint
                 if ($decoded === 'false' || $decoded === false) {
                     return false;
                 }
-                return $decoded;
+                return $decoded ?? $value;
             })
             ->toArray();
     }
@@ -341,7 +347,7 @@ final class PosBlueprint
                 self::navItem('item-unit', 'Satuan Barang', 'unit', 'blue'),
                 self::navItem('item-category', 'Kategori Barang', 'category', 'blue'),
                 // self::navItem('order-fulfillment', 'Pemenuhan Pesanan', 'inventory', 'purple'),
-                self::navItem('item-location', 'Barang pergudang', 'location', 'purple'),
+                self::navItem('item-location', 'Barang per gudang', 'location', 'purple'),
                 self::navItem('minimum-stock', 'Barang stok minimum', 'box', 'purple'),
             ]),
             // self::navModule('fixed-assets', 'Aset Tetap', 'asset', [

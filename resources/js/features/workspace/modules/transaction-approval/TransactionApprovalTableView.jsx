@@ -59,7 +59,6 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
             <TableToolbar
                 filters={table.filters?.length ? <ApprovalFilterSlot filters={table.filters} values={filterValues} onChange={handleFilterChange} /> : null}
-                topRowClassName="mb-4"
                 size="compact"
                 createButton={{ label: table.createLabel, onClick: onCreate, icon: <PlusIcon className="h-6 w-6" /> }}
                 refreshButton={{ label: table.refreshLabel, onClick: onRefresh, icon: <RefreshIcon className="h-5 w-5" /> }}

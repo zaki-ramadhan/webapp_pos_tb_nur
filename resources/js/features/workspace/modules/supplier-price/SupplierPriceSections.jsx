@@ -93,10 +93,6 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                         ))}
                     </SelectField>
                 </div>
-
-                <FormFieldRow label={config.labels.currency} required>
-                    <ChipLookupField values={values.currencies} placeholder={config.currencyPlaceholder} searchLabel="Cari mata uang" />
-                </FormFieldRow>
             </div>
         </div>
     );

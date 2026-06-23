@@ -21,6 +21,7 @@ export default function ModuleFormTemplate({
                         tabs={form.tabs}
                         activeTabId={activeTabId}
                         onSelectTab={setActiveTabId}
+                        className="pl-0 sm:pl-0"
                     />
                 </div>
             ) : null}

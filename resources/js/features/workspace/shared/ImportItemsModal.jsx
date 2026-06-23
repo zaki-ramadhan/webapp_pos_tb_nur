@@ -205,7 +205,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             <h3 className="text-base font-semibold text-slate-800 mb-3 border-b pb-2">
                                 Sesuaikan Pemetaan Kolom
                             </h3>
-                            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                                 <ColumnMappingSelect label="Kode Barang / Barcode *" fieldKey="code" mapping={columnMapping} setMapping={setColumnMapping} csvHeaders={csvHeaders} />
                                 <ColumnMappingSelect label="Kuantitas *" fieldKey="quantity" mapping={columnMapping} setMapping={setColumnMapping} csvHeaders={csvHeaders} />
                                 <ColumnMappingSelect label="Harga Satuan" fieldKey="price" mapping={columnMapping} setMapping={setColumnMapping} csvHeaders={csvHeaders} defaultLabel="-- Gunakan Harga Default --" />

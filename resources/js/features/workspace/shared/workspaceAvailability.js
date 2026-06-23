@@ -1,8 +1,20 @@
 const inactiveWorkspacePageIds = new Set(['transaction-approval']);
 
-const inactiveReportCategoryIds = new Set([]);
+const inactiveReportCategoryIds = new Set([
+    'profit-center',
+]);
 
-const inactivePreferenceChecklistItemIds = new Set([]);
+const inactivePreferenceChecklistItemIds = new Set([
+    'multi-branch',
+    'tax-feature',
+    'delivery-service',
+    'payment-terms',
+    'purchase-order',
+    'multi-unit',
+    'simple-production',
+    'sales-quote-order',
+    'department-center',
+]);
 
 const inactiveWorkspaceControlIds = new Set([
     'item-brand-field',
@@ -26,7 +38,6 @@ const pageToFeatureMap = {
     'sales-quote': 'sales-quote-order',
     'sales-order': 'sales-quote-order',
     'sales-delivery': 'sales-quote-order',
-    'sales-deposit': 'sales-quote-order',
     'sales-return': 'sales-return',
     'price-adjustment': 'price-adjustment',
     'sales-commission': 'salesman',
@@ -46,6 +57,8 @@ const pageToFeatureMap = {
     // Persediaan
     'item-request': 'item-request',
     'stock-transfer': 'multi-warehouse',
+    'warehouse-master': 'multi-warehouse',
+    'item-location': 'multi-warehouse',
     'work-order': 'simple-production',
     'material-addition': 'simple-production',
     'work-completion': 'simple-production',
@@ -54,23 +67,23 @@ const pageToFeatureMap = {
 const featureDefaults = {
     'multi-branch': false,
     'multi-currency': true,
-    'tax-feature': true,
-    'approval-feature': true,
-    'asset-feature': true,
-    'budget-feature': true,
-    'department-center': true,
-    'sales-quote-order': true,
+    'tax-feature': false,
+    'approval-feature': false,
+    'asset-feature': false,
+    'budget-feature': false,
+    'department-center': false,
+    'sales-quote-order': false,
     'sales-return': true,
     'price-adjustment': true,
     'salesman': true,
-    'delivery-service': true,
-    'payment-terms': true,
-    'purchase-order': true,
+    'delivery-service': false,
+    'payment-terms': false,
+    'purchase-order': false,
     'supplier-price-list': true,
     'item-request': true,
     'multi-warehouse': true,
-    'multi-unit': true,
-    'simple-production': true,
+    'multi-unit': false,
+    'simple-production': false,
 };
 
 export const WORKSPACE_INACTIVE_BADGE_LABEL = 'Nonaktif';

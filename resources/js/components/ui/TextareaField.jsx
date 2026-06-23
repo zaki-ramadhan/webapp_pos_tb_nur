@@ -28,7 +28,10 @@ export default function TextareaField({
     function handleChange(event) {
         if (!onChange) return;
         // Bersihkan tag HTML
-        const sanitized = event.target.value.replace(/<[^>]*>/g, '');
+        let sanitized = event.target.value.replace(/<[^>]*>/g, '');
+        if (sanitized.startsWith(' ')) {
+            sanitized = sanitized.trimStart();
+        }
         if (sanitized !== event.target.value) {
             event.target.value = sanitized;
         }

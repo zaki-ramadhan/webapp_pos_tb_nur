@@ -16,6 +16,9 @@ function resolveMaxColumns(itemCount) {
 }
 
 function resolveColumnCount(itemCount) {
+    if (itemCount === 4) {
+        return 3;
+    }
     if (itemCount <= 1) {
         return 1;
     }

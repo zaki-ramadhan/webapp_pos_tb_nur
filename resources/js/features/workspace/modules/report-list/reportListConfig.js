@@ -174,8 +174,8 @@ const reports = [
         'sales-item-by-warehouse',
         'sales',
         'Penjualan',
-        'Penjualan Barang pergudang',
-        'Menampilkan nilai penjualan barang pergudang',
+        'Penjualan Barang per gudang',
+        'Menampilkan nilai penjualan barang per gudang',
         'ledger'
     ),
     createReport(

@@ -1,5 +1,6 @@
 import React from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
+import RadioField from '@/components/ui/RadioField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import PreferenceLookupAutocomplete from './PreferenceLookupAutocomplete';
@@ -27,10 +28,11 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
             <TextInput
                 id={`${block.id}-before-value`}
                 value={block.beforeValue ?? ''}
-                containerClassName="w-[60px]"
-                className="h-[38px] w-[60px] rounded-[6px] border-[#cfd6e2]"
-                inputClassName="px-2 text-left text-xs sm:text-sm text-[#111827]"
+                containerClassName="w-[85px]"
+                className="h-[38px] w-[85px] rounded-[6px] border-[#cfd6e2]"
+                inputClassName="px-3 text-left text-xs sm:text-sm text-[#111827]"
                 maxLength={3}
+                clearable={false}
                 onChange={(event) =>
                     onChangeBlock(rowId, optionValue, block.id, 'beforeValue', event.target.value)
                 }
@@ -58,10 +60,11 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
             <TextInput
                 id={`${block.id}-after-value`}
                 value={block.afterValue ?? ''}
-                containerClassName="w-[60px]"
-                className="h-[38px] w-[60px] rounded-[6px] border-[#cfd6e2]"
-                inputClassName="px-2 text-left text-xs sm:text-sm text-[#111827]"
+                containerClassName="w-[85px]"
+                className="h-[38px] w-[85px] rounded-[6px] border-[#cfd6e2]"
+                inputClassName="px-3 text-left text-xs sm:text-sm text-[#111827]"
                 maxLength={3}
+                clearable={false}
                 onChange={(event) =>
                     onChangeBlock(rowId, optionValue, block.id, 'afterValue', event.target.value)
                 }

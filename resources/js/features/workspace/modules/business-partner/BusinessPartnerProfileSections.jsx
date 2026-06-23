@@ -155,16 +155,6 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                     </FormFieldRow>
 
 
-
-                    <FormFieldRow label={config.labels.currency} required>
-                        <ChipLookupField
-                            values={values.currencies}
-                            placeholder={config.lookupPlaceholders.default}
-                            onRemove={() => {}}
-                            searchLabel="Cari mata uang"
-                        />
-                    </FormFieldRow>
-
                     {config.generalRightFields?.map((field) => (
                         <FormFieldRow key={field.id} label={field.label}>
                             {field.type === 'checkbox' ? (

@@ -147,7 +147,7 @@ export default function ReferenceLookupInput({
 
     const toneClassName = resolvedError
         ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
-        : 'border-[#cfd6e2] focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+        : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div ref={rootRef} className={`relative w-full ${className}`.trim()}>

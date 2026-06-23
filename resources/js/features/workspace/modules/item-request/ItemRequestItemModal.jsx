@@ -11,6 +11,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { TableActionIcon } from '@/features/workspace/shared/Icons';
+import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 function cloneLookupValues(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -38,6 +39,8 @@ function ModalFieldRow({ label, required = false, children }) {
 }
 
 function ItemDetailsTab({ values, setValues }) {
+    const hideDepartment = isWorkspacePageInactive('department');
+
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Kode #">
@@ -89,20 +92,22 @@ function ItemDetailsTab({ values, setValues }) {
                 </div>
             </ModalFieldRow>
 
-            <ModalFieldRow label="Departemen">
-                <ChipLookupField
-                    values={values.department}
-                    placeholder="Cari/Pilih..."
-                    searchLabel="Cari departemen"
-                    onRemove={(departmentValue) =>
-                        setValues((current) => ({
-                            ...current,
-                            department: current.department.filter((item) => item !== departmentValue),
-                        }))
-                    }
-                    heightClassName="h-[36px]"
-                />
-            </ModalFieldRow>
+            {!hideDepartment ? (
+                <ModalFieldRow label="Departemen">
+                    <ChipLookupField
+                        values={values.department}
+                        placeholder="Cari/Pilih..."
+                        searchLabel="Cari departemen"
+                        onRemove={(departmentValue) =>
+                            setValues((current) => ({
+                                ...current,
+                                department: current.department.filter((item) => item !== departmentValue),
+                            }))
+                        }
+                        heightClassName="h-[36px]"
+                    />
+                </ModalFieldRow>
+            ) : null}
         </div>
     );
 }

@@ -3,6 +3,9 @@ import { useRef, useState, useEffect } from 'react';
 import { useFormError } from './FormErrorContext';
 
 function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false) {
+    if (typeof val === 'string' && val.startsWith(' ')) {
+        val = val.trimStart();
+    }
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
     
@@ -182,6 +185,7 @@ export default function TextInput({
     onChange,
     value,
     defaultValue,
+    clearable = true,
     ...props
 }) {
     const inputRef = useRef(null);
@@ -201,6 +205,8 @@ export default function TextInput({
 
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
+    const hasHeightClass = className.split(' ').some(c => c.startsWith('h-') || c.startsWith('min-h-') || c.startsWith('max-h-'));
+    const heightClass = hasHeightClass ? '' : 'h-11';
     const isNonInteractive = disabled || (readOnly && !interactiveReadOnly);
     const toneClassName = resolvedError
         ? isNonInteractive
@@ -395,13 +401,13 @@ export default function TextInput({
     const isClearOrClose = isClearOrCloseElement(trailing);
     const showTrailing = trailing 
         ? !(isNonInteractive && isClearOrClose)
-        : (onChange && !isNonInteractive && localValue !== undefined && localValue !== null && localValue !== '');
+        : (clearable && onChange && !isNonInteractive && localValue !== undefined && localValue !== null && localValue !== '');
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
             <div
                 onMouseDown={focusInputFromWrapper}
-                className={`group flex h-11 w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
+                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
             >
                 {prefix ? (
                     <span

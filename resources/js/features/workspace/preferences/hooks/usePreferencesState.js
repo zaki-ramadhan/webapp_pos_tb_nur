@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
+import { usePage } from '@inertiajs/react';
 import { mergeValuesIntoTabs } from '../preferenceMapping';
 
 export default function usePreferencesState(workspace, backendRows) {
-    const [values, setValues] = useState({});
+    const { props } = usePage();
+    const initialPrefs = props.dashboard?.preferences ?? {};
+
+    const [values, setValues] = useState(initialPrefs);
     const [isDirty, setIsDirty] = useState(false);
 
     useEffect(() => {
@@ -20,15 +24,18 @@ export default function usePreferencesState(workspace, backendRows) {
         setIsDirty(true);
     };
 
-    const [tabsData, setTabsData] = useState({
-        features: workspace.featureTabs,
-        tax: workspace.taxTabs,
-        approval: workspace.approvalTabs,
-        attachments: workspace.attachmentsTabs,
-        sales: workspace.salesTabs,
-        purchase: workspace.purchaseTabs,
-        limitations: workspace.limitationsTabs,
-        others: workspace.othersTabs,
+    const [tabsData, setTabsData] = useState(() => {
+        const base = {
+            features: workspace.featureTabs,
+            tax: workspace.taxTabs,
+            approval: workspace.approvalTabs,
+            attachments: workspace.attachmentsTabs,
+            sales: workspace.salesTabs,
+            purchase: workspace.purchaseTabs,
+            limitations: workspace.limitationsTabs,
+            others: workspace.othersTabs,
+        };
+        return mergeValuesIntoTabs(base, initialPrefs);
     });
 
     const [activeAttachmentsTabId, setActiveAttachmentsTabId] = useState(workspace.attachmentsTabs?.[0]?.id ?? '');

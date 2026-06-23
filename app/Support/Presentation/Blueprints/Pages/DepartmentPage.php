@@ -76,10 +76,6 @@ class DepartmentPage
                                 'label' => 'Departemen',
                             ],
                             [
-                                'id' => 'department-opening-balance',
-                                'label' => 'Saldo Awal',
-                            ],
-                            [
                                 'id' => 'department-users',
                                 'label' => 'Daftar Pengguna',
                             ],

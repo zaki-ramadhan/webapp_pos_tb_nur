@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import {
     createDetailTabOpeners,
     resolveActivePageContentTabs,
@@ -18,6 +18,28 @@ export default function useWorkspaceTabs({
 }) {
     const [activeLevel2Tabs, setActiveLevel2Tabs] = useState(initialActiveLevel2Tabs);
     const [pageLevel2ContentTabs, setPageLevel2ContentTabs] = useState(initialPageLevel2ContentTabs);
+
+    useEffect(() => {
+        function handleUpdateTabLabel(e) {
+            const { pageId, tabId, label } = e.detail || {};
+            if (!pageId || !tabId || !label) return;
+
+            setPageLevel2ContentTabs((currentTabs) => {
+                const pageTabs = currentTabs[pageId] ?? [];
+                const updatedTabs = pageTabs.map((tab) =>
+                    tab.id === tabId ? { ...tab, label } : tab
+                );
+
+                return {
+                    ...currentTabs,
+                    [pageId]: updatedTabs,
+                };
+            });
+        }
+
+        window.addEventListener('workspace:update-tab-label', handleUpdateTabLabel);
+        return () => window.removeEventListener('workspace:update-tab-label', handleUpdateTabLabel);
+    }, []);
 
     const handleOpenContentTab = useCallback((pageId, tab) => {
         if (!pages[pageId]?.subtab && !pages[pageId]?.detailTabsOnly) {

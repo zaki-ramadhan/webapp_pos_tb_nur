@@ -16,6 +16,7 @@ import {
     renderItemsServicesDockIcon,
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -68,11 +69,12 @@ export default function ItemsServicesFormView({
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId]);
 
-    useEffect(() => {
-        if (!isDirty) {
-            setValues(initialValues);
-        }
-    }, [initialValues, isDirty]);
+    useFormValuesSync({
+        initialValues,
+        recordId: detailRow?.id ?? null,
+        isDirty,
+        setValues,
+    });
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({

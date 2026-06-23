@@ -42,12 +42,12 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
     const isSelectable = isImplemented && !isInactive;
     const stateClassName = isInactive
-        ? 'border-[#f2d38a] bg-[#fff7e3] text-[#9d7a24]'
+        ? 'border-[#d1d5db] bg-[#f3f4f6] text-[#6b7280] opacity-80 saturate-0'
         : isImplemented
           ? tone.button
           : 'border-[#d6d9e2] bg-[#eef0f4] text-[#9aa3b1] opacity-80 saturate-0';
-    const iconClassName = isInactive ? 'text-[#c08b17]' : isImplemented ? tone.icon : 'text-[#9aa3b1]';
-    const labelClassName = isInactive ? 'text-[#7d6220]' : isImplemented ? 'text-[#445065]' : 'text-[#8f97a7]';
+    const iconClassName = isInactive ? 'text-[#9ca3af]' : isImplemented ? tone.icon : 'text-[#9aa3b1]';
+    const labelClassName = isInactive ? 'text-[#4b5563]' : isImplemented ? 'text-[#445065]' : 'text-[#8f97a7]';
     const tileClassName = dense
         ? 'min-h-[88px] gap-2.5 rounded-[10px] px-2 py-3.5 sm:min-h-[92px] md:min-h-[96px]'
         : 'min-h-[86px] gap-2.5 rounded-[10px] px-2 py-3.5 sm:min-h-[92px] sm:px-2 md:min-h-[98px]';
@@ -74,8 +74,8 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
             </span>
             {hintLabel ? (
                 <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] ${
-                        isInactive ? 'bg-[#f8e6b4] text-[#8b6511]' : 'bg-[#dde2ea] text-[#7d8698]'
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
+                        isInactive ? 'bg-[#e5e7eb] text-[#5e6678]' : 'bg-[#dde2ea] text-[#7d8698]'
                     }`.trim()}
                 >
                     {isInactive ? WORKSPACE_INACTIVE_BADGE_LABEL : 'Draft'}

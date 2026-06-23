@@ -17,7 +17,7 @@ function InventoryAdjustmentFieldRow({ label, required = false, labelClassName =
 
 export default function InventoryAdjustmentHeader({ config, values, setValues, isDetail }) {
     return (
-        <div className="border-b border-[#d8dde7] px-4 py-4">
+        <div className="px-4 pt-4 pb-0">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] xl:items-start">
                 <div className="space-y-3">
                     <InventoryAdjustmentFieldRow label={config.labels.date} required>
@@ -36,20 +36,25 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
 
                 <div className="space-y-3">
                     {isDetail ? (
-                        <InventoryAdjustmentFieldRow label={config.labels.documentNumber} required labelClassName="sm:text-right">
-                            <TextInput
-                                value={values.documentNumber}
-                                readOnly
-                                trailing={<span className="text-2xl font-semibold text-[#1f2436]">x</span>}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                                trailingClassName="px-3"
-                            />
-                        </InventoryAdjustmentFieldRow>
+                        <div className="grid gap-3 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                            <div className="flex items-center justify-start sm:justify-end">
+                                <TransactionFieldLabel label={config.labels.documentNumber} required className="whitespace-nowrap sm:text-right" />
+                            </div>
+                            <div className="flex sm:justify-end">
+                                <TextInput
+                                    value={values.documentNumber}
+                                    readOnly
+                                    trailing={<span className="text-2xl font-semibold text-[#1f2436]">x</span>}
+                                    className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
+                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    trailingClassName="px-3"
+                                />
+                            </div>
+                        </div>
                     ) : (
-                        <div className="grid gap-3 sm:grid-cols-[150px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                        <div className="grid gap-3 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <div className="flex items-center justify-start gap-4 sm:justify-end">
-                                <TransactionFieldLabel label={config.labels.documentNumber} required />
+                                <TransactionFieldLabel label={config.labels.documentNumber} required className="whitespace-nowrap" />
                                 <TransactionSwitch
                                     checked={values.autoNumber}
                                     onChange={(nextValue) =>
@@ -61,34 +66,41 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                 />
                             </div>
 
-                            <SelectField
-                                value={values.numberingType}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        numberingType: event.target.value,
-                                    }))
-                                }
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
-                            >
-                                {config.numberingOptions.map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </SelectField>
+                            <div className="flex sm:justify-end">
+                                {values.autoNumber ? (
+                                    <SelectField
+                                        value={values.numberingType}
+                                        onChange={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                numberingType: event.target.value,
+                                            }))
+                                        }
+                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
+                                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    >
+                                        {config.numberingOptions.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </SelectField>
+                                ) : (
+                                    <TextInput
+                                        value={values.documentNumber}
+                                        onChange={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                documentNumber: event.target.value,
+                                            }))
+                                        }
+                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
+                                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    />
+                                )}
+                            </div>
                         </div>
                     )}
-
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
-                        >
-                            {config.takeButtonLabel}
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

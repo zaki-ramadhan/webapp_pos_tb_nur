@@ -72,23 +72,7 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                     ) : null}
                 </div>
             </div>
-
             <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                {!isDetail && values.currency ? <div /> : null}
-                {isDetail && values.currency ? (
-                    <>
-                        <div />
-                        <div className="max-w-[180px] justify-self-end w-full">
-                            <TextInput
-                                value={values.currency}
-                                readOnly
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            />
-                        </div>
-                    </>
-                ) : null}
-
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                     {!isDetail ? (

@@ -26,6 +26,11 @@ export default function ModuleTableTemplate({
     extraToolbarSlot,
     customRowFilter,
     tableMinWidth,
+    disableImport = false,
+    disableExport = false,
+    disablePrint = false,
+    disableColumnSettings = false,
+    disableRefresh = false,
 }) {
     const [keyword, setKeyword] = useState('');
     const [inactiveFilter, setInactiveFilter] = useState(table.filterOptions?.[0]?.value ?? 'all');
@@ -118,20 +123,22 @@ export default function ModuleTableTemplate({
                     onClick: onCreate,
                     icon: <PlusIcon className="h-6 w-6" />,
                 } : null}
-                refreshButton={{
+                refreshButton={disableRefresh ? null : {
                     label: table.refreshLabel,
                     onClick: table.onRefresh,
                     loading: table.loading,
                 }}
                 resourceName={resourceName}
                 onRefresh={table.onRefresh}
-                exportConfig={{
+                importButton={disableImport ? false : null}
+                printButton={disablePrint ? false : null}
+                exportConfig={disableExport ? false : {
                     columns: cleanedColumns,
                     rows: filteredRows,
                     filename: exportFilename,
                     title: exportTitle,
                 }}
-                columnSettings={{
+                columnSettings={disableColumnSettings ? false : {
                     columns: cleanedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
                     visibleIds: visibleColumnIds,
                     onToggle: (columnId) => {
@@ -195,7 +202,7 @@ export default function ModuleTableTemplate({
                                         {visibleColumns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`px-3 text-base text-[#131a28] ${column.align === 'left' ? 'text-left' : 'text-center'}`}
+                                                className={`px-3 text-base text-[#131a28] ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                                             >
                                                 <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
                                             </DataTableCell>

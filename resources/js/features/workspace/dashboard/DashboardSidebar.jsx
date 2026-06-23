@@ -123,12 +123,12 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
 
     const tone = toneClasses[item.tone] ?? toneClasses.blue;
     const iconBgClass = isInactive
-        ? 'bg-[#f9e7bb]'
+        ? 'bg-[#e5e7eb]'
         : isImplemented
           ? tone.iconBg
           : 'bg-[#eef0f4]';
     const iconTextClass = isInactive
-        ? 'text-[#b67d12]'
+        ? 'text-[#7b849c]'
         : isImplemented
           ? tone.iconText
           : 'text-[#9aa3b1]';
@@ -143,7 +143,7 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
             }}
             className={`flex w-full items-start gap-2.5 rounded-[8px] border px-2.5 py-2.5 text-left transition ${
                 isInactive
-                    ? 'cursor-not-allowed border-[#f0d9a3] bg-[#fff8e9]'
+                    ? 'cursor-not-allowed border-[#e5e7eb] bg-[#f9fafb] opacity-80 saturate-0'
                     : isImplemented
                       ? 'border-[#d7ddea] bg-white hover:bg-[#f8fbff]'
                       : 'cursor-not-allowed border-[#e8ebf2] bg-[#f8fafc] opacity-80'
@@ -154,15 +154,15 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
-                <span className={`block text-xs font-medium leading-4.5 ${isInactive ? 'text-[#7d6220]' : isImplemented ? 'text-[#22304a]' : 'text-[#8f97a7]'}`}>
+                <span className={`block text-xs font-medium leading-4.5 ${isInactive ? 'text-[#5e6678]' : isImplemented ? 'text-[#22304a]' : 'text-[#8f97a7]'}`}>
                     {item.label}
                 </span>
-                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-[#9a7b35]' : isImplemented ? 'text-[#7b849c]' : 'text-[#b2b9c9]'}`}>
+                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-[#8c94a5]' : isImplemented ? 'text-[#7b849c]' : 'text-[#b2b9c9]'}`}>
                     {statusLabel}
                 </span>
             </span>
             {isInactive ? (
-                <span className="shrink-0 rounded-full bg-[#f6dfab] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                <span className="shrink-0 rounded-full bg-[#e5e7eb] px-1.5 py-0.5 text-[10px] font-semibold text-[#5e6678]">
                     {WORKSPACE_INACTIVE_BADGE_LABEL}
                 </span>
             ) : null}

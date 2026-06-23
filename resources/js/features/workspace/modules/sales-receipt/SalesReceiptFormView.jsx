@@ -63,9 +63,9 @@ export default function SalesReceiptFormView({
             <div className="flex min-h-full flex-col gap-3">
                 <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
                     <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-                        <div className="border-b border-[#d8dde7] px-4 py-4">
+                        <div className="px-4 pt-4 pb-0">
                             <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-                                <div className={`grid gap-y-3 ${isDetail ? 'sm:grid-cols-[130px_minmax(0,1fr)_180px]' : 'sm:grid-cols-[130px_minmax(0,1fr)]'} sm:items-center sm:gap-x-4`.trim()}>
+                                <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                                     <TransactionFieldLabel label={config.labels.customer} required />
                                     <ChipLookupField
                                         values={values.customer}
@@ -74,11 +74,6 @@ export default function SalesReceiptFormView({
                                         searchLabel="Cari pelanggan"
                                         onSearch={handlers.onSelectCustomer}
                                     />
-                                    {isDetail ? (
-                                        <div className="max-w-[180px]">
-                                            <TextInput value={values.currency} readOnly className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
-                                        </div>
-                                    ) : null}
 
                                     <TransactionFieldLabel label={config.labels.bank} required />
                                     <ChipLookupField
@@ -89,7 +84,6 @@ export default function SalesReceiptFormView({
                                         onSearch={handlers.onSelectBankAccount}
                                         heightClassName="h-[40px]"
                                     />
-                                    {isDetail ? <div /> : null}
 
                                     <TransactionFieldLabel label={config.labels.paymentAmount} />
                                     <div className="flex min-w-0 items-center gap-3">
@@ -102,7 +96,6 @@ export default function SalesReceiptFormView({
                                             ))}
                                         </div>
                                     </div>
-                                    {isDetail ? <div /> : null}
                                 </div>
 
                                 <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">

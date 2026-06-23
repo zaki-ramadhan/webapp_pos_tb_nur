@@ -6,13 +6,30 @@ import { ChevronDownIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import Tooltip from '@/components/ui/Tooltip';
 import { tableRegistry, useColumnVisibility, getTableSchemaKey, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 
-export function TransactionToolbarIconButton({ label, children, className = '' }) {
+export function TransactionToolbarIconButton({ label, children, className = '', disabled }) {
+    const [activeTableState, setActiveTableState] = useState(() => tableRegistry.activeTable);
+
+    useEffect(() => {
+        return tableRegistry.subscribe((state) => setActiveTableState(state));
+    }, []);
+
+    const isExportOrPrint = /cetak|unduh|ekspor|download/i.test(label || '');
+    const isTableEmpty = activeTableState?.rows?.length === 0;
+    const resolvedDisabled = disabled !== undefined ? disabled : (isExportOrPrint && isTableEmpty);
+
+    const tooltipLabel = resolvedDisabled && isExportOrPrint
+        ? (/cetak/i.test(label || '') ? 'Tidak ada data untuk dicetak' : 'Tidak ada data untuk diekspor')
+        : label;
+
     return (
-        <Tooltip content={label} portal>
+        <Tooltip content={tooltipLabel} portal>
             <button
                 type="button"
+                disabled={resolvedDisabled}
                 aria-label={label}
-                className={`inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${className}`.trim()}
+                className={`inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition ${
+                    resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-[#e8f2ff]'
+                } ${className}`.trim()}
             >
                 {children}
             </button>
@@ -20,18 +37,37 @@ export function TransactionToolbarIconButton({ label, children, className = '' }
     );
 }
 
-export function TransactionToolbarSplitButton({ label, icon, items = [] }) {
+export function TransactionToolbarSplitButton({ label, icon, items = [], disabled }) {
     const [open, setOpen] = useState(false);
+    const [activeTableState, setActiveTableState] = useState(() => tableRegistry.activeTable);
     const buttonRef = useRef(null);
+
+    useEffect(() => {
+        return tableRegistry.subscribe((state) => setActiveTableState(state));
+    }, []);
+
+    const isExportOrPrint = /cetak|unduh|ekspor|download/i.test(label || '');
+    const isTableEmpty = activeTableState?.rows?.length === 0;
+    const resolvedDisabled = disabled !== undefined ? disabled : (isExportOrPrint && isTableEmpty);
+
+    const tooltipLabel = resolvedDisabled && isExportOrPrint
+        ? (/cetak/i.test(label || '') ? 'Tidak ada data untuk dicetak' : 'Tidak ada data untuk diekspor')
+        : label;
 
     return (
         <div className="relative">
-            <Tooltip content={label} portal>
+            <Tooltip content={tooltipLabel} portal>
                 <button
                     ref={buttonRef}
                     type="button"
-                    onClick={() => setOpen((current) => !current)}
-                    className="inline-flex h-[34px] shrink-0 overflow-hidden rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                    disabled={resolvedDisabled}
+                    onClick={() => {
+                        if (resolvedDisabled) return;
+                        setOpen((current) => !current);
+                    }}
+                    className={`inline-flex h-[34px] shrink-0 overflow-hidden rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition ${
+                        resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-[#e8f2ff]'
+                    }`}
                     aria-label={label}
                 >
                     <span className="inline-flex w-[36px] items-center justify-center">{icon}</span>
@@ -41,26 +77,28 @@ export function TransactionToolbarSplitButton({ label, icon, items = [] }) {
                 </button>
             </Tooltip>
 
-            <DropdownMenu
-                open={open}
-                onClose={() => setOpen(false)}
-                anchorRef={buttonRef}
-                widthClassName="w-[180px]"
-            >
-                <div className="flex flex-col">
-                    {items.map((item) => (
-                        <DropdownMenuItem
-                            key={item.id}
-                            onClick={() => {
-                                item.onClick?.();
-                                setOpen(false);
-                            }}
-                        >
-                            {item.label}
-                        </DropdownMenuItem>
-                    ))}
-                </div>
-            </DropdownMenu>
+            {!resolvedDisabled && (
+                <DropdownMenu
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    anchorRef={buttonRef}
+                    widthClassName="w-[180px]"
+                >
+                    <div className="flex flex-col">
+                        {items.map((item) => (
+                            <DropdownMenuItem
+                                key={item.id}
+                                onClick={() => {
+                                    item.onClick?.();
+                                    setOpen(false);
+                                }}
+                            >
+                                {item.label}
+                            </DropdownMenuItem>
+                        ))}
+                    </div>
+                </DropdownMenu>
+            )}
         </div>
     );
 }

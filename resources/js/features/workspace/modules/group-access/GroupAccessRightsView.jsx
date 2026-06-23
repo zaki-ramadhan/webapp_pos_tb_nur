@@ -7,7 +7,6 @@ import {
     filterSections,
 } from './groupAccessUtils';
 import {
-    CopyPermissionsButton,
     GroupAccessCategoryList,
     PermissionCell,
 } from '@/features/workspace/modules/group-access/groupAccessViewShared';
@@ -248,11 +247,7 @@ export default function GroupAccessRightsView({
                             />
                         </div>
 
-                        <CopyPermissionsButton
-                            label={permissions.copyAccessLabel}
-                            options={permissions.copyAccessOptions}
-                            onSelect={handleCopyPermissions}
-                        />
+
                     </div>
 
                     <PermissionMatrix

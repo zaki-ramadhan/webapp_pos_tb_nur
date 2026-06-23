@@ -7,14 +7,6 @@ class ItemLocationPage
     public static function get(array $navigationPages): array
     {
         return array_replace($navigationPages['item-location'], [
-            'subtab' => [
-                'id' => 'item-location-create',
-                'label' => 'Data Baru',
-            ],
-            'viewModes' => [
-                'form' => 'Form',
-                'table' => 'Tabel',
-            ],
             'itemLocation' => [
                 'topActions' => [
                     [

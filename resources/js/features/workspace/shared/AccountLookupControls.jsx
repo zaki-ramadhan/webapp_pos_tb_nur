@@ -77,7 +77,7 @@ export function AccountLookupField({
                     placeholder={placeholder}
                     searchLabel={searchLabel}
                     disabled={disabled}
-                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-[#e39191]' : 'border-[#cfd6e2]'} ${className}`.trim()}
+                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-[#e39191]' : 'border-slate-400'} ${className}`.trim()}
                     inputClassName="text-xs sm:text-sm text-[#1f2436]"
                     trailingClassName="gap-1 pr-2"
                     loading={controller.loading && controller.open}
@@ -127,7 +127,7 @@ export function AccountLookupTextInput({
     searchLabel = 'Cari akun perkiraan',
     dialogTitle = 'Pilih Akun Perkiraan',
     disabled = false,
-    className = 'h-[40px] rounded-[4px] border-[#cfd6e2]',
+    className = 'h-[40px] rounded-[4px] border-slate-400',
     inputClassName = 'text-xs sm:text-sm text-[#1f2436]',
     trailingClassName = '',
     onSelectAccount = null,

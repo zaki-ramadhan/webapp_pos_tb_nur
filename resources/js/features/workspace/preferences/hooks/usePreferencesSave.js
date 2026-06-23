@@ -1,3 +1,4 @@
+import { router } from '@inertiajs/react';
 import { createBackendResource, getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
 import { extractPreferencesFromTabs } from '../preferenceMapping';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
@@ -47,7 +48,7 @@ export default function usePreferencesSave(
                 company_info: values,
                 settings: {
                     ...values,
-                    ...extractPreferencesFromTabs(Object.values(tabsData).flat())
+                    ...extractPreferencesFromTabs(Object.values(tabsData).filter(Boolean).flat())
                 }
             };
 
@@ -58,6 +59,7 @@ export default function usePreferencesSave(
                 title: 'Berhasil',
                 message: 'Preferensi berhasil disimpan.',
             });
+            router.reload();
             reload();
         } catch (error) {
             console.error('Save failed:', error);

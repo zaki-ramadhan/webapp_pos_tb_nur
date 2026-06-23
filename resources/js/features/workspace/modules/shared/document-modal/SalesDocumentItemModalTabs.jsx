@@ -2,6 +2,7 @@ import TextInput from '@/components/ui/TextInput';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { CloseIcon, DownloadIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 import CheckboxField from '@/components/ui/CheckboxField';
 import {
@@ -162,16 +163,22 @@ export function ItemSerialTab({ detail }) {
 }
 
 export function ItemInfoTab({ detail }) {
+    const hideDepartment = isWorkspacePageInactive('department');
+
     return (
         <div className="grid gap-y-4 sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-x-4">
-            <TransactionFieldLabel label="Departemen" />
-            <ChipLookupField
-                values={detail.department ?? []}
-                placeholder="Cari/Pilih..."
-                onRemove={() => {}}
-                searchLabel="Cari departemen"
-                heightClassName="h-[36px]"
-            />
+            {!hideDepartment ? (
+                <>
+                    <TransactionFieldLabel label="Departemen" />
+                    <ChipLookupField
+                        values={detail.department ?? []}
+                        placeholder="Cari/Pilih..."
+                        onRemove={() => {}}
+                        searchLabel="Cari departemen"
+                        heightClassName="h-[36px]"
+                    />
+                </>
+            ) : null}
 
             <TransactionFieldLabel label="Keterangan" />
             <ReadonlyDocumentTextarea value={detail.notes ?? ''} className="min-h-[92px]" />

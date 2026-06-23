@@ -326,4 +326,64 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'code' => 'TAX-IMP-GOOD',
         ]);
     }
+
+    public function test_employee_resource_can_be_stored_updated_and_deleted(): void
+    {
+        $user = User::factory()->create();
+
+        // 1. Create Employee
+        $response = $this->actingAs($user)->postJson('/api/backend/employees', [
+            'employee_code' => 'EMP-TEST-001',
+            'employee_id_type' => 'Karyawan',
+            'full_name' => 'John Doe',
+            'subject_to_income_tax' => true,
+            'tax_number' => '123456789012345',
+            'employment_status' => 'Pegawai Tetap',
+            'tax_allowance_status' => 'Kawin (1 tanggungan)',
+        ]);
+
+        $response->assertCreated();
+        $employeeId = $response->json('data.id');
+
+        $this->assertDatabaseHas('employees', [
+            'id' => $employeeId,
+            'employee_code' => 'EMP-TEST-001',
+            'full_name' => 'John Doe',
+            'subject_to_income_tax' => true,
+        ]);
+
+        // 2. Uniqueness validation
+        $responseDuplicate = $this->actingAs($user)->postJson('/api/backend/employees', [
+            'employee_code' => 'EMP-TEST-001',
+            'full_name' => 'Jane Doe',
+        ]);
+        $responseDuplicate->assertStatus(422);
+
+        // 3. Update Employee
+        $responseUpdate = $this->actingAs($user)->putJson("/api/backend/employees/{$employeeId}", [
+            'employee_code' => 'EMP-TEST-001-UPDATED',
+            'full_name' => 'John Doe Updated',
+            'subject_to_income_tax' => false,
+            'tax_number' => null,
+            'employment_status' => null,
+            'tax_allowance_status' => null,
+        ]);
+        $responseUpdate->assertOk();
+
+        $this->assertDatabaseHas('employees', [
+            'id' => $employeeId,
+            'employee_code' => 'EMP-TEST-001-UPDATED',
+            'full_name' => 'John Doe Updated',
+            'subject_to_income_tax' => false,
+            'tax_number' => null,
+        ]);
+
+        // 4. Delete Employee
+        $responseDelete = $this->actingAs($user)->deleteJson("/api/backend/employees/{$employeeId}");
+        $responseDelete->assertOk();
+
+        $this->assertDatabaseMissing('employees', [
+            'id' => $employeeId,
+        ]);
+    }
 }

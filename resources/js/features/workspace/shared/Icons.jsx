@@ -26,6 +26,7 @@ import {
     Save,
     Search,
     Settings,
+    Share,
     Shield,
     TriangleAlert,
     Trash2,
@@ -41,8 +42,8 @@ export function SearchIcon({ className = 'h-5 w-5 text-[#9098ae]' }) {
     return <AppIcon icon={Search} className={className} />;
 }
 
-export function PlusIcon({ className = 'h-5 w-5' }) {
-    return <AppIcon icon={Plus} className={className} />;
+export function PlusIcon({ className = 'h-5 w-5', strokeWidth = 2.8 }) {
+    return <AppIcon icon={Plus} className={className} strokeWidth={strokeWidth} />;
 }
 
 export function KebabIcon({ className = 'h-5 w-5 text-[#4f5678]' }) {
@@ -83,6 +84,10 @@ export function PrintIcon({ className = 'h-4 w-4' }) {
 
 export function DownloadIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Download} className={className} />;
+}
+
+export function ShareIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={Share} className={className} />;
 }
 
 export function FileIcon({ className = 'h-4.5 w-4.5' }) {

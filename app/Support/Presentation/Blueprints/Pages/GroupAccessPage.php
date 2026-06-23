@@ -49,7 +49,7 @@ class GroupAccessPage
                                             'options' => [
                                                 [
                                                     'id' => 'follow-preference',
-                                                    'label' => 'Mengikuti Pembatasan di Preferensi',
+                                                    'label' => 'Tidak ada pembatasan (Akses penuh 24 jam)',
                                                     'checked' => true,
                                                 ],
                                                 [
@@ -85,7 +85,7 @@ class GroupAccessPage
                                             'options' => [
                                                 [
                                                     'id' => 'follow-preference',
-                                                    'label' => 'Mengikuti Pembatasan di Preferensi',
+                                                    'label' => 'Tidak ada pembatasan (Akses penuh 24 jam)',
                                                     'checked' => true,
                                                 ],
                                                 [
@@ -174,7 +174,7 @@ class GroupAccessPage
                                 'options' => [
                                     [
                                         'id' => 'follow-preference',
-                                        'label' => 'Mengikuti Pembatasan di Preferensi',
+                                        'label' => 'Tidak ada pembatasan (Akses penuh 24 jam)',
                                         'checked' => true,
                                     ],
                                     [
@@ -237,28 +237,14 @@ class GroupAccessPage
                             'categories' => [
                                 \App\Support\Presentation\PosBlueprint::accessCategory('company', 'Perusahaan', 'building', [
                                     \App\Support\Presentation\PosBlueprint::accessSection('company-menu', 'Akses Menu', [
-                                        \App\Support\Presentation\PosBlueprint::accessRow('currency', 'Mata Uang', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('department', 'Departemen', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('branch', 'Cabang', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('tax-master', 'Pajak', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('payment-terms', 'Syarat Pembayaran', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('employees', 'Karyawan', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('salary-allowance', 'Gaji atau Tunjangan', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('shipping', 'Pengiriman', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('fob', 'FOB', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('contacts', 'Kontak', ['active' => true, 'update' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('numbering', 'Penomoran', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('print-design', 'Desain Cetakan', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('recurring-transactions', 'Transaksi Berulang', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('activity-log', 'Log Aktivitas', ['active' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('preferences', 'Preferensi', ['active' => true]),
-                                        // \App\Support\Presentation\PosBlueprint::accessRow('transaction-approval', 'Penyetuju Transaksi', ['active' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('period-end', 'Proses Akhir Bulan', ['create' => true, 'update' => true, 'delete' => true]),
                                     ]),
                                     \App\Support\Presentation\PosBlueprint::accessSection('company-other', 'Akses Lainnya', [
-                                        \App\Support\Presentation\PosBlueprint::accessRow('defer-income-expense', 'Melakukan penangguhan Pendapatan dan Beban di Transaksi', ['active' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('manual-number', 'Mengisi Nomor Transaksi manual', ['active' => true], true),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('form-designer', 'Rancangan Formulir', ['update' => true], true),
                                         \App\Support\Presentation\PosBlueprint::accessRow('report-export', 'Ekspor Laporan', ['active' => true], true),
                                     ]),
                                 ]),
@@ -267,8 +253,6 @@ class GroupAccessPage
                                         \App\Support\Presentation\PosBlueprint::accessRow('journal-entry', 'Jurnal Umum', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('general-entry', 'Pencatatan Beban', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('salary-entry', 'Pencatatan Gaji', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('adjustment-entry', 'Jurnal Penyesuaian', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('closing-entry', 'Jurnal Penutup', ['create' => true, 'update' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('account-list', 'Akun Perkiraan', ['active' => true, 'create' => true, 'update' => true]),
                                     ]),
                                 ]),
@@ -282,20 +266,17 @@ class GroupAccessPage
                                 ]),
                                 \App\Support\Presentation\PosBlueprint::accessCategory('sales', 'Penjualan', 'sales', [
                                     \App\Support\Presentation\PosBlueprint::accessSection('sales-menu', 'Akses Menu', [
-                                        \App\Support\Presentation\PosBlueprint::accessRow('sales-quote', 'Penawaran Penjualan', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('sales-order', 'Pesanan Penjualan', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('delivery-order', 'Pengiriman Pesanan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('sales-invoice', 'Faktur Penjualan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('sales-receipt', 'Penerimaan Penjualan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('sales-return', 'Retur Penjualan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('customers', 'Pelanggan', ['active' => true, 'create' => true, 'update' => true, 'view' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('price-adjustment', 'Penyesuaian Harga atau Diskon', ['create' => true, 'update' => true, 'delete' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('sales-commission', 'Komisi Penjual', ['active' => true, 'update' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('sales-checkin', 'Check-in', ['active' => true]),
                                     ]),
                                 ]),
                                 \App\Support\Presentation\PosBlueprint::accessCategory('purchase', 'Pembelian', 'purchase', [
                                     \App\Support\Presentation\PosBlueprint::accessSection('purchase-menu', 'Akses Menu', [
-                                        \App\Support\Presentation\PosBlueprint::accessRow('purchase-order', 'Pesanan Pembelian', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('goods-receipt', 'Penerimaan Barang', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('purchase-invoice', 'Faktur Pembelian', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('purchase-payment', 'Pembayaran Pembelian', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('purchase-return', 'Retur Pembelian', ['create' => true, 'update' => true, 'delete' => true]),
@@ -306,35 +287,13 @@ class GroupAccessPage
                                 \App\Support\Presentation\PosBlueprint::accessCategory('inventory', 'Persediaan', 'inventory', [
                                     \App\Support\Presentation\PosBlueprint::accessSection('inventory-menu', 'Akses Menu', [
                                         \App\Support\Presentation\PosBlueprint::accessRow('item-request', 'Permintaan Barang', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('stock-transfer', 'Pemindahan Barang', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('inventory-adjustment', 'Penyesuaian Persediaan', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('work-order', 'Pekerjaan Pesanan', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('material-addition', 'Penambahan Bahan Baku', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('job-completion', 'Penyelesaian Pesanan', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('stock-opname-order', 'Perintah Stok Opname', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('stock-opname-result', 'Hasil Stok Opname', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('minimum-stock', 'Minimum Stok Cabang', ['active' => true, 'update' => true]),
-                                    ]),
-                                ]),
-                                \App\Support\Presentation\PosBlueprint::accessCategory('asset', 'Aset Tetap', 'asset', [
-                                    \App\Support\Presentation\PosBlueprint::accessSection('asset-menu', 'Akses Menu', [
-                                        \App\Support\Presentation\PosBlueprint::accessRow('asset-master', 'Aset Tetap', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('asset-change', 'Perubahan Aset Tetap', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('asset-disposal', 'Disposisi Aset Tetap', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('asset-move', 'Pindah Aset', ['create' => true, 'update' => true, 'delete' => true]),
-                                    ]),
-                                ]),
-                                \App\Support\Presentation\PosBlueprint::accessCategory('target', 'Target', 'budget', [
-                                    \App\Support\Presentation\PosBlueprint::accessSection('target-menu', 'Akses Menu', [
-                                        \App\Support\Presentation\PosBlueprint::accessRow('sales-target', 'Target Penjualan', ['active' => true, 'create' => true, 'update' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('expense-budget', 'Anggaran Beban', ['active' => true, 'create' => true, 'update' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('company-budget', 'Anggaran Perusahaan', ['active' => true, 'create' => true, 'update' => true]),
-                                    ]),
-                                ]),
-                                \App\Support\Presentation\PosBlueprint::accessCategory('calendar', 'Kalender', 'calendar', [
-                                    \App\Support\Presentation\PosBlueprint::accessSection('calendar-menu', 'Akses Menu', [
-                                        \App\Support\Presentation\PosBlueprint::accessRow('company-calendar', 'Kalender', ['active' => true, 'create' => true, 'update' => true, 'delete' => true, 'view' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('upcoming-activities', 'Kegiatan Mendatang', ['active' => true, 'view' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('minimum-stock', 'Barang stok minimum', ['active' => true, 'update' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('items-services', 'Barang dan Jasa', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('warehouse-master', 'Gudang', ['create' => true, 'update' => true, 'delete' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('item-unit', 'Satuan Barang', ['create' => true, 'update' => true, 'delete' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('item-category', 'Kategori Barang', ['create' => true, 'update' => true, 'delete' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('item-location', 'Barang per gudang', ['active' => true]),
                                     ]),
                                 ]),
                             ],

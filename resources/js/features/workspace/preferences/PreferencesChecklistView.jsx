@@ -4,33 +4,26 @@ import { AlertTriangleIcon } from '@/features/workspace/shared/Icons';
 import PreferencesSectionHeading from '@/features/workspace/preferences/PreferencesSectionHeading';
 import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTabPanel';
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
-import {
-    isPreferenceChecklistItemInactive,
-    WORKSPACE_INACTIVE_BADGE_LABEL,
-    WORKSPACE_INACTIVE_HINT,
-} from '@/features/workspace/shared/workspaceAvailability';
+import { isPreferenceChecklistItemInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 function ChecklistItem({ item, inputId, onToggle }) {
     const isInactive = isPreferenceChecklistItemInactive(item.id);
+    if (isInactive) {
+        return null;
+    }
+
     const label = (
-        <>
-            <span className="text-xs sm:text-sm leading-6">{item.label}</span>
-            {isInactive ? (
-                <span className="ml-2 inline-flex rounded-full bg-[#f6dfab] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
-                    {WORKSPACE_INACTIVE_BADGE_LABEL}
-                </span>
-            ) : null}
-        </>
+        <span className="text-xs sm:text-sm leading-6">{item.label}</span>
     );
 
     return (
         <CheckboxField
             id={inputId}
             checked={Boolean(item.checked)}
-            disabled={Boolean(item.disabled) || isInactive}
+            disabled={Boolean(item.disabled)}
             error={item.error}
             message={item.message}
-            hint={isInactive ? WORKSPACE_INACTIVE_HINT : item.hint}
+            hint={item.hint}
             size="sm"
             align="center"
             label={label}
@@ -147,7 +140,31 @@ export default function PreferencesChecklistView({
 }) {
     const { tabState, activeTab, updateActiveTab } = usePreferencesTabsState(tabs, activeTabId, onUpdate);
 
-    const columns = activeTab ? buildColumns(activeTab.sections ?? []) : [];
+    const visibleSections = activeTab
+        ? (activeTab.sections ?? [])
+              .map((section) => {
+                  const activeItems = (section.items ?? []).filter(
+                      (item) => !isPreferenceChecklistItemInactive(item.id)
+                  );
+                  const activeRadioItems = (section.radioItems ?? []).filter(
+                      (item) => !isPreferenceChecklistItemInactive(item.id)
+                  );
+                  return {
+                      ...section,
+                      items: activeItems,
+                      radioItems: activeRadioItems,
+                  };
+              })
+              .filter((section) => {
+                  return (
+                      section.items.length > 0 ||
+                      section.radioItems.length > 0 ||
+                      (section.textItems ?? []).length > 0
+                  );
+              })
+        : [];
+
+    const columns = activeTab ? buildColumns(visibleSections) : [];
     const bodyClassName = activeTab?.bodyClassName ?? activeTab?.contentClassName ?? contentClassName;
     const resolvedContentClassName = activeTab?.contentClassName ?? contentClassName;
 
@@ -192,7 +209,7 @@ export default function PreferencesChecklistView({
         return null;
     }
 
-    const hasCheckedItems = activeTab.sections?.some((section) =>
+    const hasCheckedItems = visibleSections.some((section) =>
         (section.items ?? []).some((item) => item.checked)
     ) ?? false;
 

@@ -43,6 +43,9 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         [form.permissionPreset, form.permissions],
     );
 
+    const formGeneralSerialized = JSON.stringify(form.general);
+    const formPermissionsSerialized = JSON.stringify(form.permissions);
+
     useEffect(() => {
         setIsDuplicated(false);
         setActiveTabId(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
@@ -50,7 +53,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         setPermissionCategories(buildInitialPermissionCategories(form.permissions, form.permissionPreset));
         setStatus({ tone: '', message: '' });
         setIsDeleteConfirmationOpen(false);
-    }, [form]);
+    }, [recordId, formGeneralSerialized, formPermissionsSerialized, form.defaultTabId, form.permissionPreset]);
 
     const isDirty = useMemo(
         () =>
@@ -115,6 +118,16 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                         label: record.name ?? generalValues.groupName,
                         tabLabel: record.name ?? generalValues.groupName,
                     });
+                } else if (isDetail && record?.name && activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId,
+                                tabId: activeLevel2Tab.id,
+                                label: record.name,
+                            },
+                        })
+                    );
                 }
             },
         });

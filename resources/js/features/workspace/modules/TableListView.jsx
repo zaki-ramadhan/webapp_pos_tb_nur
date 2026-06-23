@@ -221,7 +221,6 @@ export default function TableListView({
                         />
                     ) : null
                 }
-                topRowClassName="mb-3"
                 createButton={createButton}
                 refreshButton={
                     table.refreshLabel

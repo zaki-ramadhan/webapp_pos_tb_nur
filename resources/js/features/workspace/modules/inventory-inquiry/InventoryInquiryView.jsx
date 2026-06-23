@@ -211,9 +211,11 @@ export default function InventoryInquiryView({
                 <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
-                                No.
-                            </DataTableHead>
+                            {filteredRows.length > 0 ? (
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                    No.
+                                </DataTableHead>
+                            ) : null}
                             {cleanedColumns.map((column) => {
                                 const minWidth = column.kind !== 'checkbox' ? getColumnMinWidth(column.label) : undefined;
                                 return (
@@ -263,7 +265,7 @@ export default function InventoryInquiryView({
                                     <DataTableCell className="px-2.5" />
                                 ) : null}
                                 <DataTableCell
-                                    colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0) + 1}
+                                    colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
                                     className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}

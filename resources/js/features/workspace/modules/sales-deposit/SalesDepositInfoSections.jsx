@@ -132,7 +132,7 @@ export function DepositSummarySection({ config, values }) {
 export function SalesDepositHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-            <div className={`grid gap-y-3 ${isDetail ? 'sm:grid-cols-[130px_minmax(0,1fr)_180px]' : 'sm:grid-cols-[130px_minmax(0,1fr)]'} sm:items-center sm:gap-x-4`.trim()}>
+            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.customer} required />
                 <ChipLookupField
                     values={values.customer}
@@ -141,11 +141,6 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                     searchLabel="Cari pelanggan"
                     onSearch={handlers.onSelectCustomer}
                 />
-                {isDetail ? (
-                    <div className="max-w-[180px]">
-                        <TextInput value={values.currency} readOnly className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
-                    </div>
-                ) : null}
 
                 <TransactionFieldLabel label={config.labels.entryDate} required />
                 <TransactionDateInput

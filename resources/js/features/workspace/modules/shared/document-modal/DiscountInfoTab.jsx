@@ -14,6 +14,7 @@ import { AccountLookupField } from '@/features/workspace/shared/AccountLookupCon
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { PlusIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
+import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 export default function DiscountInfoTab({ values, setValues }) {
     const discountColumns = useMemo(
@@ -24,6 +25,8 @@ export default function DiscountInfoTab({ values, setValues }) {
         ],
         [],
     );
+
+    const hideDepartment = isWorkspacePageInactive('department');
 
     return (
         <div className="space-y-3">
@@ -78,14 +81,18 @@ export default function DiscountInfoTab({ values, setValues }) {
                     textareaClassName="min-h-[56px] text-xs sm:text-sm text-[#1f2436]"
                 />
 
-                <TransactionFieldLabel label="Departemen" />
-                <ChipLookupField
-                    values={values.department}
-                    placeholder="Cari/Pilih..."
-                    onRemove={() => {}}
-                    searchLabel="Cari departemen"
-                    heightClassName="h-[36px]"
-                />
+                {!hideDepartment ? (
+                    <>
+                        <TransactionFieldLabel label="Departemen" />
+                        <ChipLookupField
+                            values={values.department}
+                            placeholder="Cari/Pilih..."
+                            onRemove={() => {}}
+                            searchLabel="Cari departemen"
+                            heightClassName="h-[36px]"
+                        />
+                    </>
+                ) : null}
             </div>
 
             <div>

@@ -36,22 +36,9 @@ class PreferencesPage
                     ['id' => 'company-address', 'label' => 'Alamat'],
                 ],
                 'featureTabs' => FeaturePreferences::tabs(),
-                'taxTabs' => TaxPreferences::tabs(),
-                'salesTabs' => SalesPurchasePreferences::salesTabs(),
-                'purchaseTabs' => SalesPurchasePreferences::purchaseTabs(),
-                'approvalTabs' => WorkflowPreferences::approvalTabs(),
                 'attachmentsTabs' => WorkflowPreferences::attachmentsTabs($attachmentsNotice),
-                'limitationsTabs' => FeaturePreferences::limitationsTabs(),
-                'othersTabs' => WorkflowPreferences::othersTabs(),
                 'sidebarItems' => [
                     ['id' => 'features', 'label' => 'Fitur'],
-                    ['id' => 'tax', 'label' => 'Pajak'],
-                    ['id' => 'sales', 'label' => 'Penjualan'],
-                    ['id' => 'purchase', 'label' => 'Pembelian'],
-                    ['id' => 'limitations', 'label' => 'Pembatasan'],
-                    ['id' => 'approval', 'label' => 'Persetujuan'],
-                    ['id' => 'attachments', 'label' => 'Lampiran'],
-                    ['id' => 'others', 'label' => 'Lain-lain'],
                 ],
                 'actions' => [
                     [

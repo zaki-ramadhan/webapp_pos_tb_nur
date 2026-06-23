@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -86,11 +87,12 @@ export default function DepartmentFormView({
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId]);
 
-    useEffect(() => {
-        if (!isDirty) {
-            setValues(initialValues);
-        }
-    }, [initialValues, isDirty]);
+    useFormValuesSync({
+        initialValues,
+        recordId: detailRow?.id ?? null,
+        isDirty,
+        setValues,
+    });
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => applyDepartmentFormChange(currentValues, field, nextValue));

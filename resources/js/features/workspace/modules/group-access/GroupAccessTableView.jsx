@@ -5,10 +5,12 @@ export default function GroupAccessTableView({ table, onCreate, onOpenDetail }) 
         <ModuleTableTemplate
             table={table}
             resourceName="access-groups"
-            exportFilename="akses_grup"
-            exportTitle="Laporan Akses Grup"
             onCreate={onCreate}
             onOpenDetail={onOpenDetail}
+            disableImport={true}
+            disableExport={true}
+            disablePrint={true}
+            disableColumnSettings={true}
         />
     );
 }

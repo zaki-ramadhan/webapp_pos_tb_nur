@@ -2,6 +2,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import { CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
 import { GroupAccessUserLookupField } from './GroupAccessControls';
 import RadioField from '@/components/ui/RadioField';
+import SelectField from '@/components/ui/SelectField';
 
 export function GroupAccessAccessOption({ option, checked, onChange, children }) {
     return (
@@ -74,39 +75,42 @@ export function GroupAccessGeneralSection({
                                 {option.id === 'limited-time' && (
                                     <div className="pl-[32px] flex flex-col gap-2 mt-1">
                                         <div className="flex flex-wrap items-center gap-3">
-                                            <select
+                                            <SelectField
                                                 value={values.accessLimitDays}
                                                 onChange={(e) => onChangeAccessLimitDays(e.target.value)}
-                                                className="h-[38px] rounded-[5px] border border-[#cfd6e2] bg-white px-3 text-xs sm:text-sm text-[#1f2436] outline-none focus:border-[#5a84e5] cursor-pointer"
+                                                className="h-[38px] min-w-[130px] text-xs sm:text-sm text-[#1f2436]"
+                                                containerClassName="w-auto"
                                             >
                                                 <option value="Senin-Jumat">Senin-Jumat</option>
                                                 <option value="Senin-Sabtu">Senin-Sabtu</option>
                                                 <option value="Setiap Hari">Setiap Hari</option>
-                                            </select>
+                                            </SelectField>
 
                                             <span className="text-xs sm:text-sm text-[#20273b]">Jam</span>
 
-                                            <select
+                                            <SelectField
                                                 value={values.accessLimitStartHour}
                                                 onChange={(e) => onChangeAccessLimitStartHour(e.target.value)}
-                                                className="h-[38px] w-[70px] rounded-[5px] border border-[#cfd6e2] bg-white px-2 text-xs sm:text-sm text-[#1f2436] outline-none focus:border-[#5a84e5] cursor-pointer"
+                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-[#1f2436]"
+                                                containerClassName="w-auto"
                                             >
                                                 {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
                                                     <option key={hour} value={hour}>{hour}</option>
                                                 ))}
-                                            </select>
+                                            </SelectField>
 
                                             <span className="text-xs sm:text-sm text-[#20273b]">-</span>
 
-                                            <select
+                                            <SelectField
                                                 value={values.accessLimitEndHour}
                                                 onChange={(e) => onChangeAccessLimitEndHour(e.target.value)}
-                                                className="h-[38px] w-[70px] rounded-[5px] border border-[#cfd6e2] bg-white px-2 text-xs sm:text-sm text-[#1f2436] outline-none focus:border-[#5a84e5] cursor-pointer"
+                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-[#1f2436]"
+                                                containerClassName="w-auto"
                                             >
                                                 {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
                                                     <option key={hour} value={hour}>{hour}</option>
                                                 ))}
-                                            </select>
+                                            </SelectField>
                                         </div>
 
                                         <div className="flex items-center gap-2 text-sm italic text-[#e15263] border-l-2 border-[#cfd6e2] pl-2.5 py-0.5 leading-none">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
+import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -58,11 +59,12 @@ export default function SimpleMasterFormView({
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId]);
 
-    useEffect(() => {
-        if (!isDirty) {
-            setValues(initialValues);
-        }
-    }, [initialValues, isDirty]);
+    useFormValuesSync({
+        initialValues,
+        recordId: detailRow?.id ?? null,
+        isDirty,
+        setValues,
+    });
 
     function handleChange(fieldId, nextValue) {
         setValues((currentValues) => ({

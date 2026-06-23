@@ -66,7 +66,7 @@ export function InventoryAdjustmentFormView({
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormValues(sourceRecord));
         setSelectedItem(null);
-    }, [config.sectionTabs, sourceRecord]);
+    }, [activeLevel2Tab?.id]);
 
     const validationMessage = useMemo(() => validateInventoryAdjustmentValues(values, config, isDetail), [config, isDetail, values]);
     const isDirty = useMemo(() => resolveInventoryDirtyState(values, initialSnapshot), [initialSnapshot, values]);
@@ -194,9 +194,7 @@ export function InventoryAdjustmentFormView({
                 onSectionChange={setActiveSectionId}
                 dockActions={dockActions}
                 footer={
-                    <div className="flex justify-end">
-                        <TransactionTotalCard label="Total" value={values.totalValue} />
-                    </div>
+                    <TransactionTotalCard label="Total" value={values.totalValue} />
                 }
             >
                 <CrudStatusMessage status={status} className="mb-3" />

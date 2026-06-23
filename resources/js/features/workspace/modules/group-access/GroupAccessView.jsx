@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import {
@@ -18,6 +18,11 @@ export default function GroupAccessView({
     onOpenDetail,
     onCloseDetail,
 }) {
+    const mapRow = useCallback(
+        (record) => buildGroupAccessRow(record, page.form),
+        [page.form],
+    );
+
     const {
         mappedRows: resolvedRows,
         tableProps,
@@ -25,7 +30,7 @@ export default function GroupAccessView({
     } = useWorkspaceResource({
         resource: 'access-groups',
         initialPerPage: 25,
-        mapRow: (record) => buildGroupAccessRow(record, page.form),
+        mapRow,
     });
 
     const rowMap = useMemo(

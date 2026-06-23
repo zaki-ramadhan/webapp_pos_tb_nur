@@ -74,17 +74,19 @@ export default function TableToolbar({
     const schemaKey = getTableSchemaKey(resolvedColumns);
     const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, resolvedColumns);
 
-    const resolvedColumnSettings = columnSettings || (resolvedColumns.length ? {
-        columns: resolvedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
-        visibleIds: visibleColumnIds,
-        onToggle: (columnId) => {
-            setVisibleColumnIds(prev =>
-                prev.includes(columnId)
-                    ? prev.filter(id => id !== columnId)
-                    : [...prev, columnId]
-            );
-        }
-    } : null);
+    const resolvedColumnSettings = columnSettings === false
+        ? null
+        : (columnSettings || (resolvedColumns.length ? {
+            columns: resolvedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
+            visibleIds: visibleColumnIds,
+            onToggle: (columnId) => {
+                setVisibleColumnIds(prev =>
+                    prev.includes(columnId)
+                        ? prev.filter(id => id !== columnId)
+                        : [...prev, columnId]
+                );
+            }
+        } : null));
 
     const defaultPrintHandler = () => {
         if (resolvedRows.length === 0) {
@@ -189,7 +191,7 @@ export default function TableToolbar({
     return (
         <div className={className}>
             {filters ? (
-                <div className={`flex flex-wrap items-center justify-between gap-3 ${topRowClassName}`.trim()}>
+                <div className={`mb-2.5 flex flex-wrap items-center justify-between gap-3 ${topRowClassName}`.trim()}>
                     <div className="flex w-full flex-wrap items-center gap-2">
                         {filters}
                         {!hasFunnelButton(filters) && (
@@ -205,35 +207,36 @@ export default function TableToolbar({
                 </div>
             ) : null}
 
-            <div className={`mt-3.5 flex flex-col justify-between gap-3 md:flex-row md:items-center ${bottomRowClassName}`.trim()}>
+            <div className={`flex flex-col justify-between gap-3 md:flex-row md:items-center ${filters ? 'mt-1' : ''} ${bottomRowClassName}`.trim()}>
                 <div className="flex flex-wrap items-center gap-2">
                     {createButton ? (
-                        <button
-                            type="button"
-                            onClick={createButton.onClick}
-                            className={`inline-flex shrink-0 items-center justify-center gap-2 rounded-[4px] bg-[#2353a0] font-semibold text-white shadow-sm transition hover:bg-[#1a4282] ${sizeStyle.createButton}`.trim()}
+                        <Tooltip content="Tambah" portal>
+                            <button
+                                type="button"
+                                onClick={createButton.onClick}
+                                title={createButton.label}
+                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-[#2353a0] text-white shadow-sm transition hover:bg-[#1a4282] ${size === 'compact' ? 'h-[34px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
+                            >
+                                <PlusIcon className={sizeStyle.createIcon} />
+                            </button>
+                        </Tooltip>
+                    ) : null}
+
+                    {refreshButton ? (
+                        <ToolbarIconButton
+                            label={refreshButton.label ?? 'Perbarui'}
+                            onClick={refreshButton.onClick}
+                            disabled={searchLoading}
+                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] ${sizeStyle.utilityButton} ${searchLoading ? 'pointer-events-none opacity-70' : ''}`.trim()}
                         >
-                            <PlusIcon className={sizeStyle.createIcon} />
-                            <span className={sizeStyle.searchText}>{createButton.label}</span>
-                        </button>
+                            <RefreshIcon className={`h-4 w-4 ${searchLoading ? 'animate-spin' : ''}`.trim()} />
+                        </ToolbarIconButton>
                     ) : null}
 
                     {leftControls}
                 </div>
 
                 <div className={`flex flex-wrap items-center gap-2 md:justify-end ${rightControlsClassName}`.trim()}>
-                    {search ? (
-                        <TextInput
-                            type="text"
-                            placeholder={search.placeholder ?? 'Cari data...'}
-                            value={search.value}
-                            onChange={(event) => search.onChange?.(event.target.value)}
-                            onClear={() => search.onChange?.('')}
-                            trailing={searchTrailing}
-                            className={`w-full md:w-[220px] lg:w-[260px] ${sizeStyle.searchInput}`.trim()}
-                        />
-                    ) : null}
-
                     {resolvedImportButton ? (
                         <ToolbarImportButton
                             importConfig={resolvedImportButton}
@@ -251,22 +254,12 @@ export default function TableToolbar({
 
                     {resolvedPrintButton ? (
                         <ToolbarIconButton
-                            label={resolvedPrintButton.label ?? 'Cetak'}
+                            label={resolvedRows.length === 0 ? 'Tidak ada data untuk dicetak' : (resolvedPrintButton.label ?? 'Cetak')}
                             onClick={resolvedPrintButton.onClick}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] ${sizeStyle.utilityButton}`.trim()}
+                            disabled={resolvedRows.length === 0}
+                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition ${resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-[#e8f2ff]'} ${sizeStyle.utilityButton}`.trim()}
                         >
                             <PrintIcon className="h-4 w-4" />
-                        </ToolbarIconButton>
-                    ) : null}
-
-                    {refreshButton ? (
-                        <ToolbarIconButton
-                            label={refreshButton.label ?? 'Muat ulang'}
-                            onClick={refreshButton.onClick}
-                            disabled={searchLoading}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] ${sizeStyle.utilityButton} ${searchLoading ? 'pointer-events-none opacity-70' : ''}`.trim()}
-                        >
-                            <RefreshIcon className={`h-4 w-4 ${searchLoading ? 'animate-spin' : ''}`.trim()} />
                         </ToolbarIconButton>
                     ) : null}
 
@@ -279,6 +272,19 @@ export default function TableToolbar({
                     ) : null}
 
                     {cleanedRightControls}
+
+                    {search ? (
+                        <TextInput
+                            type="text"
+                            placeholder={search.placeholder ?? 'Cari data...'}
+                            value={search.value}
+                            onChange={(event) => search.onChange?.(event.target.value)}
+                            onClear={() => search.onChange?.('')}
+                            trailing={searchTrailing}
+                            containerClassName={search.widthClassName ?? 'w-full md:w-[220px] lg:w-[260px]'}
+                            className={sizeStyle.searchInput}
+                        />
+                    ) : null}
                 </div>
             </div>
         </div>

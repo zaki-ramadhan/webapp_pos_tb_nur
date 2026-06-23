@@ -17,7 +17,7 @@ export default function SupplierPriceFormView({ config }) {
         <div className="flex min-h-full flex-col gap-3">
             <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
                 <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
-                    <div className="border-b border-[#d8dde7] px-4 py-4">
+                    <div className="px-4 pt-4 pb-0">
                         <SupplierPriceHeader config={config} values={values} setValues={setValues} />
                     </div>
 
