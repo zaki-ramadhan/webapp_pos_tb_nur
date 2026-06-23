@@ -28,6 +28,9 @@ export default function UserTableView({ table, onRefresh, onCreate, onOpenDetail
             inactiveFilterKey="isActiveLabel"
             onCreate={onCreate}
             onOpenDetail={onOpenDetail}
+            disableImport={true}
+            disablePrint={true}
+            disableColumnSettings={true}
         />
     );
 }

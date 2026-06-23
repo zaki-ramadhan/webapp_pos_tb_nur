@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
+import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import RadioField from '@/components/ui/RadioField';
 import TextInput from '@/components/ui/TextInput';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
@@ -88,7 +89,11 @@ function buildPayloadFromInput(inputVal, values, lookupData, isDetail) {
     }
 
     const adminRole = lookupData.roles?.find((r) => r.code === 'admin' || r.name?.toLowerCase()?.includes('admin'));
-    const roleIds = values.accessType === 'administrator' ? [adminRole?.id ?? 2] : [];
+    const operatorRole = lookupData.roles?.find((r) => r.code === 'operator' || r.name?.toLowerCase()?.includes('operator'));
+    const roleIds = values.accessType === 'administrator'
+        ? [adminRole?.id ?? 2]
+        : (operatorRole ? [operatorRole.id] : [3]);
+
 
     return toUserPayload({ ...values, name, email, phone, password: values.password || (isDetail ? undefined : 'password'), roleIds });
 }
@@ -107,11 +112,6 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
 
-    useEffect(() => {
-        setValues(initialValues);
-        setStatus({ tone: '', message: '' });
-    }, [initialValues]);
-
     const isDirty = useMemo(() => (
         values.name !== initialValues.name ||
         values.email !== initialValues.email ||
@@ -122,6 +122,14 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
         values.accessType !== initialValues.accessType
     ), [values, initialValues]);
 
+    useFormValuesSync({
+        initialValues,
+        recordId,
+        isDirty,
+        setValues,
+        onSync: () => setStatus({ tone: '', message: '' }),
+    });
+
     useWorkspaceDirtyRegistration({ pageId: 'users', tabId: activeLevel2Tab?.id, dirty: isDirty, enabled: Boolean(activeLevel2Tab?.id) });
 
     const { store, update } = useBackendResource({ resource: 'users' });
@@ -131,6 +139,15 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
         if (!inputVal) {
             setStatus({ tone: 'error', message: 'No Handphone/Email wajib diisi.' });
             return;
+        }
+
+        const isEmailInput = inputVal.includes('@');
+        if (isEmailInput) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(inputVal)) {
+                setStatus({ tone: 'error', message: 'Format email tidak valid.' });
+                return;
+            }
         }
 
         const payload = buildPayloadFromInput(inputVal, values, lookupData, isDetail);
