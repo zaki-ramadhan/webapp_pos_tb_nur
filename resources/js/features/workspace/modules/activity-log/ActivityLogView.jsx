@@ -157,7 +157,6 @@ export default function ActivityLogView({ page }) {
                         ))}
                     </SelectField>
                 ))}
-                topRowClassName="mb-3"
                 size="compact"
                 refreshButton={{
                     label: table.refreshLabel,
@@ -236,9 +235,6 @@ export default function ActivityLogView({ page }) {
                                     </DataTableCell>
                                     <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.email)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.ipAddress)}</span>
                                     </DataTableCell>
                                 </DataTableRow>
                             ))

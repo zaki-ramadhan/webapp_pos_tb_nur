@@ -106,12 +106,6 @@ class ActivityLogPage
                                 'align' => 'left',
                                 'widthClassName' => 'w-[190px]',
                             ],
-                            [
-                                'id' => 'ipAddress',
-                                'label' => 'Alamat IP',
-                                'align' => 'left',
-                                'widthClassName' => 'w-[140px]',
-                            ],
                         ],
                         'rows' => ActivityLogTable::rows(),
                     ],
