@@ -145,8 +145,6 @@ class EmployeesPage
                         ],
                         'employeeIdTypeOptions' => [
                             'Karyawan',
-                            'Kontrak',
-                            'Magang',
                         ],
                         'branchOptions' => [
                             'JAKARTA',

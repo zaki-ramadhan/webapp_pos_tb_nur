@@ -35,24 +35,26 @@ export function validateEmployeeFields(values) {
     }
 
     // Pajak
-    if (values.taxNumber) {
-        const strippedNpwp = String(values.taxNumber).replace(/[^0-9]/g, '');
-        if (strippedNpwp.length !== 15 && strippedNpwp.length !== 16) {
-            errors.tax_number = 'Format NPWP tidak valid. NPWP harus terdiri dari 15 atau 16 digit angka.';
+    if (values.subjectToIncomeTax) {
+        if (values.taxNumber) {
+            const strippedNpwp = String(values.taxNumber).replace(/[^0-9]/g, '');
+            if (strippedNpwp.length !== 15 && strippedNpwp.length !== 16) {
+                errors.tax_number = 'Format NPWP tidak valid. NPWP harus terdiri dari 15 atau 16 digit angka.';
+            }
         }
-    }
 
-    if (values.previousIncome) {
-        const parsedIncome = parseNullableCurrencyInput(values.previousIncome);
-        if (parsedIncome === null || isNaN(parsedIncome) || parsedIncome < 0) {
-            errors.previous_income = 'Penghasilan sebelumnya harus berupa nominal angka valid.';
+        if (values.previousIncome) {
+            const parsedIncome = parseNullableCurrencyInput(values.previousIncome);
+            if (parsedIncome === null || isNaN(parsedIncome) || parsedIncome < 0) {
+                errors.previous_income = 'Penghasilan sebelumnya harus berupa nominal angka valid.';
+            }
         }
-    }
 
-    if (values.previousTax) {
-        const parsedTax = parseNullableCurrencyInput(values.previousTax);
-        if (parsedTax === null || isNaN(parsedTax) || parsedTax < 0) {
-            errors.previous_tax = 'PPh sebelumnya harus berupa nominal angka valid.';
+        if (values.previousTax) {
+            const parsedTax = parseNullableCurrencyInput(values.previousTax);
+            if (parsedTax === null || isNaN(parsedTax) || parsedTax < 0) {
+                errors.previous_tax = 'PPh sebelumnya harus berupa nominal angka valid.';
+            }
         }
     }
 

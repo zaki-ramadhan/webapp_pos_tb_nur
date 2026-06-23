@@ -3,7 +3,8 @@ import { buildFilterOptions, formatCurrencyValue } from '@/features/workspace/sh
 
 export function buildEmployeeFormValues(form, detailRow = null) {
     const defaults = form.defaults ?? {};
-    const primaryBankAccount = detailRow?.bankAccounts?.find((account) => account.is_primary) ?? detailRow?.bankAccounts?.[0] ?? null;
+    const bankAccountsList = detailRow?.bankAccounts ?? detailRow?.bank_accounts ?? [];
+    const primaryBankAccount = bankAccountsList.find((account) => account.is_primary) ?? bankAccountsList[0] ?? null;
 
     return {
         ...defaults,
@@ -57,7 +58,8 @@ export function buildEmployeeRow(record) {
     const branchName = record.branch?.name ?? '';
     const departmentName = record.department?.name ?? '';
     const taxStatus = record.tax_allowance_status ?? record.tax_status ?? '';
-    const primaryBankAccount = (record.bankAccounts ?? []).find((account) => account.is_primary) ?? record.bankAccounts?.[0] ?? null;
+    const bankAccountsList = record.bankAccounts ?? record.bank_accounts ?? [];
+    const primaryBankAccount = bankAccountsList.find((account) => account.is_primary) ?? bankAccountsList[0] ?? null;
     const previousIncome = Number(record.previous_income ?? 0);
     const previousTax = Number(record.previous_tax ?? 0);
 
@@ -107,7 +109,7 @@ export function buildEmployeeRow(record) {
         bankName: primaryBankAccount?.bank_name ?? '',
         bankAccountNumber: primaryBankAccount?.account_number ?? '',
         bankAccountHolder: primaryBankAccount?.account_name ?? '',
-        bankAccounts: record.bankAccounts ?? [],
+        bankAccounts: bankAccountsList,
         inactiveValue: record.is_active === false ? 'yes' : 'no',
         employmentStatusValue: String(record.employment_status ?? '').toLowerCase().includes('kontrak') ? 'contract' : 'permanent',
         departmentValue: departmentName.trim().toLowerCase().replace(/\s+/g, '-'),

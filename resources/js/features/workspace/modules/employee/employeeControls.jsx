@@ -16,7 +16,7 @@ export function SuggestionTextInput({
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
     emptyLabel = 'Tidak ada data yang cocok.',
-    className = 'h-[40px] rounded-[4px] border-[#cfd6e2]',
+    className = 'h-[40px] rounded-[4px] border-slate-400',
     inputClassName = 'text-xs sm:text-sm text-[#1f2436]',
     ...props
 }) {

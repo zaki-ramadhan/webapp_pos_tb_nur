@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
+import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -89,14 +90,17 @@ export default function EmployeeFormView({
         window.dispatchEvent(new CustomEvent('form-validation-clear'));
     }, [activeTabInstanceId]);
 
-    useEffect(() => {
-        if (!isDirty) {
-            setValues(initialValues);
+    useFormValuesSync({
+        initialValues,
+        recordId: detailRowId,
+        isDirty,
+        setValues,
+        onSync: (syncedValues) => {
             setErrors({
-                website: validateEmployeeWebsite(initialValues.website ?? ''),
+                website: validateEmployeeWebsite(syncedValues.website ?? ''),
             });
-        }
-    }, [initialValues, isDirty]);
+        },
+    });
 
     function handleChange(field, nextValue) {
         if (errors[field]) {
@@ -263,7 +267,6 @@ export default function EmployeeFormView({
                             onClick={requestDelete}
                         />
                     ) : null}
-                    <AttachmentSelectButton label={form.attachmentLabel} onOpen={() => setAttachmentModalOpen(true)} />
                 </>
             }
         >

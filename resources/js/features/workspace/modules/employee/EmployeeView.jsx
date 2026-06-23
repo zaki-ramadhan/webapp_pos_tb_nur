@@ -4,6 +4,7 @@ import useBackendIndexResource from '@/features/workspace/backend/useBackendInde
 import EmployeeFormView from '@/features/workspace/modules/employee/EmployeeFormView';
 import EmployeeTableView from '@/features/workspace/modules/employee/EmployeeTableView';
 import { buildEmployeeFilters, buildEmployeeRow } from '@/features/workspace/modules/employee/employeeViewShared';
+import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 export default function EmployeeView({
     page,
@@ -68,7 +69,8 @@ export default function EmployeeView({
             table: {
                 ...page.table,
                 rows: mappedRows,
-                filters: buildEmployeeFilters(page.table?.filters ?? [], mappedRows),
+                filters: buildEmployeeFilters(page.table?.filters ?? [], mappedRows)
+                    .filter((filter) => !(filter.id === 'department' && isWorkspacePageInactive('department'))),
                 pageValue: employeeResource.total.toLocaleString('id-ID'),
                 loading: employeeResource.loading,
                 refreshLabel: employeeResource.loading ? 'Memuat data...' : page.table?.refreshLabel,
