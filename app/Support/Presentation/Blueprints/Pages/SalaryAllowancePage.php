@@ -44,20 +44,12 @@ class SalaryAllowancePage
                             'inactiveOptionLabel' => 'Ya',
                         ],
                         'typeOptions' => [
-                            'Gaji/Pensiun atau THT/JHT',
-                            'Tunjangan PPh',
-                            'Subsidi PPh',
-                            'Tunjangan Lainnya, Uang lembur dan sebagainya',
-                            'Tunjangan Jaminan Kecelakaan Kerja, Jaminan Kematian',
-                            'Honorarium dan Imbalan lain sejenisnya',
-                            'Premi asuransi kesehatan yang dibayarkan pemberi kerja',
-                            'Penerimaan dalam bentuk natura dan kenikmatan lainnya',
-                            'Tantiem, Bonus, Rapel, Gratifikasi, Jasa Produksi dan THR',
-                            'Tunjangan Iuran Pensiun/THT/JHT dibayarkan Pemberi Kerja',
-                            'Potongan Gaji (Tidak Mengurangi PPh)',
-                            'Pengurangan Gaji (Mengurangi PPh)',
-                            'Premi asuransi kesehatan dibayarkan pekerja',
-                            'Iuran Pensiun/THT/JHT dibayarkan Pekerja',
+                            'Gaji Pokok / Upah',
+                            'Tunjangan Jabatan & Operasional',
+                            'Tunjangan Makan & Transport',
+                            'Uang Lembur',
+                            'THR & Bonus',
+                            'Potongan (Kasbon / Absensi)',
                         ],
                         'payDeductOptions' => ['Bulanan'],
                         'accountOptions' => [
@@ -68,7 +60,7 @@ class SalaryAllowancePage
                         'newEntry' => [
                             'id' => 'draft-new',
                             'name' => '',
-                            'type' => 'Gaji/Pensiun atau THT/JHT',
+                            'type' => 'Gaji Pokok / Upah',
                             'payDeduct' => 'Bulanan',
                             'expenseAccount' => '',
                             'inactive' => false,
@@ -85,8 +77,8 @@ class SalaryAllowancePage
                                     'defaultValue' => 'all',
                                     'options' => [
                                         ['value' => 'all', 'label' => 'Tipe Gaji atau Tunjangan: Semua'],
-                                        ['value' => 'salary', 'label' => 'Tipe Gaji atau Tunjangan: Gaji/Pensiun atau THT/JHT'],
-                                        ['value' => 'allowance', 'label' => 'Tipe Gaji atau Tunjangan: Tunjangan'],
+                                        ['value' => 'salary', 'label' => 'Tipe Gaji atau Tunjangan: Gaji Pokok / Upah'],
+                                        ['value' => 'allowance', 'label' => 'Tipe Gaji atau Tunjangan: Tunjangan & Potongan'],
                                     ],
                                 ],
                                 [
@@ -109,7 +101,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'salary-basic',
                                 'name' => 'Gaji Pokok',
-                                'type' => 'Gaji/Pensiun atau THT/JHT',
+                                'type' => 'Gaji Pokok / Upah',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -118,7 +110,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'holiday-bonus',
                                 'name' => 'Tunjangan Hari Raya',
-                                'type' => 'Tantiem, Bonus, Rapel, Gratifikasi, Jasa Produksi dan THR',
+                                'type' => 'THR & Bonus',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -127,7 +119,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'bonus',
                                 'name' => 'Tunjangan Bonus',
-                                'type' => 'Tantiem, Bonus, Rapel, Gratifikasi, Jasa Produksi dan THR',
+                                'type' => 'THR & Bonus',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -136,7 +128,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'tax-allowance',
                                 'name' => 'Tunjangan PPh',
-                                'type' => 'Tunjangan PPh',
+                                'type' => 'Tunjangan Jabatan & Operasional',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -145,7 +137,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'position-allowance',
                                 'name' => 'Tunjangan Jabatan',
-                                'type' => 'Tunjangan Lainnya, Uang lembur dan sebagainya',
+                                'type' => 'Tunjangan Jabatan & Operasional',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -154,7 +146,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'meal-allowance',
                                 'name' => 'Tunjangan Makan',
-                                'type' => 'Tunjangan Lainnya, Uang lembur dan sebagainya',
+                                'type' => 'Tunjangan Makan & Transport',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -163,7 +155,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'transport-allowance',
                                 'name' => 'Tunjangan Transportasi',
-                                'type' => 'Tunjangan Lainnya, Uang lembur dan sebagainya',
+                                'type' => 'Tunjangan Makan & Transport',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -172,7 +164,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'telecom-allowance',
                                 'name' => 'Tunjangan Telekomunikasi',
-                                'type' => 'Tunjangan Lainnya, Uang lembur dan sebagainya',
+                                'type' => 'Tunjangan Jabatan & Operasional',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -181,7 +173,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'overtime-allowance',
                                 'name' => 'Tunjangan Lembur',
-                                'type' => 'Tunjangan Lainnya, Uang lembur dan sebagainya',
+                                'type' => 'Uang Lembur',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',
@@ -190,7 +182,7 @@ class SalaryAllowancePage
                             [
                                 'id' => 'insurance-allowance',
                                 'name' => 'Tunjangan Premi Asuransi',
-                                'type' => 'Premi asuransi kesehatan yang dibayarkan pemberi kerja',
+                                'type' => 'Tunjangan Jabatan & Operasional',
                                 'inactive' => false,
                                 'inactiveLabel' => 'Tidak',
                                 'payDeduct' => 'Bulanan',

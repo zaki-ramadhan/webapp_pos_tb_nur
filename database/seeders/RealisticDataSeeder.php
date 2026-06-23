@@ -252,7 +252,7 @@ class RealisticDataSeeder extends Seeder
             [
                 'code' => 'ALL-TJ',
                 'name' => 'Tunjangan Jabatan',
-                'allowance_type' => 'Allowance',
+                'allowance_type' => 'Tunjangan Jabatan & Operasional',
                 'account_id' => $accBebanGajiId,
                 'notes' => 'Tunjangan struktural jabatan',
                 'is_active' => true,
@@ -262,7 +262,7 @@ class RealisticDataSeeder extends Seeder
             [
                 'code' => 'ALL-TR',
                 'name' => 'Tunjangan Transportasi',
-                'allowance_type' => 'Allowance',
+                'allowance_type' => 'Tunjangan Makan & Transport',
                 'account_id' => $accBebanGajiId,
                 'notes' => 'Tunjangan transportasi harian',
                 'is_active' => true,
@@ -272,7 +272,7 @@ class RealisticDataSeeder extends Seeder
             [
                 'code' => 'ALL-MK',
                 'name' => 'Tunjangan Uang Makan',
-                'allowance_type' => 'Allowance',
+                'allowance_type' => 'Tunjangan Makan & Transport',
                 'account_id' => $accBebanGajiId,
                 'notes' => 'Tunjangan makan siang karyawan',
                 'is_active' => true,
@@ -282,7 +282,7 @@ class RealisticDataSeeder extends Seeder
             [
                 'code' => 'ALL-BPJS',
                 'name' => 'Tunjangan BPJS Kesehatan',
-                'allowance_type' => 'Allowance',
+                'allowance_type' => 'Tunjangan Jabatan & Operasional',
                 'account_id' => $accBebanGajiId,
                 'notes' => 'Subsidi BPJS Kesehatan',
                 'is_active' => true,
@@ -292,7 +292,7 @@ class RealisticDataSeeder extends Seeder
             [
                 'code' => 'DED-PPH',
                 'name' => 'Potongan PPh 21',
-                'allowance_type' => 'Deduction',
+                'allowance_type' => 'Potongan (Kasbon / Absensi)',
                 'account_id' => $accBebanGajiId,
                 'notes' => 'Potongan pajak penghasilan karyawan',
                 'is_active' => true,
@@ -1051,7 +1051,15 @@ class RealisticDataSeeder extends Seeder
 
         $adminRoleId = DB::table('roles')->insertGetId([
             'code' => 'admin',
-            'name' => 'Admin',
+            'name' => 'Administrator',
+            'is_active' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $operatorRoleId = DB::table('roles')->insertGetId([
+            'code' => 'operator',
+            'name' => 'Operator',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
@@ -1192,13 +1200,13 @@ class RealisticDataSeeder extends Seeder
         DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['owner@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['owner@tbnur.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['siti@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['siti@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti@tbnur.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['andi@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['andi@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['andi@tbnur.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $adminRoleId, 'user_id' => $usersMap['rudi@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['rudi@tbnur.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['rudi@tbnur.com']]);
 
         // Seed data log aktivitas

@@ -19,7 +19,7 @@ export default function SalaryAllowanceTableView({
     const filteredRows = useMemo(() => {
         return rows.filter((row) => {
             if (filters.type !== 'all') {
-                const typeCategory = row.type === 'Gaji/Pensiun atau THT/JHT' ? 'salary' : 'allowance';
+                const typeCategory = row.type === 'Gaji Pokok / Upah' ? 'salary' : 'allowance';
 
                 if (typeCategory !== filters.type) {
                      return false;
