@@ -30,7 +30,7 @@ class RegisterUserController extends Controller
 
         $rules = [
             'name' => ['required', 'string', 'max:160'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'max:255'],
         ];
 

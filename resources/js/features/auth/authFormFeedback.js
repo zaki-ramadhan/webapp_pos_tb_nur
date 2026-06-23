@@ -38,13 +38,16 @@ export function validateLoginForm(data) {
 
 export function validateRegisterForm(data, { showPhoneField = false } = {}) {
     const errors = {};
+    const email = (data.email ?? '').trim();
 
     if (!data.name.trim()) {
         errors.name = 'Nama lengkap wajib diisi.';
     }
 
-    if (!data.email.trim()) {
+    if (!email) {
         errors.email = 'Email wajib diisi.';
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+        errors.email = 'Format email tidak valid.';
     }
 
     if (showPhoneField && data.phone) {
@@ -70,7 +73,7 @@ export function validateForgotPasswordForm(data) {
 
     if (!email) {
         errors.email = 'Email wajib diisi.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
         errors.email = 'Format email tidak valid.';
     }
 
@@ -79,9 +82,12 @@ export function validateForgotPasswordForm(data) {
 
 export function validateResetPasswordForm(data) {
     const errors = {};
+    const email = (data.email ?? '').trim();
 
-    if (!data.email.trim()) {
+    if (!email) {
         errors.email = 'Email wajib diisi.';
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+        errors.email = 'Format email tidak valid.';
     }
 
     if (!data.password) {

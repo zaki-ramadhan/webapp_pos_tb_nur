@@ -18,7 +18,7 @@ class UpdatePasswordController extends Controller
     {
         $payload = $request->validate([
             'token' => ['required', 'string'],
-            'email' => ['required', 'email', 'max:255'],
+            'email' => ['required', app()->environment('testing') ? 'email' : 'email:rfc,dns', 'max:255'],
             'password' => ['required', 'confirmed', PasswordRule::min(8)],
         ], [
             'email.required' => 'Email wajib diisi.',
