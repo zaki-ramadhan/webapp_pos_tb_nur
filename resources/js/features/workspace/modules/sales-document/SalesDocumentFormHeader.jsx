@@ -114,6 +114,8 @@ export default function SalesDocumentFormHeader({
                             <TextInput
                                 value={values.documentNumber}
                                 onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value, autoNumber: false }))}
+                                onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
+                                maxLength={120}
                                 readOnly={isDetail}
                                 trailing={<span className="text-lg font-semibold text-[#1f2436]">×</span>}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"

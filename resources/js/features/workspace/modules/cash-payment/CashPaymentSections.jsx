@@ -85,8 +85,9 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                                     label="Ya"
                                     checked={values.voided}
                                     disabled
-                                    inputClassName="h-[24px] w-[24px] rounded-[4px]"
-                                    containerClassName="w-auto inline-flex items-center"
+                                    align="center"
+                                    inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                    containerClassName="w-auto inline-flex"
                                 />
                             </>
                         ) : null}
@@ -220,6 +221,8 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                                 id="documentNumber"
                                 value={values.documentNumber}
                                 onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
+                                onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
+                                maxLength={120}
                                 readOnly={Boolean(activeRecordId)}
                                 trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"

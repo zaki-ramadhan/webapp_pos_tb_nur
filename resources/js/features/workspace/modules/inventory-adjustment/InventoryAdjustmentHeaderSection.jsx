@@ -94,6 +94,13 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                                 documentNumber: event.target.value,
                                             }))
                                         }
+                                        onBlur={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                documentNumber: event.target.value.trim(),
+                                            }))
+                                        }
+                                        maxLength={120}
                                         className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
                                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                     />

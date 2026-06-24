@@ -136,6 +136,13 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                                 documentNumber: event.target.value,
                                             }))
                                         }
+                                        onBlur={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                documentNumber: event.target.value.trim(),
+                                            }))
+                                        }
+                                        maxLength={120}
                                         className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
                                         inputClassName="text-xs sm:text-sm text-[#1f2436]"
                                     />
@@ -259,8 +266,9 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                                         closeRequest: event.target.checked,
                                     }))
                                 }
-                                inputClassName="h-[20px] w-[20px] rounded"
-                                containerClassName="w-auto inline-flex items-center"
+                                align="center"
+                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                containerClassName="w-auto inline-flex"
                             />
                         </div>
                     ) : null}

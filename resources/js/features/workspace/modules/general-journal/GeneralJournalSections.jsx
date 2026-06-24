@@ -149,6 +149,8 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                                 <TextInput
                                     value={values.documentNumber}
                                     onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
+                                    onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
+                                    maxLength={120}
                                     readOnly={Boolean(activeRecordId)}
                                     trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
                                     className="h-[40px] rounded-[4px] border-[#cfd6e2]"

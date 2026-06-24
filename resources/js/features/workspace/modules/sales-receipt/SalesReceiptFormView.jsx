@@ -141,6 +141,13 @@ export default function SalesReceiptFormView({
                                                     documentNumber: event.target.value,
                                                 }))
                                             }
+                                            onBlur={(event) =>
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    documentNumber: event.target.value.trim(),
+                                                }))
+                                            }
+                                            maxLength={120}
                                             readOnly={Boolean(isDetail)}
                                             className="h-[40px] rounded-[4px] border-[#cfd6e2]"
                                             inputClassName="text-xs sm:text-sm text-[#1f2436]"
