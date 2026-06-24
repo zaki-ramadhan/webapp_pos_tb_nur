@@ -8,14 +8,22 @@ const accountTopActions = [
 ];
 
 const accountTypeOptions = [
-    'Kas & Bank',
-    'Piutang',
+    'Kas dan Bank',
+    'Piutang Usaha',
     'Persediaan',
+    'Aset Lancar Lainnya',
     'Aset Tetap',
-    'Kewajiban',
+    'Akumulasi Penyusutan',
+    'Aset Lainnya',
+    'Utang Usaha',
+    'Liabilitas Jangka Pendek',
+    'Liabilitas Jangka Panjang',
     'Modal',
     'Pendapatan',
+    'Beban Pokok Penjualan',
     'Beban',
+    'Beban Lainnya',
+    'Pendapatan Lainnya',
 ];
 
 const accountTableColumns = [
@@ -28,7 +36,7 @@ const accountTableColumns = [
 const accountRows = [];
 
 const accountCreateValues = {
-    type: 'Kas & Bank',
+    type: 'Kas dan Bank',
     isSubAccount: false,
     code: '',
     name: '',
@@ -70,7 +78,7 @@ export const defaultAccountsConfig = {
                 rowKey: 'type',
                 options: [
                     { value: 'all', label: 'Tipe Akun: Semua' },
-                    { value: 'Kas & Bank', label: 'Tipe Akun: Kas & Bank' },
+                    { value: 'Kas dan Bank', label: 'Tipe Akun: Kas dan Bank' },
                 ],
             },
         ],

@@ -27,11 +27,30 @@ import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 
+function shouldShowSaldoTab(type) {
+    if (!type) return false;
+    const normalized = type.toLowerCase().trim();
+    const noSaldoTypes = [
+        'piutang usaha',
+        'piutang',
+        'accounts receivable',
+        'persediaan',
+        'inventory',
+        'aset tetap',
+        'fixed asset',
+        'fixed assets',
+        'utang usaha',
+        'utang',
+        'accounts payable',
+        'kewajiban',
+    ];
+    return !noSaldoTypes.includes(normalized);
+}
+
 export default function AccountsFormView({ config, backendRows, activeLevel2Tab, onOpenDetail, onCloseDetail, onReload }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
-    const tabs = isDetail ? config.detailTabs : config.createTabs;
-    const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? 'general');
+    
     const backendRecord = useMemo(
         () => backendRows.find((row) => String(row.id) === String(recordId)) ?? null,
         [backendRows, recordId],
@@ -43,6 +62,37 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
         [backendRecord, config, isDetail, recordId],
     );
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
+    
+    const tabs = useMemo(() => {
+        const baseTabs = isDetail
+            ? [
+                  { id: 'general', label: 'Informasi Umum' },
+                  { id: 'others', label: 'Lain-lain' },
+                  { id: 'children', label: 'Akun Anak' },
+              ]
+            : [
+                  { id: 'general', label: 'Informasi Umum' },
+                  { id: 'opening-balance', label: 'Saldo' },
+                  { id: 'others', label: 'Lain-lain' },
+              ];
+
+        const showSaldo = shouldShowSaldoTab(values.type);
+
+        if (showSaldo) {
+            if (isDetail && !baseTabs.some((t) => t.id === 'opening-balance')) {
+                return [
+                    baseTabs[0],
+                    { id: 'opening-balance', label: 'Saldo' },
+                    ...baseTabs.slice(1),
+                ];
+            }
+            return baseTabs;
+        } else {
+            return baseTabs.filter((t) => t.id !== 'opening-balance');
+        }
+    }, [isDetail, values.type]);
+
+    const [activeTabId, setActiveTabId] = useState('general');
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -55,11 +105,18 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
     const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
-        setActiveTabId((isDetail ? config.detailTabs : config.createTabs)[0]?.id ?? 'general');
+        setActiveTabId('general');
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteModalOpen(false);
-    }, [activeTabInstanceId, config.createTabs, config.detailTabs, isDetail]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTabInstanceId]);
+
+    useEffect(() => {
+        if (!tabs.some((t) => t.id === activeTabId)) {
+            setActiveTabId('general');
+        }
+    }, [tabs, activeTabId]);
 
     useEffect(() => {
         if (!hasChanges) {

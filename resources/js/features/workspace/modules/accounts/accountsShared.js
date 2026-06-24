@@ -1,5 +1,27 @@
 import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
+const DB_TO_UI_TYPE_MAP = {
+    'Cash/Bank': 'Kas dan Bank',
+    'Fixed Asset': 'Aset Tetap',
+    'Accumulated Depreciation': 'Akumulasi Penyusutan',
+    'Expense': 'Beban',
+};
+
+const UI_TO_DB_TYPE_MAP = {
+    'Kas dan Bank': 'Cash/Bank',
+    'Aset Tetap': 'Fixed Asset',
+    'Akumulasi Penyusutan': 'Accumulated Depreciation',
+    'Beban': 'Expense',
+};
+
+export function mapDbToUiType(type) {
+    return DB_TO_UI_TYPE_MAP[type] ?? type;
+}
+
+export function mapUiToDbType(type) {
+    return UI_TO_DB_TYPE_MAP[type] ?? type;
+}
+
 export function buildFormState(source = {}) {
     return {
         ...source,
@@ -81,7 +103,7 @@ export function mapAccountRow(record) {
         id: String(record.id),
         code: record.code ?? '',
         name: record.name ?? '',
-        type: record.account_type ?? '',
+        type: mapDbToUiType(record.account_type ?? ''),
         balance: formatBalanceLabel(openingBalance),
         negative: openingBalance < 0,
         level: 0,
@@ -119,7 +141,7 @@ export function buildAccountSourceRecord(record, config) {
         users: Array.isArray(record.users) && record.users.length
             ? record.users.map((user) => user.name).filter(Boolean)
             : [],
-        type: record.account_type ?? config.createValues.type,
+        type: mapDbToUiType(record.account_type ?? config.createValues.type),
         isSubAccount: Boolean(record.parent_id),
         autoCode: record.auto_code !== false,
         code: record.code ?? '',
@@ -164,7 +186,7 @@ export function buildAccountPayload(values) {
         code: values.isSubAccount && values.autoCode ? null : String(values.code ?? '').trim(),
         auto_code: values.isSubAccount ? Boolean(values.autoCode) : false,
         name: String(values.name ?? '').trim(),
-        account_type: String(values.type ?? '').trim(),
+        account_type: mapUiToDbType(String(values.type ?? '').trim()),
         notes: String(values.notes ?? '').trim() || null,
         opening_balance: normalizeNumericValue(values.openingBalanceValue) ?? 0,
         opening_balance_date: normalizeDateForPayload(values.openingBalanceDate),

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
+import EmptyState from '@/components/ui/EmptyState';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
@@ -92,33 +93,16 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                 </div>
             </div>
 
-            {(!values.isSubAccount || !values.autoCode) && (
-                <AccountsFormFieldRow label={config.labels.code} required>
-                    <TextInput
-                        value={values.code}
-                        onChange={(event) => onChange('code', event.target.value)}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                    />
-                </AccountsFormFieldRow>
-            )}
-
-            {Boolean(values.isSubAccount) && (
-                <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
-                    <div className="lg:col-span-2 flex items-center pt-1 pb-1">
-                        <CheckboxField
-                            id="accounts-auto-code"
-                            label="Pengkodean otomatis dengan prefix kode akun induk"
-                            checked={Boolean(values.autoCode)}
-                            onChange={(event) => onChange('autoCode', event.target.checked)}
-                            align="center"
-                            labelClassName="text-xs sm:text-sm text-[#1f2436] font-normal select-none"
-                            inputClassName="mt-0 h-[18px] w-[18px]"
-                            containerClassName="w-auto"
-                        />
-                    </div>
-                </div>
-            )}
+            <AccountsFormFieldRow label={config.labels.code}>
+                <TextInput
+                    id="accounts-code"
+                    name="code"
+                    value={values.code || '(Otomatis)'}
+                    readOnly
+                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                    inputClassName="text-xs sm:text-sm text-[#8a91a8]"
+                />
+            </AccountsFormFieldRow>
 
             <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
                 <div className="pt-2 lg:pt-1.5">
@@ -151,7 +135,7 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
         <div className="space-y-4">
             <h3 className="text-2xl font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
+            <div className="grid grid-cols-1 gap-y-3.5 max-w-[980px]">
                 <AccountsFormFieldRow label={config.labels.openingBalanceValue}>
                     <FormattedAmountInput
                         value={values.openingBalanceValue}
@@ -282,6 +266,20 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
 }
 
 export function AccountsChildrenTab({ values }) {
+    if (!values.childAccounts || values.childAccounts.length === 0) {
+        return (
+            <div className="w-full flex justify-center py-6">
+                <EmptyState
+                    title="Tidak Ada Akun Anak"
+                    description="Akun perkiraan ini tidak memiliki sub-akun/akun anak."
+                    iconName="default"
+                    size="sm"
+                    tone="subtle"
+                />
+            </div>
+        );
+    }
+
     return (
         <div className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_310px]">
             <div className="space-y-1.5">
