@@ -21,7 +21,7 @@ export default function DropdownMenu({
             anchorRef={anchorRef}
             align={align}
             side={side}
-            className={`rounded-[4px] shadow-md ${paddingClass} ${widthClassName} ${className}`.trim()}
+            className={`rounded-[3px] shadow-md ${paddingClass} ${widthClassName} ${className}`.trim()}
             panelClassName={panelClassName}
         >
             {children}

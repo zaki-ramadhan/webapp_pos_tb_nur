@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 
 import { useFormError } from './FormErrorContext';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false) {
     if (typeof val === 'string' && val.startsWith(' ')) {
@@ -71,6 +72,13 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
         return clean;
     }
 
+    // Cek jika kolom kode akun (account code)
+    const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) && 
+                          (searchStr.includes('code') || searchStr.includes('kode'));
+    if (isAccountCode) {
+        return val.replace(/[^0-9.]/g, '');
+    }
+
     // Cek jika kolom huruf saja
     const isLettersOnly = lettersOnly || 
                           (
@@ -115,6 +123,22 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                       searchStr.includes('bulan') || 
                       searchStr.includes('hari') || 
                       searchStr.includes('umur');
+
+    const isCurrency = searchStr.includes('price') || 
+                       searchStr.includes('amount') || 
+                       searchStr.includes('limit') || 
+                       searchStr.includes('kurs') ||
+                       searchStr.includes('jumlah') ||
+                       searchStr.includes('nominal') ||
+                       searchStr.includes('cost') ||
+                       searchStr.includes('piutang') ||
+                       searchStr.includes('utang') ||
+                       searchStr.includes('nilai') ||
+                       prefixStr === 'rp';
+
+    if (isCurrency) {
+        return formatAmountInput(val, { allowDecimal: true });
+    }
 
     const isAgeOrRange = searchStr.includes('age') || searchStr.includes('range');
     if (isAgeOrRange) {
@@ -283,7 +307,10 @@ export default function TextInput({
                                 /\bno\.?\b/.test(searchStr)
                             ) && !searchStr.includes('note') && !searchStr.includes('document');
 
-        if (isNumeric || isDigitOnly) {
+        const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) && 
+                              (searchStr.includes('code') || searchStr.includes('kode'));
+
+        if (isNumeric || isDigitOnly || isAccountCode) {
             const allowedKeys = [
                 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'Enter', 'Home', 'End'
             ];
@@ -303,8 +330,9 @@ export default function TextInput({
 
             const isDigit = /^[0-9]$/.test(event.key);
             const isSeparator = event.key === '.' || event.key === ',';
+            const isAllowedSeparator = isAccountCode ? event.key === '.' : isSeparator;
 
-            if (!isDigit && (!isNumeric || !isSeparator)) {
+            if (!isDigit && (!isNumeric || !isSeparator) && (!isAccountCode || !isAllowedSeparator)) {
                 event.preventDefault();
                 return;
             }
