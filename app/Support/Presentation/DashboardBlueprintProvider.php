@@ -787,7 +787,7 @@ class DashboardBlueprintProvider
                     'title' => 'Barang Paling Laku',
                     'type' => 'top-products',
                     'items' => $topProductsItems,
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'h-[310px]',
                 ],
                 [
                     'id' => 'overdue-activity',
