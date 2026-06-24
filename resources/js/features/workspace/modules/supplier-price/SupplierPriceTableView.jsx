@@ -14,7 +14,7 @@ import SelectField from '@/components/ui/SelectField';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { TransactionToolbarIconButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import { FunnelIcon, LinkIcon, PrintIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { FunnelIcon, RefreshIcon, PrintIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 
 function SupplierPriceFilterBar({ table, filters, setFilters }) {
     return (
@@ -115,7 +115,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                 }}
                 refreshButton={{
                     label: config.table.refreshLabel,
-                    icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    icon: <RefreshIcon className="h-4.5 w-4.5" />,
                 }}
                 rightControls={
                     <>

@@ -5,7 +5,7 @@ import {
     CircleCheckIcon,
     DownloadIcon,
     FunnelIcon,
-    LinkIcon,
+    RefreshIcon,
     PlusIcon,
     PrintIcon,
     SearchIcon,
@@ -173,7 +173,7 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
         },
         refreshButton: {
             label: config.table.refreshLabel,
-            icon: <LinkIcon className="h-4.5 w-4.5" />,
+            icon: <RefreshIcon className="h-4.5 w-4.5" />,
             onClick: config.table.onRefresh,
             loading: Boolean(config.table.loading),
         },

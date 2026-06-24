@@ -20,7 +20,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import {
     DownloadIcon,
     FunnelIcon,
-    LinkIcon,
+    RefreshIcon,
     PlusIcon,
     PrintIcon,
     SearchIcon,
@@ -134,7 +134,7 @@ export default function DepositTableView({
                 }}
                 refreshButton={{
                     label: config.table.refreshLabel,
-                    icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    icon: <RefreshIcon className="h-4.5 w-4.5" />,
                 }}
                 rightControls={
                     <>

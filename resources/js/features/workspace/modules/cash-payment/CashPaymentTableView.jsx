@@ -11,7 +11,7 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import {
     CogIcon,
     DownloadIcon,
-    LinkIcon,
+    RefreshIcon,
     PlusIcon,
     PrintIcon,
     SearchIcon,
@@ -79,7 +79,7 @@ export default function CashPaymentTableView({
                 }}
                 refreshButton={{
                     label: loading ? 'Memuat data...' : config.table.refreshLabel,
-                    icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    icon: <RefreshIcon className="h-4.5 w-4.5" />,
                     onClick: onRefresh,
                     loading,
                 }}

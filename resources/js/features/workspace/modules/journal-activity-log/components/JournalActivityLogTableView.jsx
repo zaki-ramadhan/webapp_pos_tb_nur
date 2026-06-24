@@ -13,7 +13,7 @@ import Pagination from '@/components/ui/Pagination';
 import { buildActivityLogFilters } from '@/features/workspace/backend/workspaceBackendAdapters';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 
 function matchesFilter(row, filter, selectedValue) {
@@ -130,7 +130,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                 }
                 refreshButton={{
                     label: config.table.refreshLabel,
-                    icon: <LinkIcon className="h-4.5 w-4.5" />,
+                    icon: <RefreshIcon className="h-4.5 w-4.5" />,
                     onClick: config.table.onRefresh,
                     loading: Boolean(config.table.loading),
                 }}

@@ -13,7 +13,7 @@ import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { FunnelIcon, LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { FunnelIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 import Tooltip from '@/components/ui/Tooltip';
 import Pagination from '@/components/ui/Pagination';
@@ -226,7 +226,7 @@ export default function TableListView({
                     table.refreshLabel
                         ? {
                               label: table.refreshLabel,
-                              icon: <LinkIcon className="h-4.5 w-4.5" />,
+                              icon: <RefreshIcon className="h-4.5 w-4.5" />,
                               onClick: table.onRefresh,
                               loading: Boolean(table.refreshLoading ?? table.loading),
                           }

@@ -6,7 +6,7 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import {
     CogIcon,
     DownloadIcon,
-    LinkIcon,
+    RefreshIcon,
     PlusIcon,
     PrintIcon,
     SearchIcon,
@@ -66,7 +66,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                 className="space-y-3"
                 filters={config.table.filters?.length ? <TransferTableFilterBar table={config.table} filters={filters} setFilters={setFilters} /> : null}
                 createButton={{ label: config.table.createLabel, onClick: onCreate, icon: <PlusIcon className="h-6 w-6" /> }}
-                refreshButton={{ label: config.table.refreshLabel, icon: <LinkIcon className="h-4.5 w-4.5" />, onClick: config.table.onRefresh, loading: config.table.loading }}
+                refreshButton={{ label: config.table.refreshLabel, icon: <RefreshIcon className="h-4.5 w-4.5" />, onClick: config.table.onRefresh, loading: config.table.loading }}
                 rightControls={
                     <>
                         <TransactionToolbarSplitButton label={config.table.downloadLabel} icon={<DownloadIcon className="h-4 w-4" />} items={config.table.downloadItems} />
