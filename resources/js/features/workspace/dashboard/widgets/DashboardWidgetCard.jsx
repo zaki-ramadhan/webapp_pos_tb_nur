@@ -29,6 +29,7 @@ export default function DashboardWidgetCard({
     isRefreshing = false,
     refreshError = null,
     showRefresh = false,
+    canRemove = true,
 }) {
     const [actionsOpen, setActionsOpen] = useState(false);
     const actionsButtonRef = useRef(null);
@@ -83,12 +84,14 @@ export default function DashboardWidgetCard({
                                     setActionsOpen(false);
                                     onRemove?.(widget);
                                 }}
+                                disabled={!canRemove}
+                                title={!canRemove ? 'Minimal harus tersisa 1 widget' : undefined}
                                 icon={
                                     <svg viewBox="0 0 24 24" className="h-5 w-5 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
                                     </svg>
                                 }
-                                className="text-sm font-medium text-red-600 animate-fade-in"
+                                className={`text-sm font-medium text-red-600 animate-fade-in ${!canRemove ? 'opacity-40' : ''}`}
                             >
                                 Hapus widget
                             </DropdownMenuItem>

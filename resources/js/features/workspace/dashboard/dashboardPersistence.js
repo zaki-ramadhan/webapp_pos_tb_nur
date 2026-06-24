@@ -49,6 +49,7 @@ export function createDefaultDashboardPreferences({
         dashboards: normalizedDashboards,
         selectedDashboardId: resolvedSelectedDashboardId,
         widgetsByDashboard: buildDefaultWidgetsByDashboard(normalizedDashboards, widgets),
+        customTitlesByDashboard: {},
     };
 }
 
@@ -99,10 +100,13 @@ export function loadDashboardPreferences(defaultPreferences, userSuffix) {
             ? parsedValue.selectedDashboardId
             : fallbackPreferences.selectedDashboardId;
 
+        const customTitlesByDashboard = parsedValue?.customTitlesByDashboard ?? {};
+
         return {
             dashboards: resolvedDashboards,
             selectedDashboardId,
             widgetsByDashboard,
+            customTitlesByDashboard,
         };
     } catch {
         return fallbackPreferences;
@@ -125,6 +129,7 @@ export function saveDashboardPreferences(preferences, userSuffix) {
                 dashboards: preferences.dashboards,
                 selectedDashboardId: preferences.selectedDashboardId,
                 widgetsByDashboard: preferences.widgetsByDashboard,
+                customTitlesByDashboard: preferences.customTitlesByDashboard ?? {},
             }),
         );
     } catch {

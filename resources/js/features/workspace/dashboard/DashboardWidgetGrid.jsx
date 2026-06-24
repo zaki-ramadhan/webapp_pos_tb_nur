@@ -92,6 +92,7 @@ export default function DashboardWidgetGrid({
                                 onRemove={onRemoveWidget}
                                 isRefreshing={Boolean(refreshingByWidgetId[widget.id])}
                                 refreshError={refreshErrorByWidgetId[widget.id] ?? null}
+                                canRemove={widgets.length > 1}
                             >
                                 <DashboardWidgetBody
                                     widget={widget}

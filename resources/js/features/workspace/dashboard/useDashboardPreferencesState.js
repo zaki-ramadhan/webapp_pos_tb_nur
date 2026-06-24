@@ -93,9 +93,14 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
         const activeIds = new Set(
             activeDashboardWidgets.map((w) => w.sourceWidgetId || w.id || w.type)
         );
-        return (dashboard.toolbar.widgetLibraryModal.items ?? []).filter(
+        const filtered = (dashboard.toolbar.widgetLibraryModal.items ?? []).filter(
             (item) => !activeIds.has(item.id)
         );
+        return [...filtered].sort((a, b) => {
+            const titleA = a.title ?? '';
+            const titleB = b.title ?? '';
+            return titleA.localeCompare(titleB, 'id', { sensitivity: 'base' });
+        });
     }, [activeDashboardWidgets, dashboard.toolbar.widgetLibraryModal.items]);
 
     function handleOpenWidgetLibrary() {
@@ -184,20 +189,35 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
             return;
         }
 
-        setDashboardPreferences((currentValue) => ({
-            ...currentValue,
-            widgetsByDashboard: {
-                ...currentValue.widgetsByDashboard,
-                [currentValue.selectedDashboardId]: (currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? []).map((widget) =>
-                    widget.id === widgetId
-                        ? {
-                              ...widget,
-                              title: nextTitle,
-                          }
-                        : widget,
-                ),
-            },
-        }));
+        setDashboardPreferences((currentValue) => {
+            const currentWidgets = currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? [];
+            const targetWidget = currentWidgets.find((w) => w.id === widgetId);
+            const sourceId = targetWidget?.sourceWidgetId ?? targetWidget?.id ?? widgetId;
+
+            const nextCustomTitles = {
+                ...currentValue.customTitlesByDashboard,
+                [currentValue.selectedDashboardId]: {
+                    ...(currentValue.customTitlesByDashboard?.[currentValue.selectedDashboardId] ?? {}),
+                    [sourceId]: nextTitle,
+                },
+            };
+
+            return {
+                ...currentValue,
+                customTitlesByDashboard: nextCustomTitles,
+                widgetsByDashboard: {
+                    ...currentValue.widgetsByDashboard,
+                    [currentValue.selectedDashboardId]: currentWidgets.map((widget) =>
+                        widget.id === widgetId
+                            ? {
+                                  ...widget,
+                                  title: nextTitle,
+                              }
+                            : widget,
+                    ),
+                },
+            };
+        });
     }
 
     function handleAddWidget(widgetLibraryItem) {
@@ -222,6 +242,11 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
                   }
                 : newWidget;
 
+            const customTitle = currentValue.customTitlesByDashboard?.[currentValue.selectedDashboardId]?.[widgetLibraryItem.id];
+            if (customTitle) {
+                syncedWidget.title = customTitle;
+            }
+
             return {
                 ...currentValue,
                 widgetsByDashboard: {
@@ -243,15 +268,21 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
             return;
         }
 
-        setDashboardPreferences((currentValue) => ({
-            ...currentValue,
-            widgetsByDashboard: {
-                ...currentValue.widgetsByDashboard,
-                [currentValue.selectedDashboardId]: (currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? []).filter(
-                    (widget) => widget.id !== id
-                ),
-            },
-        }));
+        setDashboardPreferences((currentValue) => {
+            const currentWidgets = currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? [];
+            if (currentWidgets.length <= 1) {
+                return currentValue;
+            }
+            return {
+                ...currentValue,
+                widgetsByDashboard: {
+                    ...currentValue.widgetsByDashboard,
+                    [currentValue.selectedDashboardId]: currentWidgets.filter(
+                        (widget) => widget.id !== id
+                    ),
+                },
+            };
+        });
     }
 
     async function handleRefreshWidget(widget) {
