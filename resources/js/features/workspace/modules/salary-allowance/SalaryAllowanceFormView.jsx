@@ -36,7 +36,7 @@ export default function SalaryAllowanceFormView({
     const [type, setType] = useState(entry.type || config.typeOptions[0] || '');
     const [expenseAccount, setExpenseAccount] = useState(entry.expenseAccount ?? '');
     const [expenseAccountId, setExpenseAccountId] = useState(entry.expenseAccountId ?? null);
-    const [inactive, setInactive] = useState(Boolean(entry.inactive));
+    const [active, setActive] = useState(!entry.inactive);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function SalaryAllowanceFormView({
         setType(entry.type || config.typeOptions[0] || '');
         setExpenseAccount(entry.expenseAccount ?? '');
         setExpenseAccountId(entry.expenseAccountId ?? null);
-        setInactive(Boolean(entry.inactive));
+        setActive(!entry.inactive);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
     }, [config.typeOptions, entry.expenseAccount, entry.expenseAccountId, entry.inactive, entry.name, entry.type]);
@@ -57,7 +57,7 @@ export default function SalaryAllowanceFormView({
             type: entry.type || config.typeOptions[0] || '',
             expenseAccount: entry.expenseAccount ?? '',
             expenseAccountId: entry.expenseAccountId ?? null,
-            inactive: Boolean(entry.inactive),
+            active: !entry.inactive,
         }),
         [config.typeOptions, entry.expenseAccount, entry.expenseAccountId, entry.inactive, entry.name, entry.type],
     );
@@ -68,9 +68,9 @@ export default function SalaryAllowanceFormView({
             type,
             expenseAccount,
             expenseAccountId,
-            inactive,
+            active,
         }),
-        [expenseAccount, expenseAccountId, inactive, name, type],
+        [expenseAccount, expenseAccountId, active, name, type],
     );
 
     const validationMessage = validateRequiredChecks([
@@ -104,7 +104,7 @@ export default function SalaryAllowanceFormView({
                     name,
                     type,
                     expenseAccountId,
-                    inactive,
+                    inactive: !active,
                 });
                 const response = isDetail
                     ? await updateBackendResource('salary-allowances', entry.id, payload)
@@ -250,12 +250,13 @@ export default function SalaryAllowanceFormView({
                             <div className="text-xs sm:text-sm text-[#1f2436]">{fields.inactiveLabel}</div>
                             <div className="flex items-center h-[40px]">
                                 <CheckboxField
-                                    id="inactive"
+                                    id="active"
                                     label={fields.inactiveOptionLabel}
-                                    checked={inactive}
-                                    onChange={(event) => setInactive(event.target.checked)}
-                                    inputClassName="h-6 w-6 rounded-[4px]"
-                                    containerClassName="w-auto inline-flex items-center"
+                                    checked={active}
+                                    onChange={(event) => setActive(event.target.checked)}
+                                    align="center"
+                                    inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                    containerClassName="w-auto inline-flex"
                                     labelClassName="text-xs sm:text-sm text-[#1f2436]"
                                 />
                             </div>

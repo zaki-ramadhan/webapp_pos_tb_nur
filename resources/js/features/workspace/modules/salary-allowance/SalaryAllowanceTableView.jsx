@@ -5,7 +5,7 @@ import SelectField from '@/components/ui/SelectField';
 const SALARY_COLUMNS = [
     { id: 'name', label: 'Nama', align: 'left' },
     { id: 'type', label: 'Tipe Gaji atau Tunjangan', align: 'left' },
-    { id: 'inactiveLabel', label: 'Non Aktif', align: 'center', widthClassName: 'w-[120px]' },
+    { id: 'activeLabel', label: 'Status', align: 'center', widthClassName: 'w-[120px]' },
 ];
 
 export default function SalaryAllowanceTableView({
@@ -26,10 +26,10 @@ export default function SalaryAllowanceTableView({
                 }
             }
 
-            if (filters.inactive !== 'all') {
-                const inactiveValue = row.inactive ? 'yes' : 'no';
+            if (filters.active !== 'all') {
+                const activeValue = row.inactive ? 'inactive' : 'active';
 
-                if (inactiveValue !== filters.inactive) {
+                if (activeValue !== filters.active) {
                     return false;
                 }
             }
