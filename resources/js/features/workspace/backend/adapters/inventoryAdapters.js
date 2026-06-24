@@ -8,6 +8,7 @@ export const BACKEND_INVENTORY_RESOURCES = {
 export function buildInventoryFilters(pageId, values) {
     if (pageId === 'item-location') {
         return {
+            product_id: values.itemSearchId ?? null,
             search: values.itemSearch?.trim() ?? '',
             as_of_date: normalizeDisplayDate(values.asOfDate),
             per_page: 100,
@@ -16,6 +17,8 @@ export function buildInventoryFilters(pageId, values) {
 
     return {
         search: values.keyword?.trim() ?? '',
+        supplier_id: values.supplierSearchId ?? null,
+        warehouse_id: values.warehouseSearchId ?? null,
         as_of_date: normalizeDisplayDate(values.asOfDate),
         per_page: 100,
     };

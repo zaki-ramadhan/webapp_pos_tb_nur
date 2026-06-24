@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     DataTable,
@@ -11,13 +11,18 @@ import {
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
+import Button from '@/components/ui/Button';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     ExternalLinkIcon,
     LinkIcon,
     SearchIcon,
+    RefreshIcon,
 } from '@/features/workspace/shared/Icons';
+import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
+import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import ToolbarIconButton from '@/features/workspace/shared/toolbar/ToolbarIconButton';
 
 import { cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
@@ -44,18 +49,21 @@ function resolveCellAlignClassName(align) {
 
 
 function InquiryIconButton({ icon, label, onClick }) {
-    const IconComponent = icon === 'external-link' ? ExternalLinkIcon : LinkIcon;
+    const IconComponent =
+        icon === 'external-link'
+            ? ExternalLinkIcon
+            : icon === 'refresh'
+            ? RefreshIcon
+            : LinkIcon;
 
     return (
-        <button
-            type="button"
-            aria-label={label}
-            title={label}
+        <ToolbarIconButton
+            label={label}
             onClick={onClick}
-            className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+            className="inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] h-[34px] w-[40px]"
         >
-            <IconComponent className="h-4.5 w-4.5" />
-        </button>
+            <IconComponent className="h-4 w-4" />
+        </ToolbarIconButton>
     );
 }
 
@@ -74,7 +82,18 @@ function InquiryTextButton({ label, tone = 'default' }) {
     );
 }
 
-function InquiryControl({ control, value, onChange, onRefresh }) {
+function InquiryControl({
+    control,
+    value,
+    onChange,
+    onRefresh,
+    suppliers = [],
+    warehouses = [],
+    products = [],
+    onLookupSelect,
+    onLookupClear,
+    searching = false,
+}) {
     if (control.type === 'select') {
         return (
             <SelectField
@@ -113,6 +132,32 @@ function InquiryControl({ control, value, onChange, onRefresh }) {
         return <InquiryTextButton label={control.label} tone={control.tone} />;
     }
 
+    if (control.type === 'lookup') {
+        const lookupItems =
+            control.id === 'supplierSearch'
+                ? suppliers
+                : control.id === 'warehouseSearch'
+                ? warehouses
+                : control.id === 'itemSearch'
+                ? products
+                : [];
+
+        return (
+            <ReferenceLookupInput
+                value={value}
+                placeholder={control.placeholder ?? 'Cari/Pilih...'}
+                items={lookupItems}
+                searching={searching}
+                getOptionLabel={(option) =>
+                    option?.code ? `[${option.code}] ${option.name}` : (option?.name ?? option?.label ?? '')
+                }
+                onSelect={(option) => onLookupSelect(control.id, option)}
+                onClear={() => onLookupClear(control.id)}
+                className={control.className ?? 'w-full sm:w-[240px]'}
+            />
+        );
+    }
+
     return (
         <TextInput
             value={value}
@@ -131,6 +176,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     const [values, setValues] = useState(() => buildInitialValues(config));
     const [keyword, setKeyword] = useState(config.search?.value ?? '');
     const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, {}));
+    const [selectedIds, setSelectedIds] = useState(() => new Set());
 
     const {
         rows: rawRows,
@@ -156,20 +202,80 @@ export default function InventoryInquiryView({ config, pageId }) {
         }));
     }, [config.table.columns]);
 
+    // Pisahkan kolom checkbox dari kolom data
+    const firstColumnIsCheckbox = cleanedColumns[0]?.kind === 'checkbox';
+    const dataColumns = useMemo(
+        () => firstColumnIsCheckbox ? cleanedColumns.slice(1) : cleanedColumns,
+        [cleanedColumns, firstColumnIsCheckbox],
+    );
+
+    const [suppliers, setSuppliers] = useState([]);
+    const [warehouses, setWarehouses] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [loadingLookups, setLoadingLookups] = useState(false);
+
+    useEffect(() => {
+        let ignore = false;
+        async function fetchLookups() {
+            setLoadingLookups(true);
+            try {
+                const [supplierData, warehouseData, productData] = await Promise.all([
+                    listBackendResource('suppliers', { per_page: 250 }),
+                    listBackendResource('warehouses', { per_page: 250 }),
+                    listBackendResource('products', { per_page: 250 }),
+                ]);
+                if (!ignore) {
+                    setSuppliers(extractBackendRows(supplierData));
+                    setWarehouses(extractBackendRows(warehouseData));
+                    setProducts(extractBackendRows(productData));
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (!ignore) {
+                    setLoadingLookups(false);
+                }
+            }
+        }
+        fetchLookups();
+        return () => {
+            ignore = true;
+        };
+    }, []);
+
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
         if (!normalizedKeyword) return tableRows;
 
         const searchKeys = config.table.searchKeys?.length
             ? config.table.searchKeys
-            : cleanedColumns.filter((col) => col.kind !== 'checkbox').map((col) => col.id);
+            : dataColumns.map((col) => col.id);
 
         return tableRows.filter((row) =>
             searchKeys.some((key) =>
                 String(row[key] ?? '').toLowerCase().includes(normalizedKeyword),
             ),
         );
-    }, [cleanedColumns, config.table.searchKeys, keyword, tableRows]);
+    }, [config.table.searchKeys, dataColumns, keyword, tableRows]);
+
+    // Reset selection jika data berubah
+    const serializedIds = filteredRows.map((r) => r.id).join(',');
+    useMemo(() => setSelectedIds(new Set()), [serializedIds]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const allSelected = filteredRows.length > 0 && filteredRows.every((r) => selectedIds.has(r.id));
+    const someSelected = !allSelected && filteredRows.some((r) => selectedIds.has(r.id));
+
+    function toggleAll() {
+        setSelectedIds(allSelected ? new Set() : new Set(filteredRows.map((r) => r.id)));
+    }
+
+    function toggleRow(id) {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    }
 
     function handleChange(controlId, nextValue) {
         const nextValues = { ...values, [controlId]: nextValue };
@@ -177,7 +283,26 @@ export default function InventoryInquiryView({ config, pageId }) {
         setFilters(buildInventoryFilters(pageId, nextValues));
     }
 
-    const firstColumnIsCheckbox = cleanedColumns[0]?.kind === 'checkbox';
+    function handleLookupSelect(controlId, option) {
+        const optionLabel = option.code ? `[${option.code}] ${option.name}` : (option.name ?? option.label ?? '');
+        const nextValues = {
+            ...values,
+            [controlId]: optionLabel,
+            [controlId + 'Id']: option.id,
+        };
+        setValues(nextValues);
+        setFilters(buildInventoryFilters(pageId, nextValues));
+    }
+
+    function handleLookupClear(controlId) {
+        const nextValues = {
+            ...values,
+            [controlId]: '',
+            [controlId + 'Id']: null,
+        };
+        setValues(nextValues);
+        setFilters(buildInventoryFilters(pageId, nextValues));
+    }
 
     return (
         <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
@@ -185,7 +310,18 @@ export default function InventoryInquiryView({ config, pageId }) {
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                     {(config.controls ?? []).map((control) => (
                         <div key={control.id} className={control.wrapperClassName ?? ''}>
-                            <InquiryControl control={control} value={values[control.id] ?? ''} onChange={handleChange} onRefresh={reload} />
+                            <InquiryControl
+                                control={control}
+                                value={values[control.id] ?? ''}
+                                onChange={handleChange}
+                                onRefresh={reload}
+                                suppliers={suppliers}
+                                warehouses={warehouses}
+                                products={products}
+                                onLookupSelect={handleLookupSelect}
+                                onLookupClear={handleLookupClear}
+                                searching={loadingLookups}
+                            />
                         </div>
                     ))}
                 </div>
@@ -215,24 +351,32 @@ export default function InventoryInquiryView({ config, pageId }) {
                 <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-[#d1d8e4]">
                     <DataTableHeader className="bg-[#5f7690]">
                         <tr>
-                            {filteredRows.length > 0 ? (
+                            {firstColumnIsCheckbox ? (
+                                <DataTableHead className="w-[52px] px-2.5 text-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={allSelected}
+                                        ref={(el) => { if (el) el.indeterminate = someSelected; }}
+                                        onChange={toggleAll}
+                                        aria-label="Pilih semua"
+                                        className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-[#d8dde7]"
+                                    />
+                                </DataTableHead>
+                            ) : null}
+                            {filteredRows.length > 0 || !firstColumnIsCheckbox ? (
                                 <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                     No.
                                 </DataTableHead>
                             ) : null}
-                            {cleanedColumns.map((column) => {
-                                const minWidth = column.kind !== 'checkbox' ? getColumnMinWidth(column.label) : undefined;
+                            {dataColumns.map((column) => {
+                                const minWidth = getColumnMinWidth(column.label);
                                 return (
                                     <DataTableHead
                                         key={column.id}
                                         className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveHeaderAlignClassName(column.align)}`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
-                                        {column.kind === 'checkbox' ? (
-                                            <span className="inline-flex h-[22px] w-[22px] rounded-[4px] border border-[#d8dde7] bg-white" />
-                                        ) : (
-                                            column.label
-                                        )}
+                                        {column.label}
                                     </DataTableHead>
                                 );
                             })}
@@ -246,30 +390,35 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     key={row.id}
                                     className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
                                 >
+                                    {firstColumnIsCheckbox ? (
+                                        <DataTableCell className="px-2.5 text-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedIds.has(row.id)}
+                                                onChange={() => toggleRow(row.id)}
+                                                aria-label={`Pilih baris ${index + 1}`}
+                                                className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-[#cfd6e2]"
+                                            />
+                                        </DataTableCell>
+                                    ) : null}
                                     <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
                                         {from > 0 ? (from + index) : (index + 1)}
                                     </DataTableCell>
-                                    {cleanedColumns.map((column) => (
+                                    {dataColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
                                             className={`px-2.5 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
                                         >
-                                            {column.kind === 'checkbox' ? (
-                                                <span className="inline-flex h-[18px] w-[18px] rounded-[4px] border border-[#cfd6e2] bg-white" />
-                                            ) : (
-                                                formatTableTextValue(row[column.id])
-                                            )}
+                                            {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                {firstColumnIsCheckbox ? (
-                                    <DataTableCell className="px-2.5" />
-                                ) : null}
+                                {firstColumnIsCheckbox ? <DataTableCell className="px-2.5" /> : null}
                                 <DataTableCell
-                                    colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0)}
+                                    colSpan={dataColumns.length + 1}
                                     className="px-2.5 py-3 text-center text-base text-[#131a28]"
                                 >
                                     {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
