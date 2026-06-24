@@ -26,7 +26,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
             } shrink-0 whitespace-nowrap`.trim()}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[90px] sm:max-w-[120px] md:max-w-[150px]">
-                <span className="block truncate py-1">{renderTabLabel(tab.label, active, true)}</span>
+                <span className="block w-full truncate py-1">{renderTabLabel(tab.label, active, true)}</span>
             </span>
             {tab.closable ? (
                 <button
@@ -151,7 +151,7 @@ export default function DashboardPageTabs({
             </div>
 
             {activePage?.id !== 'dashboard' && activePage?.showViewIndicator && !level2Tabs.length ? (
-                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-1.5 sm:px-2.5">
+                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-0.5 sm:px-2.5 mt-0.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <div
                             aria-disabled="true"
@@ -172,7 +172,7 @@ export default function DashboardPageTabs({
             ) : null}
 
             {activePage?.id !== 'dashboard' && level2Tabs.length ? (
-                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-1.5 sm:px-2.5">
+                <div className="border-t border-ui-border-medium bg-ui-bg-panel-lighter px-2 pb-0 pt-0.5 sm:px-2.5 mt-0.5">
                     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                         <SecondaryTabs
                             tabs={level2Tabs}

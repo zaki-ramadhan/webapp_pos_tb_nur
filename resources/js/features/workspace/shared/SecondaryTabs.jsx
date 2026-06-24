@@ -32,7 +32,7 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
             aria-label={tab.ariaLabel ?? tab.label}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">
-                {isViewTab ? <ViewModeIcon /> : <span className="block truncate py-1">{renderTabLabel(tab.label, active, false)}</span>}
+                {isViewTab ? <ViewModeIcon /> : <span className="block w-full truncate py-1">{renderTabLabel(tab.label, active, false)}</span>}
             </span>
 
             {tab.closable ? (

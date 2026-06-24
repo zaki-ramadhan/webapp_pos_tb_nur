@@ -13,9 +13,9 @@ export function renderTabLabel(label, active = false, isPrimary = false) {
         const cleanLabel = label.slice(1);
         const asteriskColor = isPrimary && active ? 'text-white' : 'text-[#ED3969]';
         return (
-            <span className="inline-flex items-baseline">
+            <span className="inline-flex items-baseline min-w-0 w-full">
                 <sup className={`text-[0.85em] font-bold select-none align-super relative -top-[0.05em] mr-0.5 ${asteriskColor}`}>*</sup>
-                <span>{cleanLabel}</span>
+                <span className="truncate">{cleanLabel}</span>
             </span>
         );
     }

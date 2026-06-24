@@ -41,8 +41,8 @@ export const STATIC_PAGE_RENDERERS = {
     'activity-log': (page) => <ActivityLogView page={page} />,
     'sales-checkin': (page) => <SalesCheckinView page={page} />,
     'report-list': (page) => <ReportListView page={page} />,
-    'minimum-stock': (page) => <InventoryInquiryView config={page.minimumStock} />,
-    'item-location': (page) => <InventoryInquiryView config={page.itemLocation} />,
+    'minimum-stock': (page) => <InventoryInquiryView config={page.minimumStock} pageId="minimum-stock" />,
+    'item-location': (page) => <InventoryInquiryView config={page.itemLocation} pageId="item-location" />,
     'salary-allowance': (page) => <SalaryAllowanceView page={page} />,
 };
 
