@@ -38,8 +38,9 @@ export function buildInventoryAdjustmentRecord(record, config) {
     const items = (record.lines ?? []).map((line, index) => ({
         id: String(line.id ?? `line-${index}`),
         __lineId: line.id ?? null,
-        name: line.description ?? line.reference_code ?? `Baris ${index + 1}`,
-        code: line.reference_code ?? '',
+        __productId: line.product_id ?? null,
+        name: line.product?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
+        code: line.product?.code ?? line.reference_code ?? '',
         adjustmentType: line.attributes?.adjustment_type ?? 'Penambahan',
         quantity: String(line.quantity ?? 0),
         unit: line.unit?.name ?? '',
@@ -85,6 +86,7 @@ export function buildInventoryAdjustmentPayload(values) {
     const lines = (values.items ?? [])
         .map((item, index) => ({
             id: item.__lineId ?? undefined,
+            product_id: item.__productId ?? null,
             description: item.name?.trim() ?? '',
             reference_code: item.code?.trim() ?? '',
             quantity: parseNumericInput(item.quantity),
@@ -95,7 +97,7 @@ export function buildInventoryAdjustmentPayload(values) {
             },
             sort_order: index,
         }))
-        .filter((item) => item.description || item.reference_code || item.quantity > 0);
+        .filter((item) => item.product_id || item.description || item.reference_code || item.quantity > 0);
 
     return {
         branch_id: values.__branchId ?? 1,

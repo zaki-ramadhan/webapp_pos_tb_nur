@@ -2,6 +2,8 @@ import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { buildAccountLookupLabel } from '@/features/workspace/shared/AccountLookupControls';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
+import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
+import { showPromptModal } from '@/components/ui/promptModal';
 
 export const buildLookupLabel = buildAccountLookupLabel;
 
@@ -125,23 +127,18 @@ export function buildInventoryDocumentNumber(pageId) {
     return `${prefix}.${dateLabel}.${Date.now()}`;
 }
 
-import { showPromptModal } from '@/components/ui/promptModal';
-
 export async function promptInventoryAdjustmentItemEditor(item = null) {
+    // Step 1: pilih produk dari master
+    const product = await promptSelectBackendRecord(
+        'items-services',
+        'produk',
+        (p) => `[${p.code ?? ''}] ${p.name ?? ''}`,
+    );
+
+    if (!product) return null;
+
+    // Step 2: isi qty, tipe, dan harga
     const result = await showPromptModal(item ? 'Edit Item Penyesuaian' : 'Tambah Item Penyesuaian', [
-        {
-            name: 'name',
-            label: 'Nama Barang',
-            type: 'text',
-            defaultValue: item?.name ?? '',
-            required: true,
-        },
-        {
-            name: 'code',
-            label: 'Kode Barang',
-            type: 'text',
-            defaultValue: item?.code ?? '',
-        },
         {
             name: 'adjustmentType',
             label: 'Tipe Penyesuaian',
@@ -161,13 +158,6 @@ export async function promptInventoryAdjustmentItemEditor(item = null) {
             required: true,
         },
         {
-            name: 'unit',
-            label: 'Satuan',
-            type: 'text',
-            defaultValue: item?.unit ?? 'PCS',
-            required: true,
-        },
-        {
             name: 'unitCost',
             label: 'Harga Satuan',
             type: 'number',
@@ -176,34 +166,26 @@ export async function promptInventoryAdjustmentItemEditor(item = null) {
         },
     ]);
 
-    if (!result) {
-        return null;
-    }
+    if (!result) return null;
 
-    const trimmedName = result.name.trim();
-    if (!trimmedName) {
-        throw new Error('Nama barang wajib diisi.');
-    }
-
-    const code = result.code ?? '';
     const adjustmentType = result.adjustmentType ?? 'Penambahan';
     const quantity = result.quantity ?? '1';
-    const unit = result.unit ?? 'PCS';
     const unitCost = result.unitCost ?? '0';
+    const unitName = product.base_unit?.name ?? item?.unit ?? 'PCS';
 
     const quantityAmount = parseNumericInput(quantity);
     const unitCostAmount = parseNumericInput(unitCost);
-    const resolvedUnit = unit.trim() || 'PCS';
 
     return {
         ...item,
         id: item?.id ?? `draft-item-${Date.now()}`,
-        name: trimmedName,
-        code: code.trim(),
+        __productId: product.id,
+        name: product.name ?? '',
+        code: product.code ?? '',
         adjustmentType: adjustmentType.trim() || 'Penambahan',
         quantity: String(quantityAmount || 0),
-        unit: resolvedUnit,
-        unitLookup: [resolvedUnit],
+        unit: unitName,
+        unitLookup: [unitName],
         unitCost: formatCurrencyValue(unitCostAmount),
         totalCost: formatCurrencyValue(quantityAmount * unitCostAmount),
         warehouse: item?.warehouse ?? [],

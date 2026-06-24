@@ -11,6 +11,7 @@ import { TransactionFieldLabel } from '@/features/workspace/modules/shared/Trans
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { TableActionIcon } from '@/features/workspace/shared/Icons';
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
+import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -20,6 +21,7 @@ function buildInitialValues(item = {}) {
     const source = item ?? {};
 
     return {
+        __productId: source.__productId ?? null,
         code: source.code ?? '',
         name: source.name ?? '',
         adjustmentType: source.adjustmentType ?? 'Penambahan',
@@ -46,17 +48,40 @@ function DetailTab({ values, setValues, modal }) {
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Kode #">
-                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{values.code}</div>
+                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{values.code || '—'}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Nama Barang" required>
                 <TextInput
                     value={values.name}
                     readOnly
-                    trailing={<span className="text-xl font-semibold text-[#1f2436]">×</span>}
+                    placeholder="Klik cari untuk pilih produk..."
+                    trailing={
+                        <button
+                            type="button"
+                            onClick={async () => {
+                                const record = await promptSelectBackendRecord(
+                                    'items-services',
+                                    'produk',
+                                    (p) => `[${p.code ?? ''}] ${p.name ?? ''}`,
+                                );
+                                if (!record) return;
+                                setValues((current) => ({
+                                    ...current,
+                                    __productId: record.id,
+                                    name: record.name ?? '',
+                                    code: record.code ?? '',
+                                    unitLookup: record.base_unit?.name ? [record.base_unit.name] : current.unitLookup,
+                                }));
+                            }}
+                            className="inline-flex h-full items-center px-3 text-xs font-medium text-[#2353a0] hover:text-[#1a3f7a]"
+                        >
+                            Cari
+                        </button>
+                    }
                     className="h-[36px] rounded-[4px] border-[#cfd6e2]"
                     inputClassName="text-xs text-[#1f2436]"
-                    trailingClassName="px-3"
+                    trailingClassName="px-0 border-l border-[#cfd6e2]"
                 />
             </ModalFieldRow>
 
