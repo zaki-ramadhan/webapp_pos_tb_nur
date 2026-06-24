@@ -14,19 +14,19 @@ class MinimumStockPage
                         'type' => 'lookup',
                         'value' => '',
                         'placeholder' => 'Cari/Pilih Pemasok...',
-                        'className' => 'w-full sm:w-[420px]',
+                        'className' => 'w-full sm:w-[240px]',
                     ],
                     [
                         'id' => 'warehouseSearch',
                         'type' => 'lookup',
                         'value' => '',
                         'placeholder' => 'Cari/Pilih Gudang...',
-                        'className' => 'w-full sm:w-[420px]',
+                        'className' => 'w-full sm:w-[240px]',
                     ],
                     [
                         'id' => 'refresh',
                         'type' => 'icon-button',
-                        'icon' => 'link',
+                        'icon' => 'refresh',
                         'label' => 'Muat ulang barang stok minimum',
                     ],
                     [
@@ -42,7 +42,7 @@ class MinimumStockPage
                 ],
                 'search' => [
                     'placeholder' => 'Cari Nama/Kode Barang...',
-                    'className' => 'w-full lg:w-[520px]',
+                    'className' => 'w-full lg:w-[280px]',
                 ],
                 'table' => [
                     'tableClassName' => 'min-w-[1800px]',

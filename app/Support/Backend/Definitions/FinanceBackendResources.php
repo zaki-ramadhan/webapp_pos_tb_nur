@@ -70,9 +70,9 @@ class FinanceBackendResources
                 modelClass: Account::class,
                 with: ['parent', 'currency', 'branches', 'users'],
                 storeRules: [
-                    'parent_id' => ['required_if:auto_code,true', 'nullable', 'integer', 'exists:accounts,id'],
+                    'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
-                    'code' => ['required_unless:auto_code,true', 'nullable', 'string', 'max:50', 'unique:accounts,code'],
+                    'code' => ['nullable', 'string', 'max:50'],
                     'name' => ['required', 'string', 'max:160'],
                     'account_type' => ['required', 'string', 'max:60'],
                     'notes' => ['nullable', 'string'],
@@ -87,9 +87,9 @@ class FinanceBackendResources
                     'user_ids.*' => ['integer', 'exists:users,id'],
                 ],
                 updateRules: fn (Model $record) => [
-                    'parent_id' => ['required_if:auto_code,true', 'nullable', 'integer', 'exists:accounts,id'],
+                    'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
-                    'code' => ['required_unless:auto_code,true', 'nullable', 'string', 'max:50', Rule::unique('accounts', 'code')->ignore($record)],
+                    'code' => ['nullable', 'string', 'max:50'],
                     'name' => ['required', 'string', 'max:160'],
                     'account_type' => ['required', 'string', 'max:60'],
                     'notes' => ['nullable', 'string'],

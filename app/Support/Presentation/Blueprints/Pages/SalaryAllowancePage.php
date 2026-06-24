@@ -40,8 +40,8 @@ class SalaryAllowancePage
                             'typeLabel' => 'Tipe Gaji atau Tunjangan',
                             'payDeductLabel' => 'Bayar/Potong',
                             'expenseAccountLabel' => 'Akun Beban',
-                            'inactiveLabel' => 'Non Aktif',
-                            'inactiveOptionLabel' => 'Ya',
+                            'inactiveLabel' => 'Status',
+                            'inactiveOptionLabel' => 'Aktif',
                         ],
                         'typeOptions' => [
                             'Gaji Pokok / Upah',
@@ -82,19 +82,19 @@ class SalaryAllowancePage
                                     ],
                                 ],
                                 [
-                                    'id' => 'inactive',
+                                    'id' => 'active',
                                     'defaultValue' => 'all',
                                     'options' => [
-                                        ['value' => 'all', 'label' => 'Non Aktif: Semua'],
-                                        ['value' => 'yes', 'label' => 'Non Aktif: Ya'],
-                                        ['value' => 'no', 'label' => 'Non Aktif: Tidak'],
+                                        ['value' => 'all', 'label' => 'Status: Semua'],
+                                        ['value' => 'active', 'label' => 'Status: Aktif'],
+                                        ['value' => 'inactive', 'label' => 'Status: Non Aktif'],
                                     ],
                                 ],
                             ],
                             'columns' => [
                                 'Nama',
                                 'Tipe Gaji atau Tunjangan',
-                                'Non Aktif',
+                                'Status',
                             ],
                         ],
                         'rows' => [

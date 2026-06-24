@@ -31,7 +31,7 @@ class ItemLocationPage
                         'type' => 'lookup',
                         'value' => '',
                         'placeholder' => 'Cari/Pilih Barang',
-                        'className' => 'w-full sm:w-[470px]',
+                        'className' => 'w-full sm:w-[320px]',
                     ],
                     [
                         'id' => 'asOfDate',
@@ -42,7 +42,7 @@ class ItemLocationPage
                     [
                         'id' => 'refresh',
                         'type' => 'icon-button',
-                        'icon' => 'link',
+                        'icon' => 'refresh',
                         'label' => 'Muat ulang barang per gudang',
                     ],
                     [
