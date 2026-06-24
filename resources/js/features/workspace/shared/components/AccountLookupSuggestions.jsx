@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
-import { buildAccountLookupLabel, buildAccountLookupMeta } from '@/features/workspace/shared/hooks/useAccountLookupController';
+import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType } from '@/features/workspace/shared/hooks/useAccountLookupController';
 
 export default function AccountLookupSuggestions({
     open,
@@ -55,7 +55,7 @@ export default function AccountLookupSuggestions({
                                     ) : null}
                                 </span>
                                 <span className="shrink-0 rounded-full bg-[#eef3fb] px-2.5 py-1 text-xs font-medium text-[#355784]">
-                                    {record.account_type ?? '-'}
+                                    {translateAccountType(record.account_type) || '-'}
                                 </span>
                             </button>
                         );

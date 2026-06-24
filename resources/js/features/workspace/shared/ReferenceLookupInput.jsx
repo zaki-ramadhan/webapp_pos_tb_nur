@@ -205,7 +205,7 @@ export default function ReferenceLookupInput({
                     onClick={() => inputRef.current?.focus()}
                     disabled={disabled}
                     aria-label={searchLabel}
-                    className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:text-slate-300"
+                    className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:text-slate-300 focus:outline-none"
                 >
                     {searching ? (
                         <LoadingIcon className="h-5 w-5 animate-spin" />

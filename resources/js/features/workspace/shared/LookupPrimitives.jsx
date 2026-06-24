@@ -7,7 +7,7 @@ export function LookupDropdownSurface({ className = '', children, maxHeightLimit
             open={true}
             onClose={onClose}
             maxHeightLimit={maxHeightLimit}
-            className={`!rounded-[4px] ${className}`.trim()}
+            className={`!rounded-[3px] ${className}`.trim()}
             anchorRef={anchorRef}
         >
             {children}
@@ -26,7 +26,7 @@ export function LookupEmptyState({
             <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#eef3fb] text-[#355784]">
                 <InfoIcon className="h-5 w-5 text-current" />
             </div>
-            <div className="mt-3 text-sm font-medium text-[#4b5567]">{title}</div>
+            <div className="mt-3 text-sm font-normal text-[#4b5567]">{title}</div>
             <div className="mt-1 text-xs text-[#8a94a8]">{description}</div>
         </div>
     );

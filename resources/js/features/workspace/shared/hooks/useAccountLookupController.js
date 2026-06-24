@@ -16,8 +16,33 @@ export function buildAccountLookupLabel(record) {
     return name || code;
 }
 
+export const ACCOUNT_TYPE_TRANSLATIONS = {
+    'Cash/Bank': 'Kas dan Bank',
+    'Fixed Asset': 'Aset Tetap',
+    'Accumulated Depreciation': 'Akumulasi Penyusutan',
+    'Expense': 'Beban',
+    'Receivable': 'Piutang Usaha',
+    'Payable': 'Utang Usaha',
+    'Equity': 'Modal',
+    'Revenue': 'Pendapatan',
+    'Cost of Sales': 'Beban Pokok Penjualan',
+    'Inventory': 'Persediaan',
+    'Other Current Asset': 'Aset Lancar Lainnya',
+    'Other Asset': 'Aset Lainnya',
+    'Other Current Liability': 'Liabilitas Jangka Pendek',
+    'Long Term Liability': 'Liabilitas Jangka Panjang',
+    'Other Expense': 'Beban Lainnya',
+    'Other Revenue': 'Pendapatan Lainnya',
+};
+
+export function translateAccountType(type) {
+    if (!type) return '';
+    return ACCOUNT_TYPE_TRANSLATIONS[type] ?? type;
+}
+
 export function buildAccountLookupMeta(record) {
-    const type = String(record?.account_type ?? '').trim();
+    const rawType = String(record?.account_type ?? '').trim();
+    const type = translateAccountType(rawType);
     const notes = String(record?.notes ?? '').trim();
 
     return [type, notes].filter(Boolean).join(' • ');
@@ -45,10 +70,12 @@ export default function useAccountLookupController({ value, values, disabled = f
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [rows, setRows] = useState([]);
+    const lastFetchKeyRef = useRef(null);
 
     useEffect(() => {
         if (!open) {
             setDraftValue('');
+            lastFetchKeyRef.current = null;
         }
     }, [open, selectedValue]);
 
@@ -93,6 +120,12 @@ export default function useAccountLookupController({ value, values, disabled = f
             return;
         }
 
+        const fetchKey = query.trim();
+
+        if (lastFetchKeyRef.current === fetchKey && rows.length > 0) {
+            return;
+        }
+
         let ignore = false;
         const timeoutId = window.setTimeout(async () => {
             setLoading(true);
@@ -100,11 +133,12 @@ export default function useAccountLookupController({ value, values, disabled = f
 
             try {
                 const payload = await listBackendResource('accounts', {
-                    search: query.trim(),
+                    search: fetchKey,
                     per_page: 15,
                 });
 
                 if (!ignore) {
+                    lastFetchKeyRef.current = fetchKey;
                     setRows(extractBackendRows(payload));
                 }
             } catch (lookupError) {

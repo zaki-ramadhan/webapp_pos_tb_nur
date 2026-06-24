@@ -44,7 +44,7 @@ export default function PreferencesLookupField({
                 type="button"
                 disabled={disabled}
                 aria-label="Cari akun"
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2937] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2937] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none focus:outline-none"
             >
                 <SearchIcon className="h-5 w-5 text-current" />
             </button>

@@ -57,7 +57,7 @@ export default function ChipLookupField({
             onMouseDown={focusLookup}
             className={`group flex w-full items-center overflow-hidden rounded-[4px] border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100' : ''} ${heightClassName} ${className}`.trim()}
         >
-            <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 px-2 py-1.5 ${contentClassName}`.trim()}>
+            <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 pl-1.5 pr-2 py-1.5 ${contentClassName}`.trim()}>
                 {items.length ? (
                     items.map((item) => (
                         <span
@@ -92,7 +92,7 @@ export default function ChipLookupField({
                 onClick={handleSearch}
                 disabled={disabled}
                 aria-label={searchLabel}
-                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none"
+                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none focus:outline-none"
             >
                 {searching ? (
                     <LoadingIcon className="h-5 w-5 animate-spin text-[#111827]" />

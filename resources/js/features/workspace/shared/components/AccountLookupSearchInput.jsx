@@ -49,7 +49,7 @@ export default function AccountLookupSearchInput({
             onMouseDown={focusInputFromWrapper}
             className={`group flex w-full items-center overflow-hidden rounded-[4px] border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400' : 'bg-white'} ${className}`.trim()}
         >
-            <div className="flex min-w-0 flex-1 items-center gap-2 px-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-3">
                 {hasSelectedValue ? (
                     <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-sm text-[#295089]">
                         <span className="truncate">{selectedValue}</span>
