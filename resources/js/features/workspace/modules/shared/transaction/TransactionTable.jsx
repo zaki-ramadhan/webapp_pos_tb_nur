@@ -31,6 +31,7 @@ export function TransactionDataTable({
     onRowClick = null,
     getRowClassName = null,
     showNumbering = true,
+    cellClassName = '',
 }) {
     const cleanedColumns = useMemo(() => {
         return (columns ?? []).map(col => ({
@@ -107,14 +108,14 @@ export function TransactionDataTable({
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {activeShowNumbering && (
-                                        <DataTableCell className="px-3 text-center text-sm text-[#646d83]">
+                                        <DataTableCell className={`px-3 text-center text-sm text-[#646d83] ${cellClassName}`.trim()}>
                                             {index + 1}
                                         </DataTableCell>
                                     )}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-3 text-sm text-[#131a28] ${resolveTransactionAlignClassName(column.align)}`.trim()}
+                                            className={`px-3 text-sm text-[#131a28] ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
                                         >
                                             {renderCell
                                                 ? renderCell({
@@ -167,13 +168,14 @@ export function TransactionLineItemsSection({
     emptyLeadingCellContent = <span className="text-center text-sm text-[#a8afbe] block w-full">-</span>,
     onRowClick = null,
     getRowClassName = null,
+    cellClassName = '',
 }) {
     const hasRows = rows.length > 0;
 
     return (
         <div className="flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0 flex-1 sm:max-w-[560px]">
+                <div className="min-w-0 flex-1 sm:max-w-[380px]">
                     {searchInput ?? (
                         <TextInput
                             value={searchValue}
@@ -215,9 +217,12 @@ export function TransactionLineItemsSection({
                     getRowClassName={getRowClassName}
                     showNumbering={false}
                     renderHeaderCell={(column) => (column.kind === 'spacer' ? spacerHeaderContent : column.label)}
-                    renderCell={({ row, column }) =>
-                        column.kind === 'spacer' ? spacerCellContent : formatTableTextValue(row[column.id])
+                    renderCell={({ row, column, index }) =>
+                        column.kind === 'spacer'
+                            ? spacerCellContent({ row, column, index })
+                            : formatTableTextValue(row[column.id])
                     }
+                    cellClassName={cellClassName}
                 />
             </div>
         </div>
