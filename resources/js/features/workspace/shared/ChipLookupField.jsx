@@ -62,7 +62,7 @@ export default function ChipLookupField({
                     items.map((item) => (
                         <span
                             key={item}
-                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-[4px] border border-blue-7fb0ee bg-info-bg px-2 py-1 text-sm text-brand-blue-darker ${chipClassName}`.trim()}
+                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark ${chipClassName}`.trim()}
                         >
                             <span className="truncate">{item}</span>
                             <button

@@ -401,8 +401,10 @@
     --color-text-sidebar-muted: #4b5563;
     --color-text-trailing-label: #1f2d42;
     --color-text-workspace-inactive: #a8afbe;
+    --color-text-workspace-dark: #1b2436;
     --color-text-workspace-muted: #5f6779;
     --color-text-workspace-tab-inactive: #7d8698;
+    --color-workspace-hover-bg: #f8fafc;
     --color-ui-border-row: #dde1e8;
     --color-warning-badge-text: #8b6511;
     --color-warning-label-text: #9a7b35;

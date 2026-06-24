@@ -160,7 +160,7 @@ export default function ReferenceLookupInput({
                         selectedLabels.map((item) => (
                             <span
                                 key={item}
-                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-blue-7fb0ee bg-info-bg px-2 py-1 text-sm text-brand-blue-darker"
+                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
                             >
                                 <span className="truncate">{item}</span>
                                 <button

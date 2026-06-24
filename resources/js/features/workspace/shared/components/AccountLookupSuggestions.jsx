@@ -43,7 +43,7 @@ export default function AccountLookupSuggestions({
                                 key={record.id}
                                 type="button"
                                 onClick={() => onSelectAccount(record, label)}
-                                className={`flex w-full items-start justify-between gap-3 border-t border-border-ui-border-lightest px-4 py-3 text-left transition first:border-t-0 hover:bg-workspace-hover-bg ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
+                                className={`flex w-full items-start justify-between gap-3 border-t border-border-ui-border-lightest px-4 py-3 text-left transition first:border-t-0 hover:bg-ui-bg-hover ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
                             >
                                 <span className="min-w-0 flex-1">
                                     <span className="block truncate text-sm font-medium text-brand-dark">{record.name ?? '-'}</span>
@@ -54,7 +54,7 @@ export default function AccountLookupSuggestions({
                                         </span>
                                     ) : null}
                                 </span>
-                                <span className="shrink-0 rounded-full bg-workspace-hover-bg px-2.5 py-1 text-xs font-medium text-text-badge-blue-dark">
+                                <span className="shrink-0 rounded-full border border-border-chip-blue bg-bg-chip-blue px-2.5 py-1 text-xs font-medium text-text-chip-blue">
                                     {translateAccountType(record.account_type) || '-'}
                                 </span>
                             </button>

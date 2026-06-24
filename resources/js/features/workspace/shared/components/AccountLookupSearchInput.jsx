@@ -51,7 +51,7 @@ export default function AccountLookupSearchInput({
         >
             <div className="flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-3">
                 {hasSelectedValue ? (
-                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-blue-7fb0ee bg-info-bg px-2 py-1 text-sm text-brand-blue-darker">
+                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark">
                         <span className="truncate">{selectedValue}</span>
                         <button
                             type="button"
@@ -65,7 +65,7 @@ export default function AccountLookupSearchInput({
                             }}
                             disabled={disabled}
                             aria-label={`Hapus ${searchLabel.toLowerCase()}`}
-                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-brand-blue-darker disabled:text-slate-300"
+                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-text-chip-blue-dark disabled:text-slate-300"
                         >
                             <CloseIcon className="h-4 w-4" />
                         </button>
