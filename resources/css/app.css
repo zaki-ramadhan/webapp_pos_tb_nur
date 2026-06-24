@@ -245,41 +245,41 @@
     --color-bg-workspace-input-panel: #f8f9fb;
     --color-bg-workspace-light: #eef2f7;
     --color-bg-workspace-tab-inactive: #dde2ea;
-    --color-blue-0568eb: #0568eb;
-    --color-blue-0f62b8: #0f62b8;
-    --color-blue-141c2c: #141c2c;
-    --color-blue-1472b6: #1472b6;
-    --color-blue-147ac7: #147ac7;
-    --color-blue-154c9f: #154c9f;
-    --color-blue-1564d7: #1564d7;
-    --color-blue-1a3f7a: #1a3f7a;
-    --color-blue-1e7ec1: #1e7ec1;
-    --color-blue-1f5ca9: #1f5ca9;
-    --color-blue-22304a: #22304a;
-    --color-blue-2269bb: #2269bb;
-    --color-blue-2563eb: #2563eb;
-    --color-blue-2d61ab: #2d61ab;
-    --color-blue-2f78e5: #2f78e5;
-    --color-blue-3f68b2: #3f68b2;
-    --color-blue-434a65: #434a65;
-    --color-blue-435b78: #435b78;
-    --color-blue-4f78a7: #4f78a7;
-    --color-blue-4f80c4: #4f80c4;
-    --color-blue-4f86d9: #4f86d9;
-    --color-blue-55aef0: #55aef0;
-    --color-blue-5f97de: #5f97de;
-    --color-blue-68b4f2: #68b4f2;
-    --color-blue-6ea4ef: #6ea4ef;
-    --color-blue-6f97c5: #6f97c5;
-    --color-blue-78a6e8: #78a6e8;
-    --color-blue-7c839b: #7c839b;
-    --color-blue-7dcaf4: #7dcaf4;
-    --color-blue-7f88a7: #7f88a7;
-    --color-blue-7fb0ee: #7fb0ee;
-    --color-blue-7fd1ff: #7fd1ff;
-    --color-blue-94a3b8: #94a3b8;
-    --color-blue-b5bcc8: #b5bcc8;
-    --color-blue-d7e8ff: #d7e8ff;
+    --color-blue-540: #0568eb;
+    --color-blue-750: #0f62b8;
+    --color-blue-930: #141c2c;
+    --color-blue-730: #1472b6;
+    --color-blue-650: #147ac7;
+    --color-blue-830: #154c9f;
+    --color-blue-600: #1564d7;
+    --color-blue-880: #1a3f7a;
+    --color-blue-620: #1e7ec1;
+    --color-blue-780: #1f5ca9;
+    --color-blue-910: #22304a;
+    --color-blue-670: #2269bb;
+    --color-blue-490: #2563eb;
+    --color-blue-700: #2d61ab;
+    --color-blue-440: #2f78e5;
+    --color-blue-570: #3f68b2;
+    --color-blue-860: #434a65;
+    --color-blue-800: #435b78;
+    --color-blue-520: #4f78a7;
+    --color-blue-470: #4f80c4;
+    --color-blue-360: #4f86d9;
+    --color-blue-280: #55aef0;
+    --color-blue-310: #5f97de;
+    --color-blue-210: #68b4f2;
+    --color-blue-230: #6ea4ef;
+    --color-blue-340: #6f97c5;
+    --color-blue-180: #78a6e8;
+    --color-blue-410: #7c839b;
+    --color-blue-130: #7dcaf4;
+    --color-blue-390: #7f88a7;
+    --color-blue-150: #7fb0ee;
+    --color-blue-80: #7fd1ff;
+    --color-blue-260: #94a3b8;
+    --color-blue-100: #b5bcc8;
+    --color-blue-50: #d7e8ff;
     --color-blue-darkest: #0b2d5a;
     --color-border-badge-neutral: #bebfc8;
     --color-border-checkbox-checked: #86b7ee;
@@ -299,83 +299,83 @@
     --color-filter-icon: #6c7894;
     --color-filter-select-text: #394157;
     --color-flag-red: #e71d2b;
-    --color-gray-8a8f98: #8a8f98;
-    --color-gray-a7abb4: #a7abb4;
-    --color-gray-a8a8a8: #a8a8a8;
-    --color-gray-b9b9b9: #b9b9b9;
-    --color-green-0b7a34: #0b7a34;
-    --color-green-10b981: #10b981;
-    --color-green-27b35f: #27b35f;
-    --color-green-2e6b34: #2e6b34;
-    --color-green-41c776: #41c776;
-    --color-green-43af5b: #43af5b;
-    --color-green-449d44: #449d44;
-    --color-green-4caf50: #4caf50;
-    --color-green-4d9b1f: #4d9b1f;
-    --color-green-5b920f: #5b920f;
-    --color-green-5cb85c: #5cb85c;
-    --color-green-61a84b: #61a84b;
-    --color-green-67b52c: #67b52c;
-    --color-green-69cf7e: #69cf7e;
-    --color-green-96d86d: #96d86d;
-    --color-green-99e19e: #99e19e;
-    --color-green-9ce04f: #9ce04f;
-    --color-green-bcebc1: #bcebc1;
-    --color-green-c8dfc9: #c8dfc9;
-    --color-green-ddf7d2: #ddf7d2;
-    --color-green-eef9e4: #eef9e4;
+    --color-gray-950: #8a8f98;
+    --color-gray-350: #a7abb4;
+    --color-gray-650: #a8a8a8;
+    --color-gray-50: #b9b9b9;
+    --color-green-950: #0b7a34;
+    --color-green-770: #10b981;
+    --color-green-730: #27b35f;
+    --color-green-910: #2e6b34;
+    --color-green-460: #41c776;
+    --color-green-590: #43af5b;
+    --color-green-680: #449d44;
+    --color-green-500: #4caf50;
+    --color-green-820: #4d9b1f;
+    --color-green-860: #5b920f;
+    --color-green-410: #5cb85c;
+    --color-green-550: #61a84b;
+    --color-green-640: #67b52c;
+    --color-green-320: #69cf7e;
+    --color-green-280: #96d86d;
+    --color-green-230: #99e19e;
+    --color-green-370: #9ce04f;
+    --color-green-140: #bcebc1;
+    --color-green-190: #c8dfc9;
+    --color-green-100: #ddf7d2;
+    --color-green-50: #eef9e4;
     --color-import-action-blue: #1d52a5;
     --color-input-prefix-bg: #f3f3f4;
     --color-input-prefix-bg-compact: #f5f6f8;
     --color-input-prefix-text: #8b94a7;
-    --color-l-blue-5a9bdd: #5a9bdd;
-    --color-l-blue-5f8fd5: #5f8fd5;
-    --color-l-green-6bc57c: #6bc57c;
-    --color-l-red-f39ca0: #f39ca0;
-    --color-orange-6d5831: #6d5831;
-    --color-orange-b45309: #b45309;
-    --color-orange-b7791f: #b7791f;
-    --color-orange-d6a54a: #d6a54a;
-    --color-orange-dcd6cc: #dcd6cc;
-    --color-orange-de6f13: #de6f13;
-    --color-orange-e0940b: #e0940b;
-    --color-orange-e8e4dd: #e8e4dd;
-    --color-orange-ea580c: #ea580c;
-    --color-orange-ea9f13: #ea9f13;
-    --color-orange-ead7b2: #ead7b2;
-    --color-orange-eb6f00: #eb6f00;
-    --color-orange-f4a62a: #f4a62a;
-    --color-orange-ff9a4d: #ff9a4d;
-    --color-orange-ffb11e: #ffb11e;
+    --color-blue-light-50: #5a9bdd;
+    --color-blue-light-950: #5f8fd5;
+    --color-green-light-500: #6bc57c;
+    --color-red-light-500: #f39ca0;
+    --color-orange-950: #6d5831;
+    --color-orange-880: #b45309;
+    --color-orange-820: #b7791f;
+    --color-orange-430: #d6a54a;
+    --color-orange-110: #dcd6cc;
+    --color-orange-630: #de6f13;
+    --color-orange-750: #e0940b;
+    --color-orange-50: #e8e4dd;
+    --color-orange-560: #ea580c;
+    --color-orange-500: #ea9f13;
+    --color-orange-180: #ead7b2;
+    --color-orange-690: #eb6f00;
+    --color-orange-370: #f4a62a;
+    --color-orange-240: #ff9a4d;
+    --color-orange-310: #ffb11e;
     --color-preferences-btn-danger: #ff4b2b;
     --color-preferences-icon-danger: #bf1313;
     --color-preferences-item-bg-danger: #ffd9d9;
     --color-preferences-text-danger: #bf2323;
-    --color-purple-681db1: #681db1;
-    --color-purple-6a1fc4: #6a1fc4;
-    --color-purple-7b45c4: #7b45c4;
-    --color-purple-7c3aed: #7c3aed;
-    --color-purple-ecddff: #ecddff;
-    --color-purple-f08bb0: #f08bb0;
-    --color-red-a33939: #a33939;
-    --color-red-b43b3b: #b43b3b;
-    --color-red-c61e1e: #c61e1e;
-    --color-red-d6305a: #d6305a;
-    --color-red-db3e3e: #db3e3e;
-    --color-red-db808b: #db808b;
-    --color-red-e15263: #e15263;
-    --color-red-e31a1a: #e31a1a;
-    --color-red-e39191: #e39191;
-    --color-red-e54854: #e54854;
-    --color-red-ef513f: #ef513f;
-    --color-red-f08f92: #f08f92;
-    --color-red-f0c4c4: #f0c4c4;
-    --color-red-f25759: #f25759;
-    --color-red-f39ca0: #f39ca0;
-    --color-red-f5b0b4: #f5b0b4;
-    --color-red-ff2d55: #ff2d55;
-    --color-red-ff3b30: #ff3b30;
-    --color-red-ff4f1f: #ff4f1f;
+    --color-purple-950: #681db1;
+    --color-purple-770: #6a1fc4;
+    --color-purple-590: #7b45c4;
+    --color-purple-410: #7c3aed;
+    --color-purple-50: #ecddff;
+    --color-purple-230: #f08bb0;
+    --color-red-950: #a33939;
+    --color-red-850: #b43b3b;
+    --color-red-900: #c61e1e;
+    --color-red-750: #d6305a;
+    --color-red-700: #db3e3e;
+    --color-red-300: #db808b;
+    --color-red-400: #e15263;
+    --color-red-800: #e31a1a;
+    --color-red-250: #e39191;
+    --color-red-600: #e54854;
+    --color-red-550: #ef513f;
+    --color-red-200: #f08f92;
+    --color-red-50: #f0c4c4;
+    --color-red-350: #f25759;
+    --color-red-150: #f39ca0;
+    --color-red-100: #f5b0b4;
+    --color-red-450: #ff2d55;
+    --color-red-500: #ff3b30;
+    --color-red-650: #ff4f1f;
     --color-status-success-badge-border: #8bd987;
     --color-status-success-badge-text: #8ccc81;
     --color-status-warning-badge-border: #ffd08c;
@@ -409,6 +409,15 @@
     --color-warning-badge-text: #8b6511;
     --color-warning-label-text: #9a7b35;
     --color-white: #ffffff;
+
+    --color-blue-900: #133663;
+    --color-blue-950: #172554;
+    --color-blue-550: #475569;
+    --color-red-220: #ff8ba6;
+    --color-red-80: #ffd2dc;
+    --color-blue-220: #85bbff;
+    --color-blue-240: #8be0d1;
+    --color-blue-70: #d1f8f2;
 }
 
 @layer base {
@@ -651,50 +660,4 @@
     }
 }
 
-/* Table view layout adjustments */
-
-/* 1. Ubah pembungkus utama tabel view menjadi transparan dan tanpa border/shadow */
-.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-}
-
-/* 2. Jadikan pembungkus tabel (div.min-h-0) transparan dan padding-nya kosong */
-.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] > div.min-h-0 {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin-top: 0 !important;
-    overflow-x: auto !important;
-}
-
-/* 3. Berikan style kartu (card) putih padat langsung ke tabelnya */
-.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] div.min-h-0 > div {
-    background-color: #ffffff !important;
-    border: 1px solid #d6dce8 !important;
-    border-radius: 6px !important;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08) !important;
-    padding: 0 !important;
-}
-
-/* 4. Buat pembungkus pagination transparan, tanpa border/shadow, dan hilangkan padding samping */
-.workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] > .flex.flex-col.items-center.justify-between.gap-4.border-t {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-top: 4px !important;
-    padding-bottom: 4px !important;
-    margin-top: 0 !important;
-}
 
