@@ -23,11 +23,11 @@ export function LookupEmptyState({
 }) {
     return (
         <div className={`px-4 py-6 text-center ${className}`.trim()}>
-            <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#eef3fb] text-[#355784]">
+            <div className="mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-workspace-hover-bg text-text-badge-blue-dark">
                 <InfoIcon className="h-5 w-5 text-current" />
             </div>
-            <div className="mt-3 text-sm font-normal text-[#4b5567]">{title}</div>
-            <div className="mt-1 text-xs text-[#8a94a8]">{description}</div>
+            <div className="mt-3 text-sm font-normal text-blue-475569">{title}</div>
+            <div className="mt-1 text-xs text-text-light">{description}</div>
         </div>
     );
 }

@@ -57,7 +57,7 @@ export default function AttachmentUploadField({
     return (
         <div className="space-y-3">
             {label && (
-                <span className="block text-base font-medium text-[#4f5678]">
+                <span className="block text-base font-medium text-layout-text">
                     {label}
                 </span>
             )}
@@ -68,7 +68,7 @@ export default function AttachmentUploadField({
                     return (
                         <div
                             key={item.id}
-                            className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-[8px] border border-[#cfd6e2] bg-[#f8fafc] shadow-sm transition hover:border-[#3b82f6]"
+                            className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-[8px] border border-ui-border bg-ui-bg-hover shadow-sm transition hover:border-google-blue"
                         >
                             {isImage ? (
                                 <img
@@ -78,8 +78,8 @@ export default function AttachmentUploadField({
                                 />
                             ) : (
                                 <div className="flex flex-col items-center p-2 text-center">
-                                    <PaperclipIcon className="h-6 w-6 text-[#64748b]" />
-                                    <span className="mt-1 block max-w-full truncate text-xs text-[#475569]">
+                                    <PaperclipIcon className="h-6 w-6 text-text-muted" />
+                                    <span className="mt-1 block max-w-full truncate text-xs text-blue-475569">
                                         {item.file_name}
                                     </span>
                                 </div>
@@ -98,15 +98,15 @@ export default function AttachmentUploadField({
                 })}
 
                 {(!multiple && currentList.length > 0) ? null : (
-                    <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-[8px] border-2 border-dashed border-[#cfd6e2] bg-white transition hover:border-[#1564d7] hover:bg-[#f8fafc]">
+                    <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-[8px] border-2 border-dashed border-ui-border bg-white transition hover:border-blue-1564d7 hover:bg-ui-bg-hover">
                         {uploading ? (
-                            <span className="text-xs text-[#4f5678] animate-pulse">
+                            <span className="text-xs text-layout-text animate-pulse">
                                 Mengunggah...
                             </span>
                         ) : (
                             <>
-                                <PlusIcon className="h-6 w-6 text-[#64748b]" />
-                                <span className="mt-1 block text-xs font-medium text-[#64748b]">
+                                <PlusIcon className="h-6 w-6 text-text-muted" />
+                                <span className="mt-1 block text-xs font-medium text-text-muted">
                                     Pilih File
                                 </span>
                             </>
@@ -124,7 +124,7 @@ export default function AttachmentUploadField({
             </div>
 
             {error && (
-                <p className="text-sm text-[#db3e3e]">
+                <p className="text-sm text-red-db3e3e">
                     {error}
                 </p>
             )}

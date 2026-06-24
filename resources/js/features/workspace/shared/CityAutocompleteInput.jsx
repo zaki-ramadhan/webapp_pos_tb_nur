@@ -14,9 +14,9 @@ export default function CityAutocompleteInput({
     disabled = false,
     error,
     message,
-    className = 'h-[40px] rounded-[4px] border-[#cfd6e2]',
-    prefixClassName = 'min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]',
-    inputClassName = 'text-xs sm:text-sm text-[#1f2436]',
+    className = 'h-[40px] rounded-[4px] border-ui-border',
+    prefixClassName = 'min-w-[62px] border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text',
+    inputClassName = 'text-xs sm:text-sm text-brand-dark',
     dropdownLeftOffsetClassName = 'left-[62px]',
     ...props
 }) {
@@ -52,8 +52,8 @@ export default function CityAutocompleteInput({
     const isNonInteractive = disabled;
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-[#e39191]'
-            : 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+            ? 'border-red-e39191'
+            : 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
@@ -133,7 +133,7 @@ export default function CityAutocompleteInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-[#5a84e5] transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-input-focus transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -155,7 +155,7 @@ export default function CityAutocompleteInput({
                         placeholder={placeholder}
                         disabled={disabled}
                         autoComplete="off"
-                        className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                        className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                         {...props}
                     />
                 </div>
@@ -176,7 +176,7 @@ export default function CityAutocompleteInput({
             </div>
 
             {feedbackMessage ? (
-                <p className="mt-1.5 text-xs sm:text-sm leading-5 text-[#d65959]">
+                <p className="mt-1.5 text-xs sm:text-sm leading-5 text-error-border">
                     {feedbackMessage}
                 </p>
             ) : null}
@@ -185,7 +185,7 @@ export default function CityAutocompleteInput({
                 <LookupDropdownSurface
                     onClose={() => setOpen(false)}
                     maxHeightLimit={220}
-                    className="border-[#cad1dd] shadow-lg rounded-[4px]"
+                    className="border-tab-view-active-border-x shadow-lg rounded-[4px]"
                     anchorRef={rootRef}
                 >
                     <div className="overflow-y-auto w-full flex-1 min-h-0">
@@ -195,12 +195,12 @@ export default function CityAutocompleteInput({
                                     key={idx}
                                     type="button"
                                     onClick={() => handleSelect(item)}
-                                    className="flex w-full flex-col px-4 py-2 text-left hover:bg-[#eef5ff] border-b border-[#f0f4f9] last:border-b-0"
+                                    className="flex w-full flex-col px-4 py-2 text-left hover:bg-info-bg border-b border-border-row-subtle last:border-b-0"
                                 >
-                                    <span className="text-xs sm:text-sm font-medium text-[#131a28]">
+                                    <span className="text-xs sm:text-sm font-medium text-text-workspace-dark">
                                         {highlightText(item.city, searchVal)}
                                     </span>
-                                    <span className="text-[10px] sm:text-xs text-[#7b8597]">
+                                    <span className="text-[10px] sm:text-xs text-blue-7c839b">
                                         {highlightText(item.province, searchVal)}
                                     </span>
                                 </button>

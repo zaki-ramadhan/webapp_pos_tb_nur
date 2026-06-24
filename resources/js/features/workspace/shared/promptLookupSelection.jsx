@@ -86,13 +86,13 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                             <SearchIcon className="h-4 w-4 text-slate-400" />
                         )
                     }
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
+                    className="h-[40px] rounded-[4px] border-ui-border"
                     inputClassName="text-xs text-slate-700"
                     autoFocus
                 />
             </div>
 
-            <div className="flex-1 overflow-y-auto max-h-[280px] border border-[#edf0f5] rounded-[4px] divide-y divide-[#edf0f5]">
+            <div className="flex-1 overflow-y-auto max-h-[280px] border border-table-row-border rounded-[4px] divide-y divide-table-row-border">
                 {loading && rows.length === 0 ? (
                     <div className="p-4 text-center text-slate-500 text-xs">
                         Memuat data...
@@ -107,7 +107,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                             key={record.id}
                             type="button"
                             onClick={() => handleSelect(record)}
-                            className="flex w-full items-start px-4 py-2 text-left transition hover:bg-[#eef3fb] active:bg-[#e2ecf8] cursor-pointer"
+                            className="flex w-full items-start px-4 py-2 text-left transition hover:bg-workspace-hover-bg active:bg-chart-grid-light cursor-pointer"
                         >
                             <span className="text-xs font-normal text-slate-700 truncate">
                                 {labelBuilder(record)}

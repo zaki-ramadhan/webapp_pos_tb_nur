@@ -29,9 +29,9 @@ export default function AccountLookupSuggestions({
         <LookupDropdownSurface className={className} anchorRef={anchorRef}>
             <div className="max-h-[280px] overflow-y-auto bg-white flex-1 min-h-0">
                 {loading ? (
-                    <div className="px-4 py-5 text-center text-sm text-[#5f6779]">{loadingLabel}</div>
+                    <div className="px-4 py-5 text-center text-sm text-text-workspace-muted">{loadingLabel}</div>
                 ) : error ? (
-                    <div className="px-4 py-5 text-center text-sm text-[#b43b3b]">{error}</div>
+                    <div className="px-4 py-5 text-center text-sm text-red-b43b3b">{error}</div>
                 ) : rows.length ? (
                     rows.map((record) => {
                         const label = buildAccountLookupLabel(record);
@@ -43,18 +43,18 @@ export default function AccountLookupSuggestions({
                                 key={record.id}
                                 type="button"
                                 onClick={() => onSelectAccount(record, label)}
-                                className={`flex w-full items-start justify-between gap-3 border-t border-[#e6ebf2] px-4 py-3 text-left transition first:border-t-0 hover:bg-[#eef3fb] ${selected ? 'bg-[#f5f9ff]' : 'bg-white'}`.trim()}
+                                className={`flex w-full items-start justify-between gap-3 border-t border-border-ui-border-lightest px-4 py-3 text-left transition first:border-t-0 hover:bg-workspace-hover-bg ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
                             >
                                 <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-sm font-medium text-[#1f2436]">{record.name ?? '-'}</span>
-                                    <span className="mt-1 block truncate text-xs text-[#5f6779]">{record.code ?? '-'}</span>
+                                    <span className="block truncate text-sm font-medium text-brand-dark">{record.name ?? '-'}</span>
+                                    <span className="mt-1 block truncate text-xs text-text-workspace-muted">{record.code ?? '-'}</span>
                                     {meta ? (
-                                        <span className="mt-0.5 block truncate text-xs text-[#8a94a8]">
+                                        <span className="mt-0.5 block truncate text-xs text-text-light">
                                             {meta}
                                         </span>
                                     ) : null}
                                 </span>
-                                <span className="shrink-0 rounded-full bg-[#eef3fb] px-2.5 py-1 text-xs font-medium text-[#355784]">
+                                <span className="shrink-0 rounded-full bg-workspace-hover-bg px-2.5 py-1 text-xs font-medium text-text-badge-blue-dark">
                                     {translateAccountType(record.account_type) || '-'}
                                 </span>
                             </button>

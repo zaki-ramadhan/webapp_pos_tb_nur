@@ -8,10 +8,10 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
         : 'gap-2 px-3.5 md:gap-2.5 md:px-4.5';
     const className = isViewTab
         ? active
-            ? 'border-x-[1px] border-t-[3px] border-b-[2px] border-b-[#f2f2f2] -mb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
+            ? 'border-x-[1px] border-t-[3px] border-b-[2px] border-b-tab-active-bg -mb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
             : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'
         : active
-          ? 'border-l-[1px] border-r-[1px] border-t-[3px] border-b-[2px] border-b-[#f2f2f2] -mb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
+          ? 'border-l-[1px] border-r-[1px] border-t-[3px] border-b-[2px] border-b-tab-active-bg -mb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
           : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text';
     const closeButtonClassName = active
         ? 'text-current hover:bg-white/20'

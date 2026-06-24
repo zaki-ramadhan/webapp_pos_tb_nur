@@ -144,10 +144,10 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
         <ModalBase
             open={open}
             onBackdropClick={onClose}
-            className="bg-[rgba(15,23,42,0.72)] z-[9999]"
-            panelClassName="max-w-[820px] w-full overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
+            className="bg-modal-overlay-dark z-[9999]"
+            panelClassName="max-w-[820px] w-full overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
         >
-            <div className="bg-[#173968] px-5 py-2.5 text-white">
+            <div className="bg-blue-133663 px-5 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
                         <TableActionIcon className="h-4 w-4 text-white" />
@@ -171,13 +171,13 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                 )}
 
                 {!file ? (
-                    <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#cfd6e2] rounded-[6px] p-8 bg-slate-50 hover:bg-slate-100 transition">
-                        <TableActionIcon className="h-12 w-12 text-[#94a3b8] mb-3" />
+                    <div className="flex flex-col items-center justify-center border-2 border-dashed border-ui-border rounded-[6px] p-8 bg-slate-50 hover:bg-slate-100 transition">
+                        <TableActionIcon className="h-12 w-12 text-blue-94a3b8 mb-3" />
                         <p className="text-base font-medium text-slate-700 mb-1">Pilih File</p>
                         <p className="text-sm text-slate-500 mb-4 text-center">
                             Mendukung format Excel (.xlsx, .xls) dan CSV (.csv)
                         </p>
-                        <label className="inline-flex h-[38px] cursor-pointer items-center justify-center rounded-[4px] bg-[#1d52a5] px-5 text-xs sm:text-sm font-medium text-white hover:bg-[#173968] transition">
+                        <label className="inline-flex h-[38px] cursor-pointer items-center justify-center rounded-[4px] bg-import-action-blue px-5 text-xs sm:text-sm font-medium text-white hover:bg-blue-133663 transition">
                             Cari File
                             <input
                                 ref={fileInputRef}
@@ -281,7 +281,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             onClick={handleConfirmImport}
                             disabled={validCount === 0}
                             className={`inline-flex h-8 items-center justify-center rounded-[4px] px-4 text-xs font-medium text-white transition ${
-                                validCount > 0 ? 'bg-[#1d52a5] hover:bg-[#173968] cursor-pointer' : 'bg-slate-300 cursor-not-allowed'
+                                validCount > 0 ? 'bg-import-action-blue hover:bg-blue-133663 cursor-pointer' : 'bg-slate-300 cursor-not-allowed'
                             }`}
                         >
                             Impor {validCount} Item

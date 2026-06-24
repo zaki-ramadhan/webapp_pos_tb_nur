@@ -38,7 +38,7 @@ function AppIcon({ icon: Icon, className, strokeWidth = 1.9 }) {
     return <Icon aria-hidden="true" className={className} strokeWidth={strokeWidth} absoluteStrokeWidth />;
 }
 
-export function SearchIcon({ className = 'h-5 w-5 text-[#9098ae]' }) {
+export function SearchIcon({ className = 'h-5 w-5 text-text-light' }) {
     return <AppIcon icon={Search} className={className} />;
 }
 
@@ -46,7 +46,7 @@ export function PlusIcon({ className = 'h-5 w-5', strokeWidth = 2.8 }) {
     return <AppIcon icon={Plus} className={className} strokeWidth={strokeWidth} />;
 }
 
-export function KebabIcon({ className = 'h-5 w-5 text-[#4f5678]' }) {
+export function KebabIcon({ className = 'h-5 w-5 text-layout-text' }) {
     return <AppIcon icon={EllipsisVertical} className={className} />;
 }
 
@@ -135,7 +135,7 @@ export function TableActionIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Rows3} className={className} />;
 }
 
-export function CrossStatusIcon({ className = 'h-5 w-5 text-[#db3e3e]' }) {
+export function CrossStatusIcon({ className = 'h-5 w-5 text-red-db3e3e' }) {
     return <AppIcon icon={CircleX} className={className} />;
 }
 
@@ -143,15 +143,15 @@ export function CircleCheckIcon({ className = 'h-5 w-5 text-current' }) {
     return <AppIcon icon={CircleCheck} className={className} />;
 }
 
-export function ShieldIcon({ className = 'h-5 w-5 text-[#8b93ad]' }) {
+export function ShieldIcon({ className = 'h-5 w-5 text-text-light' }) {
     return <AppIcon icon={Shield} className={className} />;
 }
 
-export function PinIcon({ className = 'h-[18px] w-[18px] text-[#7f88a7]' }) {
+export function PinIcon({ className = 'h-[18px] w-[18px] text-blue-7f88a7' }) {
     return <AppIcon icon={MapPin} className={className} />;
 }
 
-export function InfoIcon({ className = 'h-5 w-5 text-[#4f5678]' }) {
+export function InfoIcon({ className = 'h-5 w-5 text-layout-text' }) {
     return <AppIcon icon={Info} className={className} />;
 }
 
@@ -163,7 +163,7 @@ export function ViewModeIcon({ className = 'h-4.5 w-4.5' }) {
     return <AppIcon icon={List} className={className} strokeWidth={2.1} />;
 }
 
-export function AlertTriangleIcon({ className = 'h-5 w-5 text-[#c61e1e]' }) {
+export function AlertTriangleIcon({ className = 'h-5 w-5 text-red-c61e1e' }) {
     return <AppIcon icon={TriangleAlert} className={className} />;
 }
 

@@ -146,7 +146,7 @@ export default function ReferenceLookupInput({
     }
 
     const toneClassName = resolvedError
-        ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+        ? 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
@@ -160,7 +160,7 @@ export default function ReferenceLookupInput({
                         selectedLabels.map((item) => (
                             <span
                                 key={item}
-                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-sm text-[#295089]"
+                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-blue-7fb0ee bg-info-bg px-2 py-1 text-sm text-brand-blue-darker"
                             >
                                 <span className="truncate">{item}</span>
                                 <button
@@ -195,7 +195,7 @@ export default function ReferenceLookupInput({
                             }}
                             onChange={handleChange}
                             aria-label={searchLabel}
-                            className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-[#1f2436] outline-none placeholder:text-[#a1a8b7] disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                            className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
                         />
                     )}
                 </div>
@@ -205,7 +205,7 @@ export default function ReferenceLookupInput({
                     onClick={() => inputRef.current?.focus()}
                     disabled={disabled}
                     aria-label={searchLabel}
-                    className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:text-slate-300 focus:outline-none"
+                    className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-ui-border-medium text-text-darkest disabled:text-slate-300 focus:outline-none"
                 >
                     {searching ? (
                         <LoadingIcon className="h-5 w-5 animate-spin" />
@@ -224,13 +224,13 @@ export default function ReferenceLookupInput({
                                     key={item.id ?? getOptionLabel(item)}
                                     type="button"
                                     onClick={() => handleSelect(item)}
-                                    className="flex w-full items-start gap-3 border-b border-[#e6ebf2] px-3 py-3 text-left transition last:border-b-0 hover:bg-[#f8fbff]"
+                                    className="flex w-full items-start gap-3 border-b border-border-ui-border-lightest px-3 py-3 text-left transition last:border-b-0 hover:bg-ui-bg-hover"
                                 >
                                     {renderOption ? (
                                         renderOption(item)
                                     ) : (
                                         <div className="min-w-0">
-                                            <div className="truncate text-xs sm:text-sm font-medium text-[#131a28]">{getOptionLabel(item)}</div>
+                                            <div className="truncate text-xs sm:text-sm font-medium text-text-workspace-dark">{getOptionLabel(item)}</div>
                                         </div>
                                     )}
                                 </button>
@@ -242,7 +242,7 @@ export default function ReferenceLookupInput({
                 </LookupDropdownSurface>
             ) : null}
             {feedbackMessage ? (
-                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-[#d65959]">
+                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-error-border">
                     {feedbackMessage}
                 </p>
             ) : null}

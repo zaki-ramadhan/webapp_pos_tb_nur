@@ -19,7 +19,7 @@ export default function AttachmentDockButton({
                 aria-label={label}
                 title={label}
                 onClick={() => setOpen((currentOpen) => !currentOpen)}
-                className="inline-flex h-12 w-[80px] shrink-0 items-center justify-center gap-2 rounded-[8px] border border-[#4d94dd] bg-[#8fc0ef] text-[#0d4e96] shadow-[0_5px_10px_rgba(20,75,138,0.16)] sm:h-[52px] sm:w-[88px] md:h-[54px] md:w-[96px]"
+                className="inline-flex h-12 w-[80px] shrink-0 items-center justify-center gap-2 rounded-[8px] border border-border-dock-blue-alt bg-bg-dock-blue-alt text-text-dock-blue-alt shadow-attachment-dock sm:h-[52px] sm:w-[88px] md:h-[54px] md:w-[96px]"
             >
                 <PaperclipIcon className="h-7 w-7" />
                 <ChevronDownIcon className="h-5 w-5" />

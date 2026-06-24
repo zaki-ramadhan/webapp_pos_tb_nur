@@ -16,7 +16,7 @@ export default function UserAvatar({
     imageUrl = null,
     className = '',
     showStatusIndicator = true,
-    statusClassName = 'bg-[#41c776]',
+    statusClassName = 'bg-green-41c776',
 }) {
     const [hasImageError, setHasImageError] = useState(false);
     const resolvedInitials = initials ?? getUserInitials(name);
@@ -28,7 +28,7 @@ export default function UserAvatar({
 
     return (
         <div
-            className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[#eceff5] text-sm font-semibold text-[#67708b] ${className}`.trim()}
+            className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-table-row-border text-sm font-semibold text-text-muted ${className}`.trim()}
         >
             {shouldShowImage ? (
                 <img

@@ -36,7 +36,7 @@ export default function ToolbarImportButton({ importConfig, sizeStyle }) {
             <ToolbarIconButton
                 label={importConfig.label ?? 'Impor data'}
                 onClick={() => fileInputRef.current?.click()}
-                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] ${sizeStyle.utilityButton} ${loading ? 'pointer-events-none opacity-70' : ''}`.trim()}
+                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition hover:bg-brand-blue-light ${sizeStyle.utilityButton} ${loading ? 'pointer-events-none opacity-70' : ''}`.trim()}
             >
                 {loading
                     ? <LoadingIcon className="h-4 w-4 animate-spin" />

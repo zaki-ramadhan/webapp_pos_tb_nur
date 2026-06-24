@@ -8,7 +8,6 @@ import {
     RefreshIcon,
     LoadingIcon,
     SearchIcon,
-    FunnelIcon,
 } from '@/features/workspace/shared/Icons';
 
 import { printTable } from './exportUtils';
@@ -25,7 +24,6 @@ import {
     PAGE_ID_TO_RESOURCE_MAP,
     mapImportRow,
     cleanRightControls,
-    hasFunnelButton,
 } from './toolbar/toolbarConstants';
 
 export default function TableToolbar({
@@ -194,15 +192,6 @@ export default function TableToolbar({
                 <div className={`mb-2.5 flex flex-wrap items-center justify-between gap-3 ${topRowClassName}`.trim()}>
                     <div className="flex w-full flex-wrap items-center gap-2">
                         {filters}
-                        {!hasFunnelButton(filters) && (
-                            <button
-                                type="button"
-                                className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0] transition hover:bg-[#cbe3ff]"
-                                aria-label="Filter"
-                            >
-                                <FunnelIcon className="h-5 w-5" />
-                            </button>
-                        )}
                     </div>
                 </div>
             ) : null}
@@ -215,7 +204,7 @@ export default function TableToolbar({
                                 type="button"
                                 onClick={createButton.onClick}
                                 title={createButton.label}
-                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-[#2353a0] text-white shadow-sm transition hover:bg-[#1a4282] ${size === 'compact' ? 'h-[34px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
+                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-blue-1a3f7a ${size === 'compact' ? 'h-[34px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
                             >
                                 <PlusIcon className={sizeStyle.createIcon} />
                             </button>
@@ -227,7 +216,7 @@ export default function TableToolbar({
                             label={refreshButton.label ?? 'Perbarui'}
                             onClick={refreshButton.onClick}
                             disabled={searchLoading}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] ${sizeStyle.utilityButton} ${searchLoading ? 'pointer-events-none opacity-70' : ''}`.trim()}
+                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition hover:bg-brand-blue-light ${sizeStyle.utilityButton} ${searchLoading ? 'pointer-events-none opacity-70' : ''}`.trim()}
                         >
                             <RefreshIcon className={`h-4 w-4 ${searchLoading ? 'animate-spin' : ''}`.trim()} />
                         </ToolbarIconButton>
@@ -257,7 +246,7 @@ export default function TableToolbar({
                             label={resolvedRows.length === 0 ? 'Tidak ada data untuk dicetak' : (resolvedPrintButton.label ?? 'Cetak')}
                             onClick={resolvedPrintButton.onClick}
                             disabled={resolvedRows.length === 0}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition ${resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-[#e8f2ff]'} ${sizeStyle.utilityButton}`.trim()}
+                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'} ${sizeStyle.utilityButton}`.trim()}
                         >
                             <PrintIcon className="h-4 w-4" />
                         </ToolbarIconButton>

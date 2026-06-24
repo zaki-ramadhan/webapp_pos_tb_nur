@@ -48,7 +48,7 @@ export default function ChipLookupField({
     }
 
     const toneClassName = error
-        ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+        ? 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
@@ -62,7 +62,7 @@ export default function ChipLookupField({
                     items.map((item) => (
                         <span
                             key={item}
-                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-sm text-[#295089] ${chipClassName}`.trim()}
+                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-[4px] border border-blue-7fb0ee bg-info-bg px-2 py-1 text-sm text-brand-blue-darker ${chipClassName}`.trim()}
                         >
                             <span className="truncate">{item}</span>
                             <button
@@ -81,7 +81,7 @@ export default function ChipLookupField({
                         </span>
                     ))
                 ) : (
-                    <span className="block truncate px-1 text-xs sm:text-sm text-[#a1a8b7]">{placeholder}</span>
+                    <span className="block truncate px-1 text-xs sm:text-sm text-disabled-border-t">{placeholder}</span>
                 )}
             </div>
 
@@ -92,12 +92,12 @@ export default function ChipLookupField({
                 onClick={handleSearch}
                 disabled={disabled}
                 aria-label={searchLabel}
-                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-[#d8dde7] text-[#111827] disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none focus:outline-none"
+                className="inline-flex h-full w-11 shrink-0 items-center justify-center border-l border-ui-border-medium text-text-darkest disabled:cursor-default disabled:text-slate-300 disabled:pointer-events-none focus:outline-none"
             >
                 {searching ? (
-                    <LoadingIcon className="h-5 w-5 animate-spin text-[#111827]" />
+                    <LoadingIcon className="h-5 w-5 animate-spin text-text-darkest" />
                 ) : (
-                    <SearchIcon className="h-5 w-5 text-[#111827]" />
+                    <SearchIcon className="h-5 w-5 text-text-darkest" />
                 )}
             </button>
         </div>

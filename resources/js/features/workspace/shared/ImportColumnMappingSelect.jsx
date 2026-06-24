@@ -7,7 +7,7 @@ export default function ImportColumnMappingSelect({ label, fieldKey, mapping, se
             <select
                 value={mapping[fieldKey]}
                 onChange={(e) => setMapping(prev => ({ ...prev, [fieldKey]: parseInt(e.target.value) }))}
-                className="w-full h-[32px] rounded-[4px] border border-[#cfd6e2] px-2 text-xs outline-none focus:border-[#1d52a5]"
+                className="w-full h-[32px] rounded-[4px] border border-ui-border px-2 text-xs outline-none focus:border-import-action-blue"
             >
                 <option value="-1">{defaultLabel}</option>
                 {csvHeaders.map((header, idx) => (

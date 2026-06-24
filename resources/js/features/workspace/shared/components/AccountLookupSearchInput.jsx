@@ -40,7 +40,7 @@ export default function AccountLookupSearchInput({
     }
 
     const toneClassName = error
-        ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+        ? 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
@@ -51,7 +51,7 @@ export default function AccountLookupSearchInput({
         >
             <div className="flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-3">
                 {hasSelectedValue ? (
-                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-[#8ab2ea] bg-[#eef5ff] px-2 py-1 text-sm text-[#295089]">
+                    <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-blue-7fb0ee bg-info-bg px-2 py-1 text-sm text-brand-blue-darker">
                         <span className="truncate">{selectedValue}</span>
                         <button
                             type="button"
@@ -65,7 +65,7 @@ export default function AccountLookupSearchInput({
                             }}
                             disabled={disabled}
                             aria-label={`Hapus ${searchLabel.toLowerCase()}`}
-                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-[#295089] disabled:text-slate-300"
+                            className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-brand-blue-darker disabled:text-slate-300"
                         >
                             <CloseIcon className="h-4 w-4" />
                         </button>
@@ -84,7 +84,7 @@ export default function AccountLookupSearchInput({
                         autoComplete="off"
                         autoCorrect="off"
                         spellCheck={false}
-                        className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-[#a1a8b7] disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} ${inputClassName}`.trim()}
+                        className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-2 text-sm outline-none placeholder:text-disabled-border-t disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} ${inputClassName}`.trim()}
                     />
                 )}
             </div>
@@ -94,9 +94,9 @@ export default function AccountLookupSearchInput({
             >
                 <div className="flex items-center gap-1">
                     {loading ? (
-                        <LoadingIcon className="h-5 w-5 animate-spin text-[#1f2436]" />
+                        <LoadingIcon className="h-5 w-5 animate-spin text-brand-dark" />
                     ) : (
-                        <SearchIcon className="h-5 w-5 text-[#1f2436]" />
+                        <SearchIcon className="h-5 w-5 text-brand-dark" />
                     )}
                 </div>
             </span>

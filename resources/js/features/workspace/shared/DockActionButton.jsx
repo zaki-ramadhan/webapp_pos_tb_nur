@@ -16,14 +16,14 @@ export default function DockActionButton({
     let toneClassName = '';
     if (isDisabled) {
         // State dinonaktifkan
-        toneClassName = 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] cursor-default opacity-55 shadow-none pointer-events-none';
+        toneClassName = 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t cursor-default opacity-55 shadow-none pointer-events-none';
     } else {
         if (resolvedTone === 'danger') {
-            toneClassName = 'border-[#f08c8c] bg-[#f8b0b0] text-[#ff2d55] hover:bg-[#f59d9d] active:bg-[#e88b8b] cursor-pointer';
+            toneClassName = 'border-red-f08f92 bg-red-f5b0b4 text-red-ff2d55 hover:bg-red-f39ca0 active:bg-red-e39191 cursor-pointer';
         } else if (resolvedTone === 'muted') {
-            toneClassName = 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] hover:bg-[#e3e3e3] active:bg-[#d5d5d5] cursor-pointer';
+            toneClassName = 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t hover:bg-orange-e8e4dd active:bg-tab-primary-inactive-hover-bg cursor-pointer';
         } else {
-            toneClassName = 'border-[#214d8d] bg-[#2d61ab] text-white hover:bg-[#27579c] active:bg-[#1d447d] cursor-pointer';
+            toneClassName = 'border-brand-blue-darker bg-blue-2d61ab text-white hover:bg-bg-import-action-hover active:bg-blue-1a3f7a cursor-pointer';
         }
     }
 
@@ -35,7 +35,7 @@ export default function DockActionButton({
             aria-disabled={isDisabled}
             aria-label={label}
             title={label}
-            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] shadow-[0_3px_5px_rgba(24,53,97,0.15)] ${toneClassName} ${className}`.trim()}
+            className={`inline-flex h-12 w-[84px] shrink-0 items-center justify-center rounded-[8px] border transition sm:h-[54px] sm:w-[92px] md:h-[60px] md:w-[104px] shadow-dock-action ${toneClassName} ${className}`.trim()}
         >
             {loading ? (
                 <Spinner className="h-8 w-8 text-current animate-spin" />
