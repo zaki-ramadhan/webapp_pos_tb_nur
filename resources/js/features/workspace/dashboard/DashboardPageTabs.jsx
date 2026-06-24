@@ -44,7 +44,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
     );
 }
 
-function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
+function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
 
@@ -76,20 +76,40 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage }) {
                 noPadding
             >
                 <div className="max-h-[280px] overflow-y-auto py-1 [scrollbar-width:thin] [scrollbar-color:#c7d0e0_transparent]">
-                    {tabs.map((tab) => (
-                        <DropdownMenuItem
-                            key={tab.id}
-                            onClick={() => handleSelect(tab.id)}
-                            className={`rounded-none px-3 py-2 text-sm md:text-sm ${
-                                activePage?.id === tab.id
-                                    ? 'bg-brand-blue-lightest font-medium text-brand-blue-darker'
-                                    : 'text-brand-dark'
-                            }`.trim()}
-                            contentClassName="truncate"
-                        >
-                            {renderTabLabel(tab.label, activePage?.id === tab.id, false)}
-                        </DropdownMenuItem>
-                    ))}
+                    {tabs.map((tab) => {
+                        const active = activePage?.id === tab.id;
+                        return (
+                            <div
+                                key={tab.id}
+                                className={`group flex w-full items-center justify-between text-sm transition hover:bg-brand-blue-lightest ${
+                                    active ? 'bg-brand-blue-lightest' : ''
+                                }`.trim()}
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => handleSelect(tab.id)}
+                                    className={`flex-1 truncate px-3 py-2 text-left text-sm leading-5 ${
+                                        active ? 'font-semibold text-brand-blue-darker' : 'text-abc-label-dark'
+                                    }`.trim()}
+                                >
+                                    {renderTabLabel(tab.label, active, false)}
+                                </button>
+                                {tab.closable ? (
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onClosePage(tab.id);
+                                        }}
+                                        className="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] text-slate-400 hover:bg-slate-200/70 hover:text-slate-700 transition"
+                                        aria-label={`Tutup tab ${tab.label}`}
+                                    >
+                                        <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.6} />
+                                    </button>
+                                ) : null}
+                            </div>
+                        );
+                    })}
                 </div>
             </DropdownMenu>
         </div>
@@ -146,7 +166,7 @@ export default function DashboardPageTabs({
                         </div>
                     </div>
 
-                    <PageTabOverflowMenu tabs={tabs} activePage={activePage} onSelectPage={onSelectPage} />
+                    <PageTabOverflowMenu tabs={tabs} activePage={activePage} onSelectPage={onSelectPage} onClosePage={onClosePage} />
                 </div>
             </div>
 
