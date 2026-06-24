@@ -2,8 +2,8 @@ import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 
 export default function PreferencesSectionHeading({ icon, title }) {
     return (
-        <div className="border-b border-[#d7dde8] pb-2">
-            <div className="flex items-center gap-2.5 text-[#0568eb]">
+        <div className="border-b border-ui-border-medium pb-2">
+            <div className="flex items-center gap-2.5 text-blue-0568eb">
                 <NavigationIcon
                     type={icon}
                     className="h-6 w-6 shrink-0 text-current sm:h-7 sm:w-7"

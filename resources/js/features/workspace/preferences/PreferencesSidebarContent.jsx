@@ -134,7 +134,7 @@ export default function PreferencesSidebarContent({
                     tabs={workspace.companyTabs}
                     activeTabId={activeProfileTabId}
                     onSelectTab={setActiveProfileTabId}
-                    activeTabClassName="font-medium text-[#374056]"
+                    activeTabClassName="font-medium text-tab-active-text"
                 />
 
                 <div className="mx-2 mb-2 min-h-0 flex-1 overflow-y-auto bg-transparent px-3 py-3 sm:mx-3 sm:mb-3 sm:px-4">
@@ -143,7 +143,7 @@ export default function PreferencesSidebarContent({
                             <div className="grid gap-x-6 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
                                 {workspace.companyInfo.map((field) => (
                                     <div key={field.id} className="contents">
-                                        <label className="text-xs sm:text-sm text-[#1f2436]">{field.label}</label>
+                                        <label className="text-xs sm:text-sm text-brand-dark">{field.label}</label>
                                         <div>
                                             <PreferenceField 
                                                 field={field} 
@@ -170,10 +170,10 @@ export default function PreferencesSidebarContent({
     const currentItem = sideItems.find((item) => item.id === activeSideItemId);
 
     return (
-        <div className="mx-2 mb-2 flex min-h-[320px] items-center justify-center rounded-[4px] border border-[#d3d9e5] bg-white px-6 py-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] sm:mx-3 sm:mb-3">
+        <div className="mx-2 mb-2 flex min-h-[320px] items-center justify-center rounded-[4px] border border-tab-overflow-panel-border bg-white px-6 py-8 text-center shadow-inset-lighter sm:mx-3 sm:mb-3">
             <div className="max-w-[560px] space-y-3">
-                <h3 className="text-2xl font-medium text-[#2b3449]">{currentItem?.label}</h3>
-                <p className="text-xs sm:text-sm leading-6 text-[#687389]">
+                <h3 className="text-2xl font-medium text-abc-label-dark">{currentItem?.label}</h3>
+                <p className="text-xs sm:text-sm leading-6 text-text-muted">
                     Halaman preferensi untuk {currentItem?.label?.toLowerCase()} belum dirender pada iterasi
                     ini. Struktur `Fitur` sudah dibuat reusable agar sub-halaman berikutnya bisa mengikuti pola
                     yang sama.

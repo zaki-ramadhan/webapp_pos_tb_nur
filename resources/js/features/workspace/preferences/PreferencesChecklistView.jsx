@@ -29,14 +29,14 @@ function ChecklistItem({ item, inputId, onToggle }) {
             label={label}
             className="gap-3"
             labelClassName="text-xs sm:text-sm leading-6"
-            inputClassName="rounded-[5px] border-[#b6c1d1] shadow-[0_2px_8px_rgba(15,23,42,0.06)] checked:border-[#86b7ee]"
+            inputClassName="rounded-[5px] border-tab-active-border-x shadow-checkbox checked:border-border-checkbox-checked"
             onChange={(event) => onToggle(event.target.checked)}
         />
     );
 }
 
 function ChecklistTextItem({ item }) {
-    return <div className="text-xs sm:text-sm leading-6 text-[#131a28]">{item.label}</div>;
+    return <div className="text-xs sm:text-sm leading-6 text-text-workspace-dark">{item.label}</div>;
 }
 
 function ChecklistNotice({ notice }) {
@@ -46,9 +46,9 @@ function ChecklistNotice({ notice }) {
 
     return (
         <div
-            className={`flex items-start gap-3 rounded-[10px] border border-[#ef4444] bg-[#ffd9d9] px-4 py-3 text-xs sm:text-sm leading-6 text-[#bf2323] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] ${notice.className ?? ''}`.trim()}
+            className={`flex items-start gap-3 rounded-[10px] border border-text-danger-hover-alt bg-preferences-item-bg-danger px-4 py-3 text-xs sm:text-sm leading-6 text-preferences-text-danger shadow-inset-light-medium ${notice.className ?? ''}`.trim()}
         >
-            <AlertTriangleIcon className="mt-0.5 h-5 w-5 shrink-0 text-[#bf1313]" />
+            <AlertTriangleIcon className="mt-0.5 h-5 w-5 shrink-0 text-preferences-icon-danger" />
             <div className="min-w-0 text-xs sm:text-sm leading-6">
                 {(notice.parts ?? []).map((part, index) =>
                     part.emphasis ? (
@@ -92,7 +92,7 @@ function ChecklistSection({ section, tabId, onToggleItem, onSelectRadioItem }) {
                                 containerClassName="!w-fit"
                                 className="gap-3"
                                 labelClassName="text-xs sm:text-sm leading-6"
-                                inputClassName="rounded-full border-[#b6c1d1] shadow-[0_2px_8px_rgba(15,23,42,0.06)] checked:border-[#86b7ee]"
+                                inputClassName="rounded-full border-tab-active-border-x shadow-checkbox checked:border-border-checkbox-checked"
                                 onChange={() => onSelectRadioItem(section.id, item.id)}
                             />
                         ))}

@@ -5,8 +5,8 @@ export default function PreferenceSideItem({ item, active, onClick }) {
             onClick={() => onClick(item.id)}
             className={`relative flex h-[36px] w-full items-center justify-center rounded-l-[3px] border border-r-0 px-4 text-center text-base transition sm:justify-end sm:text-right ${
                 active
-                    ? 'z-10 -mr-px border-[#d3d9e5] border-l-[3px] border-l-[#ED3969] bg-white font-normal text-[#333c52] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]'
-                    : 'border-[#b5bcc8] bg-[#c8c8c8] font-normal text-[#5f6679] hover:bg-[#cfcfd1]'
+                    ? 'z-10 -mr-px border-tab-overflow-panel-border border-l-[3px] border-l-tab-active-border-t bg-ui-bg-hover font-normal text-section-tab-neutral-text shadow-inset-light'
+                    : 'border-blue-b5bcc8 bg-disabled-border font-normal text-tab-inactive-text hover:bg-tab-primary-inactive-hover-bg'
             }`.trim()}
         >
             {item.label}

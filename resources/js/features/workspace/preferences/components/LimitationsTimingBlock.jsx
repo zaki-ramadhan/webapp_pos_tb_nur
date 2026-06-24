@@ -18,7 +18,7 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
                 label={<span className="text-xs sm:text-sm">{block.label}</span>}
                 className="gap-2"
                 labelClassName="text-xs sm:text-sm leading-6"
-                inputClassName="rounded-[5px] border-[#b6c1d1]"
+                inputClassName="rounded-[5px] border-tab-active-border-x"
                 containerClassName="w-auto shrink-0"
                 onChange={(event) =>
                     onToggle(rowId, optionValue, block.id, event.target.checked)
@@ -29,8 +29,8 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
                 id={`${block.id}-before-value`}
                 value={block.beforeValue ?? ''}
                 containerClassName="w-[85px]"
-                className="h-[38px] w-[85px] rounded-[6px] border-[#cfd6e2]"
-                inputClassName="px-3 text-left text-xs sm:text-sm text-[#111827]"
+                className="h-[38px] w-[85px] rounded-[6px] border-ui-border"
+                inputClassName="px-3 text-left text-xs sm:text-sm text-text-darkest"
                 maxLength={3}
                 clearable={false}
                 onChange={(event) =>
@@ -42,8 +42,8 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
                 id={`${block.id}-before-unit`}
                 value={block.beforeUnit ?? ''}
                 containerClassName="w-[90px]"
-                className="h-[38px] w-[90px] rounded-[6px] border-[#cfd6e2]"
-                selectClassName="text-xs sm:text-sm text-[#111827]"
+                className="h-[38px] w-[90px] rounded-[6px] border-ui-border"
+                selectClassName="text-xs sm:text-sm text-text-darkest"
                 onChange={(event) =>
                     onChangeBlock(rowId, optionValue, block.id, 'beforeUnit', event.target.value)
                 }
@@ -55,14 +55,14 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
                 ))}
             </SelectField>
 
-            <span className="text-xs sm:text-sm leading-6 text-[#111827]">sebelum atau</span>
+            <span className="text-xs sm:text-sm leading-6 text-text-darkest">sebelum atau</span>
 
             <TextInput
                 id={`${block.id}-after-value`}
                 value={block.afterValue ?? ''}
                 containerClassName="w-[85px]"
-                className="h-[38px] w-[85px] rounded-[6px] border-[#cfd6e2]"
-                inputClassName="px-3 text-left text-xs sm:text-sm text-[#111827]"
+                className="h-[38px] w-[85px] rounded-[6px] border-ui-border"
+                inputClassName="px-3 text-left text-xs sm:text-sm text-text-darkest"
                 maxLength={3}
                 clearable={false}
                 onChange={(event) =>
@@ -74,8 +74,8 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
                 id={`${block.id}-after-unit`}
                 value={block.afterUnit ?? ''}
                 containerClassName="w-[90px]"
-                className="h-[38px] w-[90px] rounded-[6px] border-[#cfd6e2]"
-                selectClassName="text-xs sm:text-sm text-[#111827]"
+                className="h-[38px] w-[90px] rounded-[6px] border-ui-border"
+                selectClassName="text-xs sm:text-sm text-text-darkest"
                 onChange={(event) =>
                     onChangeBlock(rowId, optionValue, block.id, 'afterUnit', event.target.value)
                 }
@@ -87,7 +87,7 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
                 ))}
             </SelectField>
 
-            <span className="text-xs sm:text-sm leading-6 text-[#111827]">sesudah periode saat ini</span>
+            <span className="text-xs sm:text-sm leading-6 text-text-darkest">sesudah periode saat ini</span>
         </div>
     );
 }
@@ -95,7 +95,7 @@ export function LimitationsTimingRule({ block, rowId, optionValue, onToggle, onC
 export function LimitationsSearchBlock({ block, rowId, optionValue, onChangeBlock }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="text-xs sm:text-sm leading-6 text-[#111827]">{block.label}</div>
+            <div className="text-xs sm:text-sm leading-6 text-text-darkest">{block.label}</div>
             <div className="max-w-[560px]">
                 <PreferenceLookupAutocomplete
                     field={{
@@ -127,7 +127,7 @@ export function LimitationsSearchBlock({ block, rowId, optionValue, onChangeBloc
 export function LimitationsNestedRadioBlock({ block, rowId, optionValue, onChangeNestedRadio }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
-            <div className="text-xs sm:text-sm leading-6 text-[#111827]">{block.label}</div>
+            <div className="text-xs sm:text-sm leading-6 text-text-darkest">{block.label}</div>
             <div className="space-y-1.5">
                 {(block.options ?? []).map((item) => (
                     <RadioField

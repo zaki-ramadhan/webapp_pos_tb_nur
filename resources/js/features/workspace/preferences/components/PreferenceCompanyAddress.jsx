@@ -15,7 +15,7 @@ export default function PreferenceCompanyAddress({ address, values, onChange }) 
 
     if (!address || !cityField || !provinceField || !postalCodeField || !countryField) {
         return (
-            <div className="p-4 text-sm text-[#65708a]">
+            <div className="p-4 text-sm text-chart-text">
                 Pengaturan alamat perusahaan belum tersedia.
             </div>
         );
@@ -40,7 +40,7 @@ export default function PreferenceCompanyAddress({ address, values, onChange }) 
     return (
         <div className="max-w-[980px]">
             <div className="grid gap-x-6 gap-y-2 lg:grid-cols-[160px_minmax(0,646px)] lg:items-start">
-                <label className="pt-1.5 text-xs sm:text-sm text-[#1f2436]">{address.label}</label>
+                <label className="pt-1.5 text-xs sm:text-sm text-brand-dark">{address.label}</label>
 
                 <div className="space-y-1.5">
                     <TextareaField
@@ -53,9 +53,9 @@ export default function PreferenceCompanyAddress({ address, values, onChange }) 
                         message={address.street?.message}
                         prefix={address.street?.label}
                         rows={3}
-                        prefixClassName="min-w-[72px] border-[#d8dde7] px-3 py-2 text-xs sm:text-sm text-[#7b8597]"
-                        className="rounded-[3px] border-[#d8dde7] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]"
-                        textareaClassName="min-h-[80px] px-3 py-2 text-xs sm:text-sm leading-6 text-[#1f2436]"
+                        prefixClassName="min-w-[72px] border-ui-border-medium px-3 py-2 text-xs sm:text-sm text-blue-7c839b"
+                        className="rounded-[3px] border-ui-border-medium shadow-inset-light"
+                        textareaClassName="min-h-[80px] px-3 py-2 text-xs sm:text-sm leading-6 text-brand-dark"
                     />
 
                     {cityValue ? (

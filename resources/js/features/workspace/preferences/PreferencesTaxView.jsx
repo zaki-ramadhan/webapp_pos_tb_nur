@@ -33,11 +33,11 @@ function TaxRowLabel({ label, showInfo = false }) {
     }
 
     return (
-        <div className="pt-1.5 text-xs sm:text-sm leading-6 text-[#0f172a]">
+        <div className="pt-1.5 text-xs sm:text-sm leading-6 text-text-contrast">
             <span className="whitespace-pre-line">{label}</span>
             {showInfo ? (
                 <Tooltip content={getTaxTooltip(label)} portal>
-                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                    <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-text-darkest cursor-help" />
                 </Tooltip>
             ) : null}
         </div>
@@ -51,7 +51,7 @@ function TaxActionButton({ control }) {
             type="button"
             disabled={control.disabled}
             aria-label={control.ariaLabel ?? control.label}
-            className={`inline-flex h-[38px] w-[50px] items-center justify-center rounded-[6px] border border-[#4f86d9] bg-white text-[#0f65c9] transition hover:bg-[#f5f9ff] disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${control.className ?? ''}`.trim()}
+            className={`inline-flex h-[38px] w-[50px] items-center justify-center rounded-[6px] border border-blue-4f86d9 bg-white text-input-brand transition hover:bg-brand-blue-lightest disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-300 ${control.className ?? ''}`.trim()}
         >
             {control.icon === 'link' ? <LinkIcon className="h-6 w-6" /> : null}
         </button>
@@ -70,9 +70,9 @@ function TaxInputControl({ control, onChange }) {
                 message={control.message}
                 prefix={control.prefix}
                 rows={control.rows ?? 3}
-                className={`rounded-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
-                prefixClassName={`min-w-[60px] border-[#d8dde7] px-3 py-2 text-xs sm:text-sm text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
-                textareaClassName={`min-h-[80px] px-3 py-2 text-xs sm:text-sm leading-6 text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+                className={`rounded-[6px] border-ui-border ${control.fieldClassName ?? ''}`.trim()}
+                prefixClassName={`min-w-[60px] border-ui-border-medium px-3 py-2 text-xs sm:text-sm text-blue-7c839b ${control.prefixClassName ?? ''}`.trim()}
+                textareaClassName={`min-h-[80px] px-3 py-2 text-xs sm:text-sm leading-6 text-text-darkest ${control.inputClassName ?? ''}`.trim()}
                 onChange={(event) => onChange(event.target.value)}
             />
         );
@@ -85,7 +85,7 @@ function TaxInputControl({ control, onChange }) {
                 disabled={control.disabled}
                 onChange={(displayValue) => onChange(displayValue)}
                 className={`w-full max-w-[424px] ${control.fieldClassName ?? ''}`.trim()}
-                inputClassName={`text-xs sm:text-sm text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+                inputClassName={`text-xs sm:text-sm text-text-darkest ${control.inputClassName ?? ''}`.trim()}
             />
         );
     }
@@ -112,10 +112,10 @@ function TaxInputControl({ control, onChange }) {
                     </button>
                 ) : null
             }
-            className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.fieldClassName ?? ''}`.trim()}
-            prefixClassName={`min-w-[62px] border-[#d8dde7] px-3 text-xs sm:text-sm text-[#7b8597] ${control.prefixClassName ?? ''}`.trim()}
-            inputClassName={`text-xs sm:text-sm text-[#111827] ${control.inputClassName ?? ''}`.trim()}
-            trailingClassName={control.clearable && hasValue ? 'px-2.5 text-[#1f2937]' : ''}
+            className={`h-[38px] rounded-[6px] border-ui-border ${control.fieldClassName ?? ''}`.trim()}
+            prefixClassName={`min-w-[62px] border-ui-border-medium px-3 text-xs sm:text-sm text-blue-7c839b ${control.prefixClassName ?? ''}`.trim()}
+            inputClassName={`text-xs sm:text-sm text-text-darkest ${control.inputClassName ?? ''}`.trim()}
+            trailingClassName={control.clearable && hasValue ? 'px-2.5 text-text-dark' : ''}
             onChange={(event) => onChange(event.target.value)}
         />
     );
@@ -190,7 +190,7 @@ function TaxCheckboxListRow({ row, onToggle }) {
                         label={<span className="text-xs sm:text-sm">{option.label}</span>}
                         className="gap-3"
                         labelClassName="text-xs sm:text-sm leading-6"
-                        inputClassName="rounded-[5px] border-[#b6c1d1]"
+                        inputClassName="rounded-[5px] border-tab-active-border-x"
                         onChange={(event) => onToggle(row.id, option.id, event.target.checked)}
                     />
                 ))}
@@ -214,7 +214,7 @@ function TaxSingleCheckboxRow({ row, onToggle }) {
                     label={<span className="text-xs sm:text-sm">{row.option?.label}</span>}
                     className="gap-3"
                     labelClassName="text-xs sm:text-sm leading-6"
-                    inputClassName="rounded-[5px] border-[#b6c1d1]"
+                    inputClassName="rounded-[5px] border-tab-active-border-x"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />
             </div>

@@ -6,7 +6,7 @@ import PreferencesTabPanel from '@/features/workspace/preferences/PreferencesTab
 import usePreferencesTabsState from '@/features/workspace/preferences/usePreferencesTabsState';
 
 function OthersRowLabel({ label }) {
-    return <div className="pt-1.5 text-xs sm:text-sm leading-6 text-[#111827]">{label}</div>;
+    return <div className="pt-1.5 text-xs sm:text-sm leading-6 text-text-darkest">{label}</div>;
 }
 
 function OthersRowNote({ note }) {
@@ -16,8 +16,8 @@ function OthersRowNote({ note }) {
 
     return (
         <div className="flex items-center gap-3 pt-0.5">
-            <span className="block h-6 w-[5px] rounded-[2px] bg-[#9a9a9a]" aria-hidden="true" />
-            <p className="text-xs sm:text-sm italic leading-6 text-[#ff4b2b]">{note}</p>
+            <span className="block h-6 w-[5px] rounded-[2px] bg-bg-bullet-gray" aria-hidden="true" />
+            <p className="text-xs sm:text-sm italic leading-6 text-preferences-btn-danger">{note}</p>
         </div>
     );
 }
@@ -42,8 +42,8 @@ function OthersSelectControl({ control, onChange }) {
             error={control.error}
             message={control.message}
             containerClassName={control.containerClassName ?? 'w-full max-w-[320px]'}
-            className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            selectClassName={`text-xs sm:text-sm text-[#111827] ${control.selectClassName ?? ''}`.trim()}
+            className={`h-[38px] rounded-[6px] border-ui-border ${control.className ?? ''}`.trim()}
+            selectClassName={`text-xs sm:text-sm text-text-darkest ${control.selectClassName ?? ''}`.trim()}
             onChange={(event) => onChange(event.target.value)}
         >
             {normalizeOptions(control.options).map((option) => (
@@ -67,8 +67,8 @@ function OthersTextControl({ control, onChange }) {
             message={control.message}
             maxLength={control.maxLength}
             containerClassName={control.containerClassName ?? 'w-full max-w-[160px]'}
-            className={`h-[38px] rounded-[6px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            inputClassName={`text-xs sm:text-sm text-[#111827] ${control.inputClassName ?? ''}`.trim()}
+            className={`h-[38px] rounded-[6px] border-ui-border ${control.className ?? ''}`.trim()}
+            inputClassName={`text-xs sm:text-sm text-text-darkest ${control.inputClassName ?? ''}`.trim()}
             onChange={(event) => onChange(event.target.value)}
         />
     );
@@ -80,7 +80,7 @@ function OthersControl({ control, onChange }) {
     }
 
     if (control.type === 'static') {
-        return <span className="text-xs sm:text-sm leading-6 text-[#111827]">{control.label}</span>;
+        return <span className="text-xs sm:text-sm leading-6 text-text-darkest">{control.label}</span>;
     }
 
     return <OthersSelectControl control={control} onChange={onChange} />;
@@ -174,8 +174,8 @@ function EmailIntro({ intro }) {
 
     return (
         <div className="space-y-1.5">
-            <h2 className="text-2xl leading-tight text-[#111827]">{intro.title}</h2>
-            <p className="text-xs sm:text-sm leading-6 text-[#111827]">{intro.description}</p>
+            <h2 className="text-2xl leading-tight text-text-darkest">{intro.title}</h2>
+            <p className="text-xs sm:text-sm leading-6 text-text-darkest">{intro.description}</p>
         </div>
     );
 }

@@ -14,7 +14,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                 disabled={field.disabled}
                 error={field.error}
                 message={field.message}
-                className="h-[34px] rounded-[3px] border-[#cfd6e2]"
+                className="h-[34px] rounded-[3px] border-ui-border"
                 selectClassName="text-xs sm:text-sm"
             >
                 {field.options.map((option) => (
@@ -74,14 +74,14 @@ const PREFERENCE_FIELD_RENDERERS = {
                     disabled={field.disabled}
                     error={field.error}
                     message={field.message}
-                    className="h-[34px] flex-1 rounded-[3px] border-[#cfd6e2] bg-[#f8f8f8]"
-                    inputClassName="text-xs sm:text-sm text-[#6a7388]"
+                    className="h-[34px] flex-1 rounded-[3px] border-ui-border bg-ui-bg-panel-lighter"
+                    inputClassName="text-xs sm:text-sm text-text-readonly-input"
                 />
                 <button
                     type="button"
                     disabled={field.disabled}
                     onClick={handleCurrencyEdit}
-                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-[#e8e4dd] text-[#2a3349] disabled:cursor-default disabled:bg-slate-100 disabled:text-slate-400 disabled:pointer-events-none enabled:hover:bg-[#dcd6cc] transition"
+                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-orange-e8e4dd text-abc-label-dark disabled:cursor-default disabled:bg-slate-100 disabled:text-slate-400 disabled:pointer-events-none enabled:hover:bg-orange-dcd6cc transition"
                     aria-label={`Edit ${field.label}`}
                 >
                     <PencilIcon />
@@ -135,7 +135,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                         </button>
                     ) : null
                 }
-                className="h-[34px] rounded-[3px] border-[#cfd6e2]"
+                className="h-[34px] rounded-[3px] border-ui-border"
                 inputClassName="text-xs sm:text-sm"
             />
         );

@@ -130,13 +130,13 @@ export function LimitationsCheckboxList({ row, onToggleItem }) {
                     size="sm"
                     align="center"
                     label={
-                        <span className="text-xs sm:text-sm leading-6 text-[#111827]">
+                        <span className="text-xs sm:text-sm leading-6 text-text-darkest">
                             {item.label}
                         </span>
                     }
                     className="gap-3"
                     labelClassName="text-xs sm:text-sm leading-6"
-                    inputClassName="rounded-[5px] border-[#b6c1d1]"
+                    inputClassName="rounded-[5px] border-tab-active-border-x"
                     onChange={(event) => onToggleItem(row.id, item.id, event.target.checked)}
                 />
             ))}

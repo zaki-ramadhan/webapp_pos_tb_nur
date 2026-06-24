@@ -26,11 +26,11 @@ function getSalesInfo(id, label) {
 function SalesInlineCheckboxRow({ row, onToggle }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="text-xs sm:text-sm leading-6 text-[#0f172a]">
+            <div className="text-xs sm:text-sm leading-6 text-text-contrast">
                 <span>{row.label}</span>
                 {row.showInfo ? (
                     <Tooltip content={getSalesInfo(row.id, row.label)} portal>
-                        <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-[#111827] cursor-help" />
+                        <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-text-darkest cursor-help" />
                     </Tooltip>
                 ) : null}
             </div>
@@ -46,7 +46,7 @@ function SalesInlineCheckboxRow({ row, onToggle }) {
                     label={<span className="text-xs sm:text-sm">{row.option?.label}</span>}
                     className="gap-3"
                     labelClassName="text-xs sm:text-sm leading-6"
-                    inputClassName="rounded-[5px] border-[#b6c1d1]"
+                    inputClassName="rounded-[5px] border-tab-active-border-x"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />
             </div>
@@ -57,7 +57,7 @@ function SalesInlineCheckboxRow({ row, onToggle }) {
 function SalesRadioGroupRow({ row, onChange }) {
     return (
         <div className="space-y-2">
-            <div className="text-xs sm:text-sm font-semibold leading-6 text-[#111827]">
+            <div className="text-xs sm:text-sm font-semibold leading-6 text-text-darkest">
                 <span className="whitespace-pre-line">{row.label}</span>
             </div>
 
@@ -103,7 +103,7 @@ function SalesCheckboxRow({ row, onToggle }) {
                 }
                 className="gap-3"
                 labelClassName="text-xs sm:text-sm leading-6"
-                inputClassName="rounded-[5px] border-[#b6c1d1]"
+                inputClassName="rounded-[5px] border-tab-active-border-x"
                 onChange={(event) => onToggle(row.id, event.target.checked)}
             />
         </div>
@@ -113,7 +113,7 @@ function SalesCheckboxRow({ row, onToggle }) {
 function SalesGridFieldRow({ row, onChangeControl }) {
     return (
         <div className="grid gap-x-4 gap-y-2 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-            <div className="text-xs sm:text-sm leading-6 text-[#111827]">
+            <div className="text-xs sm:text-sm leading-6 text-text-darkest">
                 <span>{row.label}</span>
             </div>
 
