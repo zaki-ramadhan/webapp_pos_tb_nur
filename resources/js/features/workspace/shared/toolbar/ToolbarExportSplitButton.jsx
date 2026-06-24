@@ -1,6 +1,6 @@
 import React from 'react';
 import Tooltip from '@/components/ui/Tooltip';
-import { ShareIcon } from '@/features/workspace/shared/Icons';
+import { ExternalLinkIcon } from '@/features/workspace/shared/Icons';
 import { exportToExcelXML } from '../exportUtils';
 
 export default function ToolbarExportSplitButton({ exportConfig, sizeStyle, visibleColumnIds }) {
@@ -35,7 +35,7 @@ export default function ToolbarExportSplitButton({ exportConfig, sizeStyle, visi
                 } ${sizeStyle.utilityButton}`.trim()}
                 aria-label="Ekspor data"
             >
-                <ShareIcon className="h-4 w-4 text-current" />
+                <ExternalLinkIcon className="h-4 w-4 text-current" />
             </button>
         </Tooltip>
     );

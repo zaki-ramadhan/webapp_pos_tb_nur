@@ -253,8 +253,9 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                                         voided: event.target.checked,
                                     }))
                                 }
-                                inputClassName="h-[24px] w-[24px] rounded-[4px]"
-                                containerClassName="w-auto inline-flex items-center h-[34px]"
+                                align="center"
+                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                containerClassName="w-auto inline-flex h-[34px]"
                             />
                         </>
                     ) : null}

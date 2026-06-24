@@ -259,8 +259,9 @@ export default function SalesDepositFormView({
                                                 taxEnabled: event.target.checked,
                                             }))
                                         }
-                                        inputClassName="h-[20px] w-[20px] rounded"
-                                        containerClassName="w-auto inline-flex items-center"
+                                        align="center"
+                                        inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                        containerClassName="w-auto inline-flex"
                                     />
                                     <CheckboxField
                                         id="taxIncluded"
@@ -272,8 +273,9 @@ export default function SalesDepositFormView({
                                                 taxIncluded: event.target.checked,
                                             }))
                                         }
-                                        inputClassName="h-[20px] w-[20px] rounded"
-                                        containerClassName="w-auto inline-flex items-center"
+                                        align="center"
+                                        inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                        containerClassName="w-auto inline-flex"
                                     />
                                 </div>
                             </div>

@@ -114,8 +114,9 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                             label={config.preInvoiceOptionLabel ?? 'Ya (Mendahului Pengiriman)'}
                             checked={values.preInvoice}
                             disabled
-                            inputClassName="h-[20px] w-[20px] rounded"
-                            containerClassName="w-auto inline-flex items-center h-[34px]"
+                            align="center"
+                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                            containerClassName="w-auto inline-flex h-[34px]"
                         />
                     </>
                 ) : null}

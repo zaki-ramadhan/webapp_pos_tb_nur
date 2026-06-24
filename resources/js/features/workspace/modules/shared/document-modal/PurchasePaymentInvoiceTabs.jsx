@@ -56,8 +56,9 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                         pphChecked: event.target.checked,
                     }))
                 }
-                inputClassName="h-[22px] w-[22px] rounded-[4px]"
-                containerClassName="w-auto inline-flex items-center"
+                align="center"
+                inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                containerClassName="w-auto inline-flex"
             />
 
             <div className="space-y-3 pl-[44px]">

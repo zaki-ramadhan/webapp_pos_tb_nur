@@ -20,6 +20,7 @@ import {
 } from '@/features/workspace/shared/Icons';
 import SelectField from '@/components/ui/SelectField';
 import Pagination from '@/components/ui/Pagination';
+import Button from '@/components/ui/Button';
 
 const CONTENT_MIN_HEIGHT_CLASS_NAME = 'min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]';
 
@@ -54,19 +55,20 @@ function resolveActionIcon(action) {
 function InquiryActionButton({ action, onClick }) {
     const toneClassName =
         action.tone === 'warning'
-            ? 'border-[#f4b038] bg-[#ffab13] text-white'
-            : 'border-[#7aa2d5] bg-white text-[#2353a0]';
+            ? 'border-transparent bg-[#ffab13] text-white hover:bg-[#e0940b]'
+            : 'border-[#7aa2d5] bg-white text-[#2353a0] hover:bg-[#f0f6ff]';
 
     return (
-        <button
-            type="button"
+        <Button
             aria-label={action.label}
             title={action.label}
             onClick={onClick}
-            className={`inline-flex h-[34px] min-w-[40px] items-center justify-center rounded-[4px] border px-3 ${toneClassName}`.trim()}
+            variant="secondary"
+            size="sm"
+            className={`h-[34px] min-w-[40px] px-3 font-normal active:scale-[0.98] focus:outline-none ${toneClassName}`.trim()}
         >
             {resolveActionIcon(action)}
-        </button>
+        </Button>
     );
 }
 

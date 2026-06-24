@@ -16,16 +16,18 @@ function SalesDocumentInvoiceTaxSection({ values }) {
                             label="Kena Pajak"
                             checked={values.taxEnabled}
                             onChange={(event) => values.setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))}
-                            inputClassName="h-[20px] w-[20px] rounded"
-                            containerClassName="w-auto inline-flex items-center"
+                            align="center"
+                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                            containerClassName="w-auto inline-flex"
                         />
                         <CheckboxField
                             id="taxIncluded"
                             label="Total termasuk Pajak"
                             checked={values.taxIncluded}
                             onChange={(event) => values.setValues?.((current) => ({ ...current, taxIncluded: event.target.checked }))}
-                            inputClassName="h-[20px] w-[20px] rounded"
-                            containerClassName="w-auto inline-flex items-center"
+                            align="center"
+                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                            containerClassName="w-auto inline-flex"
                         />
                     </div>
                     <TransactionFieldLabel label="Tipe ID" />
@@ -66,12 +68,12 @@ export default function SalesDocumentTaxShippingColumn({ config, values, setValu
                     <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.tax} />
                         <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-[#1f2436]">
-                            <label className="inline-flex items-center gap-3">
-                                <input type="checkbox" checked={values.taxEnabled} onChange={(event) => setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))} className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
+                            <label className="inline-flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" checked={values.taxEnabled} onChange={(event) => setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))} className="h-3.5 w-3.5 rounded-[3px] border border-slate-400 text-input-brand focus:ring-2 focus:ring-input-focus/30" />
                                 <span>Kena Pajak</span>
                             </label>
-                            <label className="inline-flex items-center gap-3">
-                                <input type="checkbox" checked={values.taxIncluded} onChange={(event) => setValues?.((current) => ({ ...current, taxIncluded: event.target.checked }))} className="h-[20px] w-[20px] rounded border border-[#cfd6e2]" />
+                            <label className="inline-flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" checked={values.taxIncluded} onChange={(event) => setValues?.((current) => ({ ...current, taxIncluded: event.target.checked }))} className="h-3.5 w-3.5 rounded-[3px] border border-slate-400 text-input-brand focus:ring-2 focus:ring-input-focus/30" />
                                 <span>Total termasuk Pajak</span>
                             </label>
                         </div>

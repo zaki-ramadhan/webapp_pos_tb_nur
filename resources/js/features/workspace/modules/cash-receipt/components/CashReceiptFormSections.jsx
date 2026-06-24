@@ -125,8 +125,9 @@ export function ReceiptInfoSection({ config, values, isDetail, handlers = {} }) 
                             label="Ya"
                             checked={values.voided}
                             disabled
-                            inputClassName="h-[24px] w-[24px] rounded-[4px]"
-                            containerClassName="w-auto inline-flex items-center"
+                            align="center"
+                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                            containerClassName="w-auto inline-flex"
                         />
                     </>
                 ) : null}
