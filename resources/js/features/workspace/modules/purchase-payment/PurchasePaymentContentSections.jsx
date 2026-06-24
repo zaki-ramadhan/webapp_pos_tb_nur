@@ -13,16 +13,31 @@ import {
     TransactionFieldLabel,
     TransactionReadonlyTextarea,
     TransactionSectionHeading,
+    TransactionLineItemsSection,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 import { PurchasePaymentHeaderIconButton } from './PurchasePaymentHeaderSections';
 
 export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice, handlers = {} }) {
     return (
-        <div className="flex min-h-[540px] flex-col">
-            <div className="flex flex-col gap-3 pb-1 xl:flex-row xl:items-center xl:justify-between">
-                <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-                    <div className="min-w-0 flex-1 sm:max-w-[560px]">
+        <TransactionLineItemsSection
+            title={
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={handlers.onSelectInvoice}
+                        className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[4px] border border-[#cfd6e2] bg-white text-[#21539b] hover:bg-[#e8f2ff] transition"
+                        aria-label="Cari faktur"
+                    >
+                        <SearchIcon className="h-5 w-5" />
+                    </button>
+                    <span className="text-right text-2xl font-normal text-[#1f2436]">{values.invoiceTitle}</span>
+                </div>
+            }
+            titleRequired={true}
+            searchInput={
+                <div className="flex items-center gap-3">
+                    <div className="min-w-0 flex-1">
                         <TextInput
                             value={values.invoiceSearch}
                             readOnly
@@ -37,48 +52,33 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                     {isDetail ? (
                         <button
                             type="button"
-                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-base text-[#21539b]"
+                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-base text-[#21539b] shrink-0"
                             onClick={handlers.onSelectInvoice}
                         >
                             {config.takeButtonLabel}
                         </button>
                     ) : null}
                 </div>
-
-                <div className="flex items-center justify-end gap-3">
-                    <PurchasePaymentHeaderIconButton label="Cari faktur" icon={<SearchIcon className="h-5 w-5" />} onClick={handlers.onSelectInvoice} />
-                    <div className="text-right text-2xl font-normal text-[#1f2436]">
-                        {values.invoiceTitle} <span className="text-[#ED3969]">*</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="mt-1 min-h-0 flex-1 overflow-x-auto">
-                <TransactionDataTable
-                    columns={config.invoiceTable.columns}
-                    rows={values.invoices}
-                    emptyLabel={config.invoiceTable.emptyLabel}
-                    minWidthClassName={config.invoiceTable.minWidthClassName ?? 'min-w-[1080px]'}
-                    emptyLeadingCellContent={
-                        <span className="inline-flex items-center justify-center">
-                            <TableActionIcon className="h-4 w-4" />
-                        </span>
-                    }
-                    onRowClick={onOpenInvoice}
-                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
-                    renderHeaderCell={(column) => (column.kind === 'spacer' ? '' : column.label)}
-                    renderCell={({ row, column }) =>
-                        column.kind === 'spacer' ? (
-                            <span className="inline-flex items-center justify-center text-[#a8afbe]">
-                                <TableActionIcon className="h-4 w-4" />
-                            </span>
-                        ) : (
-                            row[column.id] ?? ''
-                        )
-                    }
-                />
-            </div>
-        </div>
+            }
+            columns={config.invoiceTable.columns}
+            rows={values.invoices}
+            emptyLabel={config.invoiceTable.emptyLabel}
+            minWidthClassName={config.invoiceTable.minWidthClassName ?? 'min-w-[1080px]'}
+            emptyLeadingCellContent={
+                <span className="inline-flex items-center justify-center">
+                    <TableActionIcon className="h-4 w-4" />
+                </span>
+            }
+            onRowClick={onOpenInvoice}
+            getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+            spacerHeaderContent=""
+            spacerCellContent={
+                <span className="inline-flex items-center justify-center text-[#a8afbe]">
+                    <TableActionIcon className="h-4 w-4" />
+                </span>
+            }
+            cellClassName="!py-1.5"
+        />
     );
 }
 
@@ -114,8 +114,9 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                                 label="Ya"
                                 checked={values.voided}
                                 disabled
-                                inputClassName="h-[24px] w-[24px] rounded-[4px]"
-                                containerClassName="w-auto inline-flex items-center"
+                                align="center"
+                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                containerClassName="w-auto inline-flex"
                             />
                         </>
                     ) : null}
@@ -157,38 +158,46 @@ export function PurchasePaymentInfoSection({ config, values }) {
 }
 
 export function PurchasePaymentTableFilterBar({ table, filters, setFilters }) {
-    return (
-        <div className="flex flex-wrap items-center gap-2">
-            {table.filters.map((filter) => (
-                <SelectField
-                    key={filter.id}
-                    value={filters[filter.id]}
-                    onChange={(event) =>
-                        setFilters((current) => ({
-                            ...current,
-                            [filter.id]: event.target.value,
-                        }))
-                    }
-                    containerClassName="w-auto shrink-0"
-                    className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
-                >
-                    {filter.options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </SelectField>
+    const renderFilter = (filter) => (
+        <SelectField
+            key={filter.id}
+            value={filters[filter.id]}
+            onChange={(event) =>
+                setFilters((current) => ({
+                    ...current,
+                    [filter.id]: event.target.value,
+                }))
+            }
+            containerClassName="w-auto shrink-0"
+            className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
+            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
+            iconClassName="mr-2 text-[#6c7894]"
+        >
+            {filter.options.map((option) => (
+                <option key={option.value} value={option.value}>
+                    {option.label}
+                </option>
             ))}
+        </SelectField>
+    );
 
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
-                aria-label={table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-4.5 w-4.5" />
-            </button>
+    return (
+        <div className="flex w-full flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+                {table.filters.slice(0, 3).map(renderFilter)}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+                {table.filters.slice(3).map(renderFilter)}
+
+                <button
+                    type="button"
+                    className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0] hover:bg-[#cbe3ff] transition"
+                    aria-label={table.filterButtonLabel}
+                >
+                    <FunnelIcon className="h-4.5 w-4.5" />
+                </button>
+            </div>
         </div>
     );
 }
