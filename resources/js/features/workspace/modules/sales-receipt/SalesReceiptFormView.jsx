@@ -62,10 +62,10 @@ export default function SalesReceiptFormView({
         <>
             <div className="flex min-h-full flex-col gap-3">
                 <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                    <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white shadow-card-light">
-                        <div className="px-4 pt-4 pb-0">
-                            <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-                                <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                    <div className="min-w-0 flex-1 flex flex-col gap-3">
+                        <div className="px-4 py-4 bg-white border border-ui-border rounded-[6px] shadow-card-light">
+                            <div className={`grid gap-x-8 gap-y-2 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
+                                <div className="grid gap-y-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                                     <TransactionFieldLabel label={config.labels.customer} required />
                                     <ChipLookupField
                                         values={values.customer}
@@ -98,7 +98,7 @@ export default function SalesReceiptFormView({
                                     </div>
                                 </div>
 
-                                <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                                <div className="grid gap-y-2 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                                     <div className="flex items-center justify-start gap-4 sm:justify-end">
                                         <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                                         {!isDetail ? (
@@ -166,12 +166,12 @@ export default function SalesReceiptFormView({
                             </div>
                         </div>
 
-                        <CrudStatusMessage status={status} className="mx-3 mt-3" />
+                        <CrudStatusMessage status={status} className="mx-3" />
 
-                        <div className="flex items-start gap-3 px-2 py-2 sm:px-3">
+                        <div className="flex gap-0 px-2 sm:px-3">
                             <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
 
-                            <div className="min-w-0 flex-1 rounded-[4px] border border-tab-overflow-panel-border bg-white px-3 py-3 shadow-inset-lighter">
+                            <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white px-3 py-3 shadow-card-light">
                                 {activeSectionId === 'additional-info' ? (
                                     <SalesReceiptAdditionalInfoSection
                                         config={config}
@@ -193,7 +193,7 @@ export default function SalesReceiptFormView({
                             </div>
                         </div>
 
-                        <div className="px-3 pb-3">
+                        <div className="px-3">
                             <ReceiptSummaryFooter paymentAmount={values.paymentAmount} />
                         </div>
                     </div>

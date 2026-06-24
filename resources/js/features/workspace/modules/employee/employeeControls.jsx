@@ -171,7 +171,7 @@ export function ToggleSwitch({ checked, onChange }) {
             aria-checked={checked}
             onClick={() => onChange(!checked)}
             className={`relative inline-flex h-[20px] w-[36px] shrink-0 items-center rounded-full transition-colors ${
-                checked ? 'bg-blue-3f68b2' : 'bg-section-tab-neutral-border'
+                checked ? 'bg-blue-570' : 'bg-section-tab-neutral-border'
             }`}
         >
             <span

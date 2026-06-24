@@ -2,9 +2,9 @@ import { authUi } from '@/features/auth/lib/auth-ui';
 
 function PlaceholderImage({ accent, badge }) {
     const accentStyles = {
-        coral: 'from-red-ff8ba6 via-red-ffd2dc to-warning-bg',
-        blue: 'from-blue-85bbff via-info-border to-ui-bg-hover',
-        teal: 'from-blue-8be0d1 via-blue-d1f8f2 to-ui-bg-hover',
+        coral: 'from-red-220 via-red-80 to-warning-bg',
+        blue: 'from-blue-220 via-info-border to-ui-bg-hover',
+        teal: 'from-blue-240 via-blue-70 to-ui-bg-hover',
     };
 
     return (

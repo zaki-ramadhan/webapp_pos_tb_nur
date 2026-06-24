@@ -89,7 +89,7 @@ export default function EmployeeAttachmentModal({
                     <label className={`flex h-11 w-full items-center justify-center rounded-[6px] border text-xs sm:text-sm font-medium shadow-sm transition ${
                         uploadingDoc
                             ? 'border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none'
-                            : 'border-brand-blue-darker bg-blue-0f62b8 text-white cursor-pointer hover:brightness-105 active:brightness-95'
+                            : 'border-brand-blue-darker bg-brand-blue-dark text-white cursor-pointer hover:brightness-105 active:brightness-95'
                     }`}>
                         {uploadingDoc ? (
                             <span className="flex items-center gap-2">
@@ -109,7 +109,7 @@ export default function EmployeeAttachmentModal({
                 </div>
 
                 {uploadError && (
-                    <p className="text-xs sm:text-sm text-red-db3e3e bg-red-50 p-2 rounded border border-red-200">
+                    <p className="text-xs sm:text-sm text-red-700 bg-danger-border p-2 rounded border border-red-150">
                         {uploadError}
                     </p>
                 )}
@@ -139,7 +139,7 @@ export default function EmployeeAttachmentModal({
                                                 href={item.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-xs sm:text-sm font-medium text-blue-0f62b8 hover:underline truncate"
+                                                className="text-xs sm:text-sm font-medium text-brand-blue-dark hover:underline truncate"
                                                 title="Buka dokumen"
                                             >
                                                 {item.file_name}
@@ -157,7 +157,7 @@ export default function EmployeeAttachmentModal({
                                                 download={item.file_name}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-1 rounded text-blue-0f62b8 hover:bg-info-bg transition"
+                                                className="p-1 rounded text-brand-blue-dark hover:bg-info-bg transition"
                                                 title="Unduh dokumen"
                                                 aria-label="Unduh lampiran"
                                             >
@@ -167,7 +167,7 @@ export default function EmployeeAttachmentModal({
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveAttachment(item.id)}
-                                                className="p-1 rounded hover:bg-red-50 text-red-db3e3e transition"
+                                                className="p-1 rounded hover:bg-danger-border text-red-700 transition"
                                                 title="Hapus dokumen"
                                                 aria-label="Hapus lampiran"
                                             >

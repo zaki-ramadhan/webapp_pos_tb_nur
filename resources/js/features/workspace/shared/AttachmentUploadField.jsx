@@ -79,7 +79,7 @@ export default function AttachmentUploadField({
                             ) : (
                                 <div className="flex flex-col items-center p-2 text-center">
                                     <PaperclipIcon className="h-6 w-6 text-text-muted" />
-                                    <span className="mt-1 block max-w-full truncate text-xs text-blue-475569">
+                                    <span className="mt-1 block max-w-full truncate text-xs text-blue-550">
                                         {item.file_name}
                                     </span>
                                 </div>
@@ -98,7 +98,7 @@ export default function AttachmentUploadField({
                 })}
 
                 {(!multiple && currentList.length > 0) ? null : (
-                    <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-[8px] border-2 border-dashed border-ui-border bg-white transition hover:border-blue-1564d7 hover:bg-ui-bg-hover">
+                    <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-[8px] border-2 border-dashed border-ui-border bg-white transition hover:border-input-brand hover:bg-ui-bg-hover">
                         {uploading ? (
                             <span className="text-xs text-layout-text animate-pulse">
                                 Mengunggah...
@@ -124,7 +124,7 @@ export default function AttachmentUploadField({
             </div>
 
             {error && (
-                <p className="text-sm text-red-db3e3e">
+                <p className="text-sm text-red-700">
                     {error}
                 </p>
             )}

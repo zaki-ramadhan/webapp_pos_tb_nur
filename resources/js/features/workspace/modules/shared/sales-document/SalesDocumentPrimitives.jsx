@@ -68,7 +68,7 @@ export function ReadonlyDocumentTextarea({ value, rows = 3, className = '' }) {
 export function DocumentStamp({ label, tone, className = '' }) {
     const toneClassName =
         tone === 'blue'
-            ? 'border-blue-7fd1ff text-blue-7dcaf4'
+            ? 'border-blue-80 text-blue-80'
             : tone === 'gray'
               ? 'border-border-badge-neutral text-text-badge-neutral'
               : 'border-status-success-badge-border text-status-success-badge-text';
@@ -172,19 +172,19 @@ export function SearchableTableSection({
                     {onTitleClick ? (
                         <button
                             type="button"
-                            className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl"
+                            className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl inline-flex items-center gap-1 whitespace-nowrap"
                             onClick={onTitleClick}
                         >
                             {titleContent}
                         </button>
                     ) : (
-                        <div className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl">{titleContent}</div>
+                        <div className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl inline-flex items-center gap-1 whitespace-nowrap">{titleContent}</div>
                     )}
                 </div>
             </div>
 
             <div className={`mt-4 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
-                <div className={minWidthClassName}>
+                <div className={(minWidthClassName ?? '').replace(/\b(?:[a-z-]*:)?min-w-\[[^\]]+\]/g, '').trim() || 'w-full'}>
                     <DataTable wrapperClassName="border-table-wrapper-border">
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>

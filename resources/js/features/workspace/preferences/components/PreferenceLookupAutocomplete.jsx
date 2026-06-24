@@ -35,7 +35,7 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
                     <button
                         type="button"
                         onClick={handleClear}
-                        className="inline-flex h-4 w-4 items-center justify-center text-text-chip-blue-dark hover:text-blue-133663"
+                        className="inline-flex h-4 w-4 items-center justify-center text-text-chip-blue-dark hover:text-blue-900"
                         aria-label={`Hapus ${value}`}
                     >
                         <CloseIcon className="h-3 w-3" />

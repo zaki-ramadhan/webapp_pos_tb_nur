@@ -41,8 +41,8 @@ export default function TextareaField({
 
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-red-e39191'
-            : 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
+            ? 'border-red-150'
+            : 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';

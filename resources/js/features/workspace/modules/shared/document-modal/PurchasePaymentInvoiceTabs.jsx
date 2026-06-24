@@ -13,16 +13,16 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                 <TextInput
                     value={values.formNumber}
                     readOnly
-                    className="h-[36px] rounded-[4px] border-green-96d86d bg-green-eef9e4"
-                    inputClassName="text-xs sm:text-sm font-semibold text-green-67b52c"
+                    className="h-[36px] rounded-[4px] border-tab-view-inactive-border-t bg-success-bg"
+                    inputClassName="text-xs sm:text-sm font-semibold text-tab-view-inactive-border-l"
                 />
 
                 <TransactionFieldLabel label="No. Faktur" />
                 <TextInput
                     value={values.billNumber}
                     readOnly
-                    className="h-[36px] rounded-[4px] border-green-96d86d bg-green-eef9e4"
-                    inputClassName="text-xs sm:text-sm font-semibold text-green-67b52c"
+                    className="h-[36px] rounded-[4px] border-tab-view-inactive-border-t bg-success-bg"
+                    inputClassName="text-xs sm:text-sm font-semibold text-tab-view-inactive-border-l"
                 />
 
                 <TransactionFieldLabel label="Terhutang" />

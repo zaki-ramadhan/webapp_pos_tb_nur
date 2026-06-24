@@ -43,7 +43,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                             return (
                                 <label key={option.value} className="flex items-center gap-3 text-xs sm:text-sm text-brand-dark">
                                     <span className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-disabled-border">
-                                        {checked ? <span className="h-[10px] w-[10px] rounded-full bg-gray-a8a8a8" /> : null}
+                                        {checked ? <span className="h-[10px] w-[10px] rounded-full bg-gray-650" /> : null}
                                     </span>
                                     <span>{option.label}</span>
                                     {option.showInfoIcon ? (

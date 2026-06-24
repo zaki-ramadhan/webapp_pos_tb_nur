@@ -12,7 +12,6 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import {
     DownloadIcon,
     FunnelIcon,
-    LinkIcon,
     PrintIcon,
     SortIcon,
     TableActionIcon,

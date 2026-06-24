@@ -17,7 +17,7 @@ export function CopyPermissionsButton({ label, options, onSelect }) {
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((currentValue) => !currentValue)}
-                className="inline-flex h-[42px] min-w-[138px] items-center justify-center gap-2 rounded-[6px] border border-chart-accent bg-white px-3.5 text-base font-medium text-blue-2d61ab transition hover:bg-ui-bg-hover"
+                className="inline-flex h-[42px] min-w-[138px] items-center justify-center gap-2 rounded-[6px] border border-chart-accent bg-white px-3.5 text-base font-medium text-blue-570 transition hover:bg-ui-bg-hover"
             >
                 <span>{label}</span>
                 <ChevronDownIcon className="h-4 w-4" />
@@ -91,7 +91,7 @@ export function GroupAccessCategoryList({
                             >
                                 <NavigationIcon
                                     type={category.icon}
-                                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-blue-7c839b'}`.trim()}
+                                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-text-light'}`.trim()}
                                 />
                                 <span className={`${isActive ? 'font-medium' : 'font-normal'}`.trim()}>
                                     {category.label}

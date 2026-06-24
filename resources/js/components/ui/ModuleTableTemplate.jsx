@@ -159,7 +159,7 @@ export default function ModuleTableTemplate({
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <div className={tableMinWidth ?? 'min-w-[760px]'}>
+                <div className={(tableMinWidth ?? '').replace(/\b(?:[a-z-]*:)?min-w-\[[^\]]+\]/g, '').trim() || 'w-full'}>
                     <DataTable wrapperClassName="border-table-wrapper-border">
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>

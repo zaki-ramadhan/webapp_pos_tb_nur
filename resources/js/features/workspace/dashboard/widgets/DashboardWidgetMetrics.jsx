@@ -35,7 +35,7 @@ function MetricLegendItem({ item }) {
                 <span className="flex items-center gap-2 text-right text-tab-view-active-text">
                     <span>{item.value}</span>
                     {item.percent ? (
-                        <span className="inline-flex rounded-full bg-table-row-border px-2 py-0.5 text-sm text-blue-7c839b">
+                        <span className="inline-flex rounded-full bg-table-row-border px-2 py-0.5 text-sm text-text-light">
                             {item.percent}
                         </span>
                     ) : null}

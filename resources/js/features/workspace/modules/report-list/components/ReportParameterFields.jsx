@@ -58,7 +58,7 @@ export function ReportFormRow({ label, required = false, children }) {
         <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[140px_minmax(0,1fr)] py-1">
             <label className="text-xs sm:text-sm font-medium text-brand-dark flex items-center select-none">
                 <span>{label}</span>
-                {required && <span className="ml-1 text-red-e31a1a">*</span>}
+                {required && <span className="ml-1 text-red-800">*</span>}
             </label>
             <div className="w-full">
                 {children}

@@ -21,7 +21,7 @@ const tooltipBaseOptions = {
 export default function TrendLineChart({
     labels = [],
     series = [],
-    accent = 'var(--color-blue-55aef0)',
+    accent = 'var(--color-blue-280)',
     valueFormat = 'number',
     heightClassName = 'h-[228px]',
 }) {

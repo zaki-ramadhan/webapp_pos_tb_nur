@@ -56,7 +56,7 @@ export function GroupAccessGeneralSection({
                         trailing={
                             general.nameField?.clearable ? <CloseIcon className="h-[18px] w-[18px] text-section-tab-neutral-text" /> : null
                         }
-                        className="h-[40px] rounded-[4px] border-blue-7fb0ee shadow-focus-blue-medium"
+                        className="h-[40px] rounded-[4px] border-brand-blue-border-light shadow-focus-blue-medium"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
@@ -113,7 +113,7 @@ export function GroupAccessGeneralSection({
                                             </SelectField>
                                         </div>
 
-                                        <div className="flex items-center gap-2 text-sm italic text-red-e15263 border-l-2 border-ui-border pl-2.5 py-0.5 leading-none">
+                                        <div className="flex items-center gap-2 text-sm italic text-red-350 border-l-2 border-ui-border pl-2.5 py-0.5 leading-none">
                                             Waktu Jakarta - Indonesia
                                         </div>
                                     </div>

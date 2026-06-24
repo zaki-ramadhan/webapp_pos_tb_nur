@@ -13,7 +13,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { LinkIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
 function buildInitialValues(config) {
     return (config.controls ?? []).reduce((result, control) => {
@@ -35,7 +35,7 @@ function ToolbarIconButton({ action }) {
     const icon =
         action.icon === 'settings'
             ? <NavigationIcon type="settings" className="h-4.5 w-4.5 text-current" />
-            : <LinkIcon className="h-4.5 w-4.5" />;
+            : <RefreshIcon className="h-4.5 w-4.5" />;
 
     return (
         <button

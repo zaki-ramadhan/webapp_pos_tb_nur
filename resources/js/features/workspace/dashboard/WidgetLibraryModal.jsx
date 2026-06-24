@@ -110,7 +110,7 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                                 <span className="block text-base font-medium leading-6 text-brand-darker">
                                     {item.title}
                                 </span>
-                                <span className="mt-1 block text-sm leading-5 text-blue-7c839b">
+                                <span className="mt-1 block text-sm leading-5 text-text-light">
                                     {item.description}
                                 </span>
                             </span>

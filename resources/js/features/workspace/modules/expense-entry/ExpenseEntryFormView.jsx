@@ -363,7 +363,7 @@ export default function ExpenseEntryFormView({
                                     variant="secondary"
                                     size="md"
                                     onClick={handleLineModalDelete}
-                                    className="border-red-e39191 hover:bg-red-50 text-error-border font-semibold"
+                                    className="border-red-150 hover:bg-danger-border text-error-border font-semibold"
                                 >
                                     Hapus
                                 </Button>

@@ -123,7 +123,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                     {isDetail && values.detailActionLabel ? (
                         <button
                             type="button"
-                            className="shrink-0 rounded-[4px] border border-gray-b9b9b9 bg-tab-inactive-border-t px-4 py-2 text-base text-tab-primary-inactive-text"
+                            className="shrink-0 rounded-[4px] border border-tab-inactive-border-l bg-tab-inactive-border-t px-4 py-2 text-base text-tab-primary-inactive-text"
                         >
                             {values.detailActionLabel}
                         </button>

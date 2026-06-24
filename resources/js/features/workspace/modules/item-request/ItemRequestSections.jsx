@@ -15,7 +15,6 @@ import {
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
-    LinkIcon,
     SearchIcon,
     TableActionIcon,
 } from '@/features/workspace/shared/Icons';

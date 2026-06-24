@@ -114,7 +114,7 @@ export default function DashboardTopBar({
                         >
                             <div className="border-b border-table-row-border px-3 py-2 text-left lg:hidden">
                                 <p className="truncate text-xs font-semibold text-brand-darker">{user.name}</p>
-                                <p className="truncate text-[10px] text-blue-7c839b">{user.role || 'Pengguna'}</p>
+                                <p className="truncate text-[10px] text-text-light">{user.role || 'Pengguna'}</p>
                             </div>
                             <DropdownMenuItem
                                 onClick={handleLogout}

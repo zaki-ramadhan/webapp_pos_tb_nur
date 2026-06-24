@@ -47,7 +47,7 @@ export function EmployeeTaxTab({ form, values, onChange }) {
                     </EmployeeFieldRow>
                     <div className="grid gap-2.5 lg:grid-cols-[160px_minmax(0,1fr)]">
                         <div className="hidden lg:block" />
-                        <div className="max-w-[860px] border-l-[4px] border-gray-8a8f98 pl-3 text-sm italic leading-6 text-illustration-danger-bg">
+                        <div className="max-w-[860px] border-l-[4px] border-text-light pl-3 text-sm italic leading-6 text-illustration-danger-bg">
                             {form.taxCalculationNote}
                         </div>
                     </div>

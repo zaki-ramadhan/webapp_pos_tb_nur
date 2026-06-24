@@ -37,7 +37,7 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                         disabled={Boolean(filter.disabled)}
                         containerClassName="w-auto shrink-0"
                         className={`h-[34px] min-w-[118px] rounded-[4px] sm:min-w-[138px] ${
-                            filter.disabled ? 'border-orange-ead7b2 bg-warning-bg' : 'border-ui-border bg-white'
+                            filter.disabled ? 'border-warning-border bg-warning-bg' : 'border-ui-border bg-white'
                         }`.trim()}
                         selectClassName={`px-3 text-xs sm:text-sm ${filter.disabled ? 'text-warning-label-text' : 'text-filter-select-text'}`.trim()}
                         iconClassName={`mr-2 ${filter.disabled ? 'text-warning-label-text' : 'text-filter-icon'}`.trim()}

@@ -31,8 +31,8 @@ function FormFieldRow({ label, required = false, children }) {
 
 export function SupplierPriceHeader({ config, values, setValues }) {
     return (
-        <div className="grid gap-x-10 gap-y-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]">
-            <div className="space-y-3">
+        <div className="grid gap-x-10 gap-y-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]">
+            <div className="space-y-2">
                 <FormFieldRow label={config.labels.supplier} required>
                     <ChipLookupField values={values.supplier} placeholder={config.supplierPlaceholder} searchLabel="Cari pemasok" />
                 </FormFieldRow>
@@ -60,7 +60,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                 </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
                 <div className="grid gap-3 lg:grid-cols-[140px_minmax(0,1fr)] lg:items-center">
                     <div className="flex items-center justify-start gap-4 lg:justify-end">
                         <TransactionFieldLabel label={config.labels.documentNumber} required />

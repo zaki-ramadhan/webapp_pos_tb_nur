@@ -22,8 +22,8 @@ export default function SalesDocumentFormHeader({
 }) {
     return (
         <div className="px-4 pt-4 pb-0">
-            <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-                <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className={`grid gap-x-8 gap-y-2 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
+                <div className="grid gap-y-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.customer} required />
                     <ChipLookupField
                         values={values.customer}
@@ -88,7 +88,7 @@ export default function SalesDocumentFormHeader({
                     ) : null}
                 </div>
 
-                <div className="grid gap-y-3 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                <div className="grid gap-y-2 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                     <div className="flex items-center justify-start gap-4 sm:justify-end">
                         <TransactionFieldLabel label={config.labels.documentNumber} required className="whitespace-nowrap sm:text-right" />
                         {!isDetail ? (

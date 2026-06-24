@@ -23,7 +23,7 @@ export default function WorkspaceDialog({
             className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[6px] px-0 py-0 shadow-dialog-large`.trim()}
         >
-            <div className="border-b border-blue-133663 bg-blue-133663 px-4 py-2.5 text-white">
+            <div className="border-b border-blue-900 bg-blue-900 px-4 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-2.5">
                         <HeaderIcon className="h-4 w-4 text-white" />

@@ -93,7 +93,7 @@ export default function SystemErrorModal({
             className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-dialog-large`.trim()}
         >
-            <div className="border-b border-blue-133663 bg-illustration-danger-border px-4 py-2.5 text-white sm:px-5">
+            <div className="border-b border-blue-900 bg-illustration-danger-border px-4 py-2.5 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-2.5">
                         <h2 className="truncate text-sm font-medium">{title}</h2>

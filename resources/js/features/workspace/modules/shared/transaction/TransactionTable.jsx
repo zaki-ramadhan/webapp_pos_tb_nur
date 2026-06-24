@@ -65,8 +65,10 @@ export function TransactionDataTable({
 
     const hasLeadingEmptyCell = visibleColumns[0]?.kind === 'spacer' && emptyLeadingCellContent !== null;
 
+    const cleanedMinWidthClassName = (minWidthClassName ?? '').replace(/\b(?:[a-z-]*:)?min-w-\[[^\]]+\]/g, '').trim();
+
     return (
-        <div className={minWidthClassName}>
+        <div className={cleanedMinWidthClassName || 'w-full'}>
             <DataTable wrapperClassName="border-table-wrapper-border">
                 <DataTableHeader className="bg-table-header-bg">
                     <tr>
@@ -189,7 +191,7 @@ export function TransactionLineItemsSection({
                     )}
                 </div>
 
-                <div className="flex items-center justify-end gap-3">
+                <div className="flex shrink-0 items-center justify-end gap-3">
                     {showTitleSearchButton ? (
                         <button
                             type="button"
@@ -199,7 +201,7 @@ export function TransactionLineItemsSection({
                             <SearchIcon className="h-5 w-5" />
                         </button>
                     ) : null}
-                    <div className={TRANSACTION_LINE_TITLE_CLASS_NAME}>
+                    <div className={`${TRANSACTION_LINE_TITLE_CLASS_NAME} inline-flex items-center gap-1`}>
                         {title}
                         {titleRequired ? <span className="text-tab-active-border-t"> *</span> : null}
                     </div>

@@ -29,7 +29,7 @@ export default function SelectField({
     const heightClass = hasHeightClass ? '' : 'h-11';
     
     const toneClassName = resolvedError
-        ? 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
+        ? 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     const triggerRef = useRef(null);
@@ -218,7 +218,7 @@ export default function SelectField({
                                 onClick={() => handleSelect(option.value)}
                                 className={`block w-full px-4 py-2.5 text-left text-xs sm:text-sm transition-colors duration-100 ${
                                     isSelected 
-                                        ? 'bg-workspace-hover-bg font-semibold text-brand-blue' 
+                                        ? 'bg-workspace-hover-bg font-medium text-brand-blue' 
                                         : isHighlighted 
                                             ? 'bg-slate-50 text-slate-900 font-medium' 
                                             : 'text-slate-700 hover:bg-slate-50'

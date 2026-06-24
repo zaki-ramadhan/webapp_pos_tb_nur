@@ -48,8 +48,8 @@ export function SalesDepositTableHeaderCell({ column }) {
 
 export function SalesDepositTableCell({ row, column }) {
     return column.id === 'statusIcon' ? (
-        <span className="inline-flex items-center justify-center text-green-27b35f">
-            <CircleCheckIcon className="h-5.5 w-5.5 text-green-27b35f" />
+        <span className="inline-flex items-center justify-center text-green-730">
+            <CircleCheckIcon className="h-5.5 w-5.5 text-green-730" />
         </span>
     ) : (
         <span className="block truncate">{row[column.id] ?? ''}</span>

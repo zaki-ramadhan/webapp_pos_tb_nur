@@ -16,7 +16,7 @@ export default function UserAvatar({
     imageUrl = null,
     className = '',
     showStatusIndicator = true,
-    statusClassName = 'bg-green-41c776',
+    statusClassName = 'bg-green-460',
 }) {
     const [hasImageError, setHasImageError] = useState(false);
     const resolvedInitials = initials ?? getUserInitials(name);

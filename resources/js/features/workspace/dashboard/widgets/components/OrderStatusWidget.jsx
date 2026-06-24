@@ -28,7 +28,7 @@ export function OrderStatusWidget({ widget }) {
 
             <div className="flex-1 flex flex-col justify-center gap-3 min-h-0">
                 <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-red-ff4f1f sm:text-base md:text-base">{widget.statusTitle}</p>
+                    <p className="text-sm font-medium text-red-650 sm:text-base md:text-base">{widget.statusTitle}</p>
                 </div>
 
                 <OrderStatusStackChart segments={segments} />

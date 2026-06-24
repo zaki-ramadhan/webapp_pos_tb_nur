@@ -28,11 +28,11 @@ function SalesTeamRow({ row }) {
             </span>
             <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-brand-darker">{row.name}</p>
-                <p className="mt-1 text-sm text-blue-7c839b">{row.role}</p>
+                <p className="mt-1 text-sm text-text-light">{row.role}</p>
             </div>
             <div className="col-start-2 flex items-center gap-2 lg:col-start-auto lg:justify-end">
                 <span className="text-sm text-text-muted">{row.totalValue}</span>
-                <span className="inline-flex rounded-full bg-brand-blue-light px-2 py-0.5 text-sm text-blue-1e7ec1">
+                <span className="inline-flex rounded-full bg-brand-blue-light px-2 py-0.5 text-sm text-blue-620">
                     {row.targetPercent}
                 </span>
             </div>

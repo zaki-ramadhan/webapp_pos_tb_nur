@@ -12,7 +12,7 @@ function WidgetHeaderAction({ label, onClick, disabled = false, buttonRef = null
             type="button"
             onClick={onClick}
             disabled={disabled}
-            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-blue-434a65 transition hover:bg-workspace-hover-bg disabled:cursor-not-allowed disabled:opacity-45 ${disabled ? '' : 'cursor-pointer'}`.trim()}
+            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-tab-active-text transition hover:bg-workspace-hover-bg disabled:cursor-not-allowed disabled:opacity-45 ${disabled ? '' : 'cursor-pointer'}`.trim()}
             aria-label={label}
         >
             {children}
@@ -38,11 +38,11 @@ export default function DashboardWidgetCard({
         <Panel className={`flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 ${widget.heightClass}`.trim()}>
             <div className="flex flex-wrap items-start justify-between gap-2 border-b border-table-row-border px-3 py-3 sm:flex-nowrap sm:items-center sm:px-4">
                 <div className="min-w-0 flex-1">
-                    <h3 className="break-words text-sm font-medium text-blue-434a65">{widget.title}</h3>
+                    <h3 className="break-words text-sm font-medium text-tab-active-text">{widget.title}</h3>
                     {widget.subtitle ? (
-                        <p className="mt-1 break-words text-sm text-blue-7c839b">{widget.subtitle}</p>
+                        <p className="mt-1 break-words text-sm text-text-light">{widget.subtitle}</p>
                     ) : null}
-                    {refreshError ? <p className="mt-1 text-sm text-orange-b45309">{refreshError}</p> : null}
+                    {refreshError ? <p className="mt-1 text-sm text-orange-880">{refreshError}</p> : null}
                 </div>
                 <div className="flex shrink-0 items-center gap-1 self-end sm:self-auto">
                     {showRefresh && (
@@ -91,7 +91,7 @@ export default function DashboardWidgetCard({
                                         <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
                                     </svg>
                                 }
-                                className={`text-sm font-medium text-red-600 animate-fade-in ${!canRemove ? 'opacity-40' : ''}`}
+                                className={`text-sm font-medium text-red-350 animate-fade-in ${!canRemove ? 'opacity-40' : ''}`}
                             >
                                 Hapus widget
                             </DropdownMenuItem>

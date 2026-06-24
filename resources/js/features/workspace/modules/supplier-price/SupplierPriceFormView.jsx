@@ -16,15 +16,15 @@ export default function SupplierPriceFormView({ config }) {
     return (
         <div className="flex min-h-full flex-col gap-3">
             <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white shadow-card-light">
-                    <div className="px-4 pt-4 pb-0">
+                <div className="min-w-0 flex-1 flex flex-col gap-3">
+                    <div className="px-4 py-4 bg-white border border-ui-border rounded-[6px] shadow-card-light">
                         <SupplierPriceHeader config={config} values={values} setValues={setValues} />
                     </div>
 
-                    <div className="flex min-h-[620px] gap-3 px-2 py-2 sm:px-3">
+                    <div className="flex min-h-[620px] gap-0">
                         <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
 
-                        <div className="min-w-0 flex-1 rounded-[4px] border border-tab-overflow-panel-border bg-white px-3 py-3 shadow-inset-lighter">
+                        <div className="min-w-0 flex-1 px-3 py-3 bg-white border border-ui-border rounded-[6px] shadow-card-light">
                             {activeSectionId === 'additional-info' ? (
                                 <SupplierPriceInfoSection config={config} values={values} setValues={setValues} />
                             ) : (

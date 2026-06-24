@@ -19,11 +19,11 @@ export default function DockActionButton({
         toneClassName = 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t cursor-default opacity-55 shadow-none pointer-events-none';
     } else {
         if (resolvedTone === 'danger') {
-            toneClassName = 'border-red-f08f92 bg-red-f5b0b4 text-red-ff2d55 hover:bg-red-f39ca0 active:bg-red-e39191 cursor-pointer';
+            toneClassName = 'border-red-150 bg-red-100 text-red-450 hover:bg-red-150 active:bg-red-150 cursor-pointer';
         } else if (resolvedTone === 'muted') {
-            toneClassName = 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t hover:bg-orange-e8e4dd active:bg-tab-primary-inactive-hover-bg cursor-pointer';
+            toneClassName = 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t hover:bg-tab-view-active-border-t active:bg-tab-primary-inactive-hover-bg cursor-pointer';
         } else {
-            toneClassName = 'border-brand-blue-darker bg-blue-2d61ab text-white hover:bg-bg-import-action-hover active:bg-blue-1a3f7a cursor-pointer';
+            toneClassName = 'border-brand-blue-darker bg-blue-570 text-white hover:bg-bg-import-action-hover active:bg-brand-blue-darker cursor-pointer';
         }
     }
 

@@ -38,7 +38,7 @@ export function PurchaseInlineCheckboxRow({ row, onToggle }) {
                     label={<span className="text-xs sm:text-sm">{row.option?.label}</span>}
                     className="gap-3"
                     labelClassName="text-xs sm:text-sm leading-6"
-                    inputClassName="rounded-[5px] border-blue-6ea4ef shadow-focus-accent-light"
+                    inputClassName="rounded-[5px] border-brand-blue-border-light shadow-focus-accent-light"
                     onChange={(event) => onToggle(row.id, event.target.checked)}
                 />
             </div>

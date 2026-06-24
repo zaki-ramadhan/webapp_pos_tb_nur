@@ -87,7 +87,7 @@ export function DepositSmartlinkSection({ config }) {
                 <p className="max-w-[720px] italic">
                     Sekarang Anda dapat menerima pembayaran tagihan ini melalui partner Payment Gateway
                     <br />
-                    kami. <span className="text-blue-1564d7">Klik Disini</span>
+                    kami. <span className="text-input-brand">Klik Disini</span>
                 </p>
             </div>
         </section>
@@ -131,8 +131,8 @@ export function DepositSummarySection({ config, values }) {
 
 export function SalesDepositHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
-        <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-            <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className={`grid gap-x-8 gap-y-2 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
+            <div className="grid gap-y-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <TransactionFieldLabel label={config.labels.customer} required />
                 <ChipLookupField
                     values={values.customer}
@@ -149,7 +149,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                 />
             </div>
 
-            <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+            <div className="grid gap-y-2 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
                     {!isDetail ? (

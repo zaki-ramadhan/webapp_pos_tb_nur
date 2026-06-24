@@ -74,7 +74,7 @@ function DetailTab({ values, setValues, modal }) {
                                     unitLookup: record.base_unit?.name ? [record.base_unit.name] : current.unitLookup,
                                 }));
                             }}
-                            className="inline-flex h-full items-center px-3 text-xs font-medium text-brand-blue hover:text-blue-1a3f7a"
+                            className="inline-flex h-full items-center px-3 text-xs font-medium text-brand-blue hover:text-brand-blue-darker"
                         >
                             Cari
                         </button>

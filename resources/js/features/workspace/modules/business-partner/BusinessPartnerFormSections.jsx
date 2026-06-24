@@ -64,7 +64,7 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 value={values.receivableAmount}
                                 onChange={(event) => onChange('receivableAmount', event.target.value)}
                                 className="h-[40px] w-[280px] rounded-[4px] border-ui-border"
-                                inputClassName="text-right text-xs sm:text-sm text-gray-8a8f98"
+                                inputClassName="text-right text-xs sm:text-sm text-text-light"
                             />
                         </div>
                     </div>
@@ -161,7 +161,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                         </FormFieldRow>
                     </div>
 
-                    <p className="mt-4 max-w-[620px] border-l-[4px] border-gray-8a8f98 pl-3 text-sm italic leading-7 text-red-ef513f">
+                    <p className="mt-4 max-w-[620px] border-l-[4px] border-text-light pl-3 text-sm italic leading-7 text-red-550">
                         {purchaseConfig.accountNote}
                     </p>
                 </div>

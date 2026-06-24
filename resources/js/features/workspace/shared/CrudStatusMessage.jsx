@@ -5,8 +5,8 @@ export default function CrudStatusMessage({ status, className = 'mb-4' }) {
 
     const toneClassName =
         status.tone === 'error'
-            ? 'border-red-f0c4c4 bg-surface text-red-a33939'
-            : 'border-green-c8dfc9 bg-success-bg text-green-2e6b34';
+            ? 'border-danger-border bg-surface text-red-850'
+            : 'border-green-140 bg-success-bg text-green-910';
 
     return (
         <div className={`${className} rounded-[6px] border px-3 py-2 text-sm ${toneClassName}`.trim()}>

@@ -8,10 +8,10 @@ export function WidgetSection({ title, caption = null, collapsible = false, expa
                 onClick={collapsible && onToggle ? onToggle : undefined}
             >
                 <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0 border-l-[3px] border-l-blue-5f8fd5 pl-3 pr-2">
+                    <div className="min-w-0 border-l-[3px] border-blue-light-50 pl-3 pr-2">
                         <h4 className="text-base font-semibold leading-tight text-brand-darker md:text-base">{title}</h4>
                         {caption ? (
-                            <p className="mt-1.5 break-words text-sm leading-5 text-blue-7c839b">{caption}</p>
+                            <p className="mt-1.5 break-words text-sm leading-5 text-text-light">{caption}</p>
                         ) : null}
                     </div>
                     {collapsible && (
@@ -46,15 +46,15 @@ export function InsightCallout({ children, tone = 'blue' }) {
     const toneConfig =
         tone === 'amber'
             ? {
-                  wrapper: 'border-orange-ead7b2 bg-[linear-gradient(180deg,#fffaf1_0%,#fff5e6_100%)] text-orange-6d5831',
-                  accent: 'bg-orange-d6a54a',
-                  icon: 'text-orange-b7791f',
+                  wrapper: 'border-warning-border bg-[linear-gradient(180deg,#fffaf1_0%,#fff5e6_100%)] text-orange-950',
+                  accent: 'bg-orange-430',
+                  icon: 'text-orange-820',
                   label: 'Perlu perhatian',
                }
             : {
-                  wrapper: 'border-abc-card-border bg-[linear-gradient(180deg,#f6faff_0%,#edf4fb_100%)] text-blue-435b78',
-                  accent: 'bg-blue-6f97c5',
-                  icon: 'text-blue-4f78a7',
+                  wrapper: 'border-abc-card-border bg-[linear-gradient(180deg,#f6faff_0%,#edf4fb_100%)] text-text-medium',
+                  accent: 'bg-brand-blue-border',
+                  icon: 'text-blue-520',
                   label: 'Catatan singkat',
                };
 
@@ -83,7 +83,7 @@ export function SummaryStrip({ items }) {
             <div className="grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
                 {items.map((item) => (
                     <div key={item.label} title="" className="rounded-[7px] border border-abc-card-border bg-white px-3 py-3 shadow-abc-card">
-                        <p title="" className="text-sm font-medium text-blue-7c839b">
+                        <p title="" className="text-sm font-medium text-text-light">
                             {item.label}
                         </p>
                         <p title="" className="mt-2 text-xl font-semibold leading-none text-brand-darker md:text-2xl 2xl:text-3xl">
@@ -110,7 +110,7 @@ export function ActionList({ items }) {
                     className="rounded-[7px] border border-abc-card-border bg-white px-3 py-2.5 shadow-abc-card"
                 >
                     <div className="flex items-start gap-3">
-                        <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-blue-4f80c4" />
+                        <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-blue-470" />
                         <div className="min-w-0">
                             <p className="text-sm font-medium text-brand-darker">{item.title}</p>
                             <p className="mt-1 text-sm leading-5 text-text-muted">{item.detail}</p>

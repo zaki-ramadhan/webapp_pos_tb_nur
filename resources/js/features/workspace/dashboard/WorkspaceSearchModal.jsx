@@ -17,27 +17,27 @@ function resolveToneClassName(tone) {
     switch (tone) {
         case 'amber':
             return {
-                border: 'border-orange-ff9a4d',
-                icon: 'text-orange-eb6f00',
+                border: 'border-orange-240',
+                icon: 'text-orange-630',
                 hover: 'hover:bg-surface',
             };
         case 'green':
             return {
-                border: 'border-green-61a84b',
-                icon: 'text-green-5b920f',
+                border: 'border-green-410',
+                icon: 'text-green-820',
                 hover: 'hover:bg-ui-bg-panel-lighter',
             };
         case 'purple':
             return {
-                border: 'border-purple-7b45c4',
-                icon: 'text-purple-6a1fc4',
+                border: 'border-purple-590',
+                icon: 'text-purple-770',
                 hover: 'hover:bg-ui-bg-hover',
             };
         case 'blue':
         default:
             return {
-                border: 'border-blue-68b4f2',
-                icon: 'text-blue-147ac7',
+                border: 'border-brand-blue-border-light',
+                icon: 'text-blue-620',
                 hover: 'hover:bg-ui-bg-hover',
             };
     }
@@ -56,7 +56,7 @@ function SearchMenuCard({ item, onSelect }) {
           ? `${toneClassName.border} ${toneClassName.hover}`
           : 'border-tab-overflow-border bg-table-row-border text-text-inactive opacity-80 saturate-0';
     const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? toneClassName.icon : 'text-text-inactive';
-    const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-blue-475569' : 'text-text-light';
+    const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-blue-550' : 'text-text-light';
     const statusLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
     return (
@@ -161,8 +161,8 @@ export default function WorkspaceSearchModal({
                                 }
                             }}
                             placeholder={modal.searchPlaceholder ?? 'Cari...'}
-                            trailing={<SearchIcon className="h-5.5 w-5.5 text-blue-7c839b" />}
-                            className="h-[50px] rounded-[20px] border-blue-5f97de shadow-focus-blue-light"
+                            trailing={<SearchIcon className="h-5.5 w-5.5 text-text-light" />}
+                            className="h-[50px] rounded-[20px] border-blue-310 shadow-focus-blue-light"
                             inputClassName="text-lg text-brand-dark"
                         />
                     </div>
@@ -196,7 +196,7 @@ export default function WorkspaceSearchModal({
                             description={modal.emptyLabel ?? 'Tidak ada menu yang cocok dengan kata kunci tersebut.'}
                             className="mt-6 rounded-[8px] border-ui-border-medium px-6 py-8"
                             titleClassName="text-base font-medium text-tab-inactive-text"
-                            descriptionClassName="mt-2 text-sm leading-5 text-blue-7c839b"
+                            descriptionClassName="mt-2 text-sm leading-5 text-text-light"
                         />
                     )}
                 </div>

@@ -31,7 +31,7 @@ function FragmentSection({ section, columns, onTogglePermission }) {
             <tr className="border-t border-table-row-border bg-white">
                 <td
                     colSpan={columns.length + 1}
-                    className="px-4 py-1.5 text-base font-semibold text-blue-141c2c"
+                    className="px-4 py-1.5 text-base font-semibold text-table-row-text"
                 >
                     {section.label}
                 </td>

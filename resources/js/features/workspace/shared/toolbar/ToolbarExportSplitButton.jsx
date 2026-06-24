@@ -31,7 +31,7 @@ export default function ToolbarExportSplitButton({ exportConfig, sizeStyle, visi
                 disabled={disabled}
                 onClick={handleExport}
                 className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
-                    disabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
+                    disabled ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
                 } ${sizeStyle.utilityButton}`.trim()}
                 aria-label="Ekspor data"
             >

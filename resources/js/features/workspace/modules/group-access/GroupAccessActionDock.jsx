@@ -16,14 +16,14 @@ export function resolveActionToneClass(action, disabled) {
 
     switch (action.tone) {
         case 'danger':
-            return 'border-red-db808b bg-red-f5b0b4 text-tab-active-border-t shadow-dock-danger';
+            return 'border-red-300 bg-red-100 text-tab-active-border-t shadow-dock-danger';
         case 'success':
-            return 'border-green-43af5b bg-green-99e19e text-green-0b7a34 shadow-dock-success';
+            return 'border-green-590 bg-green-230 text-green-950 shadow-dock-success';
         case 'primary':
-            return 'border-brand-blue-darker bg-blue-2d61ab text-white shadow-dock-accent';
+            return 'border-brand-blue-darker bg-blue-570 text-white shadow-dock-accent';
         case 'muted':
         default:
-            return 'border-brand-blue-darker bg-blue-2d61ab text-white shadow-dock-accent';
+            return 'border-brand-blue-darker bg-blue-570 text-white shadow-dock-accent';
     }
 }
 

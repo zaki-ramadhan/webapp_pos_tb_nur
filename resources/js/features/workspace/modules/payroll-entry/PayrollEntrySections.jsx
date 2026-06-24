@@ -18,7 +18,7 @@ import TextareaField from '@/components/ui/TextareaField';
 export function PayrollHeader({ config, values, setValues }) {
     return (
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-y-4 gap-x-8">
-            <div className="flex flex-col gap-y-3 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+            <div className="flex flex-col gap-y-2 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.paymentType} />
                     <SelectField
@@ -67,7 +67,7 @@ export function PayrollHeader({ config, values, setValues }) {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-y-3 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+            <div className="flex flex-col gap-y-2 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.numbering} required htmlFor="numbering-type" />
                     <div className="flex items-center gap-3 w-full">

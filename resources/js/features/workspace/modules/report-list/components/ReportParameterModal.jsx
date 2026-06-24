@@ -194,7 +194,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                         onClick={() => setActiveTab('umum')}
                         className={`flex-1 py-2 text-center text-xs font-medium border-b-2 transition-colors ${
                             activeTab === 'umum'
-                                ? 'border-red-e31a1a text-red-e31a1a'
+                                ? 'border-red-800 text-red-800'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
@@ -205,7 +205,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                         onClick={() => setActiveTab('kolom')}
                         className={`flex-1 py-2 text-center text-xs font-medium border-b-2 transition-colors ${
                             activeTab === 'kolom'
-                                ? 'border-red-e31a1a text-red-e31a1a'
+                                ? 'border-red-800 text-red-800'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
@@ -272,7 +272,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                                 <button
                                     type="button"
                                     onClick={() => setShowAddMenu(prev => !prev)}
-                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-green-5cb85c hover:bg-green-4caf50 text-white shadow-sm transition-colors active:bg-green-449d44"
+                                    className="inline-flex items-center justify-center h-[34px] w-[34px] rounded-[4px] bg-green-410 hover:bg-green-410 text-white shadow-sm transition-colors active:bg-green-680"
                                     title="Tambah Kolom"
                                 >
                                     <Plus className="h-5 w-5" strokeWidth={2.5} />
@@ -327,7 +327,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="submit"
                         onClick={handleTampilkan}
-                        className="h-8 px-4 text-xs font-medium text-white bg-blue-154c9f hover:bg-illustration-danger-border rounded-[4px] shadow-sm transition-colors active:bg-blue-darkest"
+                        className="h-8 px-4 text-xs font-medium text-white bg-brand-blue-hover hover:bg-illustration-danger-border rounded-[4px] shadow-sm transition-colors active:bg-blue-darkest"
                     >
                         Tampilkan
                     </button>

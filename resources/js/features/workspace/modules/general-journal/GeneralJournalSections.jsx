@@ -87,7 +87,7 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
 
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
-            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.entryDate} required />
                     <TransactionDateInput
@@ -108,7 +108,7 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                 </div>
             </div>
 
-            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.documentNumber} required />
 
@@ -168,8 +168,8 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                         <TextInput
                             value={values.transactionNumber}
                             readOnly
-                            className="h-[40px] rounded-[4px] border-green-96d86d bg-green-eef9e4"
-                            inputClassName="text-xs sm:text-sm font-medium text-green-4d9b1f"
+                            className="h-[40px] rounded-[4px] border-tab-view-inactive-border-t bg-success-bg"
+                            inputClassName="text-xs sm:text-sm font-medium text-green-820"
                         />
                     </div>
                 ) : null}

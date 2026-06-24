@@ -101,7 +101,7 @@ export function resolveChartObject(obj) {
 }
 
 
-export function toRgba(hexColor = 'var(--color-blue-55aef0)', alpha = 1) {
+export function toRgba(hexColor = 'var(--color-blue-280)', alpha = 1) {
     let color = hexColor;
     if (typeof window !== 'undefined' && String(hexColor).startsWith('var(')) {
         const resolved = resolveCssVar(hexColor);
@@ -162,7 +162,7 @@ export function hasNonZeroValue(values = []) {
     return values.some((value) => Math.abs(Number(value) || 0) > 0);
 }
 
-export function normalizeTrendSeries(series = [], accent = 'var(--color-blue-55aef0)') {
+export function normalizeTrendSeries(series = [], accent = 'var(--color-blue-280)') {
     const fallbackFill = toRgba(accent, 0.16);
 
     return (series ?? [])
@@ -206,7 +206,7 @@ export function normalizeSummarySections(sections = []) {
                 label: item.label ?? `Item ${itemIndex + 1}`,
                 value: numericValue,
                 valueText: item.value ?? formatChartValue(numericValue, 'currency'),
-                color: item.color ?? 'var(--color-blue-94a3b8)',
+                color: item.color ?? 'var(--color-text-light)',
             };
         }),
     }));
@@ -217,7 +217,7 @@ export function buildEmphasisColors(values = [], colors = [], mutedAlpha = 0.32)
     const maxValue = normalizedValues.length ? Math.max(...normalizedValues) : 0;
 
     return normalizedValues.map((value, index) => {
-        const baseColor = colors[index] ?? 'var(--color-blue-94a3b8)';
+        const baseColor = colors[index] ?? 'var(--color-text-light)';
 
         if (maxValue <= 0 || value >= maxValue) {
             return baseColor;
@@ -273,7 +273,7 @@ export function buildRankedHuePalette(
         primaryColor = 'var(--color-chart-accent)',
         secondaryColor = 'var(--color-chart-secondary)',
         tertiaryColor = 'var(--color-chart-tertiary)',
-        hoverPrimaryColor = 'var(--color-blue-5f97de)',
+        hoverPrimaryColor = 'var(--color-blue-310)',
         hoverSecondaryColor = 'var(--color-chart-secondary-hover)',
         hoverTertiaryColor = 'var(--color-chart-tertiary-hover)',
     } = {},

@@ -84,7 +84,7 @@ export function ToolbarIconAction({ icon, label }) {
 }
 
 export function SectionHeading({ title }) {
-    return <h3 className="border-b border-ui-border-medium pb-3 text-2xl font-normal text-blue-1564d7">{title}</h3>;
+    return <h3 className="border-b border-ui-border-medium pb-3 text-2xl font-normal text-input-brand">{title}</h3>;
 }
 
 export function AddressStack({ prefixValue, values, readOnly = false, onChange = null }) {

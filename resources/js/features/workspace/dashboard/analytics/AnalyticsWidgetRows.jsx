@@ -9,13 +9,13 @@ export function AbcTopItemRow({ item }) {
             </span>
             <div className="min-w-0">
                 <p className="break-words text-sm font-medium text-brand-darker sm:truncate">{item.name}</p>
-                <p className="mt-1 text-sm text-blue-7c839b">
+                <p className="mt-1 text-sm text-text-light">
                     {item.code} • {item.unitsSold}
                 </p>
             </div>
             <div className="col-start-2 text-left sm:col-start-auto sm:text-right">
                 <p className="text-sm font-semibold text-brand-darker">{item.revenue}</p>
-                <p className="mt-1 text-sm text-blue-7c839b">{item.share}</p>
+                <p className="mt-1 text-sm text-text-light">{item.share}</p>
             </div>
         </div>
     );
@@ -30,7 +30,7 @@ export function RuleSummaryRow({ rule }) {
                     <span>{rule.transactionBase}</span>
                 </div>
                 {rule.lift && (
-                    <span className="text-sm font-medium text-blue-1e7ec1 bg-brand-blue-light px-2 py-0.5 rounded-full">
+                    <span className="text-sm font-medium text-blue-620 bg-brand-blue-light px-2 py-0.5 rounded-full">
                         Lift: {rule.lift}
                     </span>
                 )}
@@ -65,7 +65,7 @@ export function RuleSummaryRow({ rule }) {
                     Confidence: <span className="font-semibold text-slate-700">{rule.confidence}</span>
                 </span>
                 <span className="flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-green-10b981"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-green-770"></span>
                     Support: <span className="font-semibold text-slate-700">{rule.support}</span>
                 </span>
             </div>

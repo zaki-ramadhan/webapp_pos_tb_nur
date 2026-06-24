@@ -13,7 +13,7 @@ export default function PreferenceCityAutocomplete({ field, value, onChange, onS
             error={field.error}
             message={field.message}
             className="h-[34px] rounded-[3px] border-ui-border-medium shadow-inset-light"
-            prefixClassName="min-w-[62px] border-ui-border-medium px-3 text-xs sm:text-sm text-blue-7c839b"
+            prefixClassName="min-w-[62px] border-ui-border-medium px-3 text-xs sm:text-sm text-text-light"
             inputClassName="text-xs sm:text-sm text-brand-dark"
         />
     );

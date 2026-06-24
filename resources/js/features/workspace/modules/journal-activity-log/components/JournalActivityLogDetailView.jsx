@@ -89,7 +89,7 @@ export default function JournalActivityLogDetailView({ config, activeLevel2Tab }
                     </div>
                 </div>
 
-                <div className="mt-6 border-t border-gray-a8a8a8 bg-tab-inactive-bg">
+                <div className="mt-6 border-t border-gray-650 bg-tab-inactive-bg">
                     <div className="grid grid-cols-[160px_minmax(0,1fr)_220px_220px]">
                         <AmountColumn label={config.labels.accountCode} align="left" />
                         <AmountColumn label={config.labels.accountName} align="left" />

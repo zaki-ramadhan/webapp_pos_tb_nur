@@ -31,7 +31,7 @@ export default function AccountLookupSuggestions({
                 {loading ? (
                     <div className="px-4 py-5 text-center text-sm text-text-workspace-muted">{loadingLabel}</div>
                 ) : error ? (
-                    <div className="px-4 py-5 text-center text-sm text-red-b43b3b">{error}</div>
+                    <div className="px-4 py-5 text-center text-sm text-red-850">{error}</div>
                 ) : rows.length ? (
                     rows.map((record) => {
                         const label = buildAccountLookupLabel(record);

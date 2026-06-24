@@ -94,7 +94,7 @@ export function FormRow({
 export function SectionHeading({ title }) {
     return (
         <div className="border-b border-abc-card-border pb-2">
-            <h3 className="text-2xl font-normal text-blue-1564d7">{title}</h3>
+            <h3 className="text-2xl font-normal text-input-brand">{title}</h3>
         </div>
     );
 }

@@ -16,7 +16,7 @@ function StatusPill({ value, tone = 'success' }) {
     const toneClassName =
         tone === 'warning'
             ? 'border-status-warning-badge-border bg-bg-badge-warning-alt text-status-warning-badge-text'
-            : 'border-green-bcebc1 bg-success-bg text-text-badge-success-alt';
+            : 'border-green-140 bg-success-bg text-text-badge-success-alt';
 
     return (
         <span className={`inline-flex rounded-[4px] border px-3 py-1 text-base ${toneClassName}`.trim()}>
@@ -133,7 +133,7 @@ export function SalesDocumentFooter({ values }) {
                             <span className="text-xs sm:text-sm text-brand-dark">
                                 {part.label}
                                 {(part.id === 'discount' || part.id === 'tax') ? (
-                                    <span className="ml-1 inline-flex rounded-[4px] border border-blue-78a6e8 px-1.5 py-0.5 text-xs text-brand-blue-accent">
+                                    <span className="ml-1 inline-flex rounded-[4px] border border-brand-blue-border-light px-1.5 py-0.5 text-xs text-brand-blue-accent">
                                         %
                                     </span>
                                 ) : null}

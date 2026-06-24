@@ -263,36 +263,38 @@ export default function SalesDocumentFormView({
     return (
         <div className="flex min-h-full flex-col gap-3">
             <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white shadow-card-light">
-                    <SalesDocumentFormHeader
-                        pageId={pageId}
-                        config={config}
-                        values={values}
-                        setValues={setValues}
-                        isDetail={isDetail}
-                        backendConfig={backendConfig}
-                        handlers={handlers}
-                        onSelectCustomer={() =>
-                            selectLookup(
-                                backendConfig?.partnerResource ?? 'customers',
-                                String(config.labels.customer).toLowerCase(),
-                                (record) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        __partnerId: record.id,
-                                        customer: [buildLookupLabel(record)],
-                                        address: record.shipping_address ?? record.billing_address ?? current.address,
-                                    })),
-                            )
-                        }
-                    />
+                <div className="min-w-0 flex-1 flex flex-col gap-3">
+                    <div className="bg-white border border-ui-border rounded-[6px] shadow-card-light px-4 py-4">
+                        <SalesDocumentFormHeader
+                            pageId={pageId}
+                            config={config}
+                            values={values}
+                            setValues={setValues}
+                            isDetail={isDetail}
+                            backendConfig={backendConfig}
+                            handlers={handlers}
+                            onSelectCustomer={() =>
+                                selectLookup(
+                                    backendConfig?.partnerResource ?? 'customers',
+                                    String(config.labels.customer).toLowerCase(),
+                                    (record) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            __partnerId: record.id,
+                                            customer: [buildLookupLabel(record)],
+                                            address: record.shipping_address ?? record.billing_address ?? current.address,
+                                        })),
+                                )
+                            }
+                        />
+                    </div>
 
-                    <CrudStatusMessage status={status} className="mx-3 mt-3" />
+                    <CrudStatusMessage status={status} className="mx-3" />
 
-                    <div className="flex items-start gap-3 px-2 py-2 sm:px-3">
+                    <div className="flex gap-0 px-2 sm:px-3">
                         <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
 
-                        <div className="relative min-w-0 flex-1 rounded-[4px] border border-tab-overflow-panel-border bg-white px-3 py-3 shadow-inset-lighter">
+                        <div className="relative min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white px-3 py-3 shadow-card-light">
                             {isDetail && values.approvalStamp ? <DocumentStamp label={values.approvalStamp} tone="blue" className="right-[12%] top-[-6px]" /> : null}
                             {isDetail && values.processStamp ? (
                                 <DocumentStamp
@@ -315,7 +317,7 @@ export default function SalesDocumentFormView({
                     </div>
 
                     {config.showFooter !== false ? (
-                        <div className="px-3 pb-3">
+                        <div className="px-3">
                             <SalesDocumentFooter values={values} />
                         </div>
                     ) : null}

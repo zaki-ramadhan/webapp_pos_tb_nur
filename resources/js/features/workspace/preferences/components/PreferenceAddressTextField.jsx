@@ -13,7 +13,7 @@ export default function PreferenceAddressTextField({ field, value, onChange, cla
             error={field.error}
             message={field.message}
             prefix={field.label}
-            prefixClassName="min-w-[62px] border-ui-border-medium px-3 text-xs sm:text-sm text-blue-7c839b"
+            prefixClassName="min-w-[62px] border-ui-border-medium px-3 text-xs sm:text-sm text-text-light"
             trailing={
                 field.clearable && !readOnly && Boolean(value ?? field.value) ? (
                     <button

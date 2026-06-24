@@ -152,7 +152,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 <div className="mt-2">
                     <DataTable>
                         <DataTableHeader>
-                            <DataTableRow className="bg-blue-133663 text-white border-t-0">
+                            <DataTableRow className="bg-blue-900 text-white border-t-0">
                                 <DataTableHead className="w-[48px] text-center">
                                     <input
                                         type="checkbox"

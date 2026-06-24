@@ -88,7 +88,7 @@ function MobileModuleButton({ item, active, onSelect }) {
                     item.disabled
                         ? 'bg-table-row-border text-tab-inactive-border-l'
                         : active
-                          ? 'bg-blue-d7e8ff text-blue-1f5ca9'
+                          ? 'bg-ui-border-light text-brand-blue-dark'
                           : 'bg-info-bg text-tab-view-active-text'
                 }`.trim()}
             >
@@ -98,11 +98,11 @@ function MobileModuleButton({ item, active, onSelect }) {
                 <span className="block truncate text-xs font-semibold">{item.label}</span>
             </span>
             {item.disabled ? (
-                <span className="shrink-0 rounded-full bg-tab-view-active-border-t px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-blue-7c839b">
+                <span className="shrink-0 rounded-full bg-tab-view-active-border-t px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-text-light">
                     Nonaktif
                 </span>
             ) : (
-                <span className={`text-text-light transition-transform duration-200 ${active ? 'rotate-180 text-blue-1f5ca9' : ''}`}>
+                <span className={`text-text-light transition-transform duration-200 ${active ? 'rotate-180 text-brand-blue-dark' : ''}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="h-3.5 w-3.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                     </svg>
@@ -128,7 +128,7 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
           ? tone.iconBg
           : 'bg-table-row-border';
     const iconTextClass = isInactive
-        ? 'text-blue-7c839b'
+        ? 'text-text-light'
         : isImplemented
           ? tone.iconText
           : 'text-text-inactive';
@@ -154,10 +154,10 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
-                <span className={`block text-xs font-medium leading-4.5 ${isInactive ? 'text-tab-inactive-text' : isImplemented ? 'text-blue-22304a' : 'text-text-light'}`}>
+                <span className={`block text-xs font-medium leading-4.5 ${isInactive ? 'text-tab-inactive-text' : isImplemented ? 'text-text-dark' : 'text-text-light'}`}>
                     {item.label}
                 </span>
-                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-text-light' : isImplemented ? 'text-blue-7c839b' : 'text-tab-inactive-border-l'}`}>
+                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-text-light' : isImplemented ? 'text-text-light' : 'text-tab-inactive-border-l'}`}>
                     {statusLabel}
                 </span>
             </span>
@@ -245,7 +245,7 @@ export default function DashboardSidebar({
                             <button
                                 type="button"
                                 onClick={handleCloseMobile}
-                                className="shrink-0 rounded-full p-2 text-blue-7c839b hover:bg-ui-bg-panel hover:text-brand-darker transition"
+                                className="shrink-0 rounded-full p-2 text-text-light hover:bg-ui-bg-panel hover:text-brand-darker transition"
                                 aria-label="Tutup Menu"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" className="h-5.5 w-5.5">
@@ -264,7 +264,7 @@ export default function DashboardSidebar({
                                 />
                                 <div className="min-w-0">
                                     <p className="truncate text-sm font-bold text-brand-darker">{user.name}</p>
-                                    <p className="truncate text-xs font-medium text-blue-7c839b">{user.role || 'Pengguna'}</p>
+                                    <p className="truncate text-xs font-medium text-text-light">{user.role || 'Pengguna'}</p>
                                 </div>
                             </div>
                         )}
@@ -307,7 +307,7 @@ export default function DashboardSidebar({
 
             <div
                 ref={railRef}
-                className="relative z-30 hidden w-full shrink-0 gap-1.5 overflow-x-auto overflow-y-hidden border-b border-blue-133663 bg-[linear-gradient(90deg,#0d2246_0%,#1a3769_40%,#2d4c88_100%)] px-1.5 py-1.5 lg:flex lg:h-full lg:w-[58px] lg:flex-col lg:items-center lg:justify-start lg:overflow-x-hidden lg:overflow-y-auto lg:border-b-0 lg:border-r lg:pt-3"
+                className="relative z-30 hidden w-full shrink-0 gap-1.5 overflow-x-auto overflow-y-hidden border-b border-blue-900 bg-[linear-gradient(90deg,#0d2246_0%,#1a3769_40%,#2d4c88_100%)] px-1.5 py-1.5 lg:flex lg:h-full lg:w-[58px] lg:flex-col lg:items-center lg:justify-start lg:overflow-x-hidden lg:overflow-y-auto lg:border-b-0 lg:border-r lg:pt-3"
             >
                 {sidebarItems.map((item) => (
                     <SidebarButton

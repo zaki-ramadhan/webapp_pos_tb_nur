@@ -28,7 +28,7 @@ function TopProductRow({ item, index }) {
             </div>
             <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-brand-darker">{item.name}</p>
-                <p className="mt-1 text-sm text-blue-7c839b">
+                <p className="mt-1 text-sm text-text-light">
                     {item.units} • {item.share}
                 </p>
             </div>

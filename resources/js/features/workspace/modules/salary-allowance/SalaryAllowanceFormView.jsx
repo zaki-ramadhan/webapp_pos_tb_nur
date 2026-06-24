@@ -233,7 +233,7 @@ export default function SalaryAllowanceFormView({
                             heightClassName="min-h-[38px]"
                             className="rounded-[4px] border-ui-border"
                             contentClassName="px-3 py-1.5"
-                            chipClassName="text-blue-22304a"
+                            chipClassName="text-text-dark"
                             onRemove={() => {
                                 setExpenseAccount('');
                                 setExpenseAccountId(null);

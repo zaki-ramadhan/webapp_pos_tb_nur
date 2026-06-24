@@ -4,6 +4,7 @@ import {
     DataTable,
     DataTableBody,
     DataTableCell,
+    DataTableHead,
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
@@ -15,7 +16,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import {
     ExternalLinkIcon,
     IdeaIcon,
-    LinkIcon,
+    RefreshIcon,
     SearchIcon,
 } from '@/features/workspace/shared/Icons';
 import SelectField from '@/components/ui/SelectField';
@@ -48,14 +49,14 @@ function resolveActionIcon(action) {
             return <NavigationIcon type="transfer" className="h-4.5 w-4.5 text-current" />;
         case 'link':
         default:
-            return <LinkIcon className="h-4.5 w-4.5" />;
+            return <RefreshIcon className="h-4.5 w-4.5" />;
     }
 }
 
 function InquiryActionButton({ action, onClick }) {
     const toneClassName =
         action.tone === 'warning'
-            ? 'border-transparent bg-warning text-white hover:bg-orange-e0940b'
+            ? 'border-transparent bg-warning text-white hover:bg-warning'
             : 'border-brand-blue-border bg-white text-brand-blue hover:bg-bg-brand-blue-toggled';
 
     return (
@@ -195,7 +196,7 @@ export default function InquiryWorkspaceView({
             </div>
 
             {error ? (
-                <div className="rounded-[6px] border border-red-f0c4c4 bg-surface px-3 py-2 text-sm text-red-a33939">
+                <div className="rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850">
                     {error}
                 </div>
             ) : null}

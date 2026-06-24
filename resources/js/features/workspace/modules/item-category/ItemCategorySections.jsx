@@ -97,7 +97,7 @@ export function ItemCategoryAccountsTab({ config, values, onAccountChange }) {
 
             <div className="flex items-start gap-3 pt-1">
                 <span className="mt-0.5 h-6 w-[4px] shrink-0 rounded-full bg-bg-timeline-bar-gray" />
-                <p className="text-sm italic leading-6 text-red-ef513f">{config.accountNote}</p>
+                <p className="text-sm italic leading-6 text-red-550">{config.accountNote}</p>
             </div>
         </div>
     );

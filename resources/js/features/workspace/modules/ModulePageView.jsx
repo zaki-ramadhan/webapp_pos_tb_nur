@@ -2,10 +2,10 @@ import Panel from '@/components/ui/Panel';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 
 const toneClasses = {
-    amber: 'bg-panel text-orange-de6f13',
-    blue: 'bg-action-btn-active-bg text-blue-1472b6',
-    green: 'bg-green-ddf7d2 text-green-5b920f',
-    purple: 'bg-purple-ecddff text-purple-681db1',
+    amber: 'bg-panel text-orange-630',
+    blue: 'bg-action-btn-active-bg text-blue-620',
+    green: 'bg-success-bg text-green-820',
+    purple: 'bg-ui-border-light text-purple-770',
 };
 
 export default function ModulePageView({ page }) {

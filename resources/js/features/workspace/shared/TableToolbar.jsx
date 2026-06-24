@@ -204,7 +204,7 @@ export default function TableToolbar({
                                 type="button"
                                 onClick={createButton.onClick}
                                 title={createButton.label}
-                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-blue-1a3f7a ${size === 'compact' ? 'h-[34px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
+                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-brand-blue-darker ${size === 'compact' ? 'h-[34px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
                             >
                                 <PlusIcon className={sizeStyle.createIcon} />
                             </button>
@@ -246,7 +246,7 @@ export default function TableToolbar({
                             label={resolvedRows.length === 0 ? 'Tidak ada data untuk dicetak' : (resolvedPrintButton.label ?? 'Cetak')}
                             onClick={resolvedPrintButton.onClick}
                             disabled={resolvedRows.length === 0}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'} ${sizeStyle.utilityButton}`.trim()}
+                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'} ${sizeStyle.utilityButton}`.trim()}
                         >
                             <PrintIcon className="h-4 w-4" />
                         </ToolbarIconButton>

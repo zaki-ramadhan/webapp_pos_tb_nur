@@ -78,7 +78,7 @@ export function SalesTab({ config, values, onChange }) {
                         </FormFieldRow>
                     ))}
                 </div>
-                <p className="mt-4 max-w-[560px] text-sm italic leading-7 text-red-ef513f">{config.helperText.salesAccountNote}</p>
+                <p className="mt-4 max-w-[560px] text-sm italic leading-7 text-red-550">{config.helperText.salesAccountNote}</p>
             </section>
         </div>
     );

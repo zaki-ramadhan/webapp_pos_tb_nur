@@ -278,7 +278,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="text-import-action-blue underline font-semibold hover:text-blue-133663"
+                                        className="text-import-action-blue underline font-semibold hover:text-blue-900"
                                     >
                                         pilih dari komputer
                                     </button>
@@ -295,7 +295,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                         <p className="text-xs text-gray-500 mt-1">Sesuaikan kolom berkas Excel Anda dengan kolom rincian barang sistem di bawah ini.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-ui-border-light p-4 rounded-lg bg-gray-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-ui-border-light p-4 rounded-lg bg-tab-inactive-border-l/50">
                         {/* Nama Barang */}
                         <div>
                             <label className="block text-xs font-semibold text-gray-700 mb-1.5">Nama Barang <span className="text-red-500">*</span></label>
@@ -398,7 +398,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                                 </thead>
                                 <tbody className="divide-y divide-ui-border-light bg-white">
                                     {previewData.map((p, idx) => (
-                                        <tr key={idx} className="hover:bg-gray-50">
+                                        <tr key={idx} className="hover:bg-tab-inactive-border-l">
                                             <td className="px-3 py-2 font-medium text-gray-900 truncate max-w-[140px] text-left">{p.name}</td>
                                             <td className="px-3 py-2 text-left">{p.code}</td>
                                             <td className="px-3 py-2 text-left">{p.adjustmentType}</td>

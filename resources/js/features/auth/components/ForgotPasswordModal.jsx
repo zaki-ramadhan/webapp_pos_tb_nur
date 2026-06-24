@@ -115,7 +115,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                                 <button
                                     type="submit"
                                     disabled={form.processing}
-                                    className="h-9 px-5 rounded-[4px] bg-pink-accent hover:bg-red-d6305a text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+                                    className="h-9 px-5 rounded-[4px] bg-pink-accent hover:bg-brand-primary-hover text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
                                 >
                                     {form.processing ? 'Memproses...' : 'Reset Password'}
                                 </button>
@@ -128,10 +128,10 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             <svg className="h-5 w-5 text-blue-500 shrink-0 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <h3 className="text-base font-semibold text-blue-2563eb">Informasi reset password</h3>
+                            <h3 className="text-base font-semibold text-blue-440">Informasi reset password</h3>
                         </div>
 
-                        <p className="text-sm leading-6 text-blue-475569">
+                        <p className="text-sm leading-6 text-blue-550">
                             Link verifikasi telah dikirim ke email <strong className="text-slate-800 font-bold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam. Apabila Anda masih belum menerima email verifikasi, silakan hubungi tim support kami di <a href="mailto:support@cpssoft.com" className="text-blue-500 hover:underline">support@cpssoft.com</a>
                         </p>
 
@@ -139,7 +139,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="h-9 min-w-[70px] px-5 rounded-[4px] bg-pink-accent hover:bg-red-d6305a text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer"
+                                className="h-9 min-w-[70px] px-5 rounded-[4px] bg-pink-accent hover:bg-brand-primary-hover text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer"
                             >
                                 OK
                             </button>

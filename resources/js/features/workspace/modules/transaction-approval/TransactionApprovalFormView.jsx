@@ -16,7 +16,7 @@ import {
 function ApprovalHeading({ title }) {
     return (
         <div className="border-b border-ui-border-medium pb-2">
-            <h3 className="text-lg font-medium text-blue-1564d7 sm:text-xl">{title}</h3>
+            <h3 className="text-lg font-medium text-input-brand sm:text-xl">{title}</h3>
         </div>
     );
 }

@@ -81,7 +81,7 @@ const PREFERENCE_FIELD_RENDERERS = {
                     type="button"
                     disabled={field.disabled}
                     onClick={handleCurrencyEdit}
-                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-orange-e8e4dd text-abc-label-dark disabled:cursor-default disabled:bg-slate-100 disabled:text-slate-400 disabled:pointer-events-none enabled:hover:bg-orange-dcd6cc transition"
+                    className="inline-flex h-[32px] w-[40px] items-center justify-center rounded-[2px] bg-tab-view-active-border-t text-abc-label-dark disabled:cursor-default disabled:bg-slate-100 disabled:text-slate-400 disabled:pointer-events-none enabled:hover:bg-tab-inactive-hover-bg transition"
                     aria-label={`Edit ${field.label}`}
                 >
                     <PencilIcon />

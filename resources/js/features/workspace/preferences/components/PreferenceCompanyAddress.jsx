@@ -53,7 +53,7 @@ export default function PreferenceCompanyAddress({ address, values, onChange }) 
                         message={address.street?.message}
                         prefix={address.street?.label}
                         rows={3}
-                        prefixClassName="min-w-[72px] border-ui-border-medium px-3 py-2 text-xs sm:text-sm text-blue-7c839b"
+                        prefixClassName="min-w-[72px] border-ui-border-medium px-3 py-2 text-xs sm:text-sm text-text-light"
                         className="rounded-[3px] border-ui-border-medium shadow-inset-light"
                         textareaClassName="min-h-[80px] px-3 py-2 text-xs sm:text-sm leading-6 text-brand-dark"
                     />

@@ -11,17 +11,17 @@ function resolveDockToneClassName(tone, isDisabled = false) {
     }
     switch (tone) {
         case 'muted':
-            return 'border-border-input-compact bg-disabled-bg text-gray-a7abb4 shadow-dock-button-subtle';
+            return 'border-border-input-compact bg-disabled-bg text-tab-inactive-border-l shadow-dock-button-subtle';
         case 'blue':
         case 'secondary':
             return 'border-border-dock-blue-alt bg-bg-dock-blue-alt text-text-dock-blue-alt shadow-dock-blue';
         case 'success':
-            return 'border-green-69cf7e bg-green-99e19e text-green-0b7a34 shadow-dock-green';
+            return 'border-green-320 bg-green-230 text-green-950 shadow-dock-green';
         case 'danger':
-            return 'border-red-f08f92 bg-red-f5b0b4 text-red-e54854 shadow-dock-red';
+            return 'border-red-150 bg-red-100 text-red-350 shadow-dock-red';
         case 'primary':
         default:
-            return 'border-brand-blue-darker bg-blue-0f62b8 text-white shadow-dock-default';
+            return 'border-brand-blue-darker bg-brand-blue-dark text-white shadow-dock-default';
     }
 }
 
@@ -32,13 +32,13 @@ function resolveDockDividerClassName(tone, isDisabled = false) {
     switch (tone) {
         case 'blue':
         case 'secondary':
-            return 'border-l-blue-5a9bdd';
+            return 'border-blue-light-50';
         case 'success':
-            return 'border-l-green-6bc57c';
+            return 'border-green-light-500';
         case 'muted':
             return 'border-l-tab-view-active-border-x';
         case 'danger':
-            return 'border-l-red-f39ca0';
+            return 'border-red-light-500';
         case 'primary':
         default:
             return 'border-l-brand-blue-hover';
@@ -115,7 +115,7 @@ export function TransactionDockButton({ action, templateLabel, favoritesStorageK
                                     }}
                                 >
                                     <span className="flex items-center gap-2">
-                                        {ItemIcon ? <ItemIcon className="h-4 w-4 text-blue-475569" /> : null}
+                                        {ItemIcon ? <ItemIcon className="h-4 w-4 text-blue-550" /> : null}
                                         <span>{item.label}</span>
                                     </span>
                                 </DropdownMenuItem>

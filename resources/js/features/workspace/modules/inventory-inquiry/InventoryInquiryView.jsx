@@ -342,7 +342,7 @@ export default function InventoryInquiryView({ config, pageId }) {
             </div>
 
             {error ? (
-                <div className="mt-3 rounded-[6px] border border-red-f0c4c4 bg-surface px-3 py-2 text-sm text-red-a33939">
+                <div className="mt-3 rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850">
                     {error}
                 </div>
             ) : null}

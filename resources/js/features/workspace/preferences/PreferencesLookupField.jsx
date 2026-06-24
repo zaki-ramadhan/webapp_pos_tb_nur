@@ -18,7 +18,7 @@ export default function PreferencesLookupField({
             <div className="min-w-0 flex-1">
                 {hasValue ? (
                     <span
-                        className={`inline-flex max-w-full items-center gap-2 rounded-[4px] border border-blue-6ea4ef bg-info-bg px-2 py-0.5 text-sm md:text-sm leading-5 text-blue-172554 ${tokenClassName}`.trim()}
+                        className={`inline-flex max-w-full items-center gap-2 rounded-[4px] border border-brand-blue-border-light bg-info-bg px-2 py-0.5 text-sm md:text-sm leading-5 text-blue-950 ${tokenClassName}`.trim()}
                     >
                         <span className="min-w-0 whitespace-pre-line break-words">{value}</span>
                         {clearable && !disabled ? (
@@ -28,7 +28,7 @@ export default function PreferencesLookupField({
                                     e.stopPropagation();
                                     onClear?.();
                                 }}
-                                className="mt-0.5 inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full text-text-dark hover:bg-blue-6ea4ef/20 transition-colors focus:outline-none"
+                                className="mt-0.5 inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full text-text-dark hover:bg-brand-blue-border-light/20 transition-colors focus:outline-none"
                                 aria-label="Hapus"
                             >
                                 <CloseIcon className="h-3.5 w-3.5" />

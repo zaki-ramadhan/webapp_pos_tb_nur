@@ -3,6 +3,7 @@ import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import Tooltip from '@/components/ui/Tooltip';
 
+
 import { TRANSACTION_SECTION_TITLE_CLASS_NAME } from './transactionStyles';
 
 export function buildCurrencyValue(value = '0') {
@@ -11,7 +12,7 @@ export function buildCurrencyValue(value = '0') {
 
 export function TransactionFieldLabel({ label, required = false, className = '', htmlFor }) {
     return (
-        <label htmlFor={htmlFor} className={`text-xs sm:text-sm text-brand-dark ${htmlFor ? 'cursor-pointer' : ''} ${className}`.trim()}>
+        <label htmlFor={htmlFor} className={`whitespace-nowrap text-xs sm:text-sm text-brand-dark ${htmlFor ? 'cursor-pointer' : ''} ${className}`.trim()}>
             {label}
             {required ? <span className="text-tab-active-border-t"> *</span> : null}
         </label>
@@ -27,7 +28,7 @@ export function TransactionSwitch({ checked, onChange }) {
                 aria-checked={checked}
                 onClick={() => onChange(!checked)}
                 className={`relative inline-flex h-[22px] w-[34px] items-center rounded-full transition ${
-                    checked ? 'bg-blue-3f68b2' : 'bg-section-tab-neutral-border'
+                    checked ? 'bg-blue-570' : 'bg-section-tab-neutral-border'
                 }`.trim()}
             >
                 <span
@@ -41,8 +42,10 @@ export function TransactionSwitch({ checked, onChange }) {
 }
 
 export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
+    if (!tabs?.length) return null;
+
     return (
-        <div className="flex shrink-0 flex-row flex-wrap gap-1.5 lg:flex-col">
+        <div className="flex shrink-0 flex-col self-start w-fit">
             {tabs.map((tab) => {
                 const active = tab.id === activeTabId;
 
@@ -53,13 +56,13 @@ export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
                         onClick={() => onSelectTab(tab.id)}
                         aria-label={tab.label}
                         title={tab.label}
-                        className={`inline-flex h-[36px] w-[36px] items-center justify-center rounded-[4px] border ${
+                        className={`relative inline-flex items-center justify-center border border-r-0 px-2 py-2.5 transition ${
                             active
-                                ? 'border-purple-f08bb0 bg-white text-text-pink-active'
-                                : 'border-tab-inactive-border-t bg-ui-bg-panel text-blue-434a65'
+                                ? 'z-10 -mr-px border-tab-overflow-panel-border border-l-[3px] border-l-tab-active-border-t bg-ui-bg-hover text-text-pink-active shadow-inset-light'
+                                : 'border-tab-active-border-x bg-disabled-border text-tab-active-text hover:bg-tab-primary-inactive-hover-bg'
                         }`.trim()}
                     >
-                        <NavigationIcon type={tab.icon} className="h-5 w-5 text-current" />
+                        <NavigationIcon type={tab.icon} className="h-4.5 w-4.5 text-current" />
                     </button>
                 );
             })}

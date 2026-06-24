@@ -195,8 +195,8 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                     <TextInput
                         value={values.cashBankReference}
                         readOnly
-                        className="h-[40px] rounded-[4px] border-green-9ce04f bg-success-bg"
-                        inputClassName="text-xs sm:text-sm text-green-4d9b1f"
+                        className="h-[40px] rounded-[4px] border-green-370 bg-success-bg"
+                        inputClassName="text-xs sm:text-sm text-green-820"
                     />
                 </AccountsFormFieldRow>
             ) : null}

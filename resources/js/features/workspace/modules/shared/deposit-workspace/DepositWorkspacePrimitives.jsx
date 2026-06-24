@@ -23,7 +23,7 @@ export function DepositStamp({ label, tone = 'blue', className = '' }) {
             ? 'border-border-badge-neutral text-text-badge-neutral'
             : tone === 'green'
               ? 'border-status-success-badge-border text-status-success-badge-text'
-              : 'border-blue-7fd1ff text-blue-7dcaf4';
+              : 'border-blue-80 text-blue-80';
 
     return (
         <div
@@ -46,7 +46,7 @@ export function DepositStamp({ label, tone = 'blue', className = '' }) {
 export function DepositStatusPill({ value }) {
     const toneClassName =
         value === 'Lunas'
-            ? 'border-green-bcebc1 bg-success-bg text-text-badge-success-alt'
+            ? 'border-green-140 bg-success-bg text-text-badge-success-alt'
             : 'border-status-warning-badge-border bg-bg-badge-warning-alt text-status-warning-badge-text';
 
     return (
@@ -95,7 +95,7 @@ export function DepositFooterSummary({ items = [] }) {
                         <div className="flex items-center gap-2 text-xs sm:text-sm text-brand-dark">
                             <span>{item.label}</span>
                             {item.badge ? (
-                                <span className="inline-flex rounded-[4px] border border-blue-7fb0ee px-1.5 py-0.5 text-xs text-brand-blue-accent">
+                                <span className="inline-flex rounded-[4px] border border-brand-blue-border-light px-1.5 py-0.5 text-xs text-brand-blue-accent">
                                     {item.badge}
                                 </span>
                             ) : null}
@@ -112,8 +112,8 @@ export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], e
     return (
         <section>
             <div className="flex items-center gap-3 border-b border-ui-border-medium pb-3">
-                <NavigationIcon type={icon} className="h-5 w-5 text-blue-2f78e5" />
-                <h3 className="text-2xl font-normal text-blue-1564d7">{title}</h3>
+                <NavigationIcon type={icon} className="h-5 w-5 text-blue-440" />
+                <h3 className="text-2xl font-normal text-input-brand">{title}</h3>
             </div>
 
             <div className="mt-4">
@@ -127,7 +127,7 @@ export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], e
                                 }`.trim()}
                             >
                                 <div>
-                                    <div className="text-base font-semibold text-blue-1564d7">{item.number}</div>
+                                    <div className="text-base font-semibold text-input-brand">{item.number}</div>
                                     <div className="mt-1 text-sm text-brand-dark">{item.date}</div>
                                 </div>
                                 <div className="text-right text-base font-semibold text-text-darkest">{item.amount}</div>

@@ -16,9 +16,9 @@ function resolveToneClassName(tone, isDisabled) {
     if (isDisabled) {
         switch (tone) {
             case 'primary':
-                return 'border-blue-2d61ab/60 bg-blue-2d61ab/60 text-white/60 pointer-events-none cursor-default';
+                return 'border-blue-570/60 bg-blue-570/60 text-white/60 pointer-events-none cursor-default';
             case 'warning':
-                return 'border-orange-ffb11e/60 bg-orange-ffb11e/60 text-white/60 pointer-events-none cursor-default';
+                return 'border-warning/60 bg-warning/60 text-white/60 pointer-events-none cursor-default';
             case 'muted':
             default:
                 return 'border-border-disabled-btn/60 bg-bg-disabled-btn/60 text-text-disabled-btn/60 pointer-events-none cursor-default';
@@ -26,9 +26,9 @@ function resolveToneClassName(tone, isDisabled) {
     }
     switch (tone) {
         case 'primary':
-            return 'border-blue-2d61ab bg-blue-2d61ab text-white shadow-button-glow-blue hover:bg-bg-import-action-hover cursor-pointer';
+            return 'border-blue-570 bg-blue-570 text-white shadow-button-glow-blue hover:bg-bg-import-action-hover cursor-pointer';
         case 'warning':
-            return 'border-orange-ffb11e bg-orange-ffb11e text-white shadow-button-glow-orange hover:bg-orange-ea9f13 cursor-pointer';
+            return 'border-warning bg-warning text-white shadow-button-glow-orange hover:bg-warning cursor-pointer';
         case 'muted':
         default:
             return 'border-border-disabled-btn bg-bg-disabled-btn text-text-disabled-btn shadow-card-medium hover:bg-tab-primary-inactive-bg cursor-pointer';

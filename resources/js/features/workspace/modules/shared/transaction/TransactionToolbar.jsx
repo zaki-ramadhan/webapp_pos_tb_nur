@@ -28,7 +28,7 @@ export function TransactionToolbarIconButton({ label, children, className = '', 
                 disabled={resolvedDisabled}
                 aria-label={label}
                 className={`inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
-                    resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
+                    resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
                 } ${className}`.trim()}
             >
                 {children}
@@ -66,7 +66,7 @@ export function TransactionToolbarSplitButton({ label, icon, items = [], disable
                         setOpen((current) => !current);
                     }}
                     className={`inline-flex h-[34px] shrink-0 overflow-hidden rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
-                        resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
+                        resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
                     }`}
                     aria-label={label}
                 >
@@ -193,7 +193,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
             {}
             <div className="px-2 pt-2 pb-1.5 border-b border-table-row-border">
                 <div className="flex items-center gap-1.5 rounded-[4px] border border-border-info-card bg-bg-info-card px-2.5 py-1.5">
-                    <SearchIcon className="h-3.5 w-3.5 shrink-0 text-blue-94a3b8" />
+                    <SearchIcon className="h-3.5 w-3.5 shrink-0 text-text-light" />
                     <input
                         type="text"
                         value={search}
@@ -203,7 +203,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
                         autoFocus
                     />
                     {search ? (
-                        <button type="button" onClick={() => setSearch('')} className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-blue-94a3b8 hover:text-brand-dark">
+                        <button type="button" onClick={() => setSearch('')} className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-text-light hover:text-brand-dark">
                             <svg viewBox="0 0 10 10" fill="currentColor" className="h-2.5 w-2.5">
                                 <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
                             </svg>
@@ -215,7 +215,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
             {}
             <div className="flex max-h-[280px] flex-col gap-0 overflow-y-auto py-1.5">
                 {filtered.length === 0 ? (
-                    <p className="px-3 py-2 text-xs text-blue-94a3b8">Tidak ada kolom ditemukan.</p>
+                    <p className="px-3 py-2 text-xs text-text-light">Tidak ada kolom ditemukan.</p>
                 ) : filtered.map(col => {
                     const visible = visibleIds.includes(col.id);
                     return (

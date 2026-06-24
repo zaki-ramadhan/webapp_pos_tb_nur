@@ -192,8 +192,8 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
 export function SalesDocumentStatusCell({ columnId, row, children }) {
     if (columnId === 'statusIcon') {
         return (
-            <span className="inline-flex items-center justify-center text-green-27b35f">
-                <CircleCheckIcon className="h-5.5 w-5.5 text-green-27b35f" />
+            <span className="inline-flex items-center justify-center text-green-730">
+                <CircleCheckIcon className="h-5.5 w-5.5 text-green-730" />
             </span>
         );
     }

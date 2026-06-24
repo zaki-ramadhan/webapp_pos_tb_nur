@@ -96,7 +96,7 @@ export default function CashPaymentAttachmentModal({
                 </div>
 
                 <div>
-                    <label className="flex h-11 w-full cursor-pointer items-center justify-center rounded-[6px] border border-brand-blue-darker bg-blue-0f62b8 text-xs sm:text-sm font-medium text-white shadow-sm hover:brightness-105 active:brightness-95 transition">
+                    <label className="flex h-11 w-full cursor-pointer items-center justify-center rounded-[6px] border border-brand-blue-darker bg-brand-blue-dark text-xs sm:text-sm font-medium text-white shadow-sm hover:brightness-105 active:brightness-95 transition">
                         {uploadingDoc ? (
                             <span className="animate-pulse">Mengunggah Dokumen...</span>
                         ) : (
@@ -112,7 +112,7 @@ export default function CashPaymentAttachmentModal({
                 </div>
 
                 {uploadError && (
-                    <p className="text-xs sm:text-sm text-red-db3e3e bg-red-50 p-2 rounded border border-red-200">
+                    <p className="text-xs sm:text-sm text-red-700 bg-danger-border p-2 rounded border border-red-150">
                         {uploadError}
                     </p>
                 )}
@@ -149,7 +149,7 @@ export default function CashPaymentAttachmentModal({
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveAttachment(item.id)}
-                                        className="p-1 rounded hover:bg-red-50 text-red-db3e3e transition"
+                                        className="p-1 rounded hover:bg-danger-border text-red-700 transition"
                                         aria-label="Hapus lampiran"
                                     >
                                         <TrashIcon className="h-4.5 w-4.5 text-current" />

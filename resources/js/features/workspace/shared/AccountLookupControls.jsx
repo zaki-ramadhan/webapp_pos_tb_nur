@@ -77,7 +77,7 @@ export function AccountLookupField({
                     placeholder={placeholder}
                     searchLabel={searchLabel}
                     disabled={disabled}
-                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-red-e39191' : 'border-slate-400'} ${className}`.trim()}
+                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-red-150' : 'border-slate-400'} ${className}`.trim()}
                     inputClassName="text-xs sm:text-sm text-brand-dark"
                     trailingClassName="gap-1 pr-2"
                     loading={controller.loading && controller.open}
