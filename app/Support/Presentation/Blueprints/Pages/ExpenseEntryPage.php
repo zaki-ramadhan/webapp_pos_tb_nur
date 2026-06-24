@@ -283,19 +283,19 @@ class ExpenseEntryPage
                         [
                             'id' => 'account',
                             'label' => 'Akun',
-                            'widthClassName' => 'w-[35%]',
+                            'widthClassName' => 'w-[15%]',
                             'align' => 'left',
                         ],
                         [
                             'id' => 'accountName',
                             'label' => 'Nama Akun',
-                            'widthClassName' => 'w-[40%]',
+                            'widthClassName' => 'w-[70%]',
                             'align' => 'left',
                         ],
                         [
                             'id' => 'amount',
                             'label' => 'Nilai',
-                            'widthClassName' => 'w-[25%]',
+                            'widthClassName' => 'w-[15%]',
                             'align' => 'right',
                         ],
                     ],

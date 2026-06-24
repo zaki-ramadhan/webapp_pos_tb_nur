@@ -2,7 +2,7 @@ import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backen
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 
-function formatCurrencyValue(value) {
+export function formatCurrencyValue(value) {
     const numericValue = Number(value ?? 0);
 
     if (!Number.isFinite(numericValue)) {
@@ -111,6 +111,7 @@ export function buildExpenseEntryRecord(record = {}, config) {
         account: line.account?.code ?? line.reference_code ?? '',
         accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
         amount: formatCurrencyValue(line.total_amount ?? 0),
+        notes: line.attributes?.notes ?? '',
     }));
     const totalAmount = Number(record.total_amount ?? 0);
     const paidAmount = Number(record.paid_amount ?? 0);
@@ -179,6 +180,9 @@ export function buildExpenseEntryPayload(values) {
         reference_code: item.account?.trim() || null,
         total_amount: parseNumericInput(item.amount),
         sort_order: index,
+        attributes: {
+            notes: item.notes?.trim() || null,
+        },
     }));
     const totalAmount = buildExpenseTotal(values.lineItems ?? []);
     const paidAmount = parseNumericInput(values.paidAmount);
@@ -232,36 +236,4 @@ export function validateExpenseEntryValues(values, config) {
     return '';
 }
 
-import { showPromptModal } from '@/components/ui/promptModal';
 
-export async function promptExpenseLineItem(record, currentItem = null) {
-    const label = buildLookupLabel(record ?? currentItem ?? {});
-    const result = await showPromptModal(`Input Nilai Beban - ${label}`, [
-        {
-            name: 'amount',
-            label: 'Nilai Beban',
-            type: 'number',
-            defaultValue: currentItem?.amount ?? '0',
-            required: true,
-        },
-    ]);
-
-    if (!result) {
-        return null;
-    }
-
-    const amount = parseNumericInput(result.amount);
-
-    if (amount <= 0) {
-        throw new Error('Nilai beban harus lebih dari 0.');
-    }
-
-    return {
-        id: currentItem?.id ?? `draft-line-${Date.now()}`,
-        __lineId: currentItem?.__lineId ?? null,
-        __accountId: record?.id ?? currentItem?.__accountId ?? null,
-        account: record?.code ?? currentItem?.account ?? '',
-        accountName: record?.name ?? currentItem?.accountName ?? '',
-        amount: formatCurrencyValue(amount),
-    };
-}

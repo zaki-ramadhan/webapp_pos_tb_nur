@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import Button from '@/components/ui/Button';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import ModalBase from '@/components/ui/ModalBase';
+import TextInput from '@/components/ui/TextInput';
+import TextareaField from '@/components/ui/TextareaField';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+import { CloseIcon, PencilIcon } from '@/features/workspace/shared/Icons';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -24,8 +30,9 @@ import {
     buildFormState,
     buildGeneratedExpenseEntryNumber,
     buildLookupLabel,
-    promptExpenseLineItem,
     validateExpenseEntryValues,
+    formatCurrencyValue,
+    parseNumericInput,
 } from './expenseEntryShared';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
@@ -59,6 +66,17 @@ export default function ExpenseEntryFormView({
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
 
+    const [lineModalOpen, setLineModalOpen] = useState(false);
+    const [lineModalTab, setLineModalTab] = useState('rincian');
+    const [lineModalRecord, setLineModalRecord] = useState(null);
+    const [lineModalCurrentItem, setLineModalCurrentItem] = useState(null);
+    const [lineModalValues, setLineModalValues] = useState({
+        accountCode: '',
+        accountName: '',
+        amount: '',
+        notes: '',
+    });
+
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormState(sourceRecord));
@@ -78,7 +96,7 @@ export default function ExpenseEntryFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty;
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(() => {
         const baseActions = config.dockActions ?? [];
@@ -115,41 +133,84 @@ export default function ExpenseEntryFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function applyLineItemUpdate(record, currentItem = null) {
-        if (!values.__liabilityAccountId || !values.liabilityAccounts?.length) {
-            await showSystemErrorModal({
-                title: 'Terjadi Permasalahan pada Pemrosesan',
-                description: 'Silakan perbaiki permasalahan berikut ini:',
-                message: 'Hutang beban harus diisi',
+    function openLineModal(record, currentItem = null) {
+        setLineModalTab('rincian');
+        setLineModalRecord(record);
+        setLineModalCurrentItem(currentItem);
+        if (currentItem) {
+            setLineModalValues({
+                accountCode: currentItem.account ?? '',
+                accountName: currentItem.accountName ?? '',
+                amount: currentItem.amount ?? '',
+                notes: currentItem.notes ?? '',
+            });
+        } else {
+            setLineModalValues({
+                accountCode: record?.code ?? '',
+                accountName: record?.name ?? '',
+                amount: '',
+                notes: '',
+            });
+        }
+        setLineModalOpen(true);
+    }
+
+    function handleLineModalSubmit(e) {
+        if (e) e.preventDefault();
+
+        const amount = parseNumericInput(lineModalValues.amount);
+        if (amount <= 0) {
+            showErrorToast({
+                message: 'Nilai harus diisi dan lebih dari 0.',
             });
             return;
         }
-        try {
-            const nextItem = await promptExpenseLineItem(record, currentItem);
 
-            if (!nextItem) {
-                return;
-            }
+        const nextItem = {
+            id: lineModalCurrentItem?.id ?? `draft-line-${Date.now()}`,
+            __lineId: lineModalCurrentItem?.__lineId ?? null,
+            __accountId: lineModalRecord?.id ?? lineModalCurrentItem?.__accountId ?? null,
+            account: lineModalValues.accountCode,
+            accountName: lineModalValues.accountName,
+            amount: formatCurrencyValue(amount),
+            notes: lineModalValues.notes,
+        };
 
-            setValues((current) =>
-                applyExpenseLineItems(
-                    {
-                        ...current,
-                        lineLookup: '',
-                    },
-                    currentItem
-                        ? (current.lineItems ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
-                        : [...(current.lineItems ?? []), nextItem],
-                ),
-            );
-            showSuccessToast({
-                message: currentItem ? 'Rincian beban diperbarui.' : 'Rincian beban ditambahkan.',
-            });
-        } catch (error) {
-            showErrorToast({
-                message: error?.message ?? 'Rincian beban tidak valid.',
-            });
-        }
+        setValues((current) =>
+            applyExpenseLineItems(
+                {
+                    ...current,
+                    lineLookup: '',
+                },
+                lineModalCurrentItem
+                    ? (current.lineItems ?? []).map((item) => (item.id === lineModalCurrentItem.id ? nextItem : item))
+                    : [...(current.lineItems ?? []), nextItem],
+            ),
+        );
+
+        setLineModalOpen(false);
+        showSuccessToast({
+            message: lineModalCurrentItem ? 'Rincian beban diperbarui.' : 'Rincian beban ditambahkan.',
+        });
+    }
+
+    function handleLineModalDelete() {
+        if (!lineModalCurrentItem) return;
+
+        setValues((current) =>
+            applyExpenseLineItems(
+                {
+                    ...current,
+                    lineLookup: '',
+                },
+                (current.lineItems ?? []).filter((item) => item.id !== lineModalCurrentItem.id),
+            ),
+        );
+
+        setLineModalOpen(false);
+        showSuccessToast({
+            message: 'Rincian beban dihapus.',
+        });
     }
 
     async function onSave() {
@@ -212,25 +273,42 @@ export default function ExpenseEntryFormView({
         });
     }
 
-    const handlers = useMemo(
-        () => ({
-            onSelectLiabilityAccount: (record) =>
-                setValues((current) => ({
-                    ...current,
-                    __liabilityAccountId: record.id,
-                    liabilityAccounts: [buildLookupLabel(record)],
-                })),
-            onRemoveLiabilityAccount: () =>
-                setValues((current) => ({
-                    ...current,
-                    __liabilityAccountId: null,
-                    liabilityAccounts: [],
-                })),
-            onSelectLineAccount: (record) => applyLineItemUpdate(record),
-            onEditLineItem: (item) => applyLineItemUpdate(null, item),
-        }),
-        [],
-    );
+    const handlers = {
+        onSelectLiabilityAccount: (record) =>
+            setValues((current) => ({
+                ...current,
+                __liabilityAccountId: record.id,
+                liabilityAccounts: [buildLookupLabel(record)],
+            })),
+        onRemoveLiabilityAccount: () =>
+            setValues((current) => ({
+                ...current,
+                __liabilityAccountId: null,
+                liabilityAccounts: [],
+            })),
+        onSelectLineAccount: (record) => {
+            if (!values.__liabilityAccountId || !values.liabilityAccounts?.length) {
+                showSystemErrorModal({
+                    title: 'Terjadi Permasalahan pada Pemrosesan',
+                    description: 'Silakan perbaiki permasalahan berikut ini:',
+                    message: 'Hutang beban harus diisi',
+                });
+                return;
+            }
+            openLineModal(record, null);
+        },
+        onEditLineItem: (item) => {
+            if (!values.__liabilityAccountId || !values.liabilityAccounts?.length) {
+                showSystemErrorModal({
+                    title: 'Terjadi Permasalahan pada Pemrosesan',
+                    description: 'Silakan perbaiki permasalahan berikut ini:',
+                    message: 'Hutang beban harus diisi',
+                });
+                return;
+            }
+            openLineModal(null, item);
+        },
+    };
 
     return (
         <>
@@ -270,6 +348,141 @@ export default function ExpenseEntryFormView({
                 confirmVariant="danger"
                 confirmLoading={saving}
             />
+            <WorkspaceDialog
+                open={lineModalOpen}
+                onClose={() => setLineModalOpen(false)}
+                title="Rincian Beban"
+                headerIcon={PencilIcon}
+                maxWidthClassName="max-w-[480px]"
+                contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[220px] flex flex-col pt-0 pb-4"
+                footer={
+                    <div className="flex justify-between items-center w-full">
+                        <div>
+                            {lineModalCurrentItem ? (
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    onClick={handleLineModalDelete}
+                                    className="border-[#e39191] hover:bg-red-50 text-[#d65959] font-semibold"
+                                >
+                                    Hapus
+                                </Button>
+                            ) : (
+                                <span />
+                            )}
+                        </div>
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onClick={handleLineModalSubmit}
+                            className="bg-[#1a50a1] hover:bg-[#154184] font-semibold shadow-[0_2px_8px_rgba(26,80,161,0.16)]"
+                        >
+                            Lanjut
+                        </Button>
+                    </div>
+                }
+            >
+                <div className="flex border-b border-[#edf0f5] -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
+                    <button
+                        type="button"
+                        onClick={() => setLineModalTab('rincian')}
+                        className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                            lineModalTab === 'rincian'
+                                ? 'border-[#ee3969] text-[#ee3969]'
+                                : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Rincian Beban
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setLineModalTab('info')}
+                        className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                            lineModalTab === 'info'
+                                ? 'border-[#ee3969] text-[#ee3969]'
+                                : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Info lainnya
+                    </button>
+                </div>
+
+                {lineModalTab === 'rincian' && (
+                    <div className="space-y-4 flex-1 pb-4">
+                        <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-4">
+                            <span className="text-sm text-slate-700 font-normal">Akun</span>
+                            <span className="text-sm text-slate-700 font-medium select-all">{lineModalValues.accountCode}</span>
+                        </div>
+
+                        <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-4">
+                            <span className="text-sm text-slate-700 font-normal">Untuk Beban</span>
+                            <TextInput
+                                id="accountName"
+                                name="accountName"
+                                value={lineModalValues.accountName}
+                                onChange={(e) =>
+                                    setLineModalValues((prev) => ({
+                                        ...prev,
+                                        accountName: e.target.value,
+                                    }))
+                                }
+                                placeholder="Nama rincian beban"
+                                className="h-[36px] rounded-[4px] border-[#cfd6e2]"
+                                inputClassName="text-sm font-normal text-slate-700"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-[130px_minmax(0,1fr)] items-start gap-4">
+                            <span className="text-sm text-slate-700 font-normal pt-2">
+                                Nilai <span className="text-red-500">*</span>
+                            </span>
+                            <div className="w-full max-w-[240px]">
+                                <TextInput
+                                    id="amount"
+                                    name="amount"
+                                    prefix="Rp"
+                                    value={lineModalValues.amount}
+                                    onChange={(e) =>
+                                        setLineModalValues((prev) => ({
+                                            ...prev,
+                                            amount: e.target.value,
+                                        }))
+                                    }
+                                    placeholder="0"
+                                    className="h-[36px] rounded-[4px] border-[#cfd6e2]"
+                                    prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-[#d8dde7] bg-[#fbfcfe] text-sm"
+                                    inputClassName="text-slate-700 font-medium text-right text-sm"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {lineModalTab === 'info' && (
+                    <div className="space-y-4 flex-1 pb-4">
+                        <div className="grid grid-cols-[130px_minmax(0,1fr)] items-start gap-4">
+                            <span className="text-sm text-slate-700 font-normal pt-1">Catatan</span>
+                            <div className="flex-1">
+                                <TextareaField
+                                    id="notes"
+                                    name="notes"
+                                    value={lineModalValues.notes}
+                                    onChange={(e) =>
+                                        setLineModalValues((prev) => ({
+                                            ...prev,
+                                            notes: e.target.value,
+                                        }))
+                                    }
+                                    placeholder="Catatan tambahan untuk baris ini..."
+                                    rows={4}
+                                    className="border-[#cfd6e2] rounded-[4px]"
+                                    textareaClassName="min-h-[80px] text-sm font-normal text-slate-700"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </WorkspaceDialog>
         </>
     );
 }
