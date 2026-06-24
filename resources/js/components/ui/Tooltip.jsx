@@ -16,12 +16,12 @@ const portalSideClasses = {
 };
 
 const arrowClasses = {
-    top: 'left-1/2 top-full -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent border-t-[#2f364a]',
+    top: 'left-1/2 top-full -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent border-t-tooltip-bg-dark',
     bottom:
-        'left-1/2 bottom-full -translate-x-1/2 border-x-[6px] border-b-[6px] border-x-transparent border-b-[#2f364a]',
-    left: 'left-full top-1/2 -translate-y-1/2 border-y-[6px] border-l-[6px] border-y-transparent border-l-[#2f364a]',
+        'left-1/2 bottom-full -translate-x-1/2 border-x-[6px] border-b-[6px] border-x-transparent border-b-tooltip-bg-dark',
+    left: 'left-full top-1/2 -translate-y-1/2 border-y-[6px] border-l-[6px] border-y-transparent border-l-tooltip-bg-dark',
     right:
-        'right-full top-1/2 -translate-y-1/2 border-y-[6px] border-r-[6px] border-y-transparent border-r-[#2f364a]',
+        'right-full top-1/2 -translate-y-1/2 border-y-[6px] border-r-[6px] border-y-transparent border-r-tooltip-bg-dark',
 };
 
 export default function Tooltip({
@@ -92,7 +92,7 @@ export default function Tooltip({
         ? createPortal(
               <span
                   role="tooltip"
-                  className={`pointer-events-none fixed z-[120] max-w-[280px] whitespace-normal rounded-[8px] bg-[#2f364a] px-3 py-2 text-xs font-medium leading-normal text-white shadow-[0_8px_20px_rgba(15,23,42,0.18)] ${portalSideClasses[side]} ${tooltipClassName}`.trim()}
+                  className={`pointer-events-none fixed z-[120] max-w-[280px] whitespace-normal rounded-[8px] bg-section-tab-neutral-text px-3 py-2 text-xs font-medium leading-normal text-white shadow-tooltip ${portalSideClasses[side]} ${tooltipClassName}`.trim()}
                   style={portalPosition}
               >
                   {content}
@@ -119,7 +119,7 @@ export default function Tooltip({
             {portal ? null : (
                 <span
                     role="tooltip"
-                    className={`pointer-events-none absolute z-40 max-w-[280px] whitespace-normal rounded-[8px] bg-[#2f364a] px-3 py-2 text-xs font-medium leading-normal text-white opacity-0 shadow-[0_8px_20px_rgba(15,23,42,0.12)] transition duration-150 group-hover:opacity-100 group-focus-within:opacity-100 ${sideClasses[side]} ${tooltipClassName}`.trim()}
+                    className={`pointer-events-none absolute z-40 max-w-[280px] whitespace-normal rounded-[8px] bg-section-tab-neutral-text px-3 py-2 text-xs font-medium leading-normal text-white opacity-0 shadow-panel-primary transition duration-150 group-hover:opacity-100 group-focus-within:opacity-100 ${sideClasses[side]} ${tooltipClassName}`.trim()}
                 >
                     {content}
                     <span

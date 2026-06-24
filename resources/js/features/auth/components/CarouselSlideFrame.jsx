@@ -2,9 +2,9 @@ import { authUi } from '@/features/auth/lib/auth-ui';
 
 function PlaceholderImage({ accent, badge }) {
     const accentStyles = {
-        coral: 'from-[#ff8ba6] via-[#ffd2dc] to-[#fff7e7]',
-        blue: 'from-[#85bbff] via-[#cfe3ff] to-[#f7fbff]',
-        teal: 'from-[#8be0d1] via-[#d1f8f2] to-[#f7fffd]',
+        coral: 'from-red-ff8ba6 via-red-ffd2dc to-warning-bg',
+        blue: 'from-blue-85bbff via-info-border to-ui-bg-hover',
+        teal: 'from-blue-8be0d1 via-blue-d1f8f2 to-ui-bg-hover',
     };
 
     return (
@@ -46,7 +46,7 @@ function PlaceholderImage({ accent, badge }) {
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                        <div className="h-9 w-28 rounded-md bg-[#f2356d]/85" />
+                        <div className="h-9 w-28 rounded-md bg-brand-primary/85" />
                         <div className="flex gap-2">
                             <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />
                             <span className="h-2.5 w-2.5 rounded-full bg-slate-300" />

@@ -96,9 +96,9 @@ export default function ModuleTableTemplate({
                     value={inactiveFilter}
                     onChange={(event) => setInactiveFilter(event.target.value)}
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[128px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {table.filterOptions.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -113,7 +113,7 @@ export default function ModuleTableTemplate({
     }, [customFiltersSlot, table.filterOptions, inactiveFilter]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 size="compact"
                 filters={filters}
@@ -154,14 +154,14 @@ export default function ModuleTableTemplate({
                     onChange: (event) => setKeyword(event.target.value),
                     placeholder: table.searchPlaceholder,
                     widthClassName: 'sm:w-[342px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <div className={tableMinWidth ?? 'min-w-[760px]'}>
-                    <DataTable wrapperClassName="border-[#d1d8e4]">
-                        <DataTableHeader className="bg-[#5f7690]">
+                    <DataTable wrapperClassName="border-table-wrapper-border">
+                        <DataTableHeader className="bg-table-header-bg">
                             <tr>
                                 {filteredRows.length > 0 && (
                                     <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
@@ -187,7 +187,7 @@ export default function ModuleTableTemplate({
                                 filteredRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
-                                        className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''}`.trim()}
+                                        className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''}`.trim()}
                                         onClick={() =>
                                             onOpenDetail?.({
                                                 recordId: String(row.id),
@@ -196,13 +196,13 @@ export default function ModuleTableTemplate({
                                             })
                                         }
                                     >
-                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                        <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                             {index + 1}
                                         </DataTableCell>
                                         {visibleColumns.map((column) => (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`px-3 text-base text-[#131a28] ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                                                className={`px-3 text-base text-text-workspace-dark ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                                             >
                                                 <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
                                             </DataTableCell>
@@ -213,7 +213,7 @@ export default function ModuleTableTemplate({
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
                                         colSpan={visibleColumns.length + (filteredRows.length > 0 ? 1 : 0)}
-                                        className="px-3 py-3 text-center text-base text-[#131a28]"
+                                        className="px-3 py-3 text-center text-base text-text-workspace-dark"
                                     >
                                         {table.emptyLabel ?? 'Belum ada data'}
                                     </DataTableCell>

@@ -1,7 +1,7 @@
 const flagMap = {
     ID: {
         title: 'Bendera Indonesia',
-        stripes: ['#e71d2b', '#ffffff'],
+        stripes: ['var(--color-flag-red)', 'var(--color-white)'],
     },
 };
 
@@ -11,7 +11,7 @@ export default function FlagIcon({ code = 'ID', className = '' }) {
     return (
         <svg
             viewBox="0 0 20 14"
-            className={`h-[14px] w-5 overflow-hidden rounded-[2px] shadow-[0_0_0_1px_rgba(0,0,0,0.08)] ${className}`.trim()}
+            className={`h-[14px] w-5 overflow-hidden rounded-[2px] shadow-flag-border ${className}`.trim()}
             aria-label={flag.title}
             role="img"
         >

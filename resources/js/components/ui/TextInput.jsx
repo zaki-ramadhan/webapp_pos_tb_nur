@@ -234,12 +234,12 @@ export default function TextInput({
     const isNonInteractive = disabled || (readOnly && !interactiveReadOnly);
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-[#e39191]'
-            : 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+            ? 'border-red-e39191'
+            : 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
-    const disabledClassName = isNonInteractive ? 'bg-[#f5f5f5] text-gray-500' : 'bg-white';
+    const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : 'bg-white';
 
     const resolvedType = type === 'number' ? 'text' : type;
     const resolvedInputMode = props.inputMode ?? (type === 'number' ? 'decimal' : undefined);
@@ -439,7 +439,7 @@ export default function TextInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm ${prefixColorClass} transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-[#f5f5f5] text-gray-500' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm ${prefixColorClass} transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -456,7 +456,7 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${isNonInteractive ? 'cursor-default bg-[#f5f5f5] text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}
@@ -500,7 +500,7 @@ export default function TextInput({
             </div>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-border' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

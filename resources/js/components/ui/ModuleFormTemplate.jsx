@@ -27,7 +27,7 @@ export default function ModuleFormTemplate({
             ) : null}
 
             <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] overflow-hidden px-4 py-4 -mt-px">
+                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-ui-border bg-white shadow-card-light overflow-hidden px-4 py-4 -mt-px">
                     <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
                         {status && (status.message || status.tone) ? (
                             <CrudStatusMessage status={status} className="mb-4 shrink-0" />

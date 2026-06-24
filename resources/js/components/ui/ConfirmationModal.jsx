@@ -6,19 +6,19 @@ function ConfirmationIllustration() {
         <svg viewBox="0 0 56 56" className="h-16 w-16 shrink-0" aria-hidden="true">
             <path
                 d="M28 6 45 18v20L28 50 11 38V18 18L28 6Z"
-                fill="#ffc93b"
-                stroke="#162746"
+                fill="var(--color-confirmation-warning-bg)"
+                stroke="var(--color-confirmation-warning-border)"
                 strokeWidth="2.4"
                 strokeLinejoin="round"
             />
             <path
                 d="M28 18v13"
                 fill="none"
-                stroke="#fff"
+                stroke="var(--color-tab-view-inactive-text)"
                 strokeWidth="4.2"
                 strokeLinecap="round"
             />
-            <circle cx="28" cy="37.5" r="2.5" fill="#fff" />
+            <circle cx="28" cy="37.5" r="2.5" fill="var(--color-tab-view-inactive-text)" />
         </svg>
     );
 }

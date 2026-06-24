@@ -11,7 +11,7 @@ export default function CarouselProgressDots({ total, activeIndex, onSelect }) {
                         aria-label={`Go to slide ${index + 1}`}
                         onClick={() => onSelect(index)}
                         className={`h-2.5 transition-all ${
-                            isActive ? 'w-8 bg-[#f2356d]' : 'w-2.5 bg-slate-300/80'
+                            isActive ? 'w-8 bg-brand-primary' : 'w-2.5 bg-slate-300/80'
                         } rounded-full`}
                     />
                 );

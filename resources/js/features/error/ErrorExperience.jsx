@@ -94,7 +94,7 @@ function ActionButton({ action }) {
     const base = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:ring-offset-2 w-full';
     const variant = action.variant === 'secondary'
         ? 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 shadow-sm'
-        : 'border border-[#2f2419] bg-[#2f2419] text-white hover:bg-slate-800 shadow-sm';
+        : 'border border-ink bg-ink text-white hover:bg-slate-800 shadow-sm';
 
     if (action.href) {
         return (
@@ -156,7 +156,7 @@ export default function ErrorExperience({
     const code = String(status);
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center bg-[#faf9f6] p-4 sm:p-6 lg:p-8 text-[#2f2419] overflow-hidden">
+        <div className="relative flex min-h-screen items-center justify-center bg-ui-bg-panel-lighter p-4 sm:p-6 lg:p-8 text-ink overflow-hidden">
             {/* Background ornament circles — fluid via vw so they scale on all viewports */}
             <div className="pointer-events-none absolute inset-0 opacity-30" aria-hidden="true">
                 <div className="absolute -left-[20vw] -top-[20vw] h-[60vw] w-[60vw] max-h-[700px] max-w-[700px] rounded-full border border-slate-200/40" />

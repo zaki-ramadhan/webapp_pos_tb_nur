@@ -16,7 +16,7 @@ createInertiaApp({
     resolve: (name) =>
         resolvePageComponent(`../pages/${name}.jsx`, import.meta.glob('../pages/**/*.jsx')),
     progress: {
-        color: '#b85d20',
+        color: 'var(--color-accent)',
         showSpinner: false,
     },
     defaults: {

@@ -12,7 +12,7 @@ export default function WorkspaceDialog({
     contentClassName = 'bg-white px-5 py-4 sm:px-6 sm:py-5',
     children,
     footer = null,
-    footerClassName = 'border-t border-[#d9dee8] bg-white px-5 py-3 sm:px-6',
+    footerClassName = 'border-t border-ui-border-medium bg-white px-5 py-3 sm:px-6',
 }) {
     const HeaderIcon = headerIcon ?? InfoIcon;
 
@@ -20,10 +20,10 @@ export default function WorkspaceDialog({
         <ModalBase
             open={open}
             onBackdropClick={disableClose ? null : onClose}
-            className="bg-[rgba(20,30,49,0.58)] px-3 py-4 sm:px-4 sm:py-6"
-            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_14px_30px_rgba(15,23,42,0.2)]`.trim()}
+            className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
+            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[6px] px-0 py-0 shadow-dialog-large`.trim()}
         >
-            <div className="border-b border-[#14345c] bg-[#173664] px-4 py-2.5 text-white">
+            <div className="border-b border-blue-133663 bg-blue-133663 px-4 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-2.5">
                         <HeaderIcon className="h-4 w-4 text-white" />

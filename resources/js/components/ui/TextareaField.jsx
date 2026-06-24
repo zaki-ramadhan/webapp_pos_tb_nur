@@ -41,8 +41,8 @@ export default function TextareaField({
 
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-[#e39191]'
-            : 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+            ? 'border-red-e39191'
+            : 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
@@ -50,11 +50,11 @@ export default function TextareaField({
     return (
         <div className={`w-full ${containerClassName}`.trim()}>
             <span
-                className={`group flex w-full items-stretch overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-[#f5f5f5]' : ''} ${className}`.trim()}
+                className={`group flex w-full items-stretch overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : ''} ${className}`.trim()}
             >
                 {prefix ? (
                     <span
-                        className={`flex min-w-[86px] shrink-0 items-start border-r border-slate-400 px-4 py-3 text-xs sm:text-sm transition-colors duration-150 group-focus-within:border-current ${isNonInteractive ? 'bg-[#f5f5f5] text-gray-500' : 'text-[#5a84e5]'} ${prefixClassName}`.trim()}
+                        className={`flex min-w-[86px] shrink-0 items-start border-r border-slate-400 px-4 py-3 text-xs sm:text-sm transition-colors duration-150 group-focus-within:border-current ${isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : 'text-input-focus'} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -68,7 +68,7 @@ export default function TextareaField({
                     readOnly={readOnly}
                     tabIndex={readOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-[#a1a8b7] ${isNonInteractive ? 'cursor-default text-gray-500 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
+                    className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default text-gray-500 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
                     onChange={handleChange}
                     {...props}
                 />
@@ -83,7 +83,7 @@ export default function TextareaField({
             </span>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-border' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

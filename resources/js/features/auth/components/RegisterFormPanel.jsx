@@ -28,7 +28,7 @@ function NameField({ salutation, onSalutationChange, prefixClassName, label, val
                             ref={buttonRef}
                             type="button"
                             onClick={() => setIsOpen(!isOpen)}
-                            className="flex items-center gap-1.5 text-[#5a84e5] text-base font-semibold outline-none cursor-pointer focus:outline-none h-full"
+                            className="flex items-center gap-1.5 text-input-focus text-base font-semibold outline-none cursor-pointer focus:outline-none h-full"
                         >
                             <span>{salutation}</span>
                             <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />

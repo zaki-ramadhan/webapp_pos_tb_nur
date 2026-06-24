@@ -46,7 +46,7 @@ export default function DashboardPage({ dashboard, widgets }) {
                 </div>
 
                 <main
-                    className="flex min-h-0 flex-1 bg-[#f2f2f2]"
+                    className="flex min-h-0 flex-1 bg-tab-active-bg"
                     style={topbarHeight ? { paddingTop: `${topbarHeight}px` } : undefined}
                 >
                     <DashboardView

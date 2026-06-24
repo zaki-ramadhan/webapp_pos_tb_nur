@@ -78,21 +78,21 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
             open={open}
             onBackdropClick={onClose}
             className="bg-slate-950/55 px-4 py-5 sm:px-6 sm:py-8"
-            panelClassName="w-full max-w-[460px] overflow-visible rounded-[12px] bg-white px-0 py-0 shadow-[0_15px_35px_rgba(0,0,0,0.15)]"
+            panelClassName="w-full max-w-[460px] overflow-visible rounded-[12px] bg-white px-0 py-0 shadow-modal-auth"
         >
             <div className="relative">
                 <button
                     type="button"
                     onClick={onClose}
                     aria-label={modal.closeLabel || 'Tutup'}
-                    className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-slate-600 shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-colors cursor-pointer"
+                    className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-slate-600 shadow-card-subtle transition-colors cursor-pointer"
                 >
                     <span className="text-sm font-semibold leading-none">&times;</span>
                 </button>
 
                 {step === 'input' ? (
                     <div className="px-6 py-6">
-                        <h2 className="text-center text-lg font-semibold text-[#1e293b]">{modal.title || 'Lupa Password'}</h2>
+                        <h2 className="text-center text-lg font-semibold text-text-dark">{modal.title || 'Lupa Password'}</h2>
 
                         <form className="mt-6 space-y-4" onSubmit={submit}>
                             <AuthInput
@@ -115,7 +115,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                                 <button
                                     type="submit"
                                     disabled={form.processing}
-                                    className="h-9 px-5 rounded-[4px] bg-[#ef3968] hover:bg-[#d6305a] text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+                                    className="h-9 px-5 rounded-[4px] bg-pink-accent hover:bg-red-d6305a text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
                                 >
                                     {form.processing ? 'Memproses...' : 'Reset Password'}
                                 </button>
@@ -128,10 +128,10 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             <svg className="h-5 w-5 text-blue-500 shrink-0 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <h3 className="text-base font-semibold text-[#2563eb]">Informasi reset password</h3>
+                            <h3 className="text-base font-semibold text-blue-2563eb">Informasi reset password</h3>
                         </div>
 
-                        <p className="text-sm leading-6 text-[#475569]">
+                        <p className="text-sm leading-6 text-blue-475569">
                             Link verifikasi telah dikirim ke email <strong className="text-slate-800 font-bold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam. Apabila Anda masih belum menerima email verifikasi, silakan hubungi tim support kami di <a href="mailto:support@cpssoft.com" className="text-blue-500 hover:underline">support@cpssoft.com</a>
                         </p>
 
@@ -139,7 +139,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="h-9 min-w-[70px] px-5 rounded-[4px] bg-[#ef3968] hover:bg-[#d6305a] text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer"
+                                className="h-9 min-w-[70px] px-5 rounded-[4px] bg-pink-accent hover:bg-red-d6305a text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer"
                             >
                                 OK
                             </button>

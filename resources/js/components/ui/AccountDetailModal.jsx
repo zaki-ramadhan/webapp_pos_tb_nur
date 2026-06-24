@@ -77,20 +77,20 @@ function AccountDetailModalContainer({
                     <button
                         type="button"
                         onClick={handleSave}
-                        className="rounded-[4px] bg-[#1a50a1] hover:bg-[#154184] font-medium text-white px-5 py-1.5 text-xs shadow-[0_2px_8px_rgba(26,80,161,0.16)] transition active:scale-[0.98] cursor-pointer"
+                        className="rounded-[4px] bg-brand-blue-dark hover:bg-brand-blue-darker font-medium text-white px-5 py-1.5 text-xs shadow-btn-blue-hover transition active:scale-[0.98] cursor-pointer"
                     >
                         Lanjut
                     </button>
                 </div>
             }
         >
-            <div className="flex border-b border-[#edf0f5] -mx-5 px-5 sm:-mx-6 sm:px-6">
+            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6">
                 <button
                     type="button"
                     onClick={() => setActiveTab('detail')}
                     className={`px-4 py-2.5 text-xs font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
                         activeTab === 'detail'
-                            ? 'border-[#ee3969] text-[#ee3969]'
+                            ? 'border-pink-accent text-pink-accent'
                             : 'border-transparent text-slate-500 hover:text-slate-700'
                     }`}
                 >
@@ -101,7 +101,7 @@ function AccountDetailModalContainer({
                     onClick={() => setActiveTab('info')}
                     className={`px-4 py-2.5 text-xs font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
                         activeTab === 'info'
-                            ? 'border-[#ee3969] text-[#ee3969]'
+                            ? 'border-pink-accent text-pink-accent'
                             : 'border-transparent text-slate-500 hover:text-slate-700'
                     }`}
                 >
@@ -137,7 +137,7 @@ function AccountDetailModalContainer({
                                         value="debit"
                                         checked={side === 'debit'}
                                         onChange={() => setSide('debit')}
-                                        className="h-4 w-4 border-slate-300 text-[#1877f2] focus:ring-[#1877f2]"
+                                        className="h-4 w-4 border-slate-300 text-control-active focus:ring-control-active"
                                     />
                                     Debit
                                 </label>
@@ -148,7 +148,7 @@ function AccountDetailModalContainer({
                                         value="credit"
                                         checked={side === 'credit'}
                                         onChange={() => setSide('credit')}
-                                        className="h-4 w-4 border-slate-300 text-[#1877f2] focus:ring-[#1877f2]"
+                                        className="h-4 w-4 border-slate-300 text-control-active focus:ring-control-active"
                                     />
                                     Kredit
                                 </label>
@@ -162,7 +162,7 @@ function AccountDetailModalContainer({
                                     onChange={handleAmountChange}
                                     error={error}
                                     className="h-[36px] rounded-[4px]"
-                                    prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-[#d8dde7] bg-[#fbfcfe] text-xs"
+                                    prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-xs"
                                     inputClassName="text-slate-700 font-medium text-right text-xs"
                                     autoFocus
                                 />
@@ -181,7 +181,7 @@ function AccountDetailModalContainer({
                             onChange={(e) => setNotes(e.target.value)}
                             placeholder="Catatan tambahan untuk baris ini..."
                             rows={4}
-                            className="w-full resize-none rounded-[4px] border border-[#cfd6e2] px-3 py-2 text-xs text-slate-700 outline-none focus:border-[#1877f2] focus:ring-1 focus:ring-[#1877f2]"
+                            className="w-full resize-none rounded-[4px] border border-ui-border px-3 py-2 text-xs text-slate-700 outline-none focus:border-control-active focus:ring-1 focus:ring-control-active"
                         />
                     </div>
                 </div>

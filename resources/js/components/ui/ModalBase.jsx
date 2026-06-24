@@ -77,7 +77,7 @@ export default function ModalBase({
             <div
                 ref={panelRef}
                 onClick={(event) => event.stopPropagation()}
-                className={`w-full max-w-lg max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-[16px] bg-white shadow-[0_8px_20px_rgba(15,23,42,0.12)] sm:max-h-[calc(100vh-3rem)] sm:rounded-[12px] ${panelClassName}`.trim()}
+                className={`w-full max-w-lg max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-[16px] bg-white shadow-panel-primary sm:max-h-[calc(100vh-3rem)] sm:rounded-[12px] ${panelClassName}`.trim()}
             >
                 {children}
             </div>

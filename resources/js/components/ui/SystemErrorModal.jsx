@@ -90,10 +90,10 @@ export default function SystemErrorModal({
         <ModalBase
             open={open}
             onBackdropClick={dismissible ? onClose : undefined}
-            className="bg-[rgba(20,30,49,0.58)] px-3 py-4 sm:px-4 sm:py-6"
-            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_14px_30px_rgba(15,23,42,0.2)]`.trim()}
+            className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
+            panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-dialog-large`.trim()}
         >
-            <div className="border-b border-[#133663] bg-[#163a6d] px-4 py-2.5 text-white sm:px-5">
+            <div className="border-b border-blue-133663 bg-illustration-danger-border px-4 py-2.5 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-2.5">
                         <h2 className="truncate text-sm font-medium">{title}</h2>
@@ -119,11 +119,11 @@ export default function SystemErrorModal({
                     </div>
 
                     <div className="min-w-0 flex-1 space-y-2.5">
-                        <p className="text-xs sm:text-sm leading-6 text-[#1f2436]">{description}</p>
+                        <p className="text-xs sm:text-sm leading-6 text-brand-dark">{description}</p>
 
                         <div className="space-y-1.5">
                             {normalizedMessages.map((item, index) => (
-                                <p key={`${item}-${index}`} className="text-xs sm:text-sm leading-6 text-[#db2347]">
+                                <p key={`${item}-${index}`} className="text-xs sm:text-sm leading-6 text-danger">
                                     {item}
                                 </p>
                             ))}
@@ -137,7 +137,7 @@ export default function SystemErrorModal({
                             variant="secondary"
                             size="md"
                             onClick={handleCopy}
-                            className="min-w-[80px] rounded-[6px] border-[#9ec0ec] text-[#1a63b3] shadow-none"
+                            className="min-w-[80px] rounded-[6px] border-layout-bg text-brand-blue-dark shadow-none"
                         >
                             {copyState === 'copied' ? copiedLabel : copyLabel}
                         </Button>
@@ -147,7 +147,7 @@ export default function SystemErrorModal({
                         <Button
                             size="md"
                             onClick={handleConfirm}
-                            className="min-w-[80px] rounded-[6px] bg-[#1f57a9] text-white shadow-none hover:bg-[#1a4c95]"
+                            className="min-w-[80px] rounded-[6px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover"
                         >
                             {confirmLabel}
                         </Button>

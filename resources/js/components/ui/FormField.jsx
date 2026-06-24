@@ -2,10 +2,10 @@ export default function FormField({ label, htmlFor, children, hint = null, requi
     return (
         <label className={`block ${className}`.trim()} htmlFor={htmlFor}>
             {label ? (
-                <span className="mb-2 block text-xs sm:text-sm font-medium text-[#56527b]">
+                <span className="mb-2 block text-xs sm:text-sm font-medium text-layout-text">
                     {label}
                     {required ? (
-                        <span className="ml-0.5 text-[#ED3969]" aria-hidden="true" title="Wajib diisi">*</span>
+                        <span className="ml-0.5 text-tab-active-border-t" aria-hidden="true" title="Wajib diisi">*</span>
                     ) : null}
                 </span>
             ) : null}

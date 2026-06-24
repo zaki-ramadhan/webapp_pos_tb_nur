@@ -29,7 +29,7 @@ export default function SelectField({
     const heightClass = hasHeightClass ? '' : 'h-11';
     
     const toneClassName = resolvedError
-        ? 'border-[#e39191] focus-within:border-[#d65959] focus-within:shadow-[0_0_0_3px_rgba(214,89,89,0.14)]'
+        ? 'border-red-e39191 focus-within:border-error-border focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     const triggerRef = useRef(null);
@@ -165,7 +165,7 @@ export default function SelectField({
             </select>
 
             <div
-                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-[#f5f5f5]' : ''} ${className}`.trim()}
+                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : ''} ${className}`.trim()}
             >
                 <button
                     ref={triggerRef}
@@ -218,7 +218,7 @@ export default function SelectField({
                                 onClick={() => handleSelect(option.value)}
                                 className={`block w-full px-4 py-2.5 text-left text-xs sm:text-sm transition-colors duration-100 ${
                                     isSelected 
-                                        ? 'bg-[#eef3fb] font-semibold text-[#2353a0]' 
+                                        ? 'bg-workspace-hover-bg font-semibold text-brand-blue' 
                                         : isHighlighted 
                                             ? 'bg-slate-50 text-slate-900 font-medium' 
                                             : 'text-slate-700 hover:bg-slate-50'
@@ -232,7 +232,7 @@ export default function SelectField({
             </PortalDropdown>
 
             {feedbackMessage ? (
-                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-[#d65959]' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                <p className={`mt-1.5 text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-border' : 'text-slate-500'} ${messageClassName}`.trim()}>
                     {feedbackMessage}
                 </p>
             ) : null}

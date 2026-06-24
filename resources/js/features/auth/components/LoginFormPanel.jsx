@@ -181,7 +181,7 @@ export default function LoginFormPanel({ login }) {
                         <button
                             type="button"
                             onClick={() => setForgotPasswordOpen(true)}
-                            className="text-xs sm:text-sm text-[#4285f4] hover:underline"
+                            className="text-xs sm:text-sm text-google-blue hover:underline"
                         >
                             {login.forgotPassword}
                         </button>

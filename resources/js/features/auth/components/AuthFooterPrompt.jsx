@@ -8,7 +8,7 @@ export default function AuthFooterPrompt({ prompt, cta, href }) {
     return (
         <div className="mt-8 text-center text-xs sm:text-sm leading-6 sm:leading-7 text-slate-400">
             <span>{prompt}</span>{' '}
-            <Link href={href} className="font-medium text-[#4285f4] hover:underline">
+            <Link href={href} className="font-medium text-google-blue hover:underline">
                 {cta}
             </Link>
         </div>

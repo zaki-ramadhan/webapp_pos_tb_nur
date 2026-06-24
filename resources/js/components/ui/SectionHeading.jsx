@@ -8,7 +8,7 @@ export default function SectionHeading({
 
     return (
         <div className={`${alignClass} ${className}`.trim()}>
-            <h1 className="text-2xl font-semibold text-[#56527b] leading-tight">{title}</h1>
+            <h1 className="text-2xl font-semibold text-layout-text leading-tight">{title}</h1>
             {subtitle ? <p className="mt-0.5 text-base leading-relaxed text-slate-400">{subtitle}</p> : null}
         </div>
     );

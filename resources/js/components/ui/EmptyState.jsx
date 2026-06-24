@@ -60,13 +60,13 @@ export default function EmptyState({
     const toneClasses = {
         default: {
             wrapper: 'bg-white/90',
-            title: 'text-[#4f5678]',
-            description: 'text-[#6a7390]',
+            title: 'text-layout-text',
+            description: 'text-text-muted',
         },
         subtle: {
             wrapper: 'bg-transparent',
-            title: 'text-[#6a7390]',
-            description: 'text-[#8890a8]',
+            title: 'text-text-muted',
+            description: 'text-text-light',
         },
     };
 

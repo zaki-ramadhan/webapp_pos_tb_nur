@@ -2,11 +2,11 @@ import Spinner from '@/components/ui/Spinner';
 
 const variantClasses = {
     primary:
-        'border border-transparent bg-brand-primary text-white shadow-[0_4px_12px_rgba(15,23,42,0.12)]',
+        'border border-transparent bg-brand-primary text-white shadow-button-primary',
     danger:
-        'border border-transparent bg-danger text-white shadow-[0_4px_12px_rgba(15,23,42,0.12)]',
+        'border border-transparent bg-danger text-white shadow-button-primary',
     secondary:
-        'border border-slate-300 bg-white text-slate-500 shadow-[0_2px_8px_rgba(15,23,42,0.08)]',
+        'border border-slate-300 bg-white text-slate-500 shadow-button-secondary',
     ghost: 'border border-transparent bg-transparent text-info',
 };
 
