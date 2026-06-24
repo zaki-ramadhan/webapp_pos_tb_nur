@@ -15,8 +15,8 @@ import {
 
 function ApprovalHeading({ title }) {
     return (
-        <div className="border-b border-[#d9dee8] pb-2">
-            <h3 className="text-lg font-medium text-[#1564d7] sm:text-xl">{title}</h3>
+        <div className="border-b border-ui-border-medium pb-2">
+            <h3 className="text-lg font-medium text-blue-1564d7 sm:text-xl">{title}</h3>
         </div>
     );
 }
@@ -30,14 +30,14 @@ function getApprovalFieldTooltip(label) {
 
 function ApprovalFieldLabel({ label, required = false, info = false }) {
     return (
-        <div className="flex items-center gap-2 pt-1 text-xs sm:text-sm text-[#1f2436]">
+        <div className="flex items-center gap-2 pt-1 text-xs sm:text-sm text-brand-dark">
             <span>
                 {label}
-                {required ? <span className="text-[#ED3969]"> *</span> : null}
+                {required ? <span className="text-tab-active-border-t"> *</span> : null}
             </span>
             {info ? (
                 <Tooltip content={getApprovalFieldTooltip(label)} portal>
-                    <InfoIcon className="h-5 w-5 text-[#1f2436] cursor-help" />
+                    <InfoIcon className="h-5 w-5 text-brand-dark cursor-help" />
                 </Tooltip>
             ) : null}
         </div>
@@ -52,9 +52,9 @@ function ThresholdField({ valueLabel, value, onChange }) {
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 prefix={valueLabel}
-                prefixClassName="min-w-[110px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#9299aa]"
-                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                prefixClassName="min-w-[110px] border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-text-prefix-label-alt"
+                className="h-[40px] rounded-[4px] border-ui-border"
+                inputClassName="text-xs sm:text-sm text-brand-dark"
             />
         </div>
     );
@@ -206,12 +206,12 @@ export default function TransactionApprovalFormView({
                         <TextInput
                             value={values.ruleName}
                             onChange={(event) => setValues((prev) => ({ ...prev, ruleName: event.target.value }))}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
 
                         <ApprovalFieldLabel label="Tipe Transaksi" />
-                        <SelectField value={values.transactionType} onChange={set('transactionType')} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
+                        <SelectField value={values.transactionType} onChange={set('transactionType')} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                             {form.transactionTypeOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                         </SelectField>
 
@@ -227,8 +227,8 @@ export default function TransactionApprovalFormView({
                             value="Semua Pengguna"
                             readOnly
                             disabled
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
-                            inputClassName="text-xs sm:text-sm text-[#9299aa]"
+                            className="h-[40px] rounded-[4px] border-ui-border bg-input-prefix-bg"
+                            inputClassName="text-xs sm:text-sm text-text-prefix-label-alt"
                         />
 
 
@@ -249,8 +249,8 @@ export default function TransactionApprovalFormView({
                                     approverId: '',
                                 }));
                             }}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             <option value="user">Pengguna</option>
                             <option value="role">Peran/Jabatan</option>
@@ -260,8 +260,8 @@ export default function TransactionApprovalFormView({
                         <SelectField
                             value={values.approverId}
                             onChange={set('approverId')}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             <option value="">[Pilih Penyetuju]</option>
                             {approverOptions.map((o) => (
@@ -272,7 +272,7 @@ export default function TransactionApprovalFormView({
                         </SelectField>
 
                         <ApprovalFieldLabel label="Dengan Syarat" />
-                        <SelectField value={values.approvalRule} onChange={set('approvalRule')} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
+                        <SelectField value={values.approvalRule} onChange={set('approvalRule')} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                             {form.approvalRuleOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                         </SelectField>
                     </div>

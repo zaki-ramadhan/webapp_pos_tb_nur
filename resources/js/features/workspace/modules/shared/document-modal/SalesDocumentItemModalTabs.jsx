@@ -14,15 +14,15 @@ export function ItemDetailTab({ detail }) {
     return (
         <div className="grid gap-y-4 sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-x-4">
             <TransactionFieldLabel label="Kode #" />
-            <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{detail.code ?? ''}</div>
+            <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-document-code">{detail.code ?? ''}</div>
 
             <TransactionFieldLabel label="Nama Barang" required />
             <TextInput
                 value={detail.name ?? ''}
                 readOnly
-                trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
-                className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                trailing={<span className="text-2xl font-semibold text-brand-dark">×</span>}
+                className="h-[36px] rounded-[4px] border-ui-border"
+                inputClassName="text-xs sm:text-sm text-brand-dark"
                 trailingClassName="px-3"
             />
 
@@ -31,9 +31,9 @@ export function ItemDetailTab({ detail }) {
                 <TextInput
                     value={detail.quantity ?? ''}
                     readOnly
-                    trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
-                    className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+                    trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                    className="h-[36px] rounded-[4px] border-ui-border"
+                    inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                     trailingClassName="px-3"
                 />
                 <ChipLookupField
@@ -57,9 +57,9 @@ export function ItemDetailTab({ detail }) {
                     value={detail.discountPercent ?? ''}
                     readOnly
                     prefix="%"
-                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                    prefixClassName="min-w-[42px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                    inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+                    className="h-[34px] rounded-[4px] border-ui-border"
+                    prefixClassName="min-w-[42px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+                    inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                 />
                 <DocumentModalCurrencyReadonlyField value={detail.discountValue} />
             </div>
@@ -68,8 +68,8 @@ export function ItemDetailTab({ detail }) {
             <TextInput
                 value={detail.total ?? ''}
                 readOnly
-                className="h-[34px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                inputClassName="text-right text-xs sm:text-sm font-normal text-[#111827]"
+                className="h-[34px] rounded-[4px] border-ui-border bg-bg-workspace-input-panel"
+                inputClassName="text-right text-xs sm:text-sm font-normal text-text-darkest"
             />
 
             <TransactionFieldLabel label="Pajak" />
@@ -106,11 +106,11 @@ export function ItemDetailTab({ detail }) {
 
 function SerialRow({ value }) {
     return (
-        <div className="grid grid-cols-[42px_minmax(0,1fr)] border-b border-[#edf1f6] last:border-b-0">
-            <div className="flex items-center justify-center bg-[#b82924] text-white">
+        <div className="grid grid-cols-[42px_minmax(0,1fr)] border-b border-table-row-border last:border-b-0">
+            <div className="flex items-center justify-center bg-btn-danger-bg text-white">
                 <CloseIcon className="h-4 w-4 text-white" strokeWidth={2.4} />
             </div>
-            <div className="px-4 py-2 text-xs sm:text-sm text-[#1f2436]">{value}</div>
+            <div className="px-4 py-2 text-xs sm:text-sm text-brand-dark">{value}</div>
         </div>
     );
 }
@@ -127,12 +127,12 @@ export function ItemSerialTab({ detail }) {
                         value={detail.serialInput ?? ''}
                         readOnly
                         placeholder={detail.serialPlaceholder ?? 'Scan Barcode / Ketik lalu [Enter]'}
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                     <button
                         type="button"
-                        className="inline-flex h-[36px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] text-white"
+                        className="inline-flex h-[36px] items-center justify-center rounded-[4px] border border-import-action-blue bg-import-action-blue text-white"
                         aria-label={detail.downloadLabel ?? 'Unduh nomor seri'}
                     >
                         <DownloadIcon className="h-4 w-4 text-white" />
@@ -140,8 +140,8 @@ export function ItemSerialTab({ detail }) {
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-[4px] border border-[#d1d8e4]">
-                <div className="grid grid-cols-[42px_minmax(0,1fr)] bg-[#5f7690] text-white">
+            <div className="overflow-hidden rounded-[4px] border border-table-wrapper-border">
+                <div className="grid grid-cols-[42px_minmax(0,1fr)] bg-table-header-bg text-white">
                     <div className="border-r border-white/20" />
                     <div className="px-4 py-2 text-center text-base font-medium">
                         {detail.serialColumnLabel ?? 'Nomor #'}
@@ -151,12 +151,12 @@ export function ItemSerialTab({ detail }) {
                     {serialNumbers.length ? (
                         serialNumbers.map((serialNumber) => <SerialRow key={serialNumber} value={serialNumber} />)
                     ) : (
-                        <div className="px-4 py-6 text-center text-base text-[#7d879a]">Belum ada data</div>
+                        <div className="px-4 py-6 text-center text-base text-text-placeholder">Belum ada data</div>
                     )}
                 </div>
             </div>
 
-            <div className="text-xs sm:text-sm text-[#1f2436]">
+            <div className="text-xs sm:text-sm text-brand-dark">
                 {detail.serialCountLabel ?? `${serialNumbers.length} No Seri/Produksi`}
             </div>
         </div>
@@ -190,8 +190,8 @@ export function ItemInfoTab({ detail }) {
                     <TextInput
                         value={detail.quoteNumber}
                         readOnly
-                        className="h-[36px] rounded-[4px] border-[#8fdb5d] bg-[#f7fff2]"
-                        inputClassName="text-xs sm:text-sm font-semibold text-[#67b52c]"
+                        className="h-[36px] rounded-[4px] border-success-border bg-bg-success-alt"
+                        inputClassName="text-xs sm:text-sm font-semibold text-green-67b52c"
                     />
                 </>
             ) : null}
@@ -202,8 +202,8 @@ export function ItemInfoTab({ detail }) {
                     <TextInput
                         value={detail.orderNumber}
                         readOnly
-                        className="h-[36px] rounded-[4px] border-[#8fdb5d] bg-[#f7fff2]"
-                        inputClassName="text-xs sm:text-sm font-semibold text-[#67b52c]"
+                        className="h-[36px] rounded-[4px] border-success-border bg-bg-success-alt"
+                        inputClassName="text-xs sm:text-sm font-semibold text-green-67b52c"
                     />
                 </>
             ) : null}

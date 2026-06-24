@@ -26,12 +26,12 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                     <button
                         type="button"
                         onClick={handlers.onSelectInvoice}
-                        className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[4px] border border-[#cfd6e2] bg-white text-[#21539b] hover:bg-[#e8f2ff] transition"
+                        className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[4px] border border-ui-border bg-white text-brand-blue-accent hover:bg-brand-blue-light transition"
                         aria-label="Cari faktur"
                     >
                         <SearchIcon className="h-5 w-5" />
                     </button>
-                    <span className="text-right text-2xl font-normal text-[#1f2436]">{values.invoiceTitle}</span>
+                    <span className="text-right text-2xl font-normal text-brand-dark">{values.invoiceTitle}</span>
                 </div>
             }
             titleRequired={true}
@@ -42,9 +42,9 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                             value={values.invoiceSearch}
                             readOnly
                             placeholder={config.invoiceSearchPlaceholder}
-                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                             onClick={handlers.onSelectInvoice}
                         />
                     </div>
@@ -52,7 +52,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                     {isDetail ? (
                         <button
                             type="button"
-                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-base text-[#21539b] shrink-0"
+                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-5 text-base text-brand-blue-accent shrink-0"
                             onClick={handlers.onSelectInvoice}
                         >
                             {config.takeButtonLabel}
@@ -70,10 +70,10 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
                 </span>
             }
             onRowClick={onOpenInvoice}
-            getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+            getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
             spacerHeaderContent=""
             spacerCellContent={
-                <span className="inline-flex items-center justify-center text-[#a8afbe]">
+                <span className="inline-flex items-center justify-center text-text-workspace-inactive">
                     <TableActionIcon className="h-4 w-4" />
                 </span>
             }
@@ -91,7 +91,7 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                 <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.paymentMethod} />
                     <div className="max-w-[276px]">
-                        <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
+                        <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                             <option value={values.paymentMethod}>{values.paymentMethod || 'Tunai'}</option>
                         </SelectField>
                     </div>
@@ -103,8 +103,8 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                                 <TextInput
                                     value={values.dueDatePph}
                                     readOnly
-                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    className="h-[34px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                 />
                             </div>
 
@@ -130,8 +130,8 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                             <TextInput
                                 value={values.printStatus}
                                 readOnly
-                                className="h-[34px] max-w-[262px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#5f6779]"
+                                className="h-[34px] max-w-[262px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-text-workspace-muted"
                             />
                         </>
                     ) : null}
@@ -148,10 +148,10 @@ export function PurchasePaymentInfoSection({ config, values }) {
 
             <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-x-4">
                 <TransactionFieldLabel label="Dibayar dengan" />
-                <div className="text-xs sm:text-sm text-[#1f2436]">{values.paidWith || '-'}</div>
+                <div className="text-xs sm:text-sm text-brand-dark">{values.paidWith || '-'}</div>
 
                 <TransactionFieldLabel label="Tanggal dan Jam" />
-                <div className="text-xs sm:text-sm text-[#1f2436]">{values.paidAt || '-'}</div>
+                <div className="text-xs sm:text-sm text-brand-dark">{values.paidAt || '-'}</div>
             </div>
         </div>
     );
@@ -169,9 +169,9 @@ export function PurchasePaymentTableFilterBar({ table, filters, setFilters }) {
                 }))
             }
             containerClassName="w-auto shrink-0"
-            className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
-            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-            iconClassName="mr-2 text-[#6c7894]"
+            className="h-[34px] min-w-[126px] rounded-[4px] border-ui-border"
+            selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+            iconClassName="mr-2 text-filter-icon"
         >
             {filter.options.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -192,7 +192,7 @@ export function PurchasePaymentTableFilterBar({ table, filters, setFilters }) {
 
                 <button
                     type="button"
-                    className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0] hover:bg-[#cbe3ff] transition"
+                    className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue hover:bg-bg-action-btn-hover transition"
                     aria-label={table.filterButtonLabel}
                 >
                     <FunnelIcon className="h-4.5 w-4.5" />

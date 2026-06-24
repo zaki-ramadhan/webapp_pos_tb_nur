@@ -44,8 +44,8 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                 <SelectField
                     value={values.kind}
                     onChange={(event) => onChange('kind', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                    className="h-[40px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs sm:text-sm text-brand-dark"
                 >
                     {config.kindOptions.map((option) => (
                         <option key={option} value={option}>
@@ -105,7 +105,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                                 }
                                 className="max-w-[332px]"
                             />
-                            <span className="text-center text-lg text-[#1f2436]">=</span>
+                            <span className="text-center text-lg text-brand-dark">=</span>
                             <SimpleTextField
                                 value={conversion.quantity}
                                 onChange={(event) =>
@@ -124,7 +124,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                                 className="h-[34px]"
                                 inputClassName="text-right"
                             />
-                            <span className="text-xs sm:text-sm text-[#1f2436]">
+                            <span className="text-xs sm:text-sm text-brand-dark">
                                 {conversion.baseUnit}
                             </span>
                         </div>
@@ -157,8 +157,8 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
                         disabled={isBrandFieldInactive}
                     />
                     {isBrandFieldInactive ? (
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-[#9a7b35]">
-                            <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-warning-label-text">
+                            <span className="rounded-full bg-bg-warning-tag px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-warning-badge-text">
                                 {WORKSPACE_INACTIVE_BADGE_LABEL}
                             </span>
                             <span>{WORKSPACE_INACTIVE_HINT}</span>
@@ -172,7 +172,7 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
                     checked={values.serialEnabled}
                     onChange={(nextValue) => onChange('serialEnabled', nextValue)}
                 />
-                <span className="text-xs sm:text-sm text-[#1f2436]">
+                <span className="text-xs sm:text-sm text-brand-dark">
                     Aktifkan No. Seri/Produksi
                 </span>
             </div>

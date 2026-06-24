@@ -24,7 +24,7 @@ export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
             {showTakeButton ? (
                 <button
                     type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
                 >
                     {config.takeButtonLabel}
                 </button>
@@ -32,7 +32,7 @@ export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
             {showSecondaryHeaderAction ? (
                 <button
                     type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
                 >
                     {secondaryActionLabel}
                 </button>
@@ -43,8 +43,8 @@ export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
                     disabled={values.processDisabled}
                     className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-base ${
                         values.processDisabled
-                            ? 'border-[#d4d7de] bg-[#f0f0f1] text-[#b1b5bf]'
-                            : 'border-[#7aa2d5] bg-white text-[#21539b]'
+                            ? 'border-tab-inactive-bg bg-tab-active-bg text-tab-inactive-border-l'
+                            : 'border-brand-blue-border bg-white text-brand-blue-accent'
                     }`.trim()}
                 >
                     <span>{config.processButtonLabel}</span>
@@ -116,9 +116,9 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
                     value={filters[filter.id]}
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option, optionIndex) => (
                         <option key={`${filter.id}-${option.label}-${optionIndex}`} value={option.value}>
@@ -130,7 +130,7 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
 
             <button
                 type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                 aria-label={config.table.filterButtonLabel}
             >
                 <FunnelIcon className="h-4.5 w-4.5" />
@@ -141,7 +141,7 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
 
 export function buildSalesDocumentRightControls(config) {
     return [
-        // Sembunyikan tombol cetak dan unduh secara tampilan agar tidak memicu pertanyaan saat sidang
+        // Hide print and download buttons
         /*
         config.table.downloadItems?.length ? (
             <TransactionToolbarSplitButton key="download" label="Unduh" icon={<DownloadIcon className="h-4 w-4" />} items={config.table.downloadItems} />
@@ -183,7 +183,7 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
             onChange: (event) => setKeyword(event.target.value),
             placeholder: config.table.searchPlaceholder,
             widthClassName: 'sm:w-[342px]',
-            trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+            trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
         },
         pageValue: config.table.pageValue,
     };
@@ -192,8 +192,8 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
 export function SalesDocumentStatusCell({ columnId, row, children }) {
     if (columnId === 'statusIcon') {
         return (
-            <span className="inline-flex items-center justify-center text-[#27b35f]">
-                <CircleCheckIcon className="h-5.5 w-5.5 text-[#27b35f]" />
+            <span className="inline-flex items-center justify-center text-green-27b35f">
+                <CircleCheckIcon className="h-5.5 w-5.5 text-green-27b35f" />
             </span>
         );
     }

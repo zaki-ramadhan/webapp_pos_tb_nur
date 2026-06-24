@@ -22,8 +22,8 @@ function ApprovalFilterSlot({ filters: filterDefs, values, onChange }) {
                     value={values[filter.id]}
                     onChange={(event) => onChange(filter.id, event.target.value)}
                     containerClassName="w-auto shrink-0"
-                    className="h-[40px] min-w-[228px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#394157]"
+                    className="h-[40px] min-w-[228px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs sm:text-sm text-filter-select-text"
                 >
                     {filter.options.map((option) => (
                         <option key={option.value} value={option.value}>{option.label}</option>
@@ -56,7 +56,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
     }, [filterValues, table.filters, table.rows]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 filters={table.filters?.length ? <ApprovalFilterSlot filters={table.filters} values={filterValues} onChange={handleFilterChange} /> : null}
                 size="compact"
@@ -67,8 +67,8 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
             />
 
             <div className="mt-3 min-h-0">
-                <DataTable wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {filteredRows.length > 0 && (
                                 <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
@@ -92,21 +92,21 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                                 <DataTableRow
                                     key={row.id}
                                     onClick={() => onOpenDetail?.({ recordId: row.id, label: row.ruleName, tabLabel: row.tabLabel })}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} cursor-pointer hover:bg-[#f3f6fa]`}
+                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} cursor-pointer hover:bg-brand-blue-lightest`}
                                 >
-                                    <DataTableCell className="px-3 text-center text-base text-[#646d83] whitespace-nowrap">
+                                    <DataTableCell className="px-3 text-center text-base text-table-row-number whitespace-nowrap">
                                         {table.pagination ? (table.pagination.from + index) : (index + 1)}
                                     </DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.valueLabel)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.approvedBy)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.createdBy)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-[#131a28]">{formatTableTextValue(row.branchLabel)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.valueLabel)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.approvedBy)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.createdBy)}</DataTableCell>
+                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.branchLabel)}</DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
-                            <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-3 py-8 text-center text-base text-[#131a28]">
+                            <DataTableRow className="border-ui-border-row bg-white">
+                                <DataTableCell colSpan={table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-3 py-8 text-center text-base text-text-workspace-dark">
                                     {table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

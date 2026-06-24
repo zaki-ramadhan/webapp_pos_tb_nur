@@ -6,9 +6,9 @@ import { CloseIcon } from '@/features/workspace/shared/Icons';
 function ItemCategoryFieldRow({ label, required = false, children, className = '' }) {
     return (
         <div className={`grid gap-3 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
-            <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
+            <label className="pt-2 text-xs sm:text-sm leading-6 text-brand-dark">
                 {label}
-                {required ? <span className="text-[#ED3969]"> *</span> : null}
+                {required ? <span className="text-tab-active-border-t"> *</span> : null}
             </label>
             <div>{children}</div>
         </div>
@@ -20,14 +20,14 @@ function ClearableTextInput({ value, onChange, className = '' }) {
         <TextInput
             value={value}
             onChange={onChange}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+            className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
+            inputClassName="text-xs sm:text-sm text-brand-dark"
             trailing={
                 value ? (
                     <button
                         type="button"
                         onClick={() => onChange({ target: { value: '' } })}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-[#111827] transition hover:bg-[#eef2f7]"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-text-darkest transition hover:bg-bg-workspace-light"
                         aria-label="Kosongkan nama kategori"
                     >
                         <CloseIcon className="h-4 w-4" strokeWidth={2.4} />
@@ -78,7 +78,7 @@ export function ItemCategoryGeneralTab({ config, values, onChange }) {
 export function ItemCategoryAccountsTab({ config, values, onAccountChange }) {
     return (
         <div className="max-w-[1180px] space-y-3">
-            <p className="pt-1 text-base italic leading-7 text-[#1f2436]">{config.accountIntro}</p>
+            <p className="pt-1 text-base italic leading-7 text-brand-dark">{config.accountIntro}</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
                 {config.accountFields.map((field) => (
@@ -96,8 +96,8 @@ export function ItemCategoryAccountsTab({ config, values, onAccountChange }) {
             </div>
 
             <div className="flex items-start gap-3 pt-1">
-                <span className="mt-0.5 h-6 w-[4px] shrink-0 rounded-full bg-[#b9bdc5]" />
-                <p className="text-sm italic leading-6 text-[#ef513f]">{config.accountNote}</p>
+                <span className="mt-0.5 h-6 w-[4px] shrink-0 rounded-full bg-bg-timeline-bar-gray" />
+                <p className="text-sm italic leading-6 text-red-ef513f">{config.accountNote}</p>
             </div>
         </div>
     );

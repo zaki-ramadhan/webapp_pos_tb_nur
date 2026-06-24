@@ -141,7 +141,7 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
 
     return (
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="shrink-0 border-b border-[#d5d9e1] bg-transparent pl-0 pr-2 pt-0 sm:pl-0 sm:pr-2.5">
+            <div className="shrink-0 border-b border-tab-inactive-bg bg-transparent pl-0 pr-2 pt-0 sm:pl-0 sm:pr-2.5">
                 <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-3">
                     <SecondaryTabs
                         tabs={innerTabs}

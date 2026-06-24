@@ -67,8 +67,8 @@ export function TransactionDataTable({
 
     return (
         <div className={minWidthClassName}>
-            <DataTable wrapperClassName="border-[#d1d8e4]">
-                <DataTableHeader className="bg-[#5f7690]">
+            <DataTable wrapperClassName="border-table-wrapper-border">
+                <DataTableHeader className="bg-table-header-bg">
                     <tr>
                         {activeShowNumbering && (
                             <DataTableHead className="w-[50px] px-3 text-center text-sm font-normal text-white">
@@ -104,18 +104,18 @@ export function TransactionDataTable({
                             return (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} ${customRowClassName}`.trim()}
+                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${customRowClassName}`.trim()}
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {activeShowNumbering && (
-                                        <DataTableCell className={`px-3 text-center text-sm text-[#646d83] ${cellClassName}`.trim()}>
+                                        <DataTableCell className={`px-3 text-center text-sm text-table-row-number ${cellClassName}`.trim()}>
                                             {index + 1}
                                         </DataTableCell>
                                     )}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-3 text-sm text-[#131a28] ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
+                                            className={`px-3 text-sm text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
                                         >
                                             {renderCell
                                                 ? renderCell({
@@ -132,13 +132,13 @@ export function TransactionDataTable({
                     ) : (
                         <DataTableRow className="bg-white">
                             {hasLeadingEmptyCell ? (
-                                <DataTableCell className="px-3 text-center text-[#a8afbe]">
+                                <DataTableCell className="px-3 text-center text-text-workspace-inactive">
                                     {emptyLeadingCellContent}
                                 </DataTableCell>
                             ) : null}
                             <DataTableCell
                                 colSpan={visibleColumns.length - (hasLeadingEmptyCell ? 1 : 0) + (activeShowNumbering ? 1 : 0)}
-                                className="px-3 py-3 text-center text-sm text-[#131a28]"
+                                className="px-3 py-3 text-center text-sm text-text-workspace-dark"
                             >
                                 {emptyLabel}
                             </DataTableCell>
@@ -164,8 +164,8 @@ export function TransactionLineItemsSection({
     searchReadOnly = false,
     searchInput = null,
     spacerHeaderContent = 'No.',
-    spacerCellContent = ({ index }) => <span className="text-center text-sm text-[#646d83] block w-full">{index + 1}</span>,
-    emptyLeadingCellContent = <span className="text-center text-sm text-[#a8afbe] block w-full">-</span>,
+    spacerCellContent = ({ index }) => <span className="text-center text-sm text-table-row-number block w-full">{index + 1}</span>,
+    emptyLeadingCellContent = <span className="text-center text-sm text-text-workspace-inactive block w-full">-</span>,
     onRowClick = null,
     getRowClassName = null,
     cellClassName = '',
@@ -182,9 +182,9 @@ export function TransactionLineItemsSection({
                             onChange={onSearchChange}
                             readOnly={searchReadOnly}
                             placeholder={searchPlaceholder}
-                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     )}
                 </div>
@@ -193,7 +193,7 @@ export function TransactionLineItemsSection({
                     {showTitleSearchButton ? (
                         <button
                             type="button"
-                            className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[4px] border border-[#cfd6e2] bg-white text-[#21539b]"
+                            className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[4px] border border-ui-border bg-white text-brand-blue-accent"
                             aria-label={`Cari ${title}`}
                         >
                             <SearchIcon className="h-5 w-5" />
@@ -201,7 +201,7 @@ export function TransactionLineItemsSection({
                     ) : null}
                     <div className={TRANSACTION_LINE_TITLE_CLASS_NAME}>
                         {title}
-                        {titleRequired ? <span className="text-[#ED3969]"> *</span> : null}
+                        {titleRequired ? <span className="text-tab-active-border-t"> *</span> : null}
                     </div>
                 </div>
             </div>

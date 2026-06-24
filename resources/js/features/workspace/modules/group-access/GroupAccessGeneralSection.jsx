@@ -17,12 +17,12 @@ export function GroupAccessAccessOption({ option, checked, onChange, children })
                         <span>{option.label}</span>
                         {option.info ? (
                             <Tooltip content="Membatasi waktu akses login pengguna ke sistem." portal>
-                                <InfoIcon className="h-[18px] w-[18px] text-[#2f374d] cursor-help" />
+                                <InfoIcon className="h-[18px] w-[18px] text-section-tab-neutral-text cursor-help" />
                             </Tooltip>
                         ) : null}
                     </span>
                 }
-                inputClassName="h-5 w-5 border-[#c7d0df]"
+                inputClassName="h-5 w-5 border-tab-view-active-border-x"
                 containerClassName="w-auto inline-flex items-center"
             />
             {checked && children}
@@ -45,8 +45,8 @@ export function GroupAccessGeneralSection({
     return (
         <div>
             <div className="grid gap-y-6 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
-                <label htmlFor={general.nameField?.id} className="pt-2 text-xs sm:text-sm text-[#20273b]">
-                    {general.nameField?.label} <span className="text-[#ED3969]">*</span>
+                <label htmlFor={general.nameField?.id} className="pt-2 text-xs sm:text-sm text-section-tab-accent-text">
+                    {general.nameField?.label} <span className="text-tab-active-border-t">*</span>
                 </label>
                 <div className="max-w-[580px]">
                     <TextInputComponent
@@ -54,14 +54,14 @@ export function GroupAccessGeneralSection({
                         value={values.groupName}
                         onChange={(event) => onChangeName(event.target.value)}
                         trailing={
-                            general.nameField?.clearable ? <CloseIcon className="h-[18px] w-[18px] text-[#2f374d]" /> : null
+                            general.nameField?.clearable ? <CloseIcon className="h-[18px] w-[18px] text-section-tab-neutral-text" /> : null
                         }
-                        className="h-[40px] rounded-[4px] border-[#7fb0ee] shadow-[0_0_0_3px_rgba(127,176,238,0.12)]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-blue-7fb0ee shadow-focus-blue-medium"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
 
-                <div className="pt-2 text-xs sm:text-sm text-[#20273b]">{general.accessLimitations?.label}</div>
+                <div className="pt-2 text-xs sm:text-sm text-section-tab-accent-text">{general.accessLimitations?.label}</div>
                 <div className="flex flex-col gap-4 pt-1">
                     {(general.accessLimitations?.options ?? []).map((option) => {
                         const isChecked = values.accessLimitationId === option.id;
@@ -78,7 +78,7 @@ export function GroupAccessGeneralSection({
                                             <SelectField
                                                 value={values.accessLimitDays}
                                                 onChange={(e) => onChangeAccessLimitDays(e.target.value)}
-                                                className="h-[38px] min-w-[130px] text-xs sm:text-sm text-[#1f2436]"
+                                                className="h-[38px] min-w-[130px] text-xs sm:text-sm text-brand-dark"
                                                 containerClassName="w-auto"
                                             >
                                                 <option value="Senin-Jumat">Senin-Jumat</option>
@@ -86,12 +86,12 @@ export function GroupAccessGeneralSection({
                                                 <option value="Setiap Hari">Setiap Hari</option>
                                             </SelectField>
 
-                                            <span className="text-xs sm:text-sm text-[#20273b]">Jam</span>
+                                            <span className="text-xs sm:text-sm text-section-tab-accent-text">Jam</span>
 
                                             <SelectField
                                                 value={values.accessLimitStartHour}
                                                 onChange={(e) => onChangeAccessLimitStartHour(e.target.value)}
-                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-[#1f2436]"
+                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-brand-dark"
                                                 containerClassName="w-auto"
                                             >
                                                 {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
@@ -99,12 +99,12 @@ export function GroupAccessGeneralSection({
                                                 ))}
                                             </SelectField>
 
-                                            <span className="text-xs sm:text-sm text-[#20273b]">-</span>
+                                            <span className="text-xs sm:text-sm text-section-tab-accent-text">-</span>
 
                                             <SelectField
                                                 value={values.accessLimitEndHour}
                                                 onChange={(e) => onChangeAccessLimitEndHour(e.target.value)}
-                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-[#1f2436]"
+                                                className="h-[38px] w-[60px] text-xs sm:text-sm text-brand-dark"
                                                 containerClassName="w-auto"
                                             >
                                                 {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((hour) => (
@@ -113,7 +113,7 @@ export function GroupAccessGeneralSection({
                                             </SelectField>
                                         </div>
 
-                                        <div className="flex items-center gap-2 text-sm italic text-[#e15263] border-l-2 border-[#cfd6e2] pl-2.5 py-0.5 leading-none">
+                                        <div className="flex items-center gap-2 text-sm italic text-red-e15263 border-l-2 border-ui-border pl-2.5 py-0.5 leading-none">
                                             Waktu Jakarta - Indonesia
                                         </div>
                                     </div>
@@ -123,7 +123,7 @@ export function GroupAccessGeneralSection({
                     })}
                 </div>
 
-                <div className="pt-2 text-xs sm:text-sm text-[#20273b]">{general.userSelection?.label}</div>
+                <div className="pt-2 text-xs sm:text-sm text-section-tab-accent-text">{general.userSelection?.label}</div>
                 <GroupAccessUserLookupField
                     field={general.userSelection}
                     selectedUsers={values.selectedUsers}

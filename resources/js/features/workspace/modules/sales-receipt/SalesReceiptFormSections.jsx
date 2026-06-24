@@ -63,7 +63,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
 
     return (
         <section className="min-h-[540px]">
-            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3 border-b border-ui-border-medium pb-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1 sm:max-w-[560px]">
                         <TextInput
@@ -76,16 +76,16 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                 }));
                             }}
                             placeholder="Cari/Pilih..."
-                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 
                     {isDetail ? (
                         <button
                             type="button"
-                            className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                            className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
                             onClick={handlers.onSelectInvoice}
                         >
                             Ambil
@@ -95,21 +95,21 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
 
                 <div className="flex items-center justify-end gap-3">
                     <TransactionToolbarIconButton label="Cari faktur" className="h-[40px] w-[40px]" onClick={handlers.onSelectInvoice}>
-                        <SearchIcon className="h-5 w-5 text-[#2353a0]" />
+                        <SearchIcon className="h-5 w-5 text-brand-blue" />
                     </TransactionToolbarIconButton>
-                    <div className="text-right text-2xl font-normal text-[#1f2436]">
+                    <div className="text-right text-2xl font-normal text-brand-dark">
                         {buildInvoiceSectionTitle(
                             config.sectionTabs?.find((tab) => tab.id === 'details')?.label ?? 'Faktur',
                             values.invoices.length,
                         )}
-                        <span className="text-[#ED3969]"> *</span>
+                        <span className="text-tab-active-border-t"> *</span>
                     </div>
                 </div>
             </div>
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1020px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable className="min-w-[1020px]" wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {config.invoiceTable.columns.map((column) => (
                                 <DataTableHead
@@ -138,8 +138,8 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                             filteredInvoices.map((invoice, index) => (
                                 <DataTableRow
                                     key={invoice.id}
-                                    className={`border-[#dde1e8] transition ${invoice.modal ? 'cursor-pointer hover:bg-[#eef3fb]' : ''} ${
-                                        index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'
+                                    className={`border-ui-border-row transition ${invoice.modal ? 'cursor-pointer hover:bg-workspace-hover-bg' : ''} ${
+                                        index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
                                     }`.trim()}
                                     onClick={() => {
                                         if (invoice.modal) {
@@ -150,10 +150,10 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                     {config.invoiceTable.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-text-workspace-dark`.trim()}
                                         >
                                             {column.id === 'spacer' ? (
-                                                <span className="inline-flex items-center justify-center text-[#a8afbe]">
+                                                <span className="inline-flex items-center justify-center text-text-workspace-inactive">
                                                     <TableActionIcon className="h-4 w-4" />
                                                 </span>
                                             ) : (
@@ -164,15 +164,15 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                 </DataTableRow>
                             ))
                         ) : (
-                            <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell className="px-2.5 text-center text-[#a8afbe]">
+                            <DataTableRow className="border-ui-border-row bg-white">
+                                <DataTableCell className="px-2.5 text-center text-text-workspace-inactive">
                                     <span className="inline-flex items-center justify-center">
                                         <TableActionIcon className="h-4 w-4" />
                                     </span>
                                 </DataTableCell>
                                 <DataTableCell
                                     colSpan={config.invoiceTable.columns.length - 1}
-                                    className="px-2.5 py-6 text-center text-base text-[#7d879a]"
+                                    className="px-2.5 py-6 text-center text-base text-text-placeholder"
                                 >
                                     {config.invoiceTable.emptyLabel}
                                 </DataTableCell>
@@ -204,8 +204,8 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                                     paymentMethod: event.target.value,
                                 }))
                             }
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             {['Tunai', 'Cek/Giro'].map((option) => (
                                 <option key={option} value={option}>
@@ -223,9 +223,9 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                                         checkNumber: event.target.value,
                                     }))
                                 }
-                                trailing={isDetail ? <span className="text-lg font-semibold text-[#1f2436]">×</span> : null}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                trailing={isDetail ? <span className="text-lg font-semibold text-brand-dark">×</span> : null}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
                             />
                         ) : null}
@@ -272,20 +272,20 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                             }))
                         }
                         rows={4}
-                        className="min-h-[72px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                        className="min-h-[72px] w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none"
                     />
 
                     {isDetail ? (
                         <>
                             <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                            <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus || 'Belum'}</div>
+                            <div className="pt-1 text-base italic text-brand-dark">{values.reconcileStatus || 'Belum'}</div>
 
                             <TransactionFieldLabel label={config.labels.printStatus} />
                             <TextInput
                                 value={values.printStatus}
                                 readOnly
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#5f6779]"
+                                className="h-[34px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-text-workspace-muted"
                             />
                         </>
                     ) : null}

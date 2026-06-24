@@ -24,8 +24,8 @@ export function PayrollHeader({ config, values, setValues }) {
                     <SelectField
                         value={values.paymentType}
                         onChange={(event) => setValues((current) => ({ ...current, paymentType: event.target.value }))}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
                     >
                         {config.paymentTypeOptions.map((option) => (
                             <option key={option} value={option}>
@@ -41,8 +41,8 @@ export function PayrollHeader({ config, values, setValues }) {
                         <SelectField
                             value={values.month}
                             onChange={(event) => setValues((current) => ({ ...current, month: event.target.value }))}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             {config.monthOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -54,8 +54,8 @@ export function PayrollHeader({ config, values, setValues }) {
                         <SelectField
                             value={values.year}
                             onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             {config.yearOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -85,8 +85,8 @@ export function PayrollHeader({ config, values, setValues }) {
                             value={values.numberingType}
                             onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
                             containerClassName="flex-1 min-w-0"
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             {config.numberingOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -117,7 +117,7 @@ export function PayrollHeader({ config, values, setValues }) {
                         <button
                             type="button"
                             disabled
-                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-[#d3d7df] bg-[#f3f3f4] px-3 text-base text-[#b1b5be]"
+                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-border-input-compact bg-input-prefix-bg px-3 text-base text-tab-inactive-border-l"
                         >
                             {config.processButtonLabel}
                         </button>
@@ -142,10 +142,10 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
                             }))
                         }
                         placeholder={config.employeeLookupPlaceholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
+                        trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
                         containerClassName="w-full sm:max-w-[360px]"
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
 
                     <TransactionHeaderButton
@@ -155,8 +155,8 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
                     />
                 </div>
 
-                <div className="text-right text-2xl font-normal text-[#1f2436]">
-                    {config.employeeSectionTitle} <span className="text-[#ED3969]">*</span>
+                <div className="text-right text-2xl font-normal text-brand-dark">
+                    {config.employeeSectionTitle} <span className="text-tab-active-border-t">*</span>
                 </div>
             </div>
 
@@ -219,8 +219,8 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
                             }))
                         }
                         rows={4}
-                        className="border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                        className="border-ui-border"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
             </div>

@@ -33,9 +33,9 @@ export function buildFormState(source = {}) {
 
 export function FieldLabel({ label, required = false, className = '' }) {
     return (
-        <label className={`text-xs sm:text-sm text-[#1f2436] ${className}`.trim()}>
+        <label className={`text-xs sm:text-sm text-brand-dark ${className}`.trim()}>
             {label}
-            {required ? <span className="text-[#ED3969]"> *</span> : null}
+            {required ? <span className="text-tab-active-border-t"> *</span> : null}
         </label>
     );
 }
@@ -76,7 +76,7 @@ export function ToolbarIconAction({ icon, label }) {
             type="button"
             aria-label={label}
             title={label}
-            className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+            className="inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
         >
             {renderedIcon}
         </button>
@@ -84,7 +84,7 @@ export function ToolbarIconAction({ icon, label }) {
 }
 
 export function SectionHeading({ title }) {
-    return <h3 className="border-b border-[#d9dee8] pb-3 text-2xl font-normal text-[#1564d7]">{title}</h3>;
+    return <h3 className="border-b border-ui-border-medium pb-3 text-2xl font-normal text-blue-1564d7">{title}</h3>;
 }
 
 export function AddressStack({ prefixValue, values, readOnly = false, onChange = null }) {
@@ -104,8 +104,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 rows={4}
                 prefix={prefixValue}
                 className="rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
-                textareaClassName="min-h-[112px] text-xs sm:text-sm text-[#1f2436]"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                textareaClassName="min-h-[112px] text-xs sm:text-sm text-brand-dark"
             />
 
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
@@ -115,8 +115,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                         readOnly
                         prefix="Kota"
                         className="h-[40px] rounded-[4px] border-slate-400"
-                        prefixClassName="min-w-[62px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        prefixClassName="min-w-[62px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 ) : (
                     <CityAutocompleteInput
@@ -124,7 +124,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                         onChange={(nextValue) => onChange?.('city', nextValue)}
                         onSelectCity={handleSelectCity}
                         prefix="Kota"
-                        prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
+                        prefixClassName="min-w-[62px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text"
                         dropdownLeftOffsetClassName="left-[62px]"
                     />
                 )}
@@ -134,8 +134,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                     readOnly={readOnly}
                     prefix="K.Pos"
                     className="h-[40px] rounded-[4px] border-slate-400"
-                    prefixClassName="min-w-[62px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    prefixClassName="min-w-[62px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                    inputClassName="text-xs sm:text-sm text-brand-dark"
                 />
             </div>
 
@@ -145,8 +145,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 readOnly={readOnly}
                 prefix="Provinsi"
                 className="h-[40px] rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
-                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                inputClassName="text-xs sm:text-sm text-brand-dark"
             />
 
             <TextInput
@@ -155,8 +155,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 readOnly={readOnly}
                 prefix="Negara"
                 className="h-[40px] rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-[#f3f3f4] px-3 text-[#8b94a7]"
-                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                inputClassName="text-xs sm:text-sm text-brand-dark"
             />
         </div>
     );
@@ -164,8 +164,8 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
 
 export function EmptyDataTable({ columns, emptyLabel }) {
     return (
-        <DataTable wrapperClassName="border-[#d1d8e4]">
-            <DataTableHeader className="bg-[#5f7690]">
+        <DataTable wrapperClassName="border-table-wrapper-border">
+            <DataTableHeader className="bg-table-header-bg">
                 <tr>
                     {columns.map((column) => (
                         <DataTableHead
@@ -180,7 +180,7 @@ export function EmptyDataTable({ columns, emptyLabel }) {
 
             <DataTableBody>
                 <DataTableRow className="bg-white">
-                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-text-workspace-dark">
                         {emptyLabel}
                     </DataTableCell>
                 </DataTableRow>

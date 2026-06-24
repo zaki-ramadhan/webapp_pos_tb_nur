@@ -105,7 +105,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
                     {isDetail || values.transferWords ? (
                         <>
                             <div />
-                            <div className="text-base italic text-[#1f2436]">{values.transferWords}</div>
+                            <div className="text-base italic text-brand-dark">{values.transferWords}</div>
                         </>
                     ) : null}
                 </section>
@@ -139,7 +139,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
                     {isDetail || values.resultWords ? (
                         <>
                             <div />
-                            <div className="text-base italic text-[#1f2436]">{values.resultWords}</div>
+                            <div className="text-base italic text-brand-dark">{values.resultWords}</div>
                         </>
                     ) : null}
                 </section>

@@ -12,7 +12,7 @@ export function ReadonlyTransactionTextarea({ value, rows = 3, className = '' })
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none ${className}`.trim()}
         />
     );
 }
@@ -20,10 +20,10 @@ export function ReadonlyTransactionTextarea({ value, rows = 3, className = '' })
 export function DepositStamp({ label, tone = 'blue', className = '' }) {
     const toneClassName =
         tone === 'gray'
-            ? 'border-[#bebfc8] text-[#b8bac3]'
+            ? 'border-border-badge-neutral text-text-badge-neutral'
             : tone === 'green'
-              ? 'border-[#8bd987] text-[#8ccc81]'
-              : 'border-[#7fd1ff] text-[#7dcaf4]';
+              ? 'border-status-success-badge-border text-status-success-badge-text'
+              : 'border-blue-7fd1ff text-blue-7dcaf4';
 
     return (
         <div
@@ -46,8 +46,8 @@ export function DepositStamp({ label, tone = 'blue', className = '' }) {
 export function DepositStatusPill({ value }) {
     const toneClassName =
         value === 'Lunas'
-            ? 'border-[#bcebc1] bg-[#effcf0] text-[#2db757]'
-            : 'border-[#ffd08c] bg-[#fff5e7] text-[#ff8d08]';
+            ? 'border-green-bcebc1 bg-success-bg text-text-badge-success-alt'
+            : 'border-status-warning-badge-border bg-bg-badge-warning-alt text-status-warning-badge-text';
 
     return (
         <span className={`inline-flex rounded-[4px] border px-3 py-1 text-base ${toneClassName}`.trim()}>
@@ -58,14 +58,14 @@ export function DepositStatusPill({ value }) {
 
 export function DepositAmountField({ prefix = 'Rp', value, className = '' }) {
     return (
-        <div className={`flex h-[34px] overflow-hidden rounded-[4px] border border-[#cfd6e2] ${className}`.trim()}>
-            <span className="inline-flex items-center border-r border-[#d8dde7] bg-[#f5f6f8] px-3 text-base text-[#9aa3b1]">
+        <div className={`flex h-[34px] overflow-hidden rounded-[4px] border border-ui-border ${className}`.trim()}>
+            <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-3 text-base text-text-inactive">
                 {prefix}
             </span>
-            <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-[#111827]">
+            <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-text-darkest">
                 {value}
             </span>
-            <span className="inline-flex w-10 items-center justify-center border-l border-[#d8dde7] text-[#1f2436]">
+            <span className="inline-flex w-10 items-center justify-center border-l border-ui-border-medium text-brand-dark">
                 <NavigationIcon type="payment" className="h-4 w-4 text-current" />
             </span>
         </div>
@@ -83,24 +83,24 @@ export function DepositFooterSummary({ items = [] }) {
     return (
         <div className="flex justify-end">
             <div
-                className={`grid w-full max-w-[866px] overflow-hidden rounded-[4px] border border-[#d2d8e3] bg-white shadow-[0_4px_10px_rgba(15,23,42,0.08)] ${gridTemplateClassName}`.trim()}
+                className={`grid w-full max-w-[866px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridTemplateClassName}`.trim()}
             >
                 {items.map((item, index) => (
                     <div
                         key={item.id ?? item.label}
-                        className={`border-b border-[#e4e8f0] px-4 py-3 last:border-b-0 md:border-b-0 md:px-5 ${
+                        className={`border-b border-ui-border-light px-4 py-3 last:border-b-0 md:border-b-0 md:px-5 ${
                             index < items.length - 1 ? 'md:border-r' : ''
                         }`.trim()}
                     >
-                        <div className="flex items-center gap-2 text-xs sm:text-sm text-[#1f2436]">
+                        <div className="flex items-center gap-2 text-xs sm:text-sm text-brand-dark">
                             <span>{item.label}</span>
                             {item.badge ? (
-                                <span className="inline-flex rounded-[4px] border border-[#8ab2ea] px-1.5 py-0.5 text-xs text-[#21539b]">
+                                <span className="inline-flex rounded-[4px] border border-blue-7fb0ee px-1.5 py-0.5 text-xs text-brand-blue-accent">
                                     {item.badge}
                                 </span>
                             ) : null}
                         </div>
-                        <div className="mt-2 text-right text-lg font-semibold text-[#111827]">{item.value}</div>
+                        <div className="mt-2 text-right text-lg font-semibold text-text-darkest">{item.value}</div>
                     </div>
                 ))}
             </div>
@@ -111,31 +111,31 @@ export function DepositFooterSummary({ items = [] }) {
 export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], emptyLabel = 'Belum ada data.' }) {
     return (
         <section>
-            <div className="flex items-center gap-3 border-b border-[#d8dde7] pb-3">
-                <NavigationIcon type={icon} className="h-5 w-5 text-[#2f78e5]" />
-                <h3 className="text-2xl font-normal text-[#1564d7]">{title}</h3>
+            <div className="flex items-center gap-3 border-b border-ui-border-medium pb-3">
+                <NavigationIcon type={icon} className="h-5 w-5 text-blue-2f78e5" />
+                <h3 className="text-2xl font-normal text-blue-1564d7">{title}</h3>
             </div>
 
             <div className="mt-4">
                 {rows.length ? (
-                    <div className="rounded-[4px] border border-[#d8dde7] bg-white">
+                    <div className="rounded-[4px] border border-ui-border-medium bg-white">
                         {rows.map((item, index) => (
                             <div
                                 key={item.id}
                                 className={`grid grid-cols-[minmax(0,1fr)_auto] gap-3 px-4 py-3 ${
-                                    index > 0 ? 'border-t border-[#e6ebf2]' : ''
+                                    index > 0 ? 'border-t border-border-ui-border-lightest' : ''
                                 }`.trim()}
                             >
                                 <div>
-                                    <div className="text-base font-semibold text-[#1661d8]">{item.number}</div>
-                                    <div className="mt-1 text-sm text-[#1f2436]">{item.date}</div>
+                                    <div className="text-base font-semibold text-blue-1564d7">{item.number}</div>
+                                    <div className="mt-1 text-sm text-brand-dark">{item.date}</div>
                                 </div>
-                                <div className="text-right text-base font-semibold text-[#111827]">{item.amount}</div>
+                                <div className="text-right text-base font-semibold text-text-darkest">{item.amount}</div>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="rounded-[4px] border border-dashed border-[#d8dde7] px-4 py-6 text-base text-[#7d879a]">
+                    <div className="rounded-[4px] border border-dashed border-ui-border-medium px-4 py-6 text-base text-text-placeholder">
                         {emptyLabel}
                     </div>
                 )}

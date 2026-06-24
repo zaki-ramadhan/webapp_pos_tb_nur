@@ -44,7 +44,7 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
                 onChange: (event) => setKeyword(event.target.value),
                 placeholder: table.searchPlaceholder,
                 widthClassName: 'sm:w-[342px]',
-                trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
             }}
             pageValue={table.pageValue}
             className="space-y-3"
@@ -62,9 +62,9 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
                                     }))
                                 }
                                 containerClassName="w-auto"
-                                className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                                iconClassName="mr-2 text-[#6c7894]"
+                                className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                                selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                                iconClassName="mr-2 text-filter-icon"
                             >
                                 {filter.options.map((option) => (
                                     <option key={option.value} value={option.value}>
@@ -76,7 +76,7 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
 
                         <button
                             type="button"
-                            className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                            className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                             aria-label={table.filterButtonLabel}
                         >
                             <FunnelIcon className="h-5 w-5" />
@@ -130,7 +130,7 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
 
     return (
         <div className="flex min-h-full flex-col gap-3">
-            <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+            <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
                 <PayrollTableToolbar
                     table={config.table}
                     filters={filters}
@@ -153,7 +153,7 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
                                 tabLabel: row.number,
                             })
                         }
-                        getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                        getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
                         renderHeaderCell={(column) => (
                             <span
                                 className={`flex items-center gap-2 ${

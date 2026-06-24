@@ -23,8 +23,8 @@ function TableFilterField({ filter, value, onChange }) {
         <SelectField
             value={value}
             onChange={(event) => onChange(filter.id, event.target.value)}
-            className="h-[40px] min-w-[110px] rounded-[4px] border-[#cfd6e2]"
-            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+            className="h-[40px] min-w-[110px] rounded-[4px] border-ui-border"
+            selectClassName="text-xs sm:text-sm text-brand-dark"
             containerClassName="w-auto"
         >
             {(filter.options ?? []).map((option) => (
@@ -114,7 +114,7 @@ export default function ItemRequestTableView({
     };
 
     return (
-        <div className="flex min-h-full flex-col gap-3 rounded-[6px] border border-[#cfd6e2] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)] sm:px-4">
+        <div className="flex min-h-full flex-col gap-3 rounded-[6px] border border-ui-border bg-white px-3 py-3 shadow-card-light sm:px-4">
             <TableToolbar
                 filters={
                     config.table.filters?.length ? (
@@ -168,7 +168,7 @@ export default function ItemRequestTableView({
                             tabLabel: row.number,
                         })
                     }
-                    getRowClassName={() => 'cursor-pointer hover:bg-[#eef3fb]'}
+                    getRowClassName={() => 'cursor-pointer hover:bg-workspace-hover-bg'}
                     renderHeaderCell={(column) => (
                         <span
                             className={`flex items-center gap-2 ${

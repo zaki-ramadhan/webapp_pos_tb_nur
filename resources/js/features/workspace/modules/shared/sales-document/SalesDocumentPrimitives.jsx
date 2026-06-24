@@ -60,7 +60,7 @@ export function ReadonlyDocumentTextarea({ value, rows = 3, className = '' }) {
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none ${className}`.trim()}
         />
     );
 }
@@ -68,10 +68,10 @@ export function ReadonlyDocumentTextarea({ value, rows = 3, className = '' }) {
 export function DocumentStamp({ label, tone, className = '' }) {
     const toneClassName =
         tone === 'blue'
-            ? 'border-[#7fd1ff] text-[#7dcaf4]'
+            ? 'border-blue-7fd1ff text-blue-7dcaf4'
             : tone === 'gray'
-              ? 'border-[#bebfc8] text-[#b8bac3]'
-              : 'border-[#8bd987] text-[#8ccc81]';
+              ? 'border-border-badge-neutral text-text-badge-neutral'
+              : 'border-status-success-badge-border text-status-success-badge-text';
 
     return (
         <div
@@ -121,20 +121,20 @@ export function SearchableTableSection({
     const titleContent = (
         <>
             {title}
-            {titleRequired ? <span className="text-[#ED3969]"> *</span> : null}
+            {titleRequired ? <span className="text-tab-active-border-t"> *</span> : null}
         </>
     );
     const hasRows = rows.length > 0;
 
     return (
         <div className={`flex flex-col ${hasRows ? 'min-h-[540px] sm:min-h-[620px]' : 'min-h-[240px] sm:min-h-[260px]'}`.trim()}>
-            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 border-b border-ui-border-medium pb-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className={`flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center ${hideSearchField ? '' : 'sm:max-w-[640px]'}`.trim()}>
                     {leadingAction ? (
                         <button
                             type="button"
                             onClick={leadingAction.onClick}
-                            className="inline-flex h-[40px] w-full shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-5 text-base text-[#21539b] sm:w-auto hover:bg-[#f3f7fc] transition"
+                            className="inline-flex h-[40px] w-full shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-5 text-base text-brand-blue-accent sm:w-auto hover:bg-brand-blue-lightest transition"
                         >
                             {leadingAction.label}
                         </button>
@@ -149,9 +149,9 @@ export function SearchableTableSection({
                                     value={searchValue}
                                     readOnly
                                     placeholder={searchPlaceholder}
-                                    trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
+                                    className="h-[40px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                 />
                             )}
                         </div>
@@ -162,31 +162,31 @@ export function SearchableTableSection({
                     {showTitleSearchButton ? (
                         <button
                             type="button"
-                            className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[4px] border border-[#cfd6e2] bg-white text-[#1f2436]"
+                            className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[4px] border border-ui-border bg-white text-brand-dark"
                             aria-label={`Cari ${title}`}
                         >
-                            <SearchIcon className="h-5 w-5 text-[#1f2436]" />
+                            <SearchIcon className="h-5 w-5 text-brand-dark" />
                         </button>
                     ) : null}
 
                     {onTitleClick ? (
                         <button
                             type="button"
-                            className="text-left text-xl font-normal text-[#1f2436] sm:text-right sm:text-2xl"
+                            className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl"
                             onClick={onTitleClick}
                         >
                             {titleContent}
                         </button>
                     ) : (
-                        <div className="text-left text-xl font-normal text-[#1f2436] sm:text-right sm:text-2xl">{titleContent}</div>
+                        <div className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl">{titleContent}</div>
                     )}
                 </div>
             </div>
 
             <div className={`mt-4 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
                 <div className={minWidthClassName}>
-                    <DataTable wrapperClassName="border-[#d1d8e4]">
-                        <DataTableHeader className="bg-[#5f7690]">
+                    <DataTable wrapperClassName="border-table-wrapper-border">
+                        <DataTableHeader className="bg-table-header-bg">
                             <tr>
                                 {columns.map((column) => (
                                     <DataTableHead
@@ -213,16 +213,16 @@ export function SearchableTableSection({
                                     return (
                                         <DataTableRow
                                             key={row.id}
-                                            className={`border-[#dde1e8] bg-white ${rowClickable ? 'cursor-pointer hover:bg-[#eef3fb]' : ''}`.trim()}
+                                            className={`border-ui-border-row bg-white ${rowClickable ? 'cursor-pointer hover:bg-workspace-hover-bg' : ''}`.trim()}
                                             onClick={rowClickable ? () => onRowClick(row) : undefined}
                                         >
                                             {columns.map((column) => (
                                                 <DataTableCell
                                                     key={column.id}
-                                                    className={`px-3 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
+                                                    className={`px-3 text-base text-text-workspace-dark ${resolveCellAlignClassName(column.align)}`.trim()}
                                                 >
                                                     {column.kind === 'spacer' ? (
-                                                        <span className="inline-flex items-center justify-center text-[#a8afbe]">
+                                                        <span className="inline-flex items-center justify-center text-text-workspace-inactive">
                                                             <TableActionIcon className="h-4 w-4" />
                                                         </span>
                                                     ) : (
@@ -235,7 +235,7 @@ export function SearchableTableSection({
                                 })
                             ) : (
                                 <DataTableRow className="bg-white">
-                                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-text-workspace-dark">
                                         {emptyLabel}
                                     </DataTableCell>
                                 </DataTableRow>

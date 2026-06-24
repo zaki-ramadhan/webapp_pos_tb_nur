@@ -97,7 +97,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
     }, [cleanedColumns, filteredRows]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 resourceName="journal-activity-log"
                 size="compact"
@@ -115,8 +115,8 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                                         }))
                                     }
                                     containerClassName="w-auto shrink-0"
-                                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2] sm:min-w-[138px]"
-                                    selectClassName="text-xs sm:text-sm text-[#394157]"
+                                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border sm:min-w-[138px]"
+                                    selectClassName="text-xs sm:text-sm text-filter-select-text"
                                 >
                                     {filter.options.map((option) => (
                                         <option key={option.value} value={option.value}>
@@ -153,14 +153,14 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                     onChange: (event) => setKeyword(event.target.value),
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[342px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
                 pageValue={filteredRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable className="min-w-[1380px]" wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {filteredRows.length > 0 && (
                                 <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
@@ -183,8 +183,8 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                        index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'
+                                    className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
+                                        index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
                                     }`.trim()}
                                     onClick={() =>
                                         onOpenDetail?.({
@@ -194,13 +194,13 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                                         })
                                     }
                                 >
-                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
                                         {config.table.pagination ? (config.table.pagination.from + index) : (index + 1)}
                                     </DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className="px-2.5 text-base text-[#131a28]"
+                                            className="px-2.5 text-base text-text-workspace-dark"
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -209,7 +209,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

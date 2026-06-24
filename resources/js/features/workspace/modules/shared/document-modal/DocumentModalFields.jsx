@@ -15,9 +15,9 @@ export function DocumentModalCurrencyField({
             onChange={onChange}
             readOnly={readOnly}
             prefix={prefix}
-            className={`h-[36px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName="min-w-[48px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-            inputClassName={`text-right text-xs sm:text-sm text-[#111827] ${inputClassName}`.trim()}
+            className={`h-[36px] rounded-[4px] border-ui-border ${className}`.trim()}
+            prefixClassName="min-w-[48px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+            inputClassName={`text-right text-xs sm:text-sm text-text-darkest ${inputClassName}`.trim()}
         />
     );
 }
@@ -33,7 +33,7 @@ export function DocumentModalCurrencyReadonlyField({
             {prefixAction ? (
                 <button
                     type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#21539b]"
+                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue-accent"
                     aria-label={prefixAction.ariaLabel ?? 'Aksi harga'}
                 >
                     {prefixAction.content}
@@ -43,10 +43,10 @@ export function DocumentModalCurrencyReadonlyField({
                 value={value ?? ''}
                 readOnly
                 prefix={prefix}
-                trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
-                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                prefixClassName="min-w-[48px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                inputClassName="text-right text-xs sm:text-sm font-normal text-[#111827]"
+                trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                className="h-[34px] rounded-[4px] border-ui-border"
+                prefixClassName="min-w-[48px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+                inputClassName="text-right text-xs sm:text-sm font-normal text-text-darkest"
                 trailingClassName="px-3"
             />
         </div>
@@ -59,7 +59,7 @@ export function ReadonlyDocumentTextarea({ value, rows = 3, className = '' }) {
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none ${className}`.trim()}
         />
     );
 }

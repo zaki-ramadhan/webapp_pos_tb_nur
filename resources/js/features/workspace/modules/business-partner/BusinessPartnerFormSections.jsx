@@ -43,10 +43,10 @@ function CustomerOthersTab({ config, values, onChange }) {
                             <TextInput
                                 value={values.receivableAgeDays}
                                 onChange={(event) => onChange('receivableAgeDays', event.target.value)}
-                                className="h-[40px] w-[130px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[40px] w-[130px] rounded-[4px] border-ui-border"
+                                inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                             />
-                            <span className="text-xs sm:text-sm text-[#1f2436]">Hari</span>
+                            <span className="text-xs sm:text-sm text-brand-dark">Hari</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3">
@@ -63,8 +63,8 @@ function CustomerOthersTab({ config, values, onChange }) {
                             <TextInput
                                 value={values.receivableAmount}
                                 onChange={(event) => onChange('receivableAmount', event.target.value)}
-                                className="h-[40px] w-[280px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-right text-xs sm:text-sm text-[#8a8f98]"
+                                className="h-[40px] w-[280px] rounded-[4px] border-ui-border"
+                                inputClassName="text-right text-xs sm:text-sm text-gray-8a8f98"
                             />
                         </div>
                     </div>
@@ -94,8 +94,8 @@ function CustomerOthersTab({ config, values, onChange }) {
                             value={values.notes}
                             onChange={(event) => onChange('notes', event.target.value)}
                             rows={4}
-                            className="rounded-[4px] border-[#cfd6e2]"
-                            textareaClassName="min-h-[98px] text-xs sm:text-sm text-[#1f2436]"
+                            className="rounded-[4px] border-ui-border"
+                            textareaClassName="min-h-[98px] text-xs sm:text-sm text-brand-dark"
                         />
                     </FormFieldRow>
                 </div>
@@ -118,9 +118,9 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                             value={values.defaultDiscountPercent}
                             onChange={(event) => onChange('defaultDiscountPercent', event.target.value)}
                             prefix="%"
-                            className="h-[40px] max-w-[360px] rounded-[4px] border-[#cfd6e2]"
-                            prefixClassName="min-w-[34px] bg-[#f5f6f8] px-3 text-[#9aa3b1]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] max-w-[360px] rounded-[4px] border-ui-border"
+                            prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </FormFieldRow>
 
@@ -129,8 +129,8 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                             value={values.defaultDescription}
                             onChange={(event) => onChange('defaultDescription', event.target.value)}
                             rows={3}
-                            className="rounded-[4px] border-[#cfd6e2]"
-                            textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
+                            className="rounded-[4px] border-ui-border"
+                            textareaClassName="min-h-[72px] text-xs sm:text-sm text-brand-dark"
                         />
                     </FormFieldRow>
                 </div>
@@ -161,7 +161,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                         </FormFieldRow>
                     </div>
 
-                    <p className="mt-4 max-w-[620px] border-l-[4px] border-[#8e8f91] pl-3 text-sm italic leading-7 text-[#ef513f]">
+                    <p className="mt-4 max-w-[620px] border-l-[4px] border-gray-8a8f98 pl-3 text-sm italic leading-7 text-red-ef513f">
                         {purchaseConfig.accountNote}
                     </p>
                 </div>
@@ -174,7 +174,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                     <button
                         type="button"
                         aria-label={purchaseConfig.bankAddLabel}
-                        className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                        className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
                     >
                         <PlusIcon className="h-5 w-5" />
                     </button>
@@ -212,8 +212,8 @@ function SupplierOthersTab({ config, values, onChange }) {
                         value={values.notes}
                         onChange={(event) => onChange('notes', event.target.value)}
                         rows={4}
-                        className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[98px] text-xs sm:text-sm text-[#1f2436]"
+                        className="rounded-[4px] border-ui-border"
+                        textareaClassName="min-h-[98px] text-xs sm:text-sm text-brand-dark"
                     />
                 </FormFieldRow>
             </div>

@@ -23,7 +23,7 @@ export default function TransactionFormLayout({
                     ) : null}
 
                     {}
-                    <div className="flex flex-1 min-h-0 flex-col gap-3 px-2 py-2 sm:px-3 lg:flex-row lg:items-stretch bg-white border border-[#cfd6e2] rounded-[6px] shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+                    <div className="flex flex-1 min-h-0 flex-col gap-3 px-2 py-2 sm:px-3 lg:flex-row lg:items-stretch bg-white border border-ui-border rounded-[6px] shadow-card-light">
                         <TransactionSectionRail
                             tabs={sectionTabs}
                             activeTabId={activeSectionId}

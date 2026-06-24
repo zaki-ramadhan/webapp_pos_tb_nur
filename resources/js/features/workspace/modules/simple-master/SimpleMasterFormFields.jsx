@@ -14,12 +14,12 @@ function getFieldInfoTooltip(label) {
 
 export function FieldLabel({ field, className = '' }) {
     return (
-        <label className={`text-xs sm:text-sm text-[#1f2436] ${className}`.trim()}>
+        <label className={`text-xs sm:text-sm text-brand-dark ${className}`.trim()}>
             {field.label}
-            {field.required ? <span className="text-[#ED3969]"> *</span> : null}
+            {field.required ? <span className="text-tab-active-border-t"> *</span> : null}
             {field.info ? (
                 <Tooltip content={typeof field.info === 'string' ? field.info : getFieldInfoTooltip(field.label)} portal>
-                    <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157] cursor-help" />
+                    <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-filter-select-text cursor-help" />
                 </Tooltip>
             ) : null}
         </label>
@@ -31,7 +31,7 @@ export function MasterFieldRow({ field, value, onChange }) {
     if (field.type === 'heading') {
         return (
             <div className={`pt-1 ${field.containerClassName ?? ''}`.trim()}>
-                <div className="text-base font-semibold text-[#1f2436]">{field.label}</div>
+                <div className="text-base font-semibold text-brand-dark">{field.label}</div>
             </div>
         );
     }
@@ -65,8 +65,8 @@ export function MasterFieldRow({ field, value, onChange }) {
                         value={value}
                         onChange={(event) => onChange(field.id, event.target.value)}
                         rows={field.rows ?? 3}
-                        className={`rounded-[4px] border-[#cfd6e2] ${field.className ?? ''}`.trim()}
-                        textareaClassName={`text-xs sm:text-sm text-[#1f2436] ${field.textareaClassName ?? ''}`.trim()}
+                        className={`rounded-[4px] border-ui-border ${field.className ?? ''}`.trim()}
+                        textareaClassName={`text-xs sm:text-sm text-brand-dark ${field.textareaClassName ?? ''}`.trim()}
                         containerClassName={field.containerClassName ?? ''}
                     />
                 </div>
@@ -85,10 +85,10 @@ export function MasterFieldRow({ field, value, onChange }) {
                         value={value}
                         onChange={(event) => onChange(field.id, event.target.value)}
                         placeholder={field.placeholder ?? 'Cari/Pilih...'}
-                        className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${field.className ?? ''}`.trim()}
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className={`h-[40px] rounded-[4px] border-ui-border ${field.className ?? ''}`.trim()}
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                         containerClassName={field.containerClassName ?? ''}
-                        trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
+                        trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
                         trailingClassName="px-3"
                     />
                 </div>
@@ -105,15 +105,15 @@ export function MasterFieldRow({ field, value, onChange }) {
                     name={field.id}
                     value={value}
                     onChange={(event) => onChange(field.id, event.target.value)}
-                    className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${field.className ?? ''}`.trim()}
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    className={`h-[40px] rounded-[4px] border-ui-border ${field.className ?? ''}`.trim()}
+                    inputClassName="text-xs sm:text-sm text-brand-dark"
                     containerClassName={field.containerClassName ?? ''}
                     trailing={
                         field.clearable && value ? (
                             <button
                                 type="button"
                                 onClick={() => onChange(field.id, '')}
-                                className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-[#111827] transition hover:bg-[#eef2f7]"
+                                className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-text-darkest transition hover:bg-bg-workspace-light"
                                 aria-label={`Kosongkan ${field.label}`}
                             >
                                 <CloseIcon className="h-4 w-4" strokeWidth={2.4} />

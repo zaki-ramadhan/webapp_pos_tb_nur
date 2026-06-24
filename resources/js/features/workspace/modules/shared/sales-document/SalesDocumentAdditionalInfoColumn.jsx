@@ -41,14 +41,14 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                             const checked = (values[field.valueKey] ?? '') === option.value;
 
                             return (
-                                <label key={option.value} className="flex items-center gap-3 text-xs sm:text-sm text-[#1f2436]">
-                                    <span className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-[#c8ccd4]">
-                                        {checked ? <span className="h-[10px] w-[10px] rounded-full bg-[#a7a7a8]" /> : null}
+                                <label key={option.value} className="flex items-center gap-3 text-xs sm:text-sm text-brand-dark">
+                                    <span className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-disabled-border">
+                                        {checked ? <span className="h-[10px] w-[10px] rounded-full bg-gray-a8a8a8" /> : null}
                                     </span>
                                     <span>{option.label}</span>
                                     {option.showInfoIcon ? (
                                         <Tooltip content={getSalesReturnInfo(option.value, option.label)} portal>
-                                            <InfoIcon className="h-4.5 w-4.5 text-[#1f2436] cursor-help" />
+                                            <InfoIcon className="h-4.5 w-4.5 text-brand-dark cursor-help" />
                                         </Tooltip>
                                     ) : null}
                                 </label>
@@ -90,8 +90,8 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                 <TextInput
                     value={values[field.valueKey] ?? ''}
                     readOnly
-                    className={field.className ?? 'h-[34px] rounded-[4px] border-[#cfd6e2]'}
-                    inputClassName={field.inputClassName ?? 'text-xs sm:text-sm text-[#5f6779]'}
+                    className={field.className ?? 'h-[34px] rounded-[4px] border-ui-border'}
+                    inputClassName={field.inputClassName ?? 'text-xs sm:text-sm text-text-workspace-muted'}
                 />
             </Fragment>
         );
@@ -135,8 +135,8 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                                     purchaseOrderNumber: event.target.value,
                                 }))
                             }
-                            className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </>
                 ) : null}
@@ -146,10 +146,10 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                     <div className="flex items-start gap-4">
                         <button
                             type="button"
-                            className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#21539b]"
+                            className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue-accent"
                             aria-label="Lihat alamat"
                         >
-                            <PinIcon className="h-[18px] w-[18px] text-[#21539b]" />
+                            <PinIcon className="h-[18px] w-[18px] text-brand-blue-accent" />
                         </button>
                         <textarea
                             value={values.address}
@@ -160,7 +160,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                                 }))
                             }
                             rows={4}
-                            className="min-h-[86px] flex-1 resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                            className="min-h-[86px] flex-1 resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none"
                         />
                     </div>
                 ) : (
@@ -173,7 +173,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                             }))
                         }
                         rows={4}
-                        className="min-h-[84px] w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none"
+                        className="min-h-[84px] w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none"
                     />
                 )}
 
@@ -189,8 +189,8 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                         }))
                     }
                     rows={4}
-                    className="border-[#cfd6e2]"
-                    textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
+                    className="border-ui-border"
+                    textareaClassName="min-h-[72px] text-xs sm:text-sm text-brand-dark"
                 />
 
                 {additionalTrailingFields.map((field, index) => renderAdditionalField(field, `${field.valueKey ?? field.label}-trailing-${index}`))}

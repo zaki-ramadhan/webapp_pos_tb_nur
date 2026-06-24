@@ -17,7 +17,7 @@ export function SuggestionTextInput({
     searchLabel = 'Cari data',
     emptyLabel = 'Tidak ada data yang cocok.',
     className = 'h-[40px] rounded-[4px] border-slate-400',
-    inputClassName = 'text-xs sm:text-sm text-[#1f2436]',
+    inputClassName = 'text-xs sm:text-sm text-brand-dark',
     ...props
 }) {
     const rootRef = useRef(null);
@@ -102,12 +102,12 @@ export function SuggestionTextInput({
                                 type="button"
                                 onClick={handleClear}
                                 aria-label={`Hapus ${searchLabel.toLowerCase()}`}
-                                className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-[#6b7280] transition hover:bg-[#eef3fb] hover:text-[#1f2436]"
+                                className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-tab-view-active-text transition hover:bg-workspace-hover-bg hover:text-brand-dark"
                             >
                                 <CloseIcon className="h-4 w-4" />
                             </button>
                         ) : null}
-                        <SearchIcon className="h-5 w-5 text-[#1f2436]" />
+                        <SearchIcon className="h-5 w-5 text-brand-dark" />
                     </div>
                 )}
                 className={className}
@@ -128,7 +128,7 @@ export function SuggestionTextInput({
                                         key={option}
                                         type="button"
                                         onClick={() => handleSelect(option)}
-                                        className={`block w-full border-t border-[#e6ebf2] px-4 py-3 text-left text-sm text-[#1f2436] transition first:border-t-0 hover:bg-[#eef3fb] ${selected ? 'bg-[#f5f9ff] font-medium' : 'bg-white'}`.trim()}
+                                        className={`block w-full border-t border-border-ui-border-lightest px-4 py-3 text-left text-sm text-brand-dark transition first:border-t-0 hover:bg-workspace-hover-bg ${selected ? 'bg-brand-blue-lightest font-medium' : 'bg-white'}`.trim()}
                                     >
                                         {option}
                                     </button>
@@ -171,7 +171,7 @@ export function ToggleSwitch({ checked, onChange }) {
             aria-checked={checked}
             onClick={() => onChange(!checked)}
             className={`relative inline-flex h-[20px] w-[36px] shrink-0 items-center rounded-full transition-colors ${
-                checked ? 'bg-[#3f68b2]' : 'bg-[#c7ceda]'
+                checked ? 'bg-blue-3f68b2' : 'bg-section-tab-neutral-border'
             }`}
         >
             <span
@@ -190,9 +190,9 @@ export function PrefixedTextArea({ value, onChange, prefix, ...props }) {
             onChange={onChange}
             prefix={prefix}
             rows={4}
-            className="rounded-[4px] border-[#cfd6e2]"
-            prefixClassName="min-w-[58px] border-[#cfd6e2] bg-[#f3f3f4] px-3 py-3 text-xs sm:text-sm text-[#8b94a7]"
-            textareaClassName="min-h-[76px] px-3 py-3 text-xs sm:text-sm text-[#1f2436]"
+            className="rounded-[4px] border-ui-border"
+            prefixClassName="min-w-[58px] border-ui-border bg-input-prefix-bg px-3 py-3 text-xs sm:text-sm text-input-prefix-text"
+            textareaClassName="min-h-[76px] px-3 py-3 text-xs sm:text-sm text-brand-dark"
             {...props}
         />
     );
@@ -204,9 +204,9 @@ export function PrefixedInput({ value, onChange, prefix, className = '', ...prop
             value={value}
             onChange={onChange}
             prefix={prefix}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName="min-w-[62px] border-[#cfd6e2] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
-            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+            className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
+            prefixClassName="min-w-[62px] border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text"
+            inputClassName="text-xs sm:text-sm text-brand-dark"
             {...props}
         />
     );
@@ -219,7 +219,7 @@ export function ToolbarSquareButton({ label, onClick, className = '', children }
             onClick={onClick}
             aria-label={label}
             title={label}
-            className={`inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] ${className}`.trim()}
+            className={`inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue ${className}`.trim()}
         >
             {children}
         </button>
@@ -237,7 +237,7 @@ export function TableActionMenu({ items = [], label = 'Aksi' }) {
                 type="button"
                 aria-label={label}
                 onClick={() => setOpen((currentOpen) => !currentOpen)}
-                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
             >
                 <CogIcon className="h-5 w-5" />
             </button>

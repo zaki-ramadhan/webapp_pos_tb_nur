@@ -12,8 +12,8 @@ function EmployeeFilterSlot({ filters: filterDefs, values, onChange }) {
                     value={values[filter.id]}
                     onChange={(event) => onChange(filter.id, event.target.value)}
                     containerClassName="w-auto shrink-0"
-                    className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2] sm:min-w-[154px]"
-                    selectClassName="text-xs sm:text-sm text-[#394157]"
+                    className="h-[34px] min-w-[128px] rounded-[4px] border-ui-border sm:min-w-[154px]"
+                    selectClassName="text-xs sm:text-sm text-filter-select-text"
                 >
                     {filter.options.map((option) => (
                         <option key={option.value} value={option.value}>

@@ -7,9 +7,9 @@ import RadioField from '@/components/ui/RadioField';
 function FormFieldRow({ label, required = false, align = 'center', children }) {
     return (
         <div className={`grid gap-3 lg:grid-cols-[440px_minmax(0,1fr)] ${align === 'start' ? 'lg:items-start' : 'lg:items-center'}`.trim()}>
-            <label className={`${align === 'start' ? 'pt-2' : ''} text-base leading-[1.35] text-[#1f2436]`.trim()}>
+            <label className={`${align === 'start' ? 'pt-2' : ''} text-base leading-[1.35] text-brand-dark`.trim()}>
                 {label}
-                {required ? <span className="text-[#ED3969]"> *</span> : null}
+                {required ? <span className="text-tab-active-border-t"> *</span> : null}
             </label>
             <div>{children}</div>
         </div>
@@ -23,7 +23,7 @@ function RadioOption({ checked, label, onChange }) {
             checked={checked}
             onChange={onChange}
             label={label}
-            inputClassName="h-[22px] w-[22px] border-[#cfd6e2]"
+            inputClassName="h-[22px] w-[22px] border-ui-border"
             containerClassName="w-auto inline-flex items-center"
         />
     );
@@ -63,8 +63,8 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                 <TextInput
                     value={values.name}
                     onChange={(event) => setValue('name', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    className="h-[40px] rounded-[4px] border-ui-border"
+                    inputClassName="text-xs sm:text-sm text-brand-dark"
                 />
             </FormFieldRow>
 
@@ -103,8 +103,8 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                 <SelectField
                     value={values.productScope}
                     onChange={(event) => setValue('productScope', event.target.value)}
-                    className="h-[40px] max-w-[426px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                    className="h-[40px] max-w-[426px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs sm:text-sm text-brand-dark"
                 >
                     {config.productScopeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -118,8 +118,8 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                 <SelectField
                     value={values.supplierScope}
                     onChange={(event) => setValue('supplierScope', event.target.value)}
-                    className="h-[40px] max-w-[426px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                    className="h-[40px] max-w-[426px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs sm:text-sm text-brand-dark"
                 >
                     {config.supplierScopeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -146,15 +146,15 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                         <TextInput
                             value={values.salesValueFrom}
                             onChange={(event) => setValue('salesValueFrom', event.target.value)}
-                            className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
-                        <div className="text-center text-xs sm:text-sm text-[#1f2436]">s/d</div>
+                        <div className="text-center text-xs sm:text-sm text-brand-dark">s/d</div>
                         <TextInput
                             value={values.salesValueTo}
                             onChange={(event) => setValue('salesValueTo', event.target.value)}
-                            className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 
@@ -167,15 +167,15 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                         <TextInput
                             value={values.quantityFrom}
                             onChange={(event) => setValue('quantityFrom', event.target.value)}
-                            className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
-                        <div className="text-center text-xs sm:text-sm text-[#1f2436]">s/d</div>
+                        <div className="text-center text-xs sm:text-sm text-brand-dark">s/d</div>
                         <TextInput
                             value={values.quantityTo}
                             onChange={(event) => setValue('quantityTo', event.target.value)}
-                            className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 
@@ -188,10 +188,10 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                         <TextInput
                             value={values.quantityUnit}
                             onChange={(event) => setValue('quantityUnit', event.target.value)}
-                            className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
-                        <div className="text-xs sm:text-sm text-[#1f2436]">{config.conditionUnitLabel}</div>
+                        <div className="text-xs sm:text-sm text-brand-dark">{config.conditionUnitLabel}</div>
                     </div>
                 </div>
             </FormFieldRow>
@@ -201,8 +201,8 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                     <SelectField
                         value={values.rewardType}
                         onChange={(event) => setValue('rewardType', event.target.value)}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
                     >
                         {config.rewardTypeOptions.map((option) => (
                             <option key={option} value={option}>
@@ -214,17 +214,17 @@ export function SalesCommissionCommissionTab({ config, values, setValues }) {
                     <TextInput
                         value={values.rewardValue}
                         onChange={(event) => setValue('rewardValue', event.target.value)}
-                        className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[34px] rounded-[4px] border-ui-border"
+                        inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                     />
 
-                    <div className="text-center text-xs sm:text-sm text-[#1f2436]">{config.rewardMiddleLabel}</div>
+                    <div className="text-center text-xs sm:text-sm text-brand-dark">{config.rewardMiddleLabel}</div>
 
                     <SelectField
                         value={values.rewardBase}
                         onChange={(event) => setValue('rewardBase', event.target.value)}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
                     >
                         {config.rewardBaseOptions.map((option) => (
                             <option key={option} value={option}>
@@ -251,8 +251,8 @@ export function SalesCommissionOtherTab({ config, values, setValues }) {
                         }))
                     }
                     rows={4}
-                    className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[80px] text-xs sm:text-sm text-[#1f2436]"
+                    className="rounded-[4px] border-ui-border"
+                    textareaClassName="min-h-[80px] text-xs sm:text-sm text-brand-dark"
                 />
             </FormFieldRow>
 

@@ -30,8 +30,8 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                 <SelectField
                     value={values.type}
                     onChange={(event) => onChange('type', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                    className="h-[40px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs sm:text-sm text-brand-dark"
                 >
                     {config.typeOptions.map((option) => (
                         <option key={option} value={option}>
@@ -61,7 +61,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             }
                         }}
                         align="center"
-                        labelClassName="text-xs sm:text-sm font-normal text-[#1f2436]"
+                        labelClassName="text-xs sm:text-sm font-normal text-brand-dark"
                         inputClassName="mt-0 h-[18px] w-[18px]"
                         containerClassName="w-auto"
                     />
@@ -99,8 +99,8 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                     name="code"
                     value={values.code || '(Otomatis)'}
                     readOnly
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#8a91a8]"
+                    className="h-[40px] rounded-[4px] border-ui-border"
+                    inputClassName="text-xs sm:text-sm text-text-light"
                 />
             </AccountsFormFieldRow>
 
@@ -112,10 +112,10 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                     <TextInput
                         value={values.name}
                         onChange={(event) => onChange('name', event.target.value)}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
-                    <p className="mt-2.5 text-xs sm:text-sm font-normal italic text-[#8a91a8] leading-relaxed">
+                    <p className="mt-2.5 text-xs sm:text-sm font-normal italic text-text-light leading-relaxed">
                         {config.helperText.nameExample}
                     </p>
                 </div>
@@ -123,7 +123,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
 
             {isDetail ? (
                 <AccountsFormFieldRow label={config.labels.balance}>
-                    <div className="pt-1 text-lg text-[#1f2436]">{values.balanceLabel}</div>
+                    <div className="pt-1 text-lg text-brand-dark">{values.balanceLabel}</div>
                 </AccountsFormFieldRow>
             ) : null}
         </div>
@@ -133,7 +133,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
 export function AccountsOpeningBalanceTab({ config, values, onChange }) {
     return (
         <div className="space-y-4">
-            <h3 className="text-2xl font-normal text-[#1f2436]">{config.headingLabels.openingBalance}</h3>
+            <h3 className="text-2xl font-normal text-brand-dark">{config.headingLabels.openingBalance}</h3>
 
             <div className="grid grid-cols-1 gap-y-3.5 max-w-[980px]">
                 <AccountsFormFieldRow label={config.labels.openingBalanceValue}>
@@ -141,9 +141,9 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                         value={values.openingBalanceValue}
                         onChange={(event) => onChange('openingBalanceValue', sanitizeNumericInput(event.target.value))}
                         prefix="Rp"
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        prefixClassName="min-w-[34px] bg-[#f5f6f8] px-3 text-[#9aa3b1]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </AccountsFormFieldRow>
 
@@ -185,8 +185,8 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                     value={values.notes}
                     onChange={(event) => onChange('notes', event.target.value)}
                     rows={3}
-                    className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[68px] text-xs sm:text-sm text-[#1f2436]"
+                    className="rounded-[4px] border-ui-border"
+                    textareaClassName="min-h-[68px] text-xs sm:text-sm text-brand-dark"
                 />
             </AccountsFormFieldRow>
 
@@ -195,14 +195,14 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                     <TextInput
                         value={values.cashBankReference}
                         readOnly
-                        className="h-[40px] rounded-[4px] border-[#9ce04f] bg-[#eef8e7]"
-                        inputClassName="text-xs sm:text-sm text-[#4d9b1f]"
+                        className="h-[40px] rounded-[4px] border-green-9ce04f bg-success-bg"
+                        inputClassName="text-xs sm:text-sm text-green-4d9b1f"
                     />
                 </AccountsFormFieldRow>
             ) : null}
 
-            <div className="border-b border-[#d9dee8] pb-2.5">
-                <h3 className="text-lg font-medium text-[#1f2436]">{config.headingLabels.userAccess}</h3>
+            <div className="border-b border-ui-border-medium pb-2.5">
+                <h3 className="text-lg font-medium text-brand-dark">{config.headingLabels.userAccess}</h3>
             </div>
 
             <div className="space-y-3">
@@ -221,14 +221,14 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                         }
                     }}
                     align="center"
-                    labelClassName="text-xs sm:text-sm font-normal text-[#1f2436]"
+                    labelClassName="text-xs sm:text-sm font-normal text-brand-dark"
                     inputClassName="mt-0 h-[18px] w-[18px]"
                     containerClassName="w-auto"
                 />
 
                 {!values.allUsers && (
                     <div className="space-y-3 pt-2">
-                        <div className="text-xs sm:text-sm font-medium text-[#1f2436]">
+                        <div className="text-xs sm:text-sm font-medium text-brand-dark">
                             Isikan pengguna-pengguna yang bisa menggunakan akun ini
                         </div>
 
@@ -286,7 +286,7 @@ export function AccountsChildrenTab({ values }) {
                 {values.childAccounts.map((item) => (
                     <div
                         key={`${item.id}-name`}
-                        className="rounded-[3px] bg-[#cbcbcb] px-4 py-2.5 text-xs sm:text-sm text-[#1f2436]"
+                        className="rounded-[3px] bg-bg-disabled-dark px-4 py-2.5 text-xs sm:text-sm text-brand-dark"
                         style={{ paddingLeft: `${16 + item.level * 18}px` }}
                     >
                         {item.name}
@@ -296,7 +296,7 @@ export function AccountsChildrenTab({ values }) {
 
             <div className="space-y-1.5">
                 {values.childAccounts.map((item) => (
-                    <div key={`${item.id}-code`} className="rounded-[3px] bg-[#cbcbcb] px-4 py-2.5 text-xs sm:text-sm text-[#1f2436]">
+                    <div key={`${item.id}-code`} className="rounded-[3px] bg-bg-disabled-dark px-4 py-2.5 text-xs sm:text-sm text-brand-dark">
                         {item.code}
                     </div>
                 ))}

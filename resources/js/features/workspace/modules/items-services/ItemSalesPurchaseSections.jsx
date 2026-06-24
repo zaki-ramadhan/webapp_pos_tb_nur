@@ -21,7 +21,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                             onChange('defaultDiscount', event.target.value)
                         }
                     />
-                    <span className="text-xs sm:text-sm text-[#1f2436]">/ Semua Satuan</span>
+                    <span className="text-xs sm:text-sm text-brand-dark">/ Semua Satuan</span>
                 </div>
             </FormRow>
 
@@ -46,10 +46,10 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                         checked={values.bulkPricingEnabled}
                         onChange={(nextValue) => onChange('bulkPricingEnabled', nextValue)}
                     />
-                    <span className="text-xs sm:text-sm text-[#1f2436]">
+                    <span className="text-xs sm:text-sm text-brand-dark">
                         Menerapkan Harga / Diskon Grosir{' '}
                         <Tooltip content="Mengaktifkan aturan tingkat harga grosir berdasarkan kuantitas pembelian." portal>
-                            <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157] cursor-help" />
+                            <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-filter-select-text cursor-help" />
                         </Tooltip>
                     </span>
                 </div>
@@ -58,7 +58,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                         checked={values.substituteEnabled}
                         onChange={(nextValue) => onChange('substituteEnabled', nextValue)}
                     />
-                    <span className="text-xs sm:text-sm text-[#1f2436]">Substitusi dengan</span>
+                    <span className="text-xs sm:text-sm text-brand-dark">Substitusi dengan</span>
                 </div>
             </div>
         </section>

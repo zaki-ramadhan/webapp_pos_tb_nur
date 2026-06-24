@@ -62,7 +62,7 @@ export default function SalesReceiptFormView({
         <>
             <div className="flex min-h-full flex-col gap-3">
                 <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                    <div className="min-w-0 flex-1 rounded-[6px] border border-[#cfd6e2] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+                    <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white shadow-card-light">
                         <div className="px-4 pt-4 pb-0">
                             <div className={`grid gap-x-8 gap-y-3 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
                                 <div className="grid gap-y-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
@@ -123,8 +123,8 @@ export default function SalesReceiptFormView({
                                                     numberingType: event.target.value,
                                                 }))
                                             }
-                                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                            className="h-[40px] rounded-[4px] border-ui-border"
+                                            selectClassName="text-xs sm:text-sm text-brand-dark"
                                         >
                                             {config.numberingOptions.map((option) => (
                                                 <option key={option} value={option}>
@@ -149,8 +149,8 @@ export default function SalesReceiptFormView({
                                             }
                                             maxLength={120}
                                             readOnly={Boolean(isDetail)}
-                                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                            className="h-[40px] rounded-[4px] border-ui-border"
+                                            inputClassName="text-xs sm:text-sm text-brand-dark"
                                         />
                                     )}
 
@@ -171,7 +171,7 @@ export default function SalesReceiptFormView({
                         <div className="flex items-start gap-3 px-2 py-2 sm:px-3">
                             <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
 
-                            <div className="min-w-0 flex-1 rounded-[4px] border border-[#d3d9e5] bg-white px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
+                            <div className="min-w-0 flex-1 rounded-[4px] border border-tab-overflow-panel-border bg-white px-3 py-3 shadow-inset-lighter">
                                 {activeSectionId === 'additional-info' ? (
                                     <SalesReceiptAdditionalInfoSection
                                         config={config}

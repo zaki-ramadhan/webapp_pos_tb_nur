@@ -44,7 +44,7 @@ function ItemDetailsTab({ values, setValues }) {
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Kode #">
-                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{values.code}</div>
+                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-document-code">{values.code}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Tgl Diminta">
@@ -55,9 +55,9 @@ function ItemDetailsTab({ values, setValues }) {
                 <TextInput
                     value={values.name}
                     readOnly
-                    trailing={<span className="text-xl font-semibold text-[#1f2436]">×</span>}
-                    className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs text-[#1f2436]"
+                    trailing={<span className="text-xl font-semibold text-brand-dark">×</span>}
+                    className="h-[36px] rounded-[4px] border-ui-border"
+                    inputClassName="text-xs text-brand-dark"
                     trailingClassName="px-3"
                 />
             </ModalFieldRow>
@@ -72,9 +72,9 @@ function ItemDetailsTab({ values, setValues }) {
                                 quantity: event.target.value,
                             }))
                         }
-                        trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-xs text-[#1f2436]"
+                        trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-right text-xs text-brand-dark"
                         trailingClassName="px-3"
                     />
                     <ChipLookupField
@@ -125,8 +125,8 @@ function ItemNotesTab({ values, setValues }) {
                         }))
                     }
                     rows={4}
-                    className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[92px] text-xs text-[#1f2436]"
+                    className="rounded-[4px] border-ui-border"
+                    textareaClassName="min-h-[92px] text-xs text-brand-dark"
                 />
             </ModalFieldRow>
         </div>
@@ -158,7 +158,7 @@ export default function ItemRequestItemModal({ open, onClose, modal, item }) {
             activeTabId={activeTabIdSafe}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
-            panelClassName="max-w-[620px] overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
+            panelClassName="max-w-[620px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[340px] py-4"
             footer={
                 <DocumentModalFooter

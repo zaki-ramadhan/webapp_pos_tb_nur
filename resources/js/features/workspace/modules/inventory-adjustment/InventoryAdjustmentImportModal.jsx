@@ -5,7 +5,7 @@ import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { parseNumericInput, formatCurrencyValue } from './inventoryAdjustmentShared';
 
-// Helper fuzzy match untuk pencocokan kolom otomatis
+// Fuzzy match helper
 function fuzzyMatch(targetKey, headers) {
     const rules = {
         name: ['nama', 'barang', 'name', 'item', 'produk', 'product'],
@@ -179,7 +179,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         }
     };
 
-    // Render Preview untuk 3 baris pertama
+    // Preview first 3 rows
     const previewData = rawRows.slice(0, 3).map((row) => {
         const rawName = mappings.name ? row[mappings.name] : '';
         const rawCode = mappings.code ? row[mappings.code] : '';
@@ -207,15 +207,15 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             onClose={onClose}
             title="Impor Rincian Barang"
             closeAriaLabel="Tutup modal impor"
-            panelClassName="max-w-[640px] overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
+            panelClassName="max-w-[640px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[300px] py-4"
             footer={
-                <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3 px-4">
+                <div className="flex items-center justify-between border-t border-ui-border-medium pt-3 px-4">
                     {step === 'match' ? (
                         <button
                             type="button"
                             onClick={() => setStep('upload')}
-                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs font-medium text-[#21539b]"
+                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs font-medium text-brand-blue-accent"
                         >
                             Kembali
                         </button>
@@ -233,7 +233,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                         <button
                             type="button"
                             onClick={handleImportSubmit}
-                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-4 text-xs font-medium text-white"
+                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-import-action-blue bg-import-action-blue px-4 text-xs font-medium text-white"
                         >
                             Mulai Impor
                         </button>
@@ -249,7 +249,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                         onDragLeave={handleDrag}
                         onDrop={handleDrop}
                         className={`flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-10 text-center transition ${
-                            dragActive ? 'border-[#ff4836] bg-[#fff5f4]' : 'border-[#cfd6e2] hover:border-gray-400'
+                            dragActive ? 'border-illustration-danger-bg bg-danger-bg' : 'border-ui-border hover:border-gray-400'
                         }`}
                     >
                         <input
@@ -262,7 +262,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
                         {loading ? (
                             <div className="flex flex-col items-center gap-2">
-                                <svg className="animate-spin h-8 w-8 text-[#1d52a5]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin h-8 w-8 text-import-action-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -278,7 +278,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="text-[#1d52a5] underline font-semibold hover:text-[#173968]"
+                                        className="text-import-action-blue underline font-semibold hover:text-blue-133663"
                                     >
                                         pilih dari komputer
                                     </button>
@@ -291,19 +291,19 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             ) : (
                 <div className="px-4 space-y-5">
                     <div>
-                        <h3 className="text-sm font-semibold text-gray-800">Nama Berkas: <span className="text-[#1d52a5] font-normal">{fileName}</span></h3>
+                        <h3 className="text-sm font-semibold text-gray-800">Nama Berkas: <span className="text-import-action-blue font-normal">{fileName}</span></h3>
                         <p className="text-xs text-gray-500 mt-1">Sesuaikan kolom berkas Excel Anda dengan kolom rincian barang sistem di bawah ini.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-[#e2e8f0] p-4 rounded-lg bg-gray-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-ui-border-light p-4 rounded-lg bg-gray-50/50">
                         {/* Nama Barang */}
                         <div>
                             <label className="block text-xs font-semibold text-gray-700 mb-1.5">Nama Barang <span className="text-red-500">*</span></label>
                             <SelectField
                                 value={mappings.name}
                                 onChange={(e) => setMappings(m => ({ ...m, name: e.target.value }))}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2] w-full"
-                                selectClassName="text-xs text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border w-full"
+                                selectClassName="text-xs text-brand-dark"
                             >
                                 <option value="">-- Pilih Kolom Excel --</option>
                                 {headers.map(h => <option key={h} value={h}>{h}</option>)}
@@ -316,8 +316,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                             <SelectField
                                 value={mappings.quantity}
                                 onChange={(e) => setMappings(m => ({ ...m, quantity: e.target.value }))}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2] w-full"
-                                selectClassName="text-xs text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border w-full"
+                                selectClassName="text-xs text-brand-dark"
                             >
                                 <option value="">-- Pilih Kolom Excel --</option>
                                 {headers.map(h => <option key={h} value={h}>{h}</option>)}
@@ -330,8 +330,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                             <SelectField
                                 value={mappings.code}
                                 onChange={(e) => setMappings(m => ({ ...m, code: e.target.value }))}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2] w-full"
-                                selectClassName="text-xs text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border w-full"
+                                selectClassName="text-xs text-brand-dark"
                             >
                                 <option value="">-- Lewati (Kosong) --</option>
                                 {headers.map(h => <option key={h} value={h}>{h}</option>)}
@@ -344,8 +344,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                             <SelectField
                                 value={mappings.adjustmentType}
                                 onChange={(e) => setMappings(m => ({ ...m, adjustmentType: e.target.value }))}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2] w-full"
-                                selectClassName="text-xs text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border w-full"
+                                selectClassName="text-xs text-brand-dark"
                             >
                                 <option value="">-- Default (Penambahan) --</option>
                                 {headers.map(h => <option key={h} value={h}>{h}</option>)}
@@ -358,8 +358,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                             <SelectField
                                 value={mappings.unit}
                                 onChange={(e) => setMappings(m => ({ ...m, unit: e.target.value }))}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2] w-full"
-                                selectClassName="text-xs text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border w-full"
+                                selectClassName="text-xs text-brand-dark"
                             >
                                 <option value="">-- Default (PCS) --</option>
                                 {headers.map(h => <option key={h} value={h}>{h}</option>)}
@@ -372,8 +372,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                             <SelectField
                                 value={mappings.unitCost}
                                 onChange={(e) => setMappings(m => ({ ...m, unitCost: e.target.value }))}
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2] w-full"
-                                selectClassName="text-xs text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border w-full"
+                                selectClassName="text-xs text-brand-dark"
                             >
                                 <option value="">-- Default (Rp 0) --</option>
                                 {headers.map(h => <option key={h} value={h}>{h}</option>)}
@@ -384,9 +384,9 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     {/* Preview Table */}
                     <div className="space-y-2">
                         <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider">Pratinjau Data (3 baris pertama)</h4>
-                        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden overflow-x-auto">
+                        <div className="border border-ui-border-light rounded-lg overflow-hidden overflow-x-auto">
                             <table className="min-w-full text-xs text-left text-gray-500">
-                                <thead className="bg-[#5f7690] text-white text-[11px] font-semibold uppercase">
+                                <thead className="bg-table-header-bg text-white text-[11px] font-semibold uppercase">
                                     <tr>
                                         <th className="px-3 py-2 text-center">Nama Barang</th>
                                         <th className="px-3 py-2 text-center">Kode</th>
@@ -396,7 +396,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                                         <th className="px-3 py-2 text-center">Total Biaya</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-[#e2e8f0] bg-white">
+                                <tbody className="divide-y divide-ui-border-light bg-white">
                                     {previewData.map((p, idx) => (
                                         <tr key={idx} className="hover:bg-gray-50">
                                             <td className="px-3 py-2 font-medium text-gray-900 truncate max-w-[140px] text-left">{p.name}</td>

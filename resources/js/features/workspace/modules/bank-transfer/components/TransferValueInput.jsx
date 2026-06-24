@@ -15,9 +15,9 @@ export default function TransferValueInput({
                 onChange={onChange}
                 readOnly={readOnly}
                 prefix={prefix}
-                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                prefixClassName="min-w-[42px] justify-center border-r-[#d8dde7] bg-[#fbfcfe] px-2 text-xs sm:text-sm text-[#9097aa]"
-                inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+                className="h-[34px] rounded-[4px] border-ui-border"
+                prefixClassName="min-w-[42px] justify-center border-r-ui-border-medium bg-ui-bg-hover px-2 text-xs sm:text-sm text-text-light"
+                inputClassName="text-right text-xs sm:text-sm text-brand-dark"
             />
         </div>
     );

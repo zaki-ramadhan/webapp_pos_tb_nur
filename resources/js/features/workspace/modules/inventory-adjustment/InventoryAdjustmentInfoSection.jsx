@@ -50,8 +50,8 @@ export default function InventoryAdjustmentInfoSection({ config, values, setValu
                             }))
                         }
                         rows={4}
-                        className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
+                        className="rounded-[4px] border-ui-border"
+                        textareaClassName="min-h-[72px] text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
             </div>

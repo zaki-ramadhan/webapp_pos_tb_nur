@@ -62,8 +62,8 @@ export default function DiscountInfoTab({ values, setValues }) {
                                 discountAmount: event.target.value,
                             }))
                         }
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#111827]"
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-text-darkest"
                     />
                 </div>
 
@@ -77,8 +77,8 @@ export default function DiscountInfoTab({ values, setValues }) {
                         }))
                     }
                     rows={3}
-                    className="border-[#cfd6e2]"
-                    textareaClassName="min-h-[56px] text-xs sm:text-sm text-[#1f2436]"
+                    className="border-ui-border"
+                    textareaClassName="min-h-[56px] text-xs sm:text-sm text-brand-dark"
                 />
 
                 {!hideDepartment ? (
@@ -98,16 +98,16 @@ export default function DiscountInfoTab({ values, setValues }) {
             <div>
                 <button
                     type="button"
-                    className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#21539b]"
+                    className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue-accent"
                     aria-label="Tambah diskon"
                 >
-                    <PlusIcon className="h-5 w-5 text-[#21539b]" />
+                    <PlusIcon className="h-5 w-5 text-brand-blue-accent" />
                 </button>
             </div>
 
-            <div className="overflow-hidden rounded-[4px] border border-[#d1d8e4]">
+            <div className="overflow-hidden rounded-[4px] border border-table-wrapper-border">
                 <DataTable wrapperClassName="border-none">
-                    <DataTableHeader className="bg-[#5f7690]">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {discountColumns.map((column) => (
                                 <DataTableHead
@@ -125,29 +125,29 @@ export default function DiscountInfoTab({ values, setValues }) {
                             values.discountRows.map((row, index) => (
                                 <DataTableRow
                                     key={`${row.account}-${row.amount}-${index}`}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
+                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                 >
-                                    <DataTableCell className="px-2.5 text-center text-[#a8afbe]">
+                                    <DataTableCell className="px-2.5 text-center text-text-workspace-inactive">
                                         <span className="inline-flex items-center justify-center">
                                             <TableActionIcon className="h-4 w-4" />
                                         </span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28]">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark">
                                         <span className="block truncate">{row.account}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-left text-base text-[#131a28]">
+                                    <DataTableCell className="px-2.5 text-left text-base text-text-workspace-dark">
                                         <span className="block truncate">{row.amount}</span>
                                     </DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
-                            <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell className="px-2.5 text-center text-[#a8afbe]">
+                            <DataTableRow className="border-ui-border-row bg-white">
+                                <DataTableCell className="px-2.5 text-center text-text-workspace-inactive">
                                     <span className="inline-flex items-center justify-center">
                                         <TableActionIcon className="h-4 w-4" />
                                     </span>
                                 </DataTableCell>
-                                <DataTableCell colSpan={2} className="px-2.5 py-6 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={2} className="px-2.5 py-6 text-center text-base text-text-workspace-dark">
                                     Belum ada data
                                 </DataTableCell>
                             </DataTableRow>

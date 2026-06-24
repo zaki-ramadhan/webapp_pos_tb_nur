@@ -75,13 +75,13 @@ export default function EmployeeAttachmentModal({
         >
             <div className="space-y-4">
                 <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4">
-                    <span className="text-xs sm:text-sm font-medium text-[#1f2436]">Nama Dokumen</span>
+                    <span className="text-xs sm:text-sm font-medium text-brand-dark">Nama Dokumen</span>
                     <TextInput
                         value={docName}
                         onChange={(e) => setDocName(e.target.value)}
                         placeholder="Deskripsi dokumen"
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
 
@@ -89,7 +89,7 @@ export default function EmployeeAttachmentModal({
                     <label className={`flex h-11 w-full items-center justify-center rounded-[6px] border text-xs sm:text-sm font-medium shadow-sm transition ${
                         uploadingDoc
                             ? 'border-slate-300 bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none'
-                            : 'border-[#214d8d] bg-[#0f62b8] text-white cursor-pointer hover:brightness-105 active:brightness-95'
+                            : 'border-brand-blue-darker bg-blue-0f62b8 text-white cursor-pointer hover:brightness-105 active:brightness-95'
                     }`}>
                         {uploadingDoc ? (
                             <span className="flex items-center gap-2">
@@ -109,17 +109,17 @@ export default function EmployeeAttachmentModal({
                 </div>
 
                 {uploadError && (
-                    <p className="text-xs sm:text-sm text-[#db3e3e] bg-red-50 p-2 rounded border border-red-200">
+                    <p className="text-xs sm:text-sm text-red-db3e3e bg-red-50 p-2 rounded border border-red-200">
                         {uploadError}
                     </p>
                 )}
 
-                <hr className="border-[#d8dde7]" />
+                <hr className="border-ui-border-medium" />
 
                 <div>
-                    <h3 className="text-xs sm:text-sm font-semibold text-[#1f2436] mb-2">Daftar Lampiran</h3>
+                    <h3 className="text-xs sm:text-sm font-semibold text-brand-dark mb-2">Daftar Lampiran</h3>
                     {!(values.attachments?.length) ? (
-                        <div className="flex flex-col items-center justify-center border-2 border-dashed border-[#cfd6e2] rounded-[6px] py-8 bg-slate-50 text-slate-400">
+                        <div className="flex flex-col items-center justify-center border-2 border-dashed border-ui-border rounded-[6px] py-8 bg-slate-50 text-slate-400">
                             <PaperclipIcon className="h-8 w-8 mb-2 text-slate-300" />
                             <span className="text-xs sm:text-sm font-normal">Tidak ada lampiran</span>
                         </div>
@@ -132,14 +132,14 @@ export default function EmployeeAttachmentModal({
                                 return (
                                     <div
                                         key={item.id}
-                                        className="flex items-center justify-between border border-[#cfd6e2] rounded-[6px] px-3 py-2 bg-slate-50 hover:bg-slate-100/70 transition"
+                                        className="flex items-center justify-between border border-ui-border rounded-[6px] px-3 py-2 bg-slate-50 hover:bg-slate-100/70 transition"
                                     >
                                         <div className="flex flex-col min-w-0 flex-1">
                                             <a
                                                 href={item.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-xs sm:text-sm font-medium text-[#0f62b8] hover:underline truncate"
+                                                className="text-xs sm:text-sm font-medium text-blue-0f62b8 hover:underline truncate"
                                                 title="Buka dokumen"
                                             >
                                                 {item.file_name}
@@ -157,7 +157,7 @@ export default function EmployeeAttachmentModal({
                                                 download={item.file_name}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-1 rounded text-[#0f62b8] hover:bg-[#eef5ff] transition"
+                                                className="p-1 rounded text-blue-0f62b8 hover:bg-info-bg transition"
                                                 title="Unduh dokumen"
                                                 aria-label="Unduh lampiran"
                                             >
@@ -167,7 +167,7 @@ export default function EmployeeAttachmentModal({
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveAttachment(item.id)}
-                                                className="p-1 rounded hover:bg-red-50 text-[#db3e3e] transition"
+                                                className="p-1 rounded hover:bg-red-50 text-red-db3e3e transition"
                                                 title="Hapus dokumen"
                                                 aria-label="Hapus lampiran"
                                             >

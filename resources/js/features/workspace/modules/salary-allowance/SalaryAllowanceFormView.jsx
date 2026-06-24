@@ -173,33 +173,33 @@ export default function SalaryAllowanceFormView({
             >
                 <div className="space-y-3.5 max-w-[680px]">
                     <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
-                        <label className="text-xs sm:text-sm text-[#1f2436]">
-                            {fields.nameLabel} <span className="text-[#ED3969]">*</span>
+                        <label className="text-xs sm:text-sm text-brand-dark">
+                            {fields.nameLabel} <span className="text-tab-active-border-t">*</span>
                         </label>
                         <TextInput
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                             trailing={isDetail ? <CloseIcon className="h-4.5 w-4.5" /> : null}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
-                        <div className="text-xs sm:text-sm text-[#1f2436]">{fields.typeLabel}</div>
+                        <div className="text-xs sm:text-sm text-brand-dark">{fields.typeLabel}</div>
                         {isDetail && !editableDetail ? (
                             <TextInput
                                 value={entry.type}
                                 readOnly
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
-                                inputClassName="text-xs sm:text-sm text-[#6a7286]"
+                                className="h-[40px] rounded-[4px] border-ui-border bg-input-prefix-bg"
+                                inputClassName="text-xs sm:text-sm text-text-compact-input"
                             />
                         ) : (
                             <SelectField
                                 value={type}
                                 onChange={(event) => setType(event.target.value)}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
                             >
                                 {config.typeOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -211,18 +211,18 @@ export default function SalaryAllowanceFormView({
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
-                        <div className="text-xs sm:text-sm text-[#1f2436]">{fields.payDeductLabel}</div>
+                        <div className="text-xs sm:text-sm text-brand-dark">{fields.payDeductLabel}</div>
                         <TextInput
                             value={entry.payDeduct}
                             readOnly
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2] bg-[#f3f3f4]"
-                            inputClassName="text-xs sm:text-sm text-[#6a7286]"
+                            className="h-[40px] rounded-[4px] border-ui-border bg-input-prefix-bg"
+                            inputClassName="text-xs sm:text-sm text-text-compact-input"
                         />
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
-                        <label className="text-xs sm:text-sm text-[#1f2436]">
-                            {fields.expenseAccountLabel} <span className="text-[#ED3969]">*</span>
+                        <label className="text-xs sm:text-sm text-brand-dark">
+                            {fields.expenseAccountLabel} <span className="text-tab-active-border-t">*</span>
                         </label>
                         <AccountLookupField
                             value={expenseAccount}
@@ -231,9 +231,9 @@ export default function SalaryAllowanceFormView({
                             searchLabel="Cari akun beban"
                             dialogTitle="Pilih Akun Beban"
                             heightClassName="min-h-[38px]"
-                            className="rounded-[4px] border-[#cfd6e2]"
+                            className="rounded-[4px] border-ui-border"
                             contentClassName="px-3 py-1.5"
-                            chipClassName="text-[#24324a]"
+                            chipClassName="text-blue-22304a"
                             onRemove={() => {
                                 setExpenseAccount('');
                                 setExpenseAccountId(null);
@@ -247,7 +247,7 @@ export default function SalaryAllowanceFormView({
 
                     {isDetail ? (
                         <div className="grid grid-cols-1 lg:grid-cols-[170px_1fr] items-center gap-x-4 gap-y-1.5">
-                            <div className="text-xs sm:text-sm text-[#1f2436]">{fields.inactiveLabel}</div>
+                            <div className="text-xs sm:text-sm text-brand-dark">{fields.inactiveLabel}</div>
                             <div className="flex items-center h-[40px]">
                                 <CheckboxField
                                     id="active"
@@ -257,7 +257,7 @@ export default function SalaryAllowanceFormView({
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
                                     containerClassName="w-auto inline-flex"
-                                    labelClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    labelClassName="text-xs sm:text-sm text-brand-dark"
                                 />
                             </div>
                         </div>

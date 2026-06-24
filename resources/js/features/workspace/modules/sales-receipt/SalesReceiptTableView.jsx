@@ -34,9 +34,9 @@ function SalesReceiptFilterBar({ config, filters, setFilters }) {
                     value={filters[filter.id]}
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option, optionIndex) => (
                         <option key={`${filter.id}-${option.label}-${optionIndex}`} value={option.value}>
@@ -48,7 +48,7 @@ function SalesReceiptFilterBar({ config, filters, setFilters }) {
 
             <button
                 type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                 aria-label={config.table.filterButtonLabel}
             >
                 <FunnelIcon className="h-4.5 w-4.5" />
@@ -115,7 +115,7 @@ export default function SalesReceiptTableView({
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 size="compact"
                 className="space-y-3"
@@ -143,13 +143,13 @@ export default function SalesReceiptTableView({
                     onChange: (event) => setKeyword(event.target.value),
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[342px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
                 />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1520px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable className="min-w-[1520px]" wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {filteredRows.length > 0 && (
                                 <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
@@ -179,20 +179,20 @@ export default function SalesReceiptTableView({
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                        index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'
+                                    className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
+                                        index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
                                     }`.trim()}
                                     onClick={() => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                                 >
                                                                         {filteredRows.length > 0 ? (
-                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                        <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                         {index + 1}
                                     </DataTableCell>
                                     ) : null}
 {config.table.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-[#131a28]`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-text-workspace-dark`.trim()}
                                         >
                                             <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
                                         </DataTableCell>
@@ -200,8 +200,8 @@ export default function SalesReceiptTableView({
                                 </DataTableRow>
                             ))
                         ) : (
-                            <DataTableRow className="border-[#dde1e8] bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-6 text-center text-base text-[#7d879a]">
+                            <DataTableRow className="border-ui-border-row bg-white">
+                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-6 text-center text-base text-text-placeholder">
                                     {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

@@ -55,8 +55,8 @@ function resolveActionIcon(action) {
 function InquiryActionButton({ action, onClick }) {
     const toneClassName =
         action.tone === 'warning'
-            ? 'border-transparent bg-[#ffab13] text-white hover:bg-[#e0940b]'
-            : 'border-[#7aa2d5] bg-white text-[#2353a0] hover:bg-[#f0f6ff]';
+            ? 'border-transparent bg-warning text-white hover:bg-orange-e0940b'
+            : 'border-brand-blue-border bg-white text-brand-blue hover:bg-bg-brand-blue-toggled';
 
     return (
         <Button
@@ -78,8 +78,8 @@ function InquiryControl({ control, value, onChange }) {
             <SelectField
                 value={value}
                 onChange={(event) => onChange(control.id, event.target.value)}
-                className={`h-[34px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                selectClassName="text-sm text-[#1f2436] sm:text-xs sm:text-sm"
+                className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                selectClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
             >
                 {(control.options ?? []).map((option) => (
                     <option key={option.value} value={option.value}>
@@ -91,7 +91,7 @@ function InquiryControl({ control, value, onChange }) {
     }
 
     if (control.type === 'label') {
-        return <span className={`text-sm text-[#111827] sm:text-base ${control.className ?? ''}`.trim()}>{control.label}</span>;
+        return <span className={`text-sm text-text-darkest sm:text-base ${control.className ?? ''}`.trim()}>{control.label}</span>;
     }
 
     if (control.type === 'date') {
@@ -99,8 +99,8 @@ function InquiryControl({ control, value, onChange }) {
             <TransactionDateInput
                 value={value}
                 onChange={(nextValue) => onChange(control.id, nextValue)}
-                className={`h-[34px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                inputClassName="text-sm text-[#1f2436] sm:text-xs sm:text-sm"
+                className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                inputClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
                 trailingClassName="w-[40px] shrink-0 justify-center px-0"
             />
         );
@@ -111,9 +111,9 @@ function InquiryControl({ control, value, onChange }) {
             value={value}
             onChange={(event) => onChange(control.id, event.target.value)}
             placeholder={control.placeholder ?? ''}
-            trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
-            className={`h-[34px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            inputClassName="text-sm text-[#1f2436] sm:text-xs sm:text-sm"
+            trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
+            className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+            inputClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
             trailingClassName="px-3"
         />
     );
@@ -195,7 +195,7 @@ export default function InquiryWorkspaceView({
             </div>
 
             {error ? (
-                <div className="rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-sm text-[#a33939]">
+                <div className="rounded-[6px] border border-red-f0c4c4 bg-surface px-3 py-2 text-sm text-red-a33939">
                     {error}
                 </div>
             ) : null}
@@ -205,10 +205,10 @@ export default function InquiryWorkspaceView({
                     hasSidePanel ? 'xl:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_380px]' : ''
                 }`.trim()}
             >
-                <div className="overflow-hidden rounded-[6px] border border-[#d6dce8] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+                <div className="overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light">
                     <div className="min-h-0 overflow-x-auto">
                         <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="rounded-none border-0">
-                            <DataTableHeader className="bg-[#5f7690]">
+                            <DataTableHeader className="bg-table-header-bg">
                                 <tr>
                                     <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                         No.
@@ -231,15 +231,15 @@ export default function InquiryWorkspaceView({
                                     filteredRows.map((row, index) => (
                                         <DataTableRow
                                             key={row.id ?? `row-${index}`}
-                                            className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
+                                            className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                         >
-                                            <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                            <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
                                                 {pagination ? (pagination.from + index) : (index + 1)}
                                             </DataTableCell>
                                             {config.table.columns.map((column) => (
                                                 <DataTableCell
                                                     key={column.id}
-                                                    className={`${resolveCellAlignClassName(column.align)} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
+                                                    className={`${resolveCellAlignClassName(column.align)} px-2.5 text-base text-text-workspace-dark ${column.cellClassName ?? ''}`.trim()}
                                                 >
                                                     {column.truncate ? (
                                                         <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
@@ -254,7 +254,7 @@ export default function InquiryWorkspaceView({
                                     <DataTableRow className="bg-white">
                                         <DataTableCell
                                             colSpan={config.table.columns.length + 1}
-                                            className="px-2.5 py-3 text-center text-base text-[#131a28]"
+                                            className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                         >
                                             {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                         </DataTableCell>
@@ -265,11 +265,11 @@ export default function InquiryWorkspaceView({
                     </div>
 
                     {!hasRows ? (
-                        <div className={`border-t border-[#edf1f6] bg-white ${config.table.emptySpaceClassName ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()} />
+                        <div className={`border-t border-table-row-border bg-white ${config.table.emptySpaceClassName ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()} />
                     ) : null}
 
                     {pagination ? (
-                        <div className="border-t border-[#edf1f6] bg-[#f8fafc] px-3 py-2">
+                        <div className="border-t border-table-row-border bg-ui-bg-hover px-3 py-2">
                             <Pagination
                                 page={pagination.page}
                                 perPage={pagination.perPage}
@@ -286,7 +286,7 @@ export default function InquiryWorkspaceView({
 
                 {hasSidePanel ? (
                     <div
-                        className={`overflow-hidden rounded-[6px] border border-[#d6dce8] bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)] ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
+                        className={`overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light ${config.sidePanel?.className ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()}
                     >
                         {config.sidePanel?.content ? (
                             <div className="h-full">{config.sidePanel.content}</div>

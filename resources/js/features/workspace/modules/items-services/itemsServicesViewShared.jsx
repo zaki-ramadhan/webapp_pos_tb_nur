@@ -76,12 +76,12 @@ export function FormRow({
 }) {
     return (
         <div className={`grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
-            <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
+            <label className="pt-2 text-xs sm:text-sm leading-6 text-brand-dark">
                 {label}
-                {required ? <span className="text-[#ED3969]"> *</span> : null}
+                {required ? <span className="text-tab-active-border-t"> *</span> : null}
                 {info ? (
                     <Tooltip content={typeof info === 'string' ? info : getFormRowTooltip(label)} portal>
-                        <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-[#394157] cursor-help" />
+                        <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-filter-select-text cursor-help" />
                     </Tooltip>
                 ) : null}
             </label>
@@ -93,8 +93,8 @@ export function FormRow({
 
 export function SectionHeading({ title }) {
     return (
-        <div className="border-b border-[#dbe1ea] pb-2">
-            <h3 className="text-2xl font-normal text-[#1564d7]">{title}</h3>
+        <div className="border-b border-abc-card-border pb-2">
+            <h3 className="text-2xl font-normal text-blue-1564d7">{title}</h3>
         </div>
     );
 }
@@ -103,7 +103,7 @@ export function DetailActionButton({ label }) {
     return (
         <button
             type="button"
-            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#b7beca] bg-[#d3d3d4] px-3.5 text-base text-[#5a6278]"
+            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-tab-active-border-x bg-tab-primary-inactive-hover-bg px-3.5 text-base text-tab-inactive-text"
         >
             {label}
         </button>
@@ -122,15 +122,15 @@ export function ClearableTextInput({
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+            className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
+            inputClassName="text-xs sm:text-sm text-brand-dark"
             trailing={
                 trailing ??
                 (value ? (
                     <button
                         type="button"
                         onClick={() => onChange({ target: { value: '' } })}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-[#111827] transition hover:bg-[#eef2f7]"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-text-darkest transition hover:bg-bg-workspace-light"
                         aria-label="Kosongkan isian"
                     >
                         <CloseIcon className="h-4 w-4" strokeWidth={2.4} />
@@ -161,9 +161,9 @@ export function SimpleTextField({
             placeholder={placeholder}
             prefix={prefix}
             trailing={trailing}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            prefixClassName={prefix ? 'min-w-[32px] border-r-[#d8dde7] bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#9aa3b1]' : ''}
-            inputClassName={`text-xs sm:text-sm text-[#1f2436] ${inputClassName}`.trim()}
+            className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
+            prefixClassName={prefix ? 'min-w-[32px] border-r-ui-border-medium bg-input-prefix-bg px-3 text-xs sm:text-sm text-text-inactive' : ''}
+            inputClassName={`text-xs sm:text-sm text-brand-dark ${inputClassName}`.trim()}
             trailingClassName={trailing ? 'px-3' : ''}
         />
     );
@@ -194,8 +194,8 @@ export function LookupField({
 export function CodeFieldRow({ values, onChange, isDetail }) {
     return (
         <div className="grid gap-3 lg:grid-cols-[170px_48px_minmax(0,1fr)] lg:items-center">
-            <label className="text-xs sm:text-sm leading-6 text-[#1f2436]">
-                Kode Barang <span className="text-[#ED3969]">*</span>
+            <label className="text-xs sm:text-sm leading-6 text-brand-dark">
+                Kode Barang <span className="text-tab-active-border-t">*</span>
             </label>
             {!isDetail ? (
                 <div className="pt-1 lg:pt-0">

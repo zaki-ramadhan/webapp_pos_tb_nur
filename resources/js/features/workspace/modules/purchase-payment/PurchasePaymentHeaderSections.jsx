@@ -18,9 +18,9 @@ export function PurchasePaymentAmountField({ values }) {
             value={values.paymentAmountDisplay}
             readOnly
             prefix={values.paymentAmountPrefix || undefined}
-            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-            prefixClassName="min-w-[42px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-            inputClassName="text-right text-xs sm:text-sm text-[#1f2436]"
+            className="h-[40px] rounded-[4px] border-ui-border"
+            prefixClassName="min-w-[42px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+            inputClassName="text-right text-xs sm:text-sm text-brand-dark"
         />
     );
 }
@@ -32,7 +32,7 @@ export function PurchasePaymentHeaderIconButton({ label, icon, onClick = null })
             aria-label={label}
             title={label}
             onClick={onClick}
-            className="inline-flex h-[36px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+            className="inline-flex h-[36px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
         >
             {icon}
         </button>
@@ -105,8 +105,8 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                                         numberingType: event.target.value,
                                     }))
                                 }
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -118,9 +118,9 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                             <TextInput
                                 value={values.documentNumber}
                                 readOnly
-                                trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
                             />
                         )}

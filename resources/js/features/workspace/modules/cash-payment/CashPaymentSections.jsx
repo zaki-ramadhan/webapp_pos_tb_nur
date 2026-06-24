@@ -49,7 +49,7 @@ export function PaymentLineItemsSection({ config, values, setValues, handlers = 
             onRowClick={handlers.onEditLineItem}
             getRowClassName={
                 handlers.onEditLineItem
-                    ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
+                    ? () => 'cursor-pointer transition hover:bg-workspace-hover-bg'
                     : undefined
             }
         />
@@ -69,8 +69,8 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                             <TextInput
                                 value={values.checkNumber}
                                 readOnly
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
                             />
                         </div>
 
@@ -98,14 +98,14 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                         {isDetail ? (
                             <>
                                 <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                                <div className="pt-1 text-base italic text-[#1f2436]">{values.reconcileStatus}</div>
+                                <div className="pt-1 text-base italic text-brand-dark">{values.reconcileStatus}</div>
 
                                 <TransactionFieldLabel label={config.labels.printStatus} />
                                 <TextInput
                                     value={values.printStatus}
                                     readOnly
-                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#5f6779]"
+                                    className="h-[34px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-text-workspace-muted"
                                 />
                             </>
                         ) : null}
@@ -122,14 +122,14 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                                 <TextInput
                                     value={values.kapNumber}
                                     readOnly
-                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    className="h-[34px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                 />
                                 <TextInput
                                     value={values.kjsNumber}
                                     readOnly
-                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    className="h-[34px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                 />
                             </div>
 
@@ -137,8 +137,8 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                             <TextInput
                                 value={values.ntpn}
                                 readOnly
-                                className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[34px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
                             />
                         </div>
                     </section>
@@ -207,8 +207,8 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                                         numberingType: event.target.value,
                                     }))
                                 }
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -224,9 +224,9 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                                 onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                 maxLength={120}
                                 readOnly={Boolean(activeRecordId)}
-                                trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
                             />
                         )}
@@ -240,7 +240,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                             ref={ambilButtonRef}
                             type="button"
                             onClick={() => setOpenAmbil((o) => !o)}
-                            className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm font-medium text-[#21539b]"
+                            className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm font-medium text-brand-blue-accent"
                         >
                             <span>{config.takeButtonLabel}</span>
                             <ChevronDownIcon className="h-4 w-4" />
@@ -290,9 +290,9 @@ export function PaymentTableFilterBar({ table, filters, setFilters }) {
                         }))
                     }
                     containerClassName="w-auto shrink-0"
-                    className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[126px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -304,7 +304,7 @@ export function PaymentTableFilterBar({ table, filters, setFilters }) {
 
             <button
                 type="button"
-                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                 aria-label={table.filterButtonLabel}
             >
                 <FunnelIcon className="h-4.5 w-4.5" />

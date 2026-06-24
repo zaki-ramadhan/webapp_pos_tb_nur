@@ -23,14 +23,14 @@ export function ClearableTextInput({ id, name, value, onChange, placeholder = ''
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${className}`.trim()}
-            inputClassName={`text-xs sm:text-sm text-[#1f2436] ${inputClassName}`.trim()}
+            className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
+            inputClassName={`text-xs sm:text-sm text-brand-dark ${inputClassName}`.trim()}
             trailing={
                 value ? (
                     <button
                         type="button"
                         onClick={() => onChange({ target: { value: '' } })}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-[#111827] transition hover:bg-[#eef2f7]"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-text-darkest transition hover:bg-bg-workspace-light"
                         aria-label="Kosongkan isian"
                     >
                         <CloseIcon className="h-4 w-4" strokeWidth={2.4} />
@@ -46,7 +46,7 @@ export function ClearableTextInput({ id, name, value, onChange, placeholder = ''
 export function PrefixedTextArea({ prefix, value, onChange }) {
     return (
         <div className="flex overflow-hidden rounded-[4px] border border-slate-400 bg-white">
-            <div className="flex min-w-[92px] items-start justify-start border-r border-slate-400 bg-[#f3f3f4] px-3 py-3 text-xs sm:text-sm text-[#8b94a7]">
+            <div className="flex min-w-[92px] items-start justify-start border-r border-slate-400 bg-input-prefix-bg px-3 py-3 text-xs sm:text-sm text-input-prefix-text">
                 {prefix}
             </div>
             <TextareaField
@@ -54,7 +54,7 @@ export function PrefixedTextArea({ prefix, value, onChange }) {
                 onChange={onChange}
                 rows={4}
                 className="border-none"
-                textareaClassName="min-h-[112px] text-[#1f2436]"
+                textareaClassName="min-h-[112px] text-brand-dark"
             />
         </div>
     );
@@ -67,15 +67,15 @@ export function PrefixedInput({ prefix, value, onChange, className = '', prefixC
             onChange={onChange}
             prefix={prefix}
             className={`h-[40px] rounded-[4px] border-slate-400 ${className}`.trim()}
-            prefixClassName={prefixClassName || "min-w-[92px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"}
-            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+            prefixClassName={prefixClassName || "min-w-[92px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text"}
+            inputClassName="text-xs sm:text-sm text-brand-dark"
             {...props}
             trailing={
                 value ? (
                     <button
                         type="button"
                         onClick={() => onChange({ target: { value: '' } })}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-[#111827] transition hover:bg-[#eef2f7]"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-[4px] text-text-darkest transition hover:bg-bg-workspace-light"
                         aria-label={`Kosongkan ${prefix}`}
                     >
                         <CloseIcon className="h-4 w-4" strokeWidth={2.4} />
@@ -135,8 +135,8 @@ export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
                         value={values.description}
                         onChange={(event) => onChange('description', event.target.value)}
                         rows={6}
-                        className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[148px] text-xs sm:text-sm text-[#1f2436]"
+                        className="rounded-[4px] border-ui-border"
+                        textareaClassName="min-h-[148px] text-xs sm:text-sm text-brand-dark"
                     />
                 </WarehouseFieldRow>
             </div>
@@ -163,10 +163,10 @@ export function WarehouseAddressTab({ config, values, onChange }) {
                         onChange={(nextValue) => onChange('city', nextValue)}
                         onSelectCity={handleSelectCity}
                         prefix="Kota"
-                        prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]"
+                        prefixClassName="min-w-[62px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text"
                         dropdownLeftOffsetClassName="left-[62px]"
                     />
-                    <PrefixedInput prefix="K.Pos" prefixClassName="min-w-[62px] border-slate-400 bg-[#f3f3f4] px-3 text-xs sm:text-sm text-[#8b94a7]" value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} />
+                    <PrefixedInput prefix="K.Pos" prefixClassName="min-w-[62px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text" value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} />
                 </div>
 
                 <PrefixedInput prefix="Provinsi" value={values.province} onChange={(event) => onChange('province', event.target.value)} />
@@ -179,8 +179,8 @@ export function WarehouseAddressTab({ config, values, onChange }) {
 export function WarehouseUsersTab({ config, values, onChange, isDetail }) {
     return (
         <div className="space-y-4">
-            <div className="border-b border-[#d9dee8] pb-2.5">
-                <h3 className="text-lg font-medium text-[#1f2436]">{config.userAccess.title}</h3>
+            <div className="border-b border-ui-border-medium pb-2.5">
+                <h3 className="text-lg font-medium text-brand-dark">{config.userAccess.title}</h3>
             </div>
 
             <CheckboxField
@@ -197,7 +197,7 @@ export function WarehouseUsersTab({ config, values, onChange, isDetail }) {
             {!values.allUsers ? (
                 <div className="space-y-3">
                     <div className="pt-1">
-                        <h3 className="text-lg font-medium text-[#1f2436]">{config.userAccess.limitedTitle}</h3>
+                        <h3 className="text-lg font-medium text-brand-dark">{config.userAccess.limitedTitle}</h3>
                     </div>
 
 

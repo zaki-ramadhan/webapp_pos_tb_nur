@@ -42,8 +42,8 @@ function AccessTypeField({ value, onChange }) {
             </div>
             {descriptions[value] && (
                 <div className="flex items-center gap-3 pt-0.5 mt-1">
-                    <span className="block h-6 w-[5px] rounded-[2px] bg-[#9a9a9a]" aria-hidden="true" />
-                    <p className="text-xs sm:text-sm italic leading-6 text-[#ED3969]">
+                    <span className="block h-6 w-[5px] rounded-[2px] bg-bg-bullet-gray" aria-hidden="true" />
+                    <p className="text-xs sm:text-sm italic leading-6 text-tab-active-border-t">
                         {descriptions[value]}
                     </p>
                 </div>
@@ -182,31 +182,31 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
             onSave={handleSave}
         >
             <div className="flex-1 min-h-0 pt-2">
-                <h2 className="text-[15px] text-[#111827] leading-normal font-normal mb-8">
+                <h2 className="text-[15px] text-text-darkest leading-normal font-normal mb-8">
                     Tambahkan pengguna untuk mengakses database ini dengan memasukkan no handphone/emailnya
                 </h2>
 
                 <div className="grid gap-x-8 gap-y-5 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start max-w-[980px]">
-                    <label className="pt-2 text-xs sm:text-sm text-[#20273b] font-normal">
-                        No Handphone/Email <span className="text-[#ED3969]">*</span>
+                    <label className="pt-2 text-xs sm:text-sm text-section-tab-accent-text font-normal">
+                        No Handphone/Email <span className="text-tab-active-border-t">*</span>
                     </label>
                     <div className="max-w-[420px] w-full">
                         <TextInput
                             value={values.phone}
                             onChange={(e) => setValues({ ...values, phone: e.target.value })}
                             placeholder=""
-                            className="h-[36px] w-full rounded-[4px] border-[#cfd6e2]"
+                            className="h-[36px] w-full rounded-[4px] border-ui-border"
                             inputClassName="text-xs sm:text-sm"
                         />
                     </div>
 
-                    <label className="pt-1.5 text-xs sm:text-sm text-[#20273b] font-normal">Jenis Akses</label>
+                    <label className="pt-1.5 text-xs sm:text-sm text-section-tab-accent-text font-normal">Jenis Akses</label>
                     <AccessTypeField
                         value={values.accessType}
                         onChange={(v) => setValues({ ...values, accessType: v })}
                     />
 
-                    <label className="pt-2 text-xs sm:text-sm text-[#20273b] font-normal">Akses Grup</label>
+                    <label className="pt-2 text-xs sm:text-sm text-section-tab-accent-text font-normal">Akses Grup</label>
                     <div className="max-w-[420px] w-full">
                         <ReferenceLookupInput
                             value={lookupData.groups?.find((g) => g.id === values.accessGroupIds[0])?.name ?? ''}

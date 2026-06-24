@@ -363,7 +363,7 @@ export default function ExpenseEntryFormView({
                                     variant="secondary"
                                     size="md"
                                     onClick={handleLineModalDelete}
-                                    className="border-[#e39191] hover:bg-red-50 text-[#d65959] font-semibold"
+                                    className="border-red-e39191 hover:bg-red-50 text-error-border font-semibold"
                                 >
                                     Hapus
                                 </Button>
@@ -375,20 +375,20 @@ export default function ExpenseEntryFormView({
                             variant="primary"
                             size="md"
                             onClick={handleLineModalSubmit}
-                            className="bg-[#1a50a1] hover:bg-[#154184] font-semibold shadow-[0_2px_8px_rgba(26,80,161,0.16)]"
+                            className="bg-brand-blue-dark hover:bg-brand-blue-darker font-semibold shadow-btn-blue-hover"
                         >
                             Lanjut
                         </Button>
                     </div>
                 }
             >
-                <div className="flex border-b border-[#edf0f5] -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
+                <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
                     <button
                         type="button"
                         onClick={() => setLineModalTab('rincian')}
                         className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
                             lineModalTab === 'rincian'
-                                ? 'border-[#ee3969] text-[#ee3969]'
+                                ? 'border-pink-accent text-pink-accent'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
@@ -399,7 +399,7 @@ export default function ExpenseEntryFormView({
                         onClick={() => setLineModalTab('info')}
                         className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
                             lineModalTab === 'info'
-                                ? 'border-[#ee3969] text-[#ee3969]'
+                                ? 'border-pink-accent text-pink-accent'
                                 : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                     >
@@ -427,7 +427,7 @@ export default function ExpenseEntryFormView({
                                     }))
                                 }
                                 placeholder="Nama rincian beban"
-                                className="h-[36px] rounded-[4px] border-[#cfd6e2]"
+                                className="h-[36px] rounded-[4px] border-ui-border"
                                 inputClassName="text-sm font-normal text-slate-700"
                             />
                         </div>
@@ -449,8 +449,8 @@ export default function ExpenseEntryFormView({
                                         }))
                                     }
                                     placeholder="0"
-                                    className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                                    prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-[#d8dde7] bg-[#fbfcfe] text-sm"
+                                    className="h-[36px] rounded-[4px] border-ui-border"
+                                    prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
                                     inputClassName="text-slate-700 font-medium text-right text-sm"
                                 />
                             </div>
@@ -475,7 +475,7 @@ export default function ExpenseEntryFormView({
                                     }
                                     placeholder="Catatan tambahan untuk baris ini..."
                                     rows={4}
-                                    className="border-[#cfd6e2] rounded-[4px]"
+                                    className="border-ui-border rounded-[4px]"
                                     textareaClassName="min-h-[80px] text-sm font-normal text-slate-700"
                                 />
                             </div>

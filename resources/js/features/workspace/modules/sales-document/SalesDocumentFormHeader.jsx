@@ -67,7 +67,7 @@ export default function SalesDocumentFormHeader({
                                     values[config.headerTextField.valueKey] ? (
                                         <button
                                             type="button"
-                                            className="text-lg font-semibold text-[#1f2436]"
+                                            className="text-lg font-semibold text-brand-dark"
                                             onClick={() =>
                                                 setValues((current) => ({
                                                     ...current,
@@ -79,8 +79,8 @@ export default function SalesDocumentFormHeader({
                                         </button>
                                     ) : null
                                 }
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
                             />
                             {isDetail ? <div /> : null}
@@ -101,8 +101,8 @@ export default function SalesDocumentFormHeader({
                             <SelectField
                                 value={values.numberingType}
                                 onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -117,9 +117,9 @@ export default function SalesDocumentFormHeader({
                                 onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                 maxLength={120}
                                 readOnly={isDetail}
-                                trailing={<span className="text-lg font-semibold text-[#1f2436]">×</span>}
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                trailing={<span className="text-lg font-semibold text-brand-dark">×</span>}
+                                className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
                             />
                         )}

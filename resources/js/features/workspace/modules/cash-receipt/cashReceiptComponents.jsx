@@ -10,9 +10,9 @@ export function ReceiptFilterBar({ table, filters, setFilters, SelectField }) {
                     value={filters[filter.id]}
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto shrink-0"
-                    className="h-[34px] min-w-[126px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[126px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -24,7 +24,7 @@ export function ReceiptFilterBar({ table, filters, setFilters, SelectField }) {
 
             <button
                 type="button"
-                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                 aria-label={table.filterButtonLabel}
             >
                 <FunnelIcon className="h-4.5 w-4.5" />
@@ -45,12 +45,12 @@ export function CashReceiptSortHeader({ column }) {
 export function CashReceiptEmptyLineRow({ colSpan, emptyLabel }) {
     return (
         <tr className="bg-white">
-            <td className="px-3 text-center text-[#a8afbe]">
+            <td className="px-3 text-center text-text-workspace-inactive">
                 <TableActionIcon className="mx-auto h-4 w-4" />
             </td>
             <td
                 colSpan={colSpan - 1}
-                className="px-3 py-3 text-center text-base text-[#131a28]"
+                className="px-3 py-3 text-center text-base text-text-workspace-dark"
             >
                 {emptyLabel}
             </td>

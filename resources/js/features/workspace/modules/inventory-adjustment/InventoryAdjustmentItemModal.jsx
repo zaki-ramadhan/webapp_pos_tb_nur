@@ -48,7 +48,7 @@ function DetailTab({ values, setValues, modal }) {
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Kode #">
-                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{values.code || '—'}</div>
+                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-document-code">{values.code || '—'}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Nama Barang" required>
@@ -74,14 +74,14 @@ function DetailTab({ values, setValues, modal }) {
                                     unitLookup: record.base_unit?.name ? [record.base_unit.name] : current.unitLookup,
                                 }));
                             }}
-                            className="inline-flex h-full items-center px-3 text-xs font-medium text-[#2353a0] hover:text-[#1a3f7a]"
+                            className="inline-flex h-full items-center px-3 text-xs font-medium text-brand-blue hover:text-blue-1a3f7a"
                         >
                             Cari
                         </button>
                     }
-                    className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs text-[#1f2436]"
-                    trailingClassName="px-0 border-l border-[#cfd6e2]"
+                    className="h-[36px] rounded-[4px] border-ui-border"
+                    inputClassName="text-xs text-brand-dark"
+                    trailingClassName="px-0 border-l border-ui-border"
                 />
             </ModalFieldRow>
 
@@ -94,8 +94,8 @@ function DetailTab({ values, setValues, modal }) {
                             adjustmentType: event.target.value,
                         }))
                     }
-                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="text-xs text-[#1f2436]"
+                    className="h-[34px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs text-brand-dark"
                     containerClassName="max-w-[204px]"
                 >
                     {(modal.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan']).map((option) => (
@@ -116,9 +116,9 @@ function DetailTab({ values, setValues, modal }) {
                                 quantity: event.target.value,
                             }))
                         }
-                        trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-xs text-[#1f2436]"
+                        trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-right text-xs text-brand-dark"
                         trailingClassName="px-3"
                     />
                     <ChipLookupField
@@ -146,10 +146,10 @@ function DetailTab({ values, setValues, modal }) {
                         }))
                     }
                     prefix="Rp"
-                    trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
-                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                    prefixClassName="min-w-[36px] justify-center bg-[#f5f6f8] px-0 text-[#9aa3b1]"
-                    inputClassName="text-right text-xs text-[#1f2436]"
+                    trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                    className="h-[34px] rounded-[4px] border-ui-border"
+                    prefixClassName="min-w-[36px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+                    inputClassName="text-right text-xs text-brand-dark"
                     trailingClassName="px-3"
                     containerClassName="max-w-[204px]"
                 />
@@ -159,8 +159,8 @@ function DetailTab({ values, setValues, modal }) {
                 <TextInput
                     value={values.totalCost}
                     readOnly
-                    className="h-[34px] rounded-[4px] border-[#cfd6e2] bg-[#f8f9fb]"
-                    inputClassName="text-right text-xs text-[#6b7280]"
+                    className="h-[34px] rounded-[4px] border-ui-border bg-bg-workspace-input-panel"
+                    inputClassName="text-right text-xs text-tab-view-active-text"
                     containerClassName="max-w-[204px]"
                 />
             </ModalFieldRow>
@@ -216,8 +216,8 @@ function InfoTab({ values, setValues }) {
                         }))
                     }
                     rows={4}
-                    className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[92px] text-xs text-[#1f2436]"
+                    className="rounded-[4px] border-ui-border"
+                    textareaClassName="min-h-[92px] text-xs text-brand-dark"
                 />
             </ModalFieldRow>
         </div>
@@ -249,7 +249,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             activeTabId={activeTabIdSafe}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
-            panelClassName="max-w-[540px] overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
+            panelClassName="max-w-[540px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[360px] py-4"
             footer={
                 <DocumentModalFooter

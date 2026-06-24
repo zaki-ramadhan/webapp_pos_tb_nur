@@ -47,16 +47,16 @@ function DetailTab({ values, setValues }) {
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Kode #">
-                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-[#22a3f2]">{values.code}</div>
+                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-document-code">{values.code}</div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Nama Barang" required>
                 <TextInput
                     value={values.name}
                     readOnly
-                    trailing={<span className="text-xl font-semibold text-[#1f2436]">×</span>}
-                    className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs text-[#1f2436]"
+                    trailing={<span className="text-xl font-semibold text-brand-dark">×</span>}
+                    className="h-[36px] rounded-[4px] border-ui-border"
+                    inputClassName="text-xs text-brand-dark"
                     trailingClassName="px-3"
                 />
             </ModalFieldRow>
@@ -71,9 +71,9 @@ function DetailTab({ values, setValues }) {
                                 quantity: event.target.value,
                             }))
                         }
-                        trailing={<TableActionIcon className="h-4 w-4 text-[#111827]" />}
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-right text-xs text-[#1f2436]"
+                        trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-right text-xs text-brand-dark"
                         trailingClassName="px-3"
                     />
 
@@ -129,9 +129,9 @@ function DetailTab({ values, setValues }) {
 
 function SerialRow({ value }) {
     return (
-        <div className="grid grid-cols-[42px_minmax(0,1fr)] border-b border-[#edf1f6] last:border-b-0">
-            <div className="flex items-center justify-center bg-[#b82924] text-white cursor-pointer select-none">X</div>
-            <div className="px-4 py-2 text-xs text-[#1f2436]">{value}</div>
+        <div className="grid grid-cols-[42px_minmax(0,1fr)] border-b border-table-row-border last:border-b-0">
+            <div className="flex items-center justify-center bg-btn-danger-bg text-white cursor-pointer select-none">X</div>
+            <div className="px-4 py-2 text-xs text-brand-dark">{value}</div>
         </div>
     );
 }
@@ -146,12 +146,12 @@ function SerialTab({ values }) {
                         value=""
                         readOnly
                         placeholder="Scan Barcode / Ketik lalu [Enter]"
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs text-[#1f2436]"
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs text-brand-dark"
                     />
                     <button
                         type="button"
-                        className="inline-flex h-[36px] items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] text-white"
+                        className="inline-flex h-[36px] items-center justify-center rounded-[4px] border border-import-action-blue bg-import-action-blue text-white"
                         aria-label="Unduh nomor seri"
                     >
                         <DownloadIcon className="h-4 w-4 text-white" />
@@ -159,8 +159,8 @@ function SerialTab({ values }) {
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-[4px] border border-[#d1d8e4]">
-                <div className="grid grid-cols-[42px_minmax(0,1fr)] bg-[#5f7690] text-white">
+            <div className="overflow-hidden rounded-[4px] border border-table-wrapper-border">
+                <div className="grid grid-cols-[42px_minmax(0,1fr)] bg-table-header-bg text-white">
                     <div className="border-r border-white/20" />
                     <div className="px-4 py-2 text-center text-sm font-medium">Nomor #</div>
                 </div>
@@ -169,12 +169,12 @@ function SerialTab({ values }) {
                     {values.serialNumbers.length ? (
                         values.serialNumbers.map((serialNumber) => <SerialRow key={serialNumber} value={serialNumber} />)
                     ) : (
-                        <div className="px-4 py-6 text-center text-xs text-[#7d879a]">Belum ada data</div>
+                        <div className="px-4 py-6 text-center text-xs text-text-placeholder">Belum ada data</div>
                     )}
                 </div>
             </div>
 
-            <div className="text-xs text-[#1f2436]">{values.serialNumbers.length} No Seri/Produksi</div>
+            <div className="text-xs text-brand-dark">{values.serialNumbers.length} No Seri/Produksi</div>
         </div>
     );
 }
@@ -192,8 +192,8 @@ function InfoTab({ values, setValues }) {
                         }))
                     }
                     rows={4}
-                    className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[92px] text-xs text-[#1f2436]"
+                    className="rounded-[4px] border-ui-border"
+                    textareaClassName="min-h-[92px] text-xs text-brand-dark"
                 />
             </ModalFieldRow>
         </div>
@@ -225,7 +225,7 @@ export default function WorkOrderItemModal({ open, onClose, modal, item }) {
             activeTabId={activeTabIdSafe}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
-            panelClassName="max-w-[620px] overflow-hidden rounded-[8px] px-0 py-0 shadow-[0_18px_44px_rgba(15,23,42,0.28)]"
+            panelClassName="max-w-[620px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[340px] py-4"
             footer={
                 <DocumentModalFooter

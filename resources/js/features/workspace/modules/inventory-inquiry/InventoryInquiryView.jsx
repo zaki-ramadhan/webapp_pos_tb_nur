@@ -60,7 +60,7 @@ function InquiryIconButton({ icon, label, onClick }) {
         <ToolbarIconButton
             label={label}
             onClick={onClick}
-            className="inline-flex shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0] transition hover:bg-[#e8f2ff] h-[34px] w-[40px]"
+            className="inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition hover:bg-brand-blue-light h-[34px] w-[40px]"
         >
             <IconComponent className="h-4 w-4" />
         </ToolbarIconButton>
@@ -73,8 +73,8 @@ function InquiryTextButton({ label, tone = 'default' }) {
             type="button"
             className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-base ${
                 tone === 'primary'
-                    ? 'border-[#7aa2d5] bg-[#f0f6ff] text-[#2353a0]'
-                    : 'border-[#7aa2d5] bg-white text-[#2353a0]'
+                    ? 'border-brand-blue-border bg-bg-brand-blue-toggled text-brand-blue'
+                    : 'border-brand-blue-border bg-white text-brand-blue'
             }`.trim()}
         >
             {label}
@@ -100,8 +100,8 @@ function InquiryControl({
                 value={value}
                 onChange={(event) => onChange(control.id, event.target.value)}
                 containerClassName="w-auto shrink-0"
-                className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                selectClassName="text-xs sm:text-sm text-brand-dark"
             >
                 {(control.options ?? []).map((option) => (
                     <option key={option.value} value={option.value}>
@@ -117,8 +117,8 @@ function InquiryControl({
             <TransactionDateInput
                 value={value}
                 onChange={(nextValue) => onChange(control.id, nextValue)}
-                className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-                inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                inputClassName="text-xs sm:text-sm text-brand-dark"
                 trailingClassName="w-[42px] shrink-0 justify-center px-0"
             />
         );
@@ -163,9 +163,9 @@ function InquiryControl({
             value={value}
             onChange={(event) => onChange(control.id, event.target.value)}
             placeholder={control.placeholder ?? ''}
-            trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
-            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${control.className ?? ''}`.trim()}
-            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+            trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
+            className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+            inputClassName="text-xs sm:text-sm text-brand-dark"
             trailingClassName="px-3"
         />
     );
@@ -305,7 +305,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                     {(config.controls ?? []).map((control) => (
@@ -332,9 +332,9 @@ export default function InventoryInquiryView({ config, pageId }) {
                             value={keyword}
                             onChange={(event) => setKeyword(event.target.value)}
                             placeholder={config.search.placeholder}
-                            trailing={<SearchIcon className="h-5 w-5 text-[#111827]" />}
-                            className={`h-[40px] rounded-[4px] border-[#cfd6e2] ${config.search.className ?? ''}`.trim()}
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
+                            className={`h-[40px] rounded-[4px] border-ui-border ${config.search.className ?? ''}`.trim()}
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                             trailingClassName="px-3"
                         />
                     </div>
@@ -342,14 +342,14 @@ export default function InventoryInquiryView({ config, pageId }) {
             </div>
 
             {error ? (
-                <div className="mt-3 rounded-[6px] border border-[#f0c4c4] bg-[#fff6f6] px-3 py-2 text-sm text-[#a33939]">
+                <div className="mt-3 rounded-[6px] border border-red-f0c4c4 bg-surface px-3 py-2 text-sm text-red-a33939">
                     {error}
                 </div>
             ) : null}
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {firstColumnIsCheckbox ? (
                                 <DataTableHead className="w-[52px] px-2.5 text-center">
@@ -359,7 +359,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                         ref={(el) => { if (el) el.indeterminate = someSelected; }}
                                         onChange={toggleAll}
                                         aria-label="Pilih semua"
-                                        className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-[#d8dde7]"
+                                        className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border-medium"
                                     />
                                 </DataTableHead>
                             ) : null}
@@ -388,7 +388,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
+                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
                                         <DataTableCell className="px-2.5 text-center">
@@ -397,17 +397,17 @@ export default function InventoryInquiryView({ config, pageId }) {
                                                 checked={selectedIds.has(row.id)}
                                                 onChange={() => toggleRow(row.id)}
                                                 aria-label={`Pilih baris ${index + 1}`}
-                                                className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-[#cfd6e2]"
+                                                className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border"
                                             />
                                         </DataTableCell>
                                     ) : null}
-                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
                                         {from > 0 ? (from + index) : (index + 1)}
                                     </DataTableCell>
                                     {dataColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`px-2.5 text-base text-[#131a28] ${resolveCellAlignClassName(column.align)}`.trim()}
+                                            className={`px-2.5 text-base text-text-workspace-dark ${resolveCellAlignClassName(column.align)}`.trim()}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -419,7 +419,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                 {firstColumnIsCheckbox ? <DataTableCell className="px-2.5" /> : null}
                                 <DataTableCell
                                     colSpan={dataColumns.length + 1}
-                                    className="px-2.5 py-3 text-center text-base text-[#131a28]"
+                                    className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                 >
                                     {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>

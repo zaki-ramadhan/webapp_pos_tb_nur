@@ -33,8 +33,8 @@ export default function BankTransferHeader({ config, values, setValues, activeRe
                     <SelectField
                         value={values.numberingType}
                         onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -48,8 +48,8 @@ export default function BankTransferHeader({ config, values, setValues, activeRe
                         onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                         onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                         maxLength={120}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 )}
             </div>

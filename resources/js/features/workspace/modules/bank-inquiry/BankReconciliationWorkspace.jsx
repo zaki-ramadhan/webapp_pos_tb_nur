@@ -7,7 +7,7 @@ import { SearchIcon } from '@/features/workspace/shared/Icons';
 import { showSuccessToast, showErrorToast, showLoadingToast, dismissToast } from '@/components/feedback/toast';
 import axios from 'axios';
 
-// Reusing standard components from the workspace to prevent code bloat
+// Components
 import {
     DataTable,
     DataTableBody,
@@ -18,7 +18,7 @@ import {
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 
-// Modular Imports
+// Imports
 import { defaultColumns, matchColumns, excelColumns, systemColumns } from './reconciliationColumns';
 import { parseExcelRows, runReconciliationMatching } from './reconciliationExcelParser';
 
@@ -44,7 +44,7 @@ export default function BankReconciliationWorkspace({
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
 
-    // Handle excel file upload & parsing via SheetJS
+    // Excel upload handler
     const handleExcelUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -329,7 +329,7 @@ export default function BankReconciliationWorkspace({
                     {!excelRows && (
                         <>
                             <DataTable className="min-w-[1000px] border-0" wrapperClassName="rounded-none border-0">
-                                <DataTableHeader className="bg-[#5f7690]">
+                                <DataTableHeader className="bg-table-header-bg">
                                     <tr>
                                         {defaultColumns.map((col) => (
                                             <SortableTableHeaderCell
@@ -347,7 +347,7 @@ export default function BankReconciliationWorkspace({
                                         <DataTableRow className="bg-white">
                                             <DataTableCell
                                                 colSpan={defaultColumns.length}
-                                                className="px-2.5 py-3 text-center text-base text-[#131a28]"
+                                                className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                             >
                                                 Memuat data...
                                             </DataTableCell>
@@ -386,7 +386,7 @@ export default function BankReconciliationWorkspace({
                                         <DataTableRow className="bg-white">
                                             <DataTableCell
                                                 colSpan={defaultColumns.length}
-                                                className="px-2.5 py-3 text-center text-base text-[#131a28]"
+                                                className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                             >
                                                 Belum ada data transaksi. Unggah file rekening koran untuk mencocokkan.
                                             </DataTableCell>
@@ -395,7 +395,7 @@ export default function BankReconciliationWorkspace({
                                 </DataTableBody>
                             </DataTable>
                             {rows.length === 0 && (
-                                <div className="border-t border-[#edf1f6] bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
+                                <div className="border-t border-table-row-border bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
                             )}
                         </>
                     )}
@@ -404,7 +404,7 @@ export default function BankReconciliationWorkspace({
                     {excelRows && activeTab === 'match' && (
                         <>
                             <DataTable className="min-w-[1200px] border-0" wrapperClassName="rounded-none border-0">
-                            <DataTableHeader className="bg-[#5f7690]">
+                            <DataTableHeader className="bg-table-header-bg">
                                 <tr>
                                     {matchColumns.map((col) => (
                                         <SortableTableHeaderCell
@@ -515,7 +515,7 @@ export default function BankReconciliationWorkspace({
                                     <DataTableRow className="bg-white">
                                         <DataTableCell
                                             colSpan={matchColumns.length}
-                                            className="px-2.5 py-3 text-center text-base text-[#131a28]"
+                                            className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                         >
                                             Tidak ada baris data dengan filter status ini.
                                         </DataTableCell>
@@ -524,7 +524,7 @@ export default function BankReconciliationWorkspace({
                             </DataTableBody>
                         </DataTable>
                         {displayedMatchResults.length === 0 && (
-                            <div className="border-t border-[#edf1f6] bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
+                            <div className="border-t border-table-row-border bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
                         )}
                     </>
                 )}
@@ -533,7 +533,7 @@ export default function BankReconciliationWorkspace({
                     {excelRows && activeTab === 'excel' && (
                         <>
                             <DataTable className="w-full border-0" wrapperClassName="rounded-none border-0">
-                                <DataTableHeader className="bg-[#5f7690]">
+                                <DataTableHeader className="bg-table-header-bg">
                                     <tr>
                                         {excelColumns.map((col) => (
                                             <SortableTableHeaderCell
@@ -567,7 +567,7 @@ export default function BankReconciliationWorkspace({
                                         <DataTableRow className="bg-white">
                                             <DataTableCell
                                                 colSpan={excelColumns.length}
-                                                className="px-2.5 py-3 text-center text-base text-[#131a28]"
+                                                className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                             >
                                                 Belum ada data.
                                             </DataTableCell>
@@ -576,7 +576,7 @@ export default function BankReconciliationWorkspace({
                                 </DataTableBody>
                             </DataTable>
                             {excelRows.length === 0 && (
-                                <div className="border-t border-[#edf1f6] bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
+                                <div className="border-t border-table-row-border bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
                             )}
                         </>
                     )}
@@ -585,7 +585,7 @@ export default function BankReconciliationWorkspace({
                     {excelRows && activeTab === 'system' && (
                         <>
                             <DataTable className="w-full border-0" wrapperClassName="rounded-none border-0">
-                                <DataTableHeader className="bg-[#5f7690]">
+                                <DataTableHeader className="bg-table-header-bg">
                                     <tr>
                                         {systemColumns.map((col) => (
                                             <SortableTableHeaderCell
@@ -621,7 +621,7 @@ export default function BankReconciliationWorkspace({
                                         <DataTableRow className="bg-white">
                                             <DataTableCell
                                                 colSpan={systemColumns.length}
-                                                className="px-2.5 py-3 text-center text-base text-[#131a28]"
+                                                className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                             >
                                                 Belum ada data.
                                             </DataTableCell>
@@ -630,7 +630,7 @@ export default function BankReconciliationWorkspace({
                                 </DataTableBody>
                             </DataTable>
                             {rows.length === 0 && (
-                                <div className="border-t border-[#edf1f6] bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
+                                <div className="border-t border-table-row-border bg-white min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]" />
                             )}
                         </>
                     )}

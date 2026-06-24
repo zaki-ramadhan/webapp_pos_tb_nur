@@ -38,7 +38,7 @@ export function cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, 
             onChange: (event) => setKeyword(event.target.value),
             placeholder: config.table.searchPlaceholder,
             widthClassName: 'sm:w-[342px]',
-            trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+            trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
         },
         pageValue: config.table.pageValue,
     };

@@ -7,41 +7,41 @@ import { TransactionDockIcon } from './TransactionDockIcon';
 
 function resolveDockToneClassName(tone, isDisabled = false) {
     if (isDisabled) {
-        return 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] shadow-none';
+        return 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t shadow-none';
     }
     switch (tone) {
         case 'muted':
-            return 'border-[#d3d7df] bg-[#e8e8e9] text-[#a7abb4] shadow-[0_2px_5px_rgba(15,23,42,0.08)]';
+            return 'border-border-input-compact bg-disabled-bg text-gray-a7abb4 shadow-dock-button-subtle';
         case 'blue':
         case 'secondary':
-            return 'border-[#4d94dd] bg-[#8fc0ef] text-[#0d4e96] shadow-[0_4px_8px_rgba(20,75,138,0.18)]';
+            return 'border-border-dock-blue-alt bg-bg-dock-blue-alt text-text-dock-blue-alt shadow-dock-blue';
         case 'success':
-            return 'border-[#69cf7e] bg-[#9de29b] text-[#0b7b34] shadow-[0_4px_8px_rgba(27,104,53,0.16)]';
+            return 'border-green-69cf7e bg-green-99e19e text-green-0b7a34 shadow-dock-green';
         case 'danger':
-            return 'border-[#f08f92] bg-[#ffb2b5] text-[#e54854] shadow-[0_4px_8px_rgba(135,43,52,0.15)]';
+            return 'border-red-f08f92 bg-red-f5b0b4 text-red-e54854 shadow-dock-red';
         case 'primary':
         default:
-            return 'border-[#214d8d] bg-[#0f62b8] text-white shadow-[0_4px_8px_rgba(24,53,97,0.22)]';
+            return 'border-brand-blue-darker bg-blue-0f62b8 text-white shadow-dock-default';
     }
 }
 
 function resolveDockDividerClassName(tone, isDisabled = false) {
     if (isDisabled) {
-        return 'border-l-[#c8ccd4]';
+        return 'border-l-disabled-border';
     }
     switch (tone) {
         case 'blue':
         case 'secondary':
-            return 'border-l-[#5a9bdd]';
+            return 'border-l-blue-5a9bdd';
         case 'success':
-            return 'border-l-[#6bc57c]';
+            return 'border-l-green-6bc57c';
         case 'muted':
-            return 'border-l-[#d0d4db]';
+            return 'border-l-tab-view-active-border-x';
         case 'danger':
-            return 'border-l-[#f39ca0]';
+            return 'border-l-red-f39ca0';
         case 'primary':
         default:
-            return 'border-l-[#1a4f95]';
+            return 'border-l-brand-blue-hover';
     }
 }
 
@@ -115,7 +115,7 @@ export function TransactionDockButton({ action, templateLabel, favoritesStorageK
                                     }}
                                 >
                                     <span className="flex items-center gap-2">
-                                        {ItemIcon ? <ItemIcon className="h-4 w-4 text-[#475569]" /> : null}
+                                        {ItemIcon ? <ItemIcon className="h-4 w-4 text-blue-475569" /> : null}
                                         <span>{item.label}</span>
                                     </span>
                                 </DropdownMenuItem>

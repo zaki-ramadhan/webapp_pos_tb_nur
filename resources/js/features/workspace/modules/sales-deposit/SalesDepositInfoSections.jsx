@@ -44,10 +44,10 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                         <div className="flex items-start gap-4">
                             <button
                                 type="button"
-                                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#21539b]"
+                                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue-accent"
                                 aria-label="Lihat alamat"
                             >
-                                <PinIcon className="h-[18px] w-[18px] text-[#21539b]" />
+                                <PinIcon className="h-[18px] w-[18px] text-brand-blue-accent" />
                             </button>
                             <ReadonlyTransactionTextarea value={values.address} className="min-h-[86px] flex-1" />
                         </div>
@@ -67,8 +67,8 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                             }))
                         }
                         rows={4}
-                        className="border-[#cfd6e2]"
-                        textareaClassName="min-h-[72px] text-xs sm:text-sm text-[#1f2436]"
+                        className="border-ui-border"
+                        textareaClassName="min-h-[72px] text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
             </div>
@@ -80,14 +80,14 @@ export function DepositSmartlinkSection({ config }) {
     return (
         <section>
             <TransactionSectionHeading title={config.smartlinkTitle} icon="smartlink" />
-            <div className="mt-4 flex items-start gap-4 text-base leading-8 text-[#1f2436]">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full text-[#1f2436]">
+            <div className="mt-4 flex items-start gap-4 text-base leading-8 text-brand-dark">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full text-brand-dark">
                     i
                 </span>
                 <p className="max-w-[720px] italic">
                     Sekarang Anda dapat menerima pembayaran tagihan ini melalui partner Payment Gateway
                     <br />
-                    kami. <span className="text-[#1564d7]">Klik Disini</span>
+                    kami. <span className="text-blue-1564d7">Klik Disini</span>
                 </p>
             </div>
         </section>
@@ -97,21 +97,21 @@ export function DepositSmartlinkSection({ config }) {
 export function DepositSummarySection({ config, values }) {
     return (
         <div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
-            <section className="rounded-[4px] border border-[#d2d8e3] bg-white">
-                <div className="border-b border-[#d8dde7] px-4 py-3">
+            <section className="rounded-[4px] border border-table-cell-border bg-white">
+                <div className="border-b border-ui-border-medium px-4 py-3">
                     <TransactionSectionHeading title={config.summaryTitle} icon="payment" />
                 </div>
                 <div className="-mt-3 pb-1 pt-2">
                     {values.summary.map(([label, value]) => (
                         label === 'Status' ? (
-                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#e6ebf2] px-4 py-2.5">
-                                <span className="text-xs sm:text-sm text-[#1f2436]">{label}</span>
+                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border-ui-border-lightest px-4 py-2.5">
+                                <span className="text-xs sm:text-sm text-brand-dark">{label}</span>
                                 <DepositStatusPill value={value} />
                             </div>
                         ) : (
-                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#e6ebf2] px-4 py-2.5 last:border-b-0">
-                                <span className="text-xs sm:text-sm text-[#1f2436]">{label}</span>
-                                <span className={`text-right text-base ${label === 'Dicetak/email' ? 'font-semibold text-[#111827]' : 'text-[#111827]'}`.trim()}>
+                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border-ui-border-lightest px-4 py-2.5 last:border-b-0">
+                                <span className="text-xs sm:text-sm text-brand-dark">{label}</span>
+                                <span className={`text-right text-base ${label === 'Dicetak/email' ? 'font-semibold text-text-darkest' : 'text-text-darkest'}`.trim()}>
                                     {value}
                                 </span>
                             </div>
@@ -158,7 +158,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                 </div>
 
                 {!isDetail && values.autoNumber ? (
-                    <SelectField value={values.numberingType} onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
+                    <SelectField value={values.numberingType} onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
                                 {option}
@@ -182,9 +182,9 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                         }
                         maxLength={120}
                         readOnly={Boolean(isDetail)}
-                        trailing={<span className="text-lg font-semibold text-[#1f2436]">x</span>}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        trailing={<span className="text-lg font-semibold text-brand-dark">x</span>}
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                         trailingClassName="px-3"
                     />
                 )}
@@ -194,7 +194,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                     <div className="flex justify-end">
                         <button
                             type="button"
-                            className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                            className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
                         >
                             <span>{values.processButtonLabel}</span>
                             <ChevronDownIcon className="h-4 w-4" />

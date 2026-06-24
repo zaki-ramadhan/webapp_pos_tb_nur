@@ -20,9 +20,9 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 function DepartmentFieldRow({ label, required = false, children }) {
     return (
         <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,570px)] lg:items-start">
-            <label className="pt-2 text-xs sm:text-sm leading-6 text-[#1f2436]">
+            <label className="pt-2 text-xs sm:text-sm leading-6 text-brand-dark">
                 {label}
-                {required ? <span className="text-[#ED3969]"> *</span> : null}
+                {required ? <span className="text-tab-active-border-t"> *</span> : null}
             </label>
             <div>{children}</div>
         </div>
@@ -32,9 +32,9 @@ function DepartmentFieldRow({ label, required = false, children }) {
 function renderReferenceOptionPrimary(item, secondaryText = '') {
     return (
         <div className="min-w-0">
-            <div className="truncate text-xs sm:text-sm font-medium text-[#131a28]">{item.label}</div>
+            <div className="truncate text-xs sm:text-sm font-medium text-text-workspace-dark">{item.label}</div>
             {secondaryText ? (
-                <div className="mt-0.5 truncate text-xs text-[#7d879a]">{secondaryText}</div>
+                <div className="mt-0.5 truncate text-xs text-text-placeholder">{secondaryText}</div>
             ) : null}
         </div>
     );
@@ -47,8 +47,8 @@ export function DepartmentGeneralTab({ form, values, onChange, parentDepartmentO
                 <TextInput
                     value={values.name}
                     onChange={(event) => onChange('name', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                    className="h-[40px] rounded-[4px] border-ui-border"
+                    inputClassName="text-xs sm:text-sm text-brand-dark"
                 />
             </DepartmentFieldRow>
 
@@ -57,8 +57,8 @@ export function DepartmentGeneralTab({ form, values, onChange, parentDepartmentO
                     value={values.description}
                     onChange={(event) => onChange('description', event.target.value)}
                     rows={4}
-                    className="rounded-[4px] border-[#cfd6e2]"
-                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                    className="rounded-[4px] border-ui-border"
+                    textareaClassName="min-h-[70px] text-xs sm:text-sm text-brand-dark"
                 />
             </DepartmentFieldRow>
 
@@ -119,8 +119,8 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
     return (
         <div className="overflow-x-auto">
             <div className="min-w-[720px]">
-                <DataTable wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {openingBalance.columns.map((column) => (
                                 <DataTableHead
@@ -141,15 +141,15 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'} border-[#dde1e8]`.trim()}
+                                    className={`${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} border-ui-border-row`.trim()}
                                 >
-                                    <DataTableCell className="px-3 text-base text-[#131a28]">
+                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">
                                         {formatTableTextValue(row.code)}
                                     </DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-[#131a28]">
+                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">
                                         {formatTableTextValue(row.name)}
                                     </DataTableCell>
-                                    <DataTableCell className="px-3 text-left text-base text-[#131a28]">
+                                    <DataTableCell className="px-3 text-left text-base text-text-workspace-dark">
                                         {formatTableTextValue(row.value)}
                                     </DataTableCell>
                                 </DataTableRow>
@@ -158,7 +158,7 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
                             <DataTableRow className="bg-white">
                                 <DataTableCell
                                     colSpan={openingBalance.columns.length}
-                                    className="px-3 py-3 text-center text-base text-[#131a28]"
+                                    className="px-3 py-3 text-center text-base text-text-workspace-dark"
                                 >
                                     {openingBalance.emptyLabel}
                                 </DataTableCell>
@@ -176,16 +176,16 @@ export function DepartmentOpeningBalanceTab({ form, values, onChange }) {
 
     return (
         <div className="space-y-4">
-            <h3 className="text-2xl font-normal leading-none text-[#1f2436]">{openingBalance.title}</h3>
+            <h3 className="text-2xl font-normal leading-none text-brand-dark">{openingBalance.title}</h3>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
                 <div className="flex items-center gap-3">
-                    <label className="text-xs sm:text-sm text-[#1f2436] shrink-0">{openingBalance.dateLabel}</label>
+                    <label className="text-xs sm:text-sm text-brand-dark shrink-0">{openingBalance.dateLabel}</label>
                     <TransactionDateInput
                         value={values.openingDate}
                         onChange={(nextValue) => onChange('openingDate', nextValue)}
-                        className="h-[40px] w-[180px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] w-[180px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                         trailingClassName="w-[42px] shrink-0 justify-center px-0"
                     />
                 </div>
@@ -196,8 +196,8 @@ export function DepartmentOpeningBalanceTab({ form, values, onChange }) {
                         placeholder={openingBalance.accountPlaceholder}
                         searchLabel="Cari akun perkiraan saldo awal"
                         dialogTitle="Pilih Akun Perkiraan Saldo Awal"
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                         trailingClassName="px-2.5"
                         onSelectAccount={(_, label) => onChange('openingBalanceKeyword', label ?? '')}
                     />
@@ -217,8 +217,8 @@ export function DepartmentUsersTab({ form, values, onChange, branchOptions, user
 
     return (
         <div className="space-y-4">
-            <div className="border-b border-[#d9dee8] pb-2.5">
-                <h3 className="text-lg font-medium text-[#1f2436]">{form.userAccess.title}</h3>
+            <div className="border-b border-ui-border-medium pb-2.5">
+                <h3 className="text-lg font-medium text-brand-dark">{form.userAccess.title}</h3>
             </div>
 
             <CheckboxField
@@ -235,7 +235,7 @@ export function DepartmentUsersTab({ form, values, onChange, branchOptions, user
             {!values.allUsers ? (
                 <div className="space-y-3">
                     <div className="pt-1">
-                        <h3 className="text-lg font-medium text-[#1f2436]">
+                        <h3 className="text-lg font-medium text-brand-dark">
                             {form.userAccess.limitedTitle ?? 'Tentukan pengguna yang dapat memilih departemen ini'}
                         </h3>
                     </div>
@@ -256,7 +256,7 @@ export function DepartmentUsersTab({ form, values, onChange, branchOptions, user
                                 onRemove={(label) => onChange('removeSelectedUser', label)}
                             />
                             {!values.selectedUserLabels.length ? (
-                                <p className="text-sm text-[#7d879a]">
+                                <p className="text-sm text-text-placeholder">
                                     Pilih pengguna yang diizinkan memakai departemen ini.
                                 </p>
                             ) : null}

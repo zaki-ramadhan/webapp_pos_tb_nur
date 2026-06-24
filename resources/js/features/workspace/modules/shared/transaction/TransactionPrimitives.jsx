@@ -11,9 +11,9 @@ export function buildCurrencyValue(value = '0') {
 
 export function TransactionFieldLabel({ label, required = false, className = '', htmlFor }) {
     return (
-        <label htmlFor={htmlFor} className={`text-xs sm:text-sm text-[#1f2436] ${htmlFor ? 'cursor-pointer' : ''} ${className}`.trim()}>
+        <label htmlFor={htmlFor} className={`text-xs sm:text-sm text-brand-dark ${htmlFor ? 'cursor-pointer' : ''} ${className}`.trim()}>
             {label}
-            {required ? <span className="text-[#ED3969]"> *</span> : null}
+            {required ? <span className="text-tab-active-border-t"> *</span> : null}
         </label>
     );
 }
@@ -27,7 +27,7 @@ export function TransactionSwitch({ checked, onChange }) {
                 aria-checked={checked}
                 onClick={() => onChange(!checked)}
                 className={`relative inline-flex h-[22px] w-[34px] items-center rounded-full transition ${
-                    checked ? 'bg-[#376eb1]' : 'bg-[#c7cfdd]'
+                    checked ? 'bg-blue-3f68b2' : 'bg-section-tab-neutral-border'
                 }`.trim()}
             >
                 <span
@@ -55,8 +55,8 @@ export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
                         title={tab.label}
                         className={`inline-flex h-[36px] w-[36px] items-center justify-center rounded-[4px] border ${
                             active
-                                ? 'border-[#f08bb0] bg-white text-[#ff2d7a]'
-                                : 'border-[#bfc6d3] bg-[#f3f4f6] text-[#454d61]'
+                                ? 'border-purple-f08bb0 bg-white text-text-pink-active'
+                                : 'border-tab-inactive-border-t bg-ui-bg-panel text-blue-434a65'
                         }`.trim()}
                     >
                         <NavigationIcon type={tab.icon} className="h-5 w-5 text-current" />
@@ -69,8 +69,8 @@ export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
 
 export function TransactionSectionHeading({ title, icon }) {
     return (
-        <div className="flex items-center gap-3 border-b border-[#d8dde7] pb-3">
-            <NavigationIcon type={icon} className="h-5 w-5 text-[#ff2d7a]" />
+        <div className="flex items-center gap-3 border-b border-ui-border-medium pb-3">
+            <NavigationIcon type={icon} className="h-5 w-5 text-text-pink-active" />
             <h3 className={TRANSACTION_SECTION_TITLE_CLASS_NAME}>{title}</h3>
         </div>
     );
@@ -80,7 +80,7 @@ export function TransactionHeaderButton({ label, trailingChevron = false, classN
     return (
         <button
             type="button"
-            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm text-[#21539b] ${className}`.trim()}
+            className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent ${className}`.trim()}
             {...props}
         >
             <span>{label}</span>
@@ -95,7 +95,7 @@ export function TransactionReadonlyTextarea({ value, rows = 3, className = '' })
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-[#cfd6e2] px-4 py-3 text-xs sm:text-sm text-[#1f2436] outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none ${className}`.trim()}
         />
     );
 }

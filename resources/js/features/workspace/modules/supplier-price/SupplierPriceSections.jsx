@@ -83,8 +83,8 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                                 numberingType: event.target.value,
                             }))
                         }
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
                     >
                         {config.numberingOptions.map((option) => (
                             <option key={option} value={option}>
@@ -101,7 +101,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
 export function SupplierPriceDetailsSection({ config, values, setValues }) {
     return (
         <div className="flex min-h-[560px] flex-col">
-            <div className="flex flex-col gap-3 border-b border-[#d8dde7] pb-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3 border-b border-ui-border-medium pb-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1 sm:max-w-[590px]">
                         <TextInput
@@ -113,15 +113,15 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                                 }))
                             }
                             placeholder={config.itemSearchPlaceholder}
-                            trailing={<SearchIcon className="h-5 w-5 text-[#1f2436]" />}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 
                     <button
                         type="button"
-                        className="inline-flex h-[36px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                        className="inline-flex h-[36px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
                     >
                         <span>{config.takeButtonLabel}</span>
                         <ChevronDownIcon className="h-4 w-4" />
@@ -132,16 +132,16 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                     <TransactionToolbarIconButton label="Cari rincian barang">
                         <SearchIcon className="h-4.5 w-4.5" />
                     </TransactionToolbarIconButton>
-                    <div className="text-right text-2xl font-normal text-[#1f2436]">
-                        {config.itemSectionTitle} <span className="text-[#ED3969]">*</span>
+                    <div className="text-right text-2xl font-normal text-brand-dark">
+                        {config.itemSectionTitle} <span className="text-tab-active-border-t">*</span>
                     </div>
                 </div>
             </div>
 
             <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
                 <div className="min-w-[980px]">
-                    <DataTable wrapperClassName="border-[#d1d8e4]">
-                        <DataTableHeader className="bg-[#5f7690]">
+                    <DataTable wrapperClassName="border-table-wrapper-border">
+                        <DataTableHeader className="bg-table-header-bg">
                             <tr>
                                 {config.itemTable.columns.map((column) => (
                                     <DataTableHead
@@ -175,7 +175,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                             <DataTableRow className="bg-white">
                                 <DataTableCell
                                     colSpan={config.itemTable.columns.length}
-                                    className="px-3 py-3 text-center text-base text-[#131a28]"
+                                    className="px-3 py-3 text-center text-base text-text-workspace-dark"
                                 >
                                     {config.itemTable.emptyLabel}
                                 </DataTableCell>
@@ -205,8 +205,8 @@ export function SupplierPriceInfoSection({ config, values, setValues }) {
                             }))
                         }
                         rows={4}
-                        className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                        className="rounded-[4px] border-ui-border"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
             </div>

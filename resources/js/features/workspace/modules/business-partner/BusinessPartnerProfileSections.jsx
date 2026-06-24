@@ -24,9 +24,9 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                         <TextInput
                             value={values.name}
                             onChange={(event) => onChange('name', event.target.value)}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            trailing={isDetail ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                            trailing={isDetail ? <CloseIcon className="h-4 w-4 text-text-darkest" /> : null}
                             trailingClassName={isDetail ? 'px-3' : ''}
                         />
                     </FormFieldRow>
@@ -36,9 +36,9 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                             <TextInput
                                 value={values.code}
                                 readOnly
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                                trailing={<CloseIcon className="h-4 w-4 text-[#111827]" />}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                                trailing={<CloseIcon className="h-4 w-4 text-text-darkest" />}
                                 trailingClassName="px-3"
                             />
                         ) : (
@@ -48,8 +48,8 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                                     <SelectField
                                         value={values.codeType}
                                         onChange={(event) => onChange('codeType', event.target.value)}
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                        className="h-[40px] rounded-[4px] border-ui-border"
+                                        selectClassName="text-xs sm:text-sm text-brand-dark"
                                     >
                                         <option value={values.codeType}>{values.codeType}</option>
                                     </SelectField>
@@ -71,19 +71,19 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                         <TextInput
                             value={values.businessPhone}
                             onChange={(event) => onChange('businessPhone', event.target.value)}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            trailing={isDetail && values.businessPhone ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                            trailing={isDetail && values.businessPhone ? <CloseIcon className="h-4 w-4 text-text-darkest" /> : null}
                             trailingClassName="px-3"
                         />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.mobilePhone}>
-                        <TextInput value={values.mobilePhone} onChange={(event) => onChange('mobilePhone', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                        <TextInput value={values.mobilePhone} onChange={(event) => onChange('mobilePhone', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.whatsapp}>
-                        <TextInput value={values.whatsapp} onChange={(event) => onChange('whatsapp', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                        <TextInput value={values.whatsapp} onChange={(event) => onChange('whatsapp', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.email}>
@@ -91,9 +91,9 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                             value={values.email}
                             onChange={(event) => onChange('email', event.target.value)}
                             placeholder="Email"
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            trailing={isDetail && values.email ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                            trailing={isDetail && values.email ? <CloseIcon className="h-4 w-4 text-text-darkest" /> : null}
                             trailingClassName="px-3"
                         />
                     </FormFieldRow>
@@ -102,15 +102,15 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                         <TextInput
                             value={values.fax}
                             onChange={(event) => onChange('fax', event.target.value)}
-                            className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
-                            trailing={isDetail && values.fax ? <CloseIcon className="h-4 w-4 text-[#111827]" /> : null}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                            trailing={isDetail && values.fax ? <CloseIcon className="h-4 w-4 text-text-darkest" /> : null}
                             trailingClassName="px-3"
                         />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.website}>
-                        <TextInput value={values.website} onChange={(event) => onChange('website', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                        <TextInput value={values.website} onChange={(event) => onChange('website', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     </FormFieldRow>
                 </div>
             </section>
@@ -123,7 +123,7 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                     {isDetail && values.detailActionLabel ? (
                         <button
                             type="button"
-                            className="shrink-0 rounded-[4px] border border-[#b9b9b9] bg-[#c7c7c7] px-4 py-2 text-base text-[#555e70]"
+                            className="shrink-0 rounded-[4px] border border-gray-b9b9b9 bg-tab-inactive-border-t px-4 py-2 text-base text-tab-primary-inactive-text"
                         >
                             {values.detailActionLabel}
                         </button>
@@ -172,8 +172,8 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                                 <SelectField
                                     value={values[field.id]}
                                     onChange={(event) => onChange(field.id, event.target.value)}
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    className="h-[40px] rounded-[4px] border-ui-border"
+                                    selectClassName="text-xs sm:text-sm text-brand-dark"
                                 >
                                     {field.options?.map((option) => (
                                         <option key={`${field.id}-${option}`} value={option}>
@@ -194,10 +194,10 @@ export function ContactsTab({ config }) {
     return (
         <div>
             <div className="mb-3 flex items-center gap-3">
-                <h3 className="text-2xl font-normal text-[#1f2436]">{config.contactsTable.title}</h3>
+                <h3 className="text-2xl font-normal text-brand-dark">{config.contactsTable.title}</h3>
                 <button
                     type="button"
-                    className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                    className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
                 >
                     <PlusIcon className="h-5 w-5" />
                 </button>
@@ -251,10 +251,10 @@ export function ShippingTab({ config, values, onChange }) {
             <section>
                 <SectionHeading title={config.headingLabels.shippingRight} />
                 <div className="mb-3 mt-4 flex flex-wrap items-center gap-3">
-                    <button type="button" className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]">
+                    <button type="button" className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue">
                         <PlusIcon className="h-5 w-5" />
                     </button>
-                    <button type="button" className="inline-flex h-[34px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#2353a0]">
+                    <button type="button" className="inline-flex h-[34px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue">
                         <span>Ambil</span>
                         <ChevronDownIcon className="h-4 w-4" />
                     </button>

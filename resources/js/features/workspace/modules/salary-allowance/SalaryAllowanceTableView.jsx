@@ -63,8 +63,8 @@ export default function SalaryAllowanceTableView({
                                 }))
                             }
                             containerClassName="w-auto"
-                            className="h-[34px] min-w-[222px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
+                            className="h-[34px] min-w-[222px] rounded-[4px] border-ui-border"
+                            selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
                         >
                             {filter.options.map((option) => (
                                 <option key={option.value} value={option.value}>

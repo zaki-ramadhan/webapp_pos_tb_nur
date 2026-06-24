@@ -32,7 +32,7 @@ function SyncRateButton({ onRefresh, loading }) {
             disabled={busy}
             aria-label={busy ? 'Sinkronisasi Kurs...' : 'Sinkronisasi Kurs API'}
             title={busy ? 'Sinkronisasi Kurs...' : 'Sinkronisasi Kurs API'}
-            className={`inline-flex h-[34px] shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-[#7aa2d5] bg-white px-3 text-sm text-[#2353a0] transition hover:bg-[#e8f2ff] ${busy ? 'pointer-events-none opacity-70' : ''}`.trim()}
+            className={`inline-flex h-[34px] shrink-0 items-center justify-center gap-1.5 rounded-[4px] border border-brand-blue-border bg-white px-3 text-sm text-brand-blue transition hover:bg-brand-blue-light ${busy ? 'pointer-events-none opacity-70' : ''}`.trim()}
         >
             <RefreshIcon className={`h-4 w-4 ${busy ? 'animate-spin' : ''}`.trim()} />
             <span className="hidden sm:inline">{busy ? 'Sinkronisasi...' : 'Sinkronisasi Kurs'}</span>

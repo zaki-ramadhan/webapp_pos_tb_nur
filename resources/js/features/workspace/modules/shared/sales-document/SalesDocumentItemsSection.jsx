@@ -17,7 +17,7 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
         <button
             type="button"
             onClick={handlers.onImportClick}
-            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b] hover:bg-[#f3f7fc] transition shrink-0 cursor-pointer"
+            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent hover:bg-brand-blue-lightest transition shrink-0 cursor-pointer"
         >
             Impor Excel/CSV
         </button>

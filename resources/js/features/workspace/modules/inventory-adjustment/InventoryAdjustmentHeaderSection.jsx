@@ -44,9 +44,9 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                 <TextInput
                                     value={values.documentNumber}
                                     readOnly
-                                    trailing={<span className="text-2xl font-semibold text-[#1f2436]">x</span>}
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    trailing={<span className="text-2xl font-semibold text-brand-dark">x</span>}
+                                    className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                     trailingClassName="px-3"
                                 />
                             </div>
@@ -76,8 +76,8 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                                 numberingType: event.target.value,
                                             }))
                                         }
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                        className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                        selectClassName="text-xs sm:text-sm text-brand-dark"
                                     >
                                         {config.numberingOptions.map((option) => (
                                             <option key={option} value={option}>
@@ -101,8 +101,8 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                             }))
                                         }
                                         maxLength={120}
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                        className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                        inputClassName="text-xs sm:text-sm text-brand-dark"
                                     />
                                 )}
                             </div>

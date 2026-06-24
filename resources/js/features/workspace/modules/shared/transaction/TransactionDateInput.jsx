@@ -78,7 +78,7 @@ export default function TransactionDateInput({
     value,
     onChange,
     className = '',
-    inputClassName = 'text-sm text-[#1f2436]',
+    inputClassName = 'text-sm text-brand-dark',
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
     disabled = false,
     ariaLabel = 'Pilih tanggal',
@@ -117,7 +117,7 @@ export default function TransactionDateInput({
     const finalStyleClasses = [...new Set([
         'h-[40px]',
         'rounded-[4px]',
-        'border-[#cfd6e2]',
+        'border-ui-border',
         ...styleClasses,
     ])].join(' ');
 
@@ -191,7 +191,7 @@ export default function TransactionDateInput({
                     readOnly
                     interactiveReadOnly
                     disabled={disabled}
-                    trailing={<CalendarIcon className="h-4 w-4 -translate-x-px text-[#1f2436]" />}
+                    trailing={<CalendarIcon className="h-4 w-4 -translate-x-px text-brand-dark" />}
                     className={finalStyleClasses}
                     inputClassName={`cursor-pointer ${inputClassName}`.trim()}
                     trailingClassName={`pointer-events-none ${trailingClassName}`.trim()}

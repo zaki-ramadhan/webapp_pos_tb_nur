@@ -44,14 +44,14 @@ export function SalesTab({ config, values, onChange }) {
                             value={values.defaultDiscountPercent}
                             onChange={(event) => onChange('defaultDiscountPercent', event.target.value)}
                             prefix="%"
-                            className="h-[40px] max-w-[360px] rounded-[4px] border-[#cfd6e2]"
-                            prefixClassName="min-w-[34px] bg-[#f5f6f8] px-3 text-[#9aa3b1]"
-                            inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] max-w-[360px] rounded-[4px] border-ui-border"
+                            prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.defaultDescription}>
-                        <TextInput value={values.defaultDescription} onChange={(event) => onChange('defaultDescription', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                        <TextInput value={values.defaultDescription} onChange={(event) => onChange('defaultDescription', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.consignment}>
@@ -78,7 +78,7 @@ export function SalesTab({ config, values, onChange }) {
                         </FormFieldRow>
                     ))}
                 </div>
-                <p className="mt-4 max-w-[560px] text-sm italic leading-7 text-[#ef513f]">{config.helperText.salesAccountNote}</p>
+                <p className="mt-4 max-w-[560px] text-sm italic leading-7 text-red-ef513f">{config.helperText.salesAccountNote}</p>
             </section>
         </div>
     );
@@ -107,22 +107,22 @@ export function TaxTab({ config, values, onChange }) {
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.taxIdType}>
-                        <SelectField value={values.taxIdType} onChange={(event) => onChange('taxIdType', event.target.value)} className="h-[40px] max-w-[360px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
+                        <SelectField value={values.taxIdType} onChange={(event) => onChange('taxIdType', event.target.value)} className="h-[40px] max-w-[360px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                             <option value="NIK">NIK</option>
                             <option value="NPWP">NPWP</option>
                         </SelectField>
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.taxNumber}>
-                        <TextInput value={values.taxNumber} onChange={(event) => onChange('taxNumber', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                        <TextInput value={values.taxNumber} onChange={(event) => onChange('taxNumber', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.taxName}>
-                        <TextInput value={values.taxName} onChange={(event) => onChange('taxName', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                        <TextInput value={values.taxName} onChange={(event) => onChange('taxName', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.taxTkuId}>
-                        <TextInput value={values.taxTkuId} onChange={(event) => onChange('taxTkuId', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                        <TextInput value={values.taxTkuId} onChange={(event) => onChange('taxTkuId', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     </FormFieldRow>
 
                     {taxOptions.showCountryLookup ? (
@@ -132,7 +132,7 @@ export function TaxTab({ config, values, onChange }) {
                     ) : null}
 
                     <FormFieldRow label={config.labels.taxTransactionType}>
-                        <SelectField value={values.taxTransactionType} onChange={(event) => onChange('taxTransactionType', event.target.value)} className="h-[40px] rounded-[4px] border-[#cfd6e2]" selectClassName="text-xs sm:text-sm text-[#1f2436]">
+                        <SelectField value={values.taxTransactionType} onChange={(event) => onChange('taxTransactionType', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                             <option value="Ditanggung">Ditanggung</option>
                             <option value="Dipungut">Dipungut</option>
                         </SelectField>
@@ -187,8 +187,8 @@ export function BalanceTab({ config }) {
     return (
         <div>
             <div className="mb-3 flex items-center gap-3">
-                <h3 className="text-2xl font-normal text-[#1f2436]">{config.balanceTable.title}</h3>
-                <button type="button" className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]">
+                <h3 className="text-2xl font-normal text-brand-dark">{config.balanceTable.title}</h3>
+                <button type="button" className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue">
                     <PlusIcon className="h-5 w-5" />
                 </button>
             </div>

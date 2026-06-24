@@ -7,7 +7,7 @@ function DocumentModalTabButton({ active, label, onClick }) {
             type="button"
             onClick={onClick}
             className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs font-medium cursor-pointer select-none max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
-                active ? 'border-[#ff4836] text-[#ff4836]' : 'border-transparent text-[#5f6980]'
+                active ? 'border-illustration-danger-bg text-illustration-danger-bg' : 'border-transparent text-tab-view-active-text'
             }`.trim()}
         >
             <span className="block truncate">{label}</span>
@@ -17,18 +17,18 @@ function DocumentModalTabButton({ active, label, onClick }) {
 
 export function DocumentModalFooter({ deleteLabel = 'Hapus', submitLabel = 'Lanjut', onDelete, onSubmit }) {
     return (
-        <div className="flex items-center justify-between border-t border-[#d8dde7] pt-3">
+        <div className="flex items-center justify-between border-t border-ui-border-medium pt-3">
             <button
                 type="button"
                 onClick={onDelete}
-                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs font-medium text-[#21539b]"
+                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs font-medium text-brand-blue-accent"
             >
                 {deleteLabel}
             </button>
             <button
                 type="button"
                 onClick={onSubmit}
-                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-[#1d52a5] bg-[#1d52a5] px-4 text-xs font-medium text-white"
+                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-import-action-blue bg-import-action-blue px-4 text-xs font-medium text-white"
             >
                 {submitLabel}
             </button>
@@ -53,10 +53,10 @@ export default function DocumentModalLayout({
         <ModalBase
             open={open}
             onBackdropClick={onClose}
-            className="bg-[rgba(15,23,42,0.72)]"
+            className="bg-modal-overlay-dark"
             panelClassName={panelClassName}
         >
-            <div className="bg-[#173968] px-4 py-2.5 text-white">
+            <div className="bg-blue-133663 px-4 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
                         <PencilIcon className="h-4 w-4 text-white" />
@@ -76,7 +76,7 @@ export default function DocumentModalLayout({
 
             <div className="bg-white px-4 pb-4 pt-3">
                 {tabs?.length ? (
-                    <div className="flex flex-wrap border-b border-[#d8dde7]">
+                    <div className="flex flex-wrap border-b border-ui-border-medium">
                         {tabs.map((tab) => (
                             <DocumentModalTabButton
                                 key={tab.id}

@@ -137,8 +137,8 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
                         placeholder="Pilih Kategori Karyawan..."
-                        className="h-9 rounded-[4px] border-[#cfd6e2]"
-                        selectClassName="text-xs text-[#1f2436]"
+                        className="h-9 rounded-[4px] border-ui-border"
+                        selectClassName="text-xs text-brand-dark"
                     >
                         {STATUS_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -152,14 +152,14 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 <div className="mt-2">
                     <DataTable>
                         <DataTableHeader>
-                            <DataTableRow className="bg-[#173664] text-white border-t-0">
+                            <DataTableRow className="bg-blue-133663 text-white border-t-0">
                                 <DataTableHead className="w-[48px] text-center">
                                     <input
                                         type="checkbox"
                                         checked={isAllSelected}
                                         onChange={toggleSelectAll}
                                         disabled={loading || filteredEmployees.length === 0}
-                                        className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-[#21539b] focus:ring-[#21539b]"
+                                        className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-brand-blue-accent focus:ring-brand-blue-accent"
                                     />
                                 </DataTableHead>
                                 <DataTableHead className="text-left font-semibold">
@@ -198,7 +198,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                                     type="checkbox"
                                                     checked={isSelected}
                                                     onChange={() => toggleSelect(emp.id)}
-                                                    className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-[#21539b] focus:ring-[#21539b] cursor-pointer"
+                                                    className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-brand-blue-accent focus:ring-brand-blue-accent cursor-pointer"
                                                 />
                                             </DataTableCell>
                                             <DataTableCell className="text-left font-normal">
@@ -212,7 +212,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                                     placeholder="0"
                                                     value={valuesMap[emp.id] ?? ''}
                                                     onChange={(e) => handleValueChange(emp.id, e.target.value)}
-                                                    className="w-full h-8 px-2 border border-slate-300 rounded-[4px] text-right text-xs focus:outline-none focus:border-[#21539b]"
+                                                    className="w-full h-8 px-2 border border-slate-300 rounded-[4px] text-right text-xs focus:outline-none focus:border-brand-blue-accent"
                                                 />
                                             </DataTableCell>
                                         </DataTableRow>

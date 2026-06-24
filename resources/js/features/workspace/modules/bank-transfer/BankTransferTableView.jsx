@@ -60,7 +60,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 size="compact"
                 className="space-y-3"
@@ -81,7 +81,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     onChange: (event) => setKeyword(event.target.value),
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[342px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
                 pageValue={config.table.pageValue}
             />
@@ -93,7 +93,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Belum ada data')}
                     minWidthClassName="min-w-[1480px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
-                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
                     renderHeaderCell={(column) => (
                         <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
                             <SortIcon className="h-3 w-3 shrink-0 text-white/55" />

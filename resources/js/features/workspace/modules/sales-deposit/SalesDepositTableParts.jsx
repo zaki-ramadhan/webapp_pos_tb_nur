@@ -14,9 +14,9 @@ export function SalesDepositFilterBar({ config, filters, setFilters }) {
                     value={filters[filter.id]}
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option, optionIndex) => (
                         <option key={`${filter.id}-${option.label}-${optionIndex}`} value={option.value}>
@@ -28,7 +28,7 @@ export function SalesDepositFilterBar({ config, filters, setFilters }) {
 
             <button
                 type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                 aria-label={config.table.filterButtonLabel}
             >
                 <FunnelIcon className="h-4.5 w-4.5" />
@@ -48,8 +48,8 @@ export function SalesDepositTableHeaderCell({ column }) {
 
 export function SalesDepositTableCell({ row, column }) {
     return column.id === 'statusIcon' ? (
-        <span className="inline-flex items-center justify-center text-[#27b35f]">
-            <CircleCheckIcon className="h-5.5 w-5.5 text-[#27b35f]" />
+        <span className="inline-flex items-center justify-center text-green-27b35f">
+            <CircleCheckIcon className="h-5.5 w-5.5 text-green-27b35f" />
         </span>
     ) : (
         <span className="block truncate">{row[column.id] ?? ''}</span>

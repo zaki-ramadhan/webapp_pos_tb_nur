@@ -7,10 +7,10 @@ function SalesDocumentInvoiceTaxSection({ values }) {
     return (
         <div>
             <TransactionSectionHeading title="Info Pajak" icon="tax" />
-            <div className="mt-4 rounded-[6px] border border-[#d6dce8] bg-white p-4">
+            <div className="mt-4 rounded-[6px] border border-ui-border-medium bg-white p-4">
                 <div className="grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label="Pajak" />
-                    <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-[#1f2436]">
+                    <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
                         <CheckboxField
                             id="taxEnabled"
                             label="Kena Pajak"
@@ -31,17 +31,17 @@ function SalesDocumentInvoiceTaxSection({ values }) {
                         />
                     </div>
                     <TransactionFieldLabel label="Tipe ID" />
-                    <TextInput value={values.taxIdType ?? ''} readOnly className="h-[34px] max-w-[272px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                    <TextInput value={values.taxIdType ?? ''} readOnly className="h-[34px] max-w-[272px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     <TransactionFieldLabel label="Negara" />
-                    <TextInput value={values.taxCountryName ?? ''} readOnly className="h-[34px] max-w-[272px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                    <TextInput value={values.taxCountryName ?? ''} readOnly className="h-[34px] max-w-[272px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     <TransactionFieldLabel label="ID Pajak" />
-                    <TextInput value={values.taxNumber ?? ''} readOnly className="h-[34px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                    <TextInput value={values.taxNumber ?? ''} readOnly className="h-[34px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     <TransactionFieldLabel label="Nama Pajak" />
-                    <TextInput value={values.taxName ?? ''} readOnly className="h-[34px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                    <TextInput value={values.taxName ?? ''} readOnly className="h-[34px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     <TransactionFieldLabel label="ID TKU" />
-                    <TextInput value={values.taxIdTku ?? ''} readOnly className="h-[34px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" />
+                    <TextInput value={values.taxIdTku ?? ''} readOnly className="h-[34px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
                     <TransactionFieldLabel label="No. Faktur Pajak" />
-                    <TextInput value={values.taxInvoiceNumber ?? ''} readOnly trailing={<span className="text-lg font-semibold text-[#1f2436]">×</span>} className="h-[34px] rounded-[4px] border-[#cfd6e2]" inputClassName="text-xs sm:text-sm text-[#1f2436]" trailingClassName="px-3" />
+                    <TextInput value={values.taxInvoiceNumber ?? ''} readOnly trailing={<span className="text-lg font-semibold text-brand-dark">×</span>} className="h-[34px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" trailingClassName="px-3" />
                 </div>
             </div>
             <div className="mt-7">
@@ -67,7 +67,7 @@ export default function SalesDocumentTaxShippingColumn({ config, values, setValu
                     <TransactionSectionHeading title={config.taxInfoTitle} icon="tax" />
                     <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <TransactionFieldLabel label={config.labels.tax} />
-                        <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-[#1f2436]">
+                        <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
                             <label className="inline-flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" checked={values.taxEnabled} onChange={(event) => setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))} className="h-3.5 w-3.5 rounded-[3px] border border-slate-400 text-input-brand focus:ring-2 focus:ring-input-focus/30" />
                                 <span>Kena Pajak</span>

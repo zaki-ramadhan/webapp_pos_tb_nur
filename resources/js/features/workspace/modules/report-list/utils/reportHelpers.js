@@ -58,20 +58,20 @@ export function buildReportContentState({ loading, error, reportsCount, visibleS
 export function getIconStyles(iconType) {
     if (iconType === 'reports' || iconType === 'budget' || iconType === 'chart') {
         return {
-            color: 'text-[#ea580c]',
+            color: 'text-orange-ea580c',
             icon: 'reports',
         };
     }
     
     if (iconType === 'activity' || iconType === 'document' || iconType === 'invoice' || iconType === 'info') {
         return {
-            color: 'text-[#2269bb]',
+            color: 'text-blue-2269bb',
             icon: iconType,
         };
     }
     
     return {
-        color: 'text-[#7c3aed]',
+        color: 'text-purple-7c3aed',
         icon: iconType === 'save' ? 'save' : 'ledger',
     };
 }

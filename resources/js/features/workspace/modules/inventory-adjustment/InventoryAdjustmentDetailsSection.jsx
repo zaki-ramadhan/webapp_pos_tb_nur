@@ -40,7 +40,7 @@ export default function InventoryAdjustmentDetailsSection({
                         }))
                     }
                     placeholder={config.detailSearchPlaceholder}
-                    className="h-[40px] w-full rounded-[4px] border border-[#cfd6e2] px-3.5 text-xs sm:text-sm text-[#1f2436] outline-none focus:border-[#7aa2d5]"
+                    className="h-[40px] w-full rounded-[4px] border border-ui-border px-3.5 text-xs sm:text-sm text-brand-dark outline-none focus:border-brand-blue-border"
                 />
             </div>
             <SelectField
@@ -55,8 +55,8 @@ export default function InventoryAdjustmentDetailsSection({
                         detailMode: event.target.value,
                     }));
                 }}
-                className="h-[34px] min-w-[120px] rounded-[4px] border-[#7aa2d5]"
-                selectClassName="text-xs sm:text-sm text-[#21539b]"
+                className="h-[34px] min-w-[120px] rounded-[4px] border-brand-blue-border"
+                selectClassName="text-xs sm:text-sm text-brand-blue-accent"
                 containerClassName="w-auto shrink-0"
             >
                 <option value="Rincian">Rincian</option>
@@ -79,7 +79,7 @@ export default function InventoryAdjustmentDetailsSection({
                 emptyLabel={config.itemTable.emptyLabel}
                 minWidthClassName={config.itemTable.minWidthClassName}
                 onRowClick={isDetail ? onOpenItem : undefined}
-                getRowClassName={() => (isDetail ? 'cursor-pointer hover:bg-[#eef3fb]' : '')}
+                getRowClassName={() => (isDetail ? 'cursor-pointer hover:bg-workspace-hover-bg' : '')}
                 searchInput={customSearchInput}
             />
 

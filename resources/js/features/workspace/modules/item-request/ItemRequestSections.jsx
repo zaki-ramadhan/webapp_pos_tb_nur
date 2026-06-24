@@ -34,7 +34,7 @@ function ItemRequestHeaderActions({ config }) {
         <div className="flex flex-wrap items-center justify-end gap-2">
             <button
                 type="button"
-                className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-base text-[#21539b]"
+                className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
             >
                 {config.takeButtonLabel}
             </button>
@@ -64,8 +64,8 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                     requestType: event.target.value,
                                 }))
                             }
-                            className="h-[40px] max-w-[280px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[40px] max-w-[280px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             {config.requestTypeOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -86,9 +86,9 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                 <TextInput
                                     value={values.documentNumber}
                                     readOnly
-                                    trailing={<span className="text-2xl font-semibold text-[#1f2436]">×</span>}
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    trailing={<span className="text-2xl font-semibold text-brand-dark">×</span>}
+                                    className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                     trailingClassName="px-3"
                                 />
                             </div>
@@ -118,8 +118,8 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                                 numberingType: event.target.value,
                                             }))
                                         }
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                        selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                        className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                        selectClassName="text-xs sm:text-sm text-brand-dark"
                                     >
                                         {config.numberingOptions.map((option) => (
                                             <option key={option} value={option}>
@@ -143,8 +143,8 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                             }))
                                         }
                                         maxLength={120}
-                                        className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[282px] w-full"
-                                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                        className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                        inputClassName="text-xs sm:text-sm text-brand-dark"
                                     />
                                 )}
                             </div>
@@ -190,14 +190,14 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
                         }))
                     }
                     placeholder={config.detailSearchPlaceholder}
-                    className="h-[40px] w-full rounded-[4px] border border-[#cfd6e2] px-3.5 text-xs sm:text-sm text-[#1f2436] outline-none focus:border-[#7aa2d5]"
+                    className="h-[40px] w-full rounded-[4px] border border-ui-border px-3.5 text-xs sm:text-sm text-brand-dark outline-none focus:border-brand-blue-border"
                 />
             </div>
             {!isDetail ? (
                 <button
                     type="button"
                     onClick={handlers.onImportClick}
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm text-[#21539b] hover:bg-[#f3f7fc] transition shrink-0 cursor-pointer"
+                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent hover:bg-brand-blue-lightest transition shrink-0 cursor-pointer"
                 >
                     Impor Excel/CSV
                 </button>
@@ -224,7 +224,7 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
             emptyLabel={config.itemTable.emptyLabel}
             minWidthClassName={config.itemTable.minWidthClassName}
             onRowClick={handlers.onEditItem}
-            getRowClassName={() => 'cursor-pointer hover:bg-[#eef3fb]'}
+            getRowClassName={() => 'cursor-pointer hover:bg-workspace-hover-bg'}
             searchInput={customSearchInput}
         />
     );
@@ -248,8 +248,8 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                                 }))
                             }
                             rows={4}
-                            className="rounded-[4px] border-[#cfd6e2]"
-                            textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                            className="rounded-[4px] border-ui-border"
+                            textareaClassName="min-h-[70px] text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 

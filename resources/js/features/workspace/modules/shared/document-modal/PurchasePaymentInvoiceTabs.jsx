@@ -13,24 +13,24 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                 <TextInput
                     value={values.formNumber}
                     readOnly
-                    className="h-[36px] rounded-[4px] border-[#9ed66f] bg-[#f1fee9]"
-                    inputClassName="text-xs sm:text-sm font-semibold text-[#67b52c]"
+                    className="h-[36px] rounded-[4px] border-green-96d86d bg-green-eef9e4"
+                    inputClassName="text-xs sm:text-sm font-semibold text-green-67b52c"
                 />
 
                 <TransactionFieldLabel label="No. Faktur" />
                 <TextInput
                     value={values.billNumber}
                     readOnly
-                    className="h-[36px] rounded-[4px] border-[#9ed66f] bg-[#f1fee9]"
-                    inputClassName="text-xs sm:text-sm font-semibold text-[#67b52c]"
+                    className="h-[36px] rounded-[4px] border-green-96d86d bg-green-eef9e4"
+                    inputClassName="text-xs sm:text-sm font-semibold text-green-67b52c"
                 />
 
                 <TransactionFieldLabel label="Terhutang" />
                 <TextInput
                     value={values.outstanding}
                     readOnly
-                    className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                    inputClassName="text-right text-xs sm:text-sm text-[#64748b]"
+                    className="h-[36px] rounded-[4px] border-ui-border"
+                    inputClassName="text-right text-xs sm:text-sm text-text-muted"
                 />
 
                 <TransactionFieldLabel label="Bayar" />
@@ -62,7 +62,7 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
             />
 
             <div className="space-y-3 pl-[44px]">
-                <div className="flex items-center justify-between gap-4 text-xs sm:text-sm text-[#1f2436]">
+                <div className="flex items-center justify-between gap-4 text-xs sm:text-sm text-brand-dark">
                     <span>{values.pphLabel}</span>
                     <span>{values.pphAmount}</span>
                 </div>
@@ -77,20 +77,20 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                                 withholdingProof: event.target.value,
                             }))
                         }
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#111827]"
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-text-darkest"
                     />
 
                     <TransactionFieldLabel label="Pembayaran" />
                     <TextInput
                         value={values.payment}
                         readOnly
-                        className="h-[36px] rounded-[4px] border-[#cfd6e2] bg-[#f7f8fb]"
-                        inputClassName="text-right text-xs sm:text-sm text-[#64748b]"
+                        className="h-[36px] rounded-[4px] border-ui-border bg-ui-bg-hover"
+                        inputClassName="text-right text-xs sm:text-sm text-text-muted"
                     />
                 </div>
 
-                <div className="border-l-4 border-[#c7ccd8] pl-3 text-sm italic leading-6 text-[#ff4836]">
+                <div className="border-l-4 border-section-tab-neutral-border pl-3 text-sm italic leading-6 text-illustration-danger-bg">
                     {values.notice}
                 </div>
             </div>

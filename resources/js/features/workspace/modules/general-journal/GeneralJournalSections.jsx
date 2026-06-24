@@ -49,7 +49,7 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
             onRowClick={handlers.onEditLineItem}
             getRowClassName={
                 handlers.onEditLineItem
-                    ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
+                    ? () => 'cursor-pointer transition hover:bg-workspace-hover-bg'
                     : undefined
             }
         />
@@ -73,8 +73,8 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
                             }))
                         }
                         rows={4}
-                        className="border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                        className="border-ui-border"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
             </div>
@@ -102,8 +102,8 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                     <TextInput
                         value={values.transactionType}
                         readOnly
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
             </div>
@@ -136,8 +136,8 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                                             numberingType: event.target.value,
                                         }))
                                     }
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    className="h-[40px] rounded-[4px] border-ui-border"
+                                    selectClassName="text-xs sm:text-sm text-brand-dark"
                                 >
                                     {config.numberingOptions.map((option) => (
                                         <option key={option} value={option}>
@@ -152,9 +152,9 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                                     onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                     maxLength={120}
                                     readOnly={Boolean(activeRecordId)}
-                                    trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                                    className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
+                                    className="h-[40px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                     trailingClassName="px-3"
                                 />
                             )}
@@ -168,8 +168,8 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                         <TextInput
                             value={values.transactionNumber}
                             readOnly
-                            className="h-[40px] rounded-[4px] border-[#96d86d] bg-[#eef9e4]"
-                            inputClassName="text-xs sm:text-sm font-medium text-[#53a11f]"
+                            className="h-[40px] rounded-[4px] border-green-96d86d bg-green-eef9e4"
+                            inputClassName="text-xs sm:text-sm font-medium text-green-4d9b1f"
                         />
                     </div>
                 ) : null}
@@ -192,9 +192,9 @@ export function JournalTableFilters({ table, filters, setFilters }) {
                         }))
                     }
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -206,7 +206,7 @@ export function JournalTableFilters({ table, filters, setFilters }) {
 
             <button
                 type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                 aria-label={table.filterButtonLabel}
             >
                 <FunnelIcon className="h-5 w-5" />

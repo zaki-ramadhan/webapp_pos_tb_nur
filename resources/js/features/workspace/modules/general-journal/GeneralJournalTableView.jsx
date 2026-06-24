@@ -68,7 +68,7 @@ export default function GeneralJournalTableView({
 
     return (
         <div className="flex min-h-full flex-col gap-3">
-            <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+            <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
                 <TableToolbar
                     size="compact"
                     className="space-y-3"
@@ -105,7 +105,7 @@ export default function GeneralJournalTableView({
                         onChange: (event) => setKeyword(event.target.value),
                         placeholder: config.table.searchPlaceholder,
                         widthClassName: 'sm:w-[342px]',
-                        trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                        trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                     }}
                     pageValue={filteredRows.length.toLocaleString('id-ID')}
                 />
@@ -123,7 +123,7 @@ export default function GeneralJournalTableView({
                                 tabLabel: row.documentNumber,
                             })
                         }
-                        getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                        getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
                         renderHeaderCell={(column) => (
                             <span
                                 className={`flex items-center gap-2 ${

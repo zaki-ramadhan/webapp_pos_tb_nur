@@ -23,19 +23,19 @@ export function ItemStockTab({ config, values }) {
         <div className="space-y-9">
             <section className="space-y-3">
                 <div className="flex items-center gap-4">
-                    <h3 className="text-[22px] font-normal text-[#1f2436]">
+                    <h3 className="text-[22px] font-normal text-brand-dark">
                         {config.labels.openingStock}
                     </h3>
                     <button
                         type="button"
-                        className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-white text-[#2353a0]"
+                        className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
                     >
                         <PlusIcon className="h-7 w-7" />
                     </button>
                 </div>
 
-                <DataTable wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {config.openingStockTable.columns.map((column) => (
                                 <DataTableHead
@@ -50,11 +50,11 @@ export function ItemStockTab({ config, values }) {
                     <DataTableBody>
                         {values.openingStockRows.length ? (
                             values.openingStockRows.map((row) => (
-                                <DataTableRow key={row.id} className="border-[#dde1e8] bg-white">
+                                <DataTableRow key={row.id} className="border-ui-border-row bg-white">
                                     {config.openingStockTable.columns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className="px-3 text-center text-[15px] text-[#131a28]"
+                                            className="px-3 text-center text-[15px] text-text-workspace-dark"
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
@@ -62,10 +62,10 @@ export function ItemStockTab({ config, values }) {
                                 </DataTableRow>
                             ))
                         ) : (
-                            <DataTableRow className="border-[#dde1e8] bg-white">
+                            <DataTableRow className="border-ui-border-row bg-white">
                                 <DataTableCell
                                     colSpan={config.openingStockTable.columns.length}
-                                    className="px-3 py-3 text-center text-[15px] text-[#131a28]"
+                                    className="px-3 py-3 text-center text-[15px] text-text-workspace-dark"
                                 >
                                     {config.openingStockTable.emptyLabel}
                                 </DataTableCell>
@@ -79,21 +79,21 @@ export function ItemStockTab({ config, values }) {
                 <SectionHeading title={values.stockWarehouseLabel} />
 
                 <div className="grid gap-3 sm:grid-cols-[170px_420px] sm:items-center">
-                    <label className="text-xs sm:text-sm text-[#1f2436]">Kuantitas</label>
+                    <label className="text-xs sm:text-sm text-brand-dark">Kuantitas</label>
                     <SimpleTextField
                         value={values.stockQuantity}
                         onChange={() => {}}
                         inputClassName="text-right"
                     />
 
-                    <label className="text-xs sm:text-sm text-[#1f2436]">Nilai Satuan</label>
+                    <label className="text-xs sm:text-sm text-brand-dark">Nilai Satuan</label>
                     <SimpleTextField
                         value={values.stockUnitValue}
                         onChange={() => {}}
                         inputClassName="text-right"
                     />
 
-                    <label className="text-xs sm:text-sm text-[#1f2436]">Beban Pokok</label>
+                    <label className="text-xs sm:text-sm text-brand-dark">Beban Pokok</label>
                     <SimpleTextField
                         value={values.stockCostOfGoods}
                         onChange={() => {}}
@@ -150,8 +150,8 @@ export function ItemAccountsTab({ config, values, onChange }) {
             </div>
 
             <div className="flex items-start gap-3 pt-1">
-                <span className="mt-0.5 h-6 w-[4px] shrink-0 rounded-full bg-[#b9bdc5]" />
-                <p className="text-[14px] italic leading-6 text-[#ef513f]">
+                <span className="mt-0.5 h-6 w-[4px] shrink-0 rounded-full bg-bg-timeline-bar-gray" />
+                <p className="text-[14px] italic leading-6 text-red-ef513f">
                     {config.accountNote}
                 </p>
             </div>
@@ -184,8 +184,8 @@ export function ItemOtherTab({ config, values, onChange }) {
                     <SelectField
                         value={values.branchesUsage}
                         onChange={(event) => onChange('branchesUsage', event.target.value)}
-                        className="h-[40px] rounded-[4px] border-[#cfd6e2] max-w-[420px]"
-                        selectClassName="text-[15px] text-[#1f2436]"
+                        className="h-[40px] rounded-[4px] border-ui-border max-w-[420px]"
+                        selectClassName="text-[15px] text-brand-dark"
                     >
                         {config.branchOptions.map((option) => (
                             <option key={option} value={option}>
@@ -200,8 +200,8 @@ export function ItemOtherTab({ config, values, onChange }) {
                         value={values.notes}
                         onChange={(event) => onChange('notes', event.target.value)}
                         rows={4}
-                        className="max-w-[576px] rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-[15px] text-[#1f2436]"
+                        className="max-w-[576px] rounded-[4px] border-ui-border"
+                        textareaClassName="min-h-[70px] text-[15px] text-brand-dark"
                     />
                 </FormRow>
             </section>
@@ -210,25 +210,25 @@ export function ItemOtherTab({ config, values, onChange }) {
                 <SectionHeading title={config.labels.dimensionInfo} />
 
                 <div className="grid gap-3 sm:grid-cols-[170px_280px] sm:items-center">
-                    <label className="text-xs sm:text-sm text-[#1f2436]">Panjang (cm)</label>
+                    <label className="text-xs sm:text-sm text-brand-dark">Panjang (cm)</label>
                     <SimpleTextField
                         value={values.length}
                         onChange={(event) => onChange('length', event.target.value)}
                     />
 
-                    <label className="text-xs sm:text-sm text-[#1f2436]">Lebar (cm)</label>
+                    <label className="text-xs sm:text-sm text-brand-dark">Lebar (cm)</label>
                     <SimpleTextField
                         value={values.width}
                         onChange={(event) => onChange('width', event.target.value)}
                     />
 
-                    <label className="text-xs sm:text-sm text-[#1f2436]">Tinggi (cm)</label>
+                    <label className="text-xs sm:text-sm text-brand-dark">Tinggi (cm)</label>
                     <SimpleTextField
                         value={values.height}
                         onChange={(event) => onChange('height', event.target.value)}
                     />
 
-                    <label className="text-xs sm:text-sm text-[#1f2436]">Berat (gr)</label>
+                    <label className="text-xs sm:text-sm text-brand-dark">Berat (gr)</label>
                     <SimpleTextField
                         value={values.weight}
                         onChange={(event) => onChange('weight', event.target.value)}

@@ -48,7 +48,7 @@ export function ExpenseLineItemsSection({ config, values, setValues, handlers = 
             onRowClick={handlers.onEditLineItem}
             getRowClassName={
                 handlers.onEditLineItem
-                    ? () => 'cursor-pointer transition hover:bg-[#eef3fb]'
+                    ? () => 'cursor-pointer transition hover:bg-workspace-hover-bg'
                     : undefined
             }
         />
@@ -79,8 +79,8 @@ export function ExpenseAdditionalInfoSection({ config, values, setValues, handle
                             }))
                         }
                         rows={4}
-                        className="border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-[#1f2436]"
+                        className="border-ui-border"
+                        textareaClassName="min-h-[70px] text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
             </div>
@@ -93,14 +93,14 @@ export function ExpenseSummarySection({ config, values }) {
         <div className="min-h-0">
             <TransactionSectionHeading title={config.summaryTitle} icon="document" />
 
-            <div className="mt-4 max-w-[860px] overflow-hidden rounded-[4px] border border-[#d2d8e3] bg-white shadow-[0_4px_10px_rgba(15,23,42,0.08)]">
-                <div className="grid grid-cols-[minmax(0,1fr)_220px] border-b border-[#d8dde7] px-4 py-3 text-xs sm:text-sm text-[#1f2436]">
+            <div className="mt-4 max-w-[860px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium">
+                <div className="grid grid-cols-[minmax(0,1fr)_220px] border-b border-ui-border-medium px-4 py-3 text-xs sm:text-sm text-brand-dark">
                     <span>{config.summaryRows.paidAmountLabel}</span>
-                    <span className="text-right font-semibold text-[#111827]">{values.paidAmount}</span>
+                    <span className="text-right font-semibold text-text-darkest">{values.paidAmount}</span>
                 </div>
-                <div className="grid grid-cols-[minmax(0,1fr)_220px] px-4 py-3 text-xs sm:text-sm text-[#1f2436]">
+                <div className="grid grid-cols-[minmax(0,1fr)_220px] px-4 py-3 text-xs sm:text-sm text-brand-dark">
                     <span>{config.summaryRows.statusLabel}</span>
-                    <span className="text-right font-semibold text-[#111827]">{values.status}</span>
+                    <span className="text-right font-semibold text-text-darkest">{values.status}</span>
                 </div>
             </div>
         </div>
@@ -183,8 +183,8 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                                         numberingType: event.target.value,
                                     }))
                                 }
-                                className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
                             >
                                 {config.numberingOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -200,9 +200,9 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                                  onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                  maxLength={120}
                                  readOnly={!showAutoNumberSwitch}
-                                 trailing={<CloseIcon className="h-4 w-4 text-[#1f2436]" />}
-                                 className="h-[40px] rounded-[4px] border-[#cfd6e2]"
-                                 inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                 trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
+                                 className="h-[40px] rounded-[4px] border-ui-border"
+                                 inputClassName="text-xs sm:text-sm text-brand-dark"
                                  trailingClassName="px-3"
                              />
                         )}
@@ -219,7 +219,7 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                                 ref={processAnchorRef}
                                 type="button"
                                 onClick={() => setProcessOpen(prev => !prev)}
-                                className="inline-flex h-[34px] w-full items-center justify-center gap-1 rounded-[4px] border border-[#7aa2d5] bg-white px-4 text-xs sm:text-sm text-[#21539b]"
+                                className="inline-flex h-[34px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent"
                             >
                                 <span>{config.processButtonLabel || 'Proses'}</span>
                                 <ChevronDownIcon className="h-4 w-4" />
@@ -257,9 +257,9 @@ export function ExpenseTableFilters({ table, filters, setFilters }) {
                         }))
                     }
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2]"
-                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                    iconClassName="mr-2 text-[#6c7894]"
+                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -271,7 +271,7 @@ export function ExpenseTableFilters({ table, filters, setFilters }) {
 
             <button
                 type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                 aria-label={table.filterButtonLabel}
             >
                 <FunnelIcon className="h-5 w-5" />

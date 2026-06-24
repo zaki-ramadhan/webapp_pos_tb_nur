@@ -11,19 +11,19 @@ import {
 
 export function resolveActionToneClass(action, disabled) {
     if (disabled) {
-        return 'border-[#c8ccd4] bg-[#ececec] text-[#9aa0aa] shadow-none opacity-55 pointer-events-none cursor-default';
+        return 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t shadow-none opacity-55 pointer-events-none cursor-default';
     }
 
     switch (action.tone) {
         case 'danger':
-            return 'border-[#db808b] bg-[#f5b0b4] text-[#ee3f67] shadow-[0_5px_10px_rgba(120,46,58,0.18)]';
+            return 'border-red-db808b bg-red-f5b0b4 text-tab-active-border-t shadow-dock-danger';
         case 'success':
-            return 'border-[#43af5b] bg-[#99e19e] text-[#0b7a34] shadow-[0_5px_10px_rgba(24,102,49,0.18)]';
+            return 'border-green-43af5b bg-green-99e19e text-green-0b7a34 shadow-dock-success';
         case 'primary':
-            return 'border-[#214d8d] bg-[#2d61ab] text-white shadow-[0_5px_10px_rgba(24,53,97,0.18)]';
+            return 'border-brand-blue-darker bg-blue-2d61ab text-white shadow-dock-accent';
         case 'muted':
         default:
-            return 'border-[#214d8d] bg-[#2d61ab] text-white shadow-[0_5px_10px_rgba(24,53,97,0.18)]';
+            return 'border-brand-blue-darker bg-blue-2d61ab text-white shadow-dock-accent';
     }
 }
 

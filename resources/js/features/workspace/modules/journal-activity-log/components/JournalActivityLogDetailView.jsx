@@ -36,15 +36,15 @@ function buildFallbackDetailRecord(row, config) {
 function SummaryField({ label, value, align = 'left' }) {
     return (
         <>
-            <div className={`text-xs sm:text-sm text-[#1f2436] ${align === 'right' ? 'lg:text-right' : ''}`.trim()}>{label}</div>
-            <div className="text-xs sm:text-sm text-[#1f2436]">{value}</div>
+            <div className={`text-xs sm:text-sm text-brand-dark ${align === 'right' ? 'lg:text-right' : ''}`.trim()}>{label}</div>
+            <div className="text-xs sm:text-sm text-brand-dark">{value}</div>
         </>
     );
 }
 
 function AmountColumn({ label, align = 'right' }) {
     return (
-        <div className="px-2 py-2 text-xs sm:text-sm text-[#1f2436] text-center">
+        <div className="px-2 py-2 text-xs sm:text-sm text-brand-dark text-center">
             {label}
         </div>
     );
@@ -62,18 +62,18 @@ export default function JournalActivityLogDetailView({ config, activeLevel2Tab }
                 <SectionTab label={config.sectionLabel} />
             </div>
 
-            <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+            <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
                 <div className="grid gap-x-8 gap-y-4 xl:grid-cols-2">
                     <div className="grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                         <SummaryField label={config.labels.date} value={detail.date} />
                         <SummaryField label={config.labels.transactionType} value={detail.transactionType} />
 
-                        <div className="text-xs sm:text-sm text-[#1f2436]">{config.labels.display}</div>
+                        <div className="text-xs sm:text-sm text-brand-dark">{config.labels.display}</div>
                         <SelectField
                             value={displayOption}
                             onChange={(event) => setDisplayOption(event.target.value)}
-                            className="h-[34px] max-w-[458px] rounded-[4px] border-[#cfd6e2]"
-                            selectClassName="text-xs sm:text-sm text-[#1f2436]"
+                            className="h-[34px] max-w-[458px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             {config.displayOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -89,7 +89,7 @@ export default function JournalActivityLogDetailView({ config, activeLevel2Tab }
                     </div>
                 </div>
 
-                <div className="mt-6 border-t border-[#a8a8a8] bg-[#d8d8d8]">
+                <div className="mt-6 border-t border-gray-a8a8a8 bg-tab-inactive-bg">
                     <div className="grid grid-cols-[160px_minmax(0,1fr)_220px_220px]">
                         <AmountColumn label={config.labels.accountCode} align="left" />
                         <AmountColumn label={config.labels.accountName} align="left" />
@@ -99,16 +99,16 @@ export default function JournalActivityLogDetailView({ config, activeLevel2Tab }
                 </div>
 
                 <div className="px-2 py-2">
-                    <div className="text-base font-semibold text-[#111827]">{detail.reviewedAt}</div>
-                    <div className="mt-1 text-base text-[#111827]">{detail.reviewer}</div>
+                    <div className="text-base font-semibold text-text-darkest">{detail.reviewedAt}</div>
+                    <div className="mt-1 text-base text-text-darkest">{detail.reviewer}</div>
 
                     <div className="mt-4 space-y-3">
                         {detail.entries.map((entry) => (
                             <div key={entry.id} className="grid grid-cols-[160px_minmax(0,1fr)_220px_220px] gap-x-3">
-                                <div className="text-xs sm:text-sm text-[#1f2436]">{entry.accountCode}</div>
-                                <div className="text-xs sm:text-sm text-[#1f2436]">{entry.accountName}</div>
-                                <div className="text-left text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.debit)}</div>
-                                <div className="text-left text-xs sm:text-sm text-[#1f2436]">{formatTableTextValue(entry.credit)}</div>
+                                <div className="text-xs sm:text-sm text-brand-dark">{entry.accountCode}</div>
+                                <div className="text-xs sm:text-sm text-brand-dark">{entry.accountName}</div>
+                                <div className="text-left text-xs sm:text-sm text-brand-dark">{formatTableTextValue(entry.debit)}</div>
+                                <div className="text-left text-xs sm:text-sm text-brand-dark">{formatTableTextValue(entry.credit)}</div>
                             </div>
                         ))}
                     </div>
@@ -117,12 +117,12 @@ export default function JournalActivityLogDetailView({ config, activeLevel2Tab }
                         <div />
                         <div />
                         <div className="pt-1 text-left">
-                            <div className="mr-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
-                            <div className="pt-1 text-lg font-semibold text-[#111827]">{detail.totalDebit}</div>
+                            <div className="mr-auto h-px w-full max-w-[454px] bg-brand-dark" />
+                            <div className="pt-1 text-lg font-semibold text-text-darkest">{detail.totalDebit}</div>
                         </div>
                         <div className="pt-1 text-left">
-                            <div className="mr-auto h-px w-full max-w-[454px] bg-[#1f2436]" />
-                            <div className="pt-1 text-lg font-semibold text-[#111827]">{detail.totalCredit}</div>
+                            <div className="mr-auto h-px w-full max-w-[454px] bg-brand-dark" />
+                            <div className="pt-1 text-lg font-semibold text-text-darkest">{detail.totalCredit}</div>
                         </div>
                     </div>
                 </div>

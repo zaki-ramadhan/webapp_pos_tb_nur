@@ -8,7 +8,7 @@ export default function ReportCard({ report, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className="group flex w-full items-start gap-4 rounded-[10px] p-2.5 text-left transition hover:bg-[#f9fafb]"
+            className="group flex w-full items-start gap-4 rounded-[10px] p-2.5 text-left transition hover:bg-ui-bg-hover"
         >
             <NavigationIcon 
                 type={styles.icon} 
@@ -17,10 +17,10 @@ export default function ReportCard({ report, onClick }) {
             />
 
             <span className="min-w-0 flex-1">
-                <span className="block text-base font-medium leading-6 text-[#111827] group-hover:text-[#ef3968] transition-colors">
+                <span className="block text-base font-medium leading-6 text-text-darkest group-hover:text-pink-accent transition-colors">
                     {report.title}
                 </span>
-                <span className="mt-1 block text-sm leading-5 text-[#64748b]">
+                <span className="mt-1 block text-sm leading-5 text-text-muted">
                     {report.description}
                 </span>
             </span>

@@ -16,8 +16,8 @@ export default function TransferInfoSection({ config, values, setValues, isDetai
                         value={values.notes}
                         onChange={(event) => setValues((current) => ({ ...current, notes: event.target.value }))}
                         rows={4}
-                        className="rounded-[4px] border-[#cfd6e2]"
-                        textareaClassName="min-h-[70px] px-4 py-3 text-xs sm:text-sm text-[#1f2436]"
+                        className="rounded-[4px] border-ui-border"
+                        textareaClassName="min-h-[70px] px-4 py-3 text-xs sm:text-sm text-brand-dark"
                     />
 
                     {isDetail ? (
@@ -26,8 +26,8 @@ export default function TransferInfoSection({ config, values, setValues, isDetai
                             <div className="space-y-3 pt-1">
                                 {values.reconciliations.map((item) => (
                                     <div key={item.id} className="grid gap-1 sm:grid-cols-[160px_1fr]">
-                                        <div className="text-xs sm:text-sm text-[#1f2436]">{item.bank}</div>
-                                        <div className="text-xs sm:text-sm text-[#1f2436]">
+                                        <div className="text-xs sm:text-sm text-brand-dark">{item.bank}</div>
+                                        <div className="text-xs sm:text-sm text-brand-dark">
                                             <span className="italic">{item.status}</span>
                                             {item.date ? <span className="ml-8">{item.date}</span> : null}
                                         </div>

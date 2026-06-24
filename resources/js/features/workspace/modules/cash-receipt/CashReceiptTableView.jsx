@@ -66,7 +66,7 @@ export default function CashReceiptTableView({
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 {...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField)}
                 refreshButton={{
@@ -78,8 +78,8 @@ export default function CashReceiptTableView({
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1380px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable className="min-w-[1380px]" wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {filteredRows.length > 0 && (
                                 <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
@@ -101,20 +101,20 @@ export default function CashReceiptTableView({
                         {filteredRows.length ? filteredRows.map((row, index) => (
                             <DataTableRow
                                 key={row.id}
-                                className={`cursor-pointer border-[#dde1e8] transition hover:bg-[#eef3fb] ${
-                                    index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'
+                                className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
+                                    index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
                                 }`.trim()}
                                 onClick={() => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                             >
                                                                     {filteredRows.length > 0 ? (
-                                        <DataTableCell className="px-3 text-center text-base text-[#646d83]">
+                                        <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                         {index + 1}
                                     </DataTableCell>
                                     ) : null}
 {config.table.columns.map((column) => (
                                     <DataTableCell
                                         key={column.id}
-                                        className={`text-left px-2.5 text-base text-[#131a28]`.trim()}
+                                        className={`text-left px-2.5 text-base text-text-workspace-dark`.trim()}
                                     >
                                         {formatTableTextValue(row[column.id])}
                                     </DataTableCell>
@@ -122,7 +122,7 @@ export default function CashReceiptTableView({
                             </DataTableRow>
                         )) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-3 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-3 py-3 text-center text-base text-text-workspace-dark">
                                     {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

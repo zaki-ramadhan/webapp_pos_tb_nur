@@ -6,7 +6,6 @@ import SelectField from '@/components/ui/SelectField';
 import { TransactionDataTable } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import { RefreshIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
-import { AccountsToolbarIconAction } from './accountsViewShared';
 
 export default function AccountsTableView({ config, onCreate, onOpenDetail, loading = false, error = '', onReload = null }) {
     const [keyword, setKeyword] = useState('');
@@ -49,7 +48,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 size="compact"
                 filters={
@@ -66,9 +65,9 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                                         }))
                                     }
                                     containerClassName="w-auto shrink-0"
-                                    className="h-[34px] min-w-[128px] rounded-[4px] border-[#cfd6e2]"
-                                    selectClassName="px-3 text-xs sm:text-sm text-[#394157]"
-                                    iconClassName="mr-2 text-[#6c7894]"
+                                    className="h-[34px] min-w-[128px] rounded-[4px] border-ui-border"
+                                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                                    iconClassName="mr-2 text-filter-icon"
                                 >
                                     {filter.options.map((option, index) => (
                                         <option key={`${filter.id}-${option.value}-${index}`} value={option.value}>
@@ -90,15 +89,12 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                     onClick: onReload,
                     loading,
                 }}
-                rightControls={config.table.toolbarActions.map((action) => (
-                    <AccountsToolbarIconAction key={action.id} action={action} />
-                ))}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[340px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
                 pageValue={config.table.pageValue}
             />
@@ -115,7 +111,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                             tabLabel: row.name,
                         })
                     }
-                    getRowClassName={() => 'cursor-pointer transition hover:bg-[#eef3fb]'}
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
                     renderHeaderCell={(column) => (
                         <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
                             <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
@@ -140,7 +136,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                         }
 
                         if (column.id === 'balance') {
-                            return <span className={row.negative ? 'text-[#ff3b30]' : ''}>{row.balance}</span>;
+                            return <span className={row.negative ? 'text-red-ff3b30' : ''}>{row.balance}</span>;
                         }
 
                         return <span className="block truncate">{row[column.id]}</span>;

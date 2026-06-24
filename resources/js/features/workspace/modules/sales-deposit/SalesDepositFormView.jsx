@@ -229,8 +229,8 @@ export default function SalesDepositFormView({
                                                 };
                                             })
                                         }
-                                        className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                        inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                        className="h-[34px] rounded-[4px] border-ui-border"
+                                        inputClassName="text-xs sm:text-sm text-brand-dark"
                                     />
                                 </div>
 
@@ -243,12 +243,12 @@ export default function SalesDepositFormView({
                                             purchaseOrderNumber: event.target.value,
                                         }))
                                     }
-                                    className="h-[34px] rounded-[4px] border-[#cfd6e2]"
-                                    inputClassName="text-xs sm:text-sm text-[#1f2436]"
+                                    className="h-[34px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
                                 />
 
                                 <TransactionFieldLabel label={config.labels.tax} />
-                                <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-[#1f2436]">
+                                <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
                                     <CheckboxField
                                         id="taxEnabled"
                                         label="Kena Pajak"

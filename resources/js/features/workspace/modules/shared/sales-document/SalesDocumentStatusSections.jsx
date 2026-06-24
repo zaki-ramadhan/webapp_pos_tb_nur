@@ -3,9 +3,9 @@ import { TableActionIcon } from '@/features/workspace/shared/Icons';
 
 function SummaryValue({ label, value, highlight = false }) {
     return (
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#e6ebf2] px-4 py-2.5 last:border-b-0">
-            <span className="text-xs sm:text-sm text-[#1f2436]">{label}</span>
-            <span className={`text-right text-base ${highlight ? 'font-semibold text-[#111827]' : 'text-[#111827]'}`.trim()}>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border-ui-border-lightest px-4 py-2.5 last:border-b-0">
+            <span className="text-xs sm:text-sm text-brand-dark">{label}</span>
+            <span className={`text-right text-base ${highlight ? 'font-semibold text-text-darkest' : 'text-text-darkest'}`.trim()}>
                 {value}
             </span>
         </div>
@@ -15,8 +15,8 @@ function SummaryValue({ label, value, highlight = false }) {
 function StatusPill({ value, tone = 'success' }) {
     const toneClassName =
         tone === 'warning'
-            ? 'border-[#ffd08c] bg-[#fff5e7] text-[#ff8d08]'
-            : 'border-[#bcebc1] bg-[#effcf0] text-[#2db757]';
+            ? 'border-status-warning-badge-border bg-bg-badge-warning-alt text-status-warning-badge-text'
+            : 'border-green-bcebc1 bg-success-bg text-text-badge-success-alt';
 
     return (
         <span className={`inline-flex rounded-[4px] border px-3 py-1 text-base ${toneClassName}`.trim()}>
@@ -39,7 +39,7 @@ export function SalesDocumentSummarySection({ config, values }) {
                 <div>
                     <TransactionSectionHeading title={config.orderInfoTitle} icon="receipt" />
 
-                    <div className="mt-4 rounded-[6px] border border-[#d6dce8] bg-white">
+                    <div className="mt-4 rounded-[6px] border border-ui-border-medium bg-white">
                         {values.summary?.map(([label, value], index) => (
                             <SummaryValue key={`${label}-${index}`} label={label} value={value} highlight={index === 0} />
                         ))}
@@ -50,18 +50,18 @@ export function SalesDocumentSummarySection({ config, values }) {
                     <div>
                         <TransactionSectionHeading title={config.processedByTitle} icon="document" />
 
-                        <div className="mt-4 rounded-[6px] border border-[#d6dce8] bg-white">
+                        <div className="mt-4 rounded-[6px] border border-ui-border-medium bg-white">
                             {processedItems.length ? (
                                 processedItems.map((item, index) => (
-                                    <div key={`${item.number ?? 'processed'}-${index}`} className="grid grid-cols-[minmax(0,1fr)_140px] gap-3 border-b border-[#e6ebf2] px-4 py-2.5 last:border-b-0">
+                                    <div key={`${item.number ?? 'processed'}-${index}`} className="grid grid-cols-[minmax(0,1fr)_140px] gap-3 border-b border-border-ui-border-lightest px-4 py-2.5 last:border-b-0">
                                         <div className="min-w-0">
-                                            <div className="truncate text-xs sm:text-sm text-[#1f2436]">{item.number ?? '-'}</div>
+                                            <div className="truncate text-xs sm:text-sm text-brand-dark">{item.number ?? '-'}</div>
                                         </div>
-                                        <div className="text-right text-xs sm:text-sm text-[#1f2436]">{item.date ?? '-'}</div>
+                                        <div className="text-right text-xs sm:text-sm text-brand-dark">{item.date ?? '-'}</div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="px-4 py-6 text-base text-[#6b7280]">{config.processedByEmptyLabel ?? 'Belum ada data.'}</div>
+                                <div className="px-4 py-6 text-base text-tab-view-active-text">{config.processedByEmptyLabel ?? 'Belum ada data.'}</div>
                             )}
                         </div>
                     </div>
@@ -71,18 +71,18 @@ export function SalesDocumentSummarySection({ config, values }) {
             <section>
                 <TransactionSectionHeading title="Status Dokumen" icon="check" />
 
-                <div className="mt-4 rounded-[6px] border border-[#d6dce8] bg-white p-4">
+                <div className="mt-4 rounded-[6px] border border-ui-border-medium bg-white p-4">
                     <div className="flex flex-col gap-4">
                         {values.approvalStamp ? (
                             <div className="flex items-center justify-between gap-3">
-                                <span className="text-xs sm:text-sm text-[#1f2436]">Approval</span>
+                                <span className="text-xs sm:text-sm text-brand-dark">Approval</span>
                                 <StatusPill value={values.approvalStamp} />
                             </div>
                         ) : null}
 
                         {values.processStamp ? (
                             <div className="flex items-center justify-between gap-3">
-                                <span className="text-xs sm:text-sm text-[#1f2436]">Proses</span>
+                                <span className="text-xs sm:text-sm text-brand-dark">Proses</span>
                                 <StatusPill
                                     value={values.processStamp}
                                     tone={String(values.processStamp).toLowerCase().includes('belum') ? 'warning' : 'success'}
@@ -98,9 +98,9 @@ export function SalesDocumentSummarySection({ config, values }) {
 
 export function SalesDocumentSmartlinkSection() {
     return (
-        <div className="rounded-[6px] border border-[#d6dce8] bg-white p-5">
+        <div className="rounded-[6px] border border-ui-border-medium bg-white p-5">
             <TransactionSectionHeading title="SmartLink" icon="smartlink" />
-            <p className="mt-4 max-w-[760px] text-base leading-7 text-[#5f6779]">
+            <p className="mt-4 max-w-[760px] text-base leading-7 text-text-workspace-muted">
                 Dokumen ini belum memiliki SmartLink aktif. Hubungkan dokumen lain atau aktifkan integrasi
                 untuk menampilkan referensi otomatis di area ini.
             </p>
@@ -126,14 +126,14 @@ export function SalesDocumentFooter({ values }) {
 
     return (
         <div className="flex justify-end">
-            <div className={`grid w-full max-w-[1220px] overflow-hidden rounded-[4px] border border-[#d2d8e3] bg-white shadow-[0_4px_10px_rgba(15,23,42,0.08)] ${gridClassName}`.trim()}>
+            <div className={`grid w-full max-w-[1220px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
                 {footerParts.map((part) => (
-                    <div key={part.id} className="border-b border-[#e4e8f0] px-4 py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5">
+                    <div key={part.id} className="border-b border-ui-border-light px-4 py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5">
                         <div className="flex items-start justify-between gap-3">
-                            <span className="text-xs sm:text-sm text-[#1f2436]">
+                            <span className="text-xs sm:text-sm text-brand-dark">
                                 {part.label}
                                 {(part.id === 'discount' || part.id === 'tax') ? (
-                                    <span className="ml-1 inline-flex rounded-[4px] border border-[#78a6e8] px-1.5 py-0.5 text-xs text-[#21539b]">
+                                    <span className="ml-1 inline-flex rounded-[4px] border border-blue-78a6e8 px-1.5 py-0.5 text-xs text-brand-blue-accent">
                                         %
                                     </span>
                                 ) : null}
@@ -141,21 +141,21 @@ export function SalesDocumentFooter({ values }) {
                         </div>
 
                         {part.isInput ? (
-                            <div className="mt-2 flex h-[34px] overflow-hidden rounded-[4px] border border-[#cfd6e2]">
+                            <div className="mt-2 flex h-[34px] overflow-hidden rounded-[4px] border border-ui-border">
                                 {part.prefix ? (
-                                    <span className="inline-flex items-center border-r border-[#d8dde7] bg-[#f5f6f8] px-3 text-base text-[#9aa3b1]">
+                                    <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-3 text-base text-text-inactive">
                                         {part.prefix}
                                     </span>
                                 ) : null}
-                                <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-[#111827]">
+                                <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-text-darkest">
                                     {part.value}
                                 </span>
-                                <span className="inline-flex w-10 items-center justify-center border-l border-[#d8dde7] text-[#1f2436]">
+                                <span className="inline-flex w-10 items-center justify-center border-l border-ui-border-medium text-brand-dark">
                                     <TableActionIcon className="h-4 w-4" />
                                 </span>
                             </div>
                         ) : (
-                            <div className={`mt-2 text-lg font-semibold text-[#111827] ${part.align === 'right' ? 'text-right' : (part.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>
+                            <div className={`mt-2 text-lg font-semibold text-text-darkest ${part.align === 'right' ? 'text-right' : (part.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>
                                 {part.value}
                             </div>
                         )}

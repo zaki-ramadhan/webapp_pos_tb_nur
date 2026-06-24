@@ -37,10 +37,10 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                         disabled={Boolean(filter.disabled)}
                         containerClassName="w-auto shrink-0"
                         className={`h-[34px] min-w-[118px] rounded-[4px] sm:min-w-[138px] ${
-                            filter.disabled ? 'border-[#ead6a7] bg-[#fff8e9]' : 'border-[#cfd6e2] bg-white'
+                            filter.disabled ? 'border-orange-ead7b2 bg-warning-bg' : 'border-ui-border bg-white'
                         }`.trim()}
-                        selectClassName={`px-3 text-xs sm:text-sm ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#394157]'}`.trim()}
-                        iconClassName={`mr-2 ${filter.disabled ? 'text-[#9a7b35]' : 'text-[#6c7894]'}`.trim()}
+                        selectClassName={`px-3 text-xs sm:text-sm ${filter.disabled ? 'text-warning-label-text' : 'text-filter-select-text'}`.trim()}
+                        iconClassName={`mr-2 ${filter.disabled ? 'text-warning-label-text' : 'text-filter-icon'}`.trim()}
                     >
                         {filter.options.map((option, optionIndex) => (
                             <option key={`${filter.id}-${option.value}-${optionIndex}`} value={option.value}>
@@ -50,9 +50,9 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                     </SelectField>
 
                     {filter.disabled && filter.hint ? (
-                        <div className="flex flex-wrap items-center gap-1.5 pl-1 text-xs text-[#9a7b35]">
+                        <div className="flex flex-wrap items-center gap-1.5 pl-1 text-xs text-warning-label-text">
                             {filter.badgeLabel ? (
-                                <span className="rounded-full bg-[#f6dfab] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b6511]">
+                                <span className="rounded-full bg-bg-warning-tag px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-warning-badge-text">
                                     {filter.badgeLabel}
                                 </span>
                             ) : null}
@@ -66,7 +66,7 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                 <Tooltip content={filterButtonLabel} portal>
                     <button
                         type="button"
-                        className="inline-flex h-[34px] w-[48px] items-center justify-center rounded-[4px] border border-[#7aa2d5] bg-[#dcedff] text-[#2353a0]"
+                        className="inline-flex h-[34px] w-[48px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
                         aria-label={filterButtonLabel}
                     >
                         <FunnelIcon className="h-4.5 w-4.5" />
@@ -203,7 +203,7 @@ export default function TableListView({
     }, [cleanedColumns, filteredRows, table.resource]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-2 py-2 shadow-[0_2px_10px_rgba(15,23,42,0.08)] sm:px-3 sm:py-3">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-2 py-2 shadow-card-light sm:px-3 sm:py-3">
             <TableToolbar
                 size="compact"
                 filters={
@@ -239,7 +239,7 @@ export default function TableListView({
                     onChange: (event) => setKeyword(event.target.value),
                     placeholder: table.searchPlaceholder ?? 'Cari data di sini...',
                     widthClassName: table.searchWidthClassName ?? 'w-full sm:w-[340px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
                 resourceName={table.resource}
                 onRefresh={table.onRefresh}
@@ -254,9 +254,9 @@ export default function TableListView({
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable
                     className={table.tableClassName ?? 'min-w-[760px] sm:min-w-[960px] lg:min-w-[1200px]'}
-                    wrapperClassName="border-[#d1d8e4]"
+                    wrapperClassName="border-table-wrapper-border"
                 >
-                    <DataTableHeader className="bg-[#5f7690]">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {paginatedRows.length > 0 && (
                                 <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
@@ -283,18 +283,18 @@ export default function TableListView({
                             paginatedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${onRowClick ? 'cursor-pointer transition hover:bg-[#eef3fb]' : ''} ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
+                                    className={`border-ui-border-row ${onRowClick ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''} ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
                                     {paginatedRows.length > 0 && (
-                                        <DataTableCell className="px-2.5 text-center text-base text-[#646d83]">
+                                        <DataTableCell className="px-2.5 text-center text-base text-table-row-number">
                                             {paginationConfig ? (paginationConfig.from + index) : (index + 1)}
                                         </DataTableCell>
                                     )}
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')} px-2.5 text-base text-[#131a28] ${column.cellClassName ?? ''}`.trim()}
+                                            className={`${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')} px-2.5 text-base text-text-workspace-dark ${column.cellClassName ?? ''}`.trim()}
                                         >
                                             {column.truncate ? (
                                                 <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
@@ -307,7 +307,7 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
                                     {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

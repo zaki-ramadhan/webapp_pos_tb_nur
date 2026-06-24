@@ -133,7 +133,7 @@ export default function ActivityLogView({ page }) {
     const emptyLabel = loading ? 'Memuat data...' : (error || 'Belum ada data');
 
     return (
-        <div className="min-h-full rounded-[6px] border border-[#d6dce8] bg-white px-3 py-3 shadow-[0_2px_10px_rgba(15,23,42,0.08)]">
+        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 resourceName="activity-log"
                 filters={table.filters.map((filter) => (
@@ -147,8 +147,8 @@ export default function ActivityLogView({ page }) {
                             }))
                         }
                         containerClassName="w-auto shrink-0"
-                        className="h-[34px] min-w-[118px] rounded-[4px] border-[#cfd6e2] sm:min-w-[138px]"
-                        selectClassName="text-xs sm:text-sm text-[#394157]"
+                        className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border sm:min-w-[138px]"
+                        selectClassName="text-xs sm:text-sm text-filter-select-text"
                     >
                         {filter.options.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -178,14 +178,14 @@ export default function ActivityLogView({ page }) {
                     onChange: (event) => setKeyword(event.target.value),
                     placeholder: table.searchPlaceholder ?? '',
                     widthClassName: 'sm:w-[340px]',
-                    trailing: <SearchIcon className="h-5 w-5 text-[#111827]" />,
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
                 pageValue={filteredRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1320px]" wrapperClassName="border-[#d1d8e4]">
-                    <DataTableHeader className="bg-[#5f7690]">
+                <DataTable className="min-w-[1320px]" wrapperClassName="border-table-wrapper-border">
+                    <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
                                 No.
@@ -210,37 +210,37 @@ export default function ActivityLogView({ page }) {
                             filteredRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-[#dde1e8] ${index % 2 === 1 ? 'bg-[#f8fafc]' : 'bg-white'}`.trim()}
+                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                 >
-                                    <DataTableCell className="px-2.5 text-center text-base text-[#646d83] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
                                         {table.pagination ? (table.pagination.from + index) : (index + 1)}
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.transactionDateLabel)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.referenceName)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.actionLabel)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.transactionTypeLabel)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.loggedAt)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.userName)}</span>
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-[#131a28] whitespace-nowrap">
+                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
                                         <span className="block truncate">{formatTableTextValue(row.email)}</span>
                                     </DataTableCell>
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length + 1} className="px-2.5 py-3 text-center text-base text-[#131a28]">
+                                <DataTableCell colSpan={table.columns.length + 1} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
                                     {emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>

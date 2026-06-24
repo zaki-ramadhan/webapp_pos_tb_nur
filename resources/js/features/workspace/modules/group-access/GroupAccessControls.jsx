@@ -17,7 +17,7 @@ export function CopyPermissionsButton({ label, options, onSelect }) {
                 ref={buttonRef}
                 type="button"
                 onClick={() => setOpen((currentValue) => !currentValue)}
-                className="inline-flex h-[42px] min-w-[138px] items-center justify-center gap-2 rounded-[6px] border border-[#6da0e2] bg-white px-3.5 text-base font-medium text-[#2a66b4] transition hover:bg-[#f7fbff]"
+                className="inline-flex h-[42px] min-w-[138px] items-center justify-center gap-2 rounded-[6px] border border-chart-accent bg-white px-3.5 text-base font-medium text-blue-2d61ab transition hover:bg-ui-bg-hover"
             >
                 <span>{label}</span>
                 <ChevronDownIcon className="h-4 w-4" />
@@ -55,7 +55,7 @@ export function PermissionCell({ checked, onChange }) {
                 id="permission"
                 checked={checked}
                 onChange={onChange}
-                inputClassName="h-[22px] w-[22px] rounded-[5px] border-[#c9d0da]"
+                inputClassName="h-[22px] w-[22px] rounded-[5px] border-tab-view-active-border-x"
                 containerClassName="w-auto flex items-center justify-center"
             />
         </div>
@@ -71,7 +71,7 @@ export function GroupAccessCategoryList({
 }) {
     return (
         <div
-            className={`min-h-0 rounded-[8px] border border-[#d8dde7] bg-white p-2 shadow-[0_2px_12px_rgba(15,23,42,0.1)] ${className}`.trim()}
+            className={`min-h-0 rounded-[8px] border border-ui-border-medium bg-white p-2 shadow-widget-hover ${className}`.trim()}
         >
             <div className={`h-full overflow-y-auto pr-1 ${scrollClassName}`.trim()}>
                 <div className="space-y-1">
@@ -85,13 +85,13 @@ export function GroupAccessCategoryList({
                                 onClick={() => onSelectCategory(category.id)}
                                 className={`flex w-full items-center gap-2.5 rounded-[6px] px-3.5 py-2.5 text-left text-sm transition ${
                                     isActive
-                                        ? 'bg-[#ED3969] text-white shadow-[0_2px_8px_rgba(237,57,105,0.18)]'
-                                        : 'text-[#5e667d] hover:bg-[#f6f7fb]'
+                                        ? 'bg-tab-active-border-t text-white shadow-tab-active-pink'
+                                        : 'text-tab-inactive-text hover:bg-brand-blue-lightest'
                                     }`.trim()}
                             >
                                 <NavigationIcon
                                     type={category.icon}
-                                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-[#7f889f]'}`.trim()}
+                                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-blue-7c839b'}`.trim()}
                                 />
                                 <span className={`${isActive ? 'font-medium' : 'font-normal'}`.trim()}>
                                     {category.label}
