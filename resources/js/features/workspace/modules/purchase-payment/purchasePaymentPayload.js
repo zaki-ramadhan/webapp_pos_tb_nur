@@ -8,7 +8,10 @@ export function buildGeneratedPurchasePaymentNumber() {
 }
 
 export function buildPurchasePaymentPayload(values) {
-    const totalAmount = buildPurchasePaymentTotal(values.invoices ?? []);
+    const invoiceTotalAmount = buildPurchasePaymentTotal(values.invoices ?? []);
+    const rawPaymentAmount = values.paymentAmountDisplay ?? values.paymentAmount ?? '';
+    const paymentAmount = parseNumericInput(rawPaymentAmount);
+    const totalAmount = String(rawPaymentAmount).trim() === '' ? invoiceTotalAmount : paymentAmount;
     const lines = (values.invoices ?? []).map((invoice, index) => ({
         id: invoice.__lineId ?? undefined,
         description: invoice.formNumber?.trim() || invoice.number?.trim() || null,

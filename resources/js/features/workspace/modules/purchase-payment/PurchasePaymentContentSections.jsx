@@ -1,7 +1,9 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { buildLookupLabel } from '@/features/workspace/shared/transactionFormatters';
 import {
     FunnelIcon,
     SearchIcon,
@@ -17,6 +19,8 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 import { PurchasePaymentHeaderIconButton } from './PurchasePaymentHeaderSections';
+
+const EMPTY_SELECTED_INVOICES = [];
 
 export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice, handlers = {} }) {
     return (
@@ -38,14 +42,25 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
             searchInput={
                 <div className="flex items-center gap-3">
                     <div className="min-w-0 flex-1">
-                        <TextInput
-                            value={values.invoiceSearch}
-                            readOnly
+                        <BackendLookupField
+                            resource="purchase-invoices"
+                            values={EMPTY_SELECTED_INVOICES}
                             placeholder={config.invoiceSearchPlaceholder}
-                            trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
-                            onClick={handlers.onSelectInvoice}
+                            searchLabel="Cari faktur pembelian"
+                            getOptionLabel={(record) => buildLookupLabel(record, 'document_number')}
+                            getOptionSearchText={(record) =>
+                                [
+                                    record?.document_number,
+                                    record?.reference_number,
+                                    record?.supplier?.name,
+                                    record?.notes,
+                                ]
+                                    .filter(Boolean)
+                                    .join(' ')
+                            }
+                            onSelect={handlers.onSelectInvoiceRecord}
+                            emptyTitle="Faktur tidak ditemukan"
+                            emptyDescription="Coba nomor faktur atau nama pemasok lain."
                         />
                     </div>
 
@@ -72,11 +87,11 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
             onRowClick={onOpenInvoice}
             getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
             spacerHeaderContent=""
-            spacerCellContent={
+            spacerCellContent={() => (
                 <span className="inline-flex items-center justify-center text-text-workspace-inactive">
                     <TableActionIcon className="h-4 w-4" />
                 </span>
-            }
+            )}
             cellClassName="!py-1.5"
         />
     );

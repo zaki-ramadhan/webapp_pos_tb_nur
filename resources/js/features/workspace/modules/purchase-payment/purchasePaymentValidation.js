@@ -17,6 +17,10 @@ export function validatePurchasePaymentValues(values, config) {
         return requiredMessage;
     }
 
+    if (parseNumericInput(values.paymentAmountDisplay ?? values.paymentAmount) <= 0) {
+        return 'Nilai pembayaran wajib lebih dari 0.';
+    }
+
     const invalidInvoice = (values.invoices ?? []).find((invoice) => parseNumericInput(invoice.payment ?? invoice.pay ?? invoice.total) <= 0);
 
     if (invalidInvoice) {

@@ -1,25 +1,36 @@
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import {
-    CloseIcon,
-    LinkIcon,
-    TableActionIcon,
-} from '@/features/workspace/shared/Icons';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
+import { CloseIcon, RefreshIcon } from '@/features/workspace/shared/Icons';
+import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { applyPurchasePaymentInvoices, formatCurrencyLabel } from './purchasePaymentCalculations';
 
-export function PurchasePaymentAmountField({ values }) {
+export function PurchasePaymentAmountField({ values, setValues }) {
     return (
-        <TextInput
+        <FormattedAmountInput
             value={values.paymentAmountDisplay}
-            readOnly
-            prefix={values.paymentAmountPrefix || undefined}
+            onChange={(event) => {
+                const nextVal = event.target.value;
+                const numericValue = parseNumericInput(nextVal);
+                const footerValue = numericValue > 0 ? formatCurrencyLabel(numericValue) : '0';
+
+                setValues((current) => ({
+                    ...current,
+                    paymentAmount: nextVal,
+                    paymentAmountDisplay: nextVal,
+                    paymentAmountPrefix: numericValue > 0 ? 'Rp' : '',
+                    footerPaymentValue: footerValue,
+                }));
+            }}
+            id="purchasePaymentAmount"
+            name="nilai pembayaran"
             className="h-[40px] rounded-[4px] border-ui-border"
-            prefixClassName="min-w-[42px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
             inputClassName="text-right text-xs sm:text-sm text-brand-dark"
         />
     );
@@ -41,8 +52,8 @@ export function PurchasePaymentHeaderIconButton({ label, icon, onClick = null })
 
 export function PurchasePaymentHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
-            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-2 gap-x-8">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.payee} required />
                     <ChipLookupField
@@ -69,18 +80,23 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                     <TransactionFieldLabel label={config.labels.paymentAmount} />
                     <div className="flex items-center gap-3">
                         <div className="min-w-0 flex-1">
-                            <PurchasePaymentAmountField values={values} />
+                            <PurchasePaymentAmountField values={values} setValues={setValues} />
                         </div>
-                        <PurchasePaymentHeaderIconButton label="Hitung ulang" icon={<LinkIcon className="h-4.5 w-4.5" />} />
-                        {values.showSecondaryAmountButton ? (
-                            <PurchasePaymentHeaderIconButton label="Lihat ringkasan" icon={<TableActionIcon className="h-4.5 w-4.5" />} />
-                        ) : null}
+                        <PurchasePaymentHeaderIconButton
+                            label="Hitung ulang"
+                            icon={<RefreshIcon className="h-4.5 w-4.5" />}
+                            onClick={() =>
+                                setValues((current) =>
+                                    applyPurchasePaymentInvoices(current, current.invoices ?? []),
+                                )
+                            }
+                        />
                     </div>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-y-3 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
-                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div className="flex items-center justify-start gap-4">
                         <TransactionFieldLabel label={config.labels.documentNumber} required />
                         {!isDetail ? (

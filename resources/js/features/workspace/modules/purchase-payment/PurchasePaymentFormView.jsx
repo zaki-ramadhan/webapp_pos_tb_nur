@@ -181,63 +181,68 @@ export default function PurchasePaymentFormView({
     }
 
     const handlers = useMemo(
-        () => ({
-            onSelectPayee: () =>
-                selectLookup('suppliers', 'pemasok', (record) =>
+        () => {
+            const appendInvoiceRecord = (record) =>
+                setValues((current) =>
+                    applyPurchasePaymentInvoices(current, [
+                        ...(current.invoices ?? []),
+                        buildPurchasePaymentInvoiceFromRecord(record),
+                    ]),
+                );
+
+            return {
+                onSelectPayee: () =>
+                    selectLookup('suppliers', 'pemasok', (record) =>
+                        setValues((current) => ({
+                            ...current,
+                            __supplierId: record.id,
+                            payee: [buildLookupLabel(record)],
+                        })),
+                    ),
+                onRemovePayee: () =>
                     setValues((current) => ({
                         ...current,
-                        __supplierId: record.id,
-                        payee: [buildLookupLabel(record)],
+                        __supplierId: null,
+                        payee: [],
                     })),
-                ),
-            onRemovePayee: () =>
-                setValues((current) => ({
-                    ...current,
-                    __supplierId: null,
-                    payee: [],
-                })),
-            onSelectBankAccount: () =>
-                selectLookup('accounts', 'bank pembayaran', (record) =>
+                onSelectBankAccount: () =>
+                    selectLookup('accounts', 'bank pembayaran', (record) =>
+                        setValues((current) => ({
+                            ...current,
+                            __bankAccountId: record.id,
+                            bankAccounts: [buildLookupLabel(record)],
+                        })),
+                    ),
+                onRemoveBankAccount: () =>
                     setValues((current) => ({
                         ...current,
-                        __bankAccountId: record.id,
-                        bankAccounts: [buildLookupLabel(record)],
+                        __bankAccountId: null,
+                        bankAccounts: [],
                     })),
-                ),
-            onRemoveBankAccount: () =>
-                setValues((current) => ({
-                    ...current,
-                    __bankAccountId: null,
-                    bankAccounts: [],
-                })),
-            onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) =>
+                onSelectBranch: () =>
+                    selectLookup('branches', 'cabang', (record) =>
+                        setValues((current) => ({
+                            ...current,
+                            __branchId: record.id,
+                            branches: [buildLookupLabel(record)],
+                        })),
+                    ),
+                onRemoveBranch: (value) =>
                     setValues((current) => ({
                         ...current,
-                        __branchId: record.id,
-                        branches: [buildLookupLabel(record)],
+                        __branchId: null,
+                        branches: (current.branches ?? []).filter((item) => item !== value),
                     })),
-                ),
-            onRemoveBranch: (value) =>
-                setValues((current) => ({
-                    ...current,
-                    __branchId: null,
-                    branches: (current.branches ?? []).filter((item) => item !== value),
-                })),
-            onSelectInvoice: () =>
-                selectLookup(
-                    'purchase-invoices',
-                    'faktur pembelian',
-                    (record) =>
-                        setValues((current) =>
-                            applyPurchasePaymentInvoices(current, [
-                                ...(current.invoices ?? []),
-                                buildPurchasePaymentInvoiceFromRecord(record),
-                            ]),
-                        ),
-                    (record) => buildLookupLabel(record, 'document_number')
-                ),
-        }),
+                onSelectInvoice: () =>
+                    selectLookup(
+                        'purchase-invoices',
+                        'faktur pembelian',
+                        appendInvoiceRecord,
+                        (record) => buildLookupLabel(record, 'document_number')
+                    ),
+                onSelectInvoiceRecord: appendInvoiceRecord,
+            };
+        },
         [selectLookup],
     );
 
