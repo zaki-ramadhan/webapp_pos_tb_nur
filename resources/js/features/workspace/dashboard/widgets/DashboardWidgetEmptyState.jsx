@@ -14,8 +14,8 @@ export default function DashboardWidgetEmptyState({
             tone="subtle"
             fill
             className={`${className} rounded-[4px] bg-transparent px-0 py-0`.trim()}
-            titleClassName="text-base font-medium text-[#6b738f] md:text-base"
-            descriptionClassName="mt-2 text-xs leading-5 text-[#8a91a8] md:text-sm"
+            titleClassName="text-base font-medium text-text-muted md:text-base"
+            descriptionClassName="mt-2 text-xs leading-5 text-text-light md:text-sm"
         />
     );
 }

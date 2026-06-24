@@ -89,7 +89,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                 actionCashier: 'Latih kasir untuk menawarkan produk aksesoris ini sebagai pelengkap opsional saat pelanggan membayar produk utama.',
                 tone: 'blue',
                 bg: 'bg-blue-50 border-blue-200 text-blue-800',
-                badgeBg: 'rgba(29, 78, 216, 1.0)',
+                badgeBg: 'var(--color-badge-group-a)',
                 strengthText: 'Sangat Kuat'
             };
         }
@@ -101,7 +101,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                 actionCashier: 'Berikan penawaran diskon potongan langsung Rp 5.000 jika kedua barang ini dibeli secara bersamaan.',
                 tone: 'blue',
                 bg: 'bg-indigo-50 border-indigo-200 text-indigo-800',
-                badgeBg: 'rgba(29, 78, 216, 0.65)',
+                badgeBg: 'var(--color-badge-group-a-65)',
                 strengthText: 'Kuat'
             };
         }
@@ -113,7 +113,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                 actionCashier: 'Ingatkan pelanggan mengenai ketersediaan paket belanja hemat untuk kedua produk rutin ini.',
                 tone: 'blue',
                 bg: 'bg-sky-50 border-sky-200 text-sky-800',
-                badgeBg: 'rgba(29, 78, 216, 0.40)',
+                badgeBg: 'var(--color-badge-group-a-40)',
                 strengthText: 'Sedang'
             };
         }
@@ -124,7 +124,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
             actionCashier: 'Gunakan gantungan promosi (shelf talker) bertuliskan "Sering Dibeli Bersama" di bawah label harga rak.',
             tone: 'slate',
             bg: 'bg-slate-50 border-slate-200 text-slate-700',
-            badgeBg: 'rgba(29, 78, 216, 0.18)',
+            badgeBg: 'var(--color-badge-group-a-18)',
             strengthText: 'Pendukung'
         };
     };
@@ -133,10 +133,10 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
         <div className="flex h-full min-h-0 flex-col gap-2 rounded-[8px] p-2 bg-[linear-gradient(180deg,#fcfdfe_0%,#f5f8fc_100%)]">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {summaryItems.map((item, idx) => (
-                    <div key={idx} title="" className="rounded-[6px] border border-[#e2e8f0] bg-white p-2.5 shadow-[0_2px_6px_rgba(15,23,42,0.02)]">
-                        <p title="" className="text-sm font-semibold text-[#64748b]">{item.label}</p>
-                        <p title="" className="mt-1 text-base sm:text-lg lg:text-xl font-bold text-[#0f172a] truncate">{item.value}</p>
-                        <p title="" className="mt-0.5 text-sm text-[#64748b]">{item.helper}</p>
+                    <div key={idx} title="" className="rounded-[6px] border border-ui-border-light bg-white p-2.5 shadow-widget-medium">
+                        <p title="" className="text-sm font-semibold text-text-muted">{item.label}</p>
+                        <p title="" className="mt-1 text-base sm:text-lg lg:text-xl font-bold text-text-contrast truncate">{item.value}</p>
+                        <p title="" className="mt-0.5 text-sm text-text-muted">{item.helper}</p>
                     </div>
                 ))}
             </div>
@@ -159,33 +159,33 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                     expanded={expanded}
                     onToggle={onToggle}
                 >
-                    <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50/20 p-3 shadow-[0_1px_2px_rgba(0,0,0,0.01)] select-none">
+                    <div className="mb-4 rounded-lg border border-blue-100 bg-blue-50/20 p-3 shadow-widget-tiny select-none">
                         <h5 className="text-sm font-semibold text-blue-900 mb-2">Petunjuk Kategori Prioritas Barang (Analisis ABC):</h5>
                         <div className="grid gap-2 sm:grid-cols-3">
-                            <div className="rounded-md border border-blue-100 bg-white p-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                            <div className="rounded-md border border-blue-100 bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: '#2d77d1' }}>
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-badge-group-a)' }}>
                                         Kat. A
                                     </span>
-                                    <span className="text-xs font-bold text-[#1f2536]">(Utama)</span>
+                                    <span className="text-xs font-bold text-brand-darker">(Utama)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
                             </div>
-                            <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                            <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: '#4caf50' }}>
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-green-4caf50)' }}>
                                         Kat. B
                                     </span>
-                                    <span className="text-xs font-bold text-[#1f2536]">(Stabil)</span>
+                                    <span className="text-xs font-bold text-brand-darker">(Stabil)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
                             </div>
-                            <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                            <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: '#f4a62a' }}>
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-orange-f4a62a)' }}>
                                         Kat. C
                                     </span>
-                                    <span className="text-xs font-bold text-[#1f2536]">(Tambahan)</span>
+                                    <span className="text-xs font-bold text-brand-darker">(Tambahan)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">5% omzet</span> toko. Produk pelengkap/aksesoris penunjang.</p>
                             </div>
@@ -196,7 +196,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                         {(widget.rules ?? []).map((rule, idx) => {
                             const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc);
                             return (
-                                <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-[0_2px_8px_rgba(29,78,216,0.04)] transition-all duration-150">
+                                <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-badge-group-a-glow transition-all duration-150">
                                     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 
                                         <div className="flex flex-wrap items-center gap-2 min-w-0 flex-[2]">

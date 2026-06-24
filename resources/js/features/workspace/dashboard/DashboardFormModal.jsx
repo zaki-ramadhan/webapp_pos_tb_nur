@@ -65,10 +65,10 @@ export default function DashboardFormModal({
         <ModalBase
             open={open}
             onBackdropClick={isSubmitting || isDeleting ? undefined : onClose}
-            className="bg-[rgba(22,31,52,0.62)]"
-            panelClassName="max-w-[602px] overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
+            className="bg-modal-overlay-light"
+            panelClassName="max-w-[602px] overflow-hidden rounded-[6px] px-0 py-0 shadow-modal-dialog"
         >
-            <div className="border-b border-[#0f366d] bg-[#163a6d] px-3 py-2.5 text-white">
+            <div className="border-b border-illustration-danger-border bg-illustration-danger-border px-3 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <h2 className="text-sm font-medium">{modal.title}</h2>
                     <button
@@ -84,7 +84,7 @@ export default function DashboardFormModal({
 
             <form onSubmit={handleSubmit} className="bg-white px-3 py-7">
                 <div className="grid gap-4 md:grid-cols-[140px_minmax(0,1fr)] md:items-center">
-                    <label htmlFor="dashboard-name" className="text-xs sm:text-sm font-medium text-[#2c344a]">
+                    <label htmlFor="dashboard-name" className="text-xs sm:text-sm font-medium text-abc-label-dark">
                         {modal.nameLabel}
                     </label>
 
@@ -111,7 +111,7 @@ export default function DashboardFormModal({
                                 disabled={isDeleting}
                                 loading={isDeleting}
                                 loadingLabel="Memproses..."
-                                className="rounded-[4px] px-3 font-medium text-[#1f63ad] hover:no-underline"
+                                className="rounded-[4px] px-3 font-medium text-brand-blue-dark hover:no-underline"
                             >
                                 {modal.deleteLabel}
                             </Button>
@@ -124,7 +124,7 @@ export default function DashboardFormModal({
                         disabled={!trimmedName || isSubmitting}
                         loading={isSubmitting}
                         loadingLabel="Memproses..."
-                        className="min-w-[88px] rounded-[4px] bg-[#234d97] px-4 hover:bg-[#1d4386]"
+                        className="min-w-[88px] rounded-[4px] bg-brand-blue-hover px-4 hover:bg-brand-blue-darker"
                     >
                         {modal.submitLabel}
                     </Button>

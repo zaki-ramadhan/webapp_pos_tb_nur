@@ -7,14 +7,14 @@ function WidgetPeriod({ value, align = 'right' }) {
     }
 
     return (
-        <div className={`text-sm text-[#4f5678] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+        <div className={`text-sm text-layout-text ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
             {value}
         </div>
     );
 }
 
 function MetricCaption({ children }) {
-    return <p className="text-sm text-[#7b8398]">{children}</p>;
+    return <p className="text-sm text-blue-7c839b">{children}</p>;
 }
 
 export function CashAvailabilityWidget({ widget }) {
@@ -24,7 +24,7 @@ export function CashAvailabilityWidget({ widget }) {
                 <div className="min-w-0">
                     <MetricCaption>{widget.balanceLabel}</MetricCaption>
                     <div className="mt-2 flex items-baseline gap-2 flex-wrap">
-                        <p className="text-lg font-semibold leading-none text-[#1f2536] sm:text-xl md:text-2xl xl:text-2xl">
+                        <p className="text-lg font-semibold leading-none text-brand-darker sm:text-xl md:text-2xl xl:text-2xl">
                             {widget.balanceValue}
                         </p>
                         <TrendIndicator trend={widget.trend} growth={widget.growth} />

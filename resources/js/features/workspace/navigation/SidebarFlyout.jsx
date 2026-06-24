@@ -209,14 +209,14 @@ export default function SidebarFlyout({
         >
             <Panel
                 ref={panelRef}
-                className={`flex flex-col overflow-hidden rounded-[10px] border border-[#d7ddea] bg-white/98 shadow-[0_18px_38px_rgba(15,23,42,0.18)] ${
+                className={`flex flex-col overflow-hidden rounded-[10px] border border-chart-border bg-white/98 shadow-sidebar-flyout ${
                     isDense ? 'px-2 py-2.5 sm:px-2.5 md:py-3' : 'px-2.5 py-3 sm:px-3 md:py-3.5'
                 }`.trim()}
                 style={panelMaxHeight ? { maxHeight: `${panelMaxHeight}px` } : undefined}
             >
                 <div className={`shrink-0 ${isDense ? 'pb-1.5' : 'pb-2'}`.trim()}>
-                    <h3 className={`font-medium text-[#555b76] ${isDense ? 'text-base sm:text-base md:text-base' : 'text-base sm:text-base md:text-lg'}`.trim()}>{title}</h3>
-                    <div className={`h-[3px] w-full bg-[#ED3969] ${isDense ? 'mt-1.5' : 'mt-2'}`.trim()} />
+                    <h3 className={`font-medium text-text-medium ${isDense ? 'text-base sm:text-base md:text-base' : 'text-base sm:text-base md:text-lg'}`.trim()}>{title}</h3>
+                    <div className={`h-[3px] w-full bg-tab-active-border-t ${isDense ? 'mt-1.5' : 'mt-2'}`.trim()} />
                 </div>
 
                 <div className={`min-h-0 flex-1 pr-1 ${useInternalScroll ? 'overflow-y-auto' : 'overflow-visible'} ${isDense ? 'mt-2' : 'mt-2.5'}`.trim()}>

@@ -11,7 +11,7 @@ export function stripDirtyPrefix(label = '') {
 export function renderTabLabel(label, active = false, isPrimary = false) {
     if (typeof label === 'string' && label.startsWith('*')) {
         const cleanLabel = label.slice(1);
-        const asteriskColor = isPrimary && active ? 'text-white' : 'text-[#ED3969]';
+        const asteriskColor = isPrimary && active ? 'text-white' : 'text-tab-active-border-t';
         return (
             <span className="inline-flex items-baseline min-w-0 w-full">
                 <sup className={`text-[0.85em] font-bold select-none align-super relative -top-[0.05em] mr-0.5 ${asteriskColor}`}>*</sup>

@@ -7,7 +7,7 @@ function WidgetPeriod({ value, align = 'right' }) {
     }
 
     return (
-        <div className={`text-sm text-[#4f5678] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+        <div className={`text-sm text-layout-text ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
             {value}
         </div>
     );
@@ -15,24 +15,24 @@ function WidgetPeriod({ value, align = 'right' }) {
 
 function TopProductRow({ item, index }) {
     return (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-2.5 rounded-[8px] border border-[#e6ebf3] bg-[#fbfcfe] px-2.5 py-2 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-2.5 rounded-[8px] border border-chart-grid-light bg-ui-bg-hover px-2.5 py-2 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
             <div className="relative h-12 w-12 shrink-0">
                 <img
                     src={getProductImageUrl(item.name)}
                     alt={item.name}
-                    className="h-12 w-12 rounded-[6px] border border-[#e2e8f0] object-cover"
+                    className="h-12 w-12 rounded-[6px] border border-ui-border-light object-cover"
                 />
-                <span className="absolute -left-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#234d97] text-[10px] font-bold text-white shadow-sm">
+                <span className="absolute -left-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand-blue-hover text-[10px] font-bold text-white shadow-sm">
                     {index + 1}
                 </span>
             </div>
             <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-[#1f2536]">{item.name}</p>
-                <p className="mt-1 text-sm text-[#7b8398]">
+                <p className="truncate text-sm font-medium text-brand-darker">{item.name}</p>
+                <p className="mt-1 text-sm text-blue-7c839b">
                     {item.units} • {item.share}
                 </p>
             </div>
-            <p className="col-start-2 text-left text-sm font-semibold text-[#1f2536] lg:col-start-auto lg:text-right">
+            <p className="col-start-2 text-left text-sm font-semibold text-brand-darker lg:col-start-auto lg:text-right">
                 {item.revenue}
             </p>
         </div>

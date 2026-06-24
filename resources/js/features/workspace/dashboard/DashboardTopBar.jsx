@@ -54,7 +54,7 @@ export default function DashboardTopBar({
     }
 
     return (
-        <header className="relative z-20 border-b border-brand-primary bg-header-gradient px-3 py-1 text-white shadow-[0_4px_12px_rgba(15,23,42,0.14)] sm:px-4 sm:py-1.5">
+        <header className="relative z-20 border-b border-brand-primary bg-header-gradient px-3 py-1 text-white shadow-topbar sm:px-4 sm:py-1.5">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center">
                     <BrandMark
@@ -96,7 +96,7 @@ export default function DashboardTopBar({
                             <UserAvatar
                                 name={user.name}
                                 imageUrl={user.avatarUrl}
-                                className="h-7 w-7 bg-white text-xs font-semibold text-[#56607c] sm:h-7.5 sm:w-7.5 sm:text-xs md:h-8 md:w-8 md:text-xs"
+                                className="h-7 w-7 bg-white text-xs font-semibold text-tab-primary-inactive-text sm:h-7.5 sm:w-7.5 sm:text-xs md:h-8 md:w-8 md:text-xs"
                                 showStatusIndicator={false}
                             />
 
@@ -112,15 +112,15 @@ export default function DashboardTopBar({
                             widthClassName="w-[min(180px,calc(100vw-1rem))]"
                             className="z-[70]"
                         >
-                            <div className="border-b border-[#edf1f6] px-3 py-2 text-left lg:hidden">
-                                <p className="truncate text-xs font-semibold text-[#1f2536]">{user.name}</p>
-                                <p className="truncate text-[10px] text-[#7b849c]">{user.role || 'Pengguna'}</p>
+                            <div className="border-b border-table-row-border px-3 py-2 text-left lg:hidden">
+                                <p className="truncate text-xs font-semibold text-brand-darker">{user.name}</p>
+                                <p className="truncate text-[10px] text-blue-7c839b">{user.role || 'Pengguna'}</p>
                             </div>
                             <DropdownMenuItem
                                 onClick={handleLogout}
-                                icon={isLoggingOut ? <Spinner className="h-4 w-4 text-[#1f63ad]" /> : <LogoutIcon />}
+                                icon={isLoggingOut ? <Spinner className="h-4 w-4 text-brand-blue-dark" /> : <LogoutIcon />}
                                 disabled={isLoggingOut}
-                                className="text-xs font-medium text-[#1f2536] md:text-sm"
+                                className="text-xs font-medium text-brand-darker md:text-sm"
                             >
                                 {isLoggingOut ? 'Memproses logout...' : 'Logout'}
                             </DropdownMenuItem>

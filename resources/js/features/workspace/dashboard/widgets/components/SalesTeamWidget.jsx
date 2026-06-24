@@ -6,7 +6,7 @@ function WidgetPeriod({ value, align = 'right' }) {
     }
 
     return (
-        <div className={`text-sm text-[#4f5678] ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
+        <div className={`text-sm text-layout-text ${align === 'right' ? 'text-right' : 'text-left'}`.trim()}>
             {value}
         </div>
     );
@@ -22,21 +22,21 @@ function SalesTeamRow({ row }) {
         .toUpperCase();
 
     return (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-[#edf1f6] py-3 first:border-t-0 first:pt-0 last:pb-0 lg:grid-cols-[auto_minmax(0,1fr)_120px_56px] lg:items-center">
-            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eef2f7] text-sm font-semibold text-[#6b738f]">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-table-row-border py-3 first:border-t-0 first:pt-0 last:pb-0 lg:grid-cols-[auto_minmax(0,1fr)_120px_56px] lg:items-center">
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg-workspace-light text-sm font-semibold text-text-muted">
                 {initials}
             </span>
             <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-[#1f2536]">{row.name}</p>
-                <p className="mt-1 text-sm text-[#7b8398]">{row.role}</p>
+                <p className="truncate text-sm font-medium text-brand-darker">{row.name}</p>
+                <p className="mt-1 text-sm text-blue-7c839b">{row.role}</p>
             </div>
             <div className="col-start-2 flex items-center gap-2 lg:col-start-auto lg:justify-end">
-                <span className="text-sm text-[#6d7590]">{row.totalValue}</span>
-                <span className="inline-flex rounded-full bg-[#dff3ff] px-2 py-0.5 text-sm text-[#1e7ec1]">
+                <span className="text-sm text-text-muted">{row.totalValue}</span>
+                <span className="inline-flex rounded-full bg-brand-blue-light px-2 py-0.5 text-sm text-blue-1e7ec1">
                     {row.targetPercent}
                 </span>
             </div>
-            <div className="col-start-2 text-left text-sm font-medium text-[#1f2536] lg:col-start-auto lg:text-right">
+            <div className="col-start-2 text-left text-sm font-medium text-brand-darker lg:col-start-auto lg:text-right">
                 {row.targetValue}
             </div>
         </div>
@@ -52,7 +52,7 @@ export function SalesTeamWidget({ widget }) {
         <div className="flex h-full flex-col gap-4 min-h-0">
             <WidgetPeriod value={widget.period} />
 
-            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,auto)] gap-4 border-b border-[#edf1f6] pb-2 text-sm font-semibold text-[#1f2536] md:grid-cols-[minmax(0,1fr)_120px_56px] shrink-0">
+            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,auto)] gap-4 border-b border-table-row-border pb-2 text-sm font-semibold text-brand-darker md:grid-cols-[minmax(0,1fr)_120px_56px] shrink-0">
                 <span>Penjual</span>
                 <span className="text-right">Total Penjualan</span>
                 <span className="hidden text-right md:block">Target</span>

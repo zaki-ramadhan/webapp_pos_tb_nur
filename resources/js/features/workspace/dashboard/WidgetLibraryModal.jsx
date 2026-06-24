@@ -71,10 +71,10 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
         <ModalBase
             open={open}
             onBackdropClick={onClose}
-            className="bg-[rgba(22,31,52,0.62)]"
-            panelClassName="max-w-[676px] overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
+            className="bg-modal-overlay-light"
+            panelClassName="max-w-[676px] overflow-hidden rounded-[6px] px-0 py-0 shadow-modal-dialog"
         >
-            <div className="border-b border-[#0f366d] bg-[#163a6d] px-4 py-2.5 text-white">
+            <div className="border-b border-illustration-danger-border bg-illustration-danger-border px-4 py-2.5 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <h2 className="text-sm font-medium">{modal.title}</h2>
                     <button
@@ -97,20 +97,20 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                     inputClassName="text-xs sm:text-sm"
                 />
 
-                <div className="mt-3 h-[400px] overflow-y-auto rounded-[4px] border border-[#d7dde8]">
+                <div className="mt-3 h-[400px] overflow-y-auto rounded-[4px] border border-ui-border-medium">
                     {filteredItems.map((item) => (
                         <button
                             key={item.id}
                             type="button"
                             onClick={() => onSelectItem?.(item)}
-                            className="flex w-full items-start gap-4 border-b border-[#edf1f6] px-5 py-3.5 text-left transition-colors duration-100 hover:bg-[#f8fafc]"
+                            className="flex w-full items-start gap-4 border-b border-table-row-border px-5 py-3.5 text-left transition-colors duration-100 hover:bg-ui-bg-hover"
                         >
                             <LibraryIcon type={item.icon} />
                             <span className="min-w-0">
-                                <span className="block text-base font-medium leading-6 text-[#1f2536]">
+                                <span className="block text-base font-medium leading-6 text-brand-darker">
                                     {item.title}
                                 </span>
-                                <span className="mt-1 block text-sm leading-5 text-[#7a8198]">
+                                <span className="mt-1 block text-sm leading-5 text-blue-7c839b">
                                     {item.description}
                                 </span>
                             </span>
@@ -127,8 +127,8 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                                     size="sm"
                                     tone="subtle"
                                     className="bg-transparent px-0 py-0"
-                                    titleClassName="text-base font-medium text-[#6b738f]"
-                                    descriptionClassName="mt-2 text-sm leading-5 text-[#8a91a8]"
+                                    titleClassName="text-base font-medium text-text-muted"
+                                    descriptionClassName="mt-2 text-sm leading-5 text-text-light"
                                 />
                             ) : (
                                 <EmptyState
@@ -138,8 +138,8 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                                     size="sm"
                                     tone="subtle"
                                     className="bg-transparent px-0 py-0"
-                                    titleClassName="text-base font-medium text-[#6b738f]"
-                                    descriptionClassName="mt-2 text-sm leading-5 text-[#8a91a8]"
+                                    titleClassName="text-base font-medium text-text-muted"
+                                    descriptionClassName="mt-2 text-sm leading-5 text-text-light"
                                 />
                             )}
                         </div>

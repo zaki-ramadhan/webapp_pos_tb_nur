@@ -110,7 +110,7 @@ const DashboardView = forwardRef(function DashboardView(
                 </div>
 
                 <div
-                    className="flex min-h-0 min-w-0 flex-1 flex-col border border-[#d3d9e7] border-t-0 bg-white/96 overflow-hidden lg:border-l-0 lg:border-t"
+                    className="flex min-h-0 min-w-0 flex-1 flex-col border border-tab-overflow-panel-border border-t-0 bg-white/96 overflow-hidden lg:border-l-0 lg:border-t"
                 >
                     <DashboardPageTabs
                         tabs={tabItems}

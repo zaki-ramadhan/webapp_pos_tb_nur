@@ -10,9 +10,9 @@ export default function useWorkspaceURLSync({
 }) {
     const isFirstRun = useRef(true);
 
-    // Sync React state → URL (replace, bukan push — tab switch bukan navigasi history)
+    // Sync state → URL (replace instead of push)
     useEffect(() => {
-        // Lewati sinkronisasi pertama kali untuk mencegah menimpa URL yang sedang dibuka oleh browser
+        // Skip first sync to prevent overwriting URL
         if (isFirstRun.current) {
             isFirstRun.current = false;
             return;
@@ -21,7 +21,7 @@ export default function useWorkspaceURLSync({
         const currentState = window.history.state || {};
         const newPath = getPagePath(activePageId ?? dashboardPageId);
 
-        // Hanya replace jika path benar-benar berbeda agar tidak membebani browser history
+        // Only replace if path changes
         if (window.location.pathname !== newPath) {
             const nextState = { ...currentState };
             if (nextState.url !== undefined) {
@@ -37,7 +37,7 @@ export default function useWorkspaceURLSync({
         }
     }, [activePageId, dashboardPageId]);
 
-    // Sync URL → React state (hanya untuk back/forward browser popstate)
+    // Sync URL → state (popstate back/forward navigation)
     const restoreStateFromUrl = useCallback(() => {
         const urlPageId = resolvePageIdFromPath(window.location.pathname);
 

@@ -43,7 +43,7 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
             side="right"
             portal
             className="flex"
-            tooltipClassName="z-[90] rounded-[6px] bg-[#23314c] px-3 py-2 text-xs font-medium shadow-[0_8px_18px_rgba(15,23,42,0.18)]"
+            tooltipClassName="z-[90] rounded-[6px] bg-abc-label-dark px-3 py-2 text-xs font-medium shadow-sidebar-tooltip"
         >
             <button
                 ref={buttonRef}
@@ -53,7 +53,7 @@ function SidebarButton({ item, active, onClick, buttonRef }) {
                     item.disabled
                         ? 'cursor-not-allowed border-transparent bg-transparent text-white/18 opacity-45'
                         : active
-                        ? 'border-[#8292b0] bg-[rgba(71,84,108,0.92)] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]'
+                        ? 'border-text-light bg-sidebar-item-active-bg text-white shadow-inset-border-white'
                         : 'border-transparent bg-transparent text-white/95 hover:bg-white/10'
                 }`.trim()}
                 aria-label={item.label}
@@ -76,20 +76,20 @@ function MobileModuleButton({ item, active, onSelect }) {
             }}
             className={`flex w-full items-center gap-2.5 rounded-[8px] border px-2.5 py-2 text-left transition ${
                 item.disabled
-                    ? 'cursor-not-allowed border-[#e8ebf2] bg-[#f5f7fb] text-[#a8afbc] opacity-70'
+                    ? 'cursor-not-allowed border-chart-grid-light bg-brand-blue-lightest text-tab-inactive-border-l opacity-70'
                     : active
-                    ? 'border-[#7aa2d5] bg-[#e8f2ff] text-[#1f4f96] font-semibold'
-                    : 'border-[#d7ddea] bg-white text-[#33415c] hover:bg-[#f6f9fe]'
+                    ? 'border-brand-blue-border bg-brand-blue-light text-brand-blue-hover font-semibold'
+                    : 'border-chart-border bg-white text-tab-active-text hover:bg-ui-bg-hover'
             }`.trim()}
             aria-disabled={item.disabled}
         >
             <span
                 className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] ${
                     item.disabled
-                        ? 'bg-[#eceff5] text-[#b1b8c4]'
+                        ? 'bg-table-row-border text-tab-inactive-border-l'
                         : active
-                          ? 'bg-[#d7e8ff] text-[#1f5ca9]'
-                          : 'bg-[#edf3fb] text-[#5c6782]'
+                          ? 'bg-blue-d7e8ff text-blue-1f5ca9'
+                          : 'bg-info-bg text-tab-view-active-text'
                 }`.trim()}
             >
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
@@ -98,11 +98,11 @@ function MobileModuleButton({ item, active, onSelect }) {
                 <span className="block truncate text-xs font-semibold">{item.label}</span>
             </span>
             {item.disabled ? (
-                <span className="shrink-0 rounded-full bg-[#e6e9f0] px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#7b8496]">
+                <span className="shrink-0 rounded-full bg-tab-view-active-border-t px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-blue-7c839b">
                     Nonaktif
                 </span>
             ) : (
-                <span className={`text-[#8a93a8] transition-transform duration-200 ${active ? 'rotate-180 text-[#1f5ca9]' : ''}`}>
+                <span className={`text-text-light transition-transform duration-200 ${active ? 'rotate-180 text-blue-1f5ca9' : ''}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="h-3.5 w-3.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                     </svg>
@@ -123,15 +123,15 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
 
     const tone = toneClasses[item.tone] ?? toneClasses.blue;
     const iconBgClass = isInactive
-        ? 'bg-[#e5e7eb]'
+        ? 'bg-disabled-bg'
         : isImplemented
           ? tone.iconBg
-          : 'bg-[#eef0f4]';
+          : 'bg-table-row-border';
     const iconTextClass = isInactive
-        ? 'text-[#7b849c]'
+        ? 'text-blue-7c839b'
         : isImplemented
           ? tone.iconText
-          : 'text-[#9aa3b1]';
+          : 'text-text-inactive';
 
     return (
         <button
@@ -143,10 +143,10 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
             }}
             className={`flex w-full items-start gap-2.5 rounded-[8px] border px-2.5 py-2.5 text-left transition ${
                 isInactive
-                    ? 'cursor-not-allowed border-[#e5e7eb] bg-[#f9fafb] opacity-80 saturate-0'
+                    ? 'cursor-not-allowed border-disabled-bg bg-ui-bg-hover opacity-80 saturate-0'
                     : isImplemented
-                      ? 'border-[#d7ddea] bg-white hover:bg-[#f8fbff]'
-                      : 'cursor-not-allowed border-[#e8ebf2] bg-[#f8fafc] opacity-80'
+                      ? 'border-chart-border bg-white hover:bg-ui-bg-hover'
+                      : 'cursor-not-allowed border-chart-grid-light bg-ui-bg-hover opacity-80'
             }`.trim()}
             aria-disabled={isInactive || !isImplemented}
         >
@@ -154,15 +154,15 @@ function MobilePanelItemButton({ item, onSelect, preferences }) {
                 <NavigationIcon type={item.icon} className="h-4.5 w-4.5" />
             </span>
             <span className="min-w-0 flex-1">
-                <span className={`block text-xs font-medium leading-4.5 ${isInactive ? 'text-[#5e6678]' : isImplemented ? 'text-[#22304a]' : 'text-[#8f97a7]'}`}>
+                <span className={`block text-xs font-medium leading-4.5 ${isInactive ? 'text-tab-inactive-text' : isImplemented ? 'text-blue-22304a' : 'text-text-light'}`}>
                     {item.label}
                 </span>
-                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-[#8c94a5]' : isImplemented ? 'text-[#7b849c]' : 'text-[#b2b9c9]'}`}>
+                <span className={`mt-0.5 block text-[11px] leading-4 ${isInactive ? 'text-text-light' : isImplemented ? 'text-blue-7c839b' : 'text-tab-inactive-border-l'}`}>
                     {statusLabel}
                 </span>
             </span>
             {isInactive ? (
-                <span className="shrink-0 rounded-full bg-[#e5e7eb] px-1.5 py-0.5 text-[10px] font-semibold text-[#5e6678]">
+                <span className="shrink-0 rounded-full bg-disabled-bg px-1.5 py-0.5 text-[10px] font-semibold text-tab-inactive-text">
                     {WORKSPACE_INACTIVE_BADGE_LABEL}
                 </span>
             ) : null}
@@ -238,14 +238,14 @@ export default function DashboardSidebar({
                     <div
                         className="fixed inset-0 z-[60] bg-white px-5 pb-6 pt-5 lg:hidden flex flex-col animate-slide-up"
                     >
-                        <div className="flex items-center justify-between gap-3 border-b border-[#edf1f6] pb-4 mb-4 shrink-0">
-                            <h3 className="text-base font-bold text-[#1f2536]">
+                        <div className="flex items-center justify-between gap-3 border-b border-table-row-border pb-4 mb-4 shrink-0">
+                            <h3 className="text-base font-bold text-brand-darker">
                                 Pilih Menu
                             </h3>
                             <button
                                 type="button"
                                 onClick={handleCloseMobile}
-                                className="shrink-0 rounded-full p-2 text-[#7b849c] hover:bg-[#f1f5f9] hover:text-[#1f2536] transition"
+                                className="shrink-0 rounded-full p-2 text-blue-7c839b hover:bg-ui-bg-panel hover:text-brand-darker transition"
                                 aria-label="Tutup Menu"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" className="h-5.5 w-5.5">
@@ -255,16 +255,16 @@ export default function DashboardSidebar({
                         </div>
 
                         {user && (
-                            <div className="flex items-center gap-3 bg-[#f8fafc] rounded-[10px] p-3 mb-4 shrink-0 border border-[#eef2f6]">
+                            <div className="flex items-center gap-3 bg-ui-bg-hover rounded-[10px] p-3 mb-4 shrink-0 border border-table-row-border">
                                 <UserAvatar
                                     name={user.name}
                                     imageUrl={user.avatarUrl}
-                                    className="h-10 w-10 bg-[#eef2f7] text-sm font-semibold text-[#56607c]"
+                                    className="h-10 w-10 bg-bg-workspace-light text-sm font-semibold text-tab-primary-inactive-text"
                                     showStatusIndicator={false}
                                 />
                                 <div className="min-w-0">
-                                    <p className="truncate text-sm font-bold text-[#1f2536]">{user.name}</p>
-                                    <p className="truncate text-xs font-medium text-[#7b849c]">{user.role || 'Pengguna'}</p>
+                                    <p className="truncate text-sm font-bold text-brand-darker">{user.name}</p>
+                                    <p className="truncate text-xs font-medium text-blue-7c839b">{user.role || 'Pengguna'}</p>
                                 </div>
                             </div>
                         )}
@@ -307,7 +307,7 @@ export default function DashboardSidebar({
 
             <div
                 ref={railRef}
-                className="relative z-30 hidden w-full shrink-0 gap-1.5 overflow-x-auto overflow-y-hidden border-b border-[#18325e] bg-[linear-gradient(90deg,#0d2246_0%,#1a3769_40%,#2d4c88_100%)] px-1.5 py-1.5 lg:flex lg:h-full lg:w-[58px] lg:flex-col lg:items-center lg:justify-start lg:overflow-x-hidden lg:overflow-y-auto lg:border-b-0 lg:border-r lg:pt-3"
+                className="relative z-30 hidden w-full shrink-0 gap-1.5 overflow-x-auto overflow-y-hidden border-b border-blue-133663 bg-[linear-gradient(90deg,#0d2246_0%,#1a3769_40%,#2d4c88_100%)] px-1.5 py-1.5 lg:flex lg:h-full lg:w-[58px] lg:flex-col lg:items-center lg:justify-start lg:overflow-x-hidden lg:overflow-y-auto lg:border-b-0 lg:border-r lg:pt-3"
             >
                 {sidebarItems.map((item) => (
                     <SidebarButton

@@ -17,28 +17,28 @@ function resolveToneClassName(tone) {
     switch (tone) {
         case 'amber':
             return {
-                border: 'border-[#ff9a4d]',
-                icon: 'text-[#eb6f00]',
-                hover: 'hover:bg-[#fff8f1]',
+                border: 'border-orange-ff9a4d',
+                icon: 'text-orange-eb6f00',
+                hover: 'hover:bg-surface',
             };
         case 'green':
             return {
-                border: 'border-[#61a84b]',
-                icon: 'text-[#5b920f]',
-                hover: 'hover:bg-[#f6fbf2]',
+                border: 'border-green-61a84b',
+                icon: 'text-green-5b920f',
+                hover: 'hover:bg-ui-bg-panel-lighter',
             };
         case 'purple':
             return {
-                border: 'border-[#7b45c4]',
-                icon: 'text-[#6a1fc4]',
-                hover: 'hover:bg-[#fbf7ff]',
+                border: 'border-purple-7b45c4',
+                icon: 'text-purple-6a1fc4',
+                hover: 'hover:bg-ui-bg-hover',
             };
         case 'blue':
         default:
             return {
-                border: 'border-[#68b4f2]',
-                icon: 'text-[#147ac7]',
-                hover: 'hover:bg-[#f7fbff]',
+                border: 'border-blue-68b4f2',
+                icon: 'text-blue-147ac7',
+                hover: 'hover:bg-ui-bg-hover',
             };
     }
 }
@@ -51,12 +51,12 @@ function SearchMenuCard({ item, onSelect }) {
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
     const isSelectable = isImplemented && !isInactive;
     const className = isInactive
-        ? 'border-[#d1d5db] bg-[#f3f4f6] text-[#6b7280] opacity-80 saturate-0'
+        ? 'border-tab-primary-inactive-hover-bg bg-ui-bg-panel text-tab-view-active-text opacity-80 saturate-0'
         : isImplemented
           ? `${toneClassName.border} ${toneClassName.hover}`
-          : 'border-[#d6d9e2] bg-[#eef0f4] text-[#9aa3b1] opacity-80 saturate-0';
-    const iconClassName = isInactive ? 'text-[#9ca3af]' : isImplemented ? toneClassName.icon : 'text-[#9aa3b1]';
-    const labelClassName = isInactive ? 'text-[#4b5563]' : isImplemented ? 'text-[#495164]' : 'text-[#8f97a7]';
+          : 'border-tab-overflow-border bg-table-row-border text-text-inactive opacity-80 saturate-0';
+    const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? toneClassName.icon : 'text-text-inactive';
+    const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-blue-475569' : 'text-text-light';
     const statusLabel = isInactive ? WORKSPACE_INACTIVE_HINT : isImplemented ? '' : 'Belum diimplementasikan penuh';
 
     return (
@@ -77,7 +77,7 @@ function SearchMenuCard({ item, onSelect }) {
             {statusLabel ? (
                 <span
                     className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
-                        isInactive ? 'bg-[#e5e7eb] text-[#5e6678]' : 'bg-[#dde2ea] text-[#7d8698]'
+                        isInactive ? 'bg-disabled-bg text-tab-inactive-text' : 'bg-bg-workspace-tab-inactive text-text-workspace-tab-inactive'
                     }`.trim()}
                 >
                     {isInactive ? WORKSPACE_INACTIVE_BADGE_LABEL : 'Draft'}
@@ -145,8 +145,8 @@ export default function WorkspaceSearchModal({
         <ModalBase
             open={open}
             onBackdropClick={onClose}
-            className="bg-[rgba(22,31,52,0.62)]"
-            panelClassName="max-w-[770px] overflow-hidden rounded-[6px] px-0 py-0 shadow-[0_16px_38px_rgba(15,23,42,0.22)]"
+            className="bg-modal-overlay-light"
+            panelClassName="max-w-[770px] overflow-hidden rounded-[6px] px-0 py-0 shadow-modal-search"
         >
             <div className="bg-white px-5 py-5 sm:px-6 sm:py-6">
                 <div className="flex items-start justify-between gap-4">
@@ -161,16 +161,16 @@ export default function WorkspaceSearchModal({
                                 }
                             }}
                             placeholder={modal.searchPlaceholder ?? 'Cari...'}
-                            trailing={<SearchIcon className="h-5.5 w-5.5 text-[#7b859c]" />}
-                            className="h-[50px] rounded-[20px] border-[#5a9ae5] shadow-[0_0_0_3px_rgba(90,154,229,0.12)]"
-                            inputClassName="text-lg text-[#1f2436]"
+                            trailing={<SearchIcon className="h-5.5 w-5.5 text-blue-7c839b" />}
+                            className="h-[50px] rounded-[20px] border-blue-5f97de shadow-focus-blue-light"
+                            inputClassName="text-lg text-brand-dark"
                         />
                     </div>
 
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#1f2436] transition hover:bg-[#f4f6fa] cursor-pointer"
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-brand-dark transition hover:bg-brand-blue-lightest cursor-pointer"
                         aria-label={modal.closeLabel ?? 'Tutup pencarian menu'}
                     >
                         <CloseIcon className="h-5 w-5" />
@@ -178,7 +178,7 @@ export default function WorkspaceSearchModal({
                 </div>
 
                 <div className="mt-4 sm:mt-6">
-                    <h2 className="text-center text-base font-semibold text-[#20263a]">{sectionTitle}</h2>
+                    <h2 className="text-center text-base font-semibold text-section-tab-accent-text">{sectionTitle}</h2>
 
                     {filteredItems.length ? (
                         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -194,9 +194,9 @@ export default function WorkspaceSearchModal({
                             iconName="search"
                             title="Tidak ada hasil"
                             description={modal.emptyLabel ?? 'Tidak ada menu yang cocok dengan kata kunci tersebut.'}
-                            className="mt-6 rounded-[8px] border-[#d6dce8] px-6 py-8"
-                            titleClassName="text-base font-medium text-[#59637b]"
-                            descriptionClassName="mt-2 text-sm leading-5 text-[#778099]"
+                            className="mt-6 rounded-[8px] border-ui-border-medium px-6 py-8"
+                            titleClassName="text-base font-medium text-tab-inactive-text"
+                            descriptionClassName="mt-2 text-sm leading-5 text-blue-7c839b"
                         />
                     )}
                 </div>

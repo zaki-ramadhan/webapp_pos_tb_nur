@@ -22,20 +22,20 @@ export function TrendIndicator({ trend, growth, className = '' }) {
     );
 }
 
-const compactHeadlineLabelClassName = 'text-sm text-[#6c748e]';
+const compactHeadlineLabelClassName = 'text-sm text-text-muted';
 const compactHeadlineValueClassName =
-    'text-lg font-semibold leading-none text-[#1f2536] md:text-xl xl:text-2xl 2xl:text-3xl';
+    'text-lg font-semibold leading-none text-brand-darker md:text-xl xl:text-2xl 2xl:text-3xl';
 
 function MetricLegendItem({ item }) {
     return (
-        <div className="flex items-start gap-2 text-sm text-[#4f5678]">
+        <div className="flex items-start gap-2 text-sm text-layout-text">
             <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full md:h-3 md:w-3" style={{ backgroundColor: item.color }} />
             <span className="min-w-0 flex-1 break-words leading-5">{item.label}</span>
             <span className="shrink-0">
-                <span className="flex items-center gap-2 text-right text-[#5e6884]">
+                <span className="flex items-center gap-2 text-right text-tab-view-active-text">
                     <span>{item.value}</span>
                     {item.percent ? (
-                        <span className="inline-flex rounded-full bg-[#eef2f8] px-2 py-0.5 text-sm text-[#7b8299]">
+                        <span className="inline-flex rounded-full bg-table-row-border px-2 py-0.5 text-sm text-blue-7c839b">
                             {item.percent}
                         </span>
                     ) : null}
@@ -60,7 +60,7 @@ export function LineTrendMetric({ widget }) {
     return (
         <div className="flex flex-1 flex-col h-full min-h-0 justify-between">
             {widget.period ? (
-                <div className="mb-3 flex justify-start text-sm text-[#5d637d] sm:justify-end">{widget.period}</div>
+                <div className="mb-3 flex justify-start text-sm text-tab-inactive-text sm:justify-end">{widget.period}</div>
             ) : null}
             <div className="flex-1 min-h-0 flex flex-col">
                 <TrendLineChart
@@ -90,7 +90,7 @@ export function RingBreakdownMetric({
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
                 {compare || trend || growth ? (
                     <div className="flex items-center gap-1.5 flex-wrap justify-center mt-1">
-                        {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                        {compare ? <p className="text-sm leading-5 text-text-muted">{compare}</p> : null}
                         <TrendIndicator trend={trend} growth={growth} />
                     </div>
                 ) : null}
@@ -101,7 +101,7 @@ export function RingBreakdownMetric({
                     <MetricLegendList items={legend} />
                 </div>
 
-                <div className="border-t border-[#e6ebf4] pt-2.5 text-[#1e2437]">
+                <div className="border-t border-chart-grid-light pt-2.5 text-brand-dark">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className={compactHeadlineLabelClassName}>{totalLabel}</span>
                         <div className="flex items-baseline gap-2">
@@ -129,14 +129,14 @@ export function ExpenseBreakdownMetric({
                 <BreakdownDoughnutChart items={legend} percentage={percentage} />
                 {compare || trend || growth ? (
                     <div className="flex items-center gap-1.5 flex-wrap justify-center mt-1">
-                        {compare ? <p className="text-sm leading-5 text-[#6b738f]">{compare}</p> : null}
+                        {compare ? <p className="text-sm leading-5 text-text-muted">{compare}</p> : null}
                         <TrendIndicator trend={trend} growth={growth} />
                     </div>
                 ) : null}
             </div>
 
             <div className="flex h-full flex-col justify-center gap-3">
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#edf0f6] pb-2.5 text-[#1e2437]">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-table-row-border pb-2.5 text-brand-dark">
                     <span className={compactHeadlineLabelClassName}>Beban</span>
                     <div className="flex items-baseline gap-2">
                         <span className={compactHeadlineValueClassName}>{totalValue}</span>
@@ -169,13 +169,13 @@ export function SummaryMetric({ sections = [], headline }) {
             <div className="flex flex-col gap-3 2xl:flex-row 2xl:items-start 2xl:justify-between 2xl:gap-4">
                 <div className="grid flex-1 gap-x-10 gap-y-3.5 lg:grid-cols-2">
                     {sections.map((section, idx) => (
-                        <div key={section.title} className={idx === 0 ? 'lg:border-r lg:border-[#eef2f7] lg:pr-8' : 'lg:pl-2'}>
-                            <h4 className="text-sm font-semibold text-[#1f2536] md:text-base xl:text-base">{section.title}</h4>
+                        <div key={section.title} className={idx === 0 ? 'lg:border-r lg:border-bg-workspace-light lg:pr-8' : 'lg:pl-2'}>
+                            <h4 className="text-sm font-semibold text-brand-darker md:text-base xl:text-base">{section.title}</h4>
                             <div className="mt-2.5 space-y-1.5">
                                 {section.items.map((item) => (
                                     <div key={item.label} className="flex items-center justify-between gap-2.5 text-sm">
-                                        <span className="text-[#747c95]">{item.label}</span>
-                                        <span className="font-medium" style={{ color: item.color ?? '#1f2536' }}>
+                                        <span className="text-chart-ticks">{item.label}</span>
+                                        <span className="font-medium" style={{ color: item.color ?? 'var(--color-brand-darker)' }}>
                                             {item.value}
                                         </span>
                                     </div>
@@ -185,7 +185,7 @@ export function SummaryMetric({ sections = [], headline }) {
                     ))}
                 </div>
 
-                <div className="min-w-0 border-t border-[#eef2f7] pt-3 2xl:min-w-[178px] 2xl:border-t-0 2xl:pt-0">
+                <div className="min-w-0 border-t border-bg-workspace-light pt-3 2xl:min-w-[178px] 2xl:border-t-0 2xl:pt-0">
                     <div className="space-y-2.5">
                         <div className="flex items-end justify-between gap-2.5 2xl:flex-col 2xl:items-end 2xl:gap-1">
                             <p className={compactHeadlineLabelClassName}>{resolvedHeadline.label}</p>
@@ -194,10 +194,10 @@ export function SummaryMetric({ sections = [], headline }) {
                                 <TrendIndicator trend={resolvedHeadline.trend} growth={resolvedHeadline.growth} />
                             </div>
                         </div>
-                        <div className="flex items-end justify-between gap-2.5 border-t border-[#eef2f7] pt-2.5 2xl:flex-col 2xl:items-end 2xl:gap-1">
-                            <p className="text-sm text-[#6c748e]">{resolvedHeadline.secondaryLabel}</p>
+                        <div className="flex items-end justify-between gap-2.5 border-t border-bg-workspace-light pt-2.5 2xl:flex-col 2xl:items-end 2xl:gap-1">
+                            <p className="text-sm text-text-muted">{resolvedHeadline.secondaryLabel}</p>
                             <div className="flex items-baseline gap-2 flex-wrap justify-end">
-                                <p className="text-base font-semibold leading-none text-[#1f2536] md:text-lg xl:text-xl 2xl:text-2xl">
+                                <p className="text-base font-semibold leading-none text-brand-darker md:text-lg xl:text-xl 2xl:text-2xl">
                                     {resolvedHeadline.secondaryValue}
                                 </p>
                                 <TrendIndicator trend={resolvedHeadline.secondaryTrend} growth={resolvedHeadline.secondaryGrowth} />

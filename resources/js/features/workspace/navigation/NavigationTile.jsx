@@ -9,28 +9,28 @@ import {
 
 export const toneClasses = {
     amber: {
-        button: 'border-[#ff8b34] bg-[#ffeddc] hover:bg-[#ffe3cd]',
-        icon: 'text-[#de6f13]',
-        iconBg: 'bg-[#ffeddc]',
-        iconText: 'text-[#de6f13]',
+        button: 'border-nav-tile-amber-border bg-nav-tile-amber-bg hover:bg-nav-tile-amber-hover',
+        icon: 'text-nav-tile-amber-text',
+        iconBg: 'bg-nav-tile-amber-bg',
+        iconText: 'text-nav-tile-amber-text',
     },
     blue: {
-        button: 'border-[#3d9ff2] bg-[#dcedff] hover:bg-[#d0e6ff]',
-        icon: 'text-[#1472b6]',
-        iconBg: 'bg-[#dcedff]',
-        iconText: 'text-[#1472b6]',
+        button: 'border-nav-tile-blue-border bg-nav-tile-blue-bg hover:bg-nav-tile-blue-hover',
+        icon: 'text-nav-tile-blue-text',
+        iconBg: 'bg-nav-tile-blue-bg',
+        iconText: 'text-nav-tile-blue-text',
     },
     green: {
-        button: 'border-[#81c442] bg-[#ddf7d2] hover:bg-[#d3f0c4]',
-        icon: 'text-[#5d930f]',
-        iconBg: 'bg-[#ddf7d2]',
-        iconText: 'text-[#5d930f]',
+        button: 'border-nav-tile-green-border bg-nav-tile-green-bg hover:bg-nav-tile-green-hover',
+        icon: 'text-nav-tile-green-text',
+        iconBg: 'bg-nav-tile-green-bg',
+        iconText: 'text-nav-tile-green-text',
     },
     purple: {
-        button: 'border-[#b56dff] bg-[#ecddff] hover:bg-[#e3d1ff]',
-        icon: 'text-[#681db1]',
-        iconBg: 'bg-[#ecddff]',
-        iconText: 'text-[#681db1]',
+        button: 'border-nav-tile-purple-border bg-nav-tile-purple-bg hover:bg-nav-tile-purple-hover',
+        icon: 'text-nav-tile-purple-text',
+        iconBg: 'bg-nav-tile-purple-bg',
+        iconText: 'text-nav-tile-purple-text',
     },
 };
 
@@ -42,12 +42,12 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
     const isImplemented = item.implemented !== false || implementedWorkspacePageIds.has(item.id);
     const isSelectable = isImplemented && !isInactive;
     const stateClassName = isInactive
-        ? 'border-[#d1d5db] bg-[#f3f4f6] text-[#6b7280] opacity-80 saturate-0'
+        ? 'border-tab-primary-inactive-hover-bg bg-ui-bg-panel text-tab-view-active-text opacity-80 saturate-0'
         : isImplemented
           ? tone.button
-          : 'border-[#d6d9e2] bg-[#eef0f4] text-[#9aa3b1] opacity-80 saturate-0';
-    const iconClassName = isInactive ? 'text-[#9ca3af]' : isImplemented ? tone.icon : 'text-[#9aa3b1]';
-    const labelClassName = isInactive ? 'text-[#4b5563]' : isImplemented ? 'text-[#445065]' : 'text-[#8f97a7]';
+          : 'border-tab-overflow-border bg-table-row-border text-text-inactive opacity-80 saturate-0';
+    const iconClassName = isInactive ? 'text-disabled-text' : isImplemented ? tone.icon : 'text-text-inactive';
+    const labelClassName = isInactive ? 'text-text-sidebar-muted' : isImplemented ? 'text-blue-434a65' : 'text-text-light';
     const tileClassName = dense
         ? 'min-h-[88px] gap-2.5 rounded-[10px] px-2 py-3.5 sm:min-h-[92px] md:min-h-[96px]'
         : 'min-h-[86px] gap-2.5 rounded-[10px] px-2 py-3.5 sm:min-h-[92px] sm:px-2 md:min-h-[98px]';
@@ -63,7 +63,7 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
                     onSelect?.(item);
                 }
             }}
-            className={`flex w-full flex-col items-center justify-center border text-center font-normal shadow-[0_6px_16px_rgba(15,23,42,0.08)] transition ${tileClassName} ${stateClassName} ${
+            className={`flex w-full flex-col items-center justify-center border text-center font-normal shadow-tile-navigation transition ${tileClassName} ${stateClassName} ${
                 isSelectable ? '' : 'cursor-not-allowed'
             }`.trim()}
             aria-disabled={!isSelectable}
@@ -75,7 +75,7 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
             {hintLabel ? (
                 <span
                     className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${
-                        isInactive ? 'bg-[#e5e7eb] text-[#5e6678]' : 'bg-[#dde2ea] text-[#7d8698]'
+                        isInactive ? 'bg-disabled-bg text-tab-inactive-text' : 'bg-bg-workspace-tab-inactive text-text-workspace-tab-inactive'
                     }`.trim()}
                 >
                     {isInactive ? WORKSPACE_INACTIVE_BADGE_LABEL : 'Draft'}
