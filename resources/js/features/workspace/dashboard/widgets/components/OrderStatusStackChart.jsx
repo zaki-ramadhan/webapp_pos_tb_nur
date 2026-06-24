@@ -2,13 +2,15 @@ import { Bar } from 'react-chartjs-2';
 import {
     hasNonZeroValue,
     parseDisplayNumber,
+    resolveChartObject,
 } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
 
+
 const tooltipBaseOptions = {
-    backgroundColor: '#ffffff',
-    titleColor: '#1f2536',
-    bodyColor: '#62708c',
-    borderColor: '#d7ddea',
+    backgroundColor: 'var(--color-white)',
+    titleColor: 'var(--color-brand-darker)',
+    bodyColor: 'var(--color-chart-text)',
+    borderColor: 'var(--color-chart-border)',
     borderWidth: 1,
     padding: 10,
 };
@@ -19,7 +21,7 @@ export default function OrderStatusStackChart({ segments = [] }) {
         label: segment.label ?? `Segmen ${index + 1}`,
         value: segment.numericValue ?? parseDisplayNumber(segment.value ?? 0),
         valueText: segment.value ?? '0',
-        color: segment.color ?? '#d8e0ec',
+        color: segment.color ?? 'var(--color-table-border)',
     }));
     const totalValue = normalizedSegments.reduce((sum, segment) => sum + Math.max(segment.value, 0), 0);
     const hasData = hasNonZeroValue(normalizedSegments.map((segment) => segment.value));
@@ -31,7 +33,7 @@ export default function OrderStatusStackChart({ segments = [] }) {
                   label: 'Belum ada data',
                   value: 1,
                   valueText: 'Belum ada data',
-                  color: '#e6edf6',
+                  color: 'var(--color-chart-grid-light)',
               },
           ];
     const data = {
@@ -101,7 +103,7 @@ export default function OrderStatusStackChart({ segments = [] }) {
     return (
         <div onContextMenu={(e) => e.preventDefault()} className="relative">
             <div className="h-[72px] overflow-hidden rounded-[6px]">
-                <Bar data={data} options={options} />
+                <Bar data={resolveChartObject(data)} options={resolveChartObject(options)} />
             </div>
             {hasData ? (
                 <div className="pointer-events-none absolute inset-x-0 top-0 flex h-[72px] items-center px-3">

@@ -1,7 +1,8 @@
 import { Bar } from 'react-chartjs-2';
 import { usePersistentTooltip } from './usePersistentTooltip';
 import { formatCompactLabel, parsePercentValue } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
-import { buildSingleHueEmphasisPalette } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
+import { buildSingleHueEmphasisPalette, resolveChartObject } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
+
 
 const analyticsBarPaletteOptions = {
     mutedAlpha: 0.28,
@@ -22,7 +23,7 @@ export default function AprioriRuleChart({ rules }) {
         transactionBase: rule.transactionBase,
     }));
     const confidenceValues = chartData.map((item) => item.confidence);
-    const confidencePalette = buildSingleHueEmphasisPalette(confidenceValues, '#6ea0df', analyticsBarPaletteOptions);
+    const confidencePalette = buildSingleHueEmphasisPalette(confidenceValues, 'var(--color-chart-accent)', analyticsBarPaletteOptions);
     const data = {
         labels: chartData.map((item) => item.label),
         datasets: [
@@ -51,10 +52,10 @@ export default function AprioriRuleChart({ rules }) {
                 display: false,
             },
             tooltip: {
-                backgroundColor: '#ffffff',
-                titleColor: '#1f2536',
-                bodyColor: '#62708c',
-                borderColor: '#d7ddea',
+                backgroundColor: 'var(--color-white)',
+                titleColor: 'var(--color-brand-darker)',
+                bodyColor: 'var(--color-chart-text)',
+                borderColor: 'var(--color-chart-border)',
                 borderWidth: 1,
                 padding: 10,
                 displayColors: false,
@@ -83,13 +84,13 @@ export default function AprioriRuleChart({ rules }) {
                 min: 0,
                 max: 100,
                 grid: {
-                    color: '#edf0f6',
+                    color: 'var(--color-table-row-border)',
                 },
                 border: {
                     display: false,
                 },
                 ticks: {
-                    color: '#75809b',
+                    color: 'var(--color-chart-ticks)',
                     font: {
                         size: 14,
                     },
@@ -106,7 +107,7 @@ export default function AprioriRuleChart({ rules }) {
                     display: false,
                 },
                 ticks: {
-                    color: '#5f6a85',
+                    color: 'var(--color-tab-view-active-text)',
                     font: {
                         size: 14,
                     },
@@ -120,8 +121,8 @@ export default function AprioriRuleChart({ rules }) {
 
     return (
         <div onContextMenu={(e) => e.preventDefault()} className="rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
-            <div className="h-[250px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[270px] lg:h-[280px]">
-                <Bar ref={chartRef} data={data} options={options} />
+            <div className="h-[250px] rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card sm:h-[270px] lg:h-[280px]">
+                <Bar ref={chartRef} data={resolveChartObject(data)} options={resolveChartObject(options)} />
             </div>
         </div>
     );

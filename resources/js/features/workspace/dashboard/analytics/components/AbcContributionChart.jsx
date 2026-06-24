@@ -1,7 +1,8 @@
 import { Chart as ReactChart } from 'react-chartjs-2';
 import { usePersistentTooltip } from './usePersistentTooltip';
 import { parsePercentValue } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
-import { toRgba } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
+import { toRgba, resolveChartObject } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
+
 
 export default function AbcContributionChart({ items }) {
     const { chartRef, handleChartClick, handleChartHover } = usePersistentTooltip();
@@ -19,7 +20,7 @@ export default function AbcContributionChart({ items }) {
     });
     const labels = chartData.map((item) => item.label);
     const shareValues = chartData.map((item) => item.share);
-    const contributionColors = chartData.map((item) => item.color ?? '#6ea0df');
+    const contributionColors = chartData.map((item) => item.color ?? 'var(--color-chart-accent)');
     const data = {
         labels,
         datasets: [
@@ -51,10 +52,10 @@ export default function AbcContributionChart({ items }) {
                 display: false,
             },
             tooltip: {
-                backgroundColor: '#ffffff',
-                titleColor: '#1f2536',
-                bodyColor: '#62708c',
-                borderColor: '#d7ddea',
+                backgroundColor: 'var(--color-white)',
+                titleColor: 'var(--color-brand-darker)',
+                bodyColor: 'var(--color-chart-text)',
+                borderColor: 'var(--color-chart-border)',
                 borderWidth: 1,
                 padding: 10,
                 displayColors: false,
@@ -75,7 +76,7 @@ export default function AbcContributionChart({ items }) {
                     display: false,
                 },
                 ticks: {
-                    color: '#6f7f99',
+                    color: 'var(--color-chart-ticks)',
                     font: {
                         size: 14,
                     },
@@ -85,13 +86,13 @@ export default function AbcContributionChart({ items }) {
                 min: 0,
                 max: 100,
                 grid: {
-                    color: '#e5ebf4',
+                    color: 'var(--color-chart-grid-light)',
                 },
                 border: {
                     display: false,
                 },
                 ticks: {
-                    color: '#6f7f99',
+                    color: 'var(--color-chart-ticks)',
                     font: {
                         size: 14,
                     },
@@ -105,24 +106,24 @@ export default function AbcContributionChart({ items }) {
 
     return (
         <div onContextMenu={(e) => e.preventDefault()} className="space-y-4 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
-            <div className="h-[200px] rounded-[8px] border border-[#dce3ed] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.04)] sm:h-[220px] lg:h-[232px]">
-                <ReactChart ref={chartRef} type="bar" data={data} options={options} />
+            <div className="h-[200px] rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card sm:h-[220px] lg:h-[232px]">
+                <ReactChart ref={chartRef} type="bar" data={resolveChartObject(data)} options={resolveChartObject(options)} />
             </div>
 
             <div className="grid gap-2 sm:grid-cols-3">
                 {chartData.map((item, index) => (
                     <div
                         key={item.label}
-                        className="rounded-[7px] border border-[#dce3ed] bg-white px-3 py-2.5 shadow-[0_6px_14px_rgba(15,23,42,0.04)]"
+                        className="rounded-[7px] border border-abc-card-border bg-white px-3 py-2.5 shadow-abc-card"
                     >
                         <div className="flex items-center justify-between gap-2">
-                            <span className="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-[#2b3650]">
+                            <span className="inline-flex min-w-0 items-center gap-2 text-sm font-medium text-abc-label-dark">
                                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
                                 <span className="truncate">{item.label}</span>
                             </span>
-                            <span className="text-sm font-semibold text-[#1f2536]">{item.share}%</span>
+                            <span className="text-sm font-semibold text-brand-darker">{item.share}%</span>
                         </div>
-                        <div className="mt-1 flex items-center justify-between gap-2 text-sm text-[#75809b]">
+                        <div className="mt-1 flex items-center justify-between gap-2 text-sm text-chart-ticks">
                             <span className="truncate">{item.itemCount}</span>
                             <span>Akumulasi {Math.round(item.cumulative)}%</span>
                         </div>

@@ -4,14 +4,16 @@ import DashboardChartShell from '@/features/workspace/dashboard/widgets/Dashboar
 import {
     formatChartValue,
     normalizeTrendSeries,
+    resolveChartObject,
     toRgba,
 } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
 
+
 const tooltipBaseOptions = {
-    backgroundColor: '#ffffff',
-    titleColor: '#1f2536',
-    bodyColor: '#62708c',
-    borderColor: '#d7ddea',
+    backgroundColor: 'var(--color-white)',
+    titleColor: 'var(--color-brand-darker)',
+    bodyColor: 'var(--color-chart-text)',
+    borderColor: 'var(--color-chart-border)',
     borderWidth: 1,
     padding: 10,
 };
@@ -19,7 +21,7 @@ const tooltipBaseOptions = {
 export default function TrendLineChart({
     labels = [],
     series = [],
-    accent = '#55aef0',
+    accent = 'var(--color-blue-55aef0)',
     valueFormat = 'number',
     heightClassName = 'h-[228px]',
 }) {
@@ -41,8 +43,8 @@ export default function TrendLineChart({
                   {
                       label: 'Belum ada data',
                       data: labels.map(() => 0),
-                      borderColor: '#c7d3e3',
-                      backgroundColor: toRgba('#c7d3e3', 0.16),
+                      borderColor: 'var(--color-ui-border)',
+                      backgroundColor: toRgba('var(--color-ui-border)', 0.16),
                       fill: true,
                       tension: 0.35,
                       pointRadius: 0,
@@ -70,7 +72,7 @@ export default function TrendLineChart({
                 labels: {
                     boxWidth: 10,
                     boxHeight: 10,
-                    color: '#5f6a85',
+                    color: 'var(--color-tab-view-active-text)',
                     font: {
                         size: 14,
                     },
@@ -94,7 +96,7 @@ export default function TrendLineChart({
                     display: false,
                 },
                 ticks: {
-                    color: '#6f7f99',
+                    color: 'var(--color-chart-ticks)',
                     font: {
                         size: 14,
                     },
@@ -102,13 +104,13 @@ export default function TrendLineChart({
             },
             y: {
                 grid: {
-                    color: '#e5ebf4',
+                    color: 'var(--color-chart-grid-light)',
                 },
                 border: {
                     display: false,
                 },
                 ticks: {
-                    color: '#6f7f99',
+                    color: 'var(--color-chart-ticks)',
                     font: {
                         size: 14,
                     },
@@ -125,7 +127,7 @@ export default function TrendLineChart({
             heightClassName={heightClassName}
             className={heightClassName.includes('flex-1') ? 'flex-1 flex flex-col min-h-0' : ''}
         >
-            <Line data={data} options={options} />
+            <Line data={resolveChartObject(data)} options={resolveChartObject(options)} />
         </DashboardChartShell>
     );
 }

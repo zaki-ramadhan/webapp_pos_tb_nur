@@ -61,8 +61,63 @@ export function parseDisplayNumber(value = 0) {
     return Number.isFinite(parsedValue) ? parsedValue * multiplier : 0;
 }
 
-export function toRgba(hexColor = '#55aef0', alpha = 1) {
-    const normalizedHex = String(hexColor).replace('#', '').trim();
+export function resolveCssVar(varName) {
+    if (typeof window === 'undefined') return '';
+    const match = String(varName).match(/var\((--[^)]+)\)/);
+    if (match) {
+        const propName = match[1];
+        const val = getComputedStyle(document.documentElement).getPropertyValue(propName).trim();
+        return val;
+    }
+    return varName;
+}
+
+export function resolveChartObject(obj) {
+    if (obj === null || obj === undefined) return obj;
+    if (typeof obj === 'string') {
+        if (obj.startsWith('var(')) {
+            const resolved = resolveCssVar(obj);
+            if (resolved) return resolved;
+        }
+        return obj;
+    }
+    if (Array.isArray(obj)) {
+        return obj.map(resolveChartObject);
+    }
+    if (typeof obj === 'object') {
+        const result = {};
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                if (typeof obj[key] === 'function') {
+                    result[key] = obj[key];
+                } else {
+                    result[key] = resolveChartObject(obj[key]);
+                }
+            }
+        }
+        return result;
+    }
+    return obj;
+}
+
+
+export function toRgba(hexColor = 'var(--color-blue-55aef0)', alpha = 1) {
+    let color = hexColor;
+    if (typeof window !== 'undefined' && String(hexColor).startsWith('var(')) {
+        const resolved = resolveCssVar(hexColor);
+        if (resolved) {
+            color = resolved;
+        }
+    }
+
+    if (String(color).startsWith('rgb')) {
+        const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
+        if (match) {
+            return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${alpha})`;
+        }
+    }
+
+    const normalizedHex = String(color).replace('#', '').trim();
 
     if (![3, 6].includes(normalizedHex.length)) {
         return `rgba(85, 174, 240, ${alpha})`;
@@ -107,13 +162,13 @@ export function hasNonZeroValue(values = []) {
     return values.some((value) => Math.abs(Number(value) || 0) > 0);
 }
 
-export function normalizeTrendSeries(series = [], accent = '#55aef0') {
+export function normalizeTrendSeries(series = [], accent = 'var(--color-blue-55aef0)') {
     const fallbackFill = toRgba(accent, 0.16);
 
     return (series ?? [])
         .filter((item) => Array.isArray(item?.data) && item.data.length)
         .map((item, index) => {
-            const color = item.color ?? item.borderColor ?? (index === 0 ? accent : '#5f6a85');
+            const color = item.color ?? item.borderColor ?? (index === 0 ? accent : 'var(--color-tab-view-active-text)');
 
             return {
                 label: item.label ?? `Seri ${index + 1}`,
@@ -134,7 +189,7 @@ export function normalizeBreakdownItems(items = []) {
             value: numericValue,
             valueText: item.value ?? formatChartValue(numericValue, 'currency'),
             percentText: item.percent ?? null,
-            color: item.color ?? '#d8e0ec',
+            color: item.color ?? 'var(--color-table-border)',
         };
     });
 }
@@ -151,7 +206,7 @@ export function normalizeSummarySections(sections = []) {
                 label: item.label ?? `Item ${itemIndex + 1}`,
                 value: numericValue,
                 valueText: item.value ?? formatChartValue(numericValue, 'currency'),
-                color: item.color ?? '#94a3b8',
+                color: item.color ?? 'var(--color-blue-94a3b8)',
             };
         }),
     }));
@@ -162,7 +217,7 @@ export function buildEmphasisColors(values = [], colors = [], mutedAlpha = 0.32)
     const maxValue = normalizedValues.length ? Math.max(...normalizedValues) : 0;
 
     return normalizedValues.map((value, index) => {
-        const baseColor = colors[index] ?? '#94a3b8';
+        const baseColor = colors[index] ?? 'var(--color-blue-94a3b8)';
 
         if (maxValue <= 0 || value >= maxValue) {
             return baseColor;
@@ -174,10 +229,10 @@ export function buildEmphasisColors(values = [], colors = [], mutedAlpha = 0.32)
 
 export function buildSingleHueEmphasisPalette(
     values = [],
-    baseColor = '#6ea0df',
+    baseColor = 'var(--color-chart-accent)',
     {
-        disabledColor = 'rgba(168, 202, 243, 0.44)',
-        hoverDisabledColor = 'rgba(138, 180, 232, 0.64)',
+        disabledColor = 'var(--color-chart-disabled)',
+        hoverDisabledColor = 'var(--color-chart-disabled-hover)',
     } = {},
 ) {
     const normalizedValues = values.map((value) => Number(value) || 0);
@@ -215,12 +270,12 @@ export function buildSingleHueEmphasisPalette(
 export function buildRankedHuePalette(
     values = [],
     {
-        primaryColor = '#6ea0df',
-        secondaryColor = 'rgba(126, 168, 223, 0.78)',
-        tertiaryColor = 'rgba(168, 202, 243, 0.5)',
-        hoverPrimaryColor = '#5f97de',
-        hoverSecondaryColor = 'rgba(111, 156, 218, 0.9)',
-        hoverTertiaryColor = 'rgba(146, 186, 236, 0.72)',
+        primaryColor = 'var(--color-chart-accent)',
+        secondaryColor = 'var(--color-chart-secondary)',
+        tertiaryColor = 'var(--color-chart-tertiary)',
+        hoverPrimaryColor = 'var(--color-blue-5f97de)',
+        hoverSecondaryColor = 'var(--color-chart-secondary-hover)',
+        hoverTertiaryColor = 'var(--color-chart-tertiary-hover)',
     } = {},
 ) {
     const normalizedValues = values.map((value, index) => ({

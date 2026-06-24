@@ -5,13 +5,15 @@ import {
     formatChartValue,
     hasNonZeroValue,
     normalizeSummarySections,
+    resolveChartObject,
 } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
 
+
 const tooltipBaseOptions = {
-    backgroundColor: '#ffffff',
-    titleColor: '#1f2536',
-    bodyColor: '#62708c',
-    borderColor: '#d7ddea',
+    backgroundColor: 'var(--color-white)',
+    titleColor: 'var(--color-brand-darker)',
+    bodyColor: 'var(--color-chart-text)',
+    borderColor: 'var(--color-chart-border)',
     borderWidth: 1,
     padding: 10,
 };
@@ -62,8 +64,8 @@ export default function SummarySectionChart({ sections = [], valueFormat = 'curr
                     title="Belum ada data"
                     description="Belum ada data untuk divisualisasikan."
                     className="rounded-[8px] bg-transparent px-2 py-2"
-                    titleClassName="text-sm font-medium text-[#6b738f]"
-                    descriptionClassName="mt-1 text-sm leading-4 text-[#8a91a8]"
+                    titleClassName="text-sm font-medium text-text-muted"
+                    descriptionClassName="mt-1 text-sm leading-4 text-text-light"
                 />
             </DashboardChartShell>
         );
@@ -103,13 +105,13 @@ export default function SummarySectionChart({ sections = [], valueFormat = 'curr
             x: {
                 stacked: true,
                 grid: {
-                    color: '#edf1f7',
+                    color: 'var(--color-table-row-border)',
                 },
                 border: {
                     display: false,
                 },
                 ticks: {
-                    color: '#6f7f99',
+                    color: 'var(--color-chart-ticks)',
                     font: {
                         size: 14,
                     },
@@ -129,7 +131,7 @@ export default function SummarySectionChart({ sections = [], valueFormat = 'curr
                     display: false,
                 },
                 ticks: {
-                    color: '#5f6a85',
+                    color: 'var(--color-tab-view-active-text)',
                     font: {
                         size: 14,
                     },
@@ -142,7 +144,7 @@ export default function SummarySectionChart({ sections = [], valueFormat = 'curr
 
     return (
         <DashboardChartShell heightClassName="h-[124px]">
-            <Bar data={data} options={options} />
+            <Bar data={resolveChartObject(data)} options={resolveChartObject(options)} />
         </DashboardChartShell>
     );
 }

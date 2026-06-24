@@ -9,8 +9,9 @@
 @source '../**/*.jsx';
 
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Custom theme variables */
     --color-surface: #fffaf3;
     --color-panel: #f6efe2;
     --color-line: rgba(110, 72, 43, 0.14);
@@ -19,8 +20,6 @@
     --color-accent: #b85d20;
     --color-input-focus: #5a84e5;
     --color-input-focus-ring: rgba(90, 132, 229, 0.16);
-
-    /* Brand & Accent Colors */
     --color-brand-primary: #f2356d;
     --color-brand-primary-hover: #e72d65;
     --color-brand-blue: #2353a0;
@@ -30,12 +29,8 @@
     --color-brand-blue-border: #7aa2d5;
     --color-brand-blue-border-light: #8ec1ef;
     --color-brand-dark: #1f2436;
-
-    /* Danger Colors */
     --color-danger: #db2347;
     --color-danger-hover: #c81f40;
-
-    /* Base UI Borders & Neutrals */
     --color-ui-border: #cfd6e2;
     --color-ui-border-light: #e2e8f0;
     --color-ui-border-medium: #d8dde7;
@@ -48,30 +43,20 @@
     --color-ui-bg-panel: #f3f4f6;
     --color-ui-bg-panel-light: #f2f2f3;
     --color-ui-bg-panel-lighter: #f6f6f7;
-
-    /* Primary Navigation Tab Specifics */
     --color-tab-primary-inactive-bg: #d9dcdf;
     --color-tab-primary-inactive-text: #596076;
     --color-tab-primary-inactive-hover-bg: #d1d5da;
     --color-tab-overflow-border: #d7dbe4;
     --color-tab-overflow-panel-border: #d3d9e5;
-
-    /* Disabled Tab States */
     --color-disabled-border: #c5c9d2;
     --color-disabled-border-t: #9ca3af;
     --color-disabled-bg: #e5e7eb;
     --color-disabled-text: #9ca3af;
-
-    /* Brand Blue specifics */
     --color-brand-blue-lightest: #f4f7fc;
     --color-brand-blue-darker: #234b87;
-
-    /* Inputs */
     --color-input-brand: #0f65c9;
     --color-error-border: #d65959;
     --color-error-text: #d65959;
-
-    /* Notice Alerts Tones */
     --color-info-border: #c8ddff;
     --color-info-bg: #eef5ff;
     --color-info-text: #45608f;
@@ -85,19 +70,13 @@
     --color-danger-border: #f7c6d2;
     --color-danger-bg: #fff1f5;
     --color-danger-text: #9a4f66;
-
-    /* Standard Table Colors */
     --color-table-border: #d8deea;
     --color-table-header-bg: #60778f;
     --color-table-row-border: #edf1f6;
     --color-table-row-text: #1b2436;
     --color-table-cell-border: #d2d8e2;
-
-    /* Layout Backgrounds */
     --color-layout-bg: #9ab8ea;
     --color-layout-text: #4f5679;
-
-    /* Secondary Navigation Tabs */
     --color-tab-active-border-x: #bcc3cf;
     --color-tab-active-border-t: #ED3969;
     --color-tab-active-bg: #f2f2f2;
@@ -108,8 +87,6 @@
     --color-tab-inactive-bg: #d5d9df;
     --color-tab-inactive-text: #5c6478;
     --color-tab-inactive-hover-bg: #d1d5da;
-
-    /* View Tab Variant (Green) */
     --color-tab-view-active-border-x: #cfd4dc;
     --color-tab-view-active-border-t: #e6e9ee;
     --color-tab-view-active-bg: #f2f2f2;
@@ -119,15 +96,317 @@
     --color-tab-view-inactive-border-t: #90e66a;
     --color-tab-view-inactive-bg: #59c62e;
     --color-tab-view-inactive-text: #ffffff;
-
-    /* Section Tabs */
     --color-section-tab-accent-text: #21283b;
     --color-section-tab-neutral-border: #c4cbd7;
     --color-section-tab-neutral-text: #31394e;
     --color-section-tab-border-x: #bcc3cf;
-
-    /* Background Gradients */
     --background-image-header-gradient: linear-gradient(90deg, #213e75 0%, #1b315d 100%);
+    --color-pink-accent: #ed3969;
+    --color-brand-darker: #1f2536;
+    --color-google-blue: #4285f4;
+    --color-google-green: #34a853;
+    --color-google-yellow: #fbbc05;
+    --color-google-red: #ea4335;
+    --color-confirmation-warning-bg: #ffc93b;
+    --color-confirmation-warning-border: #162746;
+    --color-illustration-danger-bg: #ff4b40;
+    --color-illustration-danger-border: #143a70;
+    --color-chart-accent: #6ea0df;
+    --color-chart-border: #d7ddea;
+    --color-chart-text: #62708c;
+    --color-chart-ticks: #6f7f99;
+    --color-chart-grid-light: #e5ebf4;
+    --color-abc-card-border: #dce3ed;
+    --color-abc-label-dark: #2b3650;
+
+    /* Custom palette colors */
+
+    /* Custom overlay & shadow tokens */
+    --color-modal-overlay-bg: rgba(20, 30, 49, 0.58);
+    --color-modal-overlay-dark: rgba(15, 23, 42, 0.72);
+    --color-modal-overlay-light: rgba(22, 31, 52, 0.62);
+    --color-sidebar-item-active-bg: rgba(71, 84, 108, 0.92);
+    --background-image-bg-gradient-radial: radial-gradient(circle at top, rgba(222, 146, 72, 0.18), transparent 28%);
+    --background-image-bg-gradient-linear: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(237, 247, 255, 0.84) 100%);
+    --background-image-bg-art-glow-white: radial-gradient(circle at center, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0) 68%);
+    --background-image-bg-art-glow-orange: radial-gradient(circle at center, rgba(255, 201, 152, 0.38) 0%, rgba(255, 201, 152, 0) 72%);
+    --background-image-bg-art-glow-blue: radial-gradient(circle at center, rgba(124, 163, 255, 0.24) 0%, rgba(124, 163, 255, 0) 72%);
+    --background-image-bg-carousel-overlay-gradient: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.32) 50%, rgba(0, 0, 0, 0.58) 100%);
+    --background-image-bg-auth-gradient-light: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.18));
+    --color-badge-group-a-65: rgba(45, 119, 209, 0.65);
+    --color-badge-group-a-40: rgba(45, 119, 209, 0.40);
+    --color-badge-group-a-18: rgba(45, 119, 209, 0.18);
+    --shadow-card-primary: 0 8px 20px rgba(15, 23, 42, 0.08);
+    --shadow-panel-primary: 0 8px 20px rgba(15, 23, 42, 0.12);
+    --shadow-card-light: 0 2px 10px rgba(15, 23, 42, 0.08);
+    --shadow-card-medium: 0 4px 10px rgba(15, 23, 42, 0.08);
+    --shadow-button-primary: 0 4px 12px rgba(15, 23, 42, 0.12);
+    --shadow-button-secondary: 0 2px 8px rgba(15, 23, 42, 0.08);
+    --shadow-modal-import: 0 18px 44px rgba(15, 23, 42, 0.28);
+    --shadow-modal-dialog: 0 10px 24px rgba(15, 23, 42, 0.16);
+    --shadow-modal-search: 0 16px 38px rgba(15, 23, 42, 0.22);
+    --shadow-dock-danger: 0 5px 10px rgba(120, 46, 58, 0.18);
+    --shadow-dock-success: 0 5px 10px rgba(24, 102, 49, 0.18);
+    --shadow-dock-blue: 0 4px 8px rgba(20, 75, 138, 0.18);
+    --shadow-dock-green: 0 4px 8px rgba(27, 104, 53, 0.16);
+    --shadow-dock-red: 0 4px 8px rgba(135, 43, 52, 0.15);
+    --shadow-dock-default: 0 4px 8px rgba(24, 53, 97, 0.22);
+    --shadow-attachment-dock: 0 5px 10px rgba(20, 75, 138, 0.16);
+    --shadow-dock-action: 0 3px 5px rgba(24, 53, 97, 0.15);
+    --shadow-tab-active-pink: 0 2px 8px rgba(237, 57, 105, 0.18);
+    --shadow-tab-sidebar-pink: 0 2px 8px rgba(239, 57, 104, 0.12);
+    --shadow-inset-light: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    --shadow-inset-lighter: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    --shadow-tooltip: 0 8px 20px rgba(15, 23, 42, 0.18);
+    --shadow-sidebar-tooltip: 0 8px 18px rgba(15, 23, 42, 0.18);
+    --shadow-sidebar-flyout: 0 18px 38px rgba(15, 23, 42, 0.18);
+    --shadow-inset-border-white: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    --shadow-btn-blue-hover: 0 2px 8px rgba(26, 80, 161, 0.16);
+    --shadow-focus-accent-light: 0 0 0 3px rgba(110, 164, 239, 0.08);
+    --shadow-focus-blue-light: 0 0 0 3px rgba(90, 154, 229, 0.12);
+    --shadow-focus-blue-medium: 0 0 0 3px rgba(127, 176, 238, 0.12);
+    --shadow-input-error-focus: 0 0 0 3px rgba(214, 89, 89, 0.14);
+    --shadow-analytics-card: 0 8px 18px rgba(15, 23, 42, 0.04);
+    --shadow-abc-card: 0 6px 14px rgba(15, 23, 42, 0.04);
+    --shadow-report-panel: 0 2px 10px rgba(15, 23, 42, 0.04);
+    --shadow-widget-hover: 0 2px 12px rgba(15, 23, 42, 0.1);
+    --shadow-bg-glow-large: 0 24px 60px rgba(15, 23, 42, 0.08);
+    --shadow-bg-glow-medium: 0 18px 44px rgba(15, 23, 42, 0.08);
+    --shadow-bg-glow-small: 0 10px 30px rgba(15, 23, 42, 0.08);
+    --shadow-dock-accent: 0 5px 10px rgba(24, 53, 97, 0.18);
+    --shadow-checkbox: 0 2px 8px rgba(15, 23, 42, 0.06);
+    --shadow-card-subtle: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-flag-border: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    --shadow-border-overlay: 0 0 0 1px rgba(15, 23, 42, 0.08);
+    --shadow-widget-medium: 0 2px 6px rgba(0, 0, 0, 0.02);
+    --shadow-widget-small: 0 1px 3px rgba(0, 0, 0, 0.02);
+    --shadow-dialog-large: 0 14px 30px rgba(15, 23, 42, 0.2);
+    --shadow-modal-auth: 0 15px 35px rgba(0, 0, 0, 0.15);
+    --shadow-analytics-light: 0 4px 12px rgba(15, 23, 42, 0.03);
+    --shadow-topbar: 0 4px 12px rgba(15, 23, 42, 0.14);
+    --shadow-widget-tiny: 0 1px 2px rgba(0, 0, 0, 0.01);
+    --shadow-panel-subtle: 0 2px 12px rgba(15, 23, 42, 0.08);
+    --shadow-dock-button-subtle: 0 2px 5px rgba(15, 23, 42, 0.08);
+    --shadow-menu-dropdown: 0 6px 24px rgba(15, 23, 42, 0.14);
+    --shadow-tile-navigation: 0 6px 16px rgba(15, 23, 42, 0.08);
+    --shadow-inset-light-medium: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    --shadow-panel-subtle-alt: 0 2px 10px rgba(15, 23, 42, 0.06);
+    --shadow-button-glow-blue: 0 4px 10px rgba(15, 23, 42, 0.12);
+    --shadow-button-glow-orange: 0 4px 10px rgba(15, 23, 42, 0.1);
+    --background-image-bg-layout-double: radial-gradient(circle at top, rgba(222, 146, 72, 0.18), transparent 28%), linear-gradient(180deg, #fffaf3 0%, #fff8ef 48%, #f3ece1 100%);
+
+    /* Chart specific palette color custom properties */
+    --color-chart-disabled: rgba(168, 202, 243, 0.44);
+    --color-chart-disabled-hover: rgba(138, 180, 232, 0.64);
+    --color-chart-secondary: rgba(126, 168, 223, 0.78);
+    --color-chart-tertiary: rgba(168, 202, 243, 0.5);
+    --color-chart-secondary-hover: rgba(111, 156, 218, 0.9);
+    --color-chart-tertiary-hover: rgba(146, 186, 236, 0.72);
+
+    /* Navigation Tiles (Modules) Color Properties */
+    --color-nav-tile-amber-border: #ff8b34;
+    --color-nav-tile-amber-bg: #ffeddc;
+    --color-nav-tile-amber-hover: #ffe3cd;
+    --color-nav-tile-amber-text: #de6f13;
+
+    --color-nav-tile-blue-border: #3d9ff2;
+    --color-nav-tile-blue-bg: #dcedff;
+    --color-nav-tile-blue-hover: #d0e6ff;
+    --color-nav-tile-blue-text: #1472b6;
+
+    --color-nav-tile-green-border: #81c442;
+    --color-nav-tile-green-bg: #ddf7d2;
+    --color-nav-tile-green-hover: #d3f0c4;
+    --color-nav-tile-green-text: #5d930f;
+
+    --color-nav-tile-purple-border: #b56dff;
+    --color-nav-tile-purple-bg: #ecddff;
+    --color-nav-tile-purple-hover: #e3d1ff;
+    --color-nav-tile-purple-text: #681db1;
+
+    /* Audit-restored custom color variables */
+    --color-action-btn-active-bg: #dcedff;
+    --color-badge-group-a: #2d77d1;
+    --color-bg-action-btn-hover: #cbe3ff;
+    --color-bg-badge-warning-alt: #fff5e7;
+    --color-bg-brand-blue-toggled: #f0f6ff;
+    --color-bg-bullet-gray: #9a9a9a;
+    --color-bg-chip-blue: #eaf3ff;
+    --color-bg-disabled-btn: #e6e6e7;
+    --color-bg-disabled-dark: #cbcbcb;
+    --color-bg-disabled-input: #f4f4f4;
+    --color-bg-dock-blue-alt: #8fc0ef;
+    --color-bg-import-action-hover: #27579c;
+    --color-bg-info-card: #f7f9fc;
+    --color-bg-scrollbar-track-alt: #efefef;
+    --color-bg-success-alt: #f7fff2;
+    --color-bg-timeline-bar-gray: #b9bdc5;
+    --color-bg-warning-tag: #f6dfab;
+    --color-bg-workspace-input-panel: #f8f9fb;
+    --color-bg-workspace-light: #eef2f7;
+    --color-bg-workspace-tab-inactive: #dde2ea;
+    --color-blue-0568eb: #0568eb;
+    --color-blue-0f62b8: #0f62b8;
+    --color-blue-141c2c: #141c2c;
+    --color-blue-1472b6: #1472b6;
+    --color-blue-147ac7: #147ac7;
+    --color-blue-154c9f: #154c9f;
+    --color-blue-1564d7: #1564d7;
+    --color-blue-1a3f7a: #1a3f7a;
+    --color-blue-1e7ec1: #1e7ec1;
+    --color-blue-1f5ca9: #1f5ca9;
+    --color-blue-22304a: #22304a;
+    --color-blue-2269bb: #2269bb;
+    --color-blue-2563eb: #2563eb;
+    --color-blue-2d61ab: #2d61ab;
+    --color-blue-2f78e5: #2f78e5;
+    --color-blue-3f68b2: #3f68b2;
+    --color-blue-434a65: #434a65;
+    --color-blue-435b78: #435b78;
+    --color-blue-4f78a7: #4f78a7;
+    --color-blue-4f80c4: #4f80c4;
+    --color-blue-4f86d9: #4f86d9;
+    --color-blue-55aef0: #55aef0;
+    --color-blue-5f97de: #5f97de;
+    --color-blue-68b4f2: #68b4f2;
+    --color-blue-6ea4ef: #6ea4ef;
+    --color-blue-6f97c5: #6f97c5;
+    --color-blue-78a6e8: #78a6e8;
+    --color-blue-7c839b: #7c839b;
+    --color-blue-7dcaf4: #7dcaf4;
+    --color-blue-7f88a7: #7f88a7;
+    --color-blue-7fb0ee: #7fb0ee;
+    --color-blue-7fd1ff: #7fd1ff;
+    --color-blue-94a3b8: #94a3b8;
+    --color-blue-b5bcc8: #b5bcc8;
+    --color-blue-d7e8ff: #d7e8ff;
+    --color-blue-darkest: #0b2d5a;
+    --color-border-badge-neutral: #bebfc8;
+    --color-border-checkbox-checked: #86b7ee;
+    --color-border-chip-blue: #7ea8e6;
+    --color-border-disabled-btn: #c9cdd5;
+    --color-border-dock-blue-alt: #4d94dd;
+    --color-border-info-card: #d0d7e3;
+    --color-border-input-compact: #d3d7df;
+    --color-border-input-hover-alt: #c0c8d5;
+    --color-border-row-subtle: #f0f4f9;
+    --color-border-tab-secondary-alt: #bcc4d0;
+    --color-border-ui-border-lightest: #e6ebf2;
+    --color-brand-blue-accent: #21539b;
+    --color-btn-danger-bg: #b82924;
+    --color-control-active: #1877f2;
+    --color-document-code: #22a3f2;
+    --color-filter-icon: #6c7894;
+    --color-filter-select-text: #394157;
+    --color-flag-red: #e71d2b;
+    --color-gray-8a8f98: #8a8f98;
+    --color-gray-a7abb4: #a7abb4;
+    --color-gray-a8a8a8: #a8a8a8;
+    --color-gray-b9b9b9: #b9b9b9;
+    --color-green-0b7a34: #0b7a34;
+    --color-green-10b981: #10b981;
+    --color-green-27b35f: #27b35f;
+    --color-green-2e6b34: #2e6b34;
+    --color-green-41c776: #41c776;
+    --color-green-43af5b: #43af5b;
+    --color-green-449d44: #449d44;
+    --color-green-4caf50: #4caf50;
+    --color-green-4d9b1f: #4d9b1f;
+    --color-green-5b920f: #5b920f;
+    --color-green-5cb85c: #5cb85c;
+    --color-green-61a84b: #61a84b;
+    --color-green-67b52c: #67b52c;
+    --color-green-69cf7e: #69cf7e;
+    --color-green-96d86d: #96d86d;
+    --color-green-99e19e: #99e19e;
+    --color-green-9ce04f: #9ce04f;
+    --color-green-bcebc1: #bcebc1;
+    --color-green-c8dfc9: #c8dfc9;
+    --color-green-ddf7d2: #ddf7d2;
+    --color-green-eef9e4: #eef9e4;
+    --color-import-action-blue: #1d52a5;
+    --color-input-prefix-bg: #f3f3f4;
+    --color-input-prefix-bg-compact: #f5f6f8;
+    --color-input-prefix-text: #8b94a7;
+    --color-l-blue-5a9bdd: #5a9bdd;
+    --color-l-blue-5f8fd5: #5f8fd5;
+    --color-l-green-6bc57c: #6bc57c;
+    --color-l-red-f39ca0: #f39ca0;
+    --color-orange-6d5831: #6d5831;
+    --color-orange-b45309: #b45309;
+    --color-orange-b7791f: #b7791f;
+    --color-orange-d6a54a: #d6a54a;
+    --color-orange-dcd6cc: #dcd6cc;
+    --color-orange-de6f13: #de6f13;
+    --color-orange-e0940b: #e0940b;
+    --color-orange-e8e4dd: #e8e4dd;
+    --color-orange-ea580c: #ea580c;
+    --color-orange-ea9f13: #ea9f13;
+    --color-orange-ead7b2: #ead7b2;
+    --color-orange-eb6f00: #eb6f00;
+    --color-orange-f4a62a: #f4a62a;
+    --color-orange-ff9a4d: #ff9a4d;
+    --color-orange-ffb11e: #ffb11e;
+    --color-preferences-btn-danger: #ff4b2b;
+    --color-preferences-icon-danger: #bf1313;
+    --color-preferences-item-bg-danger: #ffd9d9;
+    --color-preferences-text-danger: #bf2323;
+    --color-purple-681db1: #681db1;
+    --color-purple-6a1fc4: #6a1fc4;
+    --color-purple-7b45c4: #7b45c4;
+    --color-purple-7c3aed: #7c3aed;
+    --color-purple-ecddff: #ecddff;
+    --color-purple-f08bb0: #f08bb0;
+    --color-red-a33939: #a33939;
+    --color-red-b43b3b: #b43b3b;
+    --color-red-c61e1e: #c61e1e;
+    --color-red-d6305a: #d6305a;
+    --color-red-db3e3e: #db3e3e;
+    --color-red-db808b: #db808b;
+    --color-red-e15263: #e15263;
+    --color-red-e31a1a: #e31a1a;
+    --color-red-e39191: #e39191;
+    --color-red-e54854: #e54854;
+    --color-red-ef513f: #ef513f;
+    --color-red-f08f92: #f08f92;
+    --color-red-f0c4c4: #f0c4c4;
+    --color-red-f25759: #f25759;
+    --color-red-f39ca0: #f39ca0;
+    --color-red-f5b0b4: #f5b0b4;
+    --color-red-ff2d55: #ff2d55;
+    --color-red-ff3b30: #ff3b30;
+    --color-red-ff4f1f: #ff4f1f;
+    --color-status-success-badge-border: #8bd987;
+    --color-status-success-badge-text: #8ccc81;
+    --color-status-warning-badge-border: #ffd08c;
+    --color-status-warning-badge-text: #ff8d08;
+    --color-table-row-number: #646d83;
+    --color-table-wrapper-border: #d1d8e4;
+    --color-text-badge-blue-dark: #355784;
+    --color-text-badge-neutral: #b8bac3;
+    --color-text-badge-success-alt: #2db757;
+    --color-text-chip-blue: #35507a;
+    --color-text-chip-blue-dark: #2f5388;
+    --color-text-compact-input: #6a7286;
+    --color-text-contrast: #0f172a;
+    --color-text-danger-hover-alt: #ef4444;
+    --color-text-darkest: #111827;
+    --color-text-disabled-btn: #9a9ea7;
+    --color-text-dock-blue-alt: #0d4e96;
+    --color-text-inactive: #9aa3b1;
+    --color-text-pink-active: #ff2d7a;
+    --color-text-placeholder: #7d879a;
+    --color-text-prefix-label-alt: #9299aa;
+    --color-text-readonly-input: #6a7388;
+    --color-text-sidebar-muted: #4b5563;
+    --color-text-trailing-label: #1f2d42;
+    --color-text-workspace-inactive: #a8afbe;
+    --color-text-workspace-muted: #5f6779;
+    --color-text-workspace-tab-inactive: #7d8698;
+    --color-ui-border-row: #dde1e8;
+    --color-warning-badge-text: #8b6511;
+    --color-warning-label-text: #9a7b35;
+    --color-white: #ffffff;
 }
 
 @layer base {
@@ -370,9 +649,7 @@
     }
 }
 
-/* ==========================================================================
-   Table List View Layout Adjustments (Transparent Toolbar & Card Table)
-   ========================================================================== */
+/* Table view layout adjustments */
 
 /* 1. Ubah pembungkus utama tabel view menjadi transparan dan tanpa border/shadow */
 .workspace-screen div.min-h-full.rounded-\[6px\].bg-white.shadow-\[0_2px_10px_rgba\(15\,23\,42\,0\.08\)\] {

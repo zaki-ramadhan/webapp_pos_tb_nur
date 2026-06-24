@@ -16,22 +16,22 @@ function resolveToneClassName(tone, isDisabled) {
     if (isDisabled) {
         switch (tone) {
             case 'primary':
-                return 'border-[#2d61ab]/60 bg-[#2d61ab]/60 text-white/60 pointer-events-none cursor-default';
+                return 'border-blue-2d61ab/60 bg-blue-2d61ab/60 text-white/60 pointer-events-none cursor-default';
             case 'warning':
-                return 'border-[#ffb11e]/60 bg-[#ffb11e]/60 text-white/60 pointer-events-none cursor-default';
+                return 'border-orange-ffb11e/60 bg-orange-ffb11e/60 text-white/60 pointer-events-none cursor-default';
             case 'muted':
             default:
-                return 'border-[#c9cdd5]/60 bg-[#e6e6e7]/60 text-[#9a9ea7]/60 pointer-events-none cursor-default';
+                return 'border-border-disabled-btn/60 bg-bg-disabled-btn/60 text-text-disabled-btn/60 pointer-events-none cursor-default';
         }
     }
     switch (tone) {
         case 'primary':
-            return 'border-[#2d61ab] bg-[#2d61ab] text-white shadow-[0_4px_10px_rgba(15,23,42,0.12)] hover:bg-[#27579c] cursor-pointer';
+            return 'border-blue-2d61ab bg-blue-2d61ab text-white shadow-button-glow-blue hover:bg-bg-import-action-hover cursor-pointer';
         case 'warning':
-            return 'border-[#ffb11e] bg-[#ffb11e] text-white shadow-[0_4px_10px_rgba(15,23,42,0.1)] hover:bg-[#ea9f13] cursor-pointer';
+            return 'border-orange-ffb11e bg-orange-ffb11e text-white shadow-button-glow-orange hover:bg-orange-ea9f13 cursor-pointer';
         case 'muted':
         default:
-            return 'border-[#c9cdd5] bg-[#e6e6e7] text-[#9a9ea7] shadow-[0_4px_10px_rgba(15,23,42,0.08)] hover:bg-[#dbdbdc] cursor-pointer';
+            return 'border-border-disabled-btn bg-bg-disabled-btn text-text-disabled-btn shadow-card-medium hover:bg-tab-primary-inactive-bg cursor-pointer';
     }
 }
 
