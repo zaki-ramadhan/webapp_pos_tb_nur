@@ -43,7 +43,6 @@ export function buildEmployeePayload(values) {
         is_salesperson: Boolean(values.isSalesperson),
         user_id: values.isSalesperson ? (values.__userId ?? null) : null,
         notes: emptyStringToNull(values.note),
-        liability_account_label: emptyStringToNull(values.liabilityAccountLabel),
         is_active: true,
         bank_accounts: hasBankAccount
             ? [

@@ -69,8 +69,6 @@ export default function PayrollEntryFormView({
     });
     const [employeeRows, setEmployeeRows] = useState(() => sourceRecord?.employeeRows ?? []);
     const [copyModalOpen, setCopyModalOpen] = useState(false);
-    const [pendingEmployee, setPendingEmployee] = useState(null);
-    const [liabilityWarningOpen, setLiabilityWarningOpen] = useState(false);
 
     const [employeeModalOpen, setEmployeeModalOpen] = useState(false);
     const [selectedEmployeeRow, setSelectedEmployeeRow] = useState(null);
@@ -407,13 +405,6 @@ export default function PayrollEntryFormView({
         },
         onSelectEmployee: (emp) => {
             if (!emp) return;
-
-            if (!emp.liability_account_label) {
-                setPendingEmployee(emp);
-                setLiabilityWarningOpen(true);
-                return;
-            }
-
             addEmployeeToRows(emp);
         }
     };
@@ -506,23 +497,6 @@ export default function PayrollEntryFormView({
                 onConfirm={onDelete}
                 onCancel={() => setDeleteConfirmationOpen(false)}
                 confirmLoading={saving}
-            />
-            <ConfirmationModal
-                open={liabilityWarningOpen}
-                title="Akun Hutang Beban Belum Diset"
-                message={`Karyawan "${pendingEmployee?.full_name ?? ''}" belum memiliki akun hutang beban. Harap set terlebih dahulu di halaman Data Karyawan > tab Rekening Gaji.\n\nTetap tambahkan karyawan ini?`}
-                confirmLabel="Tetap Tambahkan"
-                confirmVariant="primary"
-                cancelLabel="Batal"
-                onConfirm={() => {
-                    setLiabilityWarningOpen(false);
-                    if (pendingEmployee) addEmployeeToRows(pendingEmployee);
-                    setPendingEmployee(null);
-                }}
-                onCancel={() => {
-                    setLiabilityWarningOpen(false);
-                    setPendingEmployee(null);
-                }}
             />
             <WorkspaceDialog
                 open={employeeModalOpen}
