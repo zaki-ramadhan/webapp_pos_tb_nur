@@ -51,6 +51,9 @@ export function TransactionDockButton({ action, templateLabel, favoritesStorageK
     const hasMenu = Boolean(action.items?.length);
     const isDisabled = Boolean(action.disabled);
 
+    const isSaveButton = action.id === 'save' || (typeof action.label === 'string' && action.label.toLowerCase().includes('simpan'));
+    const resolvedTone = isSaveButton ? 'primary' : action.tone;
+
     return (
         <div className="relative">
             <button
@@ -72,14 +75,14 @@ export function TransactionDockButton({ action, templateLabel, favoritesStorageK
 
                     action.onClick?.();
                 }}
-                className={`inline-flex h-[44px] w-[72px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[48px] sm:w-[80px] lg:h-[52px] lg:w-[88px] ${resolveDockToneClassName(action.tone, isDisabled)} ${isDisabled ? 'cursor-default opacity-55 pointer-events-none' : 'hover:brightness-105 active:brightness-95 cursor-pointer transition'}`.trim()}
+                className={`inline-flex h-[44px] w-[72px] shrink-0 overflow-hidden rounded-[8px] border sm:h-[48px] sm:w-[80px] lg:h-[52px] lg:w-[88px] ${resolveDockToneClassName(resolvedTone, isDisabled)} ${isDisabled ? 'cursor-default opacity-55 pointer-events-none' : 'hover:brightness-105 active:brightness-95 cursor-pointer transition'}`.trim()}
             >
                 <span className="inline-flex flex-1 items-center justify-center">
                     <TransactionDockIcon icon={action.icon} />
                 </span>
                 {hasMenu ? (
                     <span
-                        className={`inline-flex w-[22px] items-center justify-center border-l sm:w-[26px] lg:w-[28px] ${resolveDockDividerClassName(action.tone, isDisabled)}`.trim()}
+                        className={`inline-flex w-[22px] items-center justify-center border-l sm:w-[26px] lg:w-[28px] ${resolveDockDividerClassName(resolvedTone, isDisabled)}`.trim()}
                     >
                         <ChevronDownIcon className="h-4 w-4" />
                     </span>
