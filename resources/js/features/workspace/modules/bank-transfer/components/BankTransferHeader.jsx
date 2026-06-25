@@ -21,12 +21,6 @@ export default function BankTransferHeader({ config, values, setValues, activeRe
             <div className="grid gap-y-2 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                 <div className="flex items-center justify-start gap-4 sm:justify-end">
                     <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
-                    {!activeRecordId ? (
-                        <TransactionSwitch
-                            checked={values.autoNumber}
-                            onChange={(nextChecked) => setValues((current) => ({ ...current, autoNumber: nextChecked }))}
-                        />
-                    ) : null}
                 </div>
 
                 {values.autoNumber ? (

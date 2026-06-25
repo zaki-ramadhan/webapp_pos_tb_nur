@@ -99,17 +99,6 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                 <div className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div className="flex items-center justify-start gap-4">
                         <TransactionFieldLabel label={config.labels.documentNumber} required />
-                        {!isDetail ? (
-                            <TransactionSwitch
-                                checked={values.autoNumber}
-                                onChange={(nextChecked) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        autoNumber: nextChecked,
-                                    }))
-                                }
-                            />
-                        ) : null}
                     </div>
                     <div className="max-w-[320px] w-full justify-self-end">
                         {!isDetail && values.autoNumber ? (
@@ -133,7 +122,9 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                         ) : (
                             <TextInput
                                 value={values.documentNumber}
-                                readOnly
+                                onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
+                                onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
+                                maxLength={120}
                                 trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
                                 className="h-[40px] rounded-[4px] border-ui-border"
                                 inputClassName="text-xs sm:text-sm text-brand-dark"

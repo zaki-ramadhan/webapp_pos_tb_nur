@@ -91,9 +91,6 @@ export default function SalesDocumentFormHeader({
                 <div className="grid gap-y-2 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                     <div className="flex items-center justify-start gap-4 sm:justify-end">
                         <TransactionFieldLabel label={config.labels.documentNumber} required className="whitespace-nowrap sm:text-right" />
-                        {!isDetail ? (
-                            <TransactionSwitch checked={values.autoNumber} onChange={(nextValue) => setValues((current) => ({ ...current, autoNumber: nextValue }))} />
-                        ) : null}
                     </div>
 
                     <div className="flex sm:justify-end">
@@ -116,7 +113,6 @@ export default function SalesDocumentFormHeader({
                                 onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value, autoNumber: false }))}
                                 onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                 maxLength={120}
-                                readOnly={isDetail}
                                 trailing={<span className="text-lg font-semibold text-brand-dark">×</span>}
                                 className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
                                 inputClassName="text-xs sm:text-sm text-brand-dark"

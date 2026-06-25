@@ -159,17 +159,6 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div className="flex items-center justify-start gap-4">
                         <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
-                        {showAutoNumberSwitch ? (
-                            <TransactionSwitch
-                                checked={values.autoNumber}
-                                onChange={(nextChecked) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        autoNumber: nextChecked,
-                                    }))
-                                }
-                            />
-                        ) : null}
                     </div>
 
                     <div className="max-w-[320px] w-full justify-self-end">
@@ -199,7 +188,6 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                                  onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                                  onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                  maxLength={120}
-                                 readOnly={!showAutoNumberSwitch}
                                  trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
                                  className="h-[40px] rounded-[4px] border-ui-border"
                                  inputClassName="text-xs sm:text-sm text-brand-dark"

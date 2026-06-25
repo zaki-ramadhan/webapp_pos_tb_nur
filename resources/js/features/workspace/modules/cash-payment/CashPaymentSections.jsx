@@ -183,17 +183,6 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                 <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div className="flex items-center justify-start gap-4">
                         <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
-                        {!activeRecordId ? (
-                            <TransactionSwitch
-                                checked={values.autoNumber}
-                                onChange={(nextChecked) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        autoNumber: nextChecked,
-                                    }))
-                                }
-                            />
-                        ) : null}
                     </div>
 
                     <div className="max-w-[240px] w-full justify-self-end">
@@ -223,7 +212,6 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                                 onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                                 onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                 maxLength={120}
-                                readOnly={Boolean(activeRecordId)}
                                 trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
                                 className="h-[40px] rounded-[4px] border-ui-border"
                                 inputClassName="text-xs sm:text-sm text-brand-dark"
