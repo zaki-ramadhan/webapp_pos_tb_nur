@@ -46,10 +46,21 @@ export default function SalesDepositFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'deposit');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const sourceRecord = useMemo(
-        () => (activeRecordId ? buildRecord(config.rowMap?.[activeRecordId] ?? config.table.rows.find((row) => row.id === activeRecordId)) : config.draft),
-        [activeRecordId, buildRecord, config],
-    );
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
+    const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
+        return activeRecordId
+            ? buildRecord(config.rowMap?.[activeRecordId] ?? config.table.rows.find((row) => row.id === activeRecordId))
+            : config.draft;
+    }, [activeRecordId, buildRecord, config, localRecord]);
     const [values, setValues] = useState(() => buildSalesDepositFormState(sourceRecord, config));
     const isDetail = Boolean(activeRecordId);
     const initialComparable = useMemo(() => buildSalesDepositFormState(sourceRecord, config), [config, sourceRecord]);
@@ -130,6 +141,11 @@ export default function SalesDepositFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildRecord ? buildRecord(record) : record;
+                    setLocalRecord(parsed);
+                }
 
                 if (!values.__backendRecordId && record?.id) {
                     onOpenDetail?.({

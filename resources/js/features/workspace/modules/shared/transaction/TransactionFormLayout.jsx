@@ -39,7 +39,7 @@ export default function TransactionFormLayout({
                     ) : null}
                 </div>
 
-                <div className="shrink-0 lg:w-[96px]">
+                <div className="shrink-0 lg:w-[96px] lg:pt-1.5">
                     <TransactionDock actions={dockActions} />
                 </div>
             </div>

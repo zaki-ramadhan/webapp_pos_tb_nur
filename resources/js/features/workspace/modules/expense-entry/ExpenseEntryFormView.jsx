@@ -49,7 +49,17 @@ export default function ExpenseEntryFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const showAutoNumberSwitch = !activeRecordId;
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
     const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
         if (activeRecordId) {
             const row = config.rowMap?.[activeRecordId];
 
@@ -61,7 +71,7 @@ export default function ExpenseEntryFormView({
         }
 
         return config.draft;
-    }, [activeRecordId, buildRecord, config]);
+    }, [activeRecordId, buildRecord, config, localRecord]);
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
@@ -107,7 +117,7 @@ export default function ExpenseEntryFormView({
                 if (action.id === 'save') {
                     return {
                         ...action,
-                        tone: values.saveTone,
+                        tone: 'primary',
                         disabled: saveDisabled,
                         label: saving ? 'Memproses...' : action.label,
                         onClick: onSave,
@@ -237,6 +247,11 @@ export default function ExpenseEntryFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildRecord ? buildRecord(record, config) : record;
+                    setLocalRecord(parsed);
+                }
 
                 if (!isDetail && record?.id) {
                     onOpenDetail?.({
@@ -451,7 +466,7 @@ export default function ExpenseEntryFormView({
                                     placeholder="0"
                                     className="h-[36px] rounded-[4px] border-ui-border"
                                     prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
-                                    inputClassName="text-slate-700 font-medium text-right text-sm"
+                                    inputClassName="text-slate-700 text-right text-sm"
                                 />
                             </div>
                         </div>

@@ -42,7 +42,17 @@ export default function PurchasePaymentFormView({
     buildRecord,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
     const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
         if (!activeRecordId) {
             return config.draft;
         }
@@ -54,7 +64,7 @@ export default function PurchasePaymentFormView({
         }
 
         return config.detailRecords?.[activeRecordId] ?? config.draft;
-    }, [activeRecordId, buildRecord, config]);
+    }, [activeRecordId, buildRecord, config, localRecord]);
     const isDetail = Boolean(activeRecordId);
     const sectionTabs = isDetail ? config.detailSectionTabs : config.sectionTabs;
     const [activeSectionId, setActiveSectionId] = useState(sectionTabs?.[0]?.id ?? 'details');
@@ -144,6 +154,11 @@ export default function PurchasePaymentFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildRecord ? buildRecord(record, config) : record;
+                    setLocalRecord(parsed);
+                }
 
                 if (!values.__backendRecordId && record?.id) {
                     onOpenDetail?.({

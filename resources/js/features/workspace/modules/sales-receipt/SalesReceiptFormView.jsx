@@ -101,17 +101,6 @@ export default function SalesReceiptFormView({
                                 <div className="grid gap-y-2 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                                     <div className="flex items-center justify-start gap-4 sm:justify-end">
                                         <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
-                                        {!isDetail ? (
-                                            <TransactionSwitch
-                                                checked={values.autoNumber}
-                                                onChange={(nextChecked) =>
-                                                    setValues((current) => ({
-                                                        ...current,
-                                                        autoNumber: nextChecked,
-                                                    }))
-                                                }
-                                            />
-                                        ) : null}
                                     </div>
 
                                     {!isDetail && values.autoNumber ? (
@@ -148,7 +137,6 @@ export default function SalesReceiptFormView({
                                                 }))
                                             }
                                             maxLength={120}
-                                            readOnly={Boolean(isDetail)}
                                             className="h-[40px] rounded-[4px] border-ui-border"
                                             inputClassName="text-xs sm:text-sm text-brand-dark"
                                         />
@@ -198,7 +186,7 @@ export default function SalesReceiptFormView({
                         </div>
                     </div>
 
-                    <div className="shrink-0 lg:w-[96px]">
+                    <div className="shrink-0 lg:w-[96px] lg:pt-4">
                         <TransactionDock actions={dockActions} />
                     </div>
                 </div>

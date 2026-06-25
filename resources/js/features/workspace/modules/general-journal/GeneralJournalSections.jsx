@@ -3,7 +3,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { CloseIcon, FunnelIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -45,7 +45,6 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
             rows={values.lineItems}
             emptyLabel={config.lineTable.emptyLabel}
             minWidthClassName="min-w-[820px]"
-            showTitleSearchButton
             onRowClick={handlers.onEditLineItem}
             getRowClassName={
                 handlers.onEditLineItem
@@ -113,19 +112,6 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                     <TransactionFieldLabel label={config.labels.documentNumber} required />
 
                     <div className="flex items-center gap-2 w-full">
-                        {!activeRecordId ? (
-                            <div className="shrink-0">
-                                <TransactionSwitch
-                                    checked={values.autoNumber}
-                                    onChange={(nextChecked) =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            autoNumber: nextChecked,
-                                        }))
-                                    }
-                                />
-                            </div>
-                        ) : null}
                         <div className="flex-1 min-w-0">
                             {values.autoNumber ? (
                                 <SelectField
@@ -151,7 +137,6 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                                     onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                                     onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                     maxLength={120}
-                                    readOnly={Boolean(activeRecordId)}
                                     trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
                                     className="h-[40px] rounded-[4px] border-ui-border"
                                     inputClassName="text-xs sm:text-sm text-brand-dark"
@@ -161,18 +146,6 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                         </div>
                     </div>
                 </div>
-
-                {values.transactionNumber ? (
-                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
-                        <TransactionFieldLabel label={config.labels.transactionNumber} />
-                        <TextInput
-                            value={values.transactionNumber}
-                            readOnly
-                            className="h-[40px] rounded-[4px] border-tab-view-inactive-border-t bg-success-bg"
-                            inputClassName="text-xs sm:text-sm font-medium text-green-820"
-                        />
-                    </div>
-                ) : null}
             </div>
         </div>
     );
@@ -203,14 +176,6 @@ export function JournalTableFilters({ table, filters, setFilters }) {
                     ))}
                 </SelectField>
             ))}
-
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-5 w-5" />
-            </button>
         </div>
     );
 }

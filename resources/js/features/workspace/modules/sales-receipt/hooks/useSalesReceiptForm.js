@@ -37,7 +37,17 @@ export default function useSalesReceiptForm({
 
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
 
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
     const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
         if (!activeRecordId) {
             return config.draft;
         }
@@ -49,7 +59,7 @@ export default function useSalesReceiptForm({
         }
 
         return config.detailRecords?.[activeRecordId] ?? config.draft;
-    }, [activeRecordId, buildRecord, config]);
+    }, [activeRecordId, buildRecord, config, localRecord]);
 
     const [values, setValues] = useState(() => buildSalesReceiptFormState(sourceRecord));
     const isDetail = Boolean(activeRecordId);
@@ -121,6 +131,11 @@ export default function useSalesReceiptForm({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildRecord ? buildRecord(record, config) : record;
+                    setLocalRecord(parsed);
+                }
 
                 if (!values.__backendRecordId && record?.id) {
                     onOpenDetail?.({

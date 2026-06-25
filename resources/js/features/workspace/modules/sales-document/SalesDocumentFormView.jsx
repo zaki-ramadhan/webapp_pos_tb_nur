@@ -71,10 +71,21 @@ export default function SalesDocumentFormView({
     const [itemModalOpen, setItemModalOpen] = useState(false);
     const [importModalOpen, setImportModalOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const sourceRecord = useMemo(
-        () => (activeRecordId ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId)) : config.draft),
-        [activeRecordId, buildRecord, config.draft, config.table.rows],
-    );
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
+    const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
+        return activeRecordId
+            ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId))
+            : config.draft;
+    }, [activeRecordId, buildRecord, config.draft, config.table.rows, localRecord]);
     const [values, setValues] = useState(() => buildSalesDocumentFormState(sourceRecord));
     const isDetail = Boolean(activeRecordId);
     const [activeSectionId, setActiveSectionId] = useState(() => resolveInitialSectionId(config, isDetail));
@@ -167,6 +178,11 @@ export default function SalesDocumentFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildRecord ? buildRecord(record) : record;
+                    setLocalRecord(parsed);
+                }
 
                 if (!isDetail && record?.id && onOpenDetail) {
                     onOpenDetail({
@@ -323,7 +339,7 @@ export default function SalesDocumentFormView({
                     ) : null}
                 </div>
 
-                <div className="shrink-0 lg:w-[96px]">
+                <div className="shrink-0 lg:w-[96px] lg:pt-4">
                     <TransactionDock actions={dockActions} />
                 </div>
             </div>
