@@ -14,7 +14,7 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                     value={values.formNumber}
                     readOnly
                     className="h-[36px] rounded-[4px] border-tab-view-inactive-border-t bg-success-bg"
-                    inputClassName="text-xs sm:text-sm font-semibold text-tab-view-inactive-border-l"
+                    inputClassName="text-xs sm:text-sm text-tab-view-inactive-border-l"
                 />
 
                 <TransactionFieldLabel label="No. Faktur" />
@@ -22,7 +22,7 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                     value={values.billNumber}
                     readOnly
                     className="h-[36px] rounded-[4px] border-tab-view-inactive-border-t bg-success-bg"
-                    inputClassName="text-xs sm:text-sm font-semibold text-tab-view-inactive-border-l"
+                    inputClassName="text-xs sm:text-sm text-tab-view-inactive-border-l"
                 />
 
                 <TransactionFieldLabel label="Terhutang" />
@@ -42,7 +42,7 @@ export function PurchasePaymentInvoiceTab({ values, setValues }) {
                             pay: event.target.value,
                         }))
                     }
-                    inputClassName="font-semibold"
+                    inputClassName=""
                 />
             </div>
 

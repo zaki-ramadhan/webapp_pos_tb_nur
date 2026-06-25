@@ -12,7 +12,7 @@ export function SalesReceiptInvoiceTab({ values, setValues }) {
                 value={values.invoiceNumber}
                 readOnly
                 className="h-[36px] rounded-[4px] border-tab-view-inactive-border-t bg-success-bg"
-                inputClassName="text-xs sm:text-sm font-semibold text-tab-view-inactive-border-l"
+                inputClassName="text-xs sm:text-sm text-tab-view-inactive-border-l"
             />
 
             <TransactionFieldLabel label="Tgl Faktur" />
@@ -35,7 +35,7 @@ export function SalesReceiptInvoiceTab({ values, setValues }) {
                         payment: event.target.value,
                     }))
                 }
-                inputClassName="font-semibold"
+                inputClassName=""
             />
         </div>
     );

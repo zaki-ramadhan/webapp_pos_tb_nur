@@ -191,7 +191,7 @@ export function ItemInfoTab({ detail }) {
                         value={detail.quoteNumber}
                         readOnly
                         className="h-[36px] rounded-[4px] border-success-border bg-bg-success-alt"
-                        inputClassName="text-xs sm:text-sm font-semibold text-tab-view-inactive-border-l"
+                        inputClassName="text-xs sm:text-sm text-tab-view-inactive-border-l"
                     />
                 </>
             ) : null}
@@ -203,7 +203,7 @@ export function ItemInfoTab({ detail }) {
                         value={detail.orderNumber}
                         readOnly
                         className="h-[36px] rounded-[4px] border-success-border bg-bg-success-alt"
-                        inputClassName="text-xs sm:text-sm font-semibold text-tab-view-inactive-border-l"
+                        inputClassName="text-xs sm:text-sm text-tab-view-inactive-border-l"
                     />
                 </>
             ) : null}

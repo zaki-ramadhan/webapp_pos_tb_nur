@@ -76,11 +76,8 @@ export const defaultPurchasePaymentConfig = {
     topActions: [],
     numberingOptions: [
         'Nomor Bukti Kas / Bank',
-        'Bank',
-        'Deposito Bank',
         'Kas & Bank',
         'Kas Kecil',
-        'Setara Kas',
     ],
     payeePlaceholder: 'Cari/Pilih Pemasok...',
     bankPlaceholder: 'Cari/Pilih...',

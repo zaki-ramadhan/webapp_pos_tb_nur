@@ -32,6 +32,10 @@ export default function TextareaField({
         if (sanitized.startsWith(' ')) {
             sanitized = sanitized.trimStart();
         }
+        const maxLen = props.maxLength ?? 1000;
+        if (sanitized.length > maxLen) {
+            sanitized = sanitized.slice(0, maxLen);
+        }
         if (sanitized !== event.target.value) {
             event.target.value = sanitized;
         }
@@ -61,6 +65,8 @@ export default function TextareaField({
                 ) : null}
 
                 <textarea
+                    ref={props.ref}
+                    {...props}
                     id={id}
                     rows={rows}
                     placeholder={placeholder}
@@ -70,7 +76,7 @@ export default function TextareaField({
                     aria-invalid={Boolean(resolvedError)}
                     className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default text-gray-500 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
                     onChange={handleChange}
-                    {...props}
+                    maxLength={props.maxLength ?? 1000}
                 />
 
                 {trailing ? (

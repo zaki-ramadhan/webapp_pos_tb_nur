@@ -246,12 +246,15 @@ export default function TextInput({
     const resolvedMin = type === 'number' ? 0 : undefined;
 
     function handleWrappedChange(event) {
-        const originalValue = event.target.value;
+        let originalValue = event.target.value;
+        if (resolvedMaxLength && originalValue.length > resolvedMaxLength) {
+            originalValue = originalValue.slice(0, resolvedMaxLength);
+        }
         const name = props.name ?? '';
         const prefixVal = typeof prefix === 'string' ? prefix : '';
         const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly);
         
-        if (originalValue !== sanitizedValue) {
+        if (event.target.value !== sanitizedValue) {
             event.target.value = sanitizedValue;
         }
         setLocalValue(event.target.value);
@@ -423,7 +426,29 @@ export default function TextInput({
                      searchStr.includes('k.pos') ||
                      searchStr.includes('kode pos');
 
-    const resolvedMaxLength = props.maxLength ?? (isPostal ? 5 : undefined);
+    const isPhone = searchStr.includes('phone') || 
+                    searchStr.includes('telp') || 
+                    searchStr.includes('telepon') ||
+                    searchStr.includes('whatsapp') || 
+                    searchStr.includes('wa') || 
+                    searchStr.includes('fax') || 
+                    searchStr.includes('hp') || 
+                    searchStr.includes('kontak') || 
+                    searchStr.includes('contact');
+
+    const isCodeOrNumber = searchStr.includes('code') || 
+                           searchStr.includes('kode') || 
+                           searchStr.includes('number') || 
+                           searchStr.includes('nomor') || 
+                           searchStr.includes('no') || 
+                           searchStr.includes('reference') || 
+                           searchStr.includes('external') || 
+                           searchStr.includes('sku') || 
+                           searchStr.includes('npwp') ||
+                           type === 'number';
+
+    const defaultMaxLength = isPostal ? 10 : (isPhone ? 30 : (isCodeOrNumber ? 120 : 255));
+    const resolvedMaxLength = props.maxLength ?? defaultMaxLength;
     const hasTrailingPx = trailingClassName.includes('px-') || trailingClassName.includes('pl-') || trailingClassName.includes('pr-');
 
     const isClearOrClose = isClearOrCloseElement(trailing);
@@ -447,6 +472,7 @@ export default function TextInput({
 
                 <input
                     ref={inputRef}
+                    {...props}
                     id={id}
                     type={resolvedType}
                     inputMode={resolvedInputMode}
@@ -461,7 +487,6 @@ export default function TextInput({
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}
                     min={resolvedMin}
-                    {...props}
                     onKeyDown={handleWrappedKeyDown}
                 />
 
