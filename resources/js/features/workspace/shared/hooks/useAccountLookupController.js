@@ -76,6 +76,7 @@ export default function useAccountLookupController({ value, values, disabled = f
         if (!open) {
             setDraftValue('');
             lastFetchKeyRef.current = null;
+            setRows([]);
         }
     }, [open, selectedValue]);
 
@@ -126,11 +127,11 @@ export default function useAccountLookupController({ value, values, disabled = f
             return;
         }
 
+        setLoading(true);
+        setError('');
+
         let ignore = false;
         const timeoutId = window.setTimeout(async () => {
-            setLoading(true);
-            setError('');
-
             try {
                 const payload = await listBackendResource('accounts', {
                     search: fetchKey,

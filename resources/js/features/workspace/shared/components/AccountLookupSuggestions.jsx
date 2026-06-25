@@ -54,7 +54,7 @@ export default function AccountLookupSuggestions({
                                         </span>
                                     ) : null}
                                 </span>
-                                <span className="shrink-0 rounded-full border border-border-chip-blue bg-bg-chip-blue px-2.5 py-1 text-xs font-medium text-text-chip-blue">
+                                <span className="shrink-0 rounded-full border border-border-chip-blue bg-bg-chip-blue px-2 py-0.5 text-xs font-medium text-text-chip-blue">
                                     {translateAccountType(record.account_type) || '-'}
                                 </span>
                             </button>
