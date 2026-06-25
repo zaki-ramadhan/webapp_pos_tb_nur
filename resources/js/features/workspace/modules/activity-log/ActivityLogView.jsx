@@ -18,7 +18,13 @@ import {
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { CogIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { cleanHeaderLabel, getColumnMinWidth, tableRegistry } from '@/features/workspace/shared/columnVisibility';
+import {
+    cleanHeaderLabel,
+    getColumnMinWidth,
+    getTableSchemaKey,
+    tableRegistry,
+    useColumnVisibility,
+} from '@/features/workspace/shared/columnVisibility';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -42,40 +48,49 @@ export default function ActivityLogView({ page }) {
         setPerPage,
         lastPage,
         from,
-        to
+        to,
     } = useBackendIndexResource({
         resource: 'activity-logs',
         initialPerPage: 25,
         filters: {
             search: keyword.trim(),
-            
         },
     });
     const rows = useMemo(() => mapActivityLogRows(backendRows), [backendRows]);
     const filtersConfig = useMemo(() => buildActivityLogFilters(rows), [rows]);
+
     const cleanedColumns = useMemo(() => {
         return (page.table.columns ?? []).map(col => ({
             ...col,
-            label: cleanHeaderLabel(col.label)
+            label: cleanHeaderLabel(col.label),
         }));
     }, [page.table.columns]);
+
+    const schemaKey = getTableSchemaKey(cleanedColumns);
+    const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
+
+    const visibleColumns = useMemo(() => {
+        return cleanedColumns.filter(col => visibleColumnIds.includes(col.id));
+    }, [cleanedColumns, visibleColumnIds]);
+
     const table = useMemo(() => ({
         ...page.table,
         filters: filtersConfig,
         columns: cleanedColumns,
         rows,
         pageValue: total.toLocaleString('id-ID'),
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
-    }), [filtersConfig, page.table, cleanedColumns, rows, total]);
+        pagination: {
+            page: currentPage,
+            perPage,
+            total,
+            lastPage,
+            from,
+            to,
+            onPageChange: setPage,
+            onPerPageChange: setPerPage,
+        },
+    }), [filtersConfig, page.table, cleanedColumns, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+
     const [filters, setFilters] = useState(() =>
         filtersConfig.reduce((result, filter) => {
             result[filter.id] = filter.options?.[0]?.value ?? 'all';
@@ -94,49 +109,41 @@ export default function ActivityLogView({ page }) {
                 return result;
             }, {}),
         );
-    }, [filtersConfig, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [filtersConfig]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
 
-        return table.rows.filter((row) => {
-            const passesFilters = table.filters.every((filter) =>
+        return rows.filter((row) => {
+            const passesFilters = filtersConfig.every((filter) =>
                 matchesFilter(row, filter, filters[filter.id] ?? 'all'),
             );
 
-            if (!passesFilters) {
-                return false;
-            }
+            if (!passesFilters) return false;
+            if (!normalizedKeyword) return true;
 
-            if (!normalizedKeyword) {
-                return true;
-            }
-
-            const searchCols = table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 2).some((column) =>
-                String(row[column.id] ?? '')
-                    .toLowerCase()
-                    .includes(normalizedKeyword),
+            return cleanedColumns.slice(0, 2).some((col) =>
+                String(row[col.id] ?? '').toLowerCase().includes(normalizedKeyword),
             );
         });
-    }, [filters, keyword, table.filters, table.rows]);
+    }, [filters, keyword, rows, filtersConfig, cleanedColumns]);
 
     useEffect(() => {
-        tableRegistry.setActiveTable(table.columns, filteredRows, 'activity-log');
+        tableRegistry.setActiveTable(cleanedColumns, filteredRows, 'activity-log');
         return () => {
             if (tableRegistry.activeTable?.resource === 'activity-log') {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [table.columns, filteredRows]);
+    }, [cleanedColumns, filteredRows]);
 
     const emptyLabel = loading ? 'Memuat data...' : (error || 'Belum ada data');
 
     return (
-        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 resourceName="activity-log"
-                filters={table.filters.map((filter) => (
+                filters={filtersConfig.map((filter) => (
                     <SelectField
                         key={filter.id}
                         value={filters[filter.id]}
@@ -167,11 +174,16 @@ export default function ActivityLogView({ page }) {
                 exportConfig={false}
                 importButton={false}
                 printButton={false}
-                menuButton={{
-                    label: 'Pengaturan',
-                    icon: <CogIcon className="h-5 w-5" />,
-                    items: [{ id: 'settings', label: 'Pengaturan' }],
-                    widthClassName: 'w-[160px]',
+                columnSettings={{
+                    columns: cleanedColumns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label),
+                    visibleIds: visibleColumnIds,
+                    onToggle: (columnId) => {
+                        setVisibleColumnIds(prev =>
+                            prev.includes(columnId)
+                                ? prev.filter(id => id !== columnId)
+                                : [...prev, columnId]
+                        );
+                    },
                 }}
                 search={{
                     value: keyword,
@@ -187,15 +199,15 @@ export default function ActivityLogView({ page }) {
                 <DataTable className="min-w-[1320px]" wrapperClassName="border-table-wrapper-border">
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
-                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                            <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
                                 No.
                             </DataTableHead>
-                            {table.columns.map((column) => {
+                            {visibleColumns.map((column) => {
                                 const minWidth = getColumnMinWidth(column.label);
                                 return (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-normal text-white text-center`.trim()}
                                         style={minWidth ? { minWidth } : undefined}
                                     >
                                         <span className="block whitespace-nowrap">{column.label}</span>
@@ -215,32 +227,19 @@ export default function ActivityLogView({ page }) {
                                     <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
                                         {table.pagination ? (table.pagination.from + index) : (index + 1)}
                                     </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.transactionDateLabel)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.referenceName)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.actionLabel)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.transactionTypeLabel)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.loggedAt)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.userName)}</span>
-                                    </DataTableCell>
-                                    <DataTableCell className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap">
-                                        <span className="block truncate">{formatTableTextValue(row.email)}</span>
-                                    </DataTableCell>
+                                    {visibleColumns.map((column) => (
+                                        <DataTableCell
+                                            key={column.id}
+                                            className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap"
+                                        >
+                                            <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                        </DataTableCell>
+                                    ))}
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={table.columns.length + 1} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
                                     {emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
