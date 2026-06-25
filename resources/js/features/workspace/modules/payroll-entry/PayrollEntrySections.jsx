@@ -2,6 +2,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import {
     TransactionDataTable,
     TransactionDateInput,
@@ -9,13 +10,12 @@ import {
     TransactionFieldLabel,
     TransactionHeaderButton,
     TransactionSectionHeading,
-    TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import TextareaField from '@/components/ui/TextareaField';
 
-export function PayrollHeader({ config, values, setValues }) {
+export function PayrollHeader({ config, values, setValues, isDetail }) {
     return (
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-y-4 gap-x-8">
             <div className="flex flex-col gap-y-2 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
@@ -69,31 +69,33 @@ export function PayrollHeader({ config, values, setValues }) {
 
             <div className="flex flex-col gap-y-2 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
-                    <TransactionFieldLabel label={config.labels.numbering} required htmlFor="numbering-type" />
-                    <div className="flex items-center gap-3 w-full">
-                        <TransactionSwitch
-                            checked={values.autoNumber}
-                            onChange={(nextChecked) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    autoNumber: nextChecked,
-                                }))
-                            }
-                        />
-                        <SelectField
-                            id="numbering-type"
-                            value={values.numberingType}
-                            onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                            containerClassName="flex-1 min-w-0"
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            selectClassName="text-xs sm:text-sm text-brand-dark"
-                        >
-                            {config.numberingOptions.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </SelectField>
+                    <TransactionFieldLabel label={config.labels.numbering} required htmlFor="documentNumber" />
+                    <div className="max-w-[320px] w-full">
+                        {isDetail ? (
+                             <TextInput
+                                 id="documentNumber"
+                                 value={values.documentNumber}
+                                 onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
+                                 onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
+                                 maxLength={120}
+                                 className="h-[40px] rounded-[4px] border-ui-border w-full"
+                                 inputClassName="text-xs sm:text-sm text-brand-dark"
+                             />
+                        ) : (
+                            <SelectField
+                                id="documentNumber"
+                                value={values.numberingType}
+                                onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
+                                className="h-[40px] rounded-[4px] border-ui-border w-full"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
+                            >
+                                {config.numberingOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        )}
                     </div>
                 </div>
 
@@ -128,25 +130,29 @@ export function PayrollHeader({ config, values, setValues }) {
     );
 }
 
-export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
+export function PayrollEmployeeSection({ config, values, setValues, onTake, handlers = {} }) {
     return (
         <div className="flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-1.5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-                    <TextInput
-                        value={values.employeeLookup}
-                        onChange={(event) =>
-                            setValues?.((current) => ({
-                                ...current,
-                                employeeLookup: event.target.value,
-                            }))
-                        }
-                        placeholder={config.employeeLookupPlaceholder}
-                        trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
-                        containerClassName="w-full sm:max-w-[360px]"
-                        className="h-[40px] rounded-[4px] border-ui-border"
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                    />
+                    <div className="w-full sm:max-w-[360px]">
+                        <BackendLookupField
+                            resource="employees"
+                            resetAfterSelect={true}
+                            placeholder={config.employeeLookupPlaceholder}
+                            searchLabel="Cari karyawan"
+                            getOptionLabel={(record) => record?.full_name ?? ''}
+                            getOptionSearchText={(record) =>
+                                [record?.full_name, record?.employee_code, record?.position]
+                                    .filter(Boolean)
+                                    .join(' ')
+                            }
+                            onSelect={handlers.onSelectEmployee}
+                            emptyTitle="Karyawan tidak ditemukan"
+                            emptyDescription="Coba cari dengan nama atau jabatan lain."
+                            className="h-[40px]"
+                        />
+                    </div>
 
                     <TransactionHeaderButton
                         label={config.takeButtonLabel}
@@ -166,6 +172,12 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake }) {
                     rows={config.employeeTable.rows}
                     emptyLabel={config.employeeTable.emptyLabel}
                     minWidthClassName="min-w-[760px]"
+                    onRowClick={handlers.onEditEmployeeRow}
+                    getRowClassName={
+                        handlers.onEditEmployeeRow
+                            ? () => 'cursor-pointer transition hover:bg-workspace-hover-bg'
+                            : undefined
+                    }
                     renderHeaderCell={(column) =>
                         column.kind === 'spacer' ? (
                             <span className="flex justify-center">

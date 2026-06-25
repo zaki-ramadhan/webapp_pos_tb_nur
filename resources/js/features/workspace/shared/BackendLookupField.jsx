@@ -6,6 +6,7 @@ import ReferenceLookupInput from './ReferenceLookupInput';
 export default function BackendLookupField({
     resource,
     values = [],
+    resetAfterSelect = false,
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
     getOptionLabel = (option) => option?.label ?? option?.name ?? '',
@@ -18,6 +19,7 @@ export default function BackendLookupField({
 }) {
     const [items, setItems] = useState([]);
     const [searching, setSearching] = useState(false);
+    const [internalValue, setInternalValue] = useState('');
 
     useEffect(() => {
         let ignore = false;
@@ -26,22 +28,39 @@ export default function BackendLookupField({
             try {
                 const payload = await listBackendResource(resource, { per_page: 150 });
                 if (!ignore) {
-                    const rows = extractBackendRows(payload);
-                    setItems(rows);
+                    setItems(extractBackendRows(payload));
                 }
-            } catch (err) {
+            } catch {
                 // Abaikan error
             } finally {
-                if (!ignore) {
-                    setSearching(false);
-                }
+                if (!ignore) setSearching(false);
             }
         }
         fetchRecords();
-        return () => {
-            ignore = true;
-        };
+        return () => { ignore = true; };
     }, [resource]);
+
+    if (resetAfterSelect) {
+        return (
+            <ReferenceLookupInput
+                value={internalValue}
+                placeholder={placeholder}
+                searchLabel={searchLabel}
+                items={items}
+                searching={searching}
+                getOptionLabel={getOptionLabel}
+                getOptionSearchText={getOptionSearchText}
+                onSelect={(item) => {
+                    onSelect?.(item);
+                    setInternalValue('');
+                }}
+                onClear={() => setInternalValue('')}
+                emptyTitle={emptyTitle}
+                emptyDescription={emptyDescription}
+                className={className}
+            />
+        );
+    }
 
     return (
         <ReferenceLookupInput
@@ -55,9 +74,7 @@ export default function BackendLookupField({
             onSelect={onSelect}
             onRemove={(label) => {
                 const item = values.find((val) => getOptionLabel(val) === label);
-                if (item) {
-                    onRemove(item);
-                }
+                if (item) onRemove(item);
             }}
             emptyTitle={emptyTitle}
             emptyDescription={emptyDescription}

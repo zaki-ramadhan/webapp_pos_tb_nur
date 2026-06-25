@@ -7,6 +7,7 @@ import TextInput from '@/components/ui/TextInput';
 import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employeeViewShared';
 import { SuggestionTextInput } from '@/features/workspace/modules/employee/employeeControls';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 
 export function EmployeeTaxTab({ form, values, onChange }) {
     return (
@@ -93,6 +94,18 @@ export function EmployeeBankTab({ form, values, onChange }) {
             </EmployeeFieldRow>
             <EmployeeFieldRow label="No Rekening"><TextInput name="bank_accounts.0.account_number" value={values.bankAccountNumber} onChange={(event) => onChange('bankAccountNumber', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[568px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
             <EmployeeFieldRow label="Atas Nama Rekening"><TextInput name="bank_accounts.0.account_name" value={values.bankAccountHolder} onChange={(event) => onChange('bankAccountHolder', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[568px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
+            <EmployeeFieldRow label="Akun Hutang Beban">
+                <AccountLookupField
+                    value={values.liabilityAccountLabel}
+                    placeholder="Cari/Pilih Akun..."
+                    searchLabel="Cari akun hutang beban"
+                    dialogTitle="Pilih Akun Hutang Beban"
+                    heightClassName="h-[40px]"
+                    className="w-full md:max-w-[568px]"
+                    onSelectAccount={(_, label) => onChange('liabilityAccountLabel', label ?? '')}
+                    onRemove={() => onChange('liabilityAccountLabel', '')}
+                />
+            </EmployeeFieldRow>
         </div>
     );
 }

@@ -51,6 +51,7 @@ export function buildEmployeeFormValues(form, detailRow = null) {
         bankAccountHolder: primaryBankAccount?.account_name ?? primaryBankAccount?.accountName ?? detailRow?.bankAccountHolder ?? defaults.bankAccountHolder ?? '',
         __bankAccountId: primaryBankAccount?.id ?? null,
         attachments: detailRow?.attachments ?? defaults.attachments ?? [],
+        liabilityAccountLabel: detailRow?.liabilityAccountLabel ?? defaults.liabilityAccountLabel ?? '',
     };
 }
 
@@ -118,6 +119,7 @@ export function buildEmployeeRow(record) {
         branchLabel: branchName,
         sellerValue: record.is_salesperson ? 'yes' : 'no',
         attachments: record.attachments ?? [],
+        liabilityAccountLabel: record.liability_account_label ?? '',
         tabLabel: record.full_name ?? record.employee_code ?? `Karyawan #${record.id}`,
     };
 }
@@ -208,6 +210,7 @@ export function buildEmployeeSnapshot(values) {
         user: values.user ?? '',
         __bankAccountId: values.__bankAccountId ?? null,
         attachments: values.attachments ?? [],
+        liabilityAccountLabel: values.liabilityAccountLabel ?? '',
     };
 }
 

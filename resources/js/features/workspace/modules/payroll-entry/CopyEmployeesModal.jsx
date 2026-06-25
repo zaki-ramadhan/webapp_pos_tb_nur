@@ -5,6 +5,8 @@ import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
 import { DataTable, DataTableBody, DataTableHead, DataTableHeader, DataTableRow, DataTableCell } from '@/components/ui/DataTable';
 import { listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 const STATUS_OPTIONS = [
     { value: 'pegawai-tetap', label: 'Pegawai Tetap' },
@@ -84,7 +86,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
         const selectedList = filteredEmployees
             .filter((emp) => selectedIds.includes(emp.id))
             .map((emp) => {
-                const rawValue = parseFloat(valuesMap[emp.id] || 0);
+                const rawValue = parseAmountInput(valuesMap[emp.id]) || 0;
                 const taxRate = emp.subject_to_income_tax ? 0.05 : 0;
                 const taxAmount = rawValue * taxRate;
                 const paidSalary = rawValue - taxAmount;
@@ -114,6 +116,8 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
             onClose={onClose}
             title="Salin Karyawan"
             maxWidthClassName="max-w-[720px]"
+            contentClassName="bg-white px-2.5 py-2.5 sm:px-3.5 sm:py-3.5"
+            footerClassName="border-t border-ui-border-medium bg-white px-2.5 py-2 sm:px-3.5"
             footer={
                 <div className="flex justify-end gap-2.5">
                     <Button variant="secondary" size="md" onClick={onClose}>
@@ -130,7 +134,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 </div>
             }
         >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
                 {}
                 <div className="w-full sm:max-w-[75%]">
                     <SelectField
@@ -149,11 +153,11 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 </div>
 
                 {}
-                <div className="mt-2">
+                <div>
                     <DataTable>
                         <DataTableHeader>
-                            <DataTableRow className="bg-blue-900 text-white border-t-0">
-                                <DataTableHead className="w-[48px] text-center">
+                            <DataTableRow className="border-t-0 text-white">
+                                <DataTableHead className="text-center" style={{ width: '48px', minWidth: '48px' }}>
                                     <input
                                         type="checkbox"
                                         checked={isAllSelected}
@@ -162,10 +166,10 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                         className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-brand-blue-accent focus:ring-brand-blue-accent"
                                     />
                                 </DataTableHead>
-                                <DataTableHead className="text-left font-semibold">
+                                <DataTableHead className="text-left font-normal">
                                     Karyawan
                                 </DataTableHead>
-                                <DataTableHead className="text-center font-semibold w-[160px]">
+                                <DataTableHead className="text-center font-normal w-[160px]">
                                     Nilai
                                 </DataTableHead>
                             </DataTableRow>
@@ -193,7 +197,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                     const isSelected = selectedIds.includes(emp.id);
                                     return (
                                         <DataTableRow key={emp.id} className={isSelected ? 'bg-slate-50' : ''}>
-                                            <DataTableCell className="w-[48px] text-center">
+                                            <DataTableCell className="text-center" style={{ width: '48px', minWidth: '48px' }}>
                                                 <input
                                                     type="checkbox"
                                                     checked={isSelected}
@@ -202,17 +206,17 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                                 />
                                             </DataTableCell>
                                             <DataTableCell className="text-left font-normal">
-                                                <span className="text-slate-500 font-mono mr-2">[{emp.employee_code}]</span>
                                                 <span className="text-slate-800 font-semibold">{emp.full_name}</span>
                                                 {emp.position && <span className="text-xs text-slate-400 block">{emp.position}</span>}
                                             </DataTableCell>
                                             <DataTableCell className="text-center w-[160px]">
-                                                <input
-                                                    type="number"
+                                                <FormattedAmountInput
                                                     placeholder="0"
                                                     value={valuesMap[emp.id] ?? ''}
                                                     onChange={(e) => handleValueChange(emp.id, e.target.value)}
-                                                    className="w-full h-8 px-2 border border-slate-300 rounded-[4px] text-right text-xs focus:outline-none focus:border-brand-blue-accent"
+                                                    allowNegative={false}
+                                                    className="w-full h-8 rounded-[4px] border-slate-300"
+                                                    inputClassName="text-right text-xs text-brand-dark px-2"
                                                 />
                                             </DataTableCell>
                                         </DataTableRow>

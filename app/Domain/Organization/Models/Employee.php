@@ -44,6 +44,7 @@ class Employee extends DomainModel
         'user_id',
         'notes',
         'is_active',
+        'liability_account_label',
     ];
 
     protected array $searchable = ['employee_code', 'full_name', 'position', 'email', 'mobile_phone'];

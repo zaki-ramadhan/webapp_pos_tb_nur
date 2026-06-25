@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import PayrollEntryFormView from './PayrollEntryFormView';
 import PayrollEntryTableView from './PayrollEntryTableView';
-import { mapPayrollEntryRow } from './payrollEntryShared';
+import { mapPayrollEntryRow, buildPayrollEntryRecord } from './payrollEntryShared';
 
 export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const {
@@ -28,6 +28,10 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenCo
 
     const resolvedConfig = useMemo(() => ({
         ...page.payrollEntry,
+        rowMap: mappedRows.reduce((result, row) => {
+            result[row.id] = row;
+            return result;
+        }, {}),
         table: {
             ...page.payrollEntry.table,
             rows: mappedRows,
@@ -36,18 +40,18 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenCo
             refreshLabel: loading ? 'Memuat data...' : page.payrollEntry.table?.refreshLabel,
             emptyLabel: error || page.payrollEntry.table?.emptyLabel || 'Belum ada data',
             onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+            pagination: {
+                page: currentPage,
+                perPage,
+                total,
+                lastPage,
+                from,
+                to,
+                onPageChange: setPage,
+                onPerPageChange: setPerPage,
+            },
         },
-    }), [error, loading, mappedRows, page.payrollEntry, reload, total]);
+    }), [error, loading, mappedRows, page.payrollEntry, reload, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <PayrollEntryTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
@@ -60,6 +64,7 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenCo
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
+            buildRecord={buildPayrollEntryRecord}
         />
     );
 }
