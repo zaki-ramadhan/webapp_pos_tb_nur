@@ -32,7 +32,13 @@ class GeneralJournalPage
                     'branch' => 'Cabang',
                     'notes' => 'Keterangan',
                 ],
-                'numberingOptions' => ['Jurnal Umum'],
+                'numberingOptions' => [
+                    'Jurnal Umum',
+                    'Nomor Bukti Kas/Bank',
+                    'Kas & Bank',
+                    'Kas Kecil',
+                    'Bank',
+                ],
                 'takeButtonLabel' => 'Ambil',
                 'branchPlaceholder' => 'Cari/Pilih...',
                 'lineSearchPlaceholder' => 'Cari/Pilih Akun Perkiraan...',
@@ -161,7 +167,7 @@ class GeneralJournalPage
                         ],
                         [
                             'id' => 'accountCode',
-                            'label' => 'Akun Perkiraan',
+                            'label' => 'Kode #',
                             'widthClassName' => 'w-[27%]',
                             'align' => 'left',
                         ],
@@ -223,7 +229,7 @@ class GeneralJournalPage
                         ['id' => 'export-journal', 'label' => 'Ekspor jurnal umum'],
                     ],
                     'columns' => [
-                        ['id' => 'documentNumber', 'label' => 'No. Jurnal', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
+                        ['id' => 'documentNumber', 'label' => 'Nomor #', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
                         ['id' => 'transactionNumber', 'label' => 'No. Trans #', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
                         ['id' => 'description', 'label' => 'Keterangan', 'widthClassName' => 'w-[30%]', 'align' => 'left'],

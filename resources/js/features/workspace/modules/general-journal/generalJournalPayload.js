@@ -4,8 +4,16 @@ import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNum
 import { validateRequiredChecks } from '@/features/workspace/shared/formValidation';
 import { buildJournalTotals } from './generalJournalAdapters';
 
-export function buildGeneratedJournalNumber() {
-    return buildGeneratedDocNumber('JV');
+export function buildGeneratedJournalNumber(numberingType) {
+    let prefix = 'JV';
+    if (numberingType === 'Nomor Bukti Kas/Bank' || numberingType === 'Kas & Bank') {
+        prefix = 'JV.KB';
+    } else if (numberingType === 'Kas Kecil') {
+        prefix = 'JV.KK';
+    } else if (numberingType === 'Bank') {
+        prefix = 'JV.B';
+    }
+    return buildGeneratedDocNumber(prefix);
 }
 
 export function buildGeneralJournalPayload(values) {
@@ -23,7 +31,7 @@ export function buildGeneralJournalPayload(values) {
 
     return {
         branch_id: values.__branchId ?? 1,
-        document_number: values.documentNumber?.trim() || buildGeneratedJournalNumber(),
+        document_number: values.documentNumber?.trim() || buildGeneratedJournalNumber(values.numberingType),
         reference_number: values.transactionNumber?.trim() || null,
         numbering_type: values.numberingType?.trim() || null,
         process_type: values.transactionTypeValue?.trim() || 'general-journal',
