@@ -206,7 +206,7 @@ export default function InquiryWorkspaceView({
                     hasSidePanel ? 'xl:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_380px]' : ''
                 }`.trim()}
             >
-                <div className="overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light">
+                <div className="min-w-0 overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light">
                     <div className="min-h-0 overflow-x-auto">
                         <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="rounded-none border-0">
                             <DataTableHeader className="bg-table-header-bg">

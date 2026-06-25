@@ -203,7 +203,7 @@ export default function TableListView({
     }, [cleanedColumns, filteredRows, table.resource]);
 
     return (
-        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-2 py-2 shadow-card-light sm:px-3 sm:py-3">
+        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-2 py-2 shadow-card-light sm:px-3 sm:py-3">
             <TableToolbar
                 size="compact"
                 filters={

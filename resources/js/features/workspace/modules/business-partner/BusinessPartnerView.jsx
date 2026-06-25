@@ -160,11 +160,11 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
 
             <ConfirmationModal
                 open={showDeleteConfirm}
-                title="Konfirmasi Hapus"
-                message="Apakah Anda yakin ingin menghapus data ini?"
-                confirmLabel="Hapus"
+                title="Konfirmasi"
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name || values.code}`}
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={performDelete}
             />

@@ -305,7 +305,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }
 
     return (
-        <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                     {(config.controls ?? []).map((control) => (

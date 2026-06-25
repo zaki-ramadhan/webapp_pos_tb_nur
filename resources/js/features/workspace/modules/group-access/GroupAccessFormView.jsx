@@ -256,30 +256,17 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                 open={isDeleteConfirmationOpen}
                 onClose={() => setIsDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
-                title={deleteConfirmation.title}
+                title="Konfirmasi"
                 message={
                     generalValues.selectedUsers && generalValues.selectedUsers.length > 0 ? (
-                        <div>
-                            <p className="mb-2">
-                                Grup akses <strong>"{generalValues.groupName}"</strong> memiliki {generalValues.selectedUsers.length} pengguna terdaftar yang akan kehilangan akses perizinan dari grup ini:
-                            </p>
-                            <ul className="mb-3 list-disc pl-5 text-sm text-slate-500 max-h-[150px] overflow-y-auto">
-                                {generalValues.selectedUsers.map((user, idx) => (
-                                    <li key={user.id ?? idx}>
-                                        {user.label || user.name}
-                                    </li>
-                                ))}
-                            </ul>
-                            <p>Apakah Anda yakin ingin melanjutkan penghapusan?</p>
-                        </div>
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${generalValues.groupName}\n\nGrup akses ini memiliki ${generalValues.selectedUsers.length} pengguna terdaftar yang akan kehilangan akses perizinan dari grup ini.`
                     ) : (
-                        deleteConfirmationMessage
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${generalValues.groupName}`
                     )
                 }
-                confirmLabel={deleteConfirmation.confirmLabel}
-                cancelLabel={deleteConfirmation.cancelLabel}
-                closeLabel={deleteConfirmation.closeLabel}
-                confirmVariant="danger"
+                confirmLabel="Ya"
+                cancelLabel="Batal"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
         </ModuleFormTemplate>

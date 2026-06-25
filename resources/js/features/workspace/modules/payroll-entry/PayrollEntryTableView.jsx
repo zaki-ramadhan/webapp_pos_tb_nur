@@ -1,14 +1,12 @@
 import { useMemo, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 
-
 import SelectField from '@/components/ui/SelectField';
 import { TransactionDataTable } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     CogIcon,
-    FunnelIcon,
     PlusIcon,
     PrintIcon,
     RefreshIcon,
@@ -48,6 +46,8 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
             }}
             pageValue={table.pageValue}
             className="space-y-3"
+            importButton={false}
+            exportConfig={false}
             filters={
                 table.filters?.length ? (
                     <div className="flex flex-wrap items-center gap-2">
@@ -73,14 +73,6 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
                                 ))}
                             </SelectField>
                         ))}
-
-                        <button
-                            type="button"
-                            className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                            aria-label={table.filterButtonLabel}
-                        >
-                            <FunnelIcon className="h-5 w-5" />
-                        </button>
                     </div>
                 ) : null
             }
@@ -130,7 +122,7 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
 
     return (
         <div className="flex min-h-full flex-col gap-3">
-            <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+            <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
                 <PayrollTableToolbar
                     table={config.table}
                     filters={filters}
