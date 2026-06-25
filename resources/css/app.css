@@ -122,9 +122,9 @@
     /* Custom palette colors */
 
     /* Custom overlay & shadow tokens */
-    --color-modal-overlay-bg: rgba(20, 30, 49, 0.58);
-    --color-modal-overlay-dark: rgba(15, 23, 42, 0.72);
-    --color-modal-overlay-light: rgba(22, 31, 52, 0.62);
+    --color-modal-overlay-bg: rgba(0, 0, 0, 0.80);
+    --color-modal-overlay-dark: rgba(0, 0, 0, 0.90);
+    --color-modal-overlay-light: rgba(0, 0, 0, 0.68);
     --color-sidebar-item-active-bg: rgba(71, 84, 108, 0.92);
     --background-image-bg-gradient-radial: radial-gradient(circle at top, rgba(222, 146, 72, 0.18), transparent 28%);
     --background-image-bg-gradient-linear: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(237, 247, 255, 0.84) 100%);
