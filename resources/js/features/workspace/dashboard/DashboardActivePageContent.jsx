@@ -65,7 +65,7 @@ export default function DashboardActivePageContent({
     }
 
     return (
-        <div className="min-h-0 flex-1 flex flex-col bg-tab-active-bg px-1 pb-2 pt-0 sm:px-2 sm:pb-2.5 lg:pb-3 overflow-y-auto">
+        <div className="min-h-0 min-w-0 flex-1 flex flex-col bg-tab-active-bg px-1 pb-2 pt-0 sm:px-2 sm:pb-2.5 lg:pb-3 overflow-y-auto">
             <FormErrorProvider>
                 {renderWorkspaceActivePage({
                     activePage,

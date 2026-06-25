@@ -76,7 +76,7 @@ export default function ConfirmationModal({
                 <ConfirmationIllustration />
 
                 <div className="min-w-0 flex-1 pt-2">
-                    <p className="text-xs sm:text-sm leading-6 text-danger">{message}</p>
+                    <p className="text-xs sm:text-sm leading-6 text-red-850 whitespace-pre-line">{message}</p>
                 </div>
             </div>
         </WorkspaceDialog>

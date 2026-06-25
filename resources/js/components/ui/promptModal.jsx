@@ -4,9 +4,11 @@ import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import TextInput from '@/components/ui/TextInput';
 import SelectField from '@/components/ui/SelectField';
 import Button from '@/components/ui/Button';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete }) {
     const [open, setOpen] = useState(true);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [values, setValues] = useState(() => {
         const initial = {};
         fields.forEach(f => {
@@ -64,7 +66,7 @@ function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete })
                     <div>
                         {showDelete ? (
                             <Button
-                                onClick={handleDelete}
+                                onClick={() => setDeleteConfirmOpen(true)}
                                 variant="secondary"
                                 size="md"
                                 className="border-red-150 hover:bg-danger-border text-error-border font-semibold rounded-[4px]"
@@ -113,6 +115,16 @@ function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete })
                     );
                 })}
             </div>
+            <ConfirmationModal
+                open={deleteConfirmOpen}
+                onClose={() => setDeleteConfirmOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Baris Detail"
+                message="Apakah Anda yakin ingin menghapus baris detail ini dari daftar?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+            />
         </WorkspaceDialog>
     );
 }

@@ -221,7 +221,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                     </h3>
                                     {loadingProducts && <span className="text-sm text-slate-500">Mencocokkan...</span>}
                                 </div>
-                                <div className="max-h-[240px] overflow-y-auto border border-slate-200 rounded-[4px]">
+                                <div className="max-h-[240px] overflow-auto border border-slate-200 rounded-[4px] w-full">
                                     <table className="w-full border-collapse text-left text-sm">
                                         <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
                                             <tr>

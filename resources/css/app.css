@@ -660,4 +660,22 @@
     }
 }
 
+/* Custom input borders for high visibility and contrast */
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(input:not(:disabled)),
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(select:not(:disabled)),
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(textarea:not(:disabled)),
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(button[aria-haspopup="listbox"]:not(:disabled)) {
+    border-color: #8b99ab !important;
+}
+
+input[type="text"]:not(.sr-only):not(:focus):not(:disabled),
+input[type="number"]:not(.sr-only):not(:focus):not(:disabled),
+input[type="date"]:not(.sr-only):not(:focus):not(:disabled),
+select:not(.sr-only):not(:focus):not(:disabled),
+textarea:not(.sr-only):not(:focus):not(:disabled),
+input[type="checkbox"]:not(:focus):not(:disabled),
+input[type="radio"]:not(:focus):not(:disabled) {
+    border-color: #8b99ab !important;
+}
+
 

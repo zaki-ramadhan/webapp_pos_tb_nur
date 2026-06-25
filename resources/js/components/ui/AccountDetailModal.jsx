@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import TextInput from '@/components/ui/TextInput';
 import Button from '@/components/ui/Button';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { PencilIcon } from '@/features/workspace/shared/Icons';
 
 function AccountDetailModalContainer({
@@ -16,6 +17,7 @@ function AccountDetailModalContainer({
     onDestroy
 }) {
     const [open, setOpen] = useState(true);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('detail');
     const [side, setSide] = useState(defaultSide || 'debit');
 
@@ -108,7 +110,7 @@ function AccountDetailModalContainer({
                     <div>
                         {isEdit ? (
                             <Button
-                                onClick={handleDelete}
+                                onClick={() => setDeleteConfirmOpen(true)}
                                 variant="secondary"
                                 size="md"
                                 className="border-red-150 hover:bg-danger-border text-error-border font-semibold rounded-[4px]"
@@ -235,6 +237,16 @@ function AccountDetailModalContainer({
                     </div>
                 </div>
             )}
+            <ConfirmationModal
+                open={deleteConfirmOpen}
+                onClose={() => setDeleteConfirmOpen(false)}
+                onConfirm={handleDelete}
+                title="Hapus Baris Detail"
+                message="Apakah Anda yakin ingin menghapus baris detail ini dari daftar?"
+                confirmLabel="Hapus"
+                cancelLabel="Batal"
+                confirmVariant="danger"
+            />
         </WorkspaceDialog>
     );
 }
