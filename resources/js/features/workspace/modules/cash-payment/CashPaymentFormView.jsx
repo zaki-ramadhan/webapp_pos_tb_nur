@@ -299,7 +299,20 @@ export default function CashPaymentFormView({
                     try {
                         const fullRecord = await getBackendResource('expense-entries', record.id);
                         if (!fullRecord) return;
-                        const importedLines = (fullRecord.lines ?? []).map((line, index) => ({
+
+                        const lines = fullRecord.lines ?? [];
+                        if (lines.length === 0) {
+                            setStatus({
+                                tone: 'error',
+                                message: `Pencatatan beban ${fullRecord.document_number} tidak memiliki rincian beban.`,
+                            });
+                            showErrorToast({
+                                message: `Pencatatan beban ${fullRecord.document_number} tidak memiliki rincian beban.`,
+                            });
+                            return;
+                        }
+
+                        const importedLines = lines.map((line, index) => ({
                             id: `imported-expense-line-${index + 1}-${Date.now()}`,
                             __lineId: null,
                             __accountId: line.account_id ?? null,
@@ -333,7 +346,20 @@ export default function CashPaymentFormView({
                     try {
                         const fullRecord = await getBackendResource('payroll-entries', record.id);
                         if (!fullRecord) return;
-                        const importedLines = (fullRecord.lines ?? []).map((line, index) => ({
+
+                        const lines = fullRecord.lines ?? [];
+                        if (lines.length === 0) {
+                            setStatus({
+                                tone: 'error',
+                                message: `Pencatatan gaji ${fullRecord.document_number} tidak memiliki rincian karyawan.`,
+                            });
+                            showErrorToast({
+                                message: `Pencatatan gaji ${fullRecord.document_number} tidak memiliki rincian karyawan.`,
+                            });
+                            return;
+                        }
+
+                        const importedLines = lines.map((line, index) => ({
                             id: `imported-payroll-line-${index + 1}-${Date.now()}`,
                             __lineId: null,
                             __accountId: line.account_id ?? null,
@@ -395,11 +421,11 @@ export default function CashPaymentFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={onDelete}
-                title="Hapus Pembayaran Kas"
-                message="Pembayaran kas ini akan dihapus permanen. Lanjutkan?"
-                confirmLabel="Hapus"
+                title="Konfirmasi"
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.documentNumber}`}
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
             <CashPaymentAttachmentModal

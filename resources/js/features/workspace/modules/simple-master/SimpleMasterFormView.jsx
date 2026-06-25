@@ -233,10 +233,11 @@ export default function SimpleMasterFormView({
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}
-                title={`Hapus ${form.sectionLabel ?? 'data'}`}
-                message={`Data "${detailRow?.name ?? detailRow?.tabLabel ?? detailRow?.id ?? 'ini'}" akan dihapus. Lanjutkan?`}
-                confirmLabel="Hapus"
-                confirmVariant="danger"
+                title="Konfirmasi"
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${detailRow?.name ?? detailRow?.tabLabel ?? detailRow?.id ?? 'ini'}`}
+                confirmLabel="Ya"
+                cancelLabel="Batal"
+                confirmVariant="primary"
                 confirmLoading={saving}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}

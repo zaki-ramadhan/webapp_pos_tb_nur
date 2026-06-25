@@ -202,11 +202,11 @@ export default function DepartmentFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
-                title="Hapus Departemen"
-                message="Departemen ini akan dihapus permanen. Lanjutkan?"
-                confirmLabel="Hapus"
+                title="Konfirmasi"
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name}`}
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
         </ModuleFormTemplate>

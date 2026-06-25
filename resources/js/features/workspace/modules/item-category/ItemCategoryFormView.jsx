@@ -187,11 +187,11 @@ export default function ItemCategoryFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
-                title="Hapus Kategori Barang"
-                message="Kategori barang ini akan dihapus permanen. Lanjutkan?"
-                confirmLabel="Hapus"
+                title="Konfirmasi"
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name}`}
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
         </ModuleFormTemplate>

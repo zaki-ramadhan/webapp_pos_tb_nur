@@ -356,11 +356,11 @@ export default function ExpenseEntryFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={onDelete}
-                title="Hapus Pencatatan Beban"
-                message="Pencatatan beban ini akan dihapus permanen. Lanjutkan?"
-                confirmLabel="Hapus"
+                title="Konfirmasi"
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.documentNumber}`}
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
             <WorkspaceDialog

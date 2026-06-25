@@ -232,29 +232,17 @@ export default function ItemsServicesFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
-                title="Hapus Barang/Jasa"
+                title="Konfirmasi"
                 message={
                     values.unitConversions && values.unitConversions.length > 0 ? (
-                        <div>
-                            <p className="mb-2">
-                                Barang/jasa <strong>"{values.name}"</strong> memiliki data konversi unit berelasi yang akan ikut terhapus:
-                            </p>
-                            <ul className="mb-3 list-disc pl-5 text-sm text-slate-500 max-h-[150px] overflow-y-auto">
-                                {values.unitConversions.map((conv, idx) => (
-                                    <li key={conv.id ?? idx}>
-                                        Unit: {conv.unitLabel || conv.unit?.[0]?.name || 'Pcs'} (Kuantitas: {conv.quantity})
-                                    </li>
-                                ))}
-                            </ul>
-                            <p>Apakah Anda yakin ingin melanjutkan penghapusan permanen?</p>
-                        </div>
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}\n\nBarang/jasa ini memiliki data konversi unit berelasi yang akan ikut terhapus.`
                     ) : (
-                        "Barang/jasa ini akan dihapus permanen. Lanjutkan?"
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}`
                     )
                 }
-                confirmLabel="Hapus"
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
         </ModuleFormTemplate>

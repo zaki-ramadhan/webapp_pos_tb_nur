@@ -349,29 +349,17 @@ export default function SalesDocumentFormView({
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={onDelete}
-                title="Hapus Dokumen"
+                title="Konfirmasi"
                 message={
                     values.items && values.items.length > 0 ? (
-                        <div>
-                            <p className="mb-2">
-                                Dokumen ini memiliki {values.items.length} baris detail transaksi yang akan ikut terhapus permanen:
-                            </p>
-                            <ul className="mb-3 list-disc pl-5 text-sm text-slate-500 max-h-[150px] overflow-y-auto">
-                                {values.items.map((item, idx) => (
-                                    <li key={item.id ?? idx}>
-                                        {item.itemCode || item.code} - {item.itemName || item.name} (Qty: {item.quantity})
-                                    </li>
-                                ))}
-                            </ul>
-                            <p>Apakah Anda yakin ingin melanjutkan penghapusan permanen?</p>
-                        </div>
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.documentNumber}\n\nDokumen ini memiliki ${values.items.length} baris detail transaksi yang akan ikut terhapus permanen.`
                     ) : (
-                        "Dokumen ini akan dihapus permanen. Lanjutkan?"
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.documentNumber}`
                     )
                 }
-                confirmLabel="Hapus"
+                confirmLabel="Ya"
                 cancelLabel="Batal"
-                confirmVariant="danger"
+                confirmVariant="primary"
                 confirmLoading={saving}
             />
             <ImportItemsModal

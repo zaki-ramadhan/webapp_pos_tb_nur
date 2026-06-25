@@ -260,28 +260,16 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
 
             <ConfirmationModal
                 open={deleteModalOpen}
-                title="Hapus akun perkiraan"
+                title="Konfirmasi"
                 message={
                     values.childAccounts && values.childAccounts.length > 0 ? (
-                        <div>
-                            <p className="mb-2">
-                                Akun <strong>"{values.name || values.code}"</strong> memiliki sub-akun berikut yang akan terputus hubungannya (menjadi akun utama tanpa induk):
-                            </p>
-                            <ul className="mb-3 list-disc pl-5 text-sm text-slate-500 max-h-[150px] overflow-y-auto">
-                                {values.childAccounts.map((child) => (
-                                    <li key={child.id}>
-                                        {child.code} - {child.name}
-                                    </li>
-                                ))}
-                            </ul>
-                            <p>Apakah Anda yakin ingin melanjutkan penghapusan?</p>
-                        </div>
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}\n\nAkun ini memiliki ${values.childAccounts.length} sub-akun yang akan terputus hubungannya (menjadi akun utama tanpa induk).`
                     ) : (
-                        `Akun "${values.name || values.code || 'ini'}" akan dihapus. Lanjutkan?`
+                        `Apakah Anda yakin akan melakukan penghapusan data:\n${values.code} - ${values.name}`
                     )
                 }
-                confirmLabel="Hapus"
-                confirmVariant="danger"
+                confirmLabel="Ya"
+                confirmVariant="primary"
                 confirmLoading={saving}
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={handleDelete}
