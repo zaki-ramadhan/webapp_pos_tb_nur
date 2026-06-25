@@ -5,7 +5,7 @@ import TextInput from '@/components/ui/TextInput';
 import SelectField from '@/components/ui/SelectField';
 import Button from '@/components/ui/Button';
 
-function PromptModalContainer({ title, fields, resolve, onDestroy }) {
+function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete }) {
     const [open, setOpen] = useState(true);
     const [values, setValues] = useState(() => {
         const initial = {};
@@ -21,6 +21,14 @@ function PromptModalContainer({ title, fields, resolve, onDestroy }) {
         setOpen(false);
         setTimeout(() => {
             resolve(null);
+            onDestroy();
+        }, 300);
+    }
+
+    function handleDelete() {
+        setOpen(false);
+        setTimeout(() => {
+            resolve({ __action: 'delete' });
             onDestroy();
         }, 300);
     }
@@ -52,9 +60,24 @@ function PromptModalContainer({ title, fields, resolve, onDestroy }) {
             title={title}
             maxWidthClassName="max-w-[480px]"
             footer={
-                <div className="flex justify-end gap-2.5">
-                    <Button onClick={handleClose} variant="secondary" size="md">Batal</Button>
-                    <Button onClick={handleSave} variant="primary" size="md">Simpan</Button>
+                <div className="flex items-center justify-between w-full">
+                    <div>
+                        {showDelete ? (
+                            <Button
+                                onClick={handleDelete}
+                                variant="secondary"
+                                size="md"
+                                className="border-red-150 hover:bg-danger-border text-error-border font-semibold rounded-[4px]"
+                            >
+                                Hapus
+                            </Button>
+                        ) : (
+                            <span />
+                        )}
+                    </div>
+                    <div className="flex gap-2.5">
+                        <Button onClick={handleSave} variant="primary" size="md">Simpan</Button>
+                    </div>
                 </div>
             }
         >
@@ -94,7 +117,7 @@ function PromptModalContainer({ title, fields, resolve, onDestroy }) {
     );
 }
 
-export function showPromptModal(title, fields) {
+export function showPromptModal(title, fields, showDelete = false) {
     return new Promise((resolve) => {
         const div = document.createElement('div');
         document.body.appendChild(div);
@@ -109,6 +132,7 @@ export function showPromptModal(title, fields) {
             <PromptModalContainer
                 title={title}
                 fields={fields}
+                showDelete={showDelete}
                 resolve={resolve}
                 onDestroy={onDestroy}
             />

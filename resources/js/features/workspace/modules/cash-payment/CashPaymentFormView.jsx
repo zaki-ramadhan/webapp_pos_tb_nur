@@ -31,6 +31,7 @@ import {
     buildLookupLabel,
     promptCashPaymentLineItem,
     validateCashPaymentValues,
+    buildCashPaymentRecord,
 } from './cashPaymentShared';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
@@ -45,7 +46,17 @@ export default function CashPaymentFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
     const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
         if (!activeRecordId) {
             return config.draft;
         }
@@ -53,7 +64,7 @@ export default function CashPaymentFormView({
         return config.rowMap?.[activeRecordId]
             ? buildDetailRecordFromRow(config.rowMap[activeRecordId], config)
             : config.detailRecords?.[activeRecordId] ?? config.draft;
-    }, [activeRecordId, config]);
+    }, [activeRecordId, config, localRecord]);
     const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
@@ -90,7 +101,7 @@ export default function CashPaymentFormView({
                     if (action.id === 'save') {
                         return {
                             ...action,
-                            tone: values.saveTone,
+                            tone: 'primary',
                             disabled: saveDisabled,
                             label: saving ? 'Memproses...' : action.label,
                             onClick: onSave,
@@ -147,6 +158,24 @@ export default function CashPaymentFormView({
                 return;
             }
 
+            if (nextItem.action === 'delete') {
+                if (currentItem) {
+                    setValues((current) =>
+                        applyCashPaymentLineItems(
+                            {
+                                ...current,
+                                lineLookup: '',
+                            },
+                            (current.lineItems ?? []).filter((item) => item.id !== currentItem.id),
+                        ),
+                    );
+                    showSuccessToast({
+                        message: 'Rincian pembayaran dihapus.',
+                    });
+                }
+                return;
+            }
+
             setValues((current) =>
                 applyCashPaymentLineItems(
                     {
@@ -192,6 +221,11 @@ export default function CashPaymentFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildCashPaymentRecord(record, config);
+                    setLocalRecord(parsed);
+                }
 
                 if (!isDetail && record?.id) {
                     onOpenDetail?.({

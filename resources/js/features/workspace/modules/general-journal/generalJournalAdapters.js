@@ -70,7 +70,7 @@ export function buildGeneralJournalRow(record) {
         id: String(record?.id ?? ''),
         __backendRecord: record,
         documentNumber: record?.document_number ?? '',
-        transactionNumber: metadata.transaction_number ?? record?.reference_number ?? '',
+        transactionNumber: metadata.transaction_number ?? record?.reference_number ?? record?.document_number ?? '',
         date: entryDate,
         description: record?.notes ?? '',
         total: formatCurrencyValue(totalAmount),
@@ -99,7 +99,7 @@ export function buildJournalRecordFromBackend(record = {}, config) {
         {
             __backendRecordId: record.id ?? null,
             documentNumber: record.document_number ?? '',
-            transactionNumber: metadata.transaction_number ?? record.reference_number ?? '',
+            transactionNumber: metadata.transaction_number ?? record.reference_number ?? record.document_number ?? '',
             entryDate: formatIsoDate(record.entry_date),
             autoNumber: false,
             numberingType: record.numbering_type ?? config.defaults?.numberingType ?? '',
@@ -138,7 +138,7 @@ export function buildRecordFromTableRow(row = {}, config) {
     return {
         id: row.id,
         documentNumber: row.documentNumber ?? '',
-        transactionNumber: row.transactionNumber ?? '',
+        transactionNumber: row.transactionNumber || row.documentNumber || '',
         entryDate: row.date ?? '',
         autoNumber: false,
         numberingType: config.numberingOptions?.[0] ?? 'Jurnal Umum',
@@ -193,10 +193,15 @@ export async function promptJournalLineItem(record, currentItem = null) {
         defaultSide,
         defaultAmount,
         defaultNotes,
+        isEdit: Boolean(currentItem),
     });
 
     if (!result) {
         return null;
+    }
+
+    if (result.action === 'delete') {
+        return { action: 'delete' };
     }
 
     const amount = result.amount;

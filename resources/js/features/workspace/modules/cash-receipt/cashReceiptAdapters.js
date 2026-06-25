@@ -180,10 +180,14 @@ export async function promptCashReceiptLineItem(record, currentItem = null) {
             defaultValue: currentItem?.amount ?? '0',
             required: true,
         },
-    ]);
+    ], Boolean(currentItem));
 
     if (!result) {
         return null;
+    }
+
+    if (result.__action === 'delete') {
+        return { action: 'delete' };
     }
 
     const amount = parseNumericInput(result.amount);

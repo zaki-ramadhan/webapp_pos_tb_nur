@@ -228,10 +228,14 @@ export async function promptBankTransferFeeItem(record, currentItem = null) {
             defaultValue: currentItem?.chargedTo ?? 'Dari Kas/Bank',
             required: true,
         },
-    ]);
+    ], Boolean(currentItem));
 
     if (!result) {
         return null;
+    }
+
+    if (result.__action === 'delete') {
+        return { action: 'delete' };
     }
 
     const amount = parseNumericInput(result.amount);

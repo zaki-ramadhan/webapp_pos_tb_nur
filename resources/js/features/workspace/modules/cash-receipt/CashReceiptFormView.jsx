@@ -22,6 +22,7 @@ import {
     applyCashReceiptLineItems,
     promptCashReceiptLineItem,
     validateCashReceiptValues,
+    buildCashReceiptRecord,
 } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
 import {
     TransactionDateInput,
@@ -48,13 +49,23 @@ export default function CashReceiptFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
     const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
         if (!activeRecordId) {
             return config.draft;
         }
 
         return config.detailRecords?.[activeRecordId] ?? buildCashReceiptDetailRecordFromRow(config.rowMap?.[activeRecordId], config);
-    }, [activeRecordId, config]);
+    }, [activeRecordId, config, localRecord]);
     const [values, setValues] = useState(() => buildCashReceiptFormState(sourceRecord, config));
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildCashReceiptFormState(sourceRecord, config), [config, sourceRecord]);
@@ -89,7 +100,7 @@ export default function CashReceiptFormView({
                     if (action.id === 'save') {
                         return {
                             ...action,
-                            tone: values.saveTone,
+                            tone: 'primary',
                             disabled: saveDisabled,
                             label: saving ? 'Memproses...' : action.label,
                             onClick: onSave,
@@ -121,6 +132,24 @@ export default function CashReceiptFormView({
             const nextItem = await promptCashReceiptLineItem(record, currentItem);
 
             if (!nextItem) {
+                return;
+            }
+
+            if (nextItem.action === 'delete') {
+                if (currentItem) {
+                    setValues((current) =>
+                        applyCashReceiptLineItems(
+                            {
+                                ...current,
+                                lineLookup: '',
+                            },
+                            (current.lineItems ?? []).filter((item) => item.id !== currentItem.id),
+                        ),
+                    );
+                    showSuccessToast({
+                        message: 'Rincian penerimaan dihapus.',
+                    });
+                }
                 return;
             }
 
@@ -169,6 +198,11 @@ export default function CashReceiptFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildCashReceiptRecord(record, config);
+                    setLocalRecord(parsed);
+                }
 
                 if (!isDetail && record?.id) {
                     onOpenDetail?.({
@@ -278,12 +312,6 @@ export default function CashReceiptFormView({
                                     <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                                         <div className="flex items-center justify-start gap-4">
                                             <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
-                                            {!activeRecordId ? (
-                                                <TransactionSwitch
-                                                    checked={values.autoNumber}
-                                                    onChange={(nextChecked) => setValues((current) => ({ ...current, autoNumber: nextChecked }))}
-                                                />
-                                            ) : null}
                                         </div>
 
                                         <div className="max-w-[240px] w-full justify-self-end">
@@ -308,7 +336,6 @@ export default function CashReceiptFormView({
                                                     onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
                                                     onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                                     maxLength={120}
-                                                    readOnly={Boolean(activeRecordId)}
                                                     className="h-[40px] rounded-[4px] border-ui-border"
                                                     inputClassName="text-xs sm:text-sm text-brand-dark"
                                                 />
@@ -338,7 +365,7 @@ export default function CashReceiptFormView({
                         </div>
                     </div>
 
-                    <div className="shrink-0 lg:w-[96px]">
+                    <div className="shrink-0 lg:w-[96px] lg:pt-4">
                         <TransactionDock actions={dockActions} />
                     </div>
                 </div>

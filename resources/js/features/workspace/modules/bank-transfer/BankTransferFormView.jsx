@@ -28,6 +28,7 @@ import {
     buildLookupLabel,
     promptBankTransferFeeItem,
     validateBankTransferValues,
+    buildBankTransferRecord,
 } from './bankTransferShared';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
@@ -42,7 +43,17 @@ export default function BankTransferFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const [localRecord, setLocalRecord] = useState(null);
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
     const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
         if (!activeRecordId) {
             return config.draft;
         }
@@ -50,7 +61,7 @@ export default function BankTransferFormView({
         return config.rowMap?.[activeRecordId]
             ? buildDetailRecordFromRow(config.rowMap[activeRecordId], config)
             : config.detailRecords?.[activeRecordId] ?? config.draft;
-    }, [activeRecordId, config]);
+    }, [activeRecordId, config, localRecord]);
     const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
@@ -96,7 +107,7 @@ export default function BankTransferFormView({
                     if (action.id === 'save') {
                         return {
                             ...action,
-                            tone: values.saveTone,
+                            tone: 'primary',
                             disabled: saveDisabled,
                             label: saving ? 'Memproses...' : action.label,
                             onClick: onSave,
@@ -128,6 +139,20 @@ export default function BankTransferFormView({
             const nextItem = await promptBankTransferFeeItem(record, currentItem);
 
             if (!nextItem) {
+                return;
+            }
+
+            if (nextItem.action === 'delete') {
+                if (currentItem) {
+                    updateValues((current) => ({
+                        ...current,
+                        feeLookup: '',
+                        feeRows: (current.feeRows ?? []).filter((item) => item.id !== currentItem.id),
+                    }));
+                    showSuccessToast({
+                        message: 'Biaya transfer dihapus.',
+                    });
+                }
                 return;
             }
 
@@ -172,6 +197,11 @@ export default function BankTransferFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildBankTransferRecord(record, config);
+                    setLocalRecord(parsed);
+                }
 
                 if (!isDetail && record?.id) {
                     onOpenDetail?.({

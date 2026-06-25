@@ -26,6 +26,7 @@ import {
     buildGeneralJournalPayload,
     buildLookupLabel,
     buildRecordFromTableRow,
+    buildJournalRecordFromBackend,
     promptJournalLineItem,
     validateJournalValues,
 } from './generalJournalShared';
@@ -43,8 +44,18 @@ export default function GeneralJournalFormView({
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    const [localRecord, setLocalRecord] = useState(null);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+
+    useEffect(() => {
+        setLocalRecord(null);
+    }, [activeRecordId]);
+
     const sourceRecord = useMemo(() => {
+        if (localRecord) {
+            return localRecord;
+        }
+
         if (!activeRecordId) {
             return config.defaults;
         }
@@ -52,7 +63,7 @@ export default function GeneralJournalFormView({
         return config.rowMap?.[activeRecordId]
             ? buildRecordFromTableRow(config.rowMap[activeRecordId], config)
             : config.records?.[activeRecordId] ?? config.defaults;
-    }, [activeRecordId, config]);
+    }, [activeRecordId, config, localRecord]);
     const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
@@ -66,7 +77,7 @@ export default function GeneralJournalFormView({
 
     const validationMessage = useMemo(() => validateJournalValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
-    const saveDisabled = saving || !isDirty;
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(
         () =>
@@ -76,7 +87,7 @@ export default function GeneralJournalFormView({
                     if (action.id === 'save') {
                         return {
                             ...action,
-                            tone: values.saveTone,
+                            tone: 'primary',
                             disabled: saveDisabled,
                             label: saving ? 'Memproses...' : action.label,
                             onClick: handleSave,
@@ -123,6 +134,24 @@ export default function GeneralJournalFormView({
             const nextItem = await promptJournalLineItem(record, currentItem);
 
             if (!nextItem) {
+                return;
+            }
+
+            if (nextItem.action === 'delete') {
+                if (currentItem) {
+                    setValues((current) =>
+                        applyJournalLineItems(
+                            {
+                                ...current,
+                                lineLookup: '',
+                            },
+                            (current.lineItems ?? []).filter((item) => item.id !== currentItem.id),
+                        ),
+                    );
+                    showSuccessToast({
+                        message: 'Baris jurnal dihapus.',
+                    });
+                }
                 return;
             }
 
@@ -179,6 +208,11 @@ export default function GeneralJournalFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+
+                if (record) {
+                    const parsed = buildJournalRecordFromBackend(record, config);
+                    setLocalRecord(parsed);
+                }
 
                 if (!isDetail && record?.id) {
                     onOpenDetail?.({
