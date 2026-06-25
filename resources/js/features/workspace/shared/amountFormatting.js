@@ -14,13 +14,13 @@ export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative 
     normalizedValue = normalizedValue.replace(/-/g, '');
 
     if (!allowDecimal) {
-        const integerOnly = normalizedValue.replace(/,/g, '').replace(/\D/g, '');
+        const integerOnly = normalizedValue.replace(/,/g, '').replace(/\D/g, '').slice(0, 15);
         return integerOnly ? `${negativePrefix}${integerOnly}` : negativePrefix;
     }
 
     const [rawIntegerPart = '', ...rawFractionParts] = normalizedValue.split(',');
-    const integerPart = rawIntegerPart.replace(/\D/g, '');
-    const fractionPart = rawFractionParts.join('').replace(/\D/g, '');
+    const integerPart = rawIntegerPart.replace(/\D/g, '').slice(0, 15);
+    const fractionPart = rawFractionParts.join('').replace(/\D/g, '').slice(0, 6);
 
     if (!integerPart && !fractionPart) {
         return negativePrefix;
