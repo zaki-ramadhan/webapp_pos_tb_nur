@@ -32,7 +32,7 @@ import {
     validateCashPaymentValues,
     buildCashPaymentRecord,
 } from './cashPaymentShared';
-import CashPaymentLineItemModal from './CashPaymentLineItemModal';
+import MoneyMovementLineItemModal from '@/features/workspace/shared/MoneyMovementLineItemModal';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function CashPaymentFormView({
@@ -476,7 +476,7 @@ export default function CashPaymentFormView({
                 setValues={setValues}
                 setStatus={setStatus}
             />
-            <CashPaymentLineItemModal
+            <MoneyMovementLineItemModal
                 open={lineItemModalOpen}
                 onClose={() => {
                     setLineItemModalOpen(false);
@@ -486,6 +486,7 @@ export default function CashPaymentFormView({
                 record={modalRecord}
                 currentItem={modalCurrentItem}
                 onSave={handleSaveLineItem}
+                type="payment"
             />
         </>
     );
