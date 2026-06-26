@@ -71,6 +71,9 @@ class BackendResourceController extends Controller
         $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
         
         $record = $this->writer->create($blueprint, $payload);
+        if (!empty($blueprint->with)) {
+            $record->load($blueprint->with);
+        }
 
         return response()->json([
             'message' => "{$blueprint->label} created successfully.",
@@ -122,6 +125,9 @@ class BackendResourceController extends Controller
         $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
         
         $entity = $this->writer->update($blueprint, $entity, $payload);
+        if (!empty($blueprint->with)) {
+            $entity->load($blueprint->with);
+        }
 
         return response()->json([
             'message' => "{$blueprint->label} updated successfully.",

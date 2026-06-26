@@ -92,7 +92,14 @@ class BackendResourceWriter
 
             // 2. Rekalkulasi & Validasi Total di Sisi Backend (Price/Total Manipulation Protection)
             if ($blueprint->key !== 'period-ends' && is_subclass_of($blueprint->modelClass(), \App\Domain\Support\Models\OperationDocument::class)) {
-                if (isset($payload['lines']) && is_array($payload['lines'])) {
+                $itemKeys = [
+                    'sales-invoices', 'sales-orders', 'sales-quotes', 'sales-deliveries', 'sales-returns',
+                    'purchase-invoices', 'purchase-orders', 'purchase-returns', 'goods-receipts',
+                    'inventory-adjustments', 'work-orders', 'material-additions', 'work-completions',
+                    'stock-transfers', 'delivery-orders', 'asset-changes', 'asset-disposals', 'asset-moves',
+                    'item-requests', 'price-adjustments',
+                ];
+                if (in_array($blueprint->key, $itemKeys) && isset($payload['lines']) && is_array($payload['lines'])) {
                     $subtotal = 0.0;
                     $discountTotal = 0.0;
                     $taxTotal = 0.0;

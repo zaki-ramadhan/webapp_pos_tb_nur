@@ -40,6 +40,21 @@ class BackendResourceIndexQuery
             $this->applySearch($query, $search, $blueprint->searchColumns);
         }
 
+        $modelInstance = new $modelClass();
+        $tableName = $modelInstance->getTable();
+        foreach ($filters as $key => $value) {
+            if (in_array($key, ['search', 'per_page', 'page'], true)) {
+                continue;
+            }
+            if ($key === 'exclude_type' && Schema::hasColumn($tableName, 'account_type')) {
+                $query->where("{$tableName}.account_type", '!=', $value);
+                continue;
+            }
+            if (Schema::hasColumn($tableName, $key)) {
+                $query->where("{$tableName}.{$key}", $value);
+            }
+        }
+
         return $query
             ->orderByDesc('id')
             ->paginate($perPage)

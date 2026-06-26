@@ -69,6 +69,10 @@ class FinanceBackendResources
                 searchColumns: ['code', 'name', 'account_type', 'notes'],
                 modelClass: Account::class,
                 with: ['parent', 'currency', 'branches', 'users'],
+                indexRules: [
+                    'account_type' => ['nullable', 'string', 'max:60'],
+                    'exclude_type' => ['nullable', 'string', 'max:60'],
+                ],
                 storeRules: [
                     'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],

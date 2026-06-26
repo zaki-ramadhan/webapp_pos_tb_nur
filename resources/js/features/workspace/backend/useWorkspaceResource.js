@@ -13,6 +13,20 @@ export default function useWorkspaceResource({
         enabled,
     });
 
+    const {
+        total,
+        loading,
+        error,
+        reload,
+        page,
+        perPage,
+        lastPage,
+        from,
+        to,
+        setPage,
+        setPerPage,
+    } = resourceState;
+
     const mappedRows = useMemo(() => {
         return (resourceState.rows ?? []).map(mapRow);
     }, [resourceState.rows, mapRow]);
@@ -20,22 +34,35 @@ export default function useWorkspaceResource({
     const tableProps = useMemo(() => {
         return {
             rows: mappedRows,
-            total: resourceState.total,
-            loading: resourceState.loading,
-            error: resourceState.error,
-            onRefresh: resourceState.reload,
+            total,
+            loading,
+            error,
+            onRefresh: reload,
             pagination: {
-                page: resourceState.page,
-                perPage: resourceState.perPage,
-                total: resourceState.total,
-                lastPage: resourceState.lastPage,
-                from: resourceState.from,
-                to: resourceState.to,
-                onPageChange: resourceState.setPage,
-                onPerPageChange: resourceState.setPerPage,
+                page,
+                perPage,
+                total,
+                lastPage,
+                from,
+                to,
+                onPageChange: setPage,
+                onPerPageChange: setPerPage,
             },
         };
-    }, [mappedRows, resourceState]);
+    }, [
+        mappedRows,
+        total,
+        loading,
+        error,
+        reload,
+        page,
+        perPage,
+        lastPage,
+        from,
+        to,
+        setPage,
+        setPerPage,
+    ]);
 
     return {
         ...resourceState,
