@@ -58,7 +58,11 @@ export default function ReferenceLookupInput({
 
     useEffect(() => {
         function handleOutsideClick(event) {
-            if (rootRef.current && !rootRef.current.contains(event.target)) {
+            const target = event.target;
+            if (rootRef.current && !rootRef.current.contains(target)) {
+                if (target instanceof HTMLElement && target.closest('[data-portal-dropdown]')) {
+                    return;
+                }
                 setOpen(false);
             }
         }

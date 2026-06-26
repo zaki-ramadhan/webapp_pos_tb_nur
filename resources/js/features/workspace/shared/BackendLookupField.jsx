@@ -6,7 +6,6 @@ import ReferenceLookupInput from './ReferenceLookupInput';
 export default function BackendLookupField({
     resource,
     values = [],
-    resetAfterSelect = false,
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
     getOptionLabel = (option) => option?.label ?? option?.name ?? '',
@@ -19,7 +18,6 @@ export default function BackendLookupField({
 }) {
     const [items, setItems] = useState([]);
     const [searching, setSearching] = useState(false);
-    const [internalValue, setInternalValue] = useState('');
 
     useEffect(() => {
         let ignore = false;
@@ -39,28 +37,6 @@ export default function BackendLookupField({
         fetchRecords();
         return () => { ignore = true; };
     }, [resource]);
-
-    if (resetAfterSelect) {
-        return (
-            <ReferenceLookupInput
-                value={internalValue}
-                placeholder={placeholder}
-                searchLabel={searchLabel}
-                items={items}
-                searching={searching}
-                getOptionLabel={getOptionLabel}
-                getOptionSearchText={getOptionSearchText}
-                onSelect={(item) => {
-                    onSelect?.(item);
-                    setInternalValue('');
-                }}
-                onClear={() => setInternalValue('')}
-                emptyTitle={emptyTitle}
-                emptyDescription={emptyDescription}
-                className={className}
-            />
-        );
-    }
 
     return (
         <ReferenceLookupInput
