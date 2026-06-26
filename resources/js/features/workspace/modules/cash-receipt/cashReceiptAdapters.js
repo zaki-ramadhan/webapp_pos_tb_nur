@@ -44,7 +44,7 @@ export function buildCashReceiptFilters(baseFilters = [], rows = []) {
 }
 
 export function buildCashReceiptRow(record) {
-    const primaryAccountLabel = buildLookupLabel(record?.primaryAccount ?? {}, 'code');
+    const primaryAccountLabel = buildLookupLabel(record?.primary_account ?? {}, 'code');
     const bankLabel = record?.metadata?.cash_bank_label ?? primaryAccountLabel;
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const entryDate = formatIsoDate(record?.entry_date);
@@ -75,7 +75,7 @@ export function buildCashReceiptRecord(record = {}, config) {
         accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
         amount: formatCurrencyValue(line.total_amount ?? 0),
     }));
-    const primaryAccountLabel = buildLookupLabel(record.primaryAccount ?? {}, 'code');
+    const primaryAccountLabel = buildLookupLabel(record.primary_account ?? {}, 'code');
     const bankLabel = record.metadata?.cash_bank_label ?? primaryAccountLabel;
 
     return applyCashReceiptLineItems(

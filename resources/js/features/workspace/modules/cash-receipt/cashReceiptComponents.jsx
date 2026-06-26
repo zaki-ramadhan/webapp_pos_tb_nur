@@ -1,5 +1,4 @@
-import React from 'react';
-import { FunnelIcon, SortIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
+import { SortIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 
 export function ReceiptFilterBar({ table, filters, setFilters, SelectField }) {
     return (
@@ -21,14 +20,6 @@ export function ReceiptFilterBar({ table, filters, setFilters, SelectField }) {
                     ))}
                 </SelectField>
             ))}
-
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-4.5 w-4.5" />
-            </button>
         </div>
     );
 }

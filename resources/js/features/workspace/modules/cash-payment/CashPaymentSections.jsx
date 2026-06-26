@@ -1,13 +1,10 @@
 import { useState, useRef } from 'react';
 
-import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import {
     CloseIcon,
-    FunnelIcon,
     ChevronDownIcon,
 } from '@/features/workspace/shared/Icons';
 import DropdownMenu from '@/components/ui/DropdownMenu';
@@ -15,11 +12,9 @@ import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
-    TransactionHeaderButton,
     TransactionLineItemsSection,
     TransactionReadonlyTextarea,
     TransactionSectionHeading,
-    TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 export function PaymentLineItemsSection({ config, values, setValues, handlers = {} }) {
@@ -39,6 +34,8 @@ export function PaymentLineItemsSection({ config, values, setValues, handlers = 
                     placeholder={config.lineSearchPlaceholder}
                     searchLabel="Cari akun pembayaran"
                     dialogTitle="Pilih Akun Pembayaran"
+                    queryParams={{ exclude_type: 'Cash/Bank' }}
+                    showType={true}
                     onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
                 />
             }
@@ -56,119 +53,55 @@ export function PaymentLineItemsSection({ config, values, setValues, handlers = 
     );
 }
 
-export function PaymentInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
+export function PaymentInfoSection({ config, values, setValues }) {
     return (
-        <div className="min-h-[540px]">
-            <div className={`grid gap-8 ${isDetail ? 'xl:grid-cols-2' : ''}`.trim()}>
-                <section className={`min-w-0 ${!isDetail ? 'lg:max-w-[50%] w-full' : ''}`.trim()}>
-                    <TransactionSectionHeading title={config.infoTitle} icon="document" />
+        <div className="w-full">
+            <div className="lg:max-w-[50%] w-full">
+                <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-                    <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-                        <TransactionFieldLabel label={config.labels.checkNumber} />
-                        <div className="max-w-[276px]">
-                            <TextInput
-                                value={values.checkNumber}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        checkNumber: event.target.value,
-                                    }))
-                                }
-                                className="h-[34px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-brand-dark"
-                            />
-                        </div>
-
-                        <TransactionFieldLabel label={config.labels.recipient} />
-                        <TransactionReadonlyTextarea
-                            value={values.recipient}
-                            readOnly={false}
+                <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                    <TransactionFieldLabel label={config.labels.checkNumber} />
+                    <div className="max-w-[276px]">
+                        <TextInput
+                            value={values.checkNumber}
                             onChange={(event) =>
                                 setValues((current) => ({
                                     ...current,
-                                    recipient: event.target.value,
+                                    checkNumber: event.target.value,
                                 }))
                             }
-                            className="min-h-[56px]"
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
-
-                        {isDetail ? (
-                            <>
-                                <TransactionFieldLabel label={config.labels.voided} />
-                                <CheckboxField
-                                    id="voided"
-                                    label="Ya"
-                                    checked={values.voided}
-                                    disabled
-                                    align="center"
-                                    inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                    containerClassName="w-auto inline-flex"
-                                />
-                            </>
-                        ) : null}
-
-                        <TransactionFieldLabel label={config.labels.notes} />
-                        <TransactionReadonlyTextarea
-                            value={values.notes}
-                            readOnly={false}
-                            onChange={(event) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    notes: event.target.value,
-                                }))
-                            }
-                            rows={4}
-                            className="min-h-[70px]"
-                        />
-
-                        {isDetail ? (
-                            <>
-                                <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                                <div className="pt-1 text-base italic text-brand-dark">{values.reconcileStatus}</div>
-
-                                <TransactionFieldLabel label={config.labels.printStatus} />
-                                <TextInput
-                                    value={values.printStatus}
-                                    readOnly
-                                    className="h-[34px] rounded-[4px] border-ui-border"
-                                    inputClassName="text-xs sm:text-sm text-text-workspace-muted"
-                                />
-                            </>
-                        ) : null}
                     </div>
-                </section>
 
-                {isDetail ? (
-                    <section className="min-w-0">
-                        <TransactionSectionHeading title={config.additionalInfoTitle} icon="payment" />
+                    <TransactionFieldLabel label={config.labels.recipient} />
+                    <TransactionReadonlyTextarea
+                        value={values.recipient}
+                        readOnly={false}
+                        onChange={(event) =>
+                            setValues((current) => ({
+                                ...current,
+                                recipient: event.target.value,
+                             }))
+                        }
+                        className="min-h-[56px]"
+                    />
 
-                        <div className="mt-4 grid gap-y-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-                            <TransactionFieldLabel label={config.labels.kapKjs} />
-                            <div className="grid gap-4 sm:grid-cols-2">
-                                <TextInput
-                                    value={values.kapNumber}
-                                    readOnly
-                                    className="h-[34px] rounded-[4px] border-ui-border"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                                />
-                                <TextInput
-                                    value={values.kjsNumber}
-                                    readOnly
-                                    className="h-[34px] rounded-[4px] border-ui-border"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                                />
-                            </div>
-
-                            <TransactionFieldLabel label={config.labels.ntpn} />
-                            <TextInput
-                                value={values.ntpn}
-                                readOnly
-                                className="h-[34px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-brand-dark"
-                            />
-                        </div>
-                    </section>
-                ) : null}
+                    <TransactionFieldLabel label={config.labels.notes} />
+                    <TransactionReadonlyTextarea
+                        value={values.notes}
+                        readOnly={false}
+                        onChange={(event) =>
+                            setValues((current) => ({
+                                ...current,
+                                notes: event.target.value,
+                            }))
+                        }
+                        rows={4}
+                        className="min-h-[70px]"
+                    />
+                </div>
             </div>
         </div>
     );
@@ -189,6 +122,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                             value={values.bankAccounts?.[0] ?? ''}
                             placeholder={config.cashBankPlaceholder}
                             searchLabel="Cari kas atau bank"
+                            queryParams={{ account_type: 'Cash/Bank' }}
                             onRemove={() =>
                                 setValues((current) => ({
                                     ...current,
@@ -327,14 +261,6 @@ export function PaymentTableFilterBar({ table, filters, setFilters }) {
                     ))}
                 </SelectField>
             ))}
-
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-4.5 w-4.5" />
-            </button>
         </div>
     );
 }

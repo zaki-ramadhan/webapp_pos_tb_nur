@@ -8,7 +8,6 @@ export function validateSalesReceiptValues(values, config) {
         ...(values.autoNumber
             ? [{ label: 'Tipe penomoran', value: values.numberingType }]
             : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
-        { label: config.labels.branch, value: values.branches, type: 'array' },
         { label: 'Faktur', value: values.invoices, type: 'array' },
     ];
 

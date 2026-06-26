@@ -115,7 +115,7 @@ export function buildExpenseEntryRecord(record = {}, config) {
     }));
     const totalAmount = Number(record.total_amount ?? 0);
     const paidAmount = Number(record.paid_amount ?? 0);
-    const primaryAccountLabel = buildLookupLabel(record.primaryAccount ?? {}, 'code');
+    const primaryAccountLabel = buildLookupLabel(record.primary_account ?? {}, 'code');
 
     return applyExpenseLineItems(
         {

@@ -32,7 +32,7 @@ export function buildCashPaymentFilters(baseFilters = [], rows = []) {
 }
 
 export function buildCashPaymentRow(record) {
-    const primaryAccountLabel = buildLookupLabel(record?.primaryAccount ?? {}, 'code');
+    const primaryAccountLabel = buildLookupLabel(record?.primary_account ?? {}, 'code');
     const bankLabel = record?.metadata?.cash_bank_label ?? primaryAccountLabel;
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const entryDate = formatIsoDate(record?.entry_date);
@@ -70,7 +70,7 @@ export function buildCashPaymentRecord(record = {}, config) {
         deferredStartMonth: line.attributes?.deferred_start_month ?? 6,
         deferredStartYear: line.attributes?.deferred_start_year ?? 2026,
     }));
-    const primaryAccountLabel = buildLookupLabel(record.primaryAccount ?? {}, 'code');
+    const primaryAccountLabel = buildLookupLabel(record.primary_account ?? {}, 'code');
     const bankLabel = record.metadata?.cash_bank_label ?? primaryAccountLabel;
 
     return applyCashPaymentLineItems(

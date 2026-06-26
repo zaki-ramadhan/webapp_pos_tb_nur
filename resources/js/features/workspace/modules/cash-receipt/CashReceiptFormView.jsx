@@ -8,9 +8,7 @@ import {
     deleteBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
@@ -26,18 +24,17 @@ import {
     buildCashReceiptRecord,
 } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
 import {
-    TransactionDateInput,
-    TransactionDock,
-    TransactionFieldLabel,
-    TransactionSectionRail,
-    TransactionSwitch,
+    TransactionFormLayout,
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     ReceiptInfoSection,
     ReceiptLineItemsSection,
+    CashReceiptHeader,
 } from '@/features/workspace/modules/cash-receipt/components/CashReceiptFormSections';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
+import { useFormLineItems } from '@/features/workspace/shared/hooks/useFormLineItems';
 
 export default function CashReceiptFormView({
     pageId,
@@ -51,9 +48,6 @@ export default function CashReceiptFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const [localRecord, setLocalRecord] = useState(null);
-    const [lineItemModalOpen, setLineItemModalOpen] = useState(false);
-    const [modalRecord, setModalRecord] = useState(null);
-    const [modalCurrentItem, setModalCurrentItem] = useState(null);
     const [kasBankWarningOpen, setKasBankWarningOpen] = useState(false);
 
     useEffect(() => {
@@ -71,13 +65,19 @@ export default function CashReceiptFormView({
 
         return config.detailRecords?.[activeRecordId] ?? buildCashReceiptDetailRecordFromRow(config.rowMap?.[activeRecordId], config);
     }, [activeRecordId, config, localRecord]);
-    const [values, setValues] = useState(() => buildCashReceiptFormState(sourceRecord, config));
+
+    const [values, setValues, isDirty] = useFormDraftState({
+        sourceRecord,
+        buildFormState: buildCashReceiptFormState,
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+    });
+
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
-    const initialComparable = useMemo(() => buildCashReceiptFormState(sourceRecord, config), [config, sourceRecord]);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-        setValues(buildCashReceiptFormState(sourceRecord, config));
     }, [config, sourceRecord]);
 
     const validationMessage = useMemo(() => validateCashReceiptValues(values, config), [config, values]);
@@ -94,7 +94,22 @@ export default function CashReceiptFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+    const {
+        lineItemModalOpen,
+        setLineItemModalOpen,
+        modalRecord,
+        setModalRecord,
+        modalCurrentItem,
+        setModalCurrentItem,
+        applyLineItemUpdate,
+        handleSaveLineItem,
+    } = useFormLineItems({
+        applyLineItems: applyCashReceiptLineItems,
+        setValues,
+        onSuccessMessage: 'Rincian penerimaan diperbarui.',
+        onDeleteMessage: 'Rincian penerimaan dihapus.',
+    });
+
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(
@@ -125,57 +140,6 @@ export default function CashReceiptFormView({
         [activeRecordId, config.dockActions, saveDisabled, saving, values.saveTone],
     );
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
-
-    function applyLineItemUpdate(record, currentItem = null) {
-        setModalRecord(record);
-        setModalCurrentItem(currentItem);
-        setLineItemModalOpen(true);
-    }
-
-    function handleSaveLineItem(nextItem) {
-        setLineItemModalOpen(false);
-        setModalRecord(null);
-        setModalCurrentItem(null);
-
-        if (nextItem.action === 'delete') {
-            if (modalCurrentItem) {
-                setValues((current) =>
-                    applyCashReceiptLineItems(
-                        {
-                            ...current,
-                            lineLookup: '',
-                        },
-                        (current.lineItems ?? []).filter((item) => item.id !== modalCurrentItem.id),
-                    ),
-                );
-                showSuccessToast({
-                    message: 'Rincian penerimaan dihapus.',
-                });
-            }
-            return;
-        }
-
-        setValues((current) =>
-            applyCashReceiptLineItems(
-                {
-                    ...current,
-                    lineLookup: '',
-                },
-                modalCurrentItem
-                    ? (current.lineItems ?? []).map((item) => (item.id === modalCurrentItem.id ? nextItem : item))
-                    : [...(current.lineItems ?? []), nextItem],
-            ),
-        );
-        showSuccessToast({
-            message: modalCurrentItem ? 'Rincian penerimaan diperbarui.' : 'Rincian penerimaan ditambahkan.',
-        });
-    }
 
     async function onSave() {
         await handleSave({
@@ -292,110 +256,34 @@ export default function CashReceiptFormView({
 
     return (
         <>
-            <div className="flex min-h-full flex-col gap-3">
-                <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                    <div className="min-w-0 flex-1 flex flex-col gap-3">
-                        <div className="px-4 py-4 bg-white border border-ui-border rounded-[6px] shadow-card-light">
-                            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
-                                <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
-                                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
-                                        <TransactionFieldLabel label={config.labels.cashBank} required htmlFor="cashBank" />
-                                        <div className="max-w-[320px] w-full">
-                                            <AccountLookupField
-                                                id="cashBank"
-                                                value={values.bankAccounts?.[0] ?? ''}
-                                                placeholder={config.cashBankPlaceholder}
-                                                searchLabel="Cari kas atau bank"
-                                                onRemove={() =>
-                                                    setValues((current) => ({
-                                                        ...current,
-                                                        __primaryAccountId: null,
-                                                        bankAccounts: [],
-                                                    }))
-                                                }
-                                                onSelectAccount={(record, label) =>
-                                                    setValues((current) => ({
-                                                        ...current,
-                                                        __primaryAccountId: record?.id ?? null,
-                                                        bankAccounts: record ? [label] : [],
-                                                    }))
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
-                                        <TransactionFieldLabel label={config.labels.entryDate} required htmlFor="entryDate" />
-                                        <TransactionDateInput
-                                            id="entryDate"
-                                            value={values.entryDate}
-                                            onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
-                                    <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
-                                        <div className="flex items-center justify-start gap-4">
-                                            <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
-                                        </div>
-
-                                        <div className="max-w-[240px] w-full justify-self-end">
-                                            {values.autoNumber ? (
-                                                <SelectField
-                                                    id="documentNumber"
-                                                    value={values.numberingType}
-                                                    onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                                                    className="h-[40px] rounded-[4px] border-ui-border"
-                                                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                                                >
-                                                    {config.numberingOptions.map((option) => (
-                                                        <option key={option} value={option}>
-                                                            {option}
-                                                        </option>
-                                                    ))}
-                                                </SelectField>
-                                            ) : (
-                                                <TextInput
-                                                    id="documentNumber"
-                                                    value={values.documentNumber}
-                                                    onChange={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value }))}
-                                                    onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
-                                                    maxLength={120}
-                                                    className="h-[40px] rounded-[4px] border-ui-border"
-                                                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <CrudStatusMessage status={status} className="mx-3" />
-
-                        <div className="flex min-h-[620px] gap-0 px-2 sm:px-3">
-                            <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
-
-                            <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white px-3 py-3 shadow-card-light">
-                                {activeSectionId === 'additional-info' ? (
-                                    <ReceiptInfoSection config={config} values={values} setValues={setValues} isDetail={Boolean(activeRecordId)} handlers={handlers} />
-                                ) : (
-                                    <ReceiptLineItemsSection config={config} values={values} setValues={setValues} handlers={handlers} />
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end px-3">
-                            <TransactionTotalCard label={config.totalCardLabel} value={values.totalValue} />
-                        </div>
-                    </div>
-
-                    <div className="shrink-0 lg:w-[96px] lg:pt-4">
-                        <TransactionDock actions={dockActions} />
-                    </div>
-                </div>
-            </div>
+            <TransactionFormLayout
+                header={
+                    <CashReceiptHeader
+                        config={config}
+                        values={values}
+                        setValues={setValues}
+                        handlers={handlers}
+                    />
+                }
+                sectionTabs={config.sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                footer={<TransactionTotalCard label={config.totalCardLabel} value={values.totalValue} />}
+                dockActions={dockActions}
+            >
+                <CrudStatusMessage status={status} className="mb-4" />
+                {activeSectionId === 'additional-info' ? (
+                    <ReceiptInfoSection
+                        config={config}
+                        values={values}
+                        setValues={setValues}
+                        isDetail={Boolean(activeRecordId)}
+                        handlers={handlers}
+                    />
+                ) : (
+                    <ReceiptLineItemsSection config={config} values={values} setValues={setValues} handlers={handlers} />
+                )}
+            </TransactionFormLayout>
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}

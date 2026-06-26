@@ -10,13 +10,13 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 import CashPaymentAttachmentModal from './CashPaymentAttachmentModal';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import TakeExpenseEntryModal from './components/TakeExpenseEntryModal';
+import TakePayrollEntryModal from './components/TakePayrollEntryModal';
 import {
     TransactionFormLayout,
     TransactionTotalCard,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import {
     CashPaymentHeader,
     PaymentInfoSection,
@@ -34,6 +34,8 @@ import {
 } from './cashPaymentShared';
 import MoneyMovementLineItemModal from '@/features/workspace/shared/MoneyMovementLineItemModal';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
+import { useFormLineItems } from '@/features/workspace/shared/hooks/useFormLineItems';
 
 export default function CashPaymentFormView({
     pageId,
@@ -47,9 +49,6 @@ export default function CashPaymentFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const [localRecord, setLocalRecord] = useState(null);
-    const [lineItemModalOpen, setLineItemModalOpen] = useState(false);
-    const [modalRecord, setModalRecord] = useState(null);
-    const [modalCurrentItem, setModalCurrentItem] = useState(null);
 
     useEffect(() => {
         setLocalRecord(null);
@@ -68,17 +67,22 @@ export default function CashPaymentFormView({
             ? buildDetailRecordFromRow(config.rowMap[activeRecordId], config)
             : config.detailRecords?.[activeRecordId] ?? config.draft;
     }, [activeRecordId, config, localRecord]);
-    const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
+
+    const [values, setValues, isDirty] = useFormDraftState({
+        sourceRecord,
+        buildFormState,
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+    });
+
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
-    const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-        setValues(buildFormState(sourceRecord, config));
     }, [config, sourceRecord]);
 
     const validationMessage = useMemo(() => validateCashPaymentValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
 
     const {
         status,
@@ -92,10 +96,30 @@ export default function CashPaymentFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
+    const {
+        lineItemModalOpen,
+        setLineItemModalOpen,
+        modalRecord,
+        setModalRecord,
+        modalCurrentItem,
+        setModalCurrentItem,
+        applyLineItemUpdate,
+        handleSaveLineItem,
+    } = useFormLineItems({
+        applyLineItems: applyCashPaymentLineItems,
+        setValues,
+        onSuccessMessage: 'Rincian pembayaran diperbarui.',
+        onDeleteMessage: 'Rincian pembayaran dihapus.',
+    });
+
     const [attachmentModalOpen, setAttachmentModalOpen] = useState(false);
     const [kasBankWarningOpen, setKasBankWarningOpen] = useState(false);
+    const [takeExpenseOpen, setTakeExpenseOpen] = useState(false);
+    const [takePayrollOpen, setTakePayrollOpen] = useState(false);
 
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+
+
 
     const dockActions = useMemo(
         () =>
@@ -148,57 +172,6 @@ export default function CashPaymentFormView({
         [config.dockActions, isDetail, saveDisabled, saving, values.saveTone],
     );
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
-
-    function applyLineItemUpdate(record, currentItem = null) {
-        setModalRecord(record);
-        setModalCurrentItem(currentItem);
-        setLineItemModalOpen(true);
-    }
-
-    function handleSaveLineItem(nextItem) {
-        setLineItemModalOpen(false);
-        setModalRecord(null);
-        setModalCurrentItem(null);
-
-        if (nextItem.action === 'delete') {
-            if (modalCurrentItem) {
-                setValues((current) =>
-                    applyCashPaymentLineItems(
-                        {
-                            ...current,
-                            lineLookup: '',
-                        },
-                        (current.lineItems ?? []).filter((item) => item.id !== modalCurrentItem.id),
-                    ),
-                );
-                showSuccessToast({
-                    message: 'Rincian pembayaran dihapus.',
-                });
-            }
-            return;
-        }
-
-        setValues((current) =>
-            applyCashPaymentLineItems(
-                {
-                    ...current,
-                    lineLookup: '',
-                },
-                modalCurrentItem
-                    ? (current.lineItems ?? []).map((item) => (item.id === modalCurrentItem.id ? nextItem : item))
-                    : [...(current.lineItems ?? []), nextItem],
-            ),
-        );
-        showSuccessToast({
-            message: modalCurrentItem ? 'Rincian pembayaran diperbarui.' : 'Rincian pembayaran ditambahkan.',
-        });
-    }
 
     async function onSave() {
         await handleSave({
@@ -265,6 +238,133 @@ export default function CashPaymentFormView({
         });
     }
 
+
+    async function handleApplyExpenseEntries(selectedRecords) {
+        try {
+            let allImportedLines = [];
+            let appendedNotes = [];
+
+            for (const record of selectedRecords) {
+                const fullRecord = (record.lines && record.lines.length > 0)
+                    ? record
+                    : await getBackendResource('expense-entries', record.id);
+                
+                if (!fullRecord) continue;
+                const lines = fullRecord.lines ?? [];
+                
+                const importedLines = lines.map((line, index) => ({
+                    id: `imported-expense-line-${index + 1}-${Date.now()}-${Math.random()}`,
+                    __lineId: null,
+                    __accountId: line.account_id ?? null,
+                    accountCode: line.account?.code ?? line.reference_code ?? '',
+                    accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Beban ${index + 1}`,
+                    amount: formatCurrencyValue(line.total_amount ?? 0),
+                }));
+
+                allImportedLines.push(...importedLines);
+                if (fullRecord.notes?.trim()) {
+                    appendedNotes.push(fullRecord.notes.trim());
+                }
+            }
+
+            if (allImportedLines.length === 0) {
+                showErrorToast({ message: 'Tidak ada rincian beban yang diimpor.' });
+                return;
+            }
+
+            setValues((current) => {
+                const combinedNotes = [current.notes?.trim(), ...appendedNotes]
+                    .filter(Boolean)
+                    .join('\n');
+                
+                return applyCashPaymentLineItems(
+                    {
+                        ...current,
+                        lineItems: [...(current.lineItems ?? []), ...allImportedLines],
+                        notes: combinedNotes,
+                    },
+                    [...(current.lineItems ?? []), ...allImportedLines],
+                );
+            });
+
+            setStatus({
+                tone: 'success',
+                message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
+            });
+            showSuccessToast({
+                message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Beban.`,
+            });
+        } catch (err) {
+            setStatus({
+                tone: 'error',
+                message: 'Gagal mengambil rincian pencatatan beban.',
+            });
+        }
+    }
+
+    async function handleApplyPayrollEntries(selectedRecords) {
+        try {
+            let allImportedLines = [];
+            let appendedNotes = [];
+
+            for (const record of selectedRecords) {
+                const fullRecord = (record.lines && record.lines.length > 0)
+                    ? record
+                    : await getBackendResource('payroll-entries', record.id);
+                
+                if (!fullRecord) continue;
+                const lines = fullRecord.lines ?? [];
+                
+                const importedLines = lines.map((line, index) => ({
+                    id: `imported-payroll-line-${index + 1}-${Date.now()}-${Math.random()}`,
+                    __lineId: null,
+                    __accountId: line.account_id ?? null,
+                    accountCode: line.account?.code ?? line.reference_code ?? '',
+                    accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Gaji ${index + 1}`,
+                    amount: formatCurrencyValue(line.total_amount ?? 0),
+                }));
+
+                allImportedLines.push(...importedLines);
+                if (fullRecord.notes?.trim()) {
+                    appendedNotes.push(fullRecord.notes.trim());
+                }
+            }
+
+            if (allImportedLines.length === 0) {
+                showErrorToast({ message: 'Tidak ada rincian gaji yang diimpor.' });
+                return;
+            }
+
+            setValues((current) => {
+                const combinedNotes = [current.notes?.trim(), ...appendedNotes]
+                    .filter(Boolean)
+                    .join('\n');
+                
+                return applyCashPaymentLineItems(
+                    {
+                        ...current,
+                        lineItems: [...(current.lineItems ?? []), ...allImportedLines],
+                        notes: combinedNotes,
+                    },
+                    [...(current.lineItems ?? []), ...allImportedLines],
+                );
+            });
+
+            setStatus({
+                tone: 'success',
+                message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
+            });
+            showSuccessToast({
+                message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Gaji.`,
+            });
+        } catch (err) {
+            setStatus({
+                tone: 'error',
+                message: 'Gagal mengambil rincian pencatatan gaji.',
+            });
+        }
+    }
+
     const handlers = useMemo(
         () => ({
             onSelectBankAccount: () =>
@@ -314,104 +414,14 @@ export default function CashPaymentFormView({
                     setKasBankWarningOpen(true);
                     return;
                 }
-                selectLookup('expense-entries', 'Pencatatan Beban', async (record) => {
-                    try {
-                        const fullRecord = await getBackendResource('expense-entries', record.id);
-                        if (!fullRecord) return;
-
-                        const lines = fullRecord.lines ?? [];
-                        if (lines.length === 0) {
-                            setStatus({
-                                tone: 'error',
-                                message: `Pencatatan beban ${fullRecord.document_number} tidak memiliki rincian beban.`,
-                            });
-                            showErrorToast({
-                                message: `Pencatatan beban ${fullRecord.document_number} tidak memiliki rincian beban.`,
-                            });
-                            return;
-                        }
-
-                        const importedLines = lines.map((line, index) => ({
-                            id: `imported-expense-line-${index + 1}-${Date.now()}`,
-                            __lineId: null,
-                            __accountId: line.account_id ?? null,
-                            accountCode: line.account?.code ?? line.reference_code ?? '',
-                            accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Beban ${index + 1}`,
-                            amount: formatCurrencyValue(line.total_amount ?? 0),
-                        }));
-                        setValues((current) =>
-                            applyCashPaymentLineItems(
-                                {
-                                    ...current,
-                                    lineItems: [...(current.lineItems ?? []), ...importedLines],
-                                    notes: current.notes?.trim() ? `${current.notes}\n${fullRecord.notes ?? ''}`.trim() : (fullRecord.notes ?? ''),
-                                },
-                                [...(current.lineItems ?? []), ...importedLines],
-                            ),
-                        );
-                        setStatus({
-                            tone: 'success',
-                            message: `Berhasil mengambil rincian dari ${fullRecord.document_number}.`,
-                        });
-                    } catch (err) {
-                        setStatus({
-                            tone: 'error',
-                            message: 'Gagal mengambil rincian pencatatan beban.',
-                        });
-                    }
-                });
+                setTakeExpenseOpen(true);
             },
             onTakePayrollEntry: () => {
                 if (!values.__primaryAccountId) {
                     setKasBankWarningOpen(true);
                     return;
                 }
-                selectLookup('payroll-entries', 'Pencatatan Gaji', async (record) => {
-                    try {
-                        const fullRecord = await getBackendResource('payroll-entries', record.id);
-                        if (!fullRecord) return;
-
-                        const lines = fullRecord.lines ?? [];
-                        if (lines.length === 0) {
-                            setStatus({
-                                tone: 'error',
-                                message: `Pencatatan gaji ${fullRecord.document_number} tidak memiliki rincian karyawan.`,
-                            });
-                            showErrorToast({
-                                message: `Pencatatan gaji ${fullRecord.document_number} tidak memiliki rincian karyawan.`,
-                            });
-                            return;
-                        }
-
-                        const importedLines = lines.map((line, index) => ({
-                            id: `imported-payroll-line-${index + 1}-${Date.now()}`,
-                            __lineId: null,
-                            __accountId: line.account_id ?? null,
-                            accountCode: line.account?.code ?? line.reference_code ?? '',
-                            accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Gaji ${index + 1}`,
-                            amount: formatCurrencyValue(line.total_amount ?? 0),
-                        }));
-                        setValues((current) =>
-                            applyCashPaymentLineItems(
-                                {
-                                    ...current,
-                                    lineItems: [...(current.lineItems ?? []), ...importedLines],
-                                    notes: current.notes?.trim() ? `${current.notes}\n${fullRecord.notes ?? ''}`.trim() : (fullRecord.notes ?? ''),
-                                },
-                                [...(current.lineItems ?? []), ...importedLines],
-                            ),
-                        );
-                        setStatus({
-                            tone: 'success',
-                            message: `Berhasil mengambil rincian dari ${fullRecord.document_number}.`,
-                        });
-                    } catch (err) {
-                        setStatus({
-                            tone: 'error',
-                            message: 'Gagal mengambil rincian pencatatan gaji.',
-                        });
-                    }
-                });
+                setTakePayrollOpen(true);
             },
         }),
         [selectLookup, setStatus, values.__primaryAccountId],
@@ -487,6 +497,16 @@ export default function CashPaymentFormView({
                 currentItem={modalCurrentItem}
                 onSave={handleSaveLineItem}
                 type="payment"
+            />
+            <TakeExpenseEntryModal
+                open={takeExpenseOpen}
+                onClose={() => setTakeExpenseOpen(false)}
+                onApply={handleApplyExpenseEntries}
+            />
+            <TakePayrollEntryModal
+                open={takePayrollOpen}
+                onClose={() => setTakePayrollOpen(false)}
+                onApply={handleApplyPayrollEntries}
             />
         </>
     );

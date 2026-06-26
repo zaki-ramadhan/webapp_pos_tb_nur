@@ -65,7 +65,7 @@ export function buildSalesReceiptFilters(baseFilters = [], rows = []) {
 }
 
 export function buildSalesReceiptRow(record) {
-    const primaryAccountLabel = record?.primaryAccount ? buildLookupLabel(record.primaryAccount, 'code') : '';
+    const primaryAccountLabel = record?.primary_account ? buildLookupLabel(record.primary_account, 'code') : '';
     const bankLabel = record?.metadata?.bank_label ?? primaryAccountLabel;
     const totalAmount = Number(record?.paid_amount ?? record?.total_amount ?? 0);
     const entryDate = formatIsoDate(record?.entry_date);
@@ -155,7 +155,7 @@ export function buildSalesReceiptRecord(record = {}, config) {
             },
         };
     });
-    const bankLabel = record?.metadata?.bank_label ?? (record?.primaryAccount ? buildLookupLabel(record.primaryAccount, 'code') : '');
+    const bankLabel = record?.metadata?.bank_label ?? (record?.primary_account ? buildLookupLabel(record.primary_account, 'code') : '');
 
     return applySalesReceiptInvoices({
         __backendRecordId: record.id ?? null,

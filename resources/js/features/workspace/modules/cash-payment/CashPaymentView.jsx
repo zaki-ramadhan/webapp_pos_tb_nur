@@ -11,8 +11,10 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenCon
         mapRow: buildCashPaymentRow,
     });
 
+    const { mappedRows, tableProps, total } = resource;
+
     const config = useMemo(() => {
-        const rows = resource.mappedRows;
+        const rows = mappedRows;
         return {
             ...page.cashPayment,
             rowMap: rows.reduce((result, row) => {
@@ -21,12 +23,12 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenCon
             }, {}),
             table: {
                 ...page.cashPayment.table,
-                ...resource.tableProps,
+                ...tableProps,
                 filters: buildCashPaymentFilters(page.cashPayment.table?.filters, rows),
-                pageValue: resource.total.toLocaleString('id-ID'),
+                pageValue: total.toLocaleString('id-ID'),
             },
         };
-    }, [page.cashPayment, resource]);
+    }, [page.cashPayment, mappedRows, tableProps, total]);
 
     return mode === 'table' ? (
         <CashPaymentTableView

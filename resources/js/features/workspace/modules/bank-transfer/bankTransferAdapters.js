@@ -14,8 +14,8 @@ import {
 
 export function buildBankTransferRow(record) {
     const metadata = record.metadata ?? {};
-    const primaryAccountLabel = metadata.from_bank_label ?? buildLookupLabel(record.primaryAccount ?? {});
-    const secondaryAccountLabel = metadata.to_bank_label ?? buildLookupLabel(record.secondaryAccount ?? {});
+    const primaryAccountLabel = metadata.from_bank_label ?? buildLookupLabel(record.primary_account ?? {});
+    const secondaryAccountLabel = metadata.to_bank_label ?? buildLookupLabel(record.secondary_account ?? {});
     const { transferAmount, feeAmount } = deriveTransferAmounts(record);
     const entryDate = formatIsoDate(record.entry_date);
     const fromBranchLabel = metadata.from_branch_label ?? record.branch?.name ?? '';
@@ -78,8 +78,8 @@ export function buildBankTransferFilters(baseFilters = [], rows = []) {
 export function buildBankTransferRecord(record = {}, config) {
     const metadata = record.metadata ?? {};
     const { feeLines, transferAmount } = deriveTransferAmounts(record);
-    const fromBankLabel = metadata.from_bank_label ?? buildLookupLabel(record.primaryAccount ?? {});
-    const toBankLabel = metadata.to_bank_label ?? buildLookupLabel(record.secondaryAccount ?? {});
+    const fromBankLabel = metadata.from_bank_label ?? buildLookupLabel(record.primary_account ?? {});
+    const toBankLabel = metadata.to_bank_label ?? buildLookupLabel(record.secondary_account ?? {});
     const feeRows = feeLines.map((line, index) => ({
         id: String(line.id ?? `fee-${index + 1}`),
         __lineId: line.id ?? null,

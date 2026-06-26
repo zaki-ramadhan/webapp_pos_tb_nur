@@ -11,8 +11,10 @@ export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenCon
         mapRow: buildCashReceiptRow,
     });
 
+    const { mappedRows, tableProps, total } = resource;
+
     const config = useMemo(() => {
-        const rows = resource.mappedRows;
+        const rows = mappedRows;
         return {
             ...page.cashReceipt,
             rowMap: rows.reduce((result, row) => {
@@ -21,12 +23,12 @@ export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenCon
             }, {}),
             table: {
                 ...page.cashReceipt.table,
-                ...resource.tableProps,
+                ...tableProps,
                 filters: buildCashReceiptFilters(page.cashReceipt.table?.filters, rows),
-                pageValue: resource.total.toLocaleString('id-ID'),
+                pageValue: total.toLocaleString('id-ID'),
             },
         };
-    }, [page.cashReceipt, resource]);
+    }, [page.cashReceipt, mappedRows, tableProps, total]);
 
     return mode === 'table' ? (
         <CashReceiptTableView

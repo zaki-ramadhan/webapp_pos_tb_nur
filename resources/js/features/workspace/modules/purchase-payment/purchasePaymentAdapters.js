@@ -56,8 +56,8 @@ export function buildPurchasePaymentFilters(baseFilters = [], rows = []) {
 }
 
 export function buildPurchasePaymentRow(record) {
-    const primaryAccountLabel = record?.primaryAccount
-        ? buildLookupLabel(record.primaryAccount, 'code')
+    const primaryAccountLabel = record?.primary_account
+        ? buildLookupLabel(record.primary_account, 'code')
         : '';
     const bankLabel = record?.metadata?.bank_label ?? primaryAccountLabel;
     const paymentAmount = Number(record?.paid_amount ?? record?.total_amount ?? 0);
@@ -120,7 +120,7 @@ export function buildPurchasePaymentRecordFromBackend(record = {}, config) {
             __bankAccountId: record.primary_account_id ?? null,
             __branchId: record.branch_id ?? null,
             payee: record.supplier?.name ? [buildLookupLabel(record.supplier)] : [],
-            bankAccounts: record.metadata?.bank_label ? [record.metadata.bank_label] : (record.primaryAccount ? [buildLookupLabel(record.primaryAccount, 'code')] : []),
+            bankAccounts: record.metadata?.bank_label ? [record.metadata.bank_label] : (record.primary_account ? [buildLookupLabel(record.primary_account, 'code')] : []),
             entryDate: formatIsoDate(record.entry_date),
             autoNumber: false,
             numberingType: record.numbering_type ?? config.draft?.numberingType ?? '',

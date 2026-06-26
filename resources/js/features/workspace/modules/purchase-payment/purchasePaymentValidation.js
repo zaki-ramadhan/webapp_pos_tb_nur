@@ -9,7 +9,6 @@ export function validatePurchasePaymentValues(values, config) {
             ? [{ label: 'Tipe penomoran', value: values.numberingType }]
             : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
         { label: config.labels.entryDate, value: values.entryDate },
-        { label: config.labels.branch, value: values.branches, type: 'array' },
         { label: 'Faktur', value: values.invoices, type: 'array' },
     ]);
 
