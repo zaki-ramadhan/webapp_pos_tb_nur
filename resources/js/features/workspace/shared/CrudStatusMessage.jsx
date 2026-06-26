@@ -1,5 +1,5 @@
 export default function CrudStatusMessage({ status, className = 'mb-4' }) {
-    if (!status?.message) {
+    if (!status?.message || status.tone !== 'error') {
         return null;
     }
 

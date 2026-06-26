@@ -156,9 +156,9 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white transition hover:bg-white/10 cursor-pointer"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white hover:text-red-600 active:text-red-800 transition cursor-pointer"
                     >
-                        <CloseIcon className="h-4 w-4 text-white" />
+                        <CloseIcon className="h-4 w-4" />
                     </button>
                 </div>
             </div>

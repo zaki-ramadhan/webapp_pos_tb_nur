@@ -15,6 +15,7 @@ export default function AccountLookupSuggestions({
     loadingLabel = 'Memuat akun perkiraan...',
     className = '',
     anchorRef = null,
+    showType = false,
 }) {
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
     const emptyMessage = query.trim()
@@ -46,13 +47,15 @@ export default function AccountLookupSuggestions({
                                 className={`flex w-full items-start gap-3 border-t border-border-ui-border-lightest px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
                             >
                                 <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-sm font-medium text-brand-dark">{record.name ?? '-'}</span>
-                                    <span className="mt-0.5 flex items-center justify-between gap-4 text-xs">
+                                    <span className="block truncate text-sm font-normal text-brand-dark">{record.name ?? '-'}</span>
+                                    <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
                                         <span className="truncate text-brand-dark">
                                             {record.code ?? '-'}
                                         </span>
-                                        <span className="shrink-0 text-text-workspace-muted italic font-medium">
-                                            Rp {Number(record.opening_balance ?? 0).toLocaleString('id-ID')}
+                                        <span className="shrink-0 text-text-workspace-muted italic">
+                                            {showType
+                                                ? translateAccountType(record.account_type)
+                                                : `Rp ${Number(record.opening_balance ?? 0).toLocaleString('id-ID')}`}
                                         </span>
                                     </span>
                                 </span>

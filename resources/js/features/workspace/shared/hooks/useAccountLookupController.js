@@ -60,7 +60,7 @@ export function normalizeSelectedLabels({ value, values }) {
     return [];
 }
 
-export default function useAccountLookupController({ value, values, disabled = false }) {
+export default function useAccountLookupController({ value, values, disabled = false, queryParams = {} }) {
     const selectedLabels = useMemo(() => normalizeSelectedLabels({ value, values }), [value, values]);
     const selectedValue = selectedLabels[0] ?? '';
     const rootRef = useRef(null);
@@ -116,14 +116,17 @@ export default function useAccountLookupController({ value, values, disabled = f
         };
     }, [open, selectedValue]);
 
+    const queryParamsStr = JSON.stringify(queryParams);
+
     useEffect(() => {
         if (!open) {
             return;
         }
 
         const fetchKey = query.trim();
+        const fetchParamsKey = `${fetchKey}_${queryParamsStr}`;
 
-        if (lastFetchKeyRef.current === fetchKey && rows.length > 0) {
+        if (lastFetchKeyRef.current === fetchParamsKey && rows.length > 0) {
             return;
         }
 
@@ -136,10 +139,11 @@ export default function useAccountLookupController({ value, values, disabled = f
                 const payload = await listBackendResource('accounts', {
                     search: fetchKey,
                     per_page: 15,
+                    ...queryParams,
                 });
 
                 if (!ignore) {
-                    lastFetchKeyRef.current = fetchKey;
+                    lastFetchKeyRef.current = fetchParamsKey;
                     setRows(extractBackendRows(payload));
                 }
             } catch (lookupError) {
@@ -158,7 +162,7 @@ export default function useAccountLookupController({ value, values, disabled = f
             ignore = true;
             window.clearTimeout(timeoutId);
         };
-    }, [open, query]);
+    }, [open, query, queryParamsStr]);
 
     function openLookup(nextQuery = '') {
         if (disabled) {

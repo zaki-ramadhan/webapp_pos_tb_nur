@@ -36,12 +36,14 @@ export function AccountLookupField({
     heightClassName = 'h-[40px]',
     onRemove = null,
     onSelectAccount = null,
+    queryParams = {},
+    showType = false,
 }) {
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
-    const controller = useAccountLookupController({ value, values, disabled });
+    const controller = useAccountLookupController({ value, values, disabled, queryParams });
     const isMultiValue = Array.isArray(values);
     const inputWrapperRef = useRef(null);
 
@@ -109,6 +111,7 @@ export function AccountLookupField({
                     controller.handleSelect(record, label, onSelectAccount);
                     clearError(contextKey);
                 }}
+                showType={showType}
             />
 
             {feedbackMessage ? (
@@ -131,8 +134,10 @@ export function AccountLookupTextInput({
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     trailingClassName = '',
     onSelectAccount = null,
+    queryParams = {},
+    showType = false,
 }) {
-    const controller = useAccountLookupController({ value, disabled });
+    const controller = useAccountLookupController({ value, disabled, queryParams });
     const inputWrapperRef = useRef(null);
 
     return (
@@ -164,6 +169,7 @@ export function AccountLookupTextInput({
                 rows={controller.rows}
                 selectedLabels={controller.selectedLabels}
                 onSelectAccount={(record, label) => controller.handleSelect(record, label, onSelectAccount)}
+                showType={showType}
             />
         </div>
     );

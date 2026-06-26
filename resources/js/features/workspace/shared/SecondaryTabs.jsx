@@ -14,8 +14,8 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
           ? 'border-l-[1px] border-r-[1px] border-t-[3px] border-b-[2px] border-b-tab-active-bg -mb-[2px] border-l-tab-active-border-x border-r-tab-active-border-x border-t-tab-active-border-t bg-tab-active-bg font-normal text-tab-active-text'
           : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-inactive-border-l border-r-tab-inactive-border-r border-t-tab-inactive-border-t bg-tab-inactive-bg font-normal text-tab-inactive-text';
     const closeButtonClassName = active
-        ? 'text-current hover:bg-white/20'
-        : 'text-slate-400 hover:text-slate-700 hover:bg-slate-200/70';
+        ? 'text-abc-label-dark hover:text-red-600 transition-colors'
+        : 'text-slate-400 hover:text-slate-700 transition-colors';
 
     return (
         <div
