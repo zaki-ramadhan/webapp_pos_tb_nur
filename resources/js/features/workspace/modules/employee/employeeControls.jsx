@@ -42,7 +42,7 @@ export function SuggestionTextInput({
         function handlePointerDown(event) {
             const target = event.target;
 
-            if (rootRef.current?.contains(target)) {
+            if (rootRef.current?.contains(target) || (target instanceof HTMLElement && target.closest('[data-portal-dropdown]'))) {
                 return;
             }
 

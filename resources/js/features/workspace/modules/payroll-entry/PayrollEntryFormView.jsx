@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
  
-import Button from '@/components/ui/Button';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
-import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+import PayrollEntryEmployeeModal from './PayrollEntryEmployeeModal';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout, TransactionDualTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { PencilIcon } from '@/features/workspace/shared/Icons';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import {
     areComparableValuesEqual,
@@ -72,12 +68,6 @@ export default function PayrollEntryFormView({
 
     const [employeeModalOpen, setEmployeeModalOpen] = useState(false);
     const [selectedEmployeeRow, setSelectedEmployeeRow] = useState(null);
-    const [employeeModalValues, setEmployeeModalValues] = useState({
-        employeeCode: '',
-        employeeName: '',
-        grossIncome: '',
-        incomeTax: '',
-    });
 
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
@@ -376,6 +366,7 @@ export default function PayrollEntryFormView({
             return [
                 ...prev,
                 {
+                    id: String(emp.id),
                     employeeId: emp.id,
                     employeeCode: emp.employee_code ?? '',
                     employeeName: emp.full_name ?? emp.name ?? '',
@@ -393,14 +384,6 @@ export default function PayrollEntryFormView({
     const handlers = {
         onEditEmployeeRow: (row) => {
             setSelectedEmployeeRow(row);
-            const gross = typeof row.grossIncomeRaw === 'number' ? row.grossIncomeRaw : (parseAmountInput(row.grossIncome) ?? 0);
-            const tax = typeof row.incomeTaxRaw === 'number' ? row.incomeTaxRaw : (parseAmountInput(row.incomeTax) ?? 0);
-            setEmployeeModalValues({
-                employeeCode: row.employeeCode ?? '',
-                employeeName: row.employeeName ?? '',
-                grossIncome: gross > 0 ? gross.toLocaleString('id-ID') : '',
-                incomeTax: tax > 0 ? tax.toLocaleString('id-ID') : '',
-            });
             setEmployeeModalOpen(true);
         },
         onSelectEmployee: (emp) => {
@@ -409,21 +392,7 @@ export default function PayrollEntryFormView({
         }
     };
 
-    function handleEmployeeModalSubmit(e) {
-        if (e) e.preventDefault();
-
-        const gross = parseAmountInput(employeeModalValues.grossIncome) ?? 0;
-        const tax = parseAmountInput(employeeModalValues.incomeTax) ?? 0;
-
-        if (gross <= 0) {
-            showErrorToast({
-                message: 'Pendapatan bruto harus diisi dan lebih dari 0.',
-            });
-            return;
-        }
-
-        const paid = gross - tax;
-
+    function handleSaveEmployee(gross, tax, paid) {
         setEmployeeRows((current) =>
             current.map((row) =>
                 row.employeeId === selectedEmployeeRow.employeeId
@@ -439,24 +408,13 @@ export default function PayrollEntryFormView({
                     : row
             )
         );
-
-        setEmployeeModalOpen(false);
-        showSuccessToast({
-            message: 'Rincian karyawan diperbarui.',
-        });
     }
 
-    function handleEmployeeModalDelete() {
+    function handleDeleteEmployee() {
         if (!selectedEmployeeRow) return;
-
         setEmployeeRows((current) =>
             current.filter((row) => row.employeeId !== selectedEmployeeRow.employeeId)
         );
-
-        setEmployeeModalOpen(false);
-        showSuccessToast({
-            message: 'Rincian karyawan dihapus.',
-        });
     }
 
     return (
@@ -498,96 +456,13 @@ export default function PayrollEntryFormView({
                 onCancel={() => setDeleteConfirmationOpen(false)}
                 confirmLoading={saving}
             />
-            <WorkspaceDialog
+            <PayrollEntryEmployeeModal
                 open={employeeModalOpen}
                 onClose={() => setEmployeeModalOpen(false)}
-                title="Rincian Karyawan"
-                headerIcon={PencilIcon}
-                maxWidthClassName="max-w-[480px]"
-                contentClassName="bg-white px-3.5 py-0 sm:px-4 min-h-[220px] flex flex-col pt-3 pb-3"
-                footerClassName="border-t border-ui-border-medium bg-white px-3.5 py-2.5 sm:px-4"
-                footer={
-                    <div className="flex justify-between items-center w-full">
-                        <div>
-                            <Button
-                                variant="secondary"
-                                size="md"
-                                onClick={handleEmployeeModalDelete}
-                                className="border-red-150 hover:bg-danger-border text-error-border font-semibold"
-                            >
-                                Hapus
-                            </Button>
-                        </div>
-                        <Button
-                            variant="primary"
-                            size="md"
-                            onClick={handleEmployeeModalSubmit}
-                            className="bg-brand-blue-dark hover:bg-brand-blue-darker font-semibold shadow-btn-blue-hover"
-                        >
-                            Lanjut
-                        </Button>
-                    </div>
-                }
-            >
-                <div className="space-y-4 flex-1 pb-4">
-                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-4">
-                        <span className="text-sm text-slate-700 font-normal">Karyawan</span>
-                        <span className="text-sm text-slate-700 font-medium select-all">
-                            {employeeModalValues.employeeName}
-                        </span>
-                    </div>
-
-                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-start gap-4">
-                        <span className="text-sm text-slate-700 font-normal pt-2">
-                            Pendapatan Bruto <span className="text-red-500">*</span>
-                        </span>
-                        <div className="w-full max-w-[240px]">
-                            <FormattedAmountInput
-                                id="grossIncome"
-                                name="grossIncome"
-                                prefix="Rp"
-                                value={employeeModalValues.grossIncome}
-                                onChange={(e) =>
-                                    setEmployeeModalValues((prev) => ({
-                                        ...prev,
-                                        grossIncome: e.target.value,
-                                    }))
-                                }
-                                allowNegative={false}
-                                placeholder="0"
-                                className="h-[36px] rounded-[4px] border-ui-border"
-                                prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
-                                inputClassName="text-slate-700 text-right text-sm"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-start gap-4">
-                        <span className="text-sm text-slate-700 font-normal pt-2">
-                            Pajak Penghasilan
-                        </span>
-                        <div className="w-full max-w-[240px]">
-                            <FormattedAmountInput
-                                id="incomeTax"
-                                name="incomeTax"
-                                prefix="Rp"
-                                value={employeeModalValues.incomeTax}
-                                onChange={(e) =>
-                                    setEmployeeModalValues((prev) => ({
-                                        ...prev,
-                                        incomeTax: e.target.value,
-                                    }))
-                                }
-                                allowNegative={false}
-                                placeholder="0"
-                                className="h-[36px] rounded-[4px] border-ui-border"
-                                prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
-                                inputClassName="text-slate-700 text-right text-sm"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </WorkspaceDialog>
+                selectedEmployeeRow={selectedEmployeeRow}
+                onSave={handleSaveEmployee}
+                onDelete={handleDeleteEmployee}
+            />
         </>
     );
 }

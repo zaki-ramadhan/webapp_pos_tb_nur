@@ -138,7 +138,7 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake, hand
                     <div className="w-full sm:max-w-[360px]">
                         <BackendLookupField
                             resource="employees"
-                            resetAfterSelect={true}
+                            values={[]}
                             placeholder={config.employeeLookupPlaceholder}
                             searchLabel="Cari karyawan"
                             getOptionLabel={(record) => record?.full_name ?? ''}

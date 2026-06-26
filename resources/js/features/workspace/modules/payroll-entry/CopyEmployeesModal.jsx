@@ -92,6 +92,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 const paidSalary = rawValue - taxAmount;
 
                 return {
+                    id: String(emp.id),
                     employeeId: emp.id,
                     employeeCode: emp.employee_code,
                     employeeName: emp.full_name,
