@@ -9,7 +9,6 @@ const implementedWorkspacePageIds = new Set([
     'bank-statement',
     'bank-history',
     'bank-reconciliation',
-    'cash-payment',
     'cash-receipt',
     'department',
     'item-unit',

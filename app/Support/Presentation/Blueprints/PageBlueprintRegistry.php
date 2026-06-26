@@ -38,7 +38,7 @@ class PageBlueprintRegistry
             'sales-commission' => Pages\SalesCommissionPage::get($navigationPages),
             'sales-checkin' => Pages\SalesCheckinPage::get($navigationPages),
             'general-journal' => Pages\GeneralJournalPage::get($navigationPages),
-            'cash-payment' => Pages\CashPaymentPage::get($navigationPages),
+            // 'cash-payment' => Pages\CashPaymentPage::get($navigationPages),
             'cash-receipt' => Pages\CashReceiptPage::get($navigationPages),
             'bank-transfer' => Pages\BankTransferPage::get($navigationPages),
             'journal-activity-log' => Pages\JournalActivityLogPage::get($navigationPages),
