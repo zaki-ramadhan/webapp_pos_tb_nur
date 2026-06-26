@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
+import MoneyMovementLineItemModal from '@/features/workspace/shared/MoneyMovementLineItemModal';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -21,7 +22,6 @@ import {
     buildGeneratedCashReceiptNumber,
     buildLookupLabel,
     applyCashReceiptLineItems,
-    promptCashReceiptLineItem,
     validateCashReceiptValues,
     buildCashReceiptRecord,
 } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
@@ -51,6 +51,10 @@ export default function CashReceiptFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const [localRecord, setLocalRecord] = useState(null);
+    const [lineItemModalOpen, setLineItemModalOpen] = useState(false);
+    const [modalRecord, setModalRecord] = useState(null);
+    const [modalCurrentItem, setModalCurrentItem] = useState(null);
+    const [kasBankWarningOpen, setKasBankWarningOpen] = useState(false);
 
     useEffect(() => {
         setLocalRecord(null);
@@ -128,51 +132,49 @@ export default function CashReceiptFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function applyLineItemUpdate(record, currentItem = null) {
-        try {
-            const nextItem = await promptCashReceiptLineItem(record, currentItem);
+    function applyLineItemUpdate(record, currentItem = null) {
+        setModalRecord(record);
+        setModalCurrentItem(currentItem);
+        setLineItemModalOpen(true);
+    }
 
-            if (!nextItem) {
-                return;
+    function handleSaveLineItem(nextItem) {
+        setLineItemModalOpen(false);
+        setModalRecord(null);
+        setModalCurrentItem(null);
+
+        if (nextItem.action === 'delete') {
+            if (modalCurrentItem) {
+                setValues((current) =>
+                    applyCashReceiptLineItems(
+                        {
+                            ...current,
+                            lineLookup: '',
+                        },
+                        (current.lineItems ?? []).filter((item) => item.id !== modalCurrentItem.id),
+                    ),
+                );
+                showSuccessToast({
+                    message: 'Rincian penerimaan dihapus.',
+                });
             }
-
-            if (nextItem.action === 'delete') {
-                if (currentItem) {
-                    setValues((current) =>
-                        applyCashReceiptLineItems(
-                            {
-                                ...current,
-                                lineLookup: '',
-                            },
-                            (current.lineItems ?? []).filter((item) => item.id !== currentItem.id),
-                        ),
-                    );
-                    showSuccessToast({
-                        message: 'Rincian penerimaan dihapus.',
-                    });
-                }
-                return;
-            }
-
-            setValues((current) =>
-                applyCashReceiptLineItems(
-                    {
-                        ...current,
-                        lineLookup: '',
-                    },
-                    currentItem
-                        ? (current.lineItems ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
-                        : [...(current.lineItems ?? []), nextItem],
-                ),
-            );
-            showSuccessToast({
-                message: currentItem ? 'Rincian penerimaan diperbarui.' : 'Rincian penerimaan ditambahkan.',
-            });
-        } catch (error) {
-            showErrorToast({
-                message: error?.message ?? 'Rincian penerimaan tidak valid.',
-            });
+            return;
         }
+
+        setValues((current) =>
+            applyCashReceiptLineItems(
+                {
+                    ...current,
+                    lineLookup: '',
+                },
+                modalCurrentItem
+                    ? (current.lineItems ?? []).map((item) => (item.id === modalCurrentItem.id ? nextItem : item))
+                    : [...(current.lineItems ?? []), nextItem],
+            ),
+        );
+        showSuccessToast({
+            message: modalCurrentItem ? 'Rincian penerimaan diperbarui.' : 'Rincian penerimaan ditambahkan.',
+        });
     }
 
     async function onSave() {
@@ -270,11 +272,22 @@ export default function CashReceiptFormView({
                     __branchId: null,
                     branches: (current.branches ?? []).filter((item) => item !== value),
                 })),
-            onSelectLineAccount: () =>
-                selectLookup('accounts', 'akun penerimaan', (record) => applyLineItemUpdate(record)),
-            onEditLineItem: (item) => applyLineItemUpdate(null, item),
+            onSelectLineAccount: (record) => {
+                if (!values.__primaryAccountId || !values.bankAccounts?.length) {
+                    setKasBankWarningOpen(true);
+                    return;
+                }
+                applyLineItemUpdate(record);
+            },
+            onEditLineItem: (item) => {
+                if (!values.__primaryAccountId || !values.bankAccounts?.length) {
+                    setKasBankWarningOpen(true);
+                    return;
+                }
+                applyLineItemUpdate(null, item);
+            },
         }),
-        [selectLookup],
+        [selectLookup, values.__primaryAccountId, values.bankAccounts],
     );
 
     return (
@@ -366,9 +379,9 @@ export default function CashReceiptFormView({
 
                             <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white px-3 py-3 shadow-card-light">
                                 {activeSectionId === 'additional-info' ? (
-                                    <ReceiptInfoSection config={config} values={values} isDetail={Boolean(activeRecordId)} handlers={handlers} />
+                                    <ReceiptInfoSection config={config} values={values} setValues={setValues} isDetail={Boolean(activeRecordId)} handlers={handlers} />
                                 ) : (
-                                    <ReceiptLineItemsSection config={config} values={values} handlers={handlers} />
+                                    <ReceiptLineItemsSection config={config} values={values} setValues={setValues} handlers={handlers} />
                                 )}
                             </div>
                         </div>
@@ -393,6 +406,28 @@ export default function CashReceiptFormView({
                 cancelLabel="Batal"
                 confirmVariant="primary"
                 confirmLoading={saving}
+            />
+            <ConfirmationModal
+                open={kasBankWarningOpen}
+                onClose={() => setKasBankWarningOpen(false)}
+                onConfirm={() => setKasBankWarningOpen(false)}
+                title="Peringatan"
+                message="Akun Kas/Bank harus diisi terlebih dahulu."
+                confirmLabel="OK"
+                cancelLabel={null}
+                confirmVariant="primary"
+            />
+            <MoneyMovementLineItemModal
+                open={lineItemModalOpen}
+                onClose={() => {
+                    setLineItemModalOpen(false);
+                    setModalRecord(null);
+                    setModalCurrentItem(null);
+                }}
+                record={modalRecord}
+                currentItem={modalCurrentItem}
+                onSave={handleSaveLineItem}
+                type="receipt"
             />
         </>
     );
