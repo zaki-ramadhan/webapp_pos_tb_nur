@@ -297,7 +297,7 @@ final class PosBlueprint
                 self::navItem('journal-activity-log', 'Log Aktivitas', 'activity', 'purple'),
             ]),
             self::navModule('cash-bank', 'Kas & Bank', 'bank', [
-                // self::navItem('cash-payment', 'Pembayaran', 'payment', 'green'),
+                self::navItem('cash-payment', 'Pembayaran', 'payment', 'green'),
                 self::navItem('cash-receipt', 'Penerimaan', 'receipt', 'green'),
                 self::navItem('bank-transfer', 'Transfer Bank', 'transfer', 'green'),
                 self::navItem('bank-statement', 'Rekening Koran', 'bank', 'purple'),
@@ -429,7 +429,7 @@ final class PosBlueprint
             'bank-statement',
             'bank-history',
             'bank-reconciliation',
-            // 'cash-payment',
+            'cash-payment',
             'cash-receipt',
             'department',
             'item-unit',
