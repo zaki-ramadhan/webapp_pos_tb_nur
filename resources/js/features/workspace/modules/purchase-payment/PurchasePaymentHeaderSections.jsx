@@ -1,6 +1,7 @@
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { CloseIcon, RefreshIcon } from '@/features/workspace/shared/Icons';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
@@ -67,13 +68,27 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.bank} required />
-                    <ChipLookupField
-                        values={values.bankAccounts}
-                        placeholder={config.bankPlaceholder}
-                        onRemove={(value) => handlers.onRemoveBankAccount?.(value)}
-                        searchLabel="Cari bank"
-                        onSearch={handlers.onSelectBankAccount}
-                    />
+                    <div className="w-full">
+                        <AccountLookupField
+                            value={values.bankAccounts?.[0] ?? ''}
+                            placeholder={config.bankPlaceholder}
+                            searchLabel="Cari bank"
+                            onRemove={() =>
+                                setValues((current) => ({
+                                    ...current,
+                                    __bankAccountId: null,
+                                    bankAccounts: [],
+                                }))
+                            }
+                            onSelectAccount={(record, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    __bankAccountId: record?.id ?? null,
+                                    bankAccounts: record ? [label] : [],
+                                }))
+                            }
+                        />
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">

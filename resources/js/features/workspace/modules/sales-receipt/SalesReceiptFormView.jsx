@@ -19,6 +19,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import useSalesReceiptForm from './hooks/useSalesReceiptForm';
 
@@ -76,13 +77,24 @@ export default function SalesReceiptFormView({
                                     />
 
                                     <TransactionFieldLabel label={config.labels.bank} required />
-                                    <ChipLookupField
-                                        values={values.bankAccounts}
+                                    <AccountLookupField
+                                        value={values.bankAccounts?.[0] ?? ''}
                                         placeholder="Cari/Pilih..."
-                                        onRemove={handlers.onRemoveBankAccount}
                                         searchLabel="Cari bank"
-                                        onSearch={handlers.onSelectBankAccount}
-                                        heightClassName="h-[40px]"
+                                        onRemove={() =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                __bankAccountId: null,
+                                                bankAccounts: [],
+                                            }))
+                                        }
+                                        onSelectAccount={(record, label) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                __bankAccountId: record?.id ?? null,
+                                                bankAccounts: record ? [label] : [],
+                                            }))
+                                        }
                                     />
 
                                     <TransactionFieldLabel label={config.labels.paymentAmount} />

@@ -92,13 +92,14 @@ export function TransactionHeaderButton({ label, trailingChevron = false, classN
     );
 }
 
-export function TransactionReadonlyTextarea({ value, rows = 3, className = '' }) {
+export function TransactionReadonlyTextarea({ value, rows = 3, className = '', onChange, readOnly = true }) {
     return (
         <textarea
             value={value}
-            readOnly
+            readOnly={readOnly}
+            onChange={onChange}
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none ${className}`.trim()}
+            className={`w-full resize-none rounded-[4px] border border-slate-400 px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none transition focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${className}`.trim()}
         />
     );
 }

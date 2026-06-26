@@ -69,7 +69,7 @@ export function buildDocumentComparableSnapshot(values) {
         paymentTerms: values.paymentTerms,
         paymentTermId: values.__paymentTermId,
         shippingDate: values.shippingDate,
-        poNumber: values.poNumber,
+        purchaseOrderNumber: values.purchaseOrderNumber,
         address: values.address,
         branches: values.branches,
         branchId: values.__branchId,

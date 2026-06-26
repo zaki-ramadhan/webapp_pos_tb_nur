@@ -13,6 +13,7 @@ import { areComparableValuesEqual } from '@/features/workspace/shared/formValida
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import {
     buildCashReceiptDetailRecordFromRow,
     buildCashReceiptFormState,
@@ -287,13 +288,25 @@ export default function CashReceiptFormView({
                                     <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                                         <TransactionFieldLabel label={config.labels.cashBank} required htmlFor="cashBank" />
                                         <div className="max-w-[320px] w-full">
-                                            <ChipLookupField
+                                            <AccountLookupField
                                                 id="cashBank"
-                                                values={values.bankAccounts}
+                                                value={values.bankAccounts?.[0] ?? ''}
                                                 placeholder={config.cashBankPlaceholder}
-                                                onRemove={handlers.onRemoveBankAccount}
                                                 searchLabel="Cari kas atau bank"
-                                                onSearch={handlers.onSelectBankAccount}
+                                                onRemove={() =>
+                                                    setValues((current) => ({
+                                                        ...current,
+                                                        __primaryAccountId: null,
+                                                        bankAccounts: [],
+                                                    }))
+                                                }
+                                                onSelectAccount={(record, label) =>
+                                                    setValues((current) => ({
+                                                        ...current,
+                                                        __primaryAccountId: record?.id ?? null,
+                                                        bankAccounts: record ? [label] : [],
+                                                    }))
+                                                }
                                             />
                                         </div>
                                     </div>
