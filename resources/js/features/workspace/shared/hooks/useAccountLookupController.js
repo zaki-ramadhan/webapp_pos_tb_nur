@@ -88,7 +88,7 @@ export default function useAccountLookupController({ value, values, disabled = f
         function handlePointerDown(event) {
             const target = event.target;
 
-            if (rootRef.current?.contains(target)) {
+            if (rootRef.current?.contains(target) || (target instanceof HTMLElement && target.closest('[data-portal-dropdown]'))) {
                 return;
             }
 

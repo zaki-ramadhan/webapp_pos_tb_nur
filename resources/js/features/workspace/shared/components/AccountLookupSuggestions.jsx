@@ -43,19 +43,18 @@ export default function AccountLookupSuggestions({
                                 key={record.id}
                                 type="button"
                                 onClick={() => onSelectAccount(record, label)}
-                                className={`flex w-full items-start justify-between gap-3 border-t border-border-ui-border-lightest px-4 py-3 text-left transition first:border-t-0 hover:bg-ui-bg-hover ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
+                                className={`flex w-full items-start gap-3 border-t border-border-ui-border-lightest px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
                             >
                                 <span className="min-w-0 flex-1">
                                     <span className="block truncate text-sm font-medium text-brand-dark">{record.name ?? '-'}</span>
-                                    <span className="mt-1 block truncate text-xs text-text-workspace-muted">{record.code ?? '-'}</span>
-                                    {meta ? (
-                                        <span className="mt-0.5 block truncate text-xs text-text-light">
-                                            {meta}
+                                    <span className="mt-0.5 flex items-center justify-between gap-4 text-xs">
+                                        <span className="truncate text-brand-dark">
+                                            {record.code ?? '-'}
                                         </span>
-                                    ) : null}
-                                </span>
-                                <span className="shrink-0 rounded-full border border-border-chip-blue bg-bg-chip-blue px-2 py-0.5 text-xs font-medium text-text-chip-blue">
-                                    {translateAccountType(record.account_type) || '-'}
+                                        <span className="shrink-0 text-text-workspace-muted italic font-medium">
+                                            Rp {Number(record.opening_balance ?? 0).toLocaleString('id-ID')}
+                                        </span>
+                                    </span>
                                 </span>
                             </button>
                         );
