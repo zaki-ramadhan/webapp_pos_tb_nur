@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
-import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import {
     CloseIcon,
@@ -56,7 +56,7 @@ export function PaymentLineItemsSection({ config, values, setValues, handlers = 
     );
 }
 
-export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) {
+export function PaymentInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="min-h-[540px]">
             <div className={`grid gap-8 ${isDetail ? 'xl:grid-cols-2' : ''}`.trim()}>
@@ -68,14 +68,29 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                         <div className="max-w-[276px]">
                             <TextInput
                                 value={values.checkNumber}
-                                readOnly
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        checkNumber: event.target.value,
+                                    }))
+                                }
                                 className="h-[34px] rounded-[4px] border-ui-border"
                                 inputClassName="text-xs sm:text-sm text-brand-dark"
                             />
                         </div>
 
                         <TransactionFieldLabel label={config.labels.recipient} />
-                        <TransactionReadonlyTextarea value={values.recipient} className="min-h-[56px]" />
+                        <TransactionReadonlyTextarea
+                            value={values.recipient}
+                            readOnly={false}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    recipient: event.target.value,
+                                }))
+                            }
+                            className="min-h-[56px]"
+                        />
 
                         {isDetail ? (
                             <>
@@ -93,7 +108,18 @@ export function PaymentInfoSection({ config, values, isDetail, handlers = {} }) 
                         ) : null}
 
                         <TransactionFieldLabel label={config.labels.notes} />
-                        <TransactionReadonlyTextarea value={values.notes} rows={4} className="min-h-[70px]" />
+                        <TransactionReadonlyTextarea
+                            value={values.notes}
+                            readOnly={false}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    notes: event.target.value,
+                                }))
+                            }
+                            rows={4}
+                            className="min-h-[70px]"
+                        />
 
                         {isDetail ? (
                             <>
@@ -158,13 +184,25 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                 <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.cashBank} required htmlFor="cashBank" />
                     <div className="max-w-[320px] w-full">
-                        <ChipLookupField
+                        <AccountLookupField
                             id="cashBank"
-                            values={values.bankAccounts}
+                            value={values.bankAccounts?.[0] ?? ''}
                             placeholder={config.cashBankPlaceholder}
-                            onRemove={(value) => handlers.onRemoveBankAccount?.(value)}
                             searchLabel="Cari kas atau bank"
-                            onSearch={handlers.onSelectBankAccount}
+                            onRemove={() =>
+                                setValues((current) => ({
+                                    ...current,
+                                    __primaryAccountId: null,
+                                    bankAccounts: [],
+                                }))
+                            }
+                            onSelectAccount={(record, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    __primaryAccountId: record?.id ?? null,
+                                    bankAccounts: record ? [label] : [],
+                                }))
+                            }
                         />
                     </div>
                 </div>

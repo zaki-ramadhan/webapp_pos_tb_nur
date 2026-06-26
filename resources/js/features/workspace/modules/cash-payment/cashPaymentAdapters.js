@@ -61,6 +61,14 @@ export function buildCashPaymentRecord(record = {}, config) {
         accountCode: line.account?.code ?? line.reference_code ?? '',
         accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
         amount: formatCurrencyValue(line.total_amount ?? 0),
+        notes: line.attributes?.notes ?? '',
+        deferred: Boolean(line.attributes?.deferred ?? false),
+        deferredAccountId: line.attributes?.deferred_account_id ?? null,
+        deferredAccountLabel: line.attributes?.deferred_account_label ?? '',
+        deferredDuration: line.attributes?.deferred_duration ?? 0,
+        deferredStartType: line.attributes?.deferred_start_type ?? 'period',
+        deferredStartMonth: line.attributes?.deferred_start_month ?? 6,
+        deferredStartYear: line.attributes?.deferred_start_year ?? 2026,
     }));
     const primaryAccountLabel = buildLookupLabel(record.primaryAccount ?? {}, 'code');
     const bankLabel = record.metadata?.cash_bank_label ?? primaryAccountLabel;

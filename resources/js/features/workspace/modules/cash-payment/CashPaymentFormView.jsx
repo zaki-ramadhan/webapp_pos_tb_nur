@@ -29,10 +29,10 @@ import {
     buildFormState,
     buildGeneratedCashPaymentNumber,
     buildLookupLabel,
-    promptCashPaymentLineItem,
     validateCashPaymentValues,
     buildCashPaymentRecord,
 } from './cashPaymentShared';
+import CashPaymentLineItemModal from './CashPaymentLineItemModal';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function CashPaymentFormView({
@@ -47,6 +47,9 @@ export default function CashPaymentFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const [localRecord, setLocalRecord] = useState(null);
+    const [lineItemModalOpen, setLineItemModalOpen] = useState(false);
+    const [modalRecord, setModalRecord] = useState(null);
+    const [modalCurrentItem, setModalCurrentItem] = useState(null);
 
     useEffect(() => {
         setLocalRecord(null);
@@ -90,12 +93,14 @@ export default function CashPaymentFormView({
     } = useTransactionForm({ validationMessage });
 
     const [attachmentModalOpen, setAttachmentModalOpen] = useState(false);
+    const [kasBankWarningOpen, setKasBankWarningOpen] = useState(false);
 
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     const dockActions = useMemo(
         () =>
             (config.dockActions ?? [])
+                .filter((action) => action.id !== 'print')
                 .filter((action) => (isDetail ? true : action.id !== 'delete'))
                 .map((action) => {
                     if (action.id === 'save') {
@@ -150,51 +155,49 @@ export default function CashPaymentFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function applyLineItemUpdate(record, currentItem = null) {
-        try {
-            const nextItem = await promptCashPaymentLineItem(record, currentItem);
+    function applyLineItemUpdate(record, currentItem = null) {
+        setModalRecord(record);
+        setModalCurrentItem(currentItem);
+        setLineItemModalOpen(true);
+    }
 
-            if (!nextItem) {
-                return;
+    function handleSaveLineItem(nextItem) {
+        setLineItemModalOpen(false);
+        setModalRecord(null);
+        setModalCurrentItem(null);
+
+        if (nextItem.action === 'delete') {
+            if (modalCurrentItem) {
+                setValues((current) =>
+                    applyCashPaymentLineItems(
+                        {
+                            ...current,
+                            lineLookup: '',
+                        },
+                        (current.lineItems ?? []).filter((item) => item.id !== modalCurrentItem.id),
+                    ),
+                );
+                showSuccessToast({
+                    message: 'Rincian pembayaran dihapus.',
+                });
             }
-
-            if (nextItem.action === 'delete') {
-                if (currentItem) {
-                    setValues((current) =>
-                        applyCashPaymentLineItems(
-                            {
-                                ...current,
-                                lineLookup: '',
-                            },
-                            (current.lineItems ?? []).filter((item) => item.id !== currentItem.id),
-                        ),
-                    );
-                    showSuccessToast({
-                        message: 'Rincian pembayaran dihapus.',
-                    });
-                }
-                return;
-            }
-
-            setValues((current) =>
-                applyCashPaymentLineItems(
-                    {
-                        ...current,
-                        lineLookup: '',
-                    },
-                    currentItem
-                        ? (current.lineItems ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
-                        : [...(current.lineItems ?? []), nextItem],
-                ),
-            );
-            showSuccessToast({
-                message: currentItem ? 'Rincian pembayaran diperbarui.' : 'Rincian pembayaran ditambahkan.',
-            });
-        } catch (error) {
-            showErrorToast({
-                message: error?.message ?? 'Rincian pembayaran tidak valid.',
-            });
+            return;
         }
+
+        setValues((current) =>
+            applyCashPaymentLineItems(
+                {
+                    ...current,
+                    lineLookup: '',
+                },
+                modalCurrentItem
+                    ? (current.lineItems ?? []).map((item) => (item.id === modalCurrentItem.id ? nextItem : item))
+                    : [...(current.lineItems ?? []), nextItem],
+            ),
+        );
+        showSuccessToast({
+            message: modalCurrentItem ? 'Rincian pembayaran diperbarui.' : 'Rincian pembayaran ditambahkan.',
+        });
     }
 
     async function onSave() {
@@ -292,9 +295,25 @@ export default function CashPaymentFormView({
                     __branchId: null,
                     branches: (current.branches ?? []).filter((item) => item !== value),
                 })),
-            onSelectLineAccount: (record) => applyLineItemUpdate(record),
-            onEditLineItem: (item) => applyLineItemUpdate(null, item),
-            onTakeExpenseEntry: () =>
+            onSelectLineAccount: (record) => {
+                if (!values.__primaryAccountId || !values.bankAccounts?.length) {
+                    setKasBankWarningOpen(true);
+                    return;
+                }
+                applyLineItemUpdate(record);
+            },
+            onEditLineItem: (item) => {
+                if (!values.__primaryAccountId || !values.bankAccounts?.length) {
+                    setKasBankWarningOpen(true);
+                    return;
+                }
+                applyLineItemUpdate(null, item);
+            },
+            onTakeExpenseEntry: () => {
+                if (!values.__primaryAccountId) {
+                    setKasBankWarningOpen(true);
+                    return;
+                }
                 selectLookup('expense-entries', 'Pencatatan Beban', async (record) => {
                     try {
                         const fullRecord = await getBackendResource('expense-entries', record.id);
@@ -340,8 +359,13 @@ export default function CashPaymentFormView({
                             message: 'Gagal mengambil rincian pencatatan beban.',
                         });
                     }
-                }),
-            onTakePayrollEntry: () =>
+                });
+            },
+            onTakePayrollEntry: () => {
+                if (!values.__primaryAccountId) {
+                    setKasBankWarningOpen(true);
+                    return;
+                }
                 selectLookup('payroll-entries', 'Pencatatan Gaji', async (record) => {
                     try {
                         const fullRecord = await getBackendResource('payroll-entries', record.id);
@@ -387,9 +411,10 @@ export default function CashPaymentFormView({
                             message: 'Gagal mengambil rincian pencatatan gaji.',
                         });
                     }
-                }),
+                });
+            },
         }),
-        [selectLookup, setStatus],
+        [selectLookup, setStatus, values.__primaryAccountId],
     );
 
     return (
@@ -412,7 +437,13 @@ export default function CashPaymentFormView({
             >
                 <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
-                    <PaymentInfoSection config={config} values={values} isDetail={Boolean(activeRecordId)} handlers={handlers} />
+                    <PaymentInfoSection
+                        config={config}
+                        values={values}
+                        setValues={setValues}
+                        isDetail={Boolean(activeRecordId)}
+                        handlers={handlers}
+                    />
                 ) : (
                     <PaymentLineItemsSection config={config} values={values} setValues={setValues} handlers={handlers} />
                 )}
@@ -428,12 +459,33 @@ export default function CashPaymentFormView({
                 confirmVariant="primary"
                 confirmLoading={saving}
             />
+            <ConfirmationModal
+                open={kasBankWarningOpen}
+                onClose={() => setKasBankWarningOpen(false)}
+                onConfirm={() => setKasBankWarningOpen(false)}
+                title="Peringatan"
+                message="Akun Kas/Bank harus diisi terlebih dahulu."
+                confirmLabel="OK"
+                cancelLabel={null}
+                confirmVariant="primary"
+            />
             <CashPaymentAttachmentModal
                 open={attachmentModalOpen}
                 onClose={() => setAttachmentModalOpen(false)}
                 values={values}
                 setValues={setValues}
                 setStatus={setStatus}
+            />
+            <CashPaymentLineItemModal
+                open={lineItemModalOpen}
+                onClose={() => {
+                    setLineItemModalOpen(false);
+                    setModalRecord(null);
+                    setModalCurrentItem(null);
+                }}
+                record={modalRecord}
+                currentItem={modalCurrentItem}
+                onSave={handleSaveLineItem}
             />
         </>
     );

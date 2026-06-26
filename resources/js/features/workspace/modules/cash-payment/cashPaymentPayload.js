@@ -19,6 +19,16 @@ export function buildCashPaymentPayload(values) {
         reference_code: item.accountCode?.trim() || null,
         total_amount: parseNumericInput(item.amount),
         sort_order: index,
+        attributes: {
+            notes: item.notes?.trim() || null,
+            deferred: Boolean(item.deferred),
+            deferred_account_id: item.deferredAccountId ?? null,
+            deferred_account_label: item.deferredAccountLabel?.trim() || null,
+            deferred_duration: parseInt(item.deferredDuration, 10) || 0,
+            deferred_start_type: item.deferredStartType || 'period',
+            deferred_start_month: item.deferredStartMonth ?? 6,
+            deferred_start_year: item.deferredStartYear ?? 2026,
+        },
     }));
     const totalAmount = buildPaymentTotalAmount(values.lineItems ?? []);
 
