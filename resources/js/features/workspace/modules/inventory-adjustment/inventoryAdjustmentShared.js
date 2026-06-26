@@ -98,7 +98,6 @@ export function validateInventoryAdjustmentValues(values, config, isDetail) {
         ...(isDetail
             ? [{ label: config.labels.documentNumber, value: values.documentNumber }]
             : [{ label: 'Tipe penomoran', value: values.numberingType }]),
-        { label: config.labels.branch, value: values.__branchId, type: 'lookup' },
         { label: config.itemSectionTitle, value: values.items, type: 'array' },
     ]);
 

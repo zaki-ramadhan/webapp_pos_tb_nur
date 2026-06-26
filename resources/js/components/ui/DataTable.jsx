@@ -84,8 +84,11 @@ export function DataTableHead({ className = '', children, style: propStyle, ...p
 
 export function DataTableCell({ className = '', children, ...props }) {
     return (
-        <td className={`border-r border-table-cell-border px-3 py-2 text-sm leading-5 last:border-r-0 sm:px-4 ${className}`.trim()} {...props}>
-            {children}
+        <td
+            className={`border-r border-table-cell-border px-3 py-2 text-sm leading-5 last:border-r-0 sm:px-4 whitespace-nowrap truncate ${className}`.trim()}
+            {...props}
+        >
+            <div className="w-full truncate block min-w-0">{children}</div>
         </td>
     );
 }

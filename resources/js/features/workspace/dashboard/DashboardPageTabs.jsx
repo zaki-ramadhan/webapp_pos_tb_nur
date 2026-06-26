@@ -32,8 +32,8 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
                 <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); onClose(tab.id); }}
-                    className={`inline-flex h-5 w-5 items-center justify-center rounded-[3px] sm:h-6 sm:w-6 ${
-                        active ? 'text-white/95 hover:bg-white/15' : 'text-slate-400 hover:text-slate-700 hover:bg-slate/200/70'
+                    className={`inline-flex h-5 w-5 items-center justify-center rounded-[3px] sm:h-6 sm:w-6 transition-colors ${
+                        active ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-slate-700'
                     }`.trim()}
                     aria-label={`Tutup tab ${tab.label}`}
                 >
@@ -101,7 +101,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage }) {
                                             e.stopPropagation();
                                             onClosePage(tab.id);
                                         }}
-                                        className="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] text-slate-400 hover:bg-slate-200/70 hover:text-slate-700 transition"
+                                        className="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] text-slate-400 hover:text-slate-700 transition-colors"
                                         aria-label={`Tutup tab ${tab.label}`}
                                     >
                                         <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.6} />

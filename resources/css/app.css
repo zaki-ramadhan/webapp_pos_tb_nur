@@ -678,4 +678,13 @@ input[type="radio"]:not(:focus):not(:disabled) {
     border-color: #8b99ab !important;
 }
 
+/* Enforce no wrapping and ellipsis on all table cells, headers, and their children */
+th, td,
+th *, td * {
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+}
+
+
 
