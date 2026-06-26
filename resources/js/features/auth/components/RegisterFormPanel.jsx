@@ -23,12 +23,12 @@ function NameField({ salutation, onSalutationChange, prefixClassName, label, val
             <TextInput
                 className="!overflow-visible"
                 prefix={
-                    <div className="relative flex h-full items-center justify-center">
+                    <div className="relative flex h-full w-full items-stretch">
                         <button
                             ref={buttonRef}
                             type="button"
                             onClick={() => setIsOpen(!isOpen)}
-                            className="flex items-center gap-1.5 text-input-focus text-base font-semibold outline-none cursor-pointer focus:outline-none h-full"
+                            className="flex w-full items-center justify-center gap-1.5 text-input-focus text-xs sm:text-sm font-semibold outline-none cursor-pointer focus:outline-none px-3 h-full"
                         >
                             <span>{salutation}</span>
                             <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />
@@ -37,10 +37,9 @@ function NameField({ salutation, onSalutationChange, prefixClassName, label, val
                             open={isOpen}
                             onClose={() => setIsOpen(false)}
                             anchorRef={buttonRef}
-                            align="start"
+                            align="end"
                             side="bottom"
                             widthClassName="w-[85px]"
-                            className="-ml-4 !top-full mt-0.5"
                         >
                             <DropdownMenuItem onClick={() => { onSalutationChange('Bpk'); setIsOpen(false); }}>
                                 Bpk
@@ -148,7 +147,7 @@ export default function RegisterFormPanel({ register }) {
                     <NameField
                         salutation={salutation}
                         onSalutationChange={setSalutation}
-                        prefixClassName="pl-4 pr-1.5 justify-center"
+                        prefixClassName="!px-0 flex items-stretch"
                         label={register.nameLabel}
                         placeholder={register.namePlaceholder}
                         value={form.data.name}
