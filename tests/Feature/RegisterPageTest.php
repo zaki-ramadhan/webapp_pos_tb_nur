@@ -15,7 +15,7 @@ class RegisterPageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('RegisterPage')
-                ->where('carousel.imageSrc', '/auth_bg.jpg')
+                ->where('carousel.imageSrc', '/auth_bg.png')
                 ->has('register'));
     }
 }

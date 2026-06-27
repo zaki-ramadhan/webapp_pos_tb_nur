@@ -15,6 +15,6 @@ class PasswordResetPageTest extends TestCase
                 ->component('ResetPasswordPage')
                 ->where('resetPassword.token', 'sample-token')
                 ->where('resetPassword.email', 'user@example.com')
-                ->where('carousel.imageSrc', '/auth_bg.jpg'));
+                ->where('carousel.imageSrc', '/auth_bg.png'));
     }
 }

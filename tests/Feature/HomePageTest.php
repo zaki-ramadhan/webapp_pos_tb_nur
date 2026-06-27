@@ -17,7 +17,7 @@ class HomePageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('HomePage')
-                ->where('carousel.imageSrc', '/auth_bg.jpg')
+                ->where('carousel.imageSrc', '/auth_bg.png')
                 ->where('login.submitHref', route('dashboard'))
                 ->has('login'));
     }
