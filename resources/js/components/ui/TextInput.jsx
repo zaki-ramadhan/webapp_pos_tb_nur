@@ -212,6 +212,52 @@ export default function TextInput({
     clearable = true,
     ...props
 }) {
+    const name = props.name ?? '';
+    const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
+    const searchStr = `${id || ''} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
+
+    const isPostal = searchStr.includes('postal') || 
+                     searchStr.includes('kodepos') || 
+                     searchStr.includes('zip') ||
+                     searchStr.includes('k.pos') ||
+                     searchStr.includes('kode pos');
+
+    const isPhone = searchStr.includes('phone') || 
+                    searchStr.includes('telp') || 
+                    searchStr.includes('telepon') ||
+                    searchStr.includes('whatsapp') || 
+                    searchStr.includes('wa') || 
+                    searchStr.includes('fax') || 
+                    searchStr.includes('hp') || 
+                    searchStr.includes('kontak') || 
+                    searchStr.includes('contact');
+
+    const isCurrency = searchStr.includes('price') || 
+                       searchStr.includes('amount') || 
+                       searchStr.includes('limit') || 
+                       searchStr.includes('kurs') ||
+                       searchStr.includes('jumlah') ||
+                       searchStr.includes('nominal') ||
+                       searchStr.includes('cost') ||
+                       searchStr.includes('piutang') ||
+                       searchStr.includes('utang') ||
+                       searchStr.includes('nilai') ||
+                       prefixStr === 'rp';
+
+    const isCodeOrNumber = searchStr.includes('code') || 
+                           searchStr.includes('kode') || 
+                           searchStr.includes('number') || 
+                           searchStr.includes('nomor') || 
+                           searchStr.includes('no') || 
+                           searchStr.includes('reference') || 
+                           searchStr.includes('external') || 
+                           searchStr.includes('sku') || 
+                           searchStr.includes('npwp') ||
+                           type === 'number';
+
+    const defaultMaxLength = isPostal ? 10 : (isPhone ? 30 : (isCurrency ? 18 : (isCodeOrNumber ? 120 : 255)));
+    const resolvedMaxLength = props.maxLength ?? defaultMaxLength;
+
     const inputRef = useRef(null);
     const [localValue, setLocalValue] = useState(() => {
         if (type === 'number') {
@@ -407,7 +453,7 @@ export default function TextInput({
         inputRef.current?.focus();
     }
 
-    const hasWidth = containerClassName.includes('w-');
+    const hasWidth = containerClassName.includes('w-') || className.includes('w-') || props.style?.width;
     const widthClass = hasWidth ? '' : 'w-full';
 
     const hasPrefixMinW = prefixClassName.includes('min-w-');
@@ -417,38 +463,6 @@ export default function TextInput({
     const hasPrefixColor = prefixClassName.includes('text-');
     const prefixColorClass = hasPrefixColor ? '' : 'text-slate-500';
 
-    const name = props.name ?? '';
-    const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
-    const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
-    const isPostal = searchStr.includes('postal') || 
-                     searchStr.includes('kodepos') || 
-                     searchStr.includes('zip') ||
-                     searchStr.includes('k.pos') ||
-                     searchStr.includes('kode pos');
-
-    const isPhone = searchStr.includes('phone') || 
-                    searchStr.includes('telp') || 
-                    searchStr.includes('telepon') ||
-                    searchStr.includes('whatsapp') || 
-                    searchStr.includes('wa') || 
-                    searchStr.includes('fax') || 
-                    searchStr.includes('hp') || 
-                    searchStr.includes('kontak') || 
-                    searchStr.includes('contact');
-
-    const isCodeOrNumber = searchStr.includes('code') || 
-                           searchStr.includes('kode') || 
-                           searchStr.includes('number') || 
-                           searchStr.includes('nomor') || 
-                           searchStr.includes('no') || 
-                           searchStr.includes('reference') || 
-                           searchStr.includes('external') || 
-                           searchStr.includes('sku') || 
-                           searchStr.includes('npwp') ||
-                           type === 'number';
-
-    const defaultMaxLength = isPostal ? 10 : (isPhone ? 30 : (isCodeOrNumber ? 120 : 255));
-    const resolvedMaxLength = props.maxLength ?? defaultMaxLength;
     const hasTrailingPx = trailingClassName.includes('px-') || trailingClassName.includes('pl-') || trailingClassName.includes('pr-');
 
     const isClearOrClose = isClearOrCloseElement(trailing);
@@ -456,8 +470,16 @@ export default function TextInput({
         ? !(isNonInteractive && isClearOrClose)
         : (clearable && onChange && !isNonInteractive && localValue !== undefined && localValue !== null && localValue !== '');
 
+    const computedStyle = { ...props.style };
+    if (!hasWidth && resolvedMaxLength) {
+        const prefixWidth = prefix ? (typeof prefix === 'string' ? prefix.length + 2 : 5) : 0;
+        const trailingWidth = showTrailing ? 3 : 2;
+        const totalCh = resolvedMaxLength + prefixWidth + trailingWidth + 2;
+        computedStyle.maxWidth = `${totalCh}ch`;
+    }
+
     return (
-        <div className={`${widthClass} ${containerClassName}`.trim()}>
+        <div className={`${widthClass} ${containerClassName}`.trim()} style={computedStyle}>
             <div
                 onMouseDown={focusInputFromWrapper}
                 className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
