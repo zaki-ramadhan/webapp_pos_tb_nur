@@ -33,18 +33,30 @@ export function deriveTransferAmounts(record) {
     };
 }
 
+function extractCleanAccountName(label) {
+    if (!label) return '';
+    const match = label.match(/^\[.*?\]\s*(.*)$/);
+    return match ? match[1].trim() : label.trim();
+}
+
 export function buildTotals(values) {
     const transferAmount = parseNumericInput(values.transferValue);
     const feeAmount = (values.feeRows ?? []).reduce((sum, row) => sum + parseNumericInput(row.amount), 0);
     const resultAmount = parseNumericInput(values.resultValue || values.transferValue);
-    const fromAccountLabel = values.fromBankAccounts?.[0] ?? 'Kas/Bank Asal';
-    const toAccountLabel = values.toBankAccounts?.[0] ?? 'Kas/Bank Tujuan';
+    const transferPrefix = values.transferPrefix || '';
+    const resultPrefix = values.resultPrefix || '';
+
+    const fromVal = transferAmount + feeAmount;
+    const toVal = resultAmount;
+
+    const fromAccountName = extractCleanAccountName(values.fromBankAccounts?.[0]);
+    const toAccountName = extractCleanAccountName(values.toBankAccounts?.[0]);
 
     return {
-        fromTotalLabel: `Total ${truncateText(fromAccountLabel, 28)}`,
-        fromTotalValue: `Rp ${formatCurrencyValue(transferAmount + feeAmount)}`,
-        toTotalLabel: `Total ${truncateText(toAccountLabel, 28)}`,
-        toTotalValue: `Rp ${formatCurrencyValue(resultAmount)}`,
+        fromTotalLabel: fromAccountName ? `Total ${fromAccountName}` : 'Total',
+        fromTotalValue: fromVal > 0 ? `${transferPrefix} ${formatCurrencyValue(fromVal)}`.trim() : '0',
+        toTotalLabel: toAccountName ? `Total ${toAccountName}` : 'Total',
+        toTotalValue: toVal > 0 ? `${resultPrefix} ${formatCurrencyValue(toVal)}`.trim() : '0',
     };
 }
 

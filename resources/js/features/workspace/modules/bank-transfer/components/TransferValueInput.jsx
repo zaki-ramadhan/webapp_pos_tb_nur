@@ -4,6 +4,7 @@ export default function TransferValueInput({
     prefix,
     value,
     onChange = null,
+    onBlur = null,
     readOnly = false,
     maxWidthClassName = 'max-w-[276px]',
 }) {
@@ -13,6 +14,7 @@ export default function TransferValueInput({
                 type="number"
                 value={value}
                 onChange={onChange}
+                onBlur={onBlur}
                 readOnly={readOnly}
                 prefix={prefix}
                 className="h-[34px] rounded-[4px] border-ui-border"
