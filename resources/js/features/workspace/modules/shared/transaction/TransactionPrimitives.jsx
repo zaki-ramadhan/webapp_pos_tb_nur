@@ -62,7 +62,7 @@ export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
                                 : 'border-tab-active-border-x bg-disabled-border text-tab-active-text hover:bg-tab-primary-inactive-hover-bg'
                         }`.trim()}
                     >
-                        <NavigationIcon type={tab.icon} className="h-4.5 w-4.5 text-current" />
+                        <NavigationIcon type={tab.icon} className="h-[22px] w-[22px] text-current" />
                     </button>
                 );
             })}

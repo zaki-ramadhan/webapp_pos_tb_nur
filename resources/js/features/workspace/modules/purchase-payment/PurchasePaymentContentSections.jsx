@@ -99,7 +99,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
 
 export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail, handlers = {} }) {
     return (
-        <div className="min-h-[540px]">
+        <div className="flex-1 flex flex-col min-h-0">
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
@@ -158,7 +158,7 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
 
 export function PurchasePaymentInfoSection({ config, values }) {
     return (
-        <div className="min-h-[540px]">
+        <div className="flex-1 flex flex-col min-h-0">
             <TransactionSectionHeading title={config.paymentInfoTitle} icon="payment" />
 
             <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-x-4">

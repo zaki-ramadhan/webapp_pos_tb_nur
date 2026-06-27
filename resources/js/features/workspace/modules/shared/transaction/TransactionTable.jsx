@@ -175,7 +175,7 @@ export function TransactionLineItemsSection({
     const hasRows = rows.length > 0;
 
     return (
-        <div className="flex flex-col min-h-0">
+        <div className="flex flex-col flex-1 min-h-0">
             <div className="flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0 flex-1 sm:max-w-[380px]">
                     {searchInput ?? (

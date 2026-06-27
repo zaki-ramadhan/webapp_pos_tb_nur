@@ -62,7 +62,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
     }, [keyword, values.invoices]);
 
     return (
-        <section className="min-h-[540px]">
+        <section className="flex-1 flex flex-col min-h-0">
             <div className="flex flex-col gap-3 border-b border-ui-border-medium pb-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1 sm:max-w-[560px]">
@@ -189,7 +189,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
     const isCheckPayment = values.paymentMethod === 'Cek/Giro';
 
     return (
-        <section className="min-h-[540px]">
+        <section className="flex-1 flex flex-col min-h-0">
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.sectionTabs?.find((tab) => tab.id === 'additional-info')?.label ?? 'Info lainnya'} icon="info" />
 
