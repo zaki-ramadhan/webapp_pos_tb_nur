@@ -9,14 +9,6 @@ export function validateBankTransferValues(values, config) {
         return `${config.labels.toBank} wajib diisi.`;
     }
 
-    if (!Array.isArray(values.fromBranches) || values.fromBranches.length < 1) {
-        return `${config.labels.fromBranch} wajib diisi.`;
-    }
-
-    if (!Array.isArray(values.toBranches) || values.toBranches.length < 1) {
-        return `${config.labels.toBranch} wajib diisi.`;
-    }
-
     if (!String(values.entryDate ?? '').trim()) {
         return `${config.labels.entryDate} wajib diisi.`;
     }

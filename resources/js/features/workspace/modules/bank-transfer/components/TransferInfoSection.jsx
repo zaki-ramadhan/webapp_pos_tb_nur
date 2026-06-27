@@ -6,11 +6,11 @@ import {
 
 export default function TransferInfoSection({ config, values, setValues, isDetail }) {
     return (
-        <div className="min-h-[540px]">
+        <div className="flex-1 flex flex-col min-h-0">
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.infoTitle} icon="receipt" />
 
-                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <div className="mt-4 grid gap-y-2.5 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TextareaField
                         value={values.notes}
