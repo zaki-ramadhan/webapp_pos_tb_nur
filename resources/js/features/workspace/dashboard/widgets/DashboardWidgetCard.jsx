@@ -103,9 +103,13 @@ export default function DashboardWidgetCard({
     const widgetKey = widget.sourceWidgetId ?? widget.id;
     const sourcePage = WIDGET_SOURCE_PAGES[widgetKey] ?? WIDGET_SOURCE_PAGES[widget.type];
 
+    const resolvedHeightClass = (widget.type === 'line' || widget.type === 'cash-availability') && widget.heightClass === 'min-h-[310px]'
+        ? 'min-h-[260px]'
+        : widget.heightClass;
+
     return (
         <>
-            <Panel className={`flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 ${widget.heightClass}`.trim()}>
+            <Panel className={`flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 ${resolvedHeightClass}`.trim()}>
                 <div className="flex flex-wrap items-start justify-between gap-2 border-b border-table-row-border px-3 py-3 sm:flex-nowrap sm:items-center sm:px-4">
                     <div className="min-w-0 flex-1">
                         <h3 className="break-words text-sm font-medium text-tab-active-text">{widget.title}</h3>
@@ -158,7 +162,10 @@ export default function DashboardWidgetCard({
                                             } else {
                                                 window.dispatchEvent(
                                                     new CustomEvent('workspace:open-page', {
-                                                        detail: { pageId: sourcePage.pageId },
+                                                        detail: { 
+                                                            pageId: sourcePage.pageId,
+                                                            targetTabId: `${sourcePage.pageId}-view`
+                                                        },
                                                     })
                                                 );
                                             }
@@ -227,7 +234,10 @@ export default function DashboardWidgetCard({
                                         setSourceModalOpen(false);
                                         window.dispatchEvent(
                                             new CustomEvent('workspace:open-page', {
-                                                detail: { pageId: src.pageId },
+                                                detail: { 
+                                                    pageId: src.pageId,
+                                                    targetTabId: `${src.pageId}-view`
+                                                },
                                             })
                                         );
                                     }}
