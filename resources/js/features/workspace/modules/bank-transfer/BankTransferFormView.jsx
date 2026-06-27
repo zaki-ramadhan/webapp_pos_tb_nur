@@ -455,14 +455,14 @@ export default function BankTransferFormView({
                             size="md"
                             onClick={() => {
                                 if (activeTab === 'detail') {
-                                    if (!feeAccount) {
+                                    if (!feeCustomName.trim()) {
                                         showErrorToast({ message: 'Nama Akun wajib diisi.' });
                                         return;
                                     }
                                     setActiveTab('notes');
                                 } else {
                                     const amountNum = parseNumericInput(feeAmount);
-                                    if (!feeAccount) {
+                                    if (!feeCustomName.trim()) {
                                         showErrorToast({ message: 'Nama Akun wajib diisi.' });
                                         return;
                                     }
@@ -474,8 +474,8 @@ export default function BankTransferFormView({
                                     const nextItem = {
                                         id: feeModalCurrentItem?.id ?? `draft-fee-${Date.now()}`,
                                         __lineId: feeModalCurrentItem?.__lineId ?? null,
-                                        __accountId: feeAccount.id,
-                                        accountCode: feeAccount.code ?? '',
+                                        __accountId: feeAccount?.id ?? feeModalCurrentItem?.__accountId ?? null,
+                                        accountCode: feeAccount?.code ?? feeModalCurrentItem?.accountCode ?? '',
                                         accountName: feeCustomName.trim(),
                                         amount: formatCurrencyValue(amountNum),
                                         chargedTo: feeChargedTo,
@@ -536,28 +536,6 @@ export default function BankTransferFormView({
                 <div className="min-h-[200px] flex flex-col justify-start">
                     {activeTab === 'detail' && (
                         <div className="space-y-2.5">
-                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
-                                <label className="text-xs sm:text-sm font-medium text-slate-700">Akun Perkiraan</label>
-                                <AccountLookupField
-                                    id="feeAccountLookup"
-                                    value={feeAccount ? `${feeAccount.code ? `[${feeAccount.code}] ` : ''}${feeAccount.name}` : ''}
-                                    placeholder="Cari/Pilih Akun Perkiraan..."
-                                    searchLabel="Cari akun perkiraan"
-                                    queryParams={{ exclude_type: 'Cash/Bank' }}
-                                    showType={true}
-                                    onRemove={() => {
-                                        setFeeAccount(null);
-                                        setFeeCustomName('');
-                                    }}
-                                    onSelectAccount={(record) => {
-                                        setFeeAccount(record);
-                                        if (record) {
-                                            setFeeCustomName(record.name ?? '');
-                                        }
-                                    }}
-                                />
-                            </div>
-
                             <div className="grid grid-cols-[130px_1fr] items-center gap-4">
                                 <label className="text-xs sm:text-sm font-medium text-slate-700">Nama Akun</label>
                                 <TextInput
