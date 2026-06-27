@@ -2,6 +2,12 @@ import { useRef } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 
+function extractCleanAccountName(label) {
+    if (!label) return '';
+    const match = label.match(/^\[.*?\]\s*(.*)$/);
+    return match ? match[1].trim() : label.trim();
+}
+
 export default function AccountLookupSearchInput({
     value,
     selectedValue = '',
@@ -52,7 +58,7 @@ export default function AccountLookupSearchInput({
             <div className="flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-3">
                 {hasSelectedValue ? (
                     <span className="inline-flex max-w-full items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark">
-                        <span className="truncate">{selectedValue}</span>
+                        <span className="truncate">{extractCleanAccountName(selectedValue)}</span>
                         <button
                             type="button"
                             onClick={() => {
