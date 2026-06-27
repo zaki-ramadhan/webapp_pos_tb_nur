@@ -1,7 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import Button from '@/components/ui/Button';
+import TextInput from '@/components/ui/TextInput';
+import SelectField from '@/components/ui/SelectField';
+import TextareaField from '@/components/ui/TextareaField';
+import { PencilIcon } from '@/features/workspace/shared/Icons';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
+import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -62,20 +71,36 @@ export default function BankTransferFormView({
             ? buildDetailRecordFromRow(config.rowMap[activeRecordId], config)
             : config.detailRecords?.[activeRecordId] ?? config.draft;
     }, [activeRecordId, config, localRecord]);
-    const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
-    const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
-    const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
+    const [values, setValues, isDirty] = useFormDraftState({
+        sourceRecord,
+        buildFormState,
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+    });
+
+    const [requiredWarningOpen, setRequiredWarningOpen] = useState(false);
+    const [requiredWarningList, setRequiredWarningList] = useState([]);
+
+    const [feeModalOpen, setFeeModalOpen] = useState(false);
+    const [feeModalRecord, setFeeModalRecord] = useState(null);
+    const [feeModalCurrentItem, setFeeModalCurrentItem] = useState(null);
+    const [feeAccount, setFeeAccount] = useState(null);
+    const [feeCustomName, setFeeCustomName] = useState('');
+    const [feeAmount, setFeeAmount] = useState('0');
+    const [feeChargedTo, setFeeChargedTo] = useState('Dari Kas/Bank');
+    const [feeNotes, setFeeNotes] = useState('');
+    const [activeTab, setActiveTab] = useState('detail');
+
+    const valuesRef = useRef(values);
+    valuesRef.current = values;
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-        setValues(buildFormState(sourceRecord, config));
     }, [config, sourceRecord]);
 
+    const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const validationMessage = useMemo(() => validateBankTransferValues(values, config), [config, values]);
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildBankTransferSnapshot(initialComparable), buildBankTransferSnapshot(values)),
-        [initialComparable, values],
-    );
 
     const {
         status,
@@ -91,13 +116,13 @@ export default function BankTransferFormView({
 
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
-    function updateValues(nextValues) {
+    const updateValues = useCallback((nextValues) => {
         setValues((currentValues) =>
             applyBankTransferComputedValues(
                 typeof nextValues === 'function' ? nextValues(currentValues) : nextValues,
             ),
         );
-    }
+    }, []);
 
     const dockActions = useMemo(
         () =>
@@ -134,7 +159,7 @@ export default function BankTransferFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function applyFeeUpdate(record, currentItem = null) {
+    const applyFeeUpdate = useCallback(async (record, currentItem = null) => {
         try {
             const nextItem = await promptBankTransferFeeItem(record, currentItem);
 
@@ -171,7 +196,7 @@ export default function BankTransferFormView({
                 message: error?.message ?? 'Biaya transfer tidak valid.',
             });
         }
-    }
+    }, [updateValues]);
 
     async function onSave() {
         await handleSave({
@@ -240,28 +265,24 @@ export default function BankTransferFormView({
 
     const handlers = useMemo(
         () => ({
-            onSelectFromBankAccount: () =>
-                selectLookup('accounts', 'kas atau bank asal', (record) =>
-                    updateValues((current) => ({
-                        ...current,
-                        __fromAccountId: record.id,
-                        fromBankAccounts: [buildLookupLabel(record)],
-                    })),
-                ),
+            onSelectFromBankAccount: (record, label) =>
+                updateValues((current) => ({
+                    ...current,
+                    __fromAccountId: record ? record.id : null,
+                    fromBankAccounts: record ? [label] : [],
+                })),
             onRemoveFromBankAccount: () =>
                 updateValues((current) => ({
                     ...current,
                     __fromAccountId: null,
                     fromBankAccounts: [],
                 })),
-            onSelectToBankAccount: () =>
-                selectLookup('accounts', 'kas atau bank tujuan', (record) =>
-                    updateValues((current) => ({
-                        ...current,
-                        __toAccountId: record.id,
-                        toBankAccounts: [buildLookupLabel(record)],
-                    })),
-                ),
+            onSelectToBankAccount: (record, label) =>
+                updateValues((current) => ({
+                    ...current,
+                    __toAccountId: record ? record.id : null,
+                    toBankAccounts: record ? [label] : [],
+                })),
             onRemoveToBankAccount: () =>
                 updateValues((current) => ({
                     ...current,
@@ -296,11 +317,53 @@ export default function BankTransferFormView({
                     __toBranchId: null,
                     toBranches: (current.toBranches ?? []).filter((item) => item !== value),
                 })),
-            onSelectFeeAccount: () =>
-                selectLookup('accounts', 'akun biaya transfer', (record) => applyFeeUpdate(record)),
-            onEditFeeItem: (item) => applyFeeUpdate(null, item),
+            onSelectFeeAccount: (record) => {
+                if (record) {
+                    const currentValues = valuesRef.current;
+                    const missing = [];
+                    if (!currentValues.entryDate) missing.push("Tanggal");
+                    if (!currentValues.fromBankAccounts?.[0]) missing.push("Dari Kas/Bank");
+                    if (!currentValues.toBankAccounts?.[0]) missing.push("Ke Kas/Bank");
+                    
+                    const transferValueNum = parseNumericInput(currentValues.transferValue);
+                    if (transferValueNum <= 0) {
+                        missing.push("Nilai Transfer");
+                    }
+                    
+                    if (missing.length > 0) {
+                        setRequiredWarningList(missing);
+                        setRequiredWarningOpen(true);
+                        return;
+                    }
+                    
+                    setFeeModalRecord(record);
+                    setFeeModalCurrentItem(null);
+                    setFeeAccount(record);
+                    setFeeCustomName(record.name ?? '');
+                    setFeeAmount('0');
+                    setFeeChargedTo('Dari Kas/Bank');
+                    setFeeNotes('');
+                    setActiveTab('detail');
+                    setFeeModalOpen(true);
+                }
+            },
+            onEditFeeItem: (item) => {
+                setFeeModalRecord(null);
+                setFeeModalCurrentItem(item);
+                setFeeAccount({
+                    id: item.__accountId,
+                    code: item.accountCode,
+                    name: item.accountName,
+                });
+                setFeeCustomName(item.accountName ?? '');
+                setFeeAmount(item.amount ? String(parseNumericInput(item.amount)) : '0');
+                setFeeChargedTo(item.chargedTo ?? 'Dari Kas/Bank');
+                setFeeNotes(item.notes ?? '');
+                setActiveTab('detail');
+                setFeeModalOpen(true);
+            },
         }),
-        [selectLookup],
+        [selectLookup, updateValues],
     );
 
     return (
@@ -339,6 +402,221 @@ export default function BankTransferFormView({
                 confirmVariant="primary"
                 confirmLoading={saving}
             />
+            <ConfirmationModal
+                open={requiredWarningOpen}
+                onClose={() => setRequiredWarningOpen(false)}
+                onConfirm={() => setRequiredWarningOpen(false)}
+                title="Peringatan"
+                message={
+                    requiredWarningList.length === 1
+                        ? `${requiredWarningList[0]} harus diisi terlebih dahulu.`
+                        : `Harap lengkapi data input berikut terlebih dahulu:\n` +
+                          requiredWarningList.map((item) => `- ${item} harus diisi`).join('\n')
+                }
+                confirmLabel="OK"
+                cancelLabel={null}
+                confirmVariant="primary"
+            />
+            <WorkspaceDialog
+                open={feeModalOpen}
+                onClose={() => {
+                    setFeeModalOpen(false);
+                    setFeeModalRecord(null);
+                    setFeeModalCurrentItem(null);
+                }}
+                title="Biaya Transfer"
+                headerIcon={PencilIcon}
+                maxWidthClassName="max-w-[500px]"
+                contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[220px] flex flex-col pt-0 pb-4"
+                footer={
+                    <div className="flex justify-between items-center w-full">
+                        {feeModalCurrentItem ? (
+                            <Button
+                                variant="secondary"
+                                size="md"
+                                onClick={() => {
+                                    setFeeModalOpen(false);
+                                    updateValues((current) => ({
+                                        ...current,
+                                        feeLookup: '',
+                                        feeRows: (current.feeRows ?? []).filter((row) => row.id !== feeModalCurrentItem.id),
+                                    }));
+                                    showSuccessToast({ message: 'Biaya transfer dihapus.' });
+                                }}
+                                className="border-red-150 hover:bg-danger-border text-error-border font-medium"
+                            >
+                                Hapus
+                            </Button>
+                        ) : (
+                            <div />
+                        )}
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onClick={() => {
+                                if (activeTab === 'detail') {
+                                    if (!feeAccount) {
+                                        showErrorToast({ message: 'Nama Akun wajib diisi.' });
+                                        return;
+                                    }
+                                    setActiveTab('notes');
+                                } else {
+                                    const amountNum = parseNumericInput(feeAmount);
+                                    if (!feeAccount) {
+                                        showErrorToast({ message: 'Nama Akun wajib diisi.' });
+                                        return;
+                                    }
+                                    if (amountNum <= 0) {
+                                        showErrorToast({ message: 'Nilai biaya transfer harus lebih dari 0.' });
+                                        return;
+                                    }
+                                    
+                                    const nextItem = {
+                                        id: feeModalCurrentItem?.id ?? `draft-fee-${Date.now()}`,
+                                        __lineId: feeModalCurrentItem?.__lineId ?? null,
+                                        __accountId: feeAccount.id,
+                                        accountCode: feeAccount.code ?? '',
+                                        accountName: feeCustomName.trim(),
+                                        amount: formatCurrencyValue(amountNum),
+                                        chargedTo: feeChargedTo,
+                                        notes: feeNotes.trim(),
+                                    };
+                                    
+                                    updateValues((current) => ({
+                                        ...current,
+                                        feeLookup: '',
+                                        feeRows: feeModalCurrentItem
+                                            ? (current.feeRows ?? []).map((row) => (row.id === feeModalCurrentItem.id ? nextItem : row))
+                                            : [...(current.feeRows ?? []), nextItem],
+                                    }));
+                                    
+                                    showSuccessToast({
+                                        message: feeModalCurrentItem ? 'Biaya transfer diperbarui.' : 'Biaya transfer ditambahkan.',
+                                    });
+                                    
+                                    setFeeModalOpen(false);
+                                    setFeeModalRecord(null);
+                                    setFeeModalCurrentItem(null);
+                                }
+                            }}
+                            className="bg-brand-blue-dark hover:bg-brand-blue-darker font-medium shadow-btn-blue-hover"
+                        >
+                            Lanjut
+                        </Button>
+                    </div>
+                }
+            >
+                {/* Tabs */}
+                <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('detail')}
+                        className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                            activeTab === 'detail'
+                                ? 'border-pink-accent text-pink-accent'
+                                : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Biaya Transfer
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('notes')}
+                        className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                            activeTab === 'notes'
+                                ? 'border-pink-accent text-pink-accent'
+                                : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                    >
+                        Info lainnya
+                    </button>
+                </div>
+
+                {/* Tab Contents */}
+                <div className="min-h-[200px] flex flex-col justify-start">
+                    {activeTab === 'detail' && (
+                        <div className="space-y-2.5">
+                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
+                                <label className="text-xs sm:text-sm font-medium text-slate-700">Akun Perkiraan</label>
+                                <AccountLookupField
+                                    id="feeAccountLookup"
+                                    value={feeAccount ? `${feeAccount.code ? `[${feeAccount.code}] ` : ''}${feeAccount.name}` : ''}
+                                    placeholder="Cari/Pilih Akun Perkiraan..."
+                                    searchLabel="Cari akun perkiraan"
+                                    queryParams={{ exclude_type: 'Cash/Bank' }}
+                                    showType={true}
+                                    onRemove={() => {
+                                        setFeeAccount(null);
+                                        setFeeCustomName('');
+                                    }}
+                                    onSelectAccount={(record) => {
+                                        setFeeAccount(record);
+                                        if (record) {
+                                            setFeeCustomName(record.name ?? '');
+                                        }
+                                    }}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
+                                <label className="text-xs sm:text-sm font-medium text-slate-700">Nama Akun</label>
+                                <TextInput
+                                    type="text"
+                                    value={feeCustomName}
+                                    onChange={(e) => setFeeCustomName(e.target.value)}
+                                    placeholder="Nama Akun..."
+                                    className="h-[34px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
+                                <label className="text-xs sm:text-sm font-medium text-slate-700">
+                                    Nilai <span className="text-red-500">*</span>
+                                </label>
+                                <div className="max-w-[276px]">
+                                    <TextInput
+                                        type="text"
+                                        value={feeAmount}
+                                        onChange={(e) => setFeeAmount(e.target.value)}
+                                        prefix="Rp"
+                                        className="h-[34px] rounded-[4px] border-ui-border"
+                                        prefixClassName="min-w-[42px] justify-center border-r-ui-border-medium bg-ui-bg-hover px-2 text-xs sm:text-sm text-text-light"
+                                        inputClassName="text-right text-xs sm:text-sm text-brand-dark"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
+                                <label className="text-xs sm:text-sm font-medium text-slate-700">Dibebankan ke</label>
+                                <SelectField
+                                    value={feeChargedTo}
+                                    onChange={(e) => setFeeChargedTo(e.target.value)}
+                                    className="h-[34px] rounded-[4px] border-ui-border text-xs sm:text-sm text-brand-dark"
+                                >
+                                    <option value="Dari Kas/Bank">Bank Pengirim</option>
+                                    <option value="Ke Kas/Bank">Bank Penerima</option>
+                                </SelectField>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'notes' && (
+                        <div className="space-y-2.5">
+                            <div className="grid grid-cols-[130px_1fr] items-start gap-4">
+                                <label className="text-xs sm:text-sm font-medium text-slate-700">Catatan</label>
+                                <TextareaField
+                                    value={feeNotes}
+                                    onChange={(e) => setFeeNotes(e.target.value)}
+                                    rows={4}
+                                    className="rounded-[4px] border-ui-border"
+                                    textareaClassName="min-h-[70px] px-4 py-3 text-xs sm:text-sm text-brand-dark"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </WorkspaceDialog>
         </>
     );
 }

@@ -88,6 +88,7 @@ export function buildBankTransferRecord(record = {}, config) {
         accountName: line.account?.name ?? line.description ?? `Biaya ${index + 1}`,
         amount: formatCurrencyValue(line.total_amount ?? 0),
         chargedTo: line.attributes?.charged_to ?? 'Dari Kas/Bank',
+        notes: line.attributes?.notes ?? line.notes ?? '',
     }));
     const values = {
         __backendRecordId: record.id ?? null,

@@ -39,6 +39,7 @@ export function buildBankTransferPayload(values) {
         attributes: {
             kind: 'fee',
             charged_to: row.chargedTo ?? 'Dari Kas/Bank',
+            notes: row.notes?.trim() || null,
         },
     }));
 
