@@ -26,6 +26,26 @@ export default function TrendLineChart({
     heightClassName = 'h-[228px]',
 }) {
     const normalizedSeries = normalizeTrendSeries(series, accent);
+    const allValues = normalizedSeries.flatMap((s) => s.data || []);
+    const maxVal = allValues.length > 0 ? Math.max(...allValues) : 0;
+
+    const getStepSize = (val) => {
+        if (val <= 0) return undefined;
+        const rawStep = val / 6;
+        const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+        const ratio = rawStep / magnitude;
+        let niceStep;
+        if (ratio <= 1.0) niceStep = 1;
+        else if (ratio <= 2.0) niceStep = 2;
+        else if (ratio <= 2.5) niceStep = 2.5;
+        else if (ratio <= 5.0) niceStep = 5;
+        else niceStep = 10;
+        return niceStep * magnitude;
+    };
+
+    const stepSize = getStepSize(maxVal);
+    const yMax = stepSize ? 6 * stepSize : undefined;
+
     const datasets =
         normalizedSeries.length > 0
             ? normalizedSeries.map((item) => ({
@@ -103,6 +123,8 @@ export default function TrendLineChart({
                 },
             },
             y: {
+                min: 0,
+                ...(yMax !== undefined ? { max: yMax } : {}),
                 grid: {
                     color: 'var(--color-chart-grid-light)',
                 },
@@ -110,6 +132,7 @@ export default function TrendLineChart({
                     display: false,
                 },
                 ticks: {
+                    ...(stepSize !== undefined ? { stepSize } : {}),
                     color: 'var(--color-chart-ticks)',
                     font: {
                         size: 14,
