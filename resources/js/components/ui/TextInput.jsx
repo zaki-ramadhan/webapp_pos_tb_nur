@@ -9,37 +9,37 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
     }
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
-    
+
     // Lewati sanitasi untuk email/username
     if (
-        searchStr.includes('email') || 
-        searchStr.includes('username') || 
+        searchStr.includes('email') ||
+        searchStr.includes('username') ||
         searchStr.includes('identifier')
     ) {
         return val;
     }
-    
+
     // Cek nomor telepon
-    const isPhone = searchStr.includes('phone') || 
-                    searchStr.includes('telp') || 
+    const isPhone = searchStr.includes('phone') ||
+                    searchStr.includes('telp') ||
                     searchStr.includes('telepon') ||
-                    searchStr.includes('whatsapp') || 
-                    searchStr.includes('wa') || 
-                    searchStr.includes('fax') || 
-                    searchStr.includes('hp') || 
-                    searchStr.includes('kontak') || 
+                    searchStr.includes('whatsapp') ||
+                    searchStr.includes('wa') ||
+                    searchStr.includes('fax') ||
+                    searchStr.includes('hp') ||
+                    searchStr.includes('kontak') ||
                     searchStr.includes('contact');
-                    
+
     // Cek jika kolom angka saja
     const isDigitOnly = (
-                            searchStr.includes('rekening') || 
-                            searchStr.includes('account_number') || 
-                            searchStr.includes('bank_number') || 
-                            searchStr.includes('tax_number') || 
-                            searchStr.includes('npwp') || 
-                            searchStr.includes('nitku') || 
-                            searchStr.includes('postal') || 
-                            searchStr.includes('kodepos') || 
+                            searchStr.includes('rekening') ||
+                            searchStr.includes('account_number') ||
+                            searchStr.includes('bank_number') ||
+                            searchStr.includes('tax_number') ||
+                            searchStr.includes('npwp') ||
+                            searchStr.includes('nitku') ||
+                            searchStr.includes('postal') ||
+                            searchStr.includes('kodepos') ||
                             searchStr.includes('zip') ||
                             searchStr.includes('k.pos') ||
                             searchStr.includes('kode pos') ||
@@ -61,8 +61,8 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
             }
         }
         if (
-            searchStr.includes('postal') || 
-            searchStr.includes('kodepos') || 
+            searchStr.includes('postal') ||
+            searchStr.includes('kodepos') ||
             searchStr.includes('zip') ||
             searchStr.includes('k.pos') ||
             searchStr.includes('kode pos')
@@ -73,21 +73,21 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
     }
 
     // Cek jika kolom kode akun (account code)
-    const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) && 
+    const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) &&
                           (searchStr.includes('code') || searchStr.includes('kode'));
     if (isAccountCode) {
         return val.replace(/[^0-9.]/g, '');
     }
 
     // Cek jika kolom huruf saja
-    const isLettersOnly = lettersOnly || 
+    const isLettersOnly = lettersOnly ||
                           (
                               (
-                                  searchStr.includes('province') || 
-                                  searchStr.includes('provinsi') || 
-                                  searchStr.includes('country') || 
-                                  searchStr.includes('negara') || 
-                                  searchStr.includes('city') || 
+                                  searchStr.includes('province') ||
+                                  searchStr.includes('provinsi') ||
+                                  searchStr.includes('country') ||
+                                  searchStr.includes('negara') ||
+                                  searchStr.includes('city') ||
                                   searchStr.includes('kota')
                               ) && !searchStr.includes('code') && !searchStr.includes('no')
                           );
@@ -98,17 +98,17 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
     }
 
     // Check if it's a numeric field
-    const isNumeric = type === 'number' || 
-                      searchStr.includes('price') || 
-                      searchStr.includes('amount') || 
-                      searchStr.includes('percentage') || 
-                      searchStr.includes('rate') || 
-                      searchStr.includes('limit') || 
-                      searchStr.includes('age') || 
-                      searchStr.includes('range') || 
-                      searchStr.includes('days') || 
-                      searchStr.includes('qty') || 
-                      searchStr.includes('quantity') || 
+    const isNumeric = type === 'number' ||
+                      searchStr.includes('price') ||
+                      searchStr.includes('amount') ||
+                      searchStr.includes('percentage') ||
+                      searchStr.includes('rate') ||
+                      searchStr.includes('limit') ||
+                      searchStr.includes('age') ||
+                      searchStr.includes('range') ||
+                      searchStr.includes('days') ||
+                      searchStr.includes('qty') ||
+                      searchStr.includes('quantity') ||
                       searchStr.includes('value') ||
                       searchStr.includes('kurs') ||
                       searchStr.includes('jumlah') ||
@@ -117,16 +117,16 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                       searchStr.includes('cost') ||
                       searchStr.includes('piutang') ||
                       searchStr.includes('utang') ||
-                      searchStr.includes('years') || 
-                      searchStr.includes('months') || 
-                      searchStr.includes('tahun') || 
-                      searchStr.includes('bulan') || 
-                      searchStr.includes('hari') || 
+                      searchStr.includes('years') ||
+                      searchStr.includes('months') ||
+                      searchStr.includes('tahun') ||
+                      searchStr.includes('bulan') ||
+                      searchStr.includes('hari') ||
                       searchStr.includes('umur');
 
-    const isCurrency = searchStr.includes('price') || 
-                       searchStr.includes('amount') || 
-                       searchStr.includes('limit') || 
+    const isCurrency = searchStr.includes('price') ||
+                       searchStr.includes('amount') ||
+                       searchStr.includes('limit') ||
                        searchStr.includes('kurs') ||
                        searchStr.includes('jumlah') ||
                        searchStr.includes('nominal') ||
@@ -216,25 +216,25 @@ export default function TextInput({
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id || ''} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
 
-    const isPostal = searchStr.includes('postal') || 
-                     searchStr.includes('kodepos') || 
+    const isPostal = searchStr.includes('postal') ||
+                     searchStr.includes('kodepos') ||
                      searchStr.includes('zip') ||
                      searchStr.includes('k.pos') ||
                      searchStr.includes('kode pos');
 
-    const isPhone = searchStr.includes('phone') || 
-                    searchStr.includes('telp') || 
+    const isPhone = searchStr.includes('phone') ||
+                    searchStr.includes('telp') ||
                     searchStr.includes('telepon') ||
-                    searchStr.includes('whatsapp') || 
-                    searchStr.includes('wa') || 
-                    searchStr.includes('fax') || 
-                    searchStr.includes('hp') || 
-                    searchStr.includes('kontak') || 
+                    searchStr.includes('whatsapp') ||
+                    searchStr.includes('wa') ||
+                    searchStr.includes('fax') ||
+                    searchStr.includes('hp') ||
+                    searchStr.includes('kontak') ||
                     searchStr.includes('contact');
 
-    const isCurrency = searchStr.includes('price') || 
-                       searchStr.includes('amount') || 
-                       searchStr.includes('limit') || 
+    const isCurrency = searchStr.includes('price') ||
+                       searchStr.includes('amount') ||
+                       searchStr.includes('limit') ||
                        searchStr.includes('kurs') ||
                        searchStr.includes('jumlah') ||
                        searchStr.includes('nominal') ||
@@ -244,14 +244,14 @@ export default function TextInput({
                        searchStr.includes('nilai') ||
                        prefixStr === 'rp';
 
-    const isCodeOrNumber = searchStr.includes('code') || 
-                           searchStr.includes('kode') || 
-                           searchStr.includes('number') || 
-                           searchStr.includes('nomor') || 
-                           searchStr.includes('no') || 
-                           searchStr.includes('reference') || 
-                           searchStr.includes('external') || 
-                           searchStr.includes('sku') || 
+    const isCodeOrNumber = searchStr.includes('code') ||
+                           searchStr.includes('kode') ||
+                           searchStr.includes('number') ||
+                           searchStr.includes('nomor') ||
+                           searchStr.includes('no') ||
+                           searchStr.includes('reference') ||
+                           searchStr.includes('external') ||
+                           searchStr.includes('sku') ||
                            searchStr.includes('npwp') ||
                            type === 'number';
 
@@ -299,7 +299,7 @@ export default function TextInput({
         const name = props.name ?? '';
         const prefixVal = typeof prefix === 'string' ? prefix : '';
         const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly);
-        
+
         if (event.target.value !== sanitizedValue) {
             event.target.value = sanitizedValue;
         }
@@ -314,18 +314,18 @@ export default function TextInput({
         const name = props.name ?? '';
         const prefixVal = typeof prefix === 'string' ? prefix : '';
         const searchStr = `${id || ''} ${name} ${placeholder} ${prefixVal}`.toLowerCase();
-        
-        const isNumeric = type === 'number' || 
-                          searchStr.includes('price') || 
-                          searchStr.includes('amount') || 
-                          searchStr.includes('percentage') || 
-                          searchStr.includes('rate') || 
-                          searchStr.includes('limit') || 
-                          searchStr.includes('age') || 
-                          searchStr.includes('range') || 
-                          searchStr.includes('days') || 
-                          searchStr.includes('qty') || 
-                          searchStr.includes('quantity') || 
+
+        const isNumeric = type === 'number' ||
+                          searchStr.includes('price') ||
+                          searchStr.includes('amount') ||
+                          searchStr.includes('percentage') ||
+                          searchStr.includes('rate') ||
+                          searchStr.includes('limit') ||
+                          searchStr.includes('age') ||
+                          searchStr.includes('range') ||
+                          searchStr.includes('days') ||
+                          searchStr.includes('qty') ||
+                          searchStr.includes('quantity') ||
                           searchStr.includes('value') ||
                           searchStr.includes('kurs') ||
                           searchStr.includes('jumlah') ||
@@ -334,29 +334,29 @@ export default function TextInput({
                           searchStr.includes('cost') ||
                           searchStr.includes('piutang') ||
                           searchStr.includes('utang') ||
-                          searchStr.includes('years') || 
-                          searchStr.includes('months') || 
-                          searchStr.includes('tahun') || 
-                          searchStr.includes('bulan') || 
-                          searchStr.includes('hari') || 
+                          searchStr.includes('years') ||
+                          searchStr.includes('months') ||
+                          searchStr.includes('tahun') ||
+                          searchStr.includes('bulan') ||
+                          searchStr.includes('hari') ||
                           searchStr.includes('umur');
 
         const isDigitOnly = (
-                                searchStr.includes('rekening') || 
-                                searchStr.includes('account_number') || 
-                                searchStr.includes('bank_number') || 
-                                searchStr.includes('tax_number') || 
-                                searchStr.includes('npwp') || 
-                                searchStr.includes('nitku') || 
-                                searchStr.includes('postal') || 
-                                searchStr.includes('kodepos') || 
+                                searchStr.includes('rekening') ||
+                                searchStr.includes('account_number') ||
+                                searchStr.includes('bank_number') ||
+                                searchStr.includes('tax_number') ||
+                                searchStr.includes('npwp') ||
+                                searchStr.includes('nitku') ||
+                                searchStr.includes('postal') ||
+                                searchStr.includes('kodepos') ||
                                 searchStr.includes('zip') ||
                                 searchStr.includes('k.pos') ||
                                 searchStr.includes('kode pos') ||
                                 /\bno\.?\b/.test(searchStr)
                             ) && !searchStr.includes('note') && !searchStr.includes('document');
 
-        const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) && 
+        const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) &&
                               (searchStr.includes('code') || searchStr.includes('kode'));
 
         if (isNumeric || isDigitOnly || isAccountCode) {
@@ -399,17 +399,17 @@ export default function TextInput({
         let val = event.target.value;
         const name = props.name ?? '';
         const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
-        
-        const isNumeric = type === 'number' || 
-                          searchStr.includes('price') || 
-                          searchStr.includes('amount') || 
-                          searchStr.includes('percentage') || 
-                          searchStr.includes('rate') || 
-                          searchStr.includes('limit') || 
-                          searchStr.includes('age') || 
-                          searchStr.includes('days') || 
-                          searchStr.includes('qty') || 
-                          searchStr.includes('quantity') || 
+
+        const isNumeric = type === 'number' ||
+                          searchStr.includes('price') ||
+                          searchStr.includes('amount') ||
+                          searchStr.includes('percentage') ||
+                          searchStr.includes('rate') ||
+                          searchStr.includes('limit') ||
+                          searchStr.includes('age') ||
+                          searchStr.includes('days') ||
+                          searchStr.includes('qty') ||
+                          searchStr.includes('quantity') ||
                           searchStr.includes('value') ||
                           searchStr.includes('kurs') ||
                           searchStr.includes('jumlah') ||
@@ -418,11 +418,11 @@ export default function TextInput({
                           searchStr.includes('cost') ||
                           searchStr.includes('piutang') ||
                           searchStr.includes('utang') ||
-                          searchStr.includes('years') || 
-                          searchStr.includes('months') || 
-                          searchStr.includes('tahun') || 
-                          searchStr.includes('bulan') || 
-                          searchStr.includes('hari') || 
+                          searchStr.includes('years') ||
+                          searchStr.includes('months') ||
+                          searchStr.includes('tahun') ||
+                          searchStr.includes('bulan') ||
+                          searchStr.includes('hari') ||
                           searchStr.includes('umur');
 
         if (isNumeric) {
@@ -466,7 +466,7 @@ export default function TextInput({
     const hasTrailingPx = trailingClassName.includes('px-') || trailingClassName.includes('pl-') || trailingClassName.includes('pr-');
 
     const isClearOrClose = isClearOrCloseElement(trailing);
-    const showTrailing = trailing 
+    const showTrailing = trailing
         ? !(isNonInteractive && isClearOrClose)
         : (clearable && onChange && !isNonInteractive && localValue !== undefined && localValue !== null && localValue !== '');
 
