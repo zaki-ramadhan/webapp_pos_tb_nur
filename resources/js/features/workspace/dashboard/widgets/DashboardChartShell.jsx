@@ -4,12 +4,8 @@ export default function DashboardChartShell({
     className = '',
 }) {
     return (
-        <div onContextMenu={(e) => e.preventDefault()} className={`rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2 ${className}`.trim()}>
-            <div
-                className={`rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card ${heightClassName}`.trim()}
-            >
-                {children}
-            </div>
+        <div onContextMenu={(e) => e.preventDefault()} className={`w-full ${heightClassName} ${className}`.trim()}>
+            {children}
         </div>
     );
 }
