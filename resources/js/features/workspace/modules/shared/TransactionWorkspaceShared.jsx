@@ -22,4 +22,6 @@ export {
 export {
     TransactionToolbarIconButton,
     TransactionToolbarSplitButton,
+    TransactionExportExcelButton,
+    TransactionSwitchViewButton,
 } from '@/features/workspace/modules/shared/transaction/TransactionToolbar';

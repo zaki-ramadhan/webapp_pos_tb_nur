@@ -118,7 +118,7 @@ export default function TableListView({
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
         const searchCols = (table.columns ?? []).filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-        const searchKeys = searchCols.slice(0, 2).map(col => col.id);
+        const searchKeys = searchCols.map(col => col.id);
 
         const filtered = table.rows.filter((row) => {
             const passesFilters = (table.filters ?? []).every((filter) =>
@@ -237,7 +237,13 @@ export default function TableListView({
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
-                    placeholder: table.searchPlaceholder ?? 'Cari data di sini...',
+                    placeholder: (() => {
+                        const searchCols = (table.columns ?? []).filter(
+                            (col) => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label
+                        );
+                        if (!searchCols.length) return table.searchPlaceholder ?? 'Cari data...';
+                        return `Cari ${labels.slice(0, 3).join(', ')}${labels.length > 3 ? '...' : ''}`;
+                    })(),
                     widthClassName: table.searchWidthClassName ?? 'w-full sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}

@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
-import { ChevronDownIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { ChevronDownIcon, SearchIcon, ExternalLinkIcon, ArrowRightLeftIcon } from '@/features/workspace/shared/Icons';
 import Tooltip from '@/components/ui/Tooltip';
+import { exportToExcelXML } from '@/features/workspace/shared/exportUtils';
 import { tableRegistry, useColumnVisibility, getTableSchemaKey, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 
-export function TransactionToolbarIconButton({ label, children, className = '', disabled }) {
+export function TransactionToolbarIconButton({ label, children, className = '', disabled, onClick, ...props }) {
     const [activeTableState, setActiveTableState] = useState(() => tableRegistry.activeTable);
 
     useEffect(() => {
@@ -27,9 +28,11 @@ export function TransactionToolbarIconButton({ label, children, className = '', 
                 type="button"
                 disabled={resolvedDisabled}
                 aria-label={label}
+                onClick={onClick}
                 className={`inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
                     resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
                 } ${className}`.trim()}
+                {...props}
             >
                 {children}
             </button>
@@ -244,5 +247,28 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
                 })}
             </div>
         </div>
+    );
+}
+
+export function TransactionExportExcelButton({ columns, rows, filename = 'export', label = 'Ekspor Excel' }) {
+    return (
+        <TransactionToolbarIconButton
+            label={label}
+            onClick={() => exportToExcelXML(columns, rows, filename)}
+        >
+            <ExternalLinkIcon className="h-4 w-4" />
+        </TransactionToolbarIconButton>
+    );
+}
+
+export function TransactionSwitchViewButton({ active = false, onClick, label = 'Ubah Tampilan' }) {
+    return (
+        <TransactionToolbarIconButton
+            label={label}
+            onClick={onClick}
+            className={active ? 'bg-brand-blue-light border-brand-blue' : ''}
+        >
+            <ArrowRightLeftIcon className="h-4 w-4" />
+        </TransactionToolbarIconButton>
     );
 }

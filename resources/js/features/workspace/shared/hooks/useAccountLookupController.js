@@ -60,7 +60,7 @@ export function normalizeSelectedLabels({ value, values }) {
     return [];
 }
 
-export default function useAccountLookupController({ value, values, disabled = false, queryParams = {} }) {
+export default function useAccountLookupController({ value, values, disabled = false, queryParams = {}, resource = 'accounts' }) {
     const selectedLabels = useMemo(() => normalizeSelectedLabels({ value, values }), [value, values]);
     const selectedValue = selectedLabels[0] ?? '';
     const rootRef = useRef(null);
@@ -136,7 +136,7 @@ export default function useAccountLookupController({ value, values, disabled = f
         let ignore = false;
         const timeoutId = window.setTimeout(async () => {
             try {
-                const payload = await listBackendResource('accounts', {
+                const payload = await listBackendResource(resource, {
                     search: fetchKey,
                     per_page: 15,
                     ...queryParams,

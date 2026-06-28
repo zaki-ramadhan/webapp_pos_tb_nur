@@ -51,7 +51,7 @@ export function ReceiptInfoSection({ config, values, setValues }) {
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-                <div className="mt-4 grid gap-y-2.5 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <div className="mt-4 grid gap-y-2.5 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4 pl-3 sm:pl-5">
                     <TransactionFieldLabel label={config.labels.checkNumber} />
                     <div className="max-w-[276px]">
                         <TextInput

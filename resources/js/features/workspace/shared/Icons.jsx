@@ -31,6 +31,7 @@ import {
     TriangleAlert,
     Trash2,
     Upload,
+    ArrowRightLeft,
     X,
 } from 'lucide-react';
 
@@ -173,4 +174,8 @@ export function BellIcon({ className = 'h-6.5 w-6.5' }) {
 
 export function LogoutIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={LogOut} className={className} />;
+}
+
+export function ArrowRightLeftIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={ArrowRightLeft} className={className} />;
 }

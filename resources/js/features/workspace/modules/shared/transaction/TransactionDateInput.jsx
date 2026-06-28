@@ -114,12 +114,13 @@ export default function TransactionDateInput({
     const defaultMaxWidth = hasMaxWidth ? '' : 'max-w-[180px]';
 
     const wrapperClassName = `relative ${defaultWidth} ${defaultMaxWidth} ${layoutClasses.join(' ')}`.trim();
+    const hasHeight = styleClasses.some((c) => c.startsWith('h-') || c.startsWith('min-h-') || c.startsWith('max-h-'));
     const finalStyleClasses = [...new Set([
-        'h-[40px]',
+        hasHeight ? '' : 'h-[40px]',
         'rounded-[4px]',
         'border-ui-border',
         ...styleClasses,
-    ])].join(' ');
+    ])].filter(Boolean).join(' ');
 
     const [displayValue, setDisplayValue] = useState(() => formatDateValue(value));
     const [nativeValue, setNativeValue] = useState(() => normalizeDateValue(value));

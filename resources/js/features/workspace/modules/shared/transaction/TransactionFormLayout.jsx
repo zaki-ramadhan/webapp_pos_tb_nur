@@ -13,9 +13,9 @@ export default function TransactionFormLayout({
     return (
         <div className="flex h-full min-h-0 flex-col gap-3">
             <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                <div className="min-w-0 flex-1 flex flex-col h-full min-h-0">
+                <div className="min-w-0 flex-1 flex flex-col h-full min-h-0 gap-1.5">
                     {header ? (
-                        <div className="shrink-0 px-4 pt-1.5 pb-2.5 bg-transparent">
+                        <div className="shrink-0 pl-4 pr-0 pt-1.5 pb-0 bg-transparent">
                             {header}
                         </div>
                     ) : null}
@@ -33,7 +33,7 @@ export default function TransactionFormLayout({
                     </div>
 
                     {footer ? (
-                        <div className="shrink-0 flex justify-end pt-3 pb-3 bg-transparent">
+                        <div className="shrink-0 flex justify-end pt-1.5 pb-1.5 bg-transparent">
                             {footer}
                         </div>
                     ) : null}

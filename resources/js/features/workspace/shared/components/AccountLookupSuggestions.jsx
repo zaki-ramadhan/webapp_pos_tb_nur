@@ -16,6 +16,7 @@ export default function AccountLookupSuggestions({
     className = '',
     anchorRef = null,
     showType = false,
+    resource = 'accounts',
 }) {
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
     const emptyMessage = query.trim()
@@ -55,7 +56,9 @@ export default function AccountLookupSuggestions({
                                         <span className="shrink-0 text-text-workspace-muted italic">
                                             {showType
                                                 ? translateAccountType(record.account_type)
-                                                : `Rp ${Number(record.opening_balance ?? 0).toLocaleString('id-ID')}`}
+                                                : resource === 'accounts'
+                                                    ? `Rp ${Number(record.opening_balance ?? 0).toLocaleString('id-ID')}`
+                                                    : null}
                                         </span>
                                     </span>
                                 </span>

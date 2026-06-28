@@ -40,12 +40,7 @@ class CashPaymentPage
                 ],
                 'cashBankPlaceholder' => 'Cari/Pilih...',
                 'branchPlaceholder' => 'Cari/Pilih...',
-                'numberingOptions' => [
-                    'Nomor Bukti Kas/Bank',
-                    'Kas & Bank',
-                    'Kas Kecil',
-                    'Bank',
-                ],
+                'numberingOptions' => NumberingHelper::getCashBankNumberingOptions(),
                 'takeButtonLabel' => 'Ambil',
                 'lineSearchPlaceholder' => 'Cari/Pilih Akun Perkiraan...',
                 'lineSectionTitle' => 'Rincian Pembayaran',

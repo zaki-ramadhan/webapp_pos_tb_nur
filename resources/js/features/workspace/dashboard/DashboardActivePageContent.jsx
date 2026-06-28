@@ -21,6 +21,7 @@ export default function DashboardActivePageContent({
     activePage,
     activePageMode,
     activeLevel2Tab,
+    level2Tabs = [],
     detailTabOpeners,
     createDetailTabOpener,
     handleOpenDefaultContentTab,
@@ -64,8 +65,11 @@ export default function DashboardActivePageContent({
         );
     }
 
+    const hasLevel2Tabs = activePage?.id !== 'dashboard' && level2Tabs?.length > 0;
+    const ptClassName = hasLevel2Tabs ? 'pt-0' : 'pt-2 sm:pt-2.5';
+
     return (
-        <div className="min-h-0 min-w-0 flex-1 flex flex-col bg-tab-active-bg px-1 pb-2 pt-0 sm:px-2 sm:pb-2.5 lg:pb-3 overflow-y-auto">
+        <div className={`min-h-0 min-w-0 flex-1 flex flex-col bg-tab-active-bg px-1 pb-2 sm:px-2 sm:pb-2.5 lg:pb-3 overflow-y-auto ${ptClassName}`}>
             <FormErrorProvider>
                 {renderWorkspaceActivePage({
                     activePage,

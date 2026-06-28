@@ -141,6 +141,7 @@ const DashboardView = forwardRef(function DashboardView(
                         activePage={activePage}
                         activePageMode={activePageMode}
                         activeLevel2Tab={activeLevel2Tab}
+                        level2Tabs={decoratedLevel2Tabs}
                         detailTabOpeners={detailTabOpeners}
                         createDetailTabOpener={createDetailTabOpener}
                         handleOpenDefaultContentTab={handleOpenDefaultContentTab}

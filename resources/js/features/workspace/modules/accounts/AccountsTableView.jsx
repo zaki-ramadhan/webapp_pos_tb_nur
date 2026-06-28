@@ -39,7 +39,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
             }
 
             const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 2).some((column) =>
+            return searchCols.some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),
@@ -92,7 +92,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
-                    placeholder: config.table.searchPlaceholder,
+                    placeholder: 'Cari No. Akun, Nama, Tipe...',
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}

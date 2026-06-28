@@ -38,12 +38,7 @@ class CashReceiptPage
                 ],
                 'cashBankPlaceholder' => 'Cari/Pilih...',
                 'branchPlaceholder' => 'Cari/Pilih...',
-                'numberingOptions' => [
-                    'Nomor Bukti Kas/Bank',
-                    'Kas & Bank',
-                    'Kas Kecil',
-                    'Bank',
-                ],
+                'numberingOptions' => NumberingHelper::getCashBankNumberingOptions(),
                 'lineSearchPlaceholder' => 'Cari/Pilih Akun Perkiraan...',
                 'lineSectionTitle' => 'Rincian Penerimaan',
                 'infoTitle' => 'Info lainnya',

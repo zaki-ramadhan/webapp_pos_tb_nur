@@ -267,8 +267,8 @@ export default function TableToolbar({
                             type="text"
                             placeholder={search.placeholder ?? 'Cari data...'}
                             value={search.value}
-                            onChange={(event) => search.onChange?.(event.target.value)}
-                            onClear={() => search.onChange?.('')}
+                            onChange={(event) => search.onChange?.(event)}
+                            onClear={() => search.onChange?.({ target: { value: '' } })}
                             trailing={searchTrailing}
                             containerClassName={search.widthClassName ?? 'w-full md:w-[220px] lg:w-[260px]'}
                             className={sizeStyle.searchInput}

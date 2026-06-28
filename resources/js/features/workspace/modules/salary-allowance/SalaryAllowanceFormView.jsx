@@ -270,7 +270,7 @@ export default function SalaryAllowanceFormView({
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
                 title="Konfirmasi"
-                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name}`}
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${name}`}
                 confirmLabel="Ya"
                 cancelLabel="Batal"
                 confirmVariant="primary"
