@@ -179,48 +179,6 @@ export default function useSalesReceiptForm({
 
     const handlers = useMemo(
         () => ({
-            onSelectCustomer: () =>
-                selectLookup('customers', 'pelanggan', (record) => buildLookupLabel(record), (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __customerId: record.id,
-                        customer: [buildLookupLabel(record)],
-                    })),
-                ),
-            onRemoveCustomer: () =>
-                setValues((current) => ({
-                    ...current,
-                    __customerId: null,
-                    customer: [],
-                })),
-            onSelectBankAccount: () =>
-                selectLookup('accounts', 'bank penerimaan', (record) => buildLookupLabel(record), (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __bankAccountId: record.id,
-                        bankAccounts: [buildLookupLabel(record)],
-                    })),
-                ),
-            onRemoveBankAccount: () =>
-                setValues((current) => ({
-                    ...current,
-                    __bankAccountId: null,
-                    bankAccounts: [],
-                })),
-            onSelectBranch: () =>
-                selectLookup('branches', 'cabang', (record) => buildLookupLabel(record), (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __branchId: record.id,
-                        branches: [buildLookupLabel(record)],
-                    })),
-                ),
-            onRemoveBranch: (value) =>
-                setValues((current) => ({
-                    ...current,
-                    __branchId: null,
-                    branches: (current.branches ?? []).filter((item) => item !== value),
-                })),
             onSelectInvoice: () =>
                 selectLookup('sales-invoices', 'faktur penjualan', (record) => buildLookupLabel(record, 'document_number'), (record) =>
                     setValues((current) =>

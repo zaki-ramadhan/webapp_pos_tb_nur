@@ -13,13 +13,11 @@ import {
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 import {
     TransactionDateInput,
-    TransactionDock,
     TransactionFieldLabel,
-    TransactionSectionRail,
     TransactionSwitch,
+    TransactionFormLayout,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
+import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import useSalesReceiptForm from './hooks/useSalesReceiptForm';
 
@@ -61,22 +59,34 @@ export default function SalesReceiptFormView({
 
     return (
         <>
-            <div className="flex min-h-full flex-col gap-3">
-                <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                    <div className="min-w-0 flex-1 flex flex-col gap-3">
-                        <div className="px-4 py-4 bg-white border border-ui-border rounded-[6px] shadow-card-light">
-                            <div className={`grid gap-x-8 gap-y-2 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-                                <div className="grid gap-y-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                                    <TransactionFieldLabel label={config.labels.customer} required />
-                                    <ChipLookupField
-                                        values={values.customer}
+            <TransactionFormLayout
+                header={
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+                        {/* Left Column */}
+                        <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                            <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                                <TransactionFieldLabel label={config.labels.customer} required />
+                                <div className="max-w-[320px] w-full">
+                                    <AccountLookupTextInput
+                                        id="customer"
+                                        resource="customers"
+                                        value={values.customer?.[0] ?? ''}
                                         placeholder="Cari/Pilih Pelanggan..."
-                                        onRemove={handlers.onRemoveCustomer}
                                         searchLabel="Cari pelanggan"
-                                        onSearch={handlers.onSelectCustomer}
+                                        onSelectAccount={(record, label) => {
+                                            setValues((current) => ({
+                                                ...current,
+                                                __customerId: record ? record.id : null,
+                                                customer: label ? [label] : [],
+                                            }));
+                                        }}
                                     />
+                                </div>
+                            </div>
 
-                                    <TransactionFieldLabel label={config.labels.bank} required />
+                            <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                                <TransactionFieldLabel label={config.labels.bank} required />
+                                <div className="max-w-[320px] w-full">
                                     <AccountLookupField
                                         value={values.bankAccounts?.[0] ?? ''}
                                         placeholder="Cari/Pilih..."
@@ -96,25 +106,32 @@ export default function SalesReceiptFormView({
                                             }))
                                         }
                                     />
+                                </div>
+                            </div>
 
-                                    <TransactionFieldLabel label={config.labels.paymentAmount} />
-                                    <div className="flex min-w-0 items-center gap-3">
-                                        <div className="min-w-0 max-w-[280px] flex-1">
-                                            <ReceiptAmountInput value={values.paymentAmount} isDetail={isDetail} />
-                                        </div>
-                                        <div className="flex shrink-0 items-center gap-2">
-                                            {values.amountButtons.map((buttonType) => (
-                                                <ReceiptAmountActionButton key={buttonType} type={buttonType} />
-                                            ))}
-                                        </div>
+                            <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                                <TransactionFieldLabel label={config.labels.paymentAmount} />
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <div className="min-w-0 max-w-[280px] flex-1">
+                                        <ReceiptAmountInput value={values.paymentAmount} isDetail={isDetail} />
+                                    </div>
+                                    <div className="flex shrink-0 items-center gap-2">
+                                        {values.amountButtons.map((buttonType) => (
+                                            <ReceiptAmountActionButton key={buttonType} type={buttonType} />
+                                        ))}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="grid gap-y-2 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                                    <div className="flex items-center justify-start gap-4 sm:justify-end">
-                                        <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
-                                    </div>
+                        {/* Right Column */}
+                        <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                            <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                                <div className="flex items-center justify-start gap-4">
+                                    <TransactionFieldLabel label={config.labels.documentNumber} required />
+                                </div>
 
+                                <div className="max-w-[282px] w-full justify-self-end">
                                     {!isDetail && values.autoNumber ? (
                                         <SelectField
                                             value={values.numberingType}
@@ -124,7 +141,7 @@ export default function SalesReceiptFormView({
                                                     numberingType: event.target.value,
                                                 }))
                                             }
-                                            className="h-[40px] rounded-[4px] border-ui-border"
+                                            className="h-[40px] rounded-[4px] border-ui-border w-full"
                                             selectClassName="text-xs sm:text-sm text-brand-dark"
                                         >
                                             {config.numberingOptions.map((option) => (
@@ -149,60 +166,56 @@ export default function SalesReceiptFormView({
                                                 }))
                                             }
                                             maxLength={120}
-                                            className="h-[40px] rounded-[4px] border-ui-border"
+                                            trailing={<span className="text-lg font-semibold text-brand-dark">×</span>}
+                                            className="h-[40px] rounded-[4px] border-ui-border w-full"
                                             inputClassName="text-xs sm:text-sm text-brand-dark"
+                                            trailingClassName="px-3"
                                         />
                                     )}
+                                </div>
+                            </div>
 
-                                    <TransactionFieldLabel label={config.labels.entryDate} required className="sm:text-right" />
-                                    <div className="max-w-[236px] justify-self-end w-full">
-                                        <TransactionDateInput
-                                            value={values.entryDate}
-                                            onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                                            className="max-w-none"
-                                        />
-                                    </div>
+                            <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                                <TransactionFieldLabel label={config.labels.entryDate} required />
+                                <div className="max-w-[236px] w-full justify-self-end">
+                                    <TransactionDateInput
+                                        value={values.entryDate}
+                                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
+                                        className="max-w-none"
+                                    />
                                 </div>
                             </div>
                         </div>
-
-                        <CrudStatusMessage status={status} className="mx-3" />
-
-                        <div className="flex gap-0 px-2 sm:px-3">
-                            <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
-
-                            <div className="min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white px-3 py-3 shadow-card-light">
-                                {activeSectionId === 'additional-info' ? (
-                                    <SalesReceiptAdditionalInfoSection
-                                        config={config}
-                                        values={values}
-                                        setValues={setValues}
-                                        isDetail={isDetail}
-                                        handlers={handlers}
-                                    />
-                                ) : (
-                                    <SalesReceiptInvoicesSection
-                                        config={config}
-                                        values={values}
-                                        setValues={setValues}
-                                        isDetail={isDetail}
-                                        onOpenInvoiceModal={setActiveInvoiceModal}
-                                        handlers={handlers}
-                                    />
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="px-3">
-                            <ReceiptSummaryFooter paymentAmount={values.paymentAmount} />
-                        </div>
                     </div>
-
-                    <div className="shrink-0 lg:w-[96px] lg:pt-4">
-                        <TransactionDock actions={dockActions} />
-                    </div>
+                }
+                sectionTabs={config.sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                footer={<ReceiptSummaryFooter paymentAmount={values.paymentAmount} />}
+                dockActions={dockActions}
+            >
+                <CrudStatusMessage status={status} className="mb-4" />
+                <div className="relative flex-1 flex flex-col min-h-0">
+                    {activeSectionId === 'additional-info' ? (
+                        <SalesReceiptAdditionalInfoSection
+                            config={config}
+                            values={values}
+                            setValues={setValues}
+                            isDetail={isDetail}
+                            handlers={handlers}
+                        />
+                    ) : (
+                        <SalesReceiptInvoicesSection
+                            config={config}
+                            values={values}
+                            setValues={setValues}
+                            isDetail={isDetail}
+                            onOpenInvoiceModal={setActiveInvoiceModal}
+                            handlers={handlers}
+                        />
+                    )}
                 </div>
-            </div>
+            </TransactionFormLayout>
 
             <SalesReceiptInvoiceModal
                 open={Boolean(activeInvoiceModal)}
