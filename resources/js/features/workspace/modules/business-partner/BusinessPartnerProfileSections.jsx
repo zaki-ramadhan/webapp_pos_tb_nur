@@ -15,13 +15,15 @@ import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
 
 export function GeneralTab({ config, values, isDetail, onChange }) {
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-8 lg:grid-cols-2">
             <section>
                 <SectionHeading title={config.headingLabels.generalLeft} />
 
                 <div className="mt-4 space-y-3">
                     <FormFieldRow label={config.labels.name} required>
                         <TextInput
+                            id="name"
+                            name="name"
                             value={values.name}
                             onChange={(event) => onChange('name', event.target.value)}
                             className="h-[40px] rounded-[4px] border-ui-border"
@@ -34,6 +36,8 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                     <FormFieldRow label={config.labels.code} required className="lg:grid-cols-[150px_minmax(0,1fr)]">
                         {isDetail ? (
                             <TextInput
+                                id="code"
+                                name="code"
                                 value={values.code}
                                 readOnly
                                 className="h-[40px] rounded-[4px] border-ui-border"
@@ -69,6 +73,8 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
 
                     <FormFieldRow label={config.labels.businessPhone}>
                         <TextInput
+                            id="businessPhone"
+                            name="businessPhone"
                             value={values.businessPhone}
                             onChange={(event) => onChange('businessPhone', event.target.value)}
                             className="h-[40px] rounded-[4px] border-ui-border"
@@ -79,15 +85,31 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.mobilePhone}>
-                        <TextInput value={values.mobilePhone} onChange={(event) => onChange('mobilePhone', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                        <TextInput
+                            id="mobilePhone"
+                            name="mobilePhone"
+                            value={values.mobilePhone}
+                            onChange={(event) => onChange('mobilePhone', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.whatsapp}>
-                        <TextInput value={values.whatsapp} onChange={(event) => onChange('whatsapp', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                        <TextInput
+                            id="whatsapp"
+                            name="whatsapp"
+                            value={values.whatsapp}
+                            onChange={(event) => onChange('whatsapp', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.email}>
                         <TextInput
+                            id="email"
+                            name="email"
                             value={values.email}
                             onChange={(event) => onChange('email', event.target.value)}
                             placeholder="Email"
@@ -100,6 +122,8 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
 
                     <FormFieldRow label={config.labels.fax}>
                         <TextInput
+                            id="fax"
+                            name="fax"
                             value={values.fax}
                             onChange={(event) => onChange('fax', event.target.value)}
                             className="h-[40px] rounded-[4px] border-ui-border"
@@ -110,7 +134,14 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.website}>
-                        <TextInput value={values.website} onChange={(event) => onChange('website', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                        <TextInput
+                            id="website"
+                            name="website"
+                            value={values.website}
+                            onChange={(event) => onChange('website', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
                     </FormFieldRow>
                 </div>
             </section>
@@ -193,11 +224,11 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
 export function ContactsTab({ config }) {
     return (
         <div>
-            <div className="mb-3 flex items-center gap-3">
-                <h3 className="text-2xl font-normal text-brand-dark">{config.contactsTable.title}</h3>
+            <div className="mb-3 border-b border-ui-border-medium pb-3 flex items-center justify-between gap-3">
+                <h3 className="text-base sm:text-lg font-normal text-input-brand">{config.contactsTable.title}</h3>
                 <button
                     type="button"
-                    className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
+                    className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition"
                 >
                     <PlusIcon className="h-5 w-5" />
                 </button>
@@ -209,7 +240,7 @@ export function ContactsTab({ config }) {
 
 export function ShippingTab({ config, values, onChange }) {
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-8 lg:grid-cols-2">
             <section>
                 <SectionHeading title={config.headingLabels.shippingLeft} />
 

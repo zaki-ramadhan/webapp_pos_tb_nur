@@ -42,7 +42,7 @@ export function FieldLabel({ label, required = false, className = '' }) {
 
 export function FormFieldRow({ label, required = false, className = '', children }) {
     return (
-        <div className={`grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
+        <div className={`grid gap-3 lg:grid-cols-[135px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
             <FieldLabel label={label} required={required} className="pt-2 lg:pt-1.5" />
             <div>{children}</div>
         </div>
@@ -84,7 +84,7 @@ export function ToolbarIconAction({ icon, label }) {
 }
 
 export function SectionHeading({ title }) {
-    return <h3 className="border-b border-ui-border-medium pb-3 text-2xl font-normal text-input-brand">{title}</h3>;
+    return <h3 className="border-b border-ui-border-medium pb-3 text-base sm:text-lg font-normal text-input-brand">{title}</h3>;
 }
 
 export function AddressStack({ prefixValue, values, readOnly = false, onChange = null }) {
@@ -108,7 +108,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 textareaClassName="min-h-[112px] text-xs sm:text-sm text-brand-dark"
             />
 
-            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_110px]">
                 {readOnly ? (
                     <TextInput
                         value={values.city}

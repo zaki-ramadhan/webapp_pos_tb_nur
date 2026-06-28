@@ -22,7 +22,7 @@ export function SalesTab({ config, values, onChange }) {
     ];
 
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-8 lg:grid-cols-2">
             <section>
                 <SectionHeading title={config.headingLabels.salesLeft} />
 
@@ -41,6 +41,8 @@ export function SalesTab({ config, values, onChange }) {
 
                     <FormFieldRow label={config.labels.defaultDiscountPercent}>
                         <TextInput
+                            id="defaultDiscountPercent"
+                            name="defaultDiscountPercent"
                             value={values.defaultDiscountPercent}
                             onChange={(event) => onChange('defaultDiscountPercent', event.target.value)}
                             prefix="%"
@@ -51,7 +53,14 @@ export function SalesTab({ config, values, onChange }) {
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.defaultDescription}>
-                        <TextInput value={values.defaultDescription} onChange={(event) => onChange('defaultDescription', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                        <TextInput
+                            id="defaultDescription"
+                            name="defaultDescription"
+                            value={values.defaultDescription}
+                            onChange={(event) => onChange('defaultDescription', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.consignment}>
@@ -88,7 +97,7 @@ export function TaxTab({ config, values, onChange }) {
     const taxOptions = config.taxOptions ?? {};
 
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-8 lg:grid-cols-2">
             <section>
                 <SectionHeading title={config.headingLabels.taxLeft} />
 
@@ -114,15 +123,36 @@ export function TaxTab({ config, values, onChange }) {
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.taxNumber}>
-                        <TextInput value={values.taxNumber} onChange={(event) => onChange('taxNumber', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                        <TextInput
+                            id="taxNumber"
+                            name="taxNumber"
+                            value={values.taxNumber}
+                            onChange={(event) => onChange('taxNumber', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.taxName}>
-                        <TextInput value={values.taxName} onChange={(event) => onChange('taxName', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                        <TextInput
+                            id="taxName"
+                            name="taxName"
+                            value={values.taxName}
+                            onChange={(event) => onChange('taxName', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.taxTkuId}>
-                        <TextInput value={values.taxTkuId} onChange={(event) => onChange('taxTkuId', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border" inputClassName="text-xs sm:text-sm text-brand-dark" />
+                        <TextInput
+                            id="taxTkuId"
+                            name="taxTkuId"
+                            value={values.taxTkuId}
+                            onChange={(event) => onChange('taxTkuId', event.target.value)}
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
                     </FormFieldRow>
 
                     {taxOptions.showCountryLookup ? (
@@ -186,9 +216,12 @@ export function TaxTab({ config, values, onChange }) {
 export function BalanceTab({ config }) {
     return (
         <div>
-            <div className="mb-3 flex items-center gap-3">
-                <h3 className="text-2xl font-normal text-brand-dark">{config.balanceTable.title}</h3>
-                <button type="button" className="inline-flex h-[34px] w-[56px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue">
+            <div className="mb-3 border-b border-ui-border-medium pb-3 flex items-center justify-between gap-3">
+                <h3 className="text-base sm:text-lg font-normal text-input-brand">{config.balanceTable.title}</h3>
+                <button
+                    type="button"
+                    className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition"
+                >
                     <PlusIcon className="h-5 w-5" />
                 </button>
             </div>

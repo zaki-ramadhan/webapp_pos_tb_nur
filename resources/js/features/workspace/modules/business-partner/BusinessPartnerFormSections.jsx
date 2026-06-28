@@ -41,6 +41,8 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 containerClassName="w-auto"
                             />
                             <TextInput
+                                id="receivableAgeDays"
+                                name="receivableAgeDays"
                                 value={values.receivableAgeDays}
                                 onChange={(event) => onChange('receivableAgeDays', event.target.value)}
                                 className="h-[40px] w-[130px] rounded-[4px] border-ui-border"
@@ -61,6 +63,8 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 containerClassName="w-auto"
                             />
                             <TextInput
+                                id="receivableAmount"
+                                name="receivableAmount"
                                 value={values.receivableAmount}
                                 onChange={(event) => onChange('receivableAmount', event.target.value)}
                                 className="h-[40px] w-[280px] rounded-[4px] border-ui-border"
@@ -108,13 +112,15 @@ function SupplierPurchaseTab({ config, values, onChange }) {
     const purchaseConfig = config.purchaseConfig ?? {};
 
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-8 lg:grid-cols-2">
             <section>
                 <SectionHeading title={purchaseConfig.titleLeft} />
 
                 <div className="mt-4 space-y-3">
                     <FormFieldRow label={purchaseConfig.discountLabel}>
                         <TextInput
+                            id="defaultDiscountPercent"
+                            name="defaultDiscountPercent"
                             value={values.defaultDiscountPercent}
                             onChange={(event) => onChange('defaultDiscountPercent', event.target.value)}
                             prefix="%"
@@ -168,19 +174,20 @@ function SupplierPurchaseTab({ config, values, onChange }) {
             </section>
 
             <section>
-                <SectionHeading title={purchaseConfig.titleRight} />
-
-                <div className="mb-3 mt-4 flex items-center gap-3">
+                <div className="mb-3 border-b border-ui-border-medium pb-3 flex items-center justify-between gap-3">
+                    <h3 className="text-base sm:text-lg font-normal text-input-brand">{purchaseConfig.titleRight}</h3>
                     <button
                         type="button"
                         aria-label={purchaseConfig.bankAddLabel}
-                        className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
+                        className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition"
                     >
                         <PlusIcon className="h-5 w-5" />
                     </button>
                 </div>
 
-                <EmptyDataTable columns={config.bankTable.columns} emptyLabel={config.bankTable.emptyLabel} />
+                <div className="mt-4">
+                    <EmptyDataTable columns={config.bankTable.columns} emptyLabel={config.bankTable.emptyLabel} />
+                </div>
             </section>
         </div>
     );

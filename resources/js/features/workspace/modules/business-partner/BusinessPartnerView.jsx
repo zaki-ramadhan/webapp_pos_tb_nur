@@ -31,6 +31,9 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
 
     useEffect(() => {
         setActiveTabId(config.tabs[0]?.id ?? 'general');
+    }, [recordId]);
+
+    useEffect(() => {
         setValues(buildFormState(sourceRecord));
         setStatus({ tone: '', message: '' });
     }, [sourceRecord]);
