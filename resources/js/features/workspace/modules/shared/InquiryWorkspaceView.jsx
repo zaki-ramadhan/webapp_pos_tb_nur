@@ -1,19 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHead,
-    DataTableHeader,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
-import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import { TransactionDateInput, TransactionDataTable, TransactionToolbarIconButton, TransactionExportExcelButton, TransactionSwitchViewButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
+    ColumnsIcon,
+    DownloadIcon,
     ExternalLinkIcon,
     IdeaIcon,
     RefreshIcon,
@@ -35,10 +29,6 @@ function buildInitialControlValues(controls) {
     }, {});
 }
 
-function resolveCellAlignClassName(align) {
-    return 'text-left';
-}
-
 function resolveActionIcon(action) {
     switch (action.icon) {
         case 'external-link':
@@ -47,6 +37,10 @@ function resolveActionIcon(action) {
             return <IdeaIcon className="h-4.5 w-4.5" />;
         case 'transfer':
             return <NavigationIcon type="transfer" className="h-4.5 w-4.5 text-current" />;
+        case 'download':
+            return <DownloadIcon className="h-4.5 w-4.5" />;
+        case 'columns':
+            return <ColumnsIcon className="h-4.5 w-4.5" />;
         case 'link':
         default:
             return <RefreshIcon className="h-4.5 w-4.5" />;
@@ -101,8 +95,27 @@ function InquiryControl({ control, value, onChange }) {
                 value={value}
                 onChange={(nextValue) => onChange(control.id, nextValue)}
                 className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
-                inputClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
-                trailingClassName="w-[40px] shrink-0 justify-center px-0"
+                inputClassName="text-sm text-brand-dark py-1 h-full"
+                trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
+            />
+        );
+    }
+
+    if (control.type === 'search') {
+        return (
+            <AccountLookupTextInput
+                id={control.id}
+                value={value}
+                placeholder={control.placeholder ?? 'Cari/Pilih...'}
+                searchLabel="Cari kas/bank"
+                dialogTitle="Pilih Kas/Bank"
+                queryParams={{ account_type: 'Cash/Bank' }}
+                className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                inputClassName="text-sm text-brand-dark py-1 h-full"
+                trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
+                onSelectAccount={(record, label) => {
+                    onChange(control.id, label);
+                }}
             />
         );
     }
@@ -130,11 +143,11 @@ export default function InquiryWorkspaceView({
     pagination = null,
 }) {
     const controls = config.controls ?? [];
-    const actions = (config.actions ?? []).filter((action) => action.tone !== 'warning' && action.icon !== 'idea' && action.id !== 'help');
     const hasSidePanel = config.sidePanel?.hidden !== true;
     const [values, setValues] = useState(() => buildInitialControlValues(controls));
     const keywordControl = controls.find((control) => control.type === 'search');
     const keyword = keywordControl ? values[keywordControl.id] ?? '' : '';
+    const [isAlternativeView, setIsAlternativeView] = useState(false);
 
     useEffect(() => {
         onValuesChange?.(values);
@@ -171,26 +184,108 @@ export default function InquiryWorkspaceView({
 
     const hasRows = filteredRows.length > 0;
 
+    const reloadAction = (config.actions ?? []).find((action) => action.id === 'reload');
+    const exportAction = (config.actions ?? []).find((action) => action.id === 'export-excel');
+    const helpAction = (config.actions ?? []).find((action) => action.id === 'help' || action.icon === 'idea' || action.tone === 'warning');
+    const otherActions = (config.actions ?? []).filter(
+        (action) => action.id !== 'reload' && action.id !== 'export-excel' && action.id !== 'help' && action.icon !== 'idea' && action.tone !== 'warning'
+    );
+
+    const searchControl = controls.find(c => c.type === 'search');
+    const dateControls = controls.filter(c => c.type === 'date' || c.type === 'label');
+
+    // Inject row numbering column with pagination offset
+    const columnsWithNo = useMemo(() => {
+        let cols = config.table.columns;
+        if (isAlternativeView) {
+            cols = config.table.columns.map((col) => {
+                if (col.id === 'mutation') {
+                    return { ...col, id: 'debit', label: 'Debit' };
+                }
+                if (col.id === 'type') {
+                    return { ...col, id: 'credit', label: 'Kredit' };
+                }
+                return col;
+            });
+        }
+
+        if (filteredRows.length === 0) {
+            return cols;
+        }
+        return [
+            { id: '__no', label: 'No.', widthClassName: 'w-[52px]' },
+            ...cols,
+        ];
+    }, [config.table.columns, filteredRows.length, isAlternativeView]);
+
+    const rowsWithNo = useMemo(() => {
+        const offset = pagination ? pagination.from - 1 : 0;
+        return filteredRows.map((row, index) => ({
+            ...row,
+            __no: offset + index + 1,
+        }));
+    }, [filteredRows, pagination]);
+
     return (
         <div className="flex min-h-full flex-col gap-3 pt-3">
-            <div className="flex flex-col gap-3 2lg:flex-row 2xl:items-start 2xl:justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
-                    {controls.map((control, index) => (
-                        <div key={control.id ?? `control-${index}`} className={control.wrapperClassName ?? ''}>
-                            <InquiryControl control={control} value={control.id ? values[control.id] ?? '' : ''} onChange={handleChange} />
+                    {searchControl ? (
+                        <div className={searchControl.wrapperClassName ?? ''}>
+                            <InquiryControl control={searchControl} value={values[searchControl.id] ?? ''} onChange={handleChange} />
                         </div>
-                    ))}
+                    ) : null}
+
+                    {dateControls.length ? (
+                        <div className="flex items-center gap-1 shrink-0">
+                            {dateControls.map((control, index) => (
+                                <div key={control.id ?? `control-date-${index}`} className={control.type === 'label' ? 'px-0.5 text-center text-sm text-text-darkest shrink-0' : 'w-[140px] sm:w-[155px] shrink-0'}>
+                                    <InquiryControl control={control} value={control.id ? values[control.id] ?? '' : ''} onChange={handleChange} />
+                                </div>
+                            ))}
+                        </div>
+                    ) : null}
+
+                    {reloadAction ? (
+                        <TransactionToolbarIconButton
+                            label={reloadAction.label}
+                            onClick={onRefresh}
+                        >
+                            <RefreshIcon className="h-4 w-4" />
+                        </TransactionToolbarIconButton>
+                    ) : null}
+
+                    {exportAction ? (
+                        <TransactionExportExcelButton
+                            columns={config.table.columns}
+                            rows={filteredRows}
+                            filename={config.label || 'histori-bank'}
+                            label={exportAction.label}
+                        />
+                    ) : null}
                 </div>
 
-                {actions.length ? (
-                    <div className="flex flex-col items-end gap-2">
-                        {actions.map((action) => (
-                            <InquiryActionButton
-                                key={action.id}
-                                action={action}
-                                onClick={action.id === 'reload' ? onRefresh : undefined}
-                            />
-                        ))}
+                {otherActions.length ? (
+                    <div className="flex items-center gap-2">
+                        {otherActions.map((action) => {
+                            if (action.id === 'switch-view') {
+                                return (
+                                    <TransactionSwitchViewButton
+                                        key={action.id}
+                                        active={isAlternativeView}
+                                        onClick={() => setIsAlternativeView((prev) => !prev)}
+                                        label={action.label}
+                                    />
+                                );
+                            }
+                            return (
+                                <InquiryActionButton
+                                    key={action.id}
+                                    action={action}
+                                    onClick={undefined}
+                                />
+                            );
+                        })}
                     </div>
                 ) : null}
             </div>
@@ -208,61 +303,13 @@ export default function InquiryWorkspaceView({
             >
                 <div className="min-w-0 overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light">
                     <div className="min-h-0 overflow-x-auto">
-                        <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="rounded-none border-0">
-                            <DataTableHeader className="bg-table-header-bg">
-                                <tr>
-                                    <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
-                                        No.
-                                    </DataTableHead>
-                                    {config.table.columns.map((column) => (
-                                        <SortableTableHeaderCell
-                                            key={column.id}
-                                            label={column.label}
-                                            align={column.align}
-                                            widthClassName={column.widthClassName}
-                                            sortable={false}
-                                            noWrap={column.noWrap === true}
-                                        />
-                                    ))}
-                                </tr>
-                            </DataTableHeader>
-
-                            <DataTableBody>
-                                {hasRows ? (
-                                    filteredRows.map((row, index) => (
-                                        <DataTableRow
-                                            key={row.id ?? `row-${index}`}
-                                            className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
-                                        >
-                                            <DataTableCell className="px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
-                                                {pagination ? (pagination.from + index) : (index + 1)}
-                                            </DataTableCell>
-                                            {config.table.columns.map((column) => (
-                                                <DataTableCell
-                                                    key={column.id}
-                                                    className={`${resolveCellAlignClassName(column.align)} px-2.5 text-base text-text-workspace-dark ${column.cellClassName ?? ''}`.trim()}
-                                                >
-                                                    {column.truncate ? (
-                                                        <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
-                                                    ) : (
-                                                        formatTableTextValue(row[column.id])
-                                                    )}
-                                                </DataTableCell>
-                                            ))}
-                                        </DataTableRow>
-                                    ))
-                                ) : (
-                                    <DataTableRow className="bg-white">
-                                        <DataTableCell
-                                            colSpan={config.table.columns.length + 1}
-                                            className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
-                                        >
-                                            {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
-                                        </DataTableCell>
-                                    </DataTableRow>
-                                )}
-                            </DataTableBody>
-                        </DataTable>
+                        <TransactionDataTable
+                            columns={columnsWithNo}
+                            rows={rowsWithNo}
+                            emptyLabel={loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
+                            minWidthClassName={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'}
+                            showNumbering={false}
+                        />
                     </div>
 
                     {!hasRows ? (

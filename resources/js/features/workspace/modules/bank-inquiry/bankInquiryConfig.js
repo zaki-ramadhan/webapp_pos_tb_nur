@@ -8,7 +8,7 @@ function createSearchControl() {
         type: 'search',
         value: '',
         placeholder: 'Cari/Pilih...',
-        wrapperClassName: 'min-w-0 flex-[999_1_280px] basis-full xl:basis-auto',
+        wrapperClassName: 'w-full sm:w-[280px] md:w-[320px] shrink-0',
         className: 'w-full',
     };
 }
@@ -87,7 +87,6 @@ export const bankInquiryPageConfigs = {
                 { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[150px]', align: 'center' },
                 { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
                 { id: 'balance', label: 'Saldo', widthClassName: 'w-[200px]', align: 'center' },
-                { id: 'index', label: '#', widthClassName: 'w-[42px]', align: 'center', noWrap: true },
             ],
             rows: [],
             emptyLabel: 'Belum ada data',
@@ -96,16 +95,15 @@ export const bankInquiryPageConfigs = {
             searchKeys: ['date', 'description', 'mutation', 'type', 'balance'],
         },
         sidePanel: {
-            className: DEFAULT_EMPTY_SPACE_CLASS_NAME,
+            hidden: true,
         },
     },
     'bank-history': {
         controls: DEFAULT_CONTROLS,
         actions: [
             createAction('reload', 'link', 'Muat ulang histori bank'),
-            createAction('open-linked', 'external-link', 'Buka referensi histori bank'),
-            createAction('switch-account', 'transfer', 'Pindah akun bank'),
-            createAction('help', 'idea', 'Bantuan histori bank', 'warning'),
+            createAction('export-excel', 'download', 'Ekspor Excel'),
+            createAction('switch-view', 'columns', 'Ubah Tampilan'),
         ],
         table: {
             columns: [
@@ -117,7 +115,6 @@ export const bankInquiryPageConfigs = {
                 { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[140px]', align: 'center' },
                 { id: 'type', label: 'Tipe', widthClassName: 'w-[80px]', align: 'center' },
                 { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'center' },
-                { id: 'index', label: '#', widthClassName: 'w-[42px]', align: 'center', noWrap: true },
             ],
             rows: [],
             emptyLabel: 'Belum ada data',

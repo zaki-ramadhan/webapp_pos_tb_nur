@@ -55,6 +55,8 @@ class BankInquiryQueryService
                     'description' => $row['description'],
                     'mutation' => $row['mutation'],
                     'type' => $row['type'],
+                    'debit' => $row['debit'],
+                    'credit' => $row['credit'],
                     'balance' => $row['balance'],
                     'index' => $index + 1,
                     'account_id' => $row['account_id'],

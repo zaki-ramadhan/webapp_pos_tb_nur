@@ -27,6 +27,8 @@ export function mapBankRows(pageId, records) {
                 description: record.description ?? '',
                 mutation: record.mutation ?? '',
                 type: record.type ?? '',
+                debit: record.debit ?? '',
+                credit: record.credit ?? '',
                 balance: record.balance ?? '',
                 index: record.index ?? index + 1,
             };
@@ -42,6 +44,7 @@ export function mapBankRows(pageId, records) {
                 debit: record.debit ?? '',
                 credit: record.credit ?? '',
                 status: record.status ?? '',
+                balance: record.balance ?? '',
             };
         }
 
