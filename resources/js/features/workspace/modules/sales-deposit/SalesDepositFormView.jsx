@@ -68,8 +68,11 @@ export default function SalesDepositFormView({
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'deposit');
+    }, [activeRecordId]);
+
+    useEffect(() => {
         setValues(buildSalesDepositFormState(sourceRecord, config));
-    }, [config, sourceRecord]);
+    }, [sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDepositValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);

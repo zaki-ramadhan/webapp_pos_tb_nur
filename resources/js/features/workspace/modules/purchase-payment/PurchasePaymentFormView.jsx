@@ -74,9 +74,12 @@ export default function PurchasePaymentFormView({
 
     useEffect(() => {
         setActiveSectionId((isDetail ? config.detailSectionTabs : config.sectionTabs)?.[0]?.id ?? 'details');
+    }, [activeRecordId]);
+
+    useEffect(() => {
         setValues(buildFormState(sourceRecord, config));
         setActiveInvoice(null);
-    }, [config, isDetail, sourceRecord]);
+    }, [sourceRecord]);
 
     const validationMessage = useMemo(() => validatePurchasePaymentValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);

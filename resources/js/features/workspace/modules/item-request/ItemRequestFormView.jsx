@@ -58,9 +58,12 @@ export default function ItemRequestFormView({
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+    }, [activeRecordId]);
+
+    useEffect(() => {
         setValues(buildFormValues(sourceRecord));
         setImportModalOpen(false);
-    }, [config.sectionTabs, sourceRecord]);
+    }, [sourceRecord]);
 
     const validationMessage = useMemo(() => validateItemRequestValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);

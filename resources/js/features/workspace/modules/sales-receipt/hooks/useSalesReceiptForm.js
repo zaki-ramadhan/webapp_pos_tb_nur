@@ -67,11 +67,14 @@ export default function useSalesReceiptForm({
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+    }, [activeRecordId]);
+
+    useEffect(() => {
         setValues(buildSalesReceiptFormState(sourceRecord));
         setActiveInvoiceModal(null);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [config.sectionTabs, sourceRecord]);
+    }, [sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesReceiptValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);

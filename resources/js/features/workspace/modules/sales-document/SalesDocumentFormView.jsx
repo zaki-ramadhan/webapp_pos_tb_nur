@@ -99,10 +99,13 @@ export default function SalesDocumentFormView({
 
     useEffect(() => {
         setActiveSectionId(resolveInitialSectionId(config, isDetail));
+    }, [activeRecordId]);
+
+    useEffect(() => {
         setValues(buildSalesDocumentFormState(sourceRecord));
         setItemModalOpen(false);
         setImportModalOpen(false);
-    }, [config, isDetail, sourceRecord]);
+    }, [sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);
     const isDirty = useMemo(() => resolveSalesDocumentDirty(values, initialSnapshot), [initialSnapshot, values]);

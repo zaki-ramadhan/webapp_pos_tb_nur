@@ -75,7 +75,7 @@ export function FormRow({
     contentClassName = '',
 }) {
     return (
-        <div className={`grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
+        <div className={`grid gap-3 lg:grid-cols-[135px_minmax(0,1fr)] lg:items-start ${className}`.trim()}>
             <label className="pt-2 text-xs sm:text-sm leading-6 text-brand-dark">
                 {label}
                 {required ? <span className="text-tab-active-border-t"> *</span> : null}
