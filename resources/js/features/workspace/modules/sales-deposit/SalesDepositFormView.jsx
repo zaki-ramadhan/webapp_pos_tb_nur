@@ -33,6 +33,7 @@ import {
 } from './salesDepositShared';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import CheckboxField from '@/components/ui/CheckboxField';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
 export default function SalesDepositFormView({
     pageId,
@@ -224,76 +225,107 @@ export default function SalesDepositFormView({
                     ) : activeSectionId === 'invoice-info' ? (
                         <DepositSummarySection config={config} values={values} />
                     ) : (
-                        <section>
+                        <section className="max-w-[540px] w-full">
                             <TransactionSectionHeading title={config.depositTitle} icon="payment" />
 
-                            <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
-                                <TransactionFieldLabel label={config.labels.depositAmount} required />
-                                <div className="max-w-[320px]">
-                                    <TextInput
-                                        value={values.depositAmount}
-                                        onChange={(event) =>
-                                            setValues((current) => {
-                                                const depositAmount = event.target.value;
-                                                const totalAmount = parseNumericInput(depositAmount);
+                            <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
+                                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                                    <TransactionFieldLabel label={config.labels.depositAmount} required />
+                                    <div className="max-w-[320px] w-full">
+                                        <TextInput
+                                            value={values.depositAmount}
+                                            onChange={(event) =>
+                                                setValues((current) => {
+                                                    const depositAmount = event.target.value;
+                                                    const totalAmount = parseNumericInput(depositAmount);
 
-                                                return {
+                                                    return {
+                                                        ...current,
+                                                        depositAmount,
+                                                        subtotal: `Rp ${Number.isFinite(totalAmount) ? totalAmount.toLocaleString('id-ID') : '0'}`,
+                                                        total: `Rp ${Number.isFinite(totalAmount) ? totalAmount.toLocaleString('id-ID') : '0'}`,
+                                                    };
+                                                })
+                                            }
+                                            className="h-[34px] rounded-[4px] border-ui-border"
+                                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                                    <TransactionFieldLabel label={config.labels.purchaseOrderNumber} />
+                                    <div className="max-w-[320px] w-full">
+                                        <TextInput
+                                            value={values.purchaseOrderNumber}
+                                            onChange={(event) =>
+                                                setValues((current) => ({
                                                     ...current,
-                                                    depositAmount,
-                                                    subtotal: `Rp ${Number.isFinite(totalAmount) ? totalAmount.toLocaleString('id-ID') : '0'}`,
-                                                    total: `Rp ${Number.isFinite(totalAmount) ? totalAmount.toLocaleString('id-ID') : '0'}`,
-                                                };
-                                            })
-                                        }
-                                        className="h-[34px] rounded-[4px] border-ui-border"
-                                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                                    />
+                                                    purchaseOrderNumber: event.target.value,
+                                                }))
+                                            }
+                                            className="h-[34px] rounded-[4px] border-ui-border"
+                                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                                        />
+                                    </div>
                                 </div>
 
-                                <TransactionFieldLabel label={config.labels.purchaseOrderNumber} />
-                                <TextInput
-                                    value={values.purchaseOrderNumber}
-                                    onChange={(event) =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            purchaseOrderNumber: event.target.value,
-                                        }))
-                                    }
-                                    className="h-[34px] rounded-[4px] border-ui-border"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                                />
-
-                                <TransactionFieldLabel label={config.labels.tax} />
-                                <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
-                                    <CheckboxField
-                                        id="taxEnabled"
-                                        label="Kena Pajak"
-                                        checked={values.taxEnabled}
-                                        onChange={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                taxEnabled: event.target.checked,
-                                            }))
-                                        }
-                                        align="center"
-                                        inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                        containerClassName="w-auto inline-flex"
-                                    />
-                                    <CheckboxField
-                                        id="taxIncluded"
-                                        label="Total termasuk Pajak"
-                                        checked={values.taxIncluded}
-                                        onChange={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                taxIncluded: event.target.checked,
-                                            }))
-                                        }
-                                        align="center"
-                                        inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                        containerClassName="w-auto inline-flex"
-                                    />
+                                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                                    <TransactionFieldLabel label={config.labels.tax} />
+                                    <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
+                                        <CheckboxField
+                                            id="taxEnabled"
+                                            label="Kena Pajak"
+                                            checked={values.taxEnabled}
+                                            onChange={(event) =>
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    taxEnabled: event.target.checked,
+                                                    ...(!event.target.checked ? { __taxId: null, taxName: '' } : {}),
+                                                }))
+                                            }
+                                            align="center"
+                                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                            containerClassName="w-auto inline-flex"
+                                        />
+                                        <CheckboxField
+                                            id="taxIncluded"
+                                            label="Total termasuk Pajak"
+                                            checked={values.taxIncluded}
+                                            onChange={(event) =>
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    taxIncluded: event.target.checked,
+                                                }))
+                                            }
+                                            align="center"
+                                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                            containerClassName="w-auto inline-flex"
+                                        />
+                                    </div>
                                 </div>
+
+                                {values.taxEnabled && (
+                                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                                        <TransactionFieldLabel label="PPN" required />
+                                        <div className="max-w-[320px] w-full">
+                                            <AccountLookupTextInput
+                                                id="tax"
+                                                resource="taxes"
+                                                value={values.taxName || ''}
+                                                placeholder="Cari/Pilih PPN..."
+                                                searchLabel="Cari pajak"
+                                                onSelectAccount={(record, label) => {
+                                                    setValues((current) => ({
+                                                        ...current,
+                                                        __taxId: record ? record.id : null,
+                                                        taxName: label || '',
+                                                    }));
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </section>
                     )}

@@ -109,7 +109,8 @@ export function buildSalesDepositRecord(record = {}, config) {
     return {
         __backendRecordId: record.id ?? null,
         __customerId: record.customer_id ?? null,
-        __paymentTermId: null,
+        __paymentTermId: record.payment_term_id ?? null,
+        paymentTermName: record.payment_term ? buildLookupLabel(record.payment_term) : '',
         __branchId: null,
         customer: record.customer?.name ? [buildLookupLabel(record.customer)] : [],
         entryDate: formatIsoDate(record.entry_date),
@@ -119,6 +120,8 @@ export function buildSalesDepositRecord(record = {}, config) {
         currency: record.currency?.code ?? 'IDR',
         depositAmount: formatCurrencyValue(totalAmount),
         purchaseOrderNumber: record.reference_number ?? '',
+        __taxId: record.tax_id ?? null,
+        taxName: record.tax ? buildLookupLabel(record.tax) : '',
         taxEnabled: Boolean(record.tax_id),
         taxIncluded: Boolean(record.metadata?.tax_included),
         paymentTerms: [],
@@ -147,7 +150,8 @@ export function buildSalesDepositFormState(source = {}, config) {
     return {
         __backendRecordId: source.__backendRecordId ?? null,
         __customerId: source.__customerId ?? null,
-        __paymentTermId: null,
+        __paymentTermId: source.__paymentTermId ?? null,
+        paymentTermName: source.paymentTermName ?? '',
         __branchId: null,
         customer: [...(source.customer ?? config.draft?.customer ?? [])],
         entryDate: source.entryDate ?? config.draft?.entryDate ?? '',
@@ -157,6 +161,8 @@ export function buildSalesDepositFormState(source = {}, config) {
         currency: source.currency ?? config.draft?.currency ?? '',
         depositAmount,
         purchaseOrderNumber: source.purchaseOrderNumber ?? config.draft?.purchaseOrderNumber ?? '',
+        __taxId: source.__taxId ?? null,
+        taxName: source.taxName ?? '',
         taxEnabled: source.taxEnabled ?? config.draft?.taxEnabled ?? false,
         taxIncluded: source.taxIncluded ?? config.draft?.taxIncluded ?? false,
         paymentTerms: [],
@@ -191,7 +197,7 @@ export function buildSalesDepositPayload(values) {
 
     return {
         customer_id: values.__customerId ?? null,
-        payment_term_id: null,
+        payment_term_id: values.__paymentTermId ?? null,
         branch_id: null,
         document_number: values.documentNumber?.trim() || buildGeneratedSalesDepositNumber(),
         numbering_type: values.numberingType?.trim() || null,
@@ -203,6 +209,7 @@ export function buildSalesDepositPayload(values) {
         paid_amount: 0,
         outstanding_amount: totalAmount,
         notes: values.notes?.trim() || null,
+        tax_id: values.taxEnabled ? (values.__taxId ?? null) : null,
         metadata: {
             address: values.address?.trim() || null,
             branch_label: null,
@@ -234,6 +241,10 @@ export function validateSalesDepositValues(values, config) {
 
     if (parseNumericInput(values.depositAmount) <= 0) {
         return `${config.labels.depositAmount} wajib lebih dari 0.`;
+    }
+
+    if (values.taxEnabled && (!values.taxName || !values.__taxId)) {
+        return 'PPN wajib diisi jika Kena Pajak dicentang.';
     }
 
     return '';

@@ -26,8 +26,6 @@ const salesDepositTopActions = [
 const salesDepositSectionTabs = [
     { id: 'deposit', label: 'Uang Muka', icon: 'document' },
     { id: 'additional-info', label: 'Info lainnya', icon: 'info' },
-    { id: 'smartlink', label: 'SmartLink', icon: 'payment' },
-    { id: 'invoice-info', label: 'Informasi Faktur', icon: 'receipt' },
 ];
 
 const salesDepositListColumns = [
@@ -90,7 +88,7 @@ export const defaultSalesDepositConfig = {
         branch: 'Cabang',
         notes: 'Keterangan',
     },
-    numberingOptions: ['Faktur Penjualan'],
+    numberingOptions: ['Faktur Penjualan', 'Uang Muka Penjualan'],
     table: {
         createLabel: 'Tambah Uang Muka Penjualan',
         refreshLabel: 'Muat ulang',

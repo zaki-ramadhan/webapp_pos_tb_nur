@@ -16,6 +16,7 @@ import {
     TransactionSwitch,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { PinIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
 
@@ -38,10 +39,28 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.infoTitle} icon="info" />
 
-                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <div className="mt-4 grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4 pl-3 sm:pl-5">
+                    <TransactionFieldLabel label={config.labels.paymentTerms} />
+                    <div className="max-w-[320px] w-full">
+                        <AccountLookupTextInput
+                            id="paymentTerm"
+                            resource="payment-terms"
+                            value={values.paymentTermName || ''}
+                            placeholder="Cari/Pilih Syarat Pembayaran..."
+                            searchLabel="Cari syarat pembayaran"
+                            onSelectAccount={(record, label) => {
+                                setValues((current) => ({
+                                    ...current,
+                                    __paymentTermId: record ? record.id : null,
+                                    paymentTermName: label || '',
+                                }));
+                            }}
+                        />
+                    </div>
+
                     <TransactionFieldLabel label={config.labels.address} />
                     {isDetail ? (
-                        <div className="flex items-start gap-4">
+                        <div className="flex items-start gap-4 max-w-[480px] w-full">
                             <button
                                 type="button"
                                 className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue-accent"
@@ -49,27 +68,46 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                             >
                                 <PinIcon className="h-[18px] w-[18px] text-brand-blue-accent" />
                             </button>
-                            <ReadonlyTransactionTextarea value={values.address} className="min-h-[86px] flex-1" />
+                            <TextareaField
+                                value={values.address}
+                                readOnly={true}
+                                rows={4}
+                                className="border-ui-border flex-1"
+                                textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
+                            />
                         </div>
                     ) : (
-                        <ReadonlyTransactionTextarea value={values.address} className="min-h-[84px]" />
+                        <div className="max-w-[480px] w-full">
+                            <TextareaField
+                                value={values.address}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        address: event.target.value,
+                                    }))
+                                }
+                                rows={4}
+                                className="border-ui-border"
+                                textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
+                            />
+                        </div>
                     )}
 
-
-
                     <TransactionFieldLabel label={config.labels.notes} />
-                    <TextareaField
-                        value={values.notes}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                notes: event.target.value,
-                            }))
-                        }
-                        rows={4}
-                        className="border-ui-border"
-                        textareaClassName="min-h-[72px] text-xs sm:text-sm text-brand-dark"
-                    />
+                    <div className="max-w-[480px] w-full">
+                        <TextareaField
+                            value={values.notes}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    notes: event.target.value,
+                                }))
+                            }
+                            rows={4}
+                            className="border-ui-border"
+                            textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
+                        />
+                    </div>
                 </div>
             </div>
         </section>
@@ -80,7 +118,7 @@ export function DepositSmartlinkSection({ config }) {
     return (
         <section>
             <TransactionSectionHeading title={config.smartlinkTitle} icon="smartlink" />
-            <div className="mt-4 flex items-start gap-4 text-base leading-8 text-brand-dark">
+            <div className="mt-4 flex items-start gap-4 text-base leading-8 text-brand-dark pl-3 sm:pl-5">
                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-full text-brand-dark">
                     i
                 </span>
@@ -131,70 +169,96 @@ export function DepositSummarySection({ config, values }) {
 
 export function SalesDepositHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
-        <div className={`grid gap-x-8 gap-y-2 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-            <div className="grid gap-y-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <TransactionFieldLabel label={config.labels.customer} required />
-                <ChipLookupField
-                    values={values.customer}
-                    placeholder="Cari/Pilih Pelanggan..."
-                    onRemove={handlers.onRemoveCustomer}
-                    searchLabel="Cari pelanggan"
-                    onSearch={handlers.onSelectCustomer}
-                />
-
-                <TransactionFieldLabel label={config.labels.entryDate} required />
-                <TransactionDateInput
-                    value={values.entryDate}
-                    onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
-                />
-            </div>
-
-            <div className="grid gap-y-2 sm:grid-cols-[140px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <div className="flex items-center justify-start gap-4 sm:justify-end">
-                    <TransactionFieldLabel label={config.labels.documentNumber} required className="sm:text-right" />
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+            {/* Left Column */}
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.customer} required />
+                    <div className="max-w-[320px] w-full">
+                        <AccountLookupTextInput
+                            id="customer"
+                            resource="customers"
+                            value={values.customer?.[0] ?? ''}
+                            placeholder="Cari/Pilih Pelanggan..."
+                            searchLabel="Cari pelanggan"
+                            onSelectAccount={(record, label) => {
+                                setValues((current) => ({
+                                    ...current,
+                                    __customerId: record ? record.id : null,
+                                    customer: label ? [label] : [],
+                                }));
+                            }}
+                        />
+                    </div>
                 </div>
 
-                {!isDetail && values.autoNumber ? (
-                    <SelectField value={values.numberingType} onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
-                        {config.numberingOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
-                ) : (
-                    <TextInput
-                        value={values.documentNumber}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                documentNumber: event.target.value,
-                            }))
-                        }
-                        onBlur={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                documentNumber: event.target.value.trim(),
-                            }))
-                        }
-                        maxLength={120}
-                        trailing={<span className="text-lg font-semibold text-brand-dark">x</span>}
-                        className="h-[40px] rounded-[4px] border-ui-border"
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                        trailingClassName="px-3"
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.entryDate} required />
+                    <TransactionDateInput
+                        value={values.entryDate}
+                        onChange={(nextValue) => setValues((current) => ({ ...current, entryDate: nextValue }))}
                     />
-                )}
+                </div>
+            </div>
 
-                <div />
+            {/* Right Column */}
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div className="flex items-center justify-start gap-4">
+                        <TransactionFieldLabel label={config.labels.documentNumber} required />
+                    </div>
+
+                    <div className="max-w-[320px] w-full justify-self-end">
+                        {!isDetail && values.autoNumber ? (
+                            <SelectField
+                                value={values.numberingType}
+                                onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
+                            >
+                                {config.numberingOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        ) : (
+                            <TextInput
+                                value={values.documentNumber}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value,
+                                    }))
+                                }
+                                onBlur={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value.trim(),
+                                    }))
+                                }
+                                maxLength={120}
+                                trailing={<span className="text-lg font-semibold text-brand-dark">x</span>}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                                trailingClassName="px-3"
+                            />
+                        )}
+                    </div>
+                </div>
+
                 {isDetail && values.processButtonLabel ? (
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
-                        >
-                            <span>{values.processButtonLabel}</span>
-                            <ChevronDownIcon className="h-4 w-4" />
-                        </button>
+                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                        <div />
+                        <div className="flex justify-end w-full max-w-[320px] justify-self-end">
+                            <button
+                                type="button"
+                                className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent"
+                            >
+                                <span>{values.processButtonLabel}</span>
+                                <ChevronDownIcon className="h-4 w-4" />
+                            </button>
+                        </div>
                     </div>
                 ) : null}
             </div>
