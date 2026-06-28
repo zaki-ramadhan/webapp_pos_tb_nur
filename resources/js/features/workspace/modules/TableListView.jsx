@@ -234,6 +234,9 @@ export default function TableListView({
                 }
                 rightControls={rightControls}
                 menuButton={menuButton}
+                importButton={table.importButton}
+                printButton={table.printButton}
+                columnSettings={table.columnSettings}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -242,6 +245,7 @@ export default function TableListView({
                             (col) => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label
                         );
                         if (!searchCols.length) return table.searchPlaceholder ?? 'Cari data...';
+                        const labels = searchCols.map((col) => col.label);
                         return `Cari ${labels.slice(0, 3).join(', ')}${labels.length > 3 ? '...' : ''}`;
                     })(),
                     widthClassName: table.searchWidthClassName ?? 'w-full sm:w-[340px]',
@@ -249,7 +253,7 @@ export default function TableListView({
                 }}
                 resourceName={table.resource}
                 onRefresh={table.onRefresh}
-                exportConfig={{
+                exportConfig={table.exportConfig === false ? false : {
                     columns: cleanedColumns,
                     rows: filteredRows,
                     filename: table.label ? table.label.toLowerCase().replace(/\s+/g, '-') : 'export',

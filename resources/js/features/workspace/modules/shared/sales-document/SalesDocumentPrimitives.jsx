@@ -128,7 +128,7 @@ export function SearchableTableSection({
 
     return (
         <div className={`flex flex-col ${hasRows ? 'min-h-[540px] sm:min-h-[620px]' : 'min-h-[240px] sm:min-h-[260px]'}`.trim()}>
-            <div className="flex flex-col gap-3 border-b border-ui-border-medium pb-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
                 <div className={`flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center ${hideSearchField ? '' : 'sm:max-w-[640px]'}`.trim()}>
                     {leadingAction ? (
                         <button
@@ -183,7 +183,7 @@ export function SearchableTableSection({
                 </div>
             </div>
 
-            <div className={`mt-4 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
+            <div className={`mt-1 overflow-x-auto ${hasRows ? 'min-h-0 flex-1' : ''}`.trim()}>
                 <div className={(minWidthClassName ?? '').replace(/\b(?:[a-z-]*:)?min-w-\[[^\]]+\]/g, '').trim() || 'w-full'}>
                     <DataTable wrapperClassName="border-table-wrapper-border">
                         <DataTableHeader className="bg-table-header-bg">

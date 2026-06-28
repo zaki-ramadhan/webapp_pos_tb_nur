@@ -1,7 +1,7 @@
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
 
-export function SalesDocumentAdditionalCostSection({ config, values, setValues }) {
+export function SalesDocumentAdditionalCostSection({ config, values, setValues, handlers }) {
     const costLeadingAction =
         config.costSectionLeadingActionDetailOnly && !values.documentNumber
             ? null
@@ -15,16 +15,11 @@ export function SalesDocumentAdditionalCostSection({ config, values, setValues }
             searchPlaceholder={config.costSearchPlaceholder}
             searchInput={
                 <AccountLookupTextInput
-                    value={values.costSearch}
+                    resource="accounts"
                     placeholder={config.costSearchPlaceholder}
                     searchLabel={`Cari ${config.additionalCostsTitle}`}
                     dialogTitle={`Pilih ${config.additionalCostsTitle}`}
-                    onSelectAccount={(_, label) =>
-                        setValues?.((current) => ({
-                            ...current,
-                            costSearch: label,
-                        }))
-                    }
+                    onSelectAccount={(record) => handlers?.onSelectCostAccount?.(record)}
                 />
             }
             title={config.additionalCostsTitle}
@@ -35,6 +30,7 @@ export function SalesDocumentAdditionalCostSection({ config, values, setValues }
             leadingAction={costLeadingAction}
             showTitleSearchButton={config.showCostTitleSearchButton}
             minWidthClassName={config.costTable.minWidthClassName ?? 'min-w-[900px]'}
+            onRowClick={handlers?.onEditCostItem}
         />
     );
 }

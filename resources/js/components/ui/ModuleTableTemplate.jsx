@@ -96,7 +96,7 @@ export default function ModuleTableTemplate({
                     value={inactiveFilter}
                     onChange={(event) => setInactiveFilter(event.target.value)}
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[128px] rounded-[4px] border-ui-border"
+                    className="h-[34px] min-w-[128px] rounded-sm border-ui-border"
                     selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
                     iconClassName="mr-2 text-filter-icon"
                 >

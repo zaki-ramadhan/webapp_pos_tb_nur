@@ -1,19 +1,25 @@
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
 export function SalesDocumentItemsSection({ config, values, isDetail, handlers }) {
     const itemTitle = values.itemCountLabel || config.itemSectionTitle;
     const canOpenItemModal = isDetail && config.itemModal?.enabled && Boolean(values.itemModal);
-    const itemLeadingAction =
-        config.itemSectionLeadingActionDetailOnly && !isDetail
+    
+    const hideAddItem = config.hideAddItemButton || false;
+    const hideImport = config.hideImportButton || false;
+
+    const itemLeadingAction = hideAddItem
+        ? null
+        : config.itemSectionLeadingActionDetailOnly && !isDetail
             ? null
             : config.itemSectionLeadingActionCreateOnly && isDetail
-              ? null
-              : config.itemSectionLeadingAction ?? (!isDetail ? { label: 'Tambah Item', onClick: handlers?.onCreateItem } : null);
+                ? null
+                : config.itemSectionLeadingAction ?? (!isDetail ? { label: 'Tambah Item', onClick: handlers?.onCreateItem } : null);
 
     const itemRowClick = canOpenItemModal ? config.onOpenItemModal : handlers?.onEditItem;
     const itemTitleClick = canOpenItemModal ? config.onOpenItemModal : handlers?.onCreateItem;
 
-    const importButton = !isDetail && handlers?.onImportClick ? (
+    const importButton = !isDetail && handlers?.onImportClick && !hideImport ? (
         <button
             type="button"
             onClick={handlers.onImportClick}
@@ -23,10 +29,20 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
         </button>
     ) : null;
 
+    const searchInput = config.itemSearchResource ? (
+        <AccountLookupTextInput
+            resource={config.itemSearchResource}
+            placeholder={config.itemSearchPlaceholder}
+            searchLabel="Cari barang dan jasa"
+            onSelectAccount={(record) => handlers?.onSelectItem?.(record)}
+        />
+    ) : null;
+
     return (
         <SearchableTableSection
             searchValue={values.itemSearch}
             searchPlaceholder={config.itemSearchPlaceholder}
+            searchInput={searchInput}
             title={itemTitle}
             columns={config.itemTable.columns}
             rows={values.items}
