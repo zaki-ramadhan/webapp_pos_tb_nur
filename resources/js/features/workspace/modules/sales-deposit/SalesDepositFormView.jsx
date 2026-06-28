@@ -233,6 +233,8 @@ export default function SalesDepositFormView({
                                     <TransactionFieldLabel label={config.labels.depositAmount} required />
                                     <div className="max-w-[320px] w-full">
                                         <TextInput
+                                            id="depositAmount"
+                                            name="depositAmount"
                                             value={values.depositAmount}
                                             onChange={(event) =>
                                                 setValues((current) => {
@@ -247,8 +249,10 @@ export default function SalesDepositFormView({
                                                     };
                                                 })
                                             }
+                                            prefix="Rp"
                                             className="h-[34px] rounded-[4px] border-ui-border"
-                                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                                            prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"
+                                            inputClassName="text-slate-700 text-sm"
                                         />
                                     </div>
                                 </div>
