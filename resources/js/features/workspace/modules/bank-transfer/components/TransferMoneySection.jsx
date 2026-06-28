@@ -7,17 +7,11 @@ import { AccountLookupField } from '@/features/workspace/shared/AccountLookupCon
 import TransferValueInput from './TransferValueInput';
 
 export default function TransferMoneySection({ config, values, setValues, handlers = {}, isDetail }) {
-    const [localValue, setLocalValue] = useState(values.transferValue);
-
-    useEffect(() => {
-        setLocalValue(values.transferValue);
-    }, [values.transferValue]);
-
     return (
         <div className="flex-1 flex flex-col min-h-0">
             <TransactionSectionHeading title={config.transferTitle} icon="document" />
 
-            <div className="mt-4 grid gap-10 lg:grid-cols-2">
+            <div className="mt-4 grid gap-10 lg:grid-cols-2 pl-3 sm:pl-5">
                 <section className="grid grid-cols-[130px_minmax(0,1fr)] lg:grid-cols-[160px_minmax(0,1fr)] items-start gap-x-4 gap-y-2.5">
                     <TransactionFieldLabel label={config.labels.fromBank} required />
                     <AccountLookupField
@@ -36,13 +30,18 @@ export default function TransferMoneySection({ config, values, setValues, handle
                     <div className="max-w-[276px] w-full">
                         <TransferValueInput
                             prefix={values.transferPrefix}
-                            value={localValue}
+                            value={values.transferValue}
                             maxWidthClassName=""
-                            onChange={(event) => setLocalValue(event.target.value)}
+                            onChange={(event) => {
+                                setValues((current) => ({
+                                    ...current,
+                                    transferValue: event.target.value,
+                                }));
+                            }}
                             onBlur={() => {
                                 setValues((current) => ({
                                     ...current,
-                                    transferValue: localValue,
+                                    blurredTransferValue: values.transferValue,
                                 }));
                             }}
                         />

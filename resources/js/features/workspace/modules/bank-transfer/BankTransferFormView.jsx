@@ -88,7 +88,7 @@ export default function BankTransferFormView({
     const [feeAccount, setFeeAccount] = useState(null);
     const [feeCustomName, setFeeCustomName] = useState('');
     const [feeAmount, setFeeAmount] = useState('0');
-    const [feeChargedTo, setFeeChargedTo] = useState('Dari Kas/Bank');
+    const [feeChargedTo, setFeeChargedTo] = useState('Bank Pengirim');
     const [feeNotes, setFeeNotes] = useState('');
     const [activeTab, setActiveTab] = useState('detail');
 
@@ -134,7 +134,7 @@ export default function BankTransferFormView({
                             ...action,
                             tone: 'primary',
                             disabled: saveDisabled,
-                            label: saving ? 'Memproses...' : action.label,
+                            label: validationMessage ? `${action.label} (${validationMessage})` : (saving ? 'Memproses...' : action.label),
                             onClick: onSave,
                         };
                     }
@@ -341,7 +341,7 @@ export default function BankTransferFormView({
                     setFeeAccount(record);
                     setFeeCustomName(record.name ?? '');
                     setFeeAmount('0');
-                    setFeeChargedTo('Dari Kas/Bank');
+                    setFeeChargedTo('Bank Pengirim');
                     setFeeNotes('');
                     setActiveTab('detail');
                     setFeeModalOpen(true);
@@ -357,7 +357,7 @@ export default function BankTransferFormView({
                 });
                 setFeeCustomName(item.accountName ?? '');
                 setFeeAmount(item.amount ? String(parseNumericInput(item.amount)) : '0');
-                setFeeChargedTo(item.chargedTo ?? 'Dari Kas/Bank');
+                setFeeChargedTo(item.chargedTo ?? 'Bank Pengirim');
                 setFeeNotes(item.notes ?? '');
                 setActiveTab('detail');
                 setFeeModalOpen(true);
@@ -572,8 +572,8 @@ export default function BankTransferFormView({
                                     onChange={(e) => setFeeChargedTo(e.target.value)}
                                     className="h-[34px] rounded-[4px] border-ui-border text-xs sm:text-sm text-brand-dark"
                                 >
-                                    <option value="Dari Kas/Bank">Bank Pengirim</option>
-                                    <option value="Ke Kas/Bank">Bank Penerima</option>
+                                    <option value="Bank Pengirim">Bank Pengirim</option>
+                                    <option value="Bank Tujuan">Bank Tujuan</option>
                                 </SelectField>
                             </div>
                         </div>

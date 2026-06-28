@@ -1,5 +1,4 @@
 import SelectField from '@/components/ui/SelectField';
-import { FunnelIcon } from '@/features/workspace/shared/Icons';
 
 export default function TransferTableFilterBar({ table, filters, setFilters }) {
     return (
@@ -21,14 +20,7 @@ export default function TransferTableFilterBar({ table, filters, setFilters }) {
                     ))}
                 </SelectField>
             ))}
-
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-4.5 w-4.5" />
-            </button>
         </div>
     );
 }
+

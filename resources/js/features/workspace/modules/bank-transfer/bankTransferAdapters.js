@@ -16,10 +16,26 @@ export function buildBankTransferRow(record) {
     const metadata = record.metadata ?? {};
     const primaryAccountLabel = metadata.from_bank_label ?? buildLookupLabel(record.primary_account ?? {});
     const secondaryAccountLabel = metadata.to_bank_label ?? buildLookupLabel(record.secondary_account ?? {});
-    const { transferAmount, feeAmount } = deriveTransferAmounts(record);
+    const { transferAmount, feeLines } = deriveTransferAmounts(record);
     const entryDate = formatIsoDate(record.entry_date);
     const fromBranchLabel = metadata.from_branch_label ?? record.branch?.name ?? '';
     const toBranchLabel = metadata.to_branch_label ?? metadata.counterpart_branch_label ?? '';
+
+    const valuesForTotals = {
+        blurredTransferValue: transferAmount,
+        exchangeRate: metadata.exchange_rate ?? 1,
+        transferPrefix: metadata.transfer_prefix ?? 'Rp',
+        resultPrefix: metadata.result_prefix ?? 'Rp',
+        feeRows: feeLines.map(line => ({
+            amount: formatCurrencyValue(line.total_amount ?? 0),
+            chargedTo: line.attributes?.charged_to ?? 'Bank Pengirim',
+        })),
+        fromBankAccounts: [primaryAccountLabel],
+        toBankAccounts: [secondaryAccountLabel],
+    };
+    const totals = buildTotals(valuesForTotals);
+    const fromTotal = metadata.from_total_value ?? totals.fromTotalValue;
+    const toTotal = metadata.to_total_value ?? totals.toTotalValue;
 
     return {
         id: String(record.id),
@@ -31,9 +47,9 @@ export function buildBankTransferRow(record) {
         toBank: truncateText(secondaryAccountLabel),
         toBankFull: secondaryAccountLabel,
         description: record.notes ?? '',
-        transferTotal: formatCurrencyValue(transferAmount),
         purchasePayment: record.reference_number ?? '',
-        feeTotal: formatCurrencyValue(feeAmount),
+        fromTotal: fromTotal,
+        toTotal: toTotal,
         dateFilter: entryDate,
         fromBankFilter: primaryAccountLabel,
         toBankFilter: secondaryAccountLabel,
@@ -87,7 +103,7 @@ export function buildBankTransferRecord(record = {}, config) {
         accountCode: line.account?.code ?? line.reference_code ?? '',
         accountName: line.account?.name ?? line.description ?? `Biaya ${index + 1}`,
         amount: formatCurrencyValue(line.total_amount ?? 0),
-        chargedTo: line.attributes?.charged_to ?? 'Dari Kas/Bank',
+        chargedTo: line.attributes?.charged_to ?? 'Bank Pengirim',
         notes: line.attributes?.notes ?? line.notes ?? '',
     }));
     const values = {
@@ -105,6 +121,7 @@ export function buildBankTransferRecord(record = {}, config) {
         exchangeRate: metadata.exchange_rate ? formatCurrencyValue(metadata.exchange_rate) : '',
         exchangeRateLabel: metadata.exchange_rate_label ?? '',
         transferValue: formatCurrencyValue(transferAmount),
+        blurredTransferValue: formatCurrencyValue(transferAmount),
         transferPrefix: metadata.transfer_prefix ?? 'Rp',
         transferWords: metadata.transfer_words ?? '',
         toBankAccounts: toBankLabel ? [toBankLabel] : [],
@@ -174,6 +191,7 @@ export function buildFormState(source = {}, config) {
         exchangeRate: source.exchangeRate ?? config.draft?.exchangeRate ?? '',
         exchangeRateLabel: source.exchangeRateLabel ?? config.draft?.exchangeRateLabel ?? '',
         transferValue: source.transferValue ?? config.draft?.transferValue ?? '',
+        blurredTransferValue: source.blurredTransferValue ?? source.transferValue ?? config.draft?.transferValue ?? '',
         transferPrefix: source.transferPrefix ?? config.draft?.transferPrefix ?? 'Rp',
         transferWords: source.transferWords ?? config.draft?.transferWords ?? '',
         toBankAccounts: [...(source.toBankAccounts ?? config.draft?.toBankAccounts ?? [])],
@@ -203,6 +221,7 @@ export function buildBankTransferSnapshot(values) {
         fromBranches: values.fromBranches ?? [],
         exchangeRate: values.exchangeRate ?? '',
         transferValue: values.transferValue ?? '',
+        blurredTransferValue: values.blurredTransferValue ?? '',
         toBankAccounts: values.toBankAccounts ?? [],
         toBranches: values.toBranches ?? [],
         notes: values.notes ?? '',

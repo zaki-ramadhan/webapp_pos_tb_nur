@@ -40,14 +40,26 @@ function extractCleanAccountName(label) {
 }
 
 export function buildTotals(values) {
-    const transferAmount = parseNumericInput(values.transferValue);
-    const feeAmount = (values.feeRows ?? []).reduce((sum, row) => sum + parseNumericInput(row.amount), 0);
-    const resultAmount = parseNumericInput(values.resultValue || values.transferValue);
+    const transferAmount = parseNumericInput(values.blurredTransferValue ?? values.transferValue);
+    const exchangeRate = parseNumericInput(values.exchangeRate);
+    const resultAmount = exchangeRate > 0 ? transferAmount * exchangeRate : transferAmount;
     const transferPrefix = values.transferPrefix || '';
     const resultPrefix = values.resultPrefix || '';
 
-    const fromVal = transferAmount + feeAmount;
-    const toVal = resultAmount;
+    let feeFromVal = 0;
+    let feeToVal = 0;
+
+    (values.feeRows ?? []).forEach((row) => {
+        const amt = parseNumericInput(row.amount);
+        if (row.chargedTo === 'Bank Tujuan' || row.chargedTo === 'Ke Kas/Bank' || row.chargedTo === 'Bank Penerima') {
+            feeToVal += amt;
+        } else {
+            feeFromVal += amt;
+        }
+    });
+
+    const fromVal = transferAmount + feeFromVal;
+    const toVal = Math.max(0, resultAmount - feeToVal);
 
     const fromAccountName = extractCleanAccountName(values.fromBankAccounts?.[0]);
     const toAccountName = extractCleanAccountName(values.toBankAccounts?.[0]);

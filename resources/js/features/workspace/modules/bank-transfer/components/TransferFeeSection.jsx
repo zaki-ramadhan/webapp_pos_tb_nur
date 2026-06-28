@@ -6,6 +6,22 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
         ? `${values.feeRows.length} ${config.feeTitle}`
         : config.feeTitle;
 
+    const renderCell = ({ row, column }) => {
+        if (column.id === 'chargedTo') {
+            if (row.chargedTo === 'Dari Kas/Bank' || row.chargedTo === 'Bank Pengirim') {
+                return 'Bank Pengirim';
+            }
+            if (row.chargedTo === 'Ke Kas/Bank' || row.chargedTo === 'Bank Penerima' || row.chargedTo === 'Bank Tujuan') {
+                return 'Bank Penerima';
+            }
+            return row.chargedTo || '-';
+        }
+        if (column.id === 'amount') {
+            return row.amount;
+        }
+        return row[column.id] !== undefined && row[column.id] !== null ? String(row[column.id]) : '';
+    };
+
     return (
         <div className="flex-1 flex flex-col min-h-0">
             <TransactionLineItemsSection
@@ -32,6 +48,7 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
                 columns={config.feeTable.columns}
                 rows={values.feeRows}
                 emptyLabel={config.feeTable.emptyLabel}
+                renderCell={renderCell}
                 onRowClick={handlers.onEditFeeItem}
                 getRowClassName={
                     handlers.onEditFeeItem

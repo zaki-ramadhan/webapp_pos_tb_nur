@@ -38,7 +38,7 @@ export function buildBankTransferPayload(values) {
         sort_order: index + 1,
         attributes: {
             kind: 'fee',
-            charged_to: row.chargedTo ?? 'Dari Kas/Bank',
+            charged_to: row.chargedTo ?? 'Bank Pengirim',
             notes: row.notes?.trim() || null,
         },
     }));
