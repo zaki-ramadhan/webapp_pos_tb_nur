@@ -72,7 +72,11 @@ class DashboardAnalyticsQueryService
 
         $formatCurrencyShort = fn ($value) => PosBlueprint::formatCurrencyShort($value);
 
+        $userActivities = [];
         if ($loadData) {
+            $user = auth()->user() ?? request()->user();
+            $userActivities = \App\Support\Presentation\Queries\DashboardActivityQueryService::getRecentActivities($user);
+
             $latestSalesInvoiceDate = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->where('status', 'Posted')
@@ -370,6 +374,7 @@ class DashboardAnalyticsQueryService
         }
 
         return [
+            'userActivities' => $userActivities,
             'upcomingNote' => $upcomingNote,
             'overdueNote' => $overdueNote,
             'transactionTypeOptions' => $transactionTypeOptions,
