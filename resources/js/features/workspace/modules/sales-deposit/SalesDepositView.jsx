@@ -7,8 +7,8 @@ import {
     buildSalesDepositRow,
     buildSalesDepositRecord as buildSalesDepositRecordFromBackend,
 } from '@/features/workspace/modules/sales-deposit/salesDepositShared';
+import ModuleTableTemplate from '@/components/ui/ModuleTableTemplate';
 import SalesDepositFormView from './SalesDepositFormView';
-import SalesDepositTableView from './SalesDepositTableView';
 
 export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
     const {
@@ -28,6 +28,7 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
         resource: 'sales-deposits',
         initialPerPage: 25,
     });
+
     const config = useMemo(() => {
         const baseConfig = buildSalesDepositConfig(page.salesDeposit);
         const mappedRows = rows.map(buildSalesDepositRow);
@@ -40,9 +41,15 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
             }, {}),
             table: {
                 ...baseConfig.table,
+                label: 'Uang Muka Penjualan',
+                resource: 'sales-deposits',
                 rows: mappedRows,
                 filters: buildSalesDepositFilters(baseConfig.table?.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
+                loading,
+                emptyLabel: error || 'Belum ada data',
+                onRefresh: reload,
+                refreshLoading: loading,
                 pagination: {
                     page: currentPage,
                     perPage,
@@ -53,10 +60,9 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
             },
         };
-    }, [loading, page.salesDeposit, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [loading, error, reload, page.salesDeposit, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     const buildRecord = useCallback((row) => {
         if (row?.__backendRecord) {
@@ -67,13 +73,14 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
     }, [config]);
 
     return mode === 'table' ? (
-        <SalesDepositTableView
-            config={config}
+        <ModuleTableTemplate
+            table={config.table}
+            resourceName="sales-deposits"
+            exportFilename="uang-muka-penjualan"
+            exportTitle="Laporan Uang Muka Penjualan"
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
-            loading={loading}
-            error={error}
-            onRefresh={reload}
+            disableExport={true}
         />
     ) : (
         <SalesDepositFormView

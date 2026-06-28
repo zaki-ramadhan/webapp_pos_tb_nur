@@ -80,7 +80,6 @@ export default function SalesDepositFormView({
         saving,
         deleteConfirmationOpen,
         setDeleteConfirmationOpen,
-        selectLookup,
         handleSave,
         requestDelete,
         handleDelete,
@@ -183,30 +182,12 @@ export default function SalesDepositFormView({
         });
     }
 
-    const handlers = useMemo(
-        () => ({
-            onSelectCustomer: () =>
-                selectLookup('customers', 'pelanggan', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __customerId: record.id,
-                        customer: [buildLookupLabel(record)],
-                    })),
-                ),
-            onRemoveCustomer: () =>
-                setValues((current) => ({
-                    ...current,
-                    __customerId: null,
-                    customer: [],
-                })),
-        }),
-        [selectLookup],
-    );
+
 
     return (
         <>
             <TransactionFormLayout
-                header={<SalesDepositHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
+                header={<SalesDepositHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
@@ -219,7 +200,7 @@ export default function SalesDepositFormView({
                     {isDetail && values.statusStamp ? <DepositStamp label={values.statusStamp} tone={values.statusTone} className={activeSectionId === 'invoice-info' ? 'left-[49%] top-[37%]' : 'left-[49%] top-[33%]'} /> : null}
 
                     {activeSectionId === 'additional-info' ? (
-                        <DepositInfoSection config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />
+                        <DepositInfoSection config={config} values={values} setValues={setValues} isDetail={isDetail} />
                     ) : activeSectionId === 'smartlink' ? (
                         <DepositSmartlinkSection config={config} />
                     ) : activeSectionId === 'invoice-info' ? (

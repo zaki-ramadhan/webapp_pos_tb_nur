@@ -17,7 +17,7 @@ import {
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import { PinIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
+import { ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
 
 export { DepositAmountField, DepositStamp };
@@ -33,7 +33,7 @@ export function DepositFooter({ values }) {
     );
 }
 
-export function DepositInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
+export function DepositInfoSection({ config, values, setValues, isDetail }) {
     return (
         <section>
             <div className="lg:max-w-[50%] w-full">
@@ -59,39 +59,21 @@ export function DepositInfoSection({ config, values, setValues, isDetail, handle
                     </div>
 
                     <TransactionFieldLabel label={config.labels.address} />
-                    {isDetail ? (
-                        <div className="flex items-start gap-4 max-w-[480px] w-full">
-                            <button
-                                type="button"
-                                className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue-accent"
-                                aria-label="Lihat alamat"
-                            >
-                                <PinIcon className="h-[18px] w-[18px] text-brand-blue-accent" />
-                            </button>
-                            <TextareaField
-                                value={values.address}
-                                readOnly={true}
-                                rows={4}
-                                className="border-ui-border flex-1"
-                                textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
-                            />
-                        </div>
-                    ) : (
-                        <div className="max-w-[480px] w-full">
-                            <TextareaField
-                                value={values.address}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        address: event.target.value,
-                                    }))
-                                }
-                                rows={4}
-                                className="border-ui-border"
-                                textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
-                            />
-                        </div>
-                    )}
+                    <div className="max-w-[480px] w-full">
+                        <TextareaField
+                            value={values.address || ''}
+                            onChange={isDetail ? undefined : (event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    address: event.target.value,
+                                }))
+                            }
+                            readOnly={isDetail}
+                            rows={4}
+                            className="border-ui-border"
+                            textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
+                        />
+                    </div>
 
                     <TransactionFieldLabel label={config.labels.notes} />
                     <div className="max-w-[480px] w-full">
@@ -167,7 +149,7 @@ export function DepositSummarySection({ config, values }) {
     );
 }
 
-export function SalesDepositHeader({ config, values, setValues, isDetail, handlers = {} }) {
+export function SalesDepositHeader({ config, values, setValues, isDetail }) {
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             {/* Left Column */}

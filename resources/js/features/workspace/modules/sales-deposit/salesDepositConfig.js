@@ -29,13 +29,12 @@ const salesDepositSectionTabs = [
 ];
 
 const salesDepositListColumns = [
-    { id: 'statusIcon', label: '#', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[190px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[45%]', align: 'left' },
     { id: 'status', label: 'Status', widthClassName: 'w-[150px]', align: 'left' },
-    { id: 'requiredIdType', label: 'Tipe ID Waj...', widthClassName: 'w-[100px]', align: 'left' },
+    { id: 'requiredIdType', label: 'Tipe ID Wajib Pajak', widthClassName: 'w-[140px]', align: 'left' },
     { id: 'age', label: 'Umur (hr)', widthClassName: 'w-[100px]', align: 'right' },
     { id: 'total', label: 'Total', widthClassName: 'w-[150px]', align: 'right' },
 ];
@@ -92,20 +91,15 @@ export const defaultSalesDepositConfig = {
     table: {
         createLabel: 'Tambah Uang Muka Penjualan',
         refreshLabel: 'Muat ulang',
-        filterButtonLabel: 'Filter lanjutan',
         searchPlaceholder: 'Cari...',
         pageValue: '2',
         columns: salesDepositListColumns,
         rows: salesDepositTableRows,
         filters: [
-            { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '10/02/2017', label: 'Tanggal: 10/02/2017' }] },
-            { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pelanggan: Semua' }, { value: 'Abadi Phone Center', label: 'Pelanggan: Abadi Phone Center' }] },
-            { id: 'status', rowKey: 'status', options: [{ value: 'all', label: 'Status: Semua' }, { value: 'Belum Lunas', label: 'Status: Belum Lunas' }, { value: 'Lunas', label: 'Status: Lunas' }] },
-            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }, { value: 'all', label: 'Sudah dicetak: Semua' }] },
+            { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }] },
+            { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pelanggan: Semua' }] },
+            { id: 'status', rowKey: 'status', options: [{ value: 'all', label: 'Status: Semua' }] },
         ],
-        downloadItems: [{ id: 'download-excel', label: 'Unduh Excel' }, { id: 'download-pdf', label: 'Unduh PDF' }],
-        printItems: [{ id: 'print-list', label: 'Cetak daftar uang muka' }],
-        settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: salesDepositSectionTabs,
     draft: salesDepositDraft,
@@ -132,9 +126,6 @@ function mergeSalesDepositConfig(baseConfig, pageConfig = {}) {
             columns: pageConfig.table?.columns ?? baseConfig.table.columns,
             rows: pageConfig.table?.rows ?? baseConfig.table.rows,
             filters: pageConfig.table?.filters ?? baseConfig.table.filters,
-            downloadItems: pageConfig.table?.downloadItems ?? baseConfig.table.downloadItems,
-            printItems: pageConfig.table?.printItems ?? baseConfig.table.printItems,
-            settingsItems: pageConfig.table?.settingsItems ?? baseConfig.table.settingsItems,
         },
         sectionTabs: pageConfig.sectionTabs ?? baseConfig.sectionTabs,
         draft: {

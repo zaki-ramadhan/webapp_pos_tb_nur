@@ -86,6 +86,8 @@ export function buildSalesDepositRow(record) {
         id: String(record?.id ?? ''),
         __backendRecord: record,
         number: record?.document_number ?? '',
+        name: record?.document_number ?? '',
+        tabLabel: record?.document_number ?? '',
         date: entryDate,
         customer: customerName,
         customerShort: customerName,
@@ -189,7 +191,7 @@ export function buildGeneratedSalesDepositNumber() {
     const day = String(now.getDate()).padStart(2, '0');
     const time = `${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
 
-    return `SD.${year}.${month}.${day}.${time}`;
+    return `DP.${year}.${month}.${day}.${time}`;
 }
 
 export function buildSalesDepositPayload(values) {
