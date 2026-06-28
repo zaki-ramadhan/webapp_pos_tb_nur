@@ -101,7 +101,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
 export function SupplierPriceDetailsSection({ config, values, setValues }) {
     return (
         <div className="flex min-h-[560px] flex-col">
-            <div className="flex flex-col gap-3 border-b border-ui-border-medium pb-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3 pb-1 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1 sm:max-w-[590px]">
                         <TextInput
@@ -138,7 +138,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                 </div>
             </div>
 
-            <div className="mt-4 min-h-0 flex-1 overflow-x-auto">
+            <div className="mt-1 min-h-0 flex-1 overflow-x-auto">
                 <div className="min-w-[980px]">
                     <DataTable wrapperClassName="border-table-wrapper-border">
                         <DataTableHeader className="bg-table-header-bg">
