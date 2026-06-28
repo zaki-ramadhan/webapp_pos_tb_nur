@@ -32,9 +32,10 @@ export function buildLookupLabel(record, codeKey = 'code') {
 
 export function applyComputedTotals(currentValues, nextItems) {
     const subtotalAmount = nextItems.reduce((sum, item) => sum + parseNumericInput(item.total), 0);
+    const subtotalCosts = (currentValues.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
     const discountAmount = nextItems.reduce((sum, item) => sum + parseNumericInput(item.discountValue ?? item.discount), 0);
     const taxAmount = currentValues.taxEnabled ? Math.max(0, (subtotalAmount - discountAmount) * 0.1) : 0;
-    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount);
+    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount + subtotalCosts);
     const nextSummary = Array.isArray(currentValues.summary)
         ? currentValues.summary.map(([label, value], index) => {
               if (index === 0 || String(label).toLowerCase() === 'total') {
@@ -224,3 +225,42 @@ export async function applyPromptItemUpdate(item, updateItems, setStatus) {
 export function resolveSalesDocumentDirty(values, initialSnapshot) {
     return !areComparableValuesEqual(buildDocumentComparableSnapshot(values), initialSnapshot);
 }
+
+export async function promptCostEditor(cost = null) {
+    const result = await showPromptModal(cost ? 'Edit Biaya Lainnya' : 'Tambah Biaya Lainnya', [
+        {
+            name: 'name',
+            label: 'Nama Biaya',
+            type: 'text',
+            defaultValue: cost?.name ?? '',
+            required: true,
+            disabled: true,
+        },
+        {
+            name: 'code',
+            label: 'Kode Akun',
+            type: 'text',
+            defaultValue: cost?.code ?? '',
+            disabled: true,
+        },
+        {
+            name: 'amount',
+            label: 'Jumlah',
+            type: 'number',
+            defaultValue: cost?.amount ?? '0',
+            required: true,
+        },
+    ]);
+
+    if (!result) {
+        return null;
+    }
+
+    const amountValue = parseNumericInput(result.amount);
+
+    return {
+        ...cost,
+        amount: formatCurrencyValue(amountValue),
+    };
+}
+

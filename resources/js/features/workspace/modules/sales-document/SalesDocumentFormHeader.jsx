@@ -8,7 +8,7 @@ import {
 import {
     SalesDocumentHeaderButtons,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
 export default function SalesDocumentFormHeader({
     pageId,
@@ -18,27 +18,33 @@ export default function SalesDocumentFormHeader({
     isDetail,
     backendConfig,
     handlers,
-    onSelectCustomer,
 }) {
     return (
-        <div className="px-4 pt-4 pb-0">
-            <div className={`grid gap-x-8 gap-y-2 ${isDetail ? 'xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]' : 'xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)]'}`.trim()}>
-                <div className="grid gap-y-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+            {/* Left Column */}
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.customer} required />
-                    <ChipLookupField
-                        values={values.customer}
-                        placeholder={config.customerPlaceholder ?? 'Cari/Pilih Pelanggan...'}
-                        onRemove={() =>
-                            setValues((current) => ({
-                                ...current,
-                                customer: [],
-                                __partnerId: null,
-                            }))
-                        }
-                        onSearch={onSelectCustomer}
-                        searchLabel={config.customerSearchLabel ?? 'Cari pelanggan'}
-                    />
+                    <div className="max-w-[320px] w-full">
+                        <AccountLookupTextInput
+                            id="customer"
+                            resource={backendConfig?.partnerResource ?? 'customers'}
+                            value={values.customer?.[0] ?? ''}
+                            placeholder={config.customerPlaceholder ?? 'Cari/Pilih Pelanggan...'}
+                            searchLabel={config.customerSearchLabel ?? 'Cari pelanggan'}
+                            onSelectAccount={(record, label) => {
+                                setValues((current) => ({
+                                    ...current,
+                                    __partnerId: record ? record.id : null,
+                                    customer: label ? [label] : [],
+                                    address: record ? (record.shipping_address ?? record.billing_address ?? current.address) : '',
+                                }));
+                            }}
+                        />
+                    </div>
+                </div>
 
+                <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.entryDate} required />
                     <TransactionDateInput
                         value={values.entryDate}
@@ -49,12 +55,12 @@ export default function SalesDocumentFormHeader({
                             }))
                         }
                     />
+                </div>
 
-
-
-                    {config.headerTextField ? (
-                        <>
-                            <TransactionFieldLabel label={config.headerTextField.label} required={config.headerTextField.required} />
+                {config.headerTextField ? (
+                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                        <TransactionFieldLabel label={config.headerTextField.label} required={config.headerTextField.required} />
+                        <div className="max-w-[320px] w-full">
                             <TextInput
                                 value={values[config.headerTextField.valueKey] ?? ''}
                                 onChange={(event) =>
@@ -83,22 +89,24 @@ export default function SalesDocumentFormHeader({
                                 inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
                             />
-                            {isDetail ? <div /> : null}
-                        </>
-                    ) : null}
-                </div>
+                        </div>
+                    </div>
+                ) : null}
+            </div>
 
-                <div className="grid gap-y-2 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                    <div className="flex items-center justify-start gap-4 sm:justify-end">
-                        <TransactionFieldLabel label={config.labels.documentNumber} required className="whitespace-nowrap sm:text-right" />
+            {/* Right Column */}
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div className="flex items-center justify-start gap-4">
+                        <TransactionFieldLabel label={config.labels.documentNumber} required />
                     </div>
 
-                    <div className="flex sm:justify-end">
+                    <div className="max-w-[282px] w-full justify-self-end">
                         {!isDetail && values.autoNumber ? (
                             <SelectField
                                 value={values.numberingType}
                                 onChange={(event) => setValues((current) => ({ ...current, numberingType: event.target.value }))}
-                                className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                className="h-[40px] rounded-[4px] border-ui-border w-full"
                                 selectClassName="text-xs sm:text-sm text-brand-dark"
                             >
                                 {config.numberingOptions.map((option) => (
@@ -114,15 +122,17 @@ export default function SalesDocumentFormHeader({
                                 onBlur={(event) => setValues((current) => ({ ...current, documentNumber: event.target.value.trim() }))}
                                 maxLength={120}
                                 trailing={<span className="text-lg font-semibold text-brand-dark">×</span>}
-                                className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
+                                className="h-[40px] rounded-[4px] border-ui-border w-full"
                                 inputClassName="text-xs sm:text-sm text-brand-dark"
                                 trailingClassName="px-3"
                             />
                         )}
                     </div>
+                </div>
 
+                <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
-                    <div className="flex sm:justify-end">
+                    <div className="flex justify-end relative justify-self-end">
                         <SalesDocumentHeaderButtons config={config} values={values} isDetail={isDetail} />
                     </div>
                 </div>

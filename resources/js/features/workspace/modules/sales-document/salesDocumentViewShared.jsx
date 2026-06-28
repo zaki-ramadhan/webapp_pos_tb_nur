@@ -78,7 +78,7 @@ export function buildSectionProps(activeSectionId, config, values, setValues, is
     }
 
     if (activeSectionId === 'additional-costs' || activeSectionId === 'advance-payments' || activeSectionId === 'order-info') {
-        return { config, values, handlers };
+        return { config, values, setValues, handlers };
     }
 
     if (activeSectionId === 'smartlink') {

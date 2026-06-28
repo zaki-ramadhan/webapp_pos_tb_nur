@@ -25,8 +25,7 @@ import {
     SalesDocumentSummarySection,
 } from '@/features/workspace/modules/shared/SalesDocumentSections';
 import {
-    TransactionDock,
-    TransactionSectionRail,
+    TransactionFormLayout,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     buildSectionProps,
@@ -46,6 +45,8 @@ import {
     buildLookupLabel,
     resolveSalesDocumentDirty,
     validateSalesDocumentValues,
+    formatCurrencyValue,
+    promptCostEditor,
 } from './salesDocumentFormShared';
 
 const sectionComponentMap = {
@@ -112,7 +113,6 @@ export default function SalesDocumentFormView({
         saving,
         deleteConfirmationOpen,
         setDeleteConfirmationOpen,
-        selectLookup,
         handleSave,
         requestDelete,
         handleDelete,
@@ -247,8 +247,64 @@ export default function SalesDocumentFormView({
                 });
                 showSuccessToast({ message: `${importedItems.length} item berhasil diimpor.` });
             },
+            onSelectItem: (record) => {
+                const unitPriceAmount = Number(record.default_sale_price ?? 0);
+                const totalAmount = 1 * unitPriceAmount;
+                const newItem = {
+                    id: `product-item-${Date.now()}-${Math.random()}`,
+                    __lineId: null,
+                    __productId: record.id,
+                    name: record.name,
+                    code: record.code ?? '',
+                    quantity: '1',
+                    unit: record.sales_unit?.name ?? record.base_unit?.name ?? 'PCS',
+                    price: formatCurrencyValue(unitPriceAmount),
+                    discount: '0',
+                    discountValue: '0',
+                    total: formatCurrencyValue(totalAmount),
+                };
+                updateItems((existingItems) => [...existingItems, newItem]);
+                showSuccessToast({ message: `Barang [${record.code ?? ''}] ${record.name} ditambahkan.` });
+            },
+            onSelectCostAccount: (record) => {
+                const newCost = {
+                    id: `cost-item-${Date.now()}-${Math.random()}`,
+                    __lineId: null,
+                    __accountId: record.id,
+                    name: record.name,
+                    code: record.code ?? '',
+                    amount: '0',
+                };
+                setValues((current) => {
+                    const updatedValues = {
+                        ...current,
+                        additionalCosts: [...(current.additionalCosts ?? []), newCost],
+                    };
+                    return applyComputedTotals(updatedValues, updatedValues.items);
+                });
+                showSuccessToast({ message: `Biaya [${record.code ?? ''}] ${record.name} ditambahkan.` });
+            },
+            onEditCostItem: async (costItem) => {
+                try {
+                    const nextCost = await promptCostEditor(costItem);
+                    if (!nextCost) return;
+
+                    setValues((current) => {
+                        const updatedValues = {
+                            ...current,
+                            additionalCosts: current.additionalCosts.map((entry) =>
+                                entry.id === costItem.id ? nextCost : entry
+                            ),
+                        };
+                        return applyComputedTotals(updatedValues, updatedValues.items);
+                    });
+                    showSuccessToast({ message: 'Biaya diperbarui.' });
+                } catch (error) {
+                    showErrorToast({ message: error.message });
+                }
+            },
         }),
-        [selectLookup, updateItems, setStatus],
+        [updateItems, setStatus],
     );
 
     const dockActions = useMemo(
@@ -277,72 +333,47 @@ export default function SalesDocumentFormView({
     );
 
     return (
-        <div className="flex min-h-full flex-col gap-3">
-            <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-                <div className="min-w-0 flex-1 flex flex-col gap-3">
-                    <div className="bg-white border border-ui-border rounded-[6px] shadow-card-light px-4 py-4">
-                        <SalesDocumentFormHeader
-                            pageId={pageId}
-                            config={config}
-                            values={values}
-                            setValues={setValues}
-                            isDetail={isDetail}
-                            backendConfig={backendConfig}
-                            handlers={handlers}
-                            onSelectCustomer={() =>
-                                selectLookup(
-                                    backendConfig?.partnerResource ?? 'customers',
-                                    String(config.labels.customer).toLowerCase(),
-                                    (record) =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            __partnerId: record.id,
-                                            customer: [buildLookupLabel(record)],
-                                            address: record.shipping_address ?? record.billing_address ?? current.address,
-                                        })),
-                                )
+        <>
+            <TransactionFormLayout
+                header={
+                    <SalesDocumentFormHeader
+                        pageId={pageId}
+                        config={config}
+                        values={values}
+                        setValues={setValues}
+                        isDetail={isDetail}
+                        backendConfig={backendConfig}
+                        handlers={handlers}
+                    />
+                }
+                sectionTabs={config.sectionTabs}
+                activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
+                footer={config.showFooter !== false ? <SalesDocumentFooter values={values} /> : null}
+                dockActions={dockActions}
+            >
+                <CrudStatusMessage status={status} className="mb-4" />
+                <div className="relative flex-1 flex flex-col min-h-0">
+                    {isDetail && values.approvalStamp ? <DocumentStamp label={values.approvalStamp} tone="blue" className="right-[12%] top-[-6px]" /> : null}
+                    {isDetail && values.processStamp ? (
+                        <DocumentStamp
+                            label={values.processStamp}
+                            tone={values.processStampTone ?? 'green'}
+                            className={
+                                activeSectionId === 'additional-info'
+                                    ? 'left-[49%] top-[34%]'
+                                    : activeSectionId === 'advance-payments'
+                                      ? 'left-[49%] top-[36%]'
+                                      : 'left-[50%] top-[40%]'
                             }
                         />
-                    </div>
-
-                    <CrudStatusMessage status={status} className="mx-3" />
-
-                    <div className="flex gap-0 px-2 sm:px-3">
-                        <TransactionSectionRail tabs={config.sectionTabs} activeTabId={activeSectionId} onSelectTab={setActiveSectionId} />
-
-                        <div className="relative min-w-0 flex-1 rounded-[6px] border border-ui-border bg-white px-3 py-3 shadow-card-light">
-                            {isDetail && values.approvalStamp ? <DocumentStamp label={values.approvalStamp} tone="blue" className="right-[12%] top-[-6px]" /> : null}
-                            {isDetail && values.processStamp ? (
-                                <DocumentStamp
-                                    label={values.processStamp}
-                                    tone={values.processStampTone ?? 'green'}
-                                    className={
-                                        activeSectionId === 'additional-info'
-                                            ? 'left-[49%] top-[34%]'
-                                            : activeSectionId === 'advance-payments'
-                                              ? 'left-[49%] top-[36%]'
-                                              : 'left-[50%] top-[40%]'
-                                    }
-                                />
-                            ) : null}
-
-                            <ActiveSectionComponent
-                                {...buildSectionProps(activeSectionId, config, values, setValues, isDetail, handlers)}
-                            />
-                        </div>
-                    </div>
-
-                    {config.showFooter !== false ? (
-                        <div className="px-3">
-                            <SalesDocumentFooter values={values} />
-                        </div>
                     ) : null}
-                </div>
 
-                <div className="shrink-0 lg:w-[96px] lg:pt-4">
-                    <TransactionDock actions={dockActions} />
+                    <ActiveSectionComponent
+                        {...buildSectionProps(activeSectionId, config, values, setValues, isDetail, handlers)}
+                    />
                 </div>
-            </div>
+            </TransactionFormLayout>
 
             <SalesDocumentItemModal open={itemModalOpen} onClose={() => setItemModalOpen(false)} modal={values.itemModal} />
             <ConfirmationModal
@@ -368,6 +399,6 @@ export default function SalesDocumentFormView({
                 onImport={handlers.onImportItems}
                 mode={String(pageId || '').toLowerCase().includes('purchase') || String(pageId || '').toLowerCase().includes('receipt') ? 'purchasing' : 'sales'}
             />
-        </div>
+        </>
     );
 }

@@ -168,7 +168,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         shippingMethod: metadata.shipping_method_name ? [metadata.shipping_method_name] : [],
         fob: metadata.fob_name ? [metadata.fob_name] : [],
         costSearch: '',
-        additionalCosts: [],
+        additionalCosts: metadata.additional_costs ?? [],
         summary: [
             ['Total', `Rp ${formatCurrencyValue(totalValue)}`],
             ['Status', record.status ?? 'Draft'],
@@ -223,9 +223,10 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
         }))
         .filter((item) => item.description || item.reference_code || item.quantity > 0 || item.total_amount > 0);
     const subtotalAmount = lines.reduce((sum, line) => sum + Number(line.total_amount ?? 0), 0);
+    const subtotalCosts = (values.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
     const discountAmount = lines.reduce((sum, line) => sum + Number(line.discount_amount ?? 0), 0);
     const taxAmount = values.taxEnabled ? Math.max(0, (subtotalAmount - discountAmount) * 0.1) : 0;
-    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount);
+    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount + subtotalCosts);
 
     return {
         [backendConfig.partnerField]: values.__partnerId,
@@ -251,6 +252,7 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
             shipping_method_name: null,
             fob_id: null,
             fob_name: null,
+            additional_costs: values.additionalCosts ?? [],
         },
         lines,
     };

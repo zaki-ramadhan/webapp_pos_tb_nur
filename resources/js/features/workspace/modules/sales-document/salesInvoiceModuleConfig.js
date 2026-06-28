@@ -39,9 +39,6 @@ export const salesInvoiceSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
     { id: 'additional-info', label: 'Info lainnya', icon: 'info' },
     { id: 'additional-costs', label: 'Biaya Lainnya', icon: 'payment' },
-    { id: 'smartlink', label: 'SmartLink', icon: 'smartlink' },
-    { id: 'advance-payments', label: 'Uang Muka', icon: 'payment' },
-    { id: 'order-info', label: 'Informasi Faktur', icon: 'receipt' },
 ];
 
 const salesOrderListColumns = [
@@ -263,6 +260,9 @@ export const defaultSalesInvoiceConfig = {
     itemModal: {
         enabled: true,
     },
+    hideAddItemButton: true,
+    hideImportButton: true,
+    itemSearchResource: 'products',
     draft: salesInvoiceDraft,
     detailRecords: salesInvoiceDetailRecords,
 };
