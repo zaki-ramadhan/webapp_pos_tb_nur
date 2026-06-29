@@ -52,7 +52,6 @@ const salesOrderListColumns = [
 ];
 
 const salesOrderItemColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[54%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[115px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[92px]', align: 'right' },
@@ -63,14 +62,12 @@ const salesOrderItemColumns = [
 ];
 
 const salesOrderCostColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Biaya', widthClassName: 'w-[70%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'amount', label: 'Jumlah', widthClassName: 'w-[150px]', align: 'right' },
 ];
 
 export const salesInvoiceAdvanceColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'number', label: 'No Faktur #', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'amount', label: 'Uang Muka', widthClassName: 'w-[180px]', align: 'right' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[58%]', align: 'left' },
@@ -162,7 +159,7 @@ const defaultSalesOrderConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: salesOrderSectionTabs,
-    itemSearchPlaceholder: 'Cari/Pilih Barang dan Jasa...',
+    itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: salesOrderItemColumns,
@@ -192,6 +189,7 @@ const salesInvoiceTableRows = [];
 
 const salesInvoiceDraft = {
     ...salesOrderDraft,
+    showProcessButton: true,
     numberingType: 'Faktur Penjualan',
     shippingDate: todayDisplayDate,
     preInvoice: false,
@@ -218,6 +216,7 @@ const salesInvoiceDetailRecords = {};
 
 export const defaultSalesInvoiceConfig = {
     ...defaultSalesOrderConfig,
+    showProcessButtonOnCreate: true,
     labels: {
         ...defaultSalesOrderConfig.labels,
         customer: 'Pelanggan',
@@ -253,7 +252,7 @@ export const defaultSalesInvoiceConfig = {
     processedByTitle: 'Uang Muka Terpakai/Retur',
     processedByEmptyLabel: 'Belum ada data.',
     showSummarySecondarySection: false,
-    showPreInvoiceOption: true,
+    showPreInvoiceOption: false,
     showContactField: true,
     showAddressPinButton: true,
     taxInfoMode: 'invoice',

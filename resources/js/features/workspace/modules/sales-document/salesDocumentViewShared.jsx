@@ -1,3 +1,6 @@
+import { useRef, useState } from 'react';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import SelectField from '@/components/ui/SelectField';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { TransactionSwitch, TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -12,45 +15,137 @@ import {
     SortIcon,
     ChevronDownIcon,
 } from '@/features/workspace/shared/Icons';
+import { showWarningToast, showSuccessToast } from '@/components/feedback/toast';
+import { applyComputedTotals } from './salesDocumentFormShared';
+import SalesDocumentCopyModal from './SalesDocumentCopyModal';
 
-export function SalesDocumentHeaderButtons({ config, values, isDetail }) {
+export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail }) {
     const secondaryActionLabel = values.secondaryHeaderActionLabel ?? config.secondaryActionLabel;
     const showSecondaryHeaderAction = Boolean(secondaryActionLabel) && (values.showSecondaryHeaderAction ?? config.showSecondaryHeaderAction ?? false);
     const showProcessButton = isDetail ? values.showProcessButton : (values.showProcessButtonOnCreate ?? config.showProcessButtonOnCreate ?? false);
     const showTakeButton = values.showHeaderTakeButton ?? config.showHeaderTakeButton ?? true;
 
+    const takeRef = useRef(null);
+    const [takeOpen, setTakeOpen] = useState(false);
+
+    const processRef = useRef(null);
+    const [processOpen, setProcessOpen] = useState(false);
+
+    const [copyOption, setCopyOption] = useState(null);
+
+    const handleTakeClick = (optionName) => {
+        setTakeOpen(false);
+        if (!values.__partnerId) {
+            showWarningToast({
+                title: 'Perhatian',
+                message: `${config.labels.customer || 'Pelanggan'} harus diisi terlebih dahulu.`,
+            });
+            return;
+        }
+        setCopyOption(optionName);
+    };
+
+    const handleProcessClick = (actionName) => {
+        setProcessOpen(false);
+        if (!values.__partnerId) {
+            showWarningToast({
+                title: 'Perhatian',
+                message: `${config.labels.customer || 'Pelanggan'} harus diisi terlebih dahulu.`,
+            });
+            return;
+        }
+        showSuccessToast({
+            title: 'Berhasil',
+            message: `Memproses ${actionName} untuk dokumen ini.`,
+        });
+    };
+
+    const handleApplyCopiedData = (copied) => {
+        if (!setValues) return;
+        setValues((current) => {
+            const nextItems = [...(current.items ?? []), ...(copied.items ?? [])];
+            const nextCosts = [...(current.additionalCosts ?? []), ...(copied.additionalCosts ?? [])];
+            const nextAdvances = [...(current.advancePayments ?? []), ...(copied.advancePayments ?? [])];
+            
+            return applyComputedTotals({
+                ...current,
+                additionalCosts: nextCosts,
+                advancePayments: nextAdvances,
+            }, nextItems);
+        });
+        showSuccessToast({
+            title: 'Berhasil',
+            message: `Berhasil menyalin data dari ${copyOption}.`,
+        });
+    };
+
     return (
         <div className="flex flex-wrap items-center justify-end gap-2">
             {showTakeButton ? (
-                <button
-                    type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
-                >
-                    {config.takeButtonLabel}
-                </button>
+                <>
+                    <button
+                        ref={takeRef}
+                        type="button"
+                        onClick={() => setTakeOpen((o) => !o)}
+                        className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm text-brand-blue-accent"
+                    >
+                        <span>{config.takeButtonLabel}</span>
+                        <ChevronDownIcon className="h-4 w-4" />
+                    </button>
+                    <DropdownMenu open={takeOpen} onClose={() => setTakeOpen(false)} anchorRef={takeRef} widthClassName="w-[180px]">
+                        <DropdownMenuItem onClick={() => handleTakeClick('Penawaran')}>Penawaran</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleTakeClick('Pesanan')}>Pesanan</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleTakeClick('Pengiriman')}>Pengiriman</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleTakeClick('Pembelian')}>Pembelian</DropdownMenuItem>
+                    </DropdownMenu>
+                </>
             ) : null}
             {showSecondaryHeaderAction ? (
                 <button
                     type="button"
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
+                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm text-brand-blue-accent"
                 >
                     {secondaryActionLabel}
                 </button>
             ) : null}
             {showProcessButton ? (
-                <button
-                    type="button"
-                    disabled={values.processDisabled}
-                    className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-base ${
-                        values.processDisabled
-                            ? 'border-tab-inactive-bg bg-tab-active-bg text-tab-inactive-border-l'
-                            : 'border-brand-blue-border bg-white text-brand-blue-accent'
-                    }`.trim()}
-                >
-                    <span>{config.processButtonLabel}</span>
-                    {!values.processDisabled ? <ChevronDownIcon className="h-4 w-4" /> : null}
-                </button>
+                <>
+                    <button
+                        ref={processRef}
+                        type="button"
+                        disabled={values.processDisabled}
+                        onClick={() => {
+                            if (!values.processDisabled) {
+                                setProcessOpen((o) => !o);
+                            }
+                        }}
+                        className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-sm ${
+                            values.processDisabled
+                                ? 'border-tab-inactive-bg bg-tab-active-bg text-tab-inactive-border-l'
+                                : 'border-brand-blue-border bg-white text-brand-blue-accent'
+                        }`.trim()}
+                    >
+                        <span>{config.processButtonLabel}</span>
+                        {!values.processDisabled ? <ChevronDownIcon className="h-4 w-4" /> : null}
+                    </button>
+                    {!values.processDisabled ? (
+                        <DropdownMenu open={processOpen} onClose={() => setProcessOpen(false)} anchorRef={processRef} widthClassName="w-[180px]">
+                            <DropdownMenuItem onClick={() => handleProcessClick('Pembayaran')}>Pembayaran</DropdownMenuItem>
+                        </DropdownMenu>
+                    ) : null}
+                </>
             ) : null}
+
+            {copyOption && (
+                <SalesDocumentCopyModal
+                    open={Boolean(copyOption)}
+                    onClose={() => setCopyOption(null)}
+                    option={copyOption}
+                    partnerId={values.__partnerId}
+                    partnerField={config.labels.customer?.toLowerCase().includes('pemasok') || config.labels.customer?.toLowerCase().includes('supplier') ? 'supplier_id' : 'customer_id'}
+                    onApply={handleApplyCopiedData}
+                />
+            )}
         </div>
     );
 }

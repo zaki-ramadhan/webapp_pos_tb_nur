@@ -102,7 +102,11 @@ export default function SalesDocumentFormView({
     }, [activeRecordId]);
 
     useEffect(() => {
-        setValues(buildSalesDocumentFormState(sourceRecord));
+        const nextValues = buildSalesDocumentFormState(sourceRecord);
+        setValues((current) => {
+            const hasEdits = resolveSalesDocumentDirty(current, initialSnapshot);
+            return hasEdits ? current : nextValues;
+        });
         setItemModalOpen(false);
         setImportModalOpen(false);
     }, [sourceRecord]);
