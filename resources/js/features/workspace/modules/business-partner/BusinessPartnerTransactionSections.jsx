@@ -91,17 +91,17 @@ export function SalesTab({ config, values, onChange }) {
                             values={(values.defaultSalesPerson || []).map(item => typeof item === 'string' ? { fullName: item } : item)}
                             placeholder={config.lookupPlaceholders.default}
                             searchLabel="Cari penjual"
-                            getOptionLabel={(option) => typeof option === 'string' ? option : (option?.fullName ?? option?.name ?? '')}
+                            getOptionLabel={(option) => typeof option === 'string' ? option : (option?.full_name ?? option?.fullName ?? option?.name ?? '')}
                             onSelect={(option) => {
                                 const current = values.defaultSalesPerson || [];
-                                const name = option.fullName ?? option.name;
+                                const name = option.full_name ?? option.fullName ?? option.name;
                                 if (!current.includes(name)) {
                                     onChange('defaultSalesPerson', [...current, name]);
                                 }
                             }}
                             onRemove={(option) => {
                                 const current = values.defaultSalesPerson || [];
-                                const name = typeof option === 'string' ? option : (option?.fullName ?? option?.name);
+                                const name = typeof option === 'string' ? option : (option?.full_name ?? option?.fullName ?? option?.name);
                                 onChange('defaultSalesPerson', current.filter(x => x !== name));
                             }}
                         />
@@ -137,12 +137,12 @@ export function SalesTab({ config, values, onChange }) {
                     <FormFieldRow label={config.labels.consignment}>
                         <CheckboxField
                             id="customer-consignment"
-                            label="Ya, Perusahaan menitipkan barang ke Pelanggan ini"
+                            label="Ya, Toko menitipkan barang ke Pelanggan ini"
                             checked={Boolean(values.consignment)}
                             onChange={(event) => onChange('consignment', event.target.checked)}
                             align="center"
-                            labelClassName="text-base"
-                            inputClassName="mt-0 h-[18px] w-[18px]"
+                            labelClassName="text-xs sm:text-sm"
+                            inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                             containerClassName="w-auto"
                         />
                     </FormFieldRow>
@@ -207,8 +207,8 @@ export function TaxTab({ config, values, onChange }) {
                             checked={Boolean(values.taxIncluded)}
                             onChange={(event) => onChange('taxIncluded', event.target.checked)}
                             align="center"
-                            labelClassName="text-base"
-                            inputClassName="mt-0 h-[18px] w-[18px]"
+                            labelClassName="text-xs sm:text-sm"
+                            inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                             containerClassName="w-auto"
                         />
                     </FormFieldRow>
@@ -279,8 +279,8 @@ export function TaxTab({ config, values, onChange }) {
                             checked={Boolean(values.taxSameAsBilling)}
                             onChange={(event) => onChange('taxSameAsBilling', event.target.checked)}
                             align="center"
-                            labelClassName="text-base"
-                            inputClassName="mt-0 h-[18px] w-[18px]"
+                            labelClassName="text-xs sm:text-sm"
+                            inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                             containerClassName="w-auto"
                         />
                     </FormFieldRow>

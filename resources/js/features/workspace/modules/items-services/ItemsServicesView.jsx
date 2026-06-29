@@ -33,11 +33,36 @@ export default function ItemsServicesView({
 
     const config = useMemo(() => {
         const baseConfig = buildItemsServicesConfig(page.itemsServices);
+        const mapped = rows.map(mapProductRow);
+
+        const uniqueBrands = [...new Set(mapped.map((r) => r.brand).filter(Boolean))];
+        const brandOptions = [
+            { value: 'all', label: 'Merek Barang: Semua' },
+            ...uniqueBrands.map((b) => ({ value: b, label: `Merek Barang: ${b}` })),
+        ];
+
+        const uniqueCategories = [...new Set(mapped.map((r) => r.categoryFilter).filter(Boolean))];
+        const categoryOptions = [
+            { value: 'all', label: 'Kategori Barang: Semua' },
+            ...uniqueCategories.map((cat) => ({ value: cat, label: `Kategori Barang: ${cat}` })),
+        ];
+
+        const updatedFilters = (baseConfig.table.filters ?? []).map((filter) => {
+            if (filter.id === 'brand') {
+                return { ...filter, options: brandOptions };
+            }
+            if (filter.id === 'category') {
+                return { ...filter, options: categoryOptions };
+            }
+            return filter;
+        });
+
         return {
             ...baseConfig,
             table: {
                 ...baseConfig.table,
-                rows: rows.map(mapProductRow),
+                rows: mapped,
+                filters: updatedFilters,
                 pageValue: total.toLocaleString('id-ID'),
                 pagination: {
                     page: currentPage,

@@ -199,8 +199,8 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                                     checked={Boolean(values[field.id])}
                                     onChange={(event) => onChange(field.id, event.target.checked)}
                                     align="center"
-                                    labelClassName="text-base"
-                                    inputClassName="mt-0 h-[18px] w-[18px]"
+                                    labelClassName="text-xs sm:text-sm"
+                                    inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                                     containerClassName="w-auto"
                                 />
                             ) : (
@@ -291,8 +291,8 @@ export function ShippingTab({ config, values, onChange }) {
                         checked={Boolean(values.shippingSameAsBilling)}
                         onChange={(event) => onChange('shippingSameAsBilling', event.target.checked)}
                         align="center"
-                        labelClassName="text-base"
-                        inputClassName="mt-0 h-[18px] w-[18px]"
+                        labelClassName="text-xs sm:text-sm"
+                        inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                         containerClassName="w-auto"
                     />
 
@@ -445,7 +445,7 @@ export function ShippingTab({ config, values, onChange }) {
                         textareaClassName="min-h-[100px] text-xs sm:text-sm text-brand-dark"
                     />
 
-                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_160px]">
+                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_190px]">
                         <CityAutocompleteInput
                             value={modalValues.city}
                             onChange={(val) => setModalValues(prev => ({ ...prev, city: val }))}

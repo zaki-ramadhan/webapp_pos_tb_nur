@@ -45,8 +45,13 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     });
 
     const handleSave = async () => {
+        window.dispatchEvent(new CustomEvent('form-validation-clear'));
+
         if (!values.name?.trim()) {
             setStatus({ tone: 'error', message: 'Nama wajib diisi.' });
+            window.dispatchEvent(new CustomEvent('form-validation-error', { 
+                detail: { name: 'Nama wajib diisi.' } 
+            }));
             return;
         }
 
@@ -55,6 +60,9 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(emailStr)) {
                 setStatus({ tone: 'error', message: 'Format email tidak valid. Pastikan domain DNS lengkap (contoh: nama@domain.com).' });
+                window.dispatchEvent(new CustomEvent('form-validation-error', { 
+                    detail: { email: 'Format email tidak valid. Pastikan domain DNS lengkap (contoh: nama@domain.com).' } 
+                }));
                 return;
             }
         }
@@ -197,12 +205,40 @@ export default function BusinessPartnerView({
     const pageConfig = partnerType === 'supplier' ? page.suppliers ?? {} : page.customers ?? {};
     const config = useMemo(() => {
         const baseConfig = buildBusinessPartnerConfig(partnerType, pageConfig);
+        const rowsWithFilters = mappedRows.map((row) => ({
+            ...row,
+            inactiveValue: row.isActive ? 'active' : 'inactive',
+        }));
+
+        const uniqueCategories = [...new Set(rowsWithFilters.map((r) => r.categoryName).filter(Boolean))];
+        const categoryOptions = [
+            { value: 'all', label: 'Kategori: Semua' },
+            ...uniqueCategories.map((cat) => ({ value: cat, label: `Kategori: ${cat}` })),
+        ];
+
+        const statusOptions = [
+            { value: 'all', label: 'Status: Semua' },
+            { value: 'active', label: 'Status: Aktif' },
+            { value: 'inactive', label: 'Status: Non Aktif' },
+        ];
+
+        const updatedFilters = (baseConfig.table.filters ?? []).map((filter) => {
+            if (filter.id === 'inactive') {
+                return { ...filter, rowKey: 'inactiveValue', options: statusOptions };
+            }
+            if (filter.id === 'category') {
+                return { ...filter, rowKey: 'categoryName', options: categoryOptions };
+            }
+            return filter;
+        });
+
         return {
             ...baseConfig,
             table: {
                 ...baseConfig.table,
                 ...tableProps,
-                rows: mappedRows,
+                rows: rowsWithFilters,
+                filters: updatedFilters,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
             },
         };

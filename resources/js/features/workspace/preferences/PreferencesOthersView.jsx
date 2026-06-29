@@ -110,7 +110,7 @@ function OthersFieldRow({ row, onChangeControl }) {
 
 function getOthersInfo(value, label) {
     const map = {
-        'company-smtp': 'Menggunakan server SMTP milik perusahaan sendiri untuk pengiriman email transaksi.',
+        'company-smtp': 'Menggunakan server SMTP milik Toko sendiri untuk pengiriman email transaksi.',
     };
     return map[value] || `Informasi tentang ${label}`;
 }

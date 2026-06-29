@@ -135,9 +135,14 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
     const { store, update } = useBackendResource({ resource: 'users' });
 
     async function handleSave() {
+        window.dispatchEvent(new CustomEvent('form-validation-clear'));
+
         const inputVal = values.phone.trim();
         if (!inputVal) {
             setStatus({ tone: 'error', message: 'No Handphone/Email wajib diisi.' });
+            window.dispatchEvent(new CustomEvent('form-validation-error', { 
+                detail: { phone: 'No Handphone/Email wajib diisi.' } 
+            }));
             return;
         }
 
@@ -146,6 +151,9 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(inputVal)) {
                 setStatus({ tone: 'error', message: 'Format email tidak valid.' });
+                window.dispatchEvent(new CustomEvent('form-validation-error', { 
+                    detail: { phone: 'Format email tidak valid.' } 
+                }));
                 return;
             }
         }
@@ -192,6 +200,8 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                     </label>
                     <div className="max-w-[420px] w-full">
                         <TextInput
+                            id="phone"
+                            name="phone"
                             value={values.phone}
                             onChange={(e) => setValues({ ...values, phone: e.target.value })}
                             placeholder=""

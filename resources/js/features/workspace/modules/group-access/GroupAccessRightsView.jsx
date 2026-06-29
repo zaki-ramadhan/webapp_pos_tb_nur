@@ -17,7 +17,7 @@ function getAccessRightTooltip(rowId, label) {
     const map = {
         'manual-number': 'Memungkinkan pengguna mengedit atau mengisi nomor dokumen transaksi secara manual.',
         'form-designer': 'Akses untuk mendesain tata letak dan cetakan dokumen formulir.',
-        'smartlink-upload-all-branches': 'Pengguna dapat mengunggah file e-Faktur Pajak dari seluruh cabang perusahaan.',
+        'smartlink-upload-all-branches': 'Pengguna dapat mengunggah file e-Faktur Pajak dari seluruh cabang Toko.',
         'report-export': 'Mengizinkan ekspor data laporan ke format eksternal seperti Excel atau PDF.',
         'edit-efaktur-transactions': 'Memungkinkan perubahan atau penghapusan transaksi yang faktur pajaknya sudah diunggah.',
         'ai-analysis': 'Akses ke fitur analisis data menggunakan kecerdasan buatan.',

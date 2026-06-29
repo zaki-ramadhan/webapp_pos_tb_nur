@@ -183,7 +183,7 @@ export default function EmployeeFormView({
         const fieldErrors = validateEmployeeFields(values);
         if (Object.keys(fieldErrors).length > 0) {
             setErrors(fieldErrors);
-            rejectCrudFormAction(validationMessage || 'Tolong lengkapi semua kolom yang wajib diisi.', { setStatus });
+            rejectCrudFormAction(validationMessage || 'Tolong lengkapi semua kolom yang wajib diisi.', { setStatus, fieldErrors });
             return;
         }
 

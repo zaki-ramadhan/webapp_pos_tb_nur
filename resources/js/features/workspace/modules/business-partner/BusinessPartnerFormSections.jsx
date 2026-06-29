@@ -37,8 +37,8 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 checked={Boolean(values.receivableAgeEnabled)}
                                 onChange={(event) => onChange('receivableAgeEnabled', event.target.checked)}
                                 align="center"
-                                labelClassName="text-base"
-                                inputClassName="mt-0 h-[18px] w-[18px]"
+                                labelClassName="text-xs sm:text-sm"
+                                inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                                 containerClassName="w-auto"
                             />
                             <TextInput
@@ -62,8 +62,8 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 checked={Boolean(values.receivableAmountEnabled)}
                                 onChange={(event) => onChange('receivableAmountEnabled', event.target.checked)}
                                 align="center"
-                                labelClassName="text-base"
-                                inputClassName="mt-0 h-[18px] w-[18px]"
+                                labelClassName="text-xs sm:text-sm"
+                                inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                                 containerClassName="w-auto"
                             />
                             <TextInput
@@ -233,8 +233,8 @@ function SupplierOthersTab({ config, values, onChange }) {
                         checked={Boolean(values.invoiceNumberOnBill)}
                         onChange={(event) => onChange('invoiceNumberOnBill', event.target.checked)}
                         align="center"
-                        labelClassName="text-base"
-                        inputClassName="mt-0 h-[18px] w-[18px]"
+                        labelClassName="text-xs sm:text-sm"
+                        inputClassName="mt-0 h-4 w-4 sm:h-[18px] sm:w-[18px]"
                         containerClassName="w-auto"
                     />
                 </FormFieldRow>

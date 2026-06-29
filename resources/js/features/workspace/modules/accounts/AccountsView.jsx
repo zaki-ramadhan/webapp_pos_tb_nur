@@ -23,12 +23,35 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
     const config = useMemo(() => {
         const baseConfig = buildAccountsConfig(page.accounts);
 
+        const statusOptions = [
+            { value: 'all', label: 'Non Aktif: Semua' },
+            { value: 'active', label: 'Status: Aktif' },
+            { value: 'inactive', label: 'Status: Non Aktif' },
+        ];
+
+        const uniqueTypes = [...new Set(mappedRows.map((r) => r.type).filter(Boolean))];
+        const typeOptions = [
+            { value: 'all', label: 'Tipe Akun: Semua' },
+            ...uniqueTypes.map((t) => ({ value: t, label: `Tipe Akun: ${t}` })),
+        ];
+
+        const updatedFilters = (baseConfig.table.filters ?? []).map((filter) => {
+            if (filter.id === 'inactive') {
+                return { ...filter, options: statusOptions };
+            }
+            if (filter.id === 'type') {
+                return { ...filter, options: typeOptions };
+            }
+            return filter;
+        });
+
         return {
             ...baseConfig,
             table: {
                 ...baseConfig.table,
                 ...tableProps,
                 rows: mappedRows,
+                filters: updatedFilters,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
             },
         };

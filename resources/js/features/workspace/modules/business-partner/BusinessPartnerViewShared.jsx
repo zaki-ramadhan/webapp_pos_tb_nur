@@ -131,7 +131,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, layout = '
                     />
                 </>
             ) : (
-                <div className="grid gap-3 grid-cols-[minmax(0,1fr)_160px]">
+                <div className="grid gap-3 grid-cols-[minmax(0,1fr)_190px]">
                     <CityAutocompleteInput
                         value={values.city}
                         onChange={(nextValue) => onChange?.('city', nextValue)}
