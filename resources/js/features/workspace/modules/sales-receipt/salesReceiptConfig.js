@@ -42,7 +42,6 @@ const salesReceiptListColumns = [
 ];
 
 const salesReceiptInvoiceColumns = [
-    { id: 'spacer', label: '', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'invoiceNumber', label: 'No. Faktur', widthClassName: 'w-[260px]', align: 'left' },
     { id: 'invoiceDate', label: 'Tgl Faktur', widthClassName: 'w-[100px]', align: 'left' },
     { id: 'invoiceTotal', label: 'Total Faktur', widthClassName: 'w-[150px]', align: 'right' },

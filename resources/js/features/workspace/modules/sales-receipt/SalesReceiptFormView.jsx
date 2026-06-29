@@ -1,6 +1,8 @@
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
+import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import SalesReceiptInvoiceModal from '@/features/workspace/modules/sales-receipt/SalesReceiptInvoiceModal';
 import {
     SalesReceiptAdditionalInfoSection,
@@ -8,7 +10,6 @@ import {
 } from '@/features/workspace/modules/sales-receipt/SalesReceiptFormSections';
 import {
     ReceiptAmountActionButton,
-    ReceiptAmountInput,
     ReceiptSummaryFooter,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 import {
@@ -111,13 +112,50 @@ export default function SalesReceiptFormView({
 
                             <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                                 <TransactionFieldLabel label={config.labels.paymentAmount} />
-                                <div className="flex min-w-0 items-center gap-3">
-                                    <div className="min-w-0 max-w-[280px] flex-1">
-                                        <ReceiptAmountInput value={values.paymentAmount} isDetail={isDetail} />
+                                <div className="flex max-w-[165px] w-full items-center gap-2">
+                                    <div className="flex-1">
+                                        <FormattedAmountInput
+                                            id="paymentAmount"
+                                            value={values.paymentAmount}
+                                            onChange={(event) => {
+                                                const nextVal = event.target.value;
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    paymentAmount: nextVal,
+                                                    paymentAmountDisplay: nextVal,
+                                                }));
+                                            }}
+                                            onBlur={(event) => {
+                                                const val = event.target.value;
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    paymentAmountForSummary: val,
+                                                }));
+                                            }}
+                                            maxLength={11}
+                                            prefix="Rp"
+                                            className="h-[40px] rounded-[4px] border-ui-border w-full"
+                                            inputClassName="text-right text-xs sm:text-sm text-brand-dark"
+                                        />
                                     </div>
-                                    <div className="flex shrink-0 items-center gap-2">
+                                    <div className="flex shrink-0 items-center gap-1.5">
                                         {values.amountButtons.map((buttonType) => (
-                                            <ReceiptAmountActionButton key={buttonType} type={buttonType} />
+                                            <ReceiptAmountActionButton
+                                                key={buttonType}
+                                                type={buttonType}
+                                                onClick={
+                                                    buttonType === 'refresh'
+                                                        ? () => {
+                                                              setValues((current) => ({
+                                                                  ...current,
+                                                                  paymentAmount: '0',
+                                                                  paymentAmountDisplay: '0',
+                                                                  paymentAmountForSummary: '0',
+                                                              }));
+                                                          }
+                                                        : undefined
+                                                }
+                                            />
                                         ))}
                                     </div>
                                 </div>
@@ -125,7 +163,7 @@ export default function SalesReceiptFormView({
                         </div>
 
                         {/* Right Column */}
-                        <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                        <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
                             <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                                 <div className="flex items-center justify-start gap-4">
                                     <TransactionFieldLabel label={config.labels.documentNumber} required />
@@ -191,7 +229,7 @@ export default function SalesReceiptFormView({
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
-                footer={<ReceiptSummaryFooter paymentAmount={values.paymentAmount} />}
+                footer={<ReceiptSummaryFooter paymentAmount={values.paymentAmountForSummary ?? values.paymentAmount} />}
                 dockActions={dockActions}
             >
                 <CrudStatusMessage status={status} className="mb-4" />
@@ -221,6 +259,37 @@ export default function SalesReceiptFormView({
                 open={Boolean(activeInvoiceModal)}
                 modal={activeInvoiceModal}
                 onClose={() => setActiveInvoiceModal(null)}
+                onSave={(updatedModalValues) => {
+                    setValues((current) => {
+                        const updatedInvoices = (current.invoices ?? []).map((inv) => {
+                            if (inv.id === activeInvoiceModal.id) {
+                                const paymentAmountValue = updatedModalValues.payment;
+                                return {
+                                    ...inv,
+                                    paid: paymentAmountValue,
+                                    payment: paymentAmountValue,
+                                    modal: {
+                                        ...inv.modal,
+                                        ...updatedModalValues,
+                                    }
+                                };
+                            }
+                            return inv;
+                        });
+                        return {
+                            ...current,
+                            invoices: updatedInvoices,
+                        };
+                    });
+                    setActiveInvoiceModal(null);
+                }}
+                onDelete={() => {
+                    setValues((current) => ({
+                        ...current,
+                        invoices: (current.invoices ?? []).filter((inv) => inv.id !== activeInvoiceModal.id),
+                    }));
+                    setActiveInvoiceModal(null);
+                }}
             />
             <ConfirmationModal
                 open={deleteConfirmationOpen}

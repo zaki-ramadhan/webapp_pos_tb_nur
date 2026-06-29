@@ -24,7 +24,7 @@ function buildModalState(modal) {
     };
 }
 
-export default function SalesReceiptInvoiceModal({ open, onClose, modal }) {
+export default function SalesReceiptInvoiceModal({ open, onClose, modal, onSave, onDelete }) {
     const tabs = [
         { id: 'invoice', label: 'Faktur' },
         { id: 'discount', label: 'Informasi Diskon' },
@@ -44,6 +44,14 @@ export default function SalesReceiptInvoiceModal({ open, onClose, modal }) {
         return null;
     }
 
+    const handleSave = () => {
+        onSave?.(values);
+    };
+
+    const handleDelete = () => {
+        onDelete?.();
+    };
+
     return (
         <DocumentModalLayout
             open={open}
@@ -55,7 +63,14 @@ export default function SalesReceiptInvoiceModal({ open, onClose, modal }) {
             closeAriaLabel="Tutup rincian faktur"
             panelClassName="max-w-[570px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
             bodyClassName="min-h-[378px] py-3"
-            footer={<DocumentModalFooter />}
+            footer={
+                <DocumentModalFooter
+                    onSubmit={handleSave}
+                    onDelete={handleDelete}
+                    submitLabel="Lanjut"
+                    deleteLabel="Hapus"
+                />
+            }
         >
             {activeTabId === 'discount' ? (
                 <SalesReceiptDiscountInfoTab values={values} setValues={setValues} />

@@ -9,13 +9,25 @@ export function buildGeneratedSalesReceiptNumber() {
 
 export function buildSalesReceiptPayload(values) {
     const totalAmount = buildSalesReceiptTotal(values.invoices ?? []);
-    const lines = (values.invoices ?? []).map((invoice, index) => ({
-        id: invoice.__lineId ?? undefined,
-        description: invoice.invoiceNumber?.trim() || null,
-        reference_code: invoice.invoiceNumber?.trim() || null,
-        total_amount: parseNumericInput(invoice.payment ?? invoice.paid ?? invoice.invoiceTotal),
-        sort_order: index,
-    }));
+    const lines = (values.invoices ?? []).map((invoice, index) => {
+        const discountAmount = parseNumericInput(invoice.modal?.discountAmount ?? 0);
+        return {
+            id: invoice.__lineId ?? undefined,
+            description: invoice.invoiceNumber?.trim() || null,
+            reference_code: invoice.invoiceNumber?.trim() || null,
+            total_amount: parseNumericInput(invoice.payment ?? invoice.paid ?? invoice.invoiceTotal),
+            account_id: invoice.modal?.__discountAccountId ?? null,
+            discount_amount: discountAmount,
+            department_id: invoice.modal?.__departmentId ?? null,
+            attributes: {
+                invoice_date: invoice.invoiceDate || null,
+                outstanding_amount: parseNumericInput(invoice.outstanding ?? invoice.invoiceTotal),
+                paid_amount: parseNumericInput(invoice.paid ?? invoice.invoiceTotal),
+                discount_notes: invoice.modal?.discountNotes?.trim() || null,
+            },
+            sort_order: index,
+        };
+    });
 
     return {
         customer_id: values.__customerId ?? null,

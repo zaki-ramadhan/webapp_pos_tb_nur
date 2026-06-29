@@ -7,8 +7,11 @@ import {
 } from './salesReceiptCalculations';
 
 export function buildSalesReceiptFormState(source = {}) {
+    const paymentAmount = source.paymentAmount ?? '0';
     return applySalesReceiptInvoices({
         ...source,
+        paymentAmount,
+        paymentAmountForSummary: paymentAmount,
         customer: [...(source.customer ?? [])],
         bankAccounts: [...(source.bankAccounts ?? [])],
         invoices: [...(source.invoices ?? [])],
@@ -129,7 +132,14 @@ export function buildSalesReceiptRecord(record = {}, config) {
     const invoices = (record.lines ?? []).map((line, index) => {
         const amount = Number(line.total_amount ?? 0);
         const invoiceNumber = line.reference_code ?? line.description ?? `INV-${index + 1}`;
-        const invoiceDate = formatIsoDate(line.line_date ?? record.entry_date);
+        const invoiceDate = line.attributes?.invoice_date ?? formatIsoDate(line.line_date ?? record.entry_date);
+        
+        const outstandingAmount = line.attributes?.outstanding_amount ?? amount;
+        const paidAmount = line.attributes?.paid_amount ?? amount;
+        const discountAmount = Number(line.discount_amount ?? 0);
+
+        const discountAccountLabel = line.account ? buildLookupLabel(line.account, 'code') : '';
+        const departmentLabel = line.department ? buildLookupLabel(line.department, 'name') : '';
 
         return {
             id: String(line.id ?? `invoice-${index + 1}`),
@@ -137,20 +147,22 @@ export function buildSalesReceiptRecord(record = {}, config) {
             __relatedDocumentId: null,
             invoiceNumber,
             invoiceDate,
-            invoiceTotal: formatCurrencyLabel(amount),
-            outstanding: formatCurrencyLabel(amount),
-            paid: formatCurrencyLabel(amount),
-            discount: 'Rp 0',
+            invoiceTotal: formatCurrencyLabel(outstandingAmount),
+            outstanding: formatCurrencyLabel(outstandingAmount),
+            paid: formatCurrencyLabel(paidAmount),
+            discount: formatCurrencyLabel(discountAmount),
             payment: formatCurrencyLabel(amount),
             modal: {
                 invoiceNumber,
                 invoiceDate,
-                outstanding: formatCurrencyLabel(amount),
+                outstanding: formatCurrencyLabel(outstandingAmount),
                 payment: formatCurrencyValue(amount),
-                discountAccount: [],
-                discountAmount: '',
-                discountNotes: '',
-                department: [],
+                __discountAccountId: line.account_id ?? null,
+                discountAccount: discountAccountLabel ? [discountAccountLabel] : [],
+                discountAmount: discountAmount > 0 ? String(discountAmount) : '',
+                discountNotes: line.attributes?.discount_notes ?? '',
+                __departmentId: line.department_id ?? null,
+                department: departmentLabel ? [departmentLabel] : [],
                 discountRows: [],
             },
         };

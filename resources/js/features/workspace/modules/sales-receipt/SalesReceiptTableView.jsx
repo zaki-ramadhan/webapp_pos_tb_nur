@@ -14,16 +14,11 @@ import SelectField from '@/components/ui/SelectField';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
-    CogIcon,
-    DownloadIcon,
-    FunnelIcon,
     RefreshIcon,
     PlusIcon,
-    PrintIcon,
     SearchIcon,
     SortIcon,
 } from '@/features/workspace/shared/Icons';
-import { TransactionToolbarSplitButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 function SalesReceiptFilterBar({ config, filters, setFilters }) {
     return (
@@ -45,14 +40,6 @@ function SalesReceiptFilterBar({ config, filters, setFilters }) {
                     ))}
                 </SelectField>
             ))}
-
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={config.table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-4.5 w-4.5" />
-            </button>
 
             {config.table.pagination ? (
                 <Pagination
@@ -131,13 +118,16 @@ export default function SalesReceiptTableView({
                     loading,
                     icon: <RefreshIcon className="h-4.5 w-4.5" />,
                 }}
-                rightControls={
-                    <>
-                        <TransactionToolbarSplitButton label="Unduh" icon={<DownloadIcon className="h-4 w-4" />} items={config.table.downloadItems} />
-                        <TransactionToolbarSplitButton label="Cetak" icon={<PrintIcon className="h-4 w-4" />} items={config.table.printItems} />
-                        <TransactionToolbarSplitButton label="Pengaturan tabel" icon={<CogIcon className="h-4 w-4" />} items={config.table.settingsItems} />
-                    </>
-                }
+                resourceName="sales-receipts"
+                onRefresh={onRefresh}
+                importButton={null}
+                printButton={null}
+                exportConfig={{
+                    columns: config.table.columns,
+                    rows: filteredRows,
+                    filename: 'penerimaan-penjualan',
+                    title: 'Laporan Penerimaan Penjualan',
+                }}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -145,7 +135,7 @@ export default function SalesReceiptTableView({
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
-                />
+            />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
                 <DataTable className="min-w-[1520px]" wrapperClassName="border-table-wrapper-border">

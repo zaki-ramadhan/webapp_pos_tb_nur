@@ -70,7 +70,11 @@ export default function useSalesReceiptForm({
     }, [activeRecordId]);
 
     useEffect(() => {
-        setValues(buildSalesReceiptFormState(sourceRecord));
+        const nextValues = buildSalesReceiptFormState(sourceRecord);
+        setValues((current) => {
+            const hasEdits = !areComparableValuesEqual(initialComparable, current);
+            return hasEdits ? current : nextValues;
+        });
         setActiveInvoiceModal(null);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
@@ -191,6 +195,16 @@ export default function useSalesReceiptForm({
                         ]),
                     ),
                 ),
+            onSelectInvoiceRecord: (record) => {
+                if (!record) return;
+                setValues((current) =>
+                    applySalesReceiptInvoices(current, [
+                        ...(current.invoices ?? []),
+                        buildSalesReceiptInvoiceFromRecord(record),
+                    ]),
+                );
+                setStatus({ tone: '', message: '' });
+            },
         }),
         [],
     );

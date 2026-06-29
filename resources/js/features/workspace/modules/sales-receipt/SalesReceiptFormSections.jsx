@@ -13,9 +13,11 @@ import TextInput from '@/components/ui/TextInput';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
+    TransactionReadonlyTextarea,
     TransactionSectionHeading,
     TransactionToolbarIconButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
@@ -27,7 +29,6 @@ import CheckboxField from '@/components/ui/CheckboxField';
 import TextareaField from '@/components/ui/TextareaField';
 import {
     buildInvoiceSectionTitle,
-    ReadonlyTextarea,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 
 export function SalesReceiptInvoicesSection({ config, values, setValues, isDetail, onOpenInvoiceModal, handlers = {} }) {
@@ -65,20 +66,22 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
         <section className="flex-1 flex flex-col min-h-0">
             <div className="flex flex-col gap-3 pb-1 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-                    <div className="min-w-0 flex-1 sm:max-w-[560px]">
-                        <TextInput
+                    <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
+                        <AccountLookupTextInput
+                            id="invoiceLookup"
+                            resource="sales-invoices"
                             value={keyword}
-                            onChange={(event) => {
-                                setKeyword(event.target.value);
-                                setValues((current) => ({
-                                    ...current,
-                                    invoiceSearch: event.target.value,
-                                }));
+                            placeholder="Cari/Pilih Faktur Penjualan..."
+                            searchLabel="Cari faktur penjualan"
+                            dialogTitle="Pilih Faktur Penjualan"
+                            onSelectAccount={(record) => {
+                                if (record) {
+                                    handlers.onSelectInvoiceRecord?.(record);
+                                } else {
+                                    setKeyword('');
+                                    setValues((current) => ({ ...current, invoiceSearch: '' }));
+                                }
                             }}
-                            placeholder="Cari/Pilih..."
-                            trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
 
@@ -94,9 +97,6 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
-                    <TransactionToolbarIconButton label="Cari faktur" className="h-[40px] w-[40px]" onClick={handlers.onSelectInvoice}>
-                        <SearchIcon className="h-5 w-5 text-brand-blue" />
-                    </TransactionToolbarIconButton>
                     <div className="text-right text-2xl font-normal text-brand-dark">
                         {buildInvoiceSectionTitle(
                             config.sectionTabs?.find((tab) => tab.id === 'details')?.label ?? 'Faktur',
@@ -152,27 +152,16 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-text-workspace-dark`.trim()}
                                         >
-                                            {column.id === 'spacer' ? (
-                                                <span className="inline-flex items-center justify-center text-text-workspace-inactive">
-                                                    <TableActionIcon className="h-4 w-4" />
-                                                </span>
-                                            ) : (
-                                                <span className="block truncate">{formatTableTextValue(invoice[column.id])}</span>
-                                            )}
+                                            <span className="block truncate">{formatTableTextValue(invoice[column.id])}</span>
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="border-ui-border-row bg-white">
-                                <DataTableCell className="px-2.5 text-center text-text-workspace-inactive">
-                                    <span className="inline-flex items-center justify-center">
-                                        <TableActionIcon className="h-4 w-4" />
-                                    </span>
-                                </DataTableCell>
                                 <DataTableCell
-                                    colSpan={config.invoiceTable.columns.length - 1}
-                                    className="px-2.5 py-6 text-center text-base text-text-placeholder"
+                                    colSpan={config.invoiceTable.columns.length}
+                                    className="px-2.5 py-6 text-center text-base text-text-placeholder bg-white"
                                 >
                                     {config.invoiceTable.emptyLabel}
                                 </DataTableCell>
@@ -193,7 +182,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.sectionTabs?.find((tab) => tab.id === 'additional-info')?.label ?? 'Info lainnya'} icon="info" />
 
-                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4 pl-3 sm:pl-5">
                     <TransactionFieldLabel label={config.labels.paymentMethod} />
                     <div className={`grid gap-4 ${isCheckPayment ? 'lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]' : ''}`.trim()}>
                         <SelectField
@@ -207,7 +196,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                             className="h-[40px] rounded-[4px] border-ui-border"
                             selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
-                            {['Tunai', 'Cek/Giro'].map((option) => (
+                            {['Tunai', 'Cek/Giro', 'Transfer Bank', 'Kartu Debit', 'Kartu Kredit', 'QRIS', 'Dompet Digital', 'Non Tunai Lainnya'].map((option) => (
                                 <option key={option} value={option}>
                                     {option}
                                 </option>
@@ -263,8 +252,9 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
 
 
                     <TransactionFieldLabel label={config.labels.notes} />
-                    <textarea
+                    <TransactionReadonlyTextarea
                         value={values.notes}
+                        readOnly={false}
                         onChange={(event) =>
                             setValues((current) => ({
                                 ...current,
@@ -272,7 +262,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                             }))
                         }
                         rows={4}
-                        className="min-h-[72px] w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none"
+                        className="min-h-[72px]"
                     />
 
                     {isDetail ? (
