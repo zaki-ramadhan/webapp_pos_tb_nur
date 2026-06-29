@@ -129,7 +129,7 @@ export function SearchableTableSection({
     return (
         <div className={`flex flex-col ${hasRows ? 'min-h-[540px] sm:min-h-[620px]' : 'min-h-[240px] sm:min-h-[260px]'}`.trim()}>
             <div className="flex flex-col gap-3 pb-1 sm:flex-row sm:items-center sm:justify-between">
-                <div className={`flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center ${hideSearchField ? '' : 'sm:max-w-[640px]'}`.trim()}>
+                <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     {leadingAction ? (
                         <button
                             type="button"
@@ -143,7 +143,7 @@ export function SearchableTableSection({
                     {extraActions}
 
                     {!hideSearchField ? (
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px] w-full">
                             {searchInput ?? (
                                 <TextInput
                                     value={searchValue}

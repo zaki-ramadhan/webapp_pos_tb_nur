@@ -126,7 +126,7 @@ export function SalesDocumentFooter({ values }) {
 
     return (
         <div className="flex justify-end">
-            <div className={`grid w-full max-w-[1220px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
+            <div className={`grid w-full min-w-[320px] sm:min-w-[480px] md:min-w-[760px] max-w-[1220px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
                 {footerParts.map((part) => (
                     <div key={part.id} className="border-b border-ui-border-light px-4 py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5">
                         <div className="flex items-start justify-between gap-3">

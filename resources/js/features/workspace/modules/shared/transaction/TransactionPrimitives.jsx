@@ -72,7 +72,7 @@ export function TransactionSectionRail({ tabs, activeTabId, onSelectTab }) {
 
 export function TransactionSectionHeading({ title, icon }) {
     return (
-        <div className="flex items-center gap-3 border-b border-ui-border-medium pb-3">
+        <div className="flex items-center gap-3 border-b border-ui-border-medium pb-1.5">
             <NavigationIcon type={icon} className="h-5 w-5 text-text-pink-active" />
             <h3 className={TRANSACTION_SECTION_TITLE_CLASS_NAME}>{title}</h3>
         </div>

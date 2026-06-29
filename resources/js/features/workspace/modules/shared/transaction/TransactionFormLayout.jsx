@@ -27,7 +27,7 @@ export default function TransactionFormLayout({
                             onSelectTab={onSectionChange}
                         />
 
-                        <div className="min-w-0 flex-1 overflow-y-auto px-3 pt-3 pb-3 flex flex-col bg-white border border-ui-border rounded-[6px] shadow-card-light">
+                        <div className="min-w-0 flex-1 overflow-y-auto px-3 pt-3 pb-6 flex flex-col bg-white border border-ui-border rounded-[6px] shadow-card-light">
                             {children}
                         </div>
                     </div>

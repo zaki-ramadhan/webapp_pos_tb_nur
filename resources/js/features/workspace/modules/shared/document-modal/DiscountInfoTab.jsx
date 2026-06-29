@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/DataTable';
 import { TransactionFieldLabel } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { PlusIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
@@ -38,14 +38,16 @@ export default function DiscountInfoTab({ values, setValues }) {
                     onRemove={() =>
                         setValues((current) => ({
                             ...current,
+                            __discountAccountId: null,
                             discountAccount: [],
                         }))
                     }
                     searchLabel="Cari akun diskon"
                     dialogTitle="Pilih Akun Diskon"
-                    onSelectAccount={(_, label) =>
+                    onSelectAccount={(record, label) =>
                         setValues((current) => ({
                             ...current,
+                            __discountAccountId: record ? record.id : null,
                             discountAccount: label ? [label] : [],
                         }))
                     }
@@ -54,7 +56,8 @@ export default function DiscountInfoTab({ values, setValues }) {
 
                 <TransactionFieldLabel label="Diskon" />
                 <div className="max-w-[170px]">
-                    <TextInput
+                    <FormattedAmountInput
+                        id="discountAmount"
                         value={values.discountAmount}
                         onChange={(event) =>
                             setValues((current) => ({
@@ -62,8 +65,10 @@ export default function DiscountInfoTab({ values, setValues }) {
                                 discountAmount: event.target.value,
                             }))
                         }
+                        maxLength={11}
+                        prefix="Rp"
                         className="h-[36px] rounded-[4px] border-ui-border"
-                        inputClassName="text-xs sm:text-sm text-text-darkest"
+                        inputClassName="text-right text-xs sm:text-sm text-text-darkest"
                     />
                 </div>
 
@@ -84,11 +89,26 @@ export default function DiscountInfoTab({ values, setValues }) {
                 {!hideDepartment ? (
                     <>
                         <TransactionFieldLabel label="Departemen" />
-                        <ChipLookupField
+                        <AccountLookupField
+                            resource="departments"
                             values={values.department}
                             placeholder="Cari/Pilih..."
-                            onRemove={() => {}}
+                            onRemove={() =>
+                                setValues((current) => ({
+                                    ...current,
+                                    __departmentId: null,
+                                    department: [],
+                                }))
+                            }
                             searchLabel="Cari departemen"
+                            dialogTitle="Pilih Departemen"
+                            onSelectAccount={(record, label) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    __departmentId: record ? record.id : null,
+                                    department: label ? [label] : [],
+                                }))
+                            }
                             heightClassName="h-[36px]"
                         />
                     </>

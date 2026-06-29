@@ -5,7 +5,7 @@ export { SalesDocumentAdditionalCostSection, SalesDocumentAdvancePaymentsSection
 
 export function SalesDocumentAdditionalInfoSection({ config, values, setValues, isDetail, handlers }) {
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
             <SalesDocumentAdditionalInfoColumn
                 config={config}
                 values={values}

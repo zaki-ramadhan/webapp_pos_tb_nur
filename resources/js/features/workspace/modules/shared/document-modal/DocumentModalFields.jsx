@@ -1,5 +1,6 @@
 import TextInput from '@/components/ui/TextInput';
 import { TableActionIcon } from '@/features/workspace/shared/Icons';
+import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 
 export function DocumentModalCurrencyField({
     value,
@@ -8,16 +9,19 @@ export function DocumentModalCurrencyField({
     prefix = 'Rp',
     className = '',
     inputClassName = '',
+    ...props
 }) {
     return (
-        <TextInput
+        <FormattedAmountInput
             value={value}
             onChange={onChange}
             readOnly={readOnly}
             prefix={prefix}
+            maxLength={11}
             className={`h-[36px] rounded-[4px] border-ui-border ${className}`.trim()}
             prefixClassName="min-w-[48px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
             inputClassName={`text-right text-xs sm:text-sm text-text-darkest ${inputClassName}`.trim()}
+            {...props}
         />
     );
 }
