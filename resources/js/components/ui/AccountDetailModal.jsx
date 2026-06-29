@@ -124,7 +124,7 @@ function AccountDetailModalContainer({
                     <div className="flex items-center justify-end gap-2.5">
                         <Button
                             onClick={handleSave}
-                            variant="primary"
+                            variant="brand-blue"
                             size="md"
                             className="min-w-[80px] rounded-[4px]"
                         >

@@ -456,10 +456,11 @@ export default function TextInput({
     const hasWidth = containerClassName.includes('w-') || className.includes('w-') || props.style?.width;
     const widthClass = hasWidth ? '' : 'w-full';
 
+    const isCurrencyPrefix = prefixStr === 'rp';
     const hasPrefixMinW = prefixClassName.includes('min-w-');
-    const prefixMinWClass = hasPrefixMinW ? '' : 'min-w-[86px]';
+    const prefixMinWClass = hasPrefixMinW ? '' : (isCurrencyPrefix ? 'min-w-0 justify-center' : 'min-w-[86px]');
     const hasPrefixPx = prefixClassName.includes('px-') || prefixClassName.includes('pl-') || prefixClassName.includes('pr-');
-    const prefixPxClass = hasPrefixPx ? '' : 'px-5';
+    const prefixPxClass = hasPrefixPx ? '' : (isCurrencyPrefix ? 'px-3' : 'px-5');
     const hasPrefixColor = prefixClassName.includes('text-');
     const prefixColorClass = hasPrefixColor ? '' : 'text-slate-500';
 

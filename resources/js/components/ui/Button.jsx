@@ -8,6 +8,8 @@ const variantClasses = {
     secondary:
         'border border-slate-300 bg-white text-slate-500 shadow-button-secondary',
     ghost: 'border border-transparent bg-transparent text-info',
+    'brand-blue':
+        'border border-transparent bg-brand-blue text-white shadow-button-primary',
 };
 
 const activeVariantClasses = {
@@ -15,6 +17,8 @@ const activeVariantClasses = {
     danger: 'hover:bg-danger-hover active:scale-[0.98] cursor-pointer',
     secondary: 'hover:bg-slate-50 active:scale-[0.98] cursor-pointer',
     ghost: 'hover:underline cursor-pointer',
+    'brand-blue':
+        'hover:bg-brand-blue-hover active:scale-[0.98] cursor-pointer',
 };
 
 const disabledClasses = 'cursor-default opacity-55 shadow-none pointer-events-none';

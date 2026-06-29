@@ -78,7 +78,7 @@ function PromptModalContainer({ title, fields, resolve, onDestroy, showDelete })
                         )}
                     </div>
                     <div className="flex gap-2.5">
-                        <Button onClick={handleSave} variant="primary" size="md">Simpan</Button>
+                        <Button onClick={handleSave} variant="brand-blue" size="md">Simpan</Button>
                     </div>
                 </div>
             }

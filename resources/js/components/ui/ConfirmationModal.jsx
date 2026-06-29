@@ -33,7 +33,7 @@ export default function ConfirmationModal({
     onClose,
     onConfirm,
     maxWidthClassName = 'max-w-[620px]',
-    confirmVariant = 'primary',
+    confirmVariant = 'brand-blue',
     confirmDisabled = false,
     confirmLoading = false,
     cancelDisabled = false,

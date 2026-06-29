@@ -23,7 +23,7 @@ export default function SelectField({
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
-    const resolvedContainerClassName = containerClassName || 'w-full';
+    const resolvedContainerClassName = containerClassName || 'w-fit min-w-[140px]';
     
     const hasHeightClass = className.split(' ').some(c => c.startsWith('h-') || c.startsWith('min-h-') || c.startsWith('max-h-'));
     const heightClass = hasHeightClass ? '' : 'h-11';
