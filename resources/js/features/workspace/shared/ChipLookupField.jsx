@@ -55,14 +55,14 @@ export default function ChipLookupField({
         <div
             ref={containerRef}
             onMouseDown={focusLookup}
-            className={`group flex w-full items-center overflow-hidden rounded-[4px] border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100' : ''} ${heightClassName} ${className}`.trim()}
+            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100' : ''} ${heightClassName} ${className}`.trim()}
         >
             <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 pl-1.5 pr-2 py-1.5 ${contentClassName}`.trim()}>
                 {items.length ? (
                     items.map((item) => (
                         <span
                             key={item}
-                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark ${chipClassName}`.trim()}
+                            className={`inline-flex min-w-0 max-w-full items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark ${chipClassName}`.trim()}
                         >
                             <span className="truncate">{item}</span>
                             <button

@@ -152,7 +152,7 @@ export default function CityAutocompleteInput({
                         }}
                         onFocus={() => setOpen(true)}
                         onBlur={handleBlur}
-                        placeholder={placeholder}
+                        placeholder={disabled ? '' : placeholder}
                         disabled={disabled}
                         autoComplete="off"
                         className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}

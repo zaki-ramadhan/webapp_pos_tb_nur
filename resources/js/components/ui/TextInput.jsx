@@ -255,7 +255,7 @@ export default function TextInput({
                            searchStr.includes('npwp') ||
                            type === 'number';
 
-    const defaultMaxLength = isPostal ? 10 : (isPhone ? 30 : (isCurrency ? 18 : (isCodeOrNumber ? 120 : 255)));
+    const defaultMaxLength = isPostal ? 5 : (isPhone ? 30 : (isCurrency ? 18 : (isCodeOrNumber ? 120 : 255)));
     const resolvedMaxLength = props.maxLength ?? defaultMaxLength;
 
     const inputRef = useRef(null);
@@ -475,7 +475,8 @@ export default function TextInput({
     if (!hasWidth && resolvedMaxLength) {
         const prefixWidth = prefix ? (typeof prefix === 'string' ? prefix.length + 2 : 5) : 0;
         const trailingWidth = showTrailing ? 3 : 2;
-        const totalCh = resolvedMaxLength + prefixWidth + trailingWidth + 2;
+        const paddingBuffer = isPostal ? 10 : 2;
+        const totalCh = resolvedMaxLength + prefixWidth + trailingWidth + paddingBuffer;
         computedStyle.maxWidth = `${totalCh}ch`;
     }
 
@@ -509,6 +510,7 @@ export default function TextInput({
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}
+                    minLength={isPostal ? 5 : props.minLength}
                     min={resolvedMin}
                     onKeyDown={handleWrappedKeyDown}
                 />

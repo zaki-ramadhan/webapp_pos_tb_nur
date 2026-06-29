@@ -127,6 +127,9 @@ export function AccountLookupField({
 
 export function AccountLookupTextInput({
     id,
+    name,
+    error = '',
+    message = '',
     value = '',
     placeholder = 'Cari/Pilih Akun Perkiraan...',
     searchLabel = 'Cari akun perkiraan',
@@ -140,6 +143,10 @@ export function AccountLookupTextInput({
     showType = false,
     resource = 'accounts',
 }) {
+    const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
+    const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
+    const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
+
     const controller = useAccountLookupController({ value, disabled, queryParams, resource });
     const inputWrapperRef = useRef(null);
 
@@ -153,13 +160,19 @@ export function AccountLookupTextInput({
                 placeholder={placeholder}
                 searchLabel={searchLabel}
                 disabled={disabled}
-                className={className}
+                className={`${resolvedError ? 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus' : ''} ${className}`.trim()}
                 inputClassName={inputClassName}
                 trailingClassName={trailingClassName}
                 loading={controller.loading && controller.open}
                 onFocus={controller.handleInputFocus}
                 onChange={controller.handleInputChange}
-                onClear={() => controller.handleRemove(() => onSelectAccount?.(null, ''))}
+                error={Boolean(resolvedError)}
+                onClear={() =>
+                    controller.handleRemove(() => {
+                        onSelectAccount?.(null, '');
+                        clearError(contextKey);
+                    })
+                }
             />
 
             <AccountLookupSuggestions
@@ -171,10 +184,19 @@ export function AccountLookupTextInput({
                 error={controller.error}
                 rows={controller.rows}
                 selectedLabels={controller.selectedLabels}
-                onSelectAccount={(record, label) => controller.handleSelect(record, label, onSelectAccount)}
+                onSelectAccount={(record, label) => {
+                    controller.handleSelect(record, label, onSelectAccount);
+                    clearError(contextKey);
+                }}
                 showType={showType}
                 resource={resource}
             />
+
+            {feedbackMessage ? (
+                <p className="mt-1.5 text-[11px] sm:text-xs leading-5 text-error-border">
+                    {feedbackMessage}
+                </p>
+            ) : null}
         </div>
     );
 }

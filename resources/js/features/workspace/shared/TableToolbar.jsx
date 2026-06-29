@@ -169,7 +169,7 @@ export default function TableToolbar({
             }
         } : null));
 
-    const resolvedExportConfig = exportConfig === false
+    const resolvedExportConfig = (exportConfig === false || exportConfig?.hideExport)
         ? null
         : (exportConfig || (resolvedColumns.length ? {
             columns: resolvedColumns,

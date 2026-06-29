@@ -684,7 +684,9 @@ th *, td * {
     white-space: nowrap !important;
     text-overflow: ellipsis !important;
     overflow: hidden !important;
+}/* Enforce centering on all table header cells and their content elements */
+th,
+th * {
+    text-align: center !important;
+    justify-content: center !important;
 }
-
-
-

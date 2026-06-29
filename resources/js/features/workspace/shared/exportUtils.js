@@ -65,13 +65,13 @@ function isNumericColumn(col, rows) {
                 .replace(/\./g, '')
                 .replace(/,/g, '')
                 .trim();
-            
+
             if (isNaN(Number(cleaned))) {
                 return false;
             }
         }
     }
-    
+
     return hasValues;
 }
 
@@ -200,7 +200,7 @@ export function printTable(columns, rows, title = 'Laporan') {
     const cleanTitle = getFriendlyTitle(typeof window !== 'undefined' ? window.__activePageId : null, title);
     const activeCols = columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions');
     const headers = [['No.', ...activeCols.map(col => col.label || '')]];
-    
+
     const data = rows.map((row, index) => {
         return [
             String(index + 1),
@@ -236,7 +236,7 @@ export function printTable(columns, rows, title = 'Laporan') {
     // Gambar header halaman 1
     const width = doc.internal.pageSize.width;
 
-    // Nama perusahaan
+    // Nama Toko
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(30, 58, 138);
@@ -252,7 +252,7 @@ export function printTable(columns, rows, title = 'Laporan') {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
-    
+
     const localeDate = new Date().toLocaleDateString('id-ID', {
         day: '2-digit',
         month: 'long',

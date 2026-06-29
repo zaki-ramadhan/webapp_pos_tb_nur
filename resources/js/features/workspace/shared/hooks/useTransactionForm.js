@@ -7,6 +7,7 @@ import { buildLookupLabel } from '@/features/workspace/shared/transactionFormatt
 
 export function useTransactionForm({
     validationMessage = null,
+    fieldErrors = null,
 } = {}) {
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
@@ -29,7 +30,7 @@ export function useTransactionForm({
 
     async function handleSave({ execute, loadingMessage, successMessage, onSuccess }) {
         if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus });
+            rejectCrudFormAction(validationMessage, { setStatus, fieldErrors });
             return { ok: false, errorMessage: validationMessage };
         }
 

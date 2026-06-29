@@ -157,14 +157,14 @@ export default function ReferenceLookupInput({
         <div ref={rootRef} className={`relative w-full ${className}`.trim()}>
             <div
                 onMouseDown={focusInput}
-                className={`group flex w-full items-center overflow-hidden rounded-[4px] border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''}`.trim()}
             >
                 <div className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5">
                     {selectedLabels.length ? (
                         selectedLabels.map((item) => (
                             <span
                                 key={item}
-                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-[4px] border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
+                                className="inline-flex max-w-full shrink-0 items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark"
                             >
                                 <span className="truncate">{item}</span>
                                 <button
