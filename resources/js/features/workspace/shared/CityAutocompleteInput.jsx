@@ -57,7 +57,7 @@ export default function CityAutocompleteInput({
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
-    const disabledClassName = isNonInteractive ? 'bg-slate-100 text-slate-400' : 'bg-white';
+    const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : 'bg-white';
 
     const filteredOptions = useMemo(() => {
         const normalized = String(searchVal ?? '').trim().toLowerCase();
@@ -133,7 +133,7 @@ export default function CityAutocompleteInput({
             >
                 {prefix ? (
                     <span
-                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-input-focus transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-slate-100 text-slate-400' : ''} ${prefixClassName}`.trim()}
+                        className={`flex h-full ${prefixMinWClass} items-center border-r border-slate-400 ${prefixPxClass} text-xs sm:text-sm text-input-focus transition-colors duration-150 group-focus-within:border-current ${disabled ? 'bg-ui-bg-panel text-gray-500' : ''} ${prefixClassName}`.trim()}
                     >
                         {prefix}
                     </span>
@@ -155,7 +155,7 @@ export default function CityAutocompleteInput({
                         placeholder={placeholder}
                         disabled={disabled}
                         autoComplete="off"
-                        className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                        className={`h-full flex-1 min-w-0 bg-transparent text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${disabled ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
                         {...props}
                     />
                 </div>

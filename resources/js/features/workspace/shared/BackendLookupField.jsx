@@ -18,8 +18,11 @@ export default function BackendLookupField({
 }) {
     const [items, setItems] = useState([]);
     const [searching, setSearching] = useState(false);
+    const [hasActivated, setHasActivated] = useState(false);
 
     useEffect(() => {
+        if (!hasActivated) return;
+
         let ignore = false;
         async function fetchRecords() {
             setSearching(true);
@@ -36,25 +39,37 @@ export default function BackendLookupField({
         }
         fetchRecords();
         return () => { ignore = true; };
-    }, [resource]);
+    }, [resource, hasActivated]);
+
+    const handleActivate = () => {
+        if (!hasActivated) {
+            setHasActivated(true);
+        }
+    };
 
     return (
-        <ReferenceLookupInput
-            values={values.map(getOptionLabel)}
-            placeholder={placeholder}
-            searchLabel={searchLabel}
-            items={items}
-            searching={searching}
-            getOptionLabel={getOptionLabel}
-            getOptionSearchText={getOptionSearchText}
-            onSelect={onSelect}
-            onRemove={(label) => {
-                const item = values.find((val) => getOptionLabel(val) === label);
-                if (item) onRemove(item);
-            }}
-            emptyTitle={emptyTitle}
-            emptyDescription={emptyDescription}
-            className={className}
-        />
+        <div
+            onFocusCapture={handleActivate}
+            onMouseDownCapture={handleActivate}
+            className="w-full"
+        >
+            <ReferenceLookupInput
+                values={values.map(getOptionLabel)}
+                placeholder={placeholder}
+                searchLabel={searchLabel}
+                items={items}
+                searching={searching}
+                getOptionLabel={getOptionLabel}
+                getOptionSearchText={getOptionSearchText}
+                onSelect={onSelect}
+                onRemove={(label) => {
+                    const item = values.find((val) => getOptionLabel(val) === label);
+                    if (item) onRemove(item);
+                }}
+                emptyTitle={emptyTitle}
+                emptyDescription={emptyDescription}
+                className={className}
+            />
+        </div>
     );
 }

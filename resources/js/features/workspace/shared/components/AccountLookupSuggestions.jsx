@@ -38,7 +38,29 @@ export default function AccountLookupSuggestions({
                     rows.map((record) => {
                         const label = buildAccountLookupLabel(record);
                         const selected = selectedLabelSet.has(label);
-                        const meta = buildAccountLookupMeta(record);
+
+                        const isDoc = Boolean(record.document_number);
+                        const title = isDoc ? record.document_number : (record.name ?? '-');
+                        
+                        const rawDate = record.entry_date || record.document_date || record.date;
+                        let dateStr = '';
+                        if (rawDate) {
+                            dateStr = String(rawDate).split('T')[0];
+                        }
+                        
+                        const counterpart = record.customer?.name || record.supplier?.name || '';
+                        
+                        const subtitleLeft = isDoc
+                            ? [dateStr, counterpart].filter(Boolean).join(' • ')
+                            : (record.code ?? '-');
+
+                        const subtitleRight = isDoc
+                            ? `Rp ${Number(record.outstanding_amount ?? record.total_amount ?? 0).toLocaleString('id-ID')}`
+                            : (showType
+                                ? translateAccountType(record.account_type)
+                                : resource === 'accounts'
+                                    ? `Rp ${Number(record.opening_balance ?? 0).toLocaleString('id-ID')}`
+                                    : null);
 
                         return (
                             <button
@@ -48,17 +70,13 @@ export default function AccountLookupSuggestions({
                                 className={`flex w-full items-start gap-3 border-t border-border-ui-border-lightest px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
                             >
                                 <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-sm font-normal text-brand-dark">{record.name ?? '-'}</span>
+                                    <span className="block truncate text-sm font-normal text-brand-dark">{title}</span>
                                     <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
                                         <span className="truncate text-brand-dark">
-                                            {record.code ?? '-'}
+                                            {subtitleLeft}
                                         </span>
                                         <span className="shrink-0 text-text-workspace-muted italic">
-                                            {showType
-                                                ? translateAccountType(record.account_type)
-                                                : resource === 'accounts'
-                                                    ? `Rp ${Number(record.opening_balance ?? 0).toLocaleString('id-ID')}`
-                                                    : null}
+                                            {subtitleRight}
                                         </span>
                                     </span>
                                 </span>
