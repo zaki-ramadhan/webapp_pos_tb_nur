@@ -10,6 +10,7 @@ import {
 import { BalanceTab, SalesTab, TaxTab } from '@/features/workspace/modules/business-partner/BusinessPartnerTransactionSections';
 import { ContactsTab, GeneralTab, ShippingTab } from '@/features/workspace/modules/business-partner/BusinessPartnerProfileSections';
 import RadioField from '@/components/ui/RadioField';
+import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 
 function CustomerOthersTab({ config, values, onChange }) {
     return (
@@ -44,7 +45,10 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 id="receivableAgeDays"
                                 name="receivableAgeDays"
                                 value={values.receivableAgeDays}
-                                onChange={(event) => onChange('receivableAgeDays', event.target.value)}
+                                onChange={(event) => {
+                                    const sanitized = event.target.value.replace(/[^0-9]/g, '');
+                                    onChange('receivableAgeDays', sanitized);
+                                }}
                                 className="h-[40px] w-[130px] rounded-[4px] border-ui-border"
                                 inputClassName="text-right text-xs sm:text-sm text-brand-dark"
                             />
@@ -66,7 +70,10 @@ function CustomerOthersTab({ config, values, onChange }) {
                                 id="receivableAmount"
                                 name="receivableAmount"
                                 value={values.receivableAmount}
-                                onChange={(event) => onChange('receivableAmount', event.target.value)}
+                                onChange={(event) => {
+                                    const sanitized = event.target.value.replace(/[^0-9.]/g, '');
+                                    onChange('receivableAmount', sanitized);
+                                }}
                                 className="h-[40px] w-[280px] rounded-[4px] border-ui-border"
                                 inputClassName="text-right text-xs sm:text-sm text-text-light"
                             />
@@ -90,7 +97,22 @@ function CustomerOthersTab({ config, values, onChange }) {
 
                 <div className="mt-4 space-y-3">
                     <FormFieldRow label={config.labels.defaultWarehouse}>
-                        <ChipLookupField values={values.defaultWarehouse} placeholder={config.lookupPlaceholders.default} onRemove={() => {}} searchLabel="Cari gudang default" />
+                        <BackendLookupField
+                            resource="warehouses"
+                            values={(values.defaultWarehouse || []).map(item => typeof item === 'string' ? { name: item } : item)}
+                            placeholder={config.lookupPlaceholders.default}
+                            searchLabel="Cari gudang default"
+                            onSelect={(option) => {
+                                const current = values.defaultWarehouse || [];
+                                if (!current.includes(option.name)) {
+                                    onChange('defaultWarehouse', [...current, option.name]);
+                                }
+                            }}
+                            onRemove={(option) => {
+                                const current = values.defaultWarehouse || [];
+                                onChange('defaultWarehouse', current.filter(x => x !== option.name));
+                            }}
+                        />
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.notes}>
@@ -174,7 +196,7 @@ function SupplierPurchaseTab({ config, values, onChange }) {
             </section>
 
             <section>
-                <div className="mb-3 border-b border-ui-border-medium pb-3 flex items-center justify-between gap-3">
+                <div className="mb-3 border-b border-ui-border-medium pb-1.5 flex items-center justify-between gap-3">
                     <h3 className="text-base sm:text-lg font-normal text-input-brand">{purchaseConfig.titleRight}</h3>
                     <button
                         type="button"

@@ -150,7 +150,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
                     </>
                 }
             >
-                <div className="flex-1 min-h-0">
+                <div className="flex-1 min-h-0 pb-8">
                     {renderPartnerTab({
                         config,
                         values,

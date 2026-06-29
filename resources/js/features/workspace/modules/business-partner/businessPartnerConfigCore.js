@@ -268,6 +268,44 @@ export function resolveBusinessPartnerRecord(kind, row = {}, config, templates) 
     const explicitDetail = config.detailRecords?.[row.id] ?? template.detailRecords[row.id];
     const baseRecord = explicitDetail ?? {};
 
+    let billingStreet = '';
+    let billingCity = '';
+    let billingPostalCode = '';
+    let billingProvince = '';
+    let billingCountry = '';
+
+    if (row.billingAddress) {
+        try {
+            const parsed = JSON.parse(row.billingAddress);
+            billingStreet = parsed.street ?? '';
+            billingCity = parsed.city ?? '';
+            billingPostalCode = parsed.postalCode ?? '';
+            billingProvince = parsed.province ?? '';
+            billingCountry = parsed.country ?? '';
+        } catch (e) {
+            billingStreet = row.billingAddress;
+        }
+    }
+
+    let shippingStreet = '';
+    let shippingCity = '';
+    let shippingPostalCode = '';
+    let shippingProvince = '';
+    let shippingCountry = '';
+
+    if (row.shippingAddress) {
+        try {
+            const parsed = JSON.parse(row.shippingAddress);
+            shippingStreet = parsed.street ?? '';
+            shippingCity = parsed.city ?? '';
+            shippingPostalCode = parsed.postalCode ?? '';
+            shippingProvince = parsed.province ?? '';
+            shippingCountry = parsed.country ?? '';
+        } catch (e) {
+            shippingStreet = row.shippingAddress;
+        }
+    }
+
     return cloneFormValues({
         ...config.formDefaults,
         ...baseRecord,
@@ -275,5 +313,21 @@ export function resolveBusinessPartnerRecord(kind, row = {}, config, templates) 
         code: baseRecord.code ?? row.code ?? config.formDefaults.code,
         category: baseRecord.category ?? (row.category ? [row.category] : config.formDefaults.category),
         detailActionLabel: baseRecord.detailActionLabel ?? '',
+        businessPhone: baseRecord.businessPhone ?? row.phone ?? config.formDefaults.businessPhone,
+        email: baseRecord.email ?? row.email ?? config.formDefaults.email,
+        website: baseRecord.website ?? row.website ?? config.formDefaults.website,
+        notes: baseRecord.notes ?? row.notes ?? config.formDefaults.notes,
+        taxNumber: baseRecord.taxNumber ?? row.taxNumber ?? config.formDefaults.taxNumber,
+        billingStreet: baseRecord.billingStreet ?? billingStreet,
+        billingCity: baseRecord.billingCity ?? billingCity,
+        billingPostalCode: baseRecord.billingPostalCode ?? billingPostalCode,
+        billingProvince: baseRecord.billingProvince ?? billingProvince,
+        billingCountry: baseRecord.billingCountry ?? billingCountry,
+        shippingStreet: baseRecord.shippingStreet ?? shippingStreet,
+        shippingCity: baseRecord.shippingCity ?? shippingCity,
+        shippingPostalCode: baseRecord.shippingPostalCode ?? shippingPostalCode,
+        shippingProvince: baseRecord.shippingProvince ?? shippingProvince,
+        shippingCountry: baseRecord.shippingCountry ?? shippingCountry,
+        shippingSameAsBilling: baseRecord.shippingSameAsBilling ?? (row.id ? (row.billingAddress === row.shippingAddress) : config.formDefaults.shippingSameAsBilling),
     });
 }

@@ -84,10 +84,10 @@ export function ToolbarIconAction({ icon, label }) {
 }
 
 export function SectionHeading({ title }) {
-    return <h3 className="border-b border-ui-border-medium pb-3 text-base sm:text-lg font-normal text-input-brand">{title}</h3>;
+    return <h3 className="border-b border-ui-border-medium pb-1.5 text-base sm:text-lg font-normal text-input-brand">{title}</h3>;
 }
 
-export function AddressStack({ prefixValue, values, readOnly = false, onChange = null }) {
+export function AddressStack({ prefixValue, values, readOnly = false, layout = 'grid', onChange = null }) {
     const handleSelectCity = (item) => {
         onChange?.('city', item.city);
         onChange?.('province', item.province);
@@ -104,40 +104,54 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 rows={4}
                 prefix={prefixValue}
                 className="rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
                 textareaClassName="min-h-[112px] text-xs sm:text-sm text-brand-dark"
             />
 
-            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_110px]">
-                {readOnly ? (
-                    <TextInput
-                        value={values.city}
-                        readOnly
-                        prefix="Kota"
-                        className="h-[40px] rounded-[4px] border-slate-400"
-                        prefixClassName="min-w-[62px] bg-input-prefix-bg px-3 text-input-prefix-text"
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                    />
-                ) : (
+            {layout === 'vertical' ? (
+                <>
                     <CityAutocompleteInput
                         value={values.city}
                         onChange={(nextValue) => onChange?.('city', nextValue)}
                         onSelectCity={handleSelectCity}
                         prefix="Kota"
-                        prefixClassName="min-w-[62px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text"
+                        disabled={readOnly}
+                        prefixClassName="min-w-[92px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-slate-600"
+                        dropdownLeftOffsetClassName="left-[92px]"
+                    />
+
+                    <TextInput
+                        value={values.postalCode}
+                        onChange={(event) => onChange?.('postalCode', event.target.value)}
+                        readOnly={readOnly}
+                        prefix="Kode Pos"
+                        className="h-[40px] rounded-[4px] border-slate-400"
+                        prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
+                    />
+                </>
+            ) : (
+                <div className="grid gap-3 grid-cols-[minmax(0,1fr)_160px]">
+                    <CityAutocompleteInput
+                        value={values.city}
+                        onChange={(nextValue) => onChange?.('city', nextValue)}
+                        onSelectCity={handleSelectCity}
+                        prefix="Kota"
+                        disabled={readOnly}
+                        prefixClassName="min-w-[62px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-slate-600"
                         dropdownLeftOffsetClassName="left-[62px]"
                     />
-                )}
-                <TextInput
-                    value={values.postalCode}
-                    onChange={(event) => onChange?.('postalCode', event.target.value)}
-                    readOnly={readOnly}
-                    prefix="K.Pos"
-                    className="h-[40px] rounded-[4px] border-slate-400"
-                    prefixClassName="min-w-[62px] bg-input-prefix-bg px-3 text-input-prefix-text"
-                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                />
-            </div>
+                    <TextInput
+                        value={values.postalCode}
+                        onChange={(event) => onChange?.('postalCode', event.target.value)}
+                        readOnly={readOnly}
+                        prefix="K.Pos"
+                        className="h-[40px] rounded-[4px] border-slate-400"
+                        prefixClassName="min-w-[50px] bg-input-prefix-bg px-2.5 text-slate-600"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
+                    />
+                </div>
+            )}
 
             <TextInput
                 value={values.province}
@@ -145,7 +159,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 readOnly={readOnly}
                 prefix="Provinsi"
                 className="h-[40px] rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />
 
@@ -155,7 +169,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, onChange =
                 readOnly={readOnly}
                 prefix="Negara"
                 className="h-[40px] rounded-[4px] border-slate-400"
-                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-input-prefix-text"
+                prefixClassName="min-w-[92px] bg-input-prefix-bg px-3 text-slate-600"
                 inputClassName="text-xs sm:text-sm text-brand-dark"
             />
         </div>
