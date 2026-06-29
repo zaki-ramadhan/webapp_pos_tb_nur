@@ -140,9 +140,12 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         __backendRecordId: record.id,
         __partnerId: record.customer_id ?? record.supplier_id ?? null,
         __paymentTermId: record.payment_term_id ?? null,
+        paymentTermName: record.payment_term?.name ?? '',
         __branchId: record.branch_id ?? null,
         __shippingMethodId: metadata.shipping_method_id ?? null,
+        shippingMethodName: metadata.shipping_method_name ?? '',
         __fobId: metadata.fob_id ?? null,
+        fobName: metadata.fob_name ?? '',
         customer: partnerName ? [partnerName] : [],
         entryDate: formatIsoDate(record.entry_date),
         autoNumber: false,
@@ -169,6 +172,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         fob: metadata.fob_name ? [metadata.fob_name] : [],
         costSearch: '',
         additionalCosts: metadata.additional_costs ?? [],
+        advancePayments: metadata.advance_payments ?? [],
         summary: [
             ['Total', `Rp ${formatCurrencyValue(totalValue)}`],
             ['Status', record.status ?? 'Draft'],
@@ -230,7 +234,7 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
 
     return {
         [backendConfig.partnerField]: values.__partnerId,
-        payment_term_id: null,
+        payment_term_id: values.__paymentTermId ?? null,
         branch_id: null,
         document_number: values.documentNumber?.trim() || buildGeneratedDocumentNumber(pageId),
         reference_number: values.purchaseOrderNumber?.trim() || null,
@@ -248,11 +252,12 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
         },
         metadata: {
             address: values.address?.trim() || null,
-            shipping_method_id: null,
-            shipping_method_name: null,
-            fob_id: null,
-            fob_name: null,
+            shipping_method_id: values.__shippingMethodId ?? null,
+            shipping_method_name: values.shippingMethodName || values.shippingMethod?.[0] || null,
+            fob_id: values.__fobId ?? null,
+            fob_name: values.fobName || values.fob?.[0] || null,
             additional_costs: values.additionalCosts ?? [],
+            advance_payments: values.advancePayments ?? [],
         },
         lines,
     };

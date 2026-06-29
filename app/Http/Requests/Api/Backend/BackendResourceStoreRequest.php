@@ -19,6 +19,27 @@ class BackendResourceStoreRequest extends BackendResourceRequest
         return $rules;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $resource = $this->route('resource');
+        if ($resource === 'customers' || $resource === 'suppliers') {
+            if (empty($this->input('code'))) {
+                $prefix = $resource === 'customers' ? 'CUST' : 'SUPP';
+                $table = $resource === 'customers' ? 'customers' : 'suppliers';
+                $index = 1;
+                do {
+                    $seqNum = str_pad($index, 3, '0', STR_PAD_LEFT);
+                    $generatedCode = "{$prefix}-{$seqNum}";
+                    $index++;
+                } while (\Illuminate\Support\Facades\DB::table($table)->where('code', $generatedCode)->exists());
+
+                $this->merge([
+                    'code' => $generatedCode,
+                ]);
+            }
+        }
+    }
+
     protected function ability(): string
     {
         return 'create';
