@@ -57,6 +57,13 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 {...salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters)}
+                resourceName={config.table.resourceName}
+                exportConfig={{
+                    columns: config.table.columns,
+                    rows: filteredRows,
+                    title: config.table.createLabel ? config.table.createLabel.replace('Tambah ', '') : 'Laporan',
+                    hideExport: true,
+                }}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">

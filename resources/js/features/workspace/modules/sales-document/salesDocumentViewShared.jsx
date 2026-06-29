@@ -223,18 +223,24 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
                 </SelectField>
             ))}
 
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={config.table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-4.5 w-4.5" />
-            </button>
+            {!config.hideFilterButton ? (
+                <button
+                    type="button"
+                    className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
+                    aria-label={config.table.filterButtonLabel}
+                >
+                    <FunnelIcon className="h-4.5 w-4.5" />
+                </button>
+            ) : null}
         </div>
     );
 }
 
 export function buildSalesDocumentRightControls(config) {
+    if (config.hideToolbarButtons) {
+        return [];
+    }
+
     return [
         // Hide print and download buttons
         /*
@@ -272,6 +278,7 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
             onClick: config.table.onRefresh,
             loading: Boolean(config.table.loading),
         },
+        importButton: config.hideImportButton ? false : undefined,
         rightControls: buildSalesDocumentRightControls(config).length ? <>{buildSalesDocumentRightControls(config)}</> : null,
         search: {
             value: keyword,

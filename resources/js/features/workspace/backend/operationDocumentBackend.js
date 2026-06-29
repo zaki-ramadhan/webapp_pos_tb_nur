@@ -94,6 +94,7 @@ export function buildOperationDocumentTableRows(pageId, records) {
             partnerFilter: partnerName,
             statusFilter: record.status ?? 'Draft',
             printedStatus: record.metadata?.printed_status ?? 'all',
+            returnType: record.metadata?.return_source ?? 'Faktur',
             pageId,
         };
     });
@@ -141,6 +142,9 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         __partnerId: record.customer_id ?? record.supplier_id ?? null,
         __paymentTermId: record.payment_term_id ?? null,
         paymentTermName: record.payment_term?.name ?? '',
+        __relatedDocumentId: record.related_document_id ?? null,
+        returnSource: metadata.return_source ?? 'Faktur',
+        returnSourceReferences: record.related_document?.document_number ? [record.related_document.document_number] : [],
         __branchId: record.branch_id ?? null,
         __shippingMethodId: metadata.shipping_method_id ?? null,
         shippingMethodName: metadata.shipping_method_name ?? '',
@@ -228,9 +232,9 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
         .filter((item) => item.description || item.reference_code || item.quantity > 0 || item.total_amount > 0);
     const subtotalAmount = lines.reduce((sum, line) => sum + Number(line.total_amount ?? 0), 0);
     const subtotalCosts = (values.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
-    const discountAmount = lines.reduce((sum, line) => sum + Number(line.discount_amount ?? 0), 0);
+    const discountAmount = parseNumericInput(values.discountValue);
     const taxAmount = values.taxEnabled ? Math.max(0, (subtotalAmount - discountAmount) * 0.1) : 0;
-    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount + subtotalCosts);
+    const totalAmount = subtotalAmount - discountAmount + taxAmount + subtotalCosts;
 
     return {
         [backendConfig.partnerField]: values.__partnerId,
@@ -243,6 +247,7 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
         entry_date: normalizeDisplayDate(values.entryDate) || new Date().toISOString().slice(0, 10),
         shipping_date: normalizeDisplayDate(values.shippingDate) || null,
         notes: values.notes?.trim() || null,
+        related_document_id: values.__relatedDocumentId ?? null,
         subtotal: subtotalAmount,
         discount_total: discountAmount,
         tax_total: taxAmount,
@@ -258,6 +263,7 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
             fob_name: values.fobName || values.fob?.[0] || null,
             additional_costs: values.additionalCosts ?? [],
             advance_payments: values.advancePayments ?? [],
+            return_source: values.returnSource ?? 'Faktur',
         },
         lines,
     };

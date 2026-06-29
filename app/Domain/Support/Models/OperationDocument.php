@@ -6,7 +6,6 @@ use App\Domain\Asset\Models\FixedAsset;
 use App\Domain\Catalog\Models\Warehouse;
 use App\Domain\Finance\Models\Account;
 use App\Domain\Finance\Models\Currency;
-use App\Domain\Finance\Models\PaymentTerm;
 use App\Domain\Finance\Models\Tax;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Organization\Models\Department;
@@ -30,7 +29,6 @@ class OperationDocument extends DomainModel
         'customer_id',
         'supplier_id',
         'currency_id',
-        'payment_term_id',
         'primary_account_id',
         'secondary_account_id',
         'tax_id',
@@ -123,11 +121,6 @@ class OperationDocument extends DomainModel
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
-    }
-
-    public function paymentTerm(): BelongsTo
-    {
-        return $this->belongsTo(PaymentTerm::class);
     }
 
     public function primaryAccount(): BelongsTo

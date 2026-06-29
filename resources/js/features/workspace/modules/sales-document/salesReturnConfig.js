@@ -29,7 +29,6 @@ const salesReturnListColumns = [
 ];
 
 const salesReturnItemColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[56%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[118px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[96px]', align: 'right' },
@@ -40,7 +39,6 @@ const salesReturnItemColumns = [
 ];
 
 const salesReturnCostColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Biaya', widthClassName: 'w-[72%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'amount', label: 'Jumlah', widthClassName: 'w-[150px]', align: 'right' },
@@ -125,10 +123,11 @@ const defaultSalesReturnConfig = {
         createLabel: 'Tambah Retur Penjualan',
         refreshLabel: 'Muat ulang',
         filterButtonLabel: 'Filter lanjutan',
-        searchPlaceholder: 'Cari...',
+        searchPlaceholder: 'Cari nomor atau pelanggan...',
         pageValue: '17',
         columns: salesReturnListColumns,
         rows: salesReturnTableRows,
+        resourceName: 'sales-returns',
         filters: [
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '31/01/2017', label: 'Tanggal: 31/01/2017' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pelanggan: Semua' }, { value: 'PT Galaxy Phone', label: 'Pelanggan: PT Galaxy Phone' }, { value: 'PT CIRCLE PHONE', label: 'Pelanggan: PT CIRCLE PHONE' }] },
@@ -186,6 +185,8 @@ const defaultSalesReturnConfig = {
     showShippingInfo: false,
     showExtraInfo: false,
     showFooter: true,
+    hideImportButton: true,
+    hideFilterButton: true,
     costSearchPlaceholder: 'Cari/Pilih Akun Perkiraan...',
     additionalCostsTitle: 'Biaya Lainnya',
     costSectionLeadingAction: { label: 'Ambil' },

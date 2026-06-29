@@ -74,7 +74,6 @@ export const salesInvoiceAdvanceColumns = [
 ];
 
 export const salesInvoiceListColumns = [
-    { id: 'statusIcon', label: '#', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'number', label: 'Nomor #', widthClassName: 'w-[190px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[190px]', align: 'left' },
@@ -217,6 +216,7 @@ const salesInvoiceDetailRecords = {};
 export const defaultSalesInvoiceConfig = {
     ...defaultSalesOrderConfig,
     showProcessButtonOnCreate: true,
+    hideFilterButton: true,
     labels: {
         ...defaultSalesOrderConfig.labels,
         customer: 'Pelanggan',
@@ -231,6 +231,8 @@ export const defaultSalesInvoiceConfig = {
         rows: salesInvoiceTableRows,
         pageValue: '54',
         columns: salesInvoiceListColumns,
+        searchPlaceholder: 'Cari nomor atau pelanggan...',
+        resourceName: 'sales-invoices',
         filters: [
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '10/02/2017', label: 'Tanggal: 10/02/2017' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pelanggan: Semua' }, { value: 'Abadi Phone Center', label: 'Pelanggan: Abadi Phone Center' }] },

@@ -127,24 +127,6 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
             <TransactionSectionHeading title={config.additionalInfoTitle} icon="document" />
 
             <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
-                <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                    <TransactionFieldLabel label="Syarat Pembayaran" />
-                    <AccountLookupTextInput
-                        id="paymentTerm"
-                        resource="payment-terms"
-                        value={values.paymentTermName || ''}
-                        placeholder="Cari/Pilih Syarat Pembayaran..."
-                        searchLabel="Cari syarat pembayaran"
-                        onSelectAccount={(record, label) => {
-                            setValues?.((current) => ({
-                                ...current,
-                                __paymentTermId: record ? record.id : null,
-                                paymentTermName: label || '',
-                                paymentTerms: label ? [label] : [],
-                            }));
-                        }}
-                    />
-                </div>
 
                 {additionalInfoLeadingFields.map((field, index) =>
                     renderAdditionalField(field, `${field.valueKey ?? field.label}-leading-${index}`),

@@ -9,8 +9,8 @@ function SalesDocumentInvoiceTaxSection({ values }) {
         <div>
             <TransactionSectionHeading title="Info Pajak" icon="tax" />
             <div className="mt-4 pl-3 sm:pl-5">
-                <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2">
-                    <TransactionFieldLabel label="Pajak" className="min-w-[130px] sm:min-w-[170px] shrink-0" />
+                <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                    <TransactionFieldLabel label="Pajak" />
                     <div className="flex flex-row items-center gap-x-8 text-xs sm:text-sm text-brand-dark">
                         <CheckboxField
                             id="taxEnabled"
@@ -98,7 +98,7 @@ export default function SalesDocumentTaxShippingColumn({ config, values, setValu
                     <div className="mt-4 flex flex-col gap-y-2 pl-3 sm:pl-5">
                         <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                             <TransactionFieldLabel label={config.labels.tax} />
-                            <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
+                            <div className="flex flex-row items-center gap-x-8 text-xs sm:text-sm text-brand-dark">
                                 <CheckboxField
                                     id="taxEnabled"
                                     label="Kena Pajak"

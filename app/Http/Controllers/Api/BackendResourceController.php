@@ -58,7 +58,7 @@ class BackendResourceController extends Controller
             $settings = collect($request->input('settings', []))
                 ->filter(fn ($val, $key) => in_array($key, $this->allowedPreferenceKeys(), true))
                 ->toArray();
-            
+
             $this->savePreferences($settings);
 
             return response()->json([
@@ -69,7 +69,7 @@ class BackendResourceController extends Controller
         $payload = $this->payloadSanitizer->sanitize($request->validated());
         $this->validator->validateBranchAssignment($request->user(), $payload);
         $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
-        
+
         $record = $this->writer->create($blueprint, $payload);
         if (!empty($blueprint->with)) {
             $record->load($blueprint->with);
@@ -107,7 +107,7 @@ class BackendResourceController extends Controller
             $settings = collect($request->input('settings', []))
                 ->filter(fn ($val, $key) => in_array($key, $this->allowedPreferenceKeys(), true))
                 ->toArray();
-            
+
             $this->savePreferences($settings);
 
             return response()->json([
@@ -123,7 +123,7 @@ class BackendResourceController extends Controller
         $payload = $this->payloadSanitizer->sanitize($request->validated());
         $this->validator->validateBranchAssignment($request->user(), $payload);
         $this->validator->validatePrivilegeEscalation($request->user(), $resource, $payload);
-        
+
         $entity = $this->writer->update($blueprint, $entity, $payload);
         if (!empty($blueprint->with)) {
             $entity->load($blueprint->with);
@@ -139,7 +139,7 @@ class BackendResourceController extends Controller
     {
         $blueprint = $this->resolveBlueprint($resource);
         $this->access->authorize($request->user(), $blueprint, 'delete');
-        
+
         $entity = $this->findRecord($blueprint, $record);
         if (! $this->access->canAccessRecord($request->user(), $entity)) {
             throw new AuthorizationException('You are not allowed to access this record.');
@@ -431,8 +431,8 @@ class BackendResourceController extends Controller
             foreach ($settings as $key => $val) {
                 $group = 'features';
                 $companyKeys = [
-                    'company-name', 'business-category', 'business-field', 
-                    'phone', 'fax', 'email', 'start-date', 'accounting-period', 
+                    'company-name', 'business-category', 'business-field',
+                    'phone', 'fax', 'email', 'start-date', 'accounting-period',
                     'currency', 'street', 'city', 'province', 'postal-code', 'country'
                 ];
                 if (in_array($key, $companyKeys)) {
@@ -460,49 +460,49 @@ class BackendResourceController extends Controller
     protected function allowedPreferenceKeys(): array
     {
         return [
-            // Info & alamat perusahaan
-            'company-name', 'business-category', 'business-field', 'phone', 'fax', 
-            'email', 'start-date', 'accounting-period', 'currency', 'street', 
+            // Info & alamat toko
+            'company-name', 'business-category', 'business-field', 'phone', 'fax',
+            'email', 'start-date', 'accounting-period', 'currency', 'street',
             'city', 'province', 'postal-code', 'country',
             // Fitur dasar
-            'multi-branch', 'multi-currency', 'tax-feature', 'approval-feature', 
+            'multi-branch', 'multi-currency', 'tax-feature', 'approval-feature',
             'asset-feature', 'budget-feature',
             // Metode & pusat biaya
             'inventory-average', 'inventory-fifo', 'department-center',
             // Penjualan & Pembelian
-            'sales-quote-order', 'sales-return', 'price-adjustment', 'salesman', 
+            'sales-quote-order', 'sales-return', 'price-adjustment', 'salesman',
             'delivery-service', 'payment-terms', 'purchase-order', 'supplier-price-list',
             // Persediaan
             'item-request', 'multi-warehouse', 'multi-unit', 'simple-production',
             // Persetujuan transaksi
-            'approval-sales-quote', 'approval-sales-order', 'approval-sales-delivery', 
-            'approval-sales-invoice', 'approval-sales-receipt', 'approval-sales-return', 
-            'approval-sales-discount', 'approval-purchase-order', 'approval-purchase-receipt', 
-            'approval-purchase-invoice', 'approval-purchase-payment', 'approval-purchase-return', 
-            'approval-purchase-price', 'approval-inventory-request', 'approval-inventory-adjustment', 
-            'approval-inventory-transfer', 'approval-inventory-job-order', 'approval-inventory-material-addition', 
-            'approval-inventory-job-completion', 'approval-inventory-stock-opname', 'approval-other-payment', 
-            'approval-other-receipt', 'approval-other-bank-transfer', 'approval-other-expense', 
+            'approval-sales-quote', 'approval-sales-order', 'approval-sales-delivery',
+            'approval-sales-invoice', 'approval-sales-receipt', 'approval-sales-return',
+            'approval-sales-discount', 'approval-purchase-order', 'approval-purchase-receipt',
+            'approval-purchase-invoice', 'approval-purchase-payment', 'approval-purchase-return',
+            'approval-purchase-price', 'approval-inventory-request', 'approval-inventory-adjustment',
+            'approval-inventory-transfer', 'approval-inventory-job-order', 'approval-inventory-material-addition',
+            'approval-inventory-job-completion', 'approval-inventory-stock-opname', 'approval-other-payment',
+            'approval-other-receipt', 'approval-other-bank-transfer', 'approval-other-expense',
             'approval-other-salary', 'approval-other-transfer-asset',
             // Lampiran transaksi
-            'attachments-sales-quote', 'attachments-sales-order', 'attachments-sales-delivery', 
-            'attachments-sales-invoice', 'attachments-sales-receipt', 'attachments-sales-return', 
-            'attachments-sales-discount', 'attachments-purchase-order', 'attachments-purchase-receipt', 
-            'attachments-purchase-invoice', 'attachments-purchase-payment', 'attachments-purchase-return', 
-            'attachments-purchase-price', 'attachments-inventory-request', 'attachments-inventory-transfer', 
-            'attachments-inventory-adjustment', 'attachments-inventory-job-order', 'attachments-inventory-material-addition', 
-            'attachments-inventory-job-completion', 'attachments-inventory-stock-opname-request', 'attachments-inventory-stock-opname-result', 
-            'attachments-other-expense-record', 'attachments-other-salary-record', 'attachments-other-general-journal', 
-            'attachments-other-payment', 'attachments-other-receipt', 'attachments-other-bank-transfer', 
-            'attachments-other-fixed-asset', 'attachments-other-fixed-asset-change', 'attachments-other-fixed-asset-disposal', 
+            'attachments-sales-quote', 'attachments-sales-order', 'attachments-sales-delivery',
+            'attachments-sales-invoice', 'attachments-sales-receipt', 'attachments-sales-return',
+            'attachments-sales-discount', 'attachments-purchase-order', 'attachments-purchase-receipt',
+            'attachments-purchase-invoice', 'attachments-purchase-payment', 'attachments-purchase-return',
+            'attachments-purchase-price', 'attachments-inventory-request', 'attachments-inventory-transfer',
+            'attachments-inventory-adjustment', 'attachments-inventory-job-order', 'attachments-inventory-material-addition',
+            'attachments-inventory-job-completion', 'attachments-inventory-stock-opname-request', 'attachments-inventory-stock-opname-result',
+            'attachments-other-expense-record', 'attachments-other-salary-record', 'attachments-other-general-journal',
+            'attachments-other-payment', 'attachments-other-receipt', 'attachments-other-bank-transfer',
+            'attachments-other-fixed-asset', 'attachments-other-fixed-asset-change', 'attachments-other-fixed-asset-disposal',
             'attachments-other-fixed-asset-transfer',
             // Batasan
-            'limitations-operator-access-mode', 'limitations-transaction-date-mode', 
-            'limitations-general-items', 'limitations-serial-items', 'limitations-return-form-items', 
+            'limitations-operator-access-mode', 'limitations-transaction-date-mode',
+            'limitations-general-items', 'limitations-serial-items', 'limitations-return-form-items',
             'limitations-period-end-items', 'limitations-advance-payment-items',
             // Format & lainnya
-            'others-decimal-format', 'others-decimal-option-value', 'others-decimal-option-condition', 
-            'others-date-display', 'others-aging-ar-range', 'others-aging-ar-source', 
+            'others-decimal-format', 'others-decimal-option-value', 'others-decimal-option-condition',
+            'others-date-display', 'others-aging-ar-range', 'others-aging-ar-source',
             'others-aging-inventory-range', 'others-sales-commission-source',
         ];
     }
@@ -529,4 +529,3 @@ class BackendResourceController extends Controller
         ]);
     }
 }
-

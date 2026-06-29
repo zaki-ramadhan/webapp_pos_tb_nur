@@ -45,6 +45,7 @@ import {
     buildLookupLabel,
     resolveSalesDocumentDirty,
     validateSalesDocumentValues,
+    validateSalesDocumentFields,
     formatCurrencyValue,
     promptCostEditor,
 } from './salesDocumentFormShared';
@@ -112,6 +113,7 @@ export default function SalesDocumentFormView({
     }, [sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);
+    const fieldErrors = useMemo(() => validateSalesDocumentFields(values, config), [config, values]);
     const isDirty = useMemo(() => resolveSalesDocumentDirty(values, initialSnapshot), [initialSnapshot, values]);
 
     const {
@@ -123,7 +125,7 @@ export default function SalesDocumentFormView({
         handleSave,
         requestDelete,
         handleDelete,
-    } = useTransactionForm({ validationMessage });
+    } = useTransactionForm({ validationMessage, fieldErrors });
 
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
@@ -356,7 +358,7 @@ export default function SalesDocumentFormView({
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
-                footer={config.showFooter !== false ? <SalesDocumentFooter values={values} /> : null}
+                footer={config.showFooter !== false ? <SalesDocumentFooter values={values} setValues={setValues} /> : null}
                 dockActions={dockActions}
             >
                 <CrudStatusMessage status={status} className="mb-4" />

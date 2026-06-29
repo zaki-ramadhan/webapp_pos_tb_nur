@@ -1,5 +1,9 @@
+import { useState, useEffect } from 'react';
+import { Calculator } from 'lucide-react';
 import { buildCurrencyValue, TransactionSectionHeading } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { TableActionIcon } from '@/features/workspace/shared/Icons';
+import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
+import { formatCurrencyValue, applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
 
 function SummaryValue({ label, value, highlight = false }) {
     return (
@@ -108,7 +112,26 @@ export function SalesDocumentSmartlinkSection() {
     );
 }
 
-export function SalesDocumentFooter({ values }) {
+export function SalesDocumentFooter({ values, setValues }) {
+    const [discountInputVal, setDiscountInputVal] = useState(values.discountValue ?? '0');
+
+    useEffect(() => {
+        setDiscountInputVal(values.discountValue ?? '0');
+    }, [values.discountValue]);
+
+    const handleDiscountBlur = () => {
+        const numeric = Math.max(0, parseNumericInput(discountInputVal));
+        const formatted = formatCurrencyValue(numeric);
+        setValues?.((current) => {
+            const nextValues = {
+                ...current,
+                discountValue: formatted,
+                isDiscountOverridden: true,
+            };
+            return applyComputedTotals(nextValues, current.items);
+        });
+    };
+
     const footerParts = [
         { id: 'subtotal', label: 'Sub Total', value: buildCurrencyValue(values.subtotal), align: 'right' },
         { id: 'discount', label: 'Diskon', value: values.discountValue, isInput: true, prefix: values.discountPrefix },
@@ -125,8 +148,8 @@ export function SalesDocumentFooter({ values }) {
                 : 'md:grid-cols-1';
 
     return (
-        <div className="flex justify-end">
-            <div className={`grid w-full min-w-[320px] sm:min-w-[480px] md:min-w-[760px] max-w-[1220px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
+        <div className="flex w-full justify-end">
+            <div className={`grid w-full md:w-1/2 overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
                 {footerParts.map((part) => (
                     <div key={part.id} className="border-b border-ui-border-light px-4 py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5">
                         <div className="flex items-start justify-between gap-3">
@@ -141,18 +164,28 @@ export function SalesDocumentFooter({ values }) {
                         </div>
 
                         {part.isInput ? (
-                            <div className="mt-2 flex h-[34px] overflow-hidden rounded-[4px] border border-ui-border">
-                                {part.prefix ? (
-                                    <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-3 text-base text-text-inactive">
-                                        {part.prefix}
+                            <div className="flex justify-end">
+                                <div className="mt-2 flex h-[34px] w-full min-w-[120px] max-w-[50%] overflow-hidden rounded-[4px] border border-ui-border focus-within:ring-2 focus-within:ring-input-focus/30 focus-within:border-brand-blue-border">
+                                    {part.prefix ? (
+                                        <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-2 text-sm text-text-inactive">
+                                            {part.prefix}
+                                        </span>
+                                    ) : null}
+                                    <input
+                                        type="text"
+                                        maxLength={3}
+                                        className="flex-1 w-0 bg-transparent px-2 text-right text-base font-semibold text-text-darkest outline-none border-none"
+                                        value={discountInputVal}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/[^0-9]/g, '');
+                                            setDiscountInputVal(val);
+                                        }}
+                                        onBlur={handleDiscountBlur}
+                                    />
+                                    <span className="inline-flex w-8 items-center justify-center border-l border-ui-border-medium text-brand-dark">
+                                        <Calculator className="h-4 w-4" />
                                     </span>
-                                ) : null}
-                                <span className="inline-flex flex-1 items-center justify-end px-3 text-lg font-semibold text-text-darkest">
-                                    {part.value}
-                                </span>
-                                <span className="inline-flex w-10 items-center justify-center border-l border-ui-border-medium text-brand-dark">
-                                    <TableActionIcon className="h-4 w-4" />
-                                </span>
+                                </div>
                             </div>
                         ) : (
                             <div className={`mt-2 text-lg font-semibold text-text-darkest ${part.align === 'right' ? 'text-right' : (part.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>

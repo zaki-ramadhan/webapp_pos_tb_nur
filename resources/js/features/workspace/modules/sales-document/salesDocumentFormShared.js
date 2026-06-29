@@ -16,7 +16,11 @@ export function formatCurrencyValue(value) {
 }
 
 export function formatCurrencyLabel(value) {
-    return `Rp ${formatCurrencyValue(value)}`;
+    const numericValue = Number(value ?? 0);
+    if (numericValue < 0) {
+        return `-Rp ${formatCurrencyValue(Math.abs(numericValue))}`;
+    }
+    return `Rp ${formatCurrencyValue(numericValue)}`;
 }
 
 export function buildLookupLabel(record, codeKey = 'code') {
@@ -33,9 +37,11 @@ export function buildLookupLabel(record, codeKey = 'code') {
 export function applyComputedTotals(currentValues, nextItems) {
     const subtotalAmount = nextItems.reduce((sum, item) => sum + parseNumericInput(item.total), 0);
     const subtotalCosts = (currentValues.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
-    const discountAmount = nextItems.reduce((sum, item) => sum + parseNumericInput(item.discountValue ?? item.discount), 0);
+    const discountAmount = currentValues.isDiscountOverridden
+        ? parseNumericInput(currentValues.discountValue)
+        : nextItems.reduce((sum, item) => sum + parseNumericInput(item.discountValue ?? item.discount), 0);
     const taxAmount = currentValues.taxEnabled ? Math.max(0, (subtotalAmount - discountAmount) * 0.1) : 0;
-    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount + subtotalCosts);
+    const totalAmount = subtotalAmount - discountAmount + taxAmount + subtotalCosts;
     const nextSummary = Array.isArray(currentValues.summary)
         ? currentValues.summary.map(([label, value], index) => {
               if (index === 0 || String(label).toLowerCase() === 'total') {
@@ -81,6 +87,11 @@ export function buildDocumentComparableSnapshot(values) {
         fobId: values.__fobId,
         taxEnabled: values.taxEnabled,
         taxIncluded: values.taxIncluded,
+        discountValue: values.discountValue,
+        isDiscountOverridden: values.isDiscountOverridden,
+        relatedDocumentId: values.__relatedDocumentId,
+        returnSource: values.returnSource,
+        returnSourceReferences: values.returnSourceReferences,
         items: (values.items ?? []).map((item) => ({
             name: item.name,
             code: item.code,
@@ -102,6 +113,7 @@ export function validateSalesDocumentValues(values, config) {
             : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
         { label: 'Rincian barang', value: values.items, type: 'array' },
         ...(config.headerTextField?.required ? [{ label: config.headerTextField.label, value: values[config.headerTextField.valueKey] }] : []),
+        ...(config.headerSelectLookupField?.required ? [{ label: config.headerSelectLookupField.label, value: values.__relatedDocumentId, type: 'lookup' }] : []),
     ]);
 
     if (requiredMessage) {
@@ -120,6 +132,34 @@ export function validateSalesDocumentValues(values, config) {
     }
 
     return '';
+}
+
+export function validateSalesDocumentFields(values, config) {
+    const fieldErrors = {};
+
+    if (!values.__partnerId) {
+        fieldErrors.customer = `${config.labels.customer} wajib diisi.`;
+    }
+    if (!values.entryDate) {
+        fieldErrors.entryDate = `${config.labels.entryDate} wajib diisi.`;
+    }
+    if (values.autoNumber) {
+        if (!values.numberingType) {
+            fieldErrors.numberingType = 'Tipe penomoran wajib dipilih.';
+        }
+    } else {
+        if (!values.documentNumber) {
+            fieldErrors.documentNumber = `${config.labels.documentNumber} wajib diisi.`;
+        }
+    }
+    if (config.headerTextField?.required && !values[config.headerTextField.valueKey]) {
+        fieldErrors[config.headerTextField.valueKey] = `${config.headerTextField.label} wajib diisi.`;
+    }
+    if (config.headerSelectLookupField?.required && !values.__relatedDocumentId) {
+        fieldErrors[config.headerSelectLookupField.valueKey] = `${config.headerSelectLookupField.label} wajib diisi.`;
+    }
+
+    return fieldErrors;
 }
 
 import { showPromptModal } from '@/components/ui/promptModal';
