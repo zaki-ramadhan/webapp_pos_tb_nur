@@ -16,7 +16,7 @@ class SecuritySeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $settings = [
-            ['group_key' => 'company_info', 'setting_key' => 'company-name', 'value' => 'UD. TB Nur', 'label' => 'Nama Perusahaan'],
+            ['group_key' => 'company_info', 'setting_key' => 'company-name', 'value' => 'UD. TB Nur', 'label' => 'Nama Toko'],
             ['group_key' => 'company_info', 'setting_key' => 'business-category', 'value' => 'GROSIR / WHOLESALER', 'label' => 'Kategori Usaha'],
             ['group_key' => 'company_info', 'setting_key' => 'business-field', 'value' => 'Bahan Bangunan', 'label' => 'Bidang Usaha'],
             ['group_key' => 'company_info', 'setting_key' => 'phone', 'value' => '021-56693463', 'label' => 'Telepon'],
@@ -255,9 +255,9 @@ class SecuritySeeder extends Seeder
                 'action' => 'update',
                 'subject_type' => 'App\\Domain\\Support\\Models\\PreferenceSetting',
                 'subject_id' => 1,
-                'subject_label' => 'Nama Perusahaan',
+                'subject_label' => 'Nama Toko',
                 'document_number' => null,
-                'description' => 'Mengubah nama profil perusahaan menjadi UD. TB Nur',
+                'description' => 'Mengubah nama profil toko menjadi UD. TB Nur',
                 'actor_user_id' => $usersMap['piscokpiscok2610@gmail.com'],
                 'actor_name' => 'Zaki Ramadhan',
                 'actor_email' => 'piscokpiscok2610@gmail.com',

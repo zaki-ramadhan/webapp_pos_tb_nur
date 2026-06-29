@@ -235,7 +235,7 @@ class GroupAccessPage
                                 ],
                             ],
                             'categories' => [
-                                \App\Support\Presentation\PosBlueprint::accessCategory('company', 'Perusahaan', 'building', [
+                                \App\Support\Presentation\PosBlueprint::accessCategory('company', 'Toko', 'building', [
                                     \App\Support\Presentation\PosBlueprint::accessSection('company-menu', 'Akses Menu', [
                                         \App\Support\Presentation\PosBlueprint::accessRow('department', 'Departemen', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('employees', 'Karyawan', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),

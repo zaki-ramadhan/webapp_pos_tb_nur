@@ -69,8 +69,8 @@ export default function DashboardWidgetCard({
             ]
         },
         'company-expense': {
-            title: 'Beban Perusahaan',
-            description: 'Widget ini membagi pengeluaran perusahaan ke dalam dua kategori beban:',
+            title: 'Beban Toko',
+            description: 'Widget ini membagi pengeluaran toko ke dalam dua kategori beban:',
             sources: [
                 { pageId: 'expense-entry', label: 'Pencatatan Beban (Beban Operasional)' },
                 { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Gaji Karyawan)' },

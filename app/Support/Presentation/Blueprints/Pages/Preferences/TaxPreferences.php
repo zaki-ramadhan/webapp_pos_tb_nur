@@ -9,13 +9,13 @@ class TaxPreferences
         return [
             [
                 'id' => 'tax-info-company',
-                'label' => 'Info Perusahaan',
+                'label' => 'Info Toko',
                 'contentClassName' => 'max-w-[760px]',
                 'rows' => [
                     [
                         'id' => 'tax-company-name-row',
                         'type' => 'field',
-                        'label' => 'Nama Perusahaan',
+                        'label' => 'Nama Toko',
                         'controls' => [
                             [
                                 'id' => 'tax-company-name',
@@ -67,7 +67,7 @@ class TaxPreferences
                     [
                         'id' => 'tax-npwp-row',
                         'type' => 'field',
-                        'label' => 'NPWP Perusahaan',
+                        'label' => 'NPWP Toko',
                         'controls' => [
                             [
                                 'id' => 'tax-company-npwp',

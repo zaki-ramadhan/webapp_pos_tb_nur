@@ -124,7 +124,7 @@ class DashboardBlueprintProvider
                         ],
                         [
                             'id' => 'company-expense',
-                            'title' => 'Beban Perusahaan',
+                            'title' => 'Beban Toko',
                             'description' => 'Distribusi pengeluaran kas operasional dan gaji.',
                             'icon' => 'expense',
                         ],
@@ -346,7 +346,7 @@ class DashboardBlueprintProvider
                 ],
                 [
                     'id' => 'company-expense',
-                    'title' => 'Beban Perusahaan',
+                    'title' => 'Beban Toko',
                     'type' => 'expense',
                     'totalValue' => 'Rp ' . number_format($totalExpense, 0, ',', '.'),
                     'percentage' => ($totalExpense > 0 ? $pctGaji : 0) . '%',

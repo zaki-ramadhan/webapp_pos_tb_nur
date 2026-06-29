@@ -16,7 +16,7 @@ export default function PreferenceCompanyAddress({ address, values, onChange }) 
     if (!address || !cityField || !provinceField || !postalCodeField || !countryField) {
         return (
             <div className="p-4 text-sm text-chart-text">
-                Pengaturan alamat perusahaan belum tersedia.
+                Pengaturan alamat toko belum tersedia.
             </div>
         );
     }

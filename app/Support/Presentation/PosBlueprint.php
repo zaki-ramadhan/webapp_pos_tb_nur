@@ -269,7 +269,7 @@ final class PosBlueprint
                 // self::navItem('print-design', 'Desain Cetakan', 'printer', 'amber'),
                 // self::navItem('transaction-approval', 'Penyetuju Transaksi', 'users', 'amber'),
             ]),
-            self::navModule('company', 'Perusahaan', 'building', [
+            self::navModule('company', 'Toko', 'building', [
                 // self::navItem('currency-master', 'Mata Uang', 'currency', 'blue'),
                 // self::navItem('branch', 'Cabang', 'branch', 'blue'),
                 self::navItem('department', 'Departemen', 'department', 'blue'),

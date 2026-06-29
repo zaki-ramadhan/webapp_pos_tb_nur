@@ -15,14 +15,14 @@ export default function usePreferencesSave(
         if (values['company-name'] !== undefined && !String(values['company-name'] ?? '').trim()) {
             showErrorToast({
                 title: 'Data tidak valid',
-                message: 'Nama Perusahaan wajib diisi.',
+                message: 'Nama Toko wajib diisi.',
             });
             return;
         }
         if (values['email'] !== undefined && !String(values['email'] ?? '').trim()) {
             showErrorToast({
                 title: 'Data tidak valid',
-                message: 'Email Perusahaan wajib diisi.',
+                message: 'Email Toko wajib diisi.',
             });
             return;
         }
@@ -32,7 +32,7 @@ export default function usePreferencesSave(
             if (emailStr && !emailRegex.test(emailStr)) {
                 showErrorToast({
                     title: 'Data tidak valid',
-                    message: 'Format email perusahaan tidak valid.',
+                    message: 'Format email toko tidak valid.',
                 });
                 return;
             }

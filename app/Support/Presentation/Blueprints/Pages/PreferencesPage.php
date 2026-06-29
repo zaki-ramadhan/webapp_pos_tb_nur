@@ -25,14 +25,14 @@ class PreferencesPage
             'label' => 'Preferensi',
             'openLoading' => [
                 'title' => 'Membuka Preferensi',
-                'description' => 'Menyiapkan pengaturan perusahaan dan preferensi database.',
+                'description' => 'Menyiapkan pengaturan toko dan preferensi database.',
                 'durationMs' => 700,
             ],
             'workspace' => [
-                'topTab' => 'Perusahaan',
+                'topTab' => 'Toko',
                 'defaultSidebarItemId' => 'features',
                 'companyTabs' => [
-                    ['id' => 'company-info', 'label' => 'Info Perusahaan'],
+                    ['id' => 'company-info', 'label' => 'Info Toko'],
                     ['id' => 'company-address', 'label' => 'Alamat'],
                 ],
                 'featureTabs' => FeaturePreferences::tabs(),
