@@ -103,7 +103,7 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.infoTitle} icon="document" />
 
-                <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+                <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4 pl-3 sm:pl-5">
                     <TransactionFieldLabel label={config.labels.paymentMethod} />
                     <div className="max-w-[276px]">
                         <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">

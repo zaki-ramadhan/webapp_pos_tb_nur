@@ -30,6 +30,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                     value={values.sellPriceLevel1}
                     onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
                     formatAsAmount
+                    maxLength={11}
                 />
             </FormRow>
 
@@ -106,6 +107,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                         onChange={(event) => onChange('purchasePrice', event.target.value)}
                         prefix="Rp"
                         formatAsAmount
+                        maxLength={11}
                         className="max-w-[420px]"
                     />
                 </FormRow>

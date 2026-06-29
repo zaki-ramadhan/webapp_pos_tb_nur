@@ -93,7 +93,7 @@ export function FormRow({
 
 export function SectionHeading({ title }) {
     return (
-        <div className="border-b border-abc-card-border pb-2">
+        <div className="border-b border-abc-card-border pb-1.5">
             <h3 className="text-2xl font-normal text-input-brand">{title}</h3>
         </div>
     );
@@ -151,6 +151,7 @@ export function SimpleTextField({
     trailing = null,
     inputClassName = '',
     formatAsAmount = false,
+    maxLength = undefined,
 }) {
     const InputComponent = formatAsAmount ? FormattedAmountInput : TextInput;
 
@@ -161,6 +162,7 @@ export function SimpleTextField({
             placeholder={placeholder}
             prefix={prefix}
             trailing={trailing}
+            maxLength={maxLength}
             className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
             prefixClassName={prefix ? 'min-w-[32px] border-r-ui-border-medium bg-input-prefix-bg px-3 text-xs sm:text-sm text-text-inactive' : ''}
             inputClassName={`text-xs sm:text-sm text-brand-dark ${inputClassName}`.trim()}

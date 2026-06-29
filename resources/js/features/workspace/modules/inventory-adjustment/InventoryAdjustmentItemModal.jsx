@@ -146,6 +146,7 @@ function DetailTab({ values, setValues, modal }) {
                         }))
                     }
                     prefix="Rp"
+                    maxLength={11}
                     trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
                     className="h-[34px] rounded-[4px] border-ui-border"
                     prefixClassName="min-w-[36px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"

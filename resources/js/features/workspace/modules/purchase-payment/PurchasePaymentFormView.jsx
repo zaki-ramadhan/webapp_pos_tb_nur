@@ -77,7 +77,11 @@ export default function PurchasePaymentFormView({
     }, [activeRecordId]);
 
     useEffect(() => {
-        setValues(buildFormState(sourceRecord, config));
+        const nextValues = buildFormState(sourceRecord, config);
+        setValues((current) => {
+            const hasEdits = !areComparableValuesEqual(initialComparable, current);
+            return hasEdits ? current : nextValues;
+        });
         setActiveInvoice(null);
     }, [sourceRecord]);
 

@@ -184,7 +184,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail }) {
             </div>
 
             {/* Right Column */}
-            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div className="flex items-center justify-start gap-4">
                         <TransactionFieldLabel label={config.labels.documentNumber} required />

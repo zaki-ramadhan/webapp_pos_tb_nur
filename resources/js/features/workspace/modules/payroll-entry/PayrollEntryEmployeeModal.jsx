@@ -114,6 +114,7 @@ export default function PayrollEntryEmployeeModal({
                                     grossIncome: e.target.value,
                                 }))
                             }
+                            maxLength={11}
                             allowNegative={false}
                             placeholder="0"
                             className="h-[36px] rounded-[4px] border-ui-border"
@@ -139,6 +140,7 @@ export default function PayrollEntryEmployeeModal({
                                     incomeTax: e.target.value,
                                 }))
                             }
+                            maxLength={11}
                             allowNegative={false}
                             placeholder="0"
                             className="h-[36px] rounded-[4px] border-ui-border"

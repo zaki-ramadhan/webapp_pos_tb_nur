@@ -235,7 +235,7 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-                <div className="mt-4 space-y-3">
+                <div className="mt-4 space-y-3 pl-3 sm:pl-5">
                     <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
                         <TransactionFieldLabel label={config.labels.notes} />
                         <TextareaField

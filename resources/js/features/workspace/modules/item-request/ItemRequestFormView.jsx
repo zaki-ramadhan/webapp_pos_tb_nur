@@ -61,7 +61,11 @@ export default function ItemRequestFormView({
     }, [activeRecordId]);
 
     useEffect(() => {
-        setValues(buildFormValues(sourceRecord));
+        const nextValues = buildFormValues(sourceRecord);
+        setValues((current) => {
+            const hasEdits = !areComparableValuesEqual(initialComparable, current);
+            return hasEdits ? current : nextValues;
+        });
         setImportModalOpen(false);
     }, [sourceRecord]);
 

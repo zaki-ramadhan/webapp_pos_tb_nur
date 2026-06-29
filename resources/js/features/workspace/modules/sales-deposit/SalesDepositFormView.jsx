@@ -71,7 +71,11 @@ export default function SalesDepositFormView({
     }, [activeRecordId]);
 
     useEffect(() => {
-        setValues(buildSalesDepositFormState(sourceRecord, config));
+        const nextValues = buildSalesDepositFormState(sourceRecord, config);
+        setValues((current) => {
+            const hasEdits = !areComparableValuesEqual(initialComparable, current);
+            return hasEdits ? current : nextValues;
+        });
     }, [sourceRecord]);
 
     const validationMessage = useMemo(() => validateSalesDepositValues(values, config), [config, values]);
@@ -221,18 +225,23 @@ export default function SalesDepositFormView({
                                             name="depositAmount"
                                             value={values.depositAmount}
                                             onChange={(event) =>
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    depositAmount: event.target.value,
+                                                }))
+                                            }
+                                            onBlur={(event) =>
                                                 setValues((current) => {
                                                     const depositAmount = event.target.value;
                                                     const totalAmount = parseNumericInput(depositAmount);
-
                                                     return {
                                                         ...current,
-                                                        depositAmount,
                                                         subtotal: `Rp ${Number.isFinite(totalAmount) ? totalAmount.toLocaleString('id-ID') : '0'}`,
                                                         total: `Rp ${Number.isFinite(totalAmount) ? totalAmount.toLocaleString('id-ID') : '0'}`,
                                                     };
                                                 })
                                             }
+                                            maxLength={11}
                                             prefix="Rp"
                                             className="h-[34px] rounded-[4px] border-ui-border"
                                             prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"

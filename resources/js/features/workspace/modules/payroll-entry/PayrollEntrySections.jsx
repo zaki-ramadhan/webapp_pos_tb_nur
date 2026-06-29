@@ -200,7 +200,7 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.additionalInfoTitle} icon="form" />
 
-                <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
+                <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start pl-3 sm:pl-5">
                     <TransactionFieldLabel label={config.additionalInfoFields.liabilityAccountLabel} required />
                     <AccountLookupField
                         values={values.liabilityAccounts}

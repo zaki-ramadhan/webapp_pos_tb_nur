@@ -103,7 +103,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
         <div className="flex min-h-[560px] flex-col">
             <div className="flex flex-col gap-3 pb-1 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-                    <div className="min-w-0 flex-1 sm:max-w-[590px]">
+                    <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
                         <TextInput
                             value={values.itemSearch}
                             onChange={(event) =>
