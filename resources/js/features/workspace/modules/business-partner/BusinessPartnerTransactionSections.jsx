@@ -72,12 +72,12 @@ export function SalesTab({ config, values, onChange }) {
                     </FormFieldRow>
 
                     <FormFieldRow label={config.labels.defaultSalesPerson}>
-                        <BackendLookupField
+                        \u003cBackendLookupField
                             resource="employees"
                             values={(values.defaultSalesPerson || []).map(item => typeof item === 'string' ? { fullName: item } : item)}
                             placeholder={config.lookupPlaceholders.default}
                             searchLabel="Cari penjual"
-                            getOptionLabel={(option) => option?.fullName ?? option?.name ?? ''}
+                            getOptionLabel={(option) => typeof option === 'string' ? option : (option?.fullName ?? option?.name ?? '')}
                             onSelect={(option) => {
                                 const current = values.defaultSalesPerson || [];
                                 const name = option.fullName ?? option.name;
@@ -87,7 +87,7 @@ export function SalesTab({ config, values, onChange }) {
                             }}
                             onRemove={(option) => {
                                 const current = values.defaultSalesPerson || [];
-                                const name = option.fullName ?? option.name;
+                                const name = typeof option === 'string' ? option : (option?.fullName ?? option?.name);
                                 onChange('defaultSalesPerson', current.filter(x => x !== name));
                             }}
                         />

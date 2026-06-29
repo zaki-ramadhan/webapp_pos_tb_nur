@@ -144,7 +144,10 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                             id="defaultDiscountPercent"
                             name="defaultDiscountPercent"
                             value={values.defaultDiscountPercent}
-                            onChange={(event) => onChange('defaultDiscountPercent', event.target.value)}
+                            onChange={(event) => {
+                                const sanitized = event.target.value.replace(/[^0-9.]/g, '');
+                                onChange('defaultDiscountPercent', sanitized);
+                            }}
                             prefix="%"
                             className="h-[40px] max-w-[360px] rounded-[4px] border-ui-border"
                             prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
