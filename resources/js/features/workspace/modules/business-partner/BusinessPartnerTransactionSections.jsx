@@ -10,6 +10,7 @@ import {
     TextInput,
 } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
 export function SalesTab({ config, values, onChange }) {
     const accountRows = [
@@ -71,8 +72,21 @@ export function SalesTab({ config, values, onChange }) {
                         />
                     </FormFieldRow>
 
+                    <FormFieldRow label={config.labels.paymentTerms}>
+                        <AccountLookupTextInput
+                            id="paymentTerms"
+                            resource="payment-terms"
+                            value={(values.paymentTerms || [])[0] || ''}
+                            placeholder="Cari/Pilih Syarat Pembayaran..."
+                            searchLabel="Cari syarat pembayaran"
+                            onSelectAccount={(record, label) => {
+                                onChange('paymentTerms', label ? [label] : []);
+                            }}
+                        />
+                    </FormFieldRow>
+
                     <FormFieldRow label={config.labels.defaultSalesPerson}>
-                        \u003cBackendLookupField
+                        <BackendLookupField
                             resource="employees"
                             values={(values.defaultSalesPerson || []).map(item => typeof item === 'string' ? { fullName: item } : item)}
                             placeholder={config.lookupPlaceholders.default}
