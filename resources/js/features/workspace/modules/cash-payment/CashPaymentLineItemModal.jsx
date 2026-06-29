@@ -246,6 +246,7 @@ export default function CashPaymentLineItemModal({
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                     prefix="Rp"
+                                    maxLength={11}
                                     placeholder="0"
                                     className="h-[36px] rounded-[4px] border-ui-border"
                                     prefixClassName="min-w-0 px-3 justify-center text-slate-500 font-normal border-r-ui-border-medium bg-ui-bg-hover text-sm"

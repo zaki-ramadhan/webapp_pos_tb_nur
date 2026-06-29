@@ -141,6 +141,7 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                         value={values.openingBalanceValue}
                         onChange={(event) => onChange('openingBalanceValue', sanitizeNumericInput(event.target.value))}
                         prefix="Rp"
+                        maxLength={11}
                         className="h-[40px] rounded-[4px] border-ui-border"
                         prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
                         inputClassName="text-xs sm:text-sm text-brand-dark"

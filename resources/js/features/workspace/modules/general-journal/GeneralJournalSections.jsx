@@ -61,7 +61,7 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
             <div className="lg:max-w-[50%] w-full">
                 <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
-                <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
+                <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start pl-3 sm:pl-5">
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TextareaField
                         value={values.notes}

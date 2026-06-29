@@ -17,6 +17,7 @@ export default function TransferValueInput({
                 onBlur={onBlur}
                 readOnly={readOnly}
                 prefix={prefix}
+                maxLength={11}
                 className="h-[34px] rounded-[4px] border-ui-border"
                 prefixClassName="min-w-[42px] justify-center border-r-ui-border-medium bg-ui-bg-hover px-2 text-xs sm:text-sm text-text-light"
                 inputClassName="text-right text-xs sm:text-sm text-brand-dark"
