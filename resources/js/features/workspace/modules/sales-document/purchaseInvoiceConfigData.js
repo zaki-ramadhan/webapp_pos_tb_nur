@@ -214,7 +214,7 @@ export const defaultPurchaseInvoiceConfig = {
     },
     itemSearchResource: 'products',
     hideAddItemButton: true,
-    hideImportButton: true,
+    hideItemImportButton: true,
     secondaryActionLabel: '',
     showSecondaryHeaderAction: false,
     showFooter: true,

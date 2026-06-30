@@ -174,7 +174,7 @@ const defaultSalesReturnConfig = {
         required: true,
         selectValueKey: 'returnSource',
         valueKey: 'returnSourceReferences',
-        options: ['Faktur'],
+        options: ['Faktur', 'Penerimaan', 'Tanpa Faktur'],
         placeholder: 'Cari/Pilih Faktur...',
         searchLabel: 'Cari faktur',
     },

@@ -113,7 +113,7 @@ export function validateSalesDocumentValues(values, config) {
             : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
         { label: 'Rincian barang', value: values.items, type: 'array' },
         ...(config.headerTextField?.required ? [{ label: config.headerTextField.label, value: values[config.headerTextField.valueKey] }] : []),
-        ...(config.headerSelectLookupField?.required ? [{ label: config.headerSelectLookupField.label, value: values.__relatedDocumentId, type: 'lookup' }] : []),
+        ...(config.headerSelectLookupField?.required && values[config.headerSelectLookupField.selectValueKey] !== 'Tanpa Faktur' ? [{ label: config.headerSelectLookupField.label, value: values.__relatedDocumentId, type: 'lookup' }] : []),
     ]);
 
     if (requiredMessage) {
@@ -155,7 +155,7 @@ export function validateSalesDocumentFields(values, config) {
     if (config.headerTextField?.required && !values[config.headerTextField.valueKey]) {
         fieldErrors[config.headerTextField.valueKey] = `${config.headerTextField.label} wajib diisi.`;
     }
-    if (config.headerSelectLookupField?.required && !values.__relatedDocumentId) {
+    if (config.headerSelectLookupField?.required && values[config.headerSelectLookupField.selectValueKey] !== 'Tanpa Faktur' && !values.__relatedDocumentId) {
         fieldErrors[config.headerSelectLookupField.valueKey] = `${config.headerSelectLookupField.label} wajib diisi.`;
     }
 

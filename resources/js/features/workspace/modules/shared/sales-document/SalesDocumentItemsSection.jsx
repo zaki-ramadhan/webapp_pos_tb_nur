@@ -6,7 +6,7 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
     const canOpenItemModal = isDetail && config.itemModal?.enabled && Boolean(values.itemModal);
     
     const hideAddItem = config.hideAddItemButton || false;
-    const hideImport = config.hideImportButton || false;
+    const hideImport = config.hideItemImportButton || config.hideImportButton || false;
 
     const itemLeadingAction = hideAddItem
         ? null

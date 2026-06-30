@@ -57,48 +57,72 @@ export default function SalesDocumentFormHeader({
                     />
                 </div>
 
-                {config.headerSelectLookupField ? (
-                    <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
-                        <TransactionFieldLabel label={config.headerSelectLookupField.label} required={config.headerSelectLookupField.required} />
-                        <div className="max-w-[320px] w-full flex items-center gap-x-2">
-                            <div className="w-[110px] shrink-0">
-                                <SelectField
-                                    value={values[config.headerSelectLookupField.selectValueKey] ?? 'Faktur'}
-                                    onChange={(event) =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            [config.headerSelectLookupField.selectValueKey]: event.target.value,
-                                        }))
-                                    }
-                                    className="h-[40px] rounded-[4px] border-ui-border w-full"
-                                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                                >
-                                    {config.headerSelectLookupField.options.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </SelectField>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <AccountLookupTextInput
-                                    id={config.headerSelectLookupField.valueKey}
-                                    resource={String(pageId).toLowerCase().includes('purchase') ? 'purchase-invoices' : 'sales-invoices'}
-                                    value={values[config.headerSelectLookupField.valueKey]?.[0] ?? ''}
-                                    placeholder={config.headerSelectLookupField.placeholder ?? 'Cari/Pilih Faktur...'}
-                                    searchLabel={config.headerSelectLookupField.searchLabel ?? 'Cari faktur'}
-                                    onSelectAccount={(record, label) => {
-                                        setValues((current) => ({
-                                            ...current,
-                                            __relatedDocumentId: record ? record.id : null,
-                                            [config.headerSelectLookupField.valueKey]: label ? [label] : [],
-                                        }));
-                                    }}
-                                />
+                {config.headerSelectLookupField ? (() => {
+                    const isPurchase = String(pageId).toLowerCase().includes('purchase');
+                    const selectedSource = values[config.headerSelectLookupField.selectValueKey] ?? 'Faktur';
+                    const isWithoutInvoice = selectedSource === 'Tanpa Faktur';
+                    
+                    const resolvedResource = selectedSource === 'Penerimaan'
+                        ? (isPurchase ? 'goods-receipts' : 'sales-deliveries')
+                        : (isPurchase ? 'purchase-invoices' : 'sales-invoices');
+                    
+                    const resolvedPlaceholder = isWithoutInvoice
+                        ? 'Tidak memerlukan dokumen...'
+                        : selectedSource === 'Penerimaan'
+                            ? (isPurchase ? 'Cari/Pilih Penerimaan Barang...' : 'Cari/Pilih Pengiriman Pesanan...')
+                            : (config.headerSelectLookupField.placeholder ?? 'Cari/Pilih Faktur...');
+                    
+                    const resolvedSearchLabel = selectedSource === 'Penerimaan'
+                        ? (isPurchase ? 'Cari penerimaan barang' : 'Cari pengiriman pesanan')
+                        : (config.headerSelectLookupField.searchLabel ?? 'Cari faktur');
+
+                    return (
+                        <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
+                            <TransactionFieldLabel label={config.headerSelectLookupField.label} required={config.headerSelectLookupField.required} />
+                            <div className="max-w-[320px] w-full flex items-center gap-x-2">
+                                <div className="w-[110px] shrink-0">
+                                    <SelectField
+                                        value={selectedSource}
+                                        onChange={(event) => {
+                                            const nextSource = event.target.value;
+                                            setValues((current) => ({
+                                                ...current,
+                                                [config.headerSelectLookupField.selectValueKey]: nextSource,
+                                                __relatedDocumentId: null,
+                                                [config.headerSelectLookupField.valueKey]: [],
+                                            }));
+                                        }}
+                                        className="h-[40px] rounded-[4px] border-ui-border w-full"
+                                        selectClassName="text-xs sm:text-sm text-brand-dark"
+                                    >
+                                        {config.headerSelectLookupField.options.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </SelectField>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <AccountLookupTextInput
+                                        id={config.headerSelectLookupField.valueKey}
+                                        resource={resolvedResource}
+                                        value={values[config.headerSelectLookupField.valueKey]?.[0] ?? ''}
+                                        placeholder={resolvedPlaceholder}
+                                        searchLabel={resolvedSearchLabel}
+                                        disabled={isWithoutInvoice}
+                                        onSelectAccount={(record, label) => {
+                                            setValues((current) => ({
+                                                ...current,
+                                                __relatedDocumentId: record ? record.id : null,
+                                                [config.headerSelectLookupField.valueKey]: label ? [label] : [],
+                                            }));
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ) : null}
+                    );
+                })() : null}
 
                 {config.headerTextField ? (
                     <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">

@@ -28,7 +28,6 @@ const purchaseReturnListColumns = [
 ];
 
 const purchaseReturnItemColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[56%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[122px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[96px]', align: 'right' },
@@ -39,7 +38,6 @@ const purchaseReturnItemColumns = [
 ];
 
 const purchaseReturnCostColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Biaya', widthClassName: 'w-[58%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[120px]', align: 'center' },
     { id: 'amount', label: 'Jumlah', widthClassName: 'w-[120px]', align: 'right' },
@@ -119,6 +117,7 @@ const defaultPurchaseReturnConfig = {
     numberingOptions: ['Retur Pembelian'],
     customerPlaceholder: 'Cari/Pilih Pemasok...',
     customerSearchLabel: 'Cari pemasok',
+    hideImportButton: true,
     table: {
         createLabel: 'Tambah Retur Pembelian',
         refreshLabel: 'Muat ulang',
@@ -139,8 +138,10 @@ const defaultPurchaseReturnConfig = {
     sectionTabs: purchaseReturnSectionTabs,
     itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
     itemSectionTitle: 'Rincian Barang',
-    itemSectionLeadingAction: { label: 'Ambil' },
-    showItemTitleSearchButton: true,
+    itemSectionLeadingAction: null,
+    showItemTitleSearchButton: false,
+    hideItemImportButton: true,
+    hideAddItemButton: true,
     hideItemSearchField: true,
     itemTable: {
         columns: purchaseReturnItemColumns,
@@ -149,7 +150,7 @@ const defaultPurchaseReturnConfig = {
     },
     costSearchPlaceholder: 'Cari/Pilih Akun Perkiraan...',
     additionalCostsTitle: 'Biaya Lainnya',
-    costSectionLeadingAction: { label: 'Ambil' },
+    costSectionLeadingAction: null,
     hideCostSearchField: true,
     costTable: {
         columns: purchaseReturnCostColumns,
@@ -169,7 +170,7 @@ const defaultPurchaseReturnConfig = {
         required: true,
         selectValueKey: 'returnSource',
         valueKey: 'returnSourceReferences',
-        options: ['Faktur'],
+        options: ['Faktur', 'Penerimaan', 'Tanpa Faktur'],
         placeholder: 'Cari/Pilih Pembelian/Pemasok...',
         searchLabel: 'Cari pembelian atau pemasok',
     },
