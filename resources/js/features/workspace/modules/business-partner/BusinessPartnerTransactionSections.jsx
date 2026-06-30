@@ -60,7 +60,7 @@ export function TaxTab({ config, values, onChange }) {
                     id="taxNumber"
                     name="taxNumber"
                     value={values.taxNumber}
-                    onChange={(event) => onChange('taxNumber', event.target.value)}
+                    onChange={(event) => onChange('taxNumber', event.target.value.replace(/[^0-9]/g, ''))}
                     className="h-[40px] rounded-[4px] border-ui-border"
                     inputClassName="text-xs sm:text-sm text-brand-dark"
                 />

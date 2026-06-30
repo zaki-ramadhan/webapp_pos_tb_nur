@@ -122,7 +122,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, layout = '
 
                     <TextInput
                         value={values.postalCode}
-                        onChange={(event) => onChange?.('postalCode', event.target.value)}
+                        onChange={(event) => onChange?.('postalCode', event.target.value.replace(/[^0-9]/g, ''))}
                         readOnly={readOnly}
                         prefix="Kode Pos"
                         className="h-[40px] rounded-[4px] border-slate-400"
@@ -143,7 +143,7 @@ export function AddressStack({ prefixValue, values, readOnly = false, layout = '
                     />
                     <TextInput
                         value={values.postalCode}
-                        onChange={(event) => onChange?.('postalCode', event.target.value)}
+                        onChange={(event) => onChange?.('postalCode', event.target.value.replace(/[^0-9]/g, ''))}
                         readOnly={readOnly}
                         prefix="K.Pos"
                         className="h-[40px] rounded-[4px] border-slate-400"
@@ -208,12 +208,6 @@ export function BusinessPartnerTableView({ config, onCreate, onOpenDetail }) {
         <TableListView
             table={config.table}
             createButton={{ label: config.table.createLabel, onClick: onCreate }}
-            rightControls={[
-                <ToolbarIconAction key="download" icon="download" label="Unduh" />,
-                <ToolbarIconAction key="open" icon="external-link" label="Buka" />,
-                <ToolbarIconAction key="print" icon="print" label="Cetak" />,
-                <ToolbarIconAction key="settings" icon="settings" label="Pengaturan tabel" />,
-            ]}
             menuButton={false}
             onRowClick={(row) =>
                 onOpenDetail?.({
