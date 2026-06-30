@@ -4,11 +4,15 @@ import { DataTableHead } from '@/components/ui/DataTable';
 import { getColumnMinWidth } from './columnVisibility';
 
 function resolveAlignClassName(align) {
-    return 'text-center';
+    if (align === 'right') return 'text-right';
+    if (align === 'center') return 'text-center';
+    return 'text-left';
 }
 
 function resolveJustifyClassName(align) {
-    return 'justify-center';
+    if (align === 'right') return 'justify-end';
+    if (align === 'center') return 'justify-center';
+    return 'justify-start';
 }
 
 function SortIcon({ direction }) {
