@@ -15,6 +15,8 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry } from '@/features/workspace/shared/columnVisibility';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -87,14 +89,16 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
         });
     }, [config.table.rows, keyword, filters, filtersConfig]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     useEffect(() => {
-        tableRegistry.setActiveTable(cleanedColumns, filteredRows, 'journal-activity-log');
+        tableRegistry.setActiveTable(cleanedColumns, sortedRows, 'journal-activity-log');
         return () => {
             if (tableRegistry.activeTable?.columns === cleanedColumns) {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [cleanedColumns, filteredRows]);
+    }, [cleanedColumns, sortedRows]);
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -115,7 +119,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                                         }))
                                     }
                                     containerClassName="w-auto shrink-0"
-                                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border sm:min-w-[138px]"
+                                    className="h-[34px] rounded-[4px] border-ui-border"
                                     selectClassName="text-xs sm:text-sm text-filter-select-text"
                                 >
                                     {filter.options.map((option) => (
@@ -162,25 +166,28 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-table-wrapper-border">
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
-                            {filteredRows.length > 0 && (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                            {sortedRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
                                     No.
                                 </DataTableHead>
                             )}
                             {visibleColumns.map((column) => (
-                                <DataTableHead
+                                <SortableTableHeaderCell
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white text-center`.trim()}
-                                >
-                                    {column.label}
-                                </DataTableHead>
+                                    label={column.label}
+                                    align={column.align}
+                                    widthClassName={column.widthClassName}
+                                    sortable={column.sortable !== false}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={() => handleSort(column.id)}
+                                />
                             ))}
                         </tr>
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
+                        {sortedRows.length ? (
+                            sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
                                     className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
@@ -209,7 +216,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

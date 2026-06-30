@@ -24,8 +24,10 @@ import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInp
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import ToolbarIconButton from '@/features/workspace/shared/toolbar/ToolbarIconButton';
 
-import { cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
+import { cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 import {
     BACKEND_INVENTORY_RESOURCES,
     buildInventoryFilters,
@@ -258,15 +260,17 @@ export default function InventoryInquiryView({ config, pageId }) {
         );
     }, [config.table.searchKeys, dataColumns, keyword, tableRows]);
 
-    // Reset selection jika data berubah
-    const serializedIds = filteredRows.map((r) => r.id).join(',');
-    useMemo(() => setSelectedIds(new Set()), [serializedIds]); // eslint-disable-line react-hooks/exhaustive-deps
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
 
-    const allSelected = filteredRows.length > 0 && filteredRows.every((r) => selectedIds.has(r.id));
-    const someSelected = !allSelected && filteredRows.some((r) => selectedIds.has(r.id));
+    // Reset selection jika data berubah
+    const serializedIds = sortedRows.map((r) => r.id).join(',');
+    useMemo(() => setSelectedIds(new Set()), [serializedIds]);
+
+    const allSelected = sortedRows.length > 0 && sortedRows.every((r) => selectedIds.has(r.id));
+    const someSelected = !allSelected && sortedRows.some((r) => selectedIds.has(r.id));
 
     function toggleAll() {
-        setSelectedIds(allSelected ? new Set() : new Set(filteredRows.map((r) => r.id)));
+        setSelectedIds(allSelected ? new Set() : new Set(sortedRows.map((r) => r.id)));
     }
 
     function toggleRow(id) {
@@ -364,28 +368,27 @@ export default function InventoryInquiryView({ config, pageId }) {
                                 </DataTableHead>
                             ) : null}
                             {filteredRows.length > 0 || !firstColumnIsCheckbox ? (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
                                     No.
                                 </DataTableHead>
                             ) : null}
-                            {dataColumns.map((column) => {
-                                const minWidth = getColumnMinWidth(column.label);
-                                return (
-                                    <DataTableHead
-                                        key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveHeaderAlignClassName(column.align)}`.trim()}
-                                        style={minWidth ? { minWidth } : undefined}
-                                    >
-                                        {column.label}
-                                    </DataTableHead>
-                                );
-                            })}
+                            {dataColumns.map((column) => (
+                                <SortableTableHeaderCell
+                                    key={column.id}
+                                    label={column.label}
+                                    align={column.align}
+                                    widthClassName={column.widthClassName}
+                                    sortable={column.sortable !== false}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={() => handleSort(column.id)}
+                                />
+                            ))}
                         </tr>
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
+                        {sortedRows.length ? (
+                            sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
                                     className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}

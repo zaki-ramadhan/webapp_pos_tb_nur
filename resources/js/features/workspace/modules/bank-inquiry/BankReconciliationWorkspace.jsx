@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/DataTable';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 // Imports
 import { defaultColumns, matchColumns, excelColumns, systemColumns } from './reconciliationColumns';
@@ -248,6 +249,9 @@ export default function BankReconciliationWorkspace({
             reason: row.status === 'Reconciled' ? 'Ada di Rekening Koran' : 'Hanya di sistem POS/ERP',
         }));
     }, [excelRows, displayedMatchResults, rows]);
+
+    const { sortedRows: sortedExcelRows, sortKey: excelSortKey, sortDir: excelSortDir, handleSort: handleExcelSort } = useTableSort(excelRows ?? []);
+    const { sortedRows: sortedSystemRows, sortKey: systemSortKey, sortDir: systemSortDir, handleSort: handleSystemSort } = useTableSort(rows);
 
     const unreconciledCount = useMemo(() => {
         return rows.filter((row) => row.status !== 'Reconciled').length;
@@ -583,14 +587,16 @@ export default function BankReconciliationWorkspace({
                                                     label={col.label}
                                                     align={col.align}
                                                     widthClassName={col.widthClassName}
-                                                    sortable={false}
+                                                    sortable={col.sortable !== false}
+                                                    sortDirection={excelSortKey === col.id ? excelSortDir : null}
+                                                    onSort={() => handleExcelSort(col.id)}
                                                 />
                                             ))}
                                         </tr>
                                     </DataTableHeader>
                                     <DataTableBody>
-                                        {excelRows.length > 0 ? (
-                                            excelRows.map((row, index) => (
+                                        {sortedExcelRows.length > 0 ? (
+                                            sortedExcelRows.map((row, index) => (
                                                 <DataTableRow
                                                     key={row.id}
                                                     className={`border-slate-100 ${index % 2 === 1 ? 'bg-slate-50/50' : 'bg-white'}`}
@@ -631,14 +637,16 @@ export default function BankReconciliationWorkspace({
                                                     label={col.label}
                                                     align={col.align}
                                                     widthClassName={col.widthClassName}
-                                                    sortable={false}
+                                                    sortable={col.sortable !== false}
+                                                    sortDirection={systemSortKey === col.id ? systemSortDir : null}
+                                                    onSort={() => handleSystemSort(col.id)}
                                                 />
                                             ))}
                                         </tr>
                                     </DataTableHeader>
                                     <DataTableBody>
-                                        {rows.length > 0 ? (
-                                            rows.map((row, index) => (
+                                        {sortedSystemRows.length > 0 ? (
+                                            sortedSystemRows.map((row, index) => (
                                                 <DataTableRow
                                                     key={row.id || index}
                                                     className={`border-slate-100 ${index % 2 === 1 ? 'bg-slate-50/50' : 'bg-white'}`}

@@ -1,23 +1,21 @@
 import { useMemo, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
-
-
 import {
     DataTable,
     DataTableBody,
     DataTableCell,
-    DataTableHead,
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     RefreshIcon,
     PlusIcon,
     SearchIcon,
-    SortIcon,
 } from '@/features/workspace/shared/Icons';
 
 function SalesReceiptFilterBar({ config, filters, setFilters }) {
@@ -29,7 +27,7 @@ function SalesReceiptFilterBar({ config, filters, setFilters }) {
                     value={filters[filter.id]}
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    className="h-[34px] rounded-[4px] border-ui-border"
                     selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
                     iconClassName="mr-2 text-filter-icon"
                 >
@@ -101,6 +99,8 @@ export default function SalesReceiptTableView({
         });
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
@@ -147,26 +147,22 @@ export default function SalesReceiptTableView({
                                 </DataTableHead>
                             )}
                             {config.table.columns.map((column) => (
-                                <DataTableHead
+                                <SortableTableHeaderCell
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'center'
-                                            ? 'text-center'
-                                            : 'text-left'
-                                    }`.trim()}
-                                >
-                                    <span className={`flex items-center gap-2 ${column.align === 'center' ? 'justify-center' : 'justify-start'}`.trim()}>
-                                        <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                        <span>{column.label}</span>
-                                    </span>
-                                </DataTableHead>
+                                    label={column.label}
+                                    align={column.align}
+                                    widthClassName={column.widthClassName}
+                                    sortable={column.sortable !== false}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={() => handleSort(column.id)}
+                                />
                             ))}
                         </tr>
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
+                        {sortedRows.length ? (
+                            sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
                                     className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${

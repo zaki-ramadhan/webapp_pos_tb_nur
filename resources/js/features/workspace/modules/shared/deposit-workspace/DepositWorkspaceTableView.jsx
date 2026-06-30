@@ -19,13 +19,13 @@ import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     DownloadIcon,
-    FunnelIcon,
     RefreshIcon,
     PlusIcon,
     PrintIcon,
     SearchIcon,
-    SortIcon,
 } from '@/features/workspace/shared/Icons';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 function DepositTableFilterBar({ table, filters, setFilters }) {
     return (
@@ -41,7 +41,7 @@ function DepositTableFilterBar({ table, filters, setFilters }) {
                         }))
                     }
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    className="h-[34px] rounded-[4px] border-ui-border"
                     selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
                     iconClassName="mr-2 text-filter-icon"
                 >
@@ -53,13 +53,7 @@ function DepositTableFilterBar({ table, filters, setFilters }) {
                 </SelectField>
             ))}
 
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[48px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-4.5 w-4.5" />
-            </button>
+
 
             {config.table.pagination ? (
                 <Pagination
@@ -121,6 +115,8 @@ export default function DepositTableView({
         });
     }, [config.table.filters, config.table.rows, filters, keyword, resolvedSearchFields]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
@@ -168,38 +164,28 @@ export default function DepositTableView({
                 <DataTable className={config.table.minWidthClassName ?? 'min-w-[1480px]'} wrapperClassName="border-table-wrapper-border">
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
-                            {filteredRows.length > 0 && (
-                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                            {sortedRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
                                     No.
                                 </DataTableHead>
                             )}
                             {config.table.columns.map((column) => (
-                                <DataTableHead
+                                <SortableTableHeaderCell
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'center'
-                                            ? 'text-center'
-                                            : 'text-left'
-                                    }`.trim()}
-                                >
-                                    <span
-                                        className={`flex items-center gap-2 ${
-                                            column.align === 'center'
-                                                ? 'justify-center'
-                                                : 'justify-start'
-                                        }`.trim()}
-                                    >
-                                        <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                        <span>{column.label}</span>
-                                    </span>
-                                </DataTableHead>
+                                    label={column.label}
+                                    align={column.align}
+                                    widthClassName={column.widthClassName}
+                                    sortable={column.sortable !== false}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={() => handleSort(column.id)}
+                                />
                             ))}
                         </tr>
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
+                        {sortedRows.length ? (
+                            sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
                                     className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
@@ -213,7 +199,7 @@ export default function DepositTableView({
                                         })
                                     }
                                 >
-                                                                        {filteredRows.length > 0 ? (
+                                    {sortedRows.length > 0 ? (
                                         <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                         {index + 1}
                                     </DataTableCell>
@@ -238,7 +224,7 @@ export default function DepositTableView({
                             ))
                         ) : (
                             <DataTableRow className="border-ui-border-row bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-6 text-center text-base text-text-placeholder">
+                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-2.5 py-6 text-center text-base text-text-placeholder">
                                     {config.table.emptyLabel ?? 'Belum ada data'}
                                 </DataTableCell>
                             </DataTableRow>

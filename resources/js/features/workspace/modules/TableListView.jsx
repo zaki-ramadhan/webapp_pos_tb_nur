@@ -13,9 +13,9 @@ import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { FunnelIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
-import Tooltip from '@/components/ui/Tooltip';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 import Pagination from '@/components/ui/Pagination';
 
 function matchesFilter(row, filter, selectedValue) {
@@ -36,7 +36,7 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                         onChange={(event) => onChange(filter.id, event.target.value)}
                         disabled={Boolean(filter.disabled)}
                         containerClassName="w-auto shrink-0"
-                        className={`h-[34px] min-w-[118px] rounded-[4px] sm:min-w-[138px] ${
+                        className={`h-[34px] rounded-[4px] ${
                             filter.disabled ? 'border-warning-border bg-warning-bg' : 'border-ui-border bg-white'
                         }`.trim()}
                         selectClassName={`px-3 text-xs sm:text-sm ${filter.disabled ? 'text-warning-label-text' : 'text-filter-select-text'}`.trim()}
@@ -61,18 +61,6 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                     ) : null}
                 </div>
             ))}
-
-            {filterButtonLabel ? (
-                <Tooltip content={filterButtonLabel} portal>
-                    <button
-                        type="button"
-                        className="inline-flex h-[34px] w-[48px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                        aria-label={filterButtonLabel}
-                    >
-                        <FunnelIcon className="h-4.5 w-4.5" />
-                    </button>
-                </Tooltip>
-            ) : null}
         </div>
     );
 }
@@ -91,8 +79,6 @@ export default function TableListView({
             return result;
         }, {}),
     );
-    const [sortKey, setSortKey] = useState(null);
-    const [sortDir, setSortDir] = useState('asc');
 
     const hasExternalPagination = Boolean(table.pagination);
     const [localPage, setLocalPage] = useState(1);
@@ -104,23 +90,12 @@ export default function TableListView({
         }
     }, [keyword, filters, hasExternalPagination]);
 
-    const handleSort = useCallback((columnId) => {
-        setSortKey((prev) => {
-            if (prev === columnId) {
-                setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
-                return columnId;
-            }
-            setSortDir('asc');
-            return columnId;
-        });
-    }, []);
-
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
         const searchCols = (table.columns ?? []).filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
         const searchKeys = searchCols.map(col => col.id);
 
-        const filtered = table.rows.filter((row) => {
+        return table.rows.filter((row) => {
             const passesFilters = (table.filters ?? []).every((filter) =>
                 matchesFilter(row, filter, filters[filter.id] ?? 'all'),
             );
@@ -134,33 +109,23 @@ export default function TableListView({
                     .includes(normalizedKeyword),
             );
         });
+    }, [filters, keyword, table.columns, table.filters, table.rows]);
 
-        if (!sortKey) return filtered;
-
-        return [...filtered].sort((a, b) => {
-            const aVal = a[sortKey] ?? '';
-            const bVal = b[sortKey] ?? '';
-            const aNum = Number(aVal);
-            const bNum = Number(bVal);
-            const isNumeric = !Number.isNaN(aNum) && !Number.isNaN(bNum);
-            const cmp = isNumeric ? aNum - bNum : String(aVal).localeCompare(String(bVal), 'id');
-            return sortDir === 'asc' ? cmp : -cmp;
-        });
-    }, [filters, keyword, sortDir, sortKey, table.columns, table.filters, table.rows, table.searchKeys]);
+    const { sortedRows: displayRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
 
     const paginatedRows = useMemo(() => {
         if (hasExternalPagination) {
-            return filteredRows;
+            return displayRows;
         }
         const start = (localPage - 1) * localPerPage;
-        return filteredRows.slice(start, start + localPerPage);
-    }, [filteredRows, hasExternalPagination, localPage, localPerPage]);
+        return displayRows.slice(start, start + localPerPage);
+    }, [displayRows, hasExternalPagination, localPage, localPerPage]);
 
     const paginationConfig = useMemo(() => {
         if (hasExternalPagination) {
             return table.pagination;
         }
-        const total = filteredRows.length;
+        const total = displayRows.length;
         const lastPage = Math.max(1, Math.ceil(total / localPerPage));
         const from = total > 0 ? (localPage - 1) * localPerPage + 1 : 0;
         const to = Math.min(total, localPage * localPerPage);
@@ -194,13 +159,13 @@ export default function TableListView({
     }, [cleanedColumns, visibleColumnIds]);
 
     useEffect(() => {
-        tableRegistry.setActiveTable(cleanedColumns, filteredRows, table.resource);
+        tableRegistry.setActiveTable(cleanedColumns, displayRows, table.resource);
         return () => {
             if (tableRegistry.activeTable?.resource === table.resource) {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [cleanedColumns, filteredRows, table.resource]);
+    }, [cleanedColumns, displayRows, table.resource]);
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-2 py-2 shadow-card-light sm:px-3 sm:py-3">
@@ -269,7 +234,7 @@ export default function TableListView({
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {paginatedRows.length > 0 && (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
                                     No.
                                 </DataTableHead>
                             )}

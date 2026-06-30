@@ -14,6 +14,8 @@ import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 function buildInitialValues(config) {
     return (config.controls ?? []).reduce((result, control) => {
@@ -70,6 +72,8 @@ export default function TransferBatchWorkspaceView({ config }) {
             ),
         );
     }, [config.table.rows, config.table.searchKeys, keyword]);
+
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
 
     const firstColumnIsCheckbox = config.table.columns[0]?.kind === 'checkbox';
 
@@ -133,27 +137,32 @@ export default function TransferBatchWorkspaceView({ config }) {
                     >
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-medium text-white">
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
                                     No.
                                 </DataTableHead>
                                 {config.table.columns.map((column) => (
-                                    <DataTableHead
-                                        key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${resolveHeaderAlignClassName(column.align)}`.trim()}
-                                    >
-                                        {column.kind === 'checkbox' ? (
+                                    column.kind === 'checkbox' ? (
+                                        <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-2.5 text-base font-normal text-white text-center`.trim()}>
                                             <span className="inline-flex h-[22px] w-[22px] rounded-[4px] border border-ui-border-medium bg-white" />
-                                        ) : (
-                                            column.label
-                                        )}
-                                    </DataTableHead>
+                                        </DataTableHead>
+                                    ) : (
+                                        <SortableTableHeaderCell
+                                            key={column.id}
+                                            label={column.label}
+                                            align={column.align}
+                                            widthClassName={column.widthClassName}
+                                            sortable={column.sortable !== false}
+                                            sortDirection={sortKey === column.id ? sortDir : null}
+                                            onSort={() => handleSort(column.id)}
+                                        />
+                                    )
                                 ))}
                             </tr>
                         </DataTableHeader>
 
                         <DataTableBody>
-                            {filteredRows.length ? (
-                                filteredRows.map((row, index) => (
+                            {sortedRows.length ? (
+                                sortedRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
                                         className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}

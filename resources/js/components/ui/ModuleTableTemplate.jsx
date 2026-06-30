@@ -9,10 +9,12 @@ import {
     DataTableHeader,
     DataTableRow,
 } from './DataTable';
-import { PlusIcon, SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { PlusIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 export default function ModuleTableTemplate({
     table,
@@ -76,14 +78,16 @@ export default function ModuleTableTemplate({
         });
     }, [customFiltersSlot, customRowFilter, inactiveFilter, inactiveFilterKey, keyword, table.rows, table.columns]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     useEffect(() => {
-        tableRegistry.setActiveTable(cleanedColumns, filteredRows, resourceName);
+        tableRegistry.setActiveTable(cleanedColumns, sortedRows, resourceName);
         return () => {
             if (tableRegistry.activeTable?.resource === resourceName) {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [cleanedColumns, filteredRows, resourceName]);
+    }, [cleanedColumns, sortedRows, resourceName]);
 
     const filters = useMemo(() => {
         if (customFiltersSlot) {
@@ -171,27 +175,27 @@ export default function ModuleTableTemplate({
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>
                                 {filteredRows.length > 0 && (
-                                    <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                                    <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
                                         No.
                                     </DataTableHead>
                                 )}
-                                {visibleColumns.map((column) => (
-                                    <DataTableHead
+                            {visibleColumns.map((column) => (
+                                    <SortableTableHeaderCell
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
-                                    >
-                                        <span className={`flex items-center gap-2 ${column.align === 'center' ? 'justify-center' : 'justify-start'}`}>
-                                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                                            <span>{column.label}</span>
-                                        </span>
-                                    </DataTableHead>
+                                        label={column.label}
+                                        align={column.align}
+                                        widthClassName={column.widthClassName}
+                                        sortable={column.sortable !== false}
+                                        sortDirection={sortKey === column.id ? sortDir : null}
+                                        onSort={column.sortable !== false ? () => handleSort(column.id) : null}
+                                    />
                                 ))}
                             </tr>
                         </DataTableHeader>
 
                         <DataTableBody>
-                            {filteredRows.length ? (
-                                filteredRows.map((row, index) => (
+                            {sortedRows.length ? (
+                                sortedRows.map((row, index) => (
                                     <DataTableRow
                                         key={row.id}
                                         className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''}`.trim()}

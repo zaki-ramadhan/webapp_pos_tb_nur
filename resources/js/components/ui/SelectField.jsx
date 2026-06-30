@@ -26,7 +26,7 @@ export default function SelectField({
     const hasContainerWidth = containerClassName.split(' ').some(c => c.startsWith('w-') || c.startsWith('max-w-'));
     const hasClassWidth = className.split(' ').some(c => c.startsWith('w-') || c.startsWith('max-w-'));
     const hasWidth = hasContainerWidth || hasClassWidth || props.style?.width;
-    const resolvedContainerClassName = containerClassName || (hasWidth ? 'w-full' : 'w-fit min-w-[140px]');
+    const resolvedContainerClassName = containerClassName || (hasWidth ? '' : 'w-full');
     
     const hasHeightClass = className.split(' ').some(c => c.startsWith('h-') || c.startsWith('min-h-') || c.startsWith('max-h-'));
     const heightClass = hasHeightClass ? '' : 'h-11';

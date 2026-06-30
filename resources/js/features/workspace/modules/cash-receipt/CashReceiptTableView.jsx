@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 
-
 import {
     DataTable,
     DataTableBody,
@@ -14,9 +13,10 @@ import SelectField from '@/components/ui/SelectField';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
-    CashReceiptSortHeader,
     cashReceiptToolbarConfig,
 } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 export default function CashReceiptTableView({
     config,
@@ -65,6 +65,8 @@ export default function CashReceiptTableView({
         });
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
@@ -81,24 +83,27 @@ export default function CashReceiptTableView({
                 <DataTable className="min-w-[1380px]" wrapperClassName="border-table-wrapper-border">
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
-                            {filteredRows.length > 0 && (
-                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
+                            {sortedRows.length > 0 && (
+                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
                                     No.
                                 </DataTableHead>
                             )}
                             {config.table.columns.map((column) => (
-                                <DataTableHead
+                                <SortableTableHeaderCell
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${column.align === 'center' ? 'text-center' : 'text-left'}`.trim()}
-                                >
-                                    <CashReceiptSortHeader column={column} />
-                                </DataTableHead>
+                                    label={column.label}
+                                    align={column.align}
+                                    widthClassName={column.widthClassName}
+                                    sortable={column.sortable !== false}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={() => handleSort(column.id)}
+                                />
                             ))}
                         </tr>
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.length ? filteredRows.map((row, index) => (
+                        {sortedRows.length ? sortedRows.map((row, index) => (
                             <DataTableRow
                                 key={row.id}
                                 className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
@@ -106,7 +111,7 @@ export default function CashReceiptTableView({
                                 }`.trim()}
                                 onClick={() => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                             >
-                                                                    {filteredRows.length > 0 ? (
+                                    {sortedRows.length > 0 ? (
                                         <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                         {index + 1}
                                     </DataTableCell>
@@ -122,7 +127,7 @@ export default function CashReceiptTableView({
                             </DataTableRow>
                         )) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-3 py-3 text-center text-base text-text-workspace-dark">
+                                <DataTableCell colSpan={config.table.columns.length + 1} className="px-3 py-3 text-center text-base text-text-workspace-dark">
                                     {loading ? 'Memuat data...' : (error || 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>

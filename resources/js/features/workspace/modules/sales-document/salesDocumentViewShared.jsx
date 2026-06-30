@@ -211,7 +211,7 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
                     value={filters[filter.id]}
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto"
-                    className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border"
+                    className="h-[34px] rounded-[4px] border-ui-border"
                     selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
                     iconClassName="mr-2 text-filter-icon"
                 >

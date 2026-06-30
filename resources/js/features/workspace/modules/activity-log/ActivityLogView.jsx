@@ -20,11 +20,12 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import { CogIcon, RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import {
     cleanHeaderLabel,
-    getColumnMinWidth,
     getTableSchemaKey,
     tableRegistry,
     useColumnVisibility,
 } from '@/features/workspace/shared/columnVisibility';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -128,14 +129,16 @@ export default function ActivityLogView({ page }) {
         });
     }, [filters, keyword, rows, filtersConfig, cleanedColumns]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     useEffect(() => {
-        tableRegistry.setActiveTable(cleanedColumns, filteredRows, 'activity-log');
+        tableRegistry.setActiveTable(cleanedColumns, sortedRows, 'activity-log');
         return () => {
             if (tableRegistry.activeTable?.resource === 'activity-log') {
                 tableRegistry.setActiveTable(null, null, null);
             }
         };
-    }, [cleanedColumns, filteredRows]);
+    }, [cleanedColumns, sortedRows]);
 
     const emptyLabel = loading ? 'Memuat data...' : (error || 'Belum ada data');
 
@@ -154,7 +157,7 @@ export default function ActivityLogView({ page }) {
                             }))
                         }
                         containerClassName="w-auto shrink-0"
-                        className="h-[34px] min-w-[118px] rounded-[4px] border-ui-border sm:min-w-[138px]"
+                        className="h-[34px] rounded-[4px] border-ui-border"
                         selectClassName="text-xs sm:text-sm text-filter-select-text"
                     >
                         {filter.options.map((option) => (
@@ -202,24 +205,23 @@ export default function ActivityLogView({ page }) {
                             <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
                                 No.
                             </DataTableHead>
-                            {visibleColumns.map((column) => {
-                                const minWidth = getColumnMinWidth(column.label);
-                                return (
-                                    <DataTableHead
-                                        key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-2.5 text-base font-normal text-white text-center`.trim()}
-                                        style={minWidth ? { minWidth } : undefined}
-                                    >
-                                        <span className="block whitespace-nowrap">{column.label}</span>
-                                    </DataTableHead>
-                                );
-                            })}
+                            {visibleColumns.map((column) => (
+                                <SortableTableHeaderCell
+                                    key={column.id}
+                                    label={column.label}
+                                    align={column.align}
+                                    widthClassName={column.widthClassName}
+                                    sortable={column.sortable !== false}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={() => handleSort(column.id)}
+                                />
+                            ))}
                         </tr>
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
+                        {sortedRows.length ? (
+                            sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
                                     className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}

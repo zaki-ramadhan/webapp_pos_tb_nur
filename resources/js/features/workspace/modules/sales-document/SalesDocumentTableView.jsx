@@ -1,19 +1,17 @@
 import { useMemo, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
-
-
 import {
     DataTable,
     DataTableBody,
     DataTableCell,
-    DataTableHead,
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
-    SalesDocumentSortHeader,
     SalesDocumentStatusCell,
     salesDocumentToolbarConfig,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
@@ -53,6 +51,8 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
         });
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
@@ -76,23 +76,22 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                                 </DataTableHead>
                             )}
                             {config.table.columns.map((column) => (
-                                <DataTableHead
+                                <SortableTableHeaderCell
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-2.5 text-base font-medium text-white ${
-                                        column.align === 'center'
-                                            ? 'text-center'
-                                            : 'text-left'
-                                    }`.trim()}
-                                >
-                                    <SalesDocumentSortHeader column={column} />
-                                </DataTableHead>
+                                    label={column.label}
+                                    align={column.align}
+                                    widthClassName={column.widthClassName}
+                                    sortable={column.sortable !== false}
+                                    sortDirection={sortKey === column.id ? sortDir : null}
+                                    onSort={() => handleSort(column.id)}
+                                />
                             ))}
                         </tr>
                     </DataTableHeader>
 
                     <DataTableBody>
-                        {filteredRows.length ? (
-                            filteredRows.map((row, index) => (
+                        {sortedRows.length ? (
+                            sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
                                     className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
