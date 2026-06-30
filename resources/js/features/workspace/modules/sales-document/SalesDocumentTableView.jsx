@@ -4,6 +4,7 @@ import {
     DataTable,
     DataTableBody,
     DataTableCell,
+    DataTableHead,
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
