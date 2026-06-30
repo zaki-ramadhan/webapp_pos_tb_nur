@@ -19,6 +19,7 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
+    const partnerLabel = partnerType === 'supplier' ? 'Pemasok' : 'Pelanggan';
     const sourceRow = config.table.rows.find((row) => row.id === recordId) ?? {};
     const sourceRecord = useMemo(
         () => (isDetail ? buildBusinessPartnerRecord(partnerType, sourceRow, config) : config.formDefaults),
@@ -71,7 +72,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         const payload = toPartnerPayload(values);
         const loadingToastId = showLoadingToast({
             title: 'Memproses',
-            message: isDetail ? 'Sedang memperbarui mitra bisnis.' : 'Sedang menyimpan mitra bisnis baru.',
+            message: `Sedang menyimpan data ${partnerLabel.toLowerCase()}.`,
         });
         try {
             if (isDetail) {
@@ -82,15 +83,28 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             dismissToast(loadingToastId);
             showSuccessToast({
                 title: 'Berhasil',
-                message: isDetail ? 'Mitra bisnis berhasil diperbarui.' : 'Mitra bisnis berhasil disimpan.',
+                message: isDetail ? `${partnerLabel} berhasil diperbarui.` : `${partnerLabel} berhasil disimpan.`,
             });
         } catch (err) {
             dismissToast(loadingToastId);
+            const errorMessage = getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.');
             showErrorToast({
                 title: 'Gagal menyimpan',
-                message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.'),
+                message: errorMessage,
             });
-            setStatus({ tone: 'error', message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menyimpan data.') });
+            setStatus({ tone: 'error', message: errorMessage });
+
+            // Dispatch backend validation errors to form fields
+            const serverFieldErrors = err?.response?.data?.errors;
+            if (serverFieldErrors && typeof serverFieldErrors === 'object') {
+                const flat = Object.fromEntries(
+                    Object.entries(serverFieldErrors).map(([key, value]) => [
+                        key,
+                        Array.isArray(value) ? (value[0] ?? '') : String(value),
+                    ]),
+                );
+                window.dispatchEvent(new CustomEvent('form-validation-error', { detail: flat }));
+            }
         }
     };
 
@@ -102,19 +116,19 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         setShowDeleteConfirm(false);
         const loadingToastId = showLoadingToast({
             title: 'Memproses',
-            message: 'Sedang menghapus mitra bisnis.',
+            message: `Sedang menghapus data ${partnerLabel.toLowerCase()}.`,
         });
         try {
             await remove(recordId);
             dismissToast(loadingToastId);
             showSuccessToast({
                 title: 'Berhasil',
-                message: 'Mitra bisnis berhasil dihapus.',
+                message: `${partnerLabel} berhasil dihapus.`,
             });
         } catch (err) {
             dismissToast(loadingToastId);
             showErrorToast({
-                title: 'Gagal menghapus',
+                title: `Gagal menghapus ${partnerLabel.toLowerCase()}`,
                 message: getBackendErrorMessage(err, 'Terjadi kesalahan saat menghapus data.'),
             });
         }
@@ -140,22 +154,15 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
                 saveDisabled={saveDisabled}
                 onSave={handleSave}
                 actionsSlot={
-                    <>
+                    isDetail ? (
                         <DockActionButton
-                            label="Lampiran"
-                            tone="primary"
-                            icon={<DockIcon icon="attachment" />}
+                            label={processing ? 'Memproses...' : 'Hapus'}
+                            tone="danger"
+                            icon={<DockIcon icon="trash" />}
+                            disabled={processing}
+                            onClick={handleDelete}
                         />
-                        {isDetail ? (
-                            <DockActionButton
-                                label={processing ? 'Memproses...' : 'Hapus'}
-                                tone="danger"
-                                icon={<DockIcon icon="trash" />}
-                                disabled={processing}
-                                onClick={handleDelete}
-                            />
-                        ) : null}
-                    </>
+                    ) : null
                 }
             >
                 <div className="flex-1 min-h-0 pb-8">

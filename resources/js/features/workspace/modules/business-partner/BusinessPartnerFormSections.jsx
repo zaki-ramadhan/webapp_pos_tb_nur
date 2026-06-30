@@ -1,6 +1,6 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import TextareaField from '@/components/ui/TextareaField';
-import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
+import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
     ChipLookupField,
     FormFieldRow,
@@ -134,86 +134,38 @@ function SupplierPurchaseTab({ config, values, onChange }) {
     const purchaseConfig = config.purchaseConfig ?? {};
 
     return (
-        <div className="grid gap-8 lg:grid-cols-2">
-            <section>
-                <SectionHeading title={purchaseConfig.titleLeft} />
+        <div className="max-w-[500px] space-y-3">
+            <SectionHeading title={purchaseConfig.titleLeft} />
 
-                <div className="mt-4 space-y-3">
-                    <FormFieldRow label={purchaseConfig.discountLabel}>
-                        <TextInput
-                            id="defaultDiscountPercent"
-                            name="defaultDiscountPercent"
-                            value={values.defaultDiscountPercent}
-                            onChange={(event) => {
-                                const sanitized = event.target.value.replace(/[^0-9.]/g, '');
-                                onChange('defaultDiscountPercent', sanitized);
-                            }}
-                            prefix="%"
-                            className="h-[40px] max-w-[360px] rounded-[4px] border-ui-border"
-                            prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
-                        />
-                    </FormFieldRow>
+            <FormFieldRow label={purchaseConfig.paymentTermsLabel}>
+                <AccountLookupTextInput
+                    id="paymentTerms"
+                    resource="payment-terms"
+                    value={(values.paymentTerms || [])[0] || ''}
+                    placeholder="Cari/Pilih Syarat Pembayaran..."
+                    searchLabel="Cari syarat pembayaran"
+                    onSelectAccount={(record, label) => {
+                        onChange('paymentTerms', label ? [label] : []);
+                        onChange('paymentTermId', record ? record.id : null);
+                    }}
+                />
+            </FormFieldRow>
 
-                    <FormFieldRow label={purchaseConfig.descriptionLabel}>
-                        <TextareaField
-                            value={values.defaultDescription}
-                            onChange={(event) => onChange('defaultDescription', event.target.value)}
-                            rows={3}
-                            className="rounded-[4px] border-ui-border"
-                            textareaClassName="min-h-[72px] text-xs sm:text-sm text-brand-dark"
-                        />
-                    </FormFieldRow>
-                </div>
-
-                <div className="mt-8">
-                    <SectionHeading title="Akun Pembelian" />
-                    <div className="mt-4 space-y-3">
-                        <FormFieldRow label={purchaseConfig.payableLabel}>
-                            <AccountLookupField
-                                values={values.payableAccount}
-                                placeholder={config.lookupPlaceholders.default}
-                                onRemove={() => onChange('payableAccount', [])}
-                                searchLabel="Cari akun utang"
-                                dialogTitle="Pilih Akun Utang"
-                                onSelectAccount={(_, label) => onChange('payableAccount', label ? [label] : [])}
-                            />
-                        </FormFieldRow>
-
-                        <FormFieldRow label={purchaseConfig.advanceLabel}>
-                            <AccountLookupField
-                                values={values.advanceAccount}
-                                placeholder={config.lookupPlaceholders.default}
-                                onRemove={() => onChange('advanceAccount', [])}
-                                searchLabel="Cari akun uang muka"
-                                dialogTitle="Pilih Akun Uang Muka"
-                                onSelectAccount={(_, label) => onChange('advanceAccount', label ? [label] : [])}
-                            />
-                        </FormFieldRow>
-                    </div>
-
-                    <p className="mt-4 max-w-[620px] border-l-[4px] border-text-light pl-3 text-sm italic leading-7 text-red-550">
-                        {purchaseConfig.accountNote}
-                    </p>
-                </div>
-            </section>
-
-            <section>
-                <div className="mb-3 border-b border-ui-border-medium pb-1.5 flex items-center justify-between gap-3">
-                    <h3 className="text-base sm:text-lg font-normal text-input-brand">{purchaseConfig.titleRight}</h3>
-                    <button
-                        type="button"
-                        aria-label={purchaseConfig.bankAddLabel}
-                        className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition"
-                    >
-                        <PlusIcon className="h-5 w-5" />
-                    </button>
-                </div>
-
-                <div className="mt-4">
-                    <EmptyDataTable columns={config.bankTable.columns} emptyLabel={config.bankTable.emptyLabel} />
-                </div>
-            </section>
+            <FormFieldRow label="Batas Saldo Utang">
+                <TextInput
+                    id="creditLimit"
+                    name="creditLimit"
+                    value={values.creditLimit}
+                    onChange={(event) => {
+                        const sanitized = event.target.value.replace(/[^0-9]/g, '');
+                        onChange('creditLimit', sanitized);
+                    }}
+                    prefix="Rp"
+                    className="h-[40px] rounded-[4px] border-ui-border"
+                    prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
+                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                />
+            </FormFieldRow>
         </div>
     );
 }

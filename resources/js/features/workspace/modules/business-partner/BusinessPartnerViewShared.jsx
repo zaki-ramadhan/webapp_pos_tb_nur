@@ -184,7 +184,7 @@ export function EmptyDataTable({ columns, emptyLabel }) {
                     {columns.map((column) => (
                         <DataTableHead
                             key={column.id}
-                            className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white text-center`.trim()}
+                            className={`${column.widthClassName ?? ''} px-3 text-base font-normal text-white text-center`.trim()}
                         >
                             {column.label}
                         </DataTableHead>

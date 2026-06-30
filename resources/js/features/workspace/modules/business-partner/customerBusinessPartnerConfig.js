@@ -78,12 +78,9 @@ export const customerBusinessPartnerTemplate = createTemplate({
     type: 'customer',
     tabs: [
         { id: 'general', label: 'Umum' },
-        { id: 'contacts', label: 'Kontak' },
         { id: 'shipping', label: 'Pengiriman' },
         { id: 'sales', label: 'Penjualan' },
         { id: 'tax', label: 'Pajak' },
-        { id: 'receivable', label: 'Saldo Piutang' },
-        { id: 'others', label: 'Lain-lain' },
     ],
     table: createTableConfig({
         createLabel: 'Tambah Pelanggan',

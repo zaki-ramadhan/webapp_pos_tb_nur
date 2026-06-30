@@ -58,11 +58,8 @@ export const supplierBusinessPartnerTemplate = createTemplate({
     type: 'supplier',
     tabs: [
         { id: 'general', label: 'Umum' },
-        { id: 'contacts', label: 'Kontak' },
         { id: 'purchase', label: 'Pembelian' },
         { id: 'tax', label: 'Pajak' },
-        { id: 'payable', label: 'Saldo Utang' },
-        { id: 'others', label: 'Lain-lain' },
     ],
     table: createTableConfig({
         createLabel: 'Tambah Pemasok',
