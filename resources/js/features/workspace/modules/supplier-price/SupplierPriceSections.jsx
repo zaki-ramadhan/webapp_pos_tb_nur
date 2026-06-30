@@ -18,120 +18,154 @@ import {
     TransactionToolbarIconButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { SearchIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
-
-function FormFieldRow({ label, required = false, children }) {
-    return (
-        <div className="grid gap-3 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-center">
-            <TransactionFieldLabel label={label} required={required} />
-            <div>{children}</div>
-        </div>
-    );
-}
+import { Trash2 } from 'lucide-react';
 
 export function SupplierPriceHeader({ config, values, setValues }) {
     return (
-        <div className="grid gap-x-10 gap-y-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]">
-            <div className="space-y-2">
-                <FormFieldRow label={config.labels.supplier} required>
-                    <ChipLookupField values={values.supplier} placeholder={config.supplierPlaceholder} searchLabel="Cari pemasok" />
-                </FormFieldRow>
-
-                <FormFieldRow label={config.labels.effectiveDate} required>
-                    <TransactionDateInput value={values.effectiveDate} className="max-w-[282px]" />
-                </FormFieldRow>
-
-                <div className="lg:pl-[182px]">
-                    <CheckboxField
-                        id="supplier-price-auto-end-date"
-                        label={config.labels.autoEndDate}
-                        checked={values.autoEndDate}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                autoEndDate: event.target.checked,
-                            }))
-                        }
-                        align="center"
-                        labelClassName="text-base md:text-base"
-                        inputClassName="mt-0 h-[18px] w-[18px]"
-                        containerClassName="w-auto"
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-2 gap-x-8">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.supplier} required />
+                    <AccountLookupTextInput
+                        id="supplierPriceSupplier"
+                        resource="suppliers"
+                        value={values.supplier?.[0] ?? ''}
+                        placeholder={config.supplierPlaceholder}
+                        searchLabel="Cari pemasok"
+                        onSelectAccount={(record, label) => {
+                            if (record) {
+                                setValues((current) => ({
+                                    ...current,
+                                    __supplierId: record.id,
+                                    supplier: [label],
+                                }));
+                            } else {
+                                setValues((current) => ({
+                                    ...current,
+                                    __supplierId: null,
+                                    supplier: [],
+                                }));
+                            }
+                        }}
                     />
+                </div>
+
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-start gap-x-4">
+                    <div className="flex flex-col gap-y-2">
+                        <TransactionFieldLabel label={config.labels.effectiveDate} required className="pt-2" />
+                        <CheckboxField
+                            id="supplier-price-auto-end-date"
+                            label={config.labels.autoEndDate}
+                            checked={values.autoEndDate}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    autoEndDate: event.target.checked,
+                                    endDate: event.target.checked ? current.endDate : '',
+                                }))
+                            }
+                            align="center"
+                            labelClassName="text-xs sm:text-sm text-brand-dark ml-1 whitespace-nowrap"
+                            inputClassName="mt-0 h-[16px] w-[16px]"
+                            containerClassName="w-auto shrink-0 mt-6"
+                        />
+                    </div>
+                    <div className="flex items-center gap-3 pt-1">
+                        <TransactionDateInput 
+                            value={values.effectiveDate} 
+                            onChange={(nextVal) => setValues(curr => ({ ...curr, effectiveDate: nextVal }))}
+                            className="w-[160px] shrink-0" 
+                        />
+                        {values.autoEndDate && (
+                            <>
+                                <span className="text-xs sm:text-sm text-brand-dark shrink-0">s/d</span>
+                                <TransactionDateInput 
+                                    value={values.endDate ?? ''} 
+                                    onChange={(nextVal) => setValues(curr => ({ ...curr, endDate: nextVal }))}
+                                    className="w-[160px] shrink-0" 
+                                />
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            <div className="space-y-2">
-                <div className="grid gap-3 lg:grid-cols-[140px_minmax(0,1fr)] lg:items-center">
-                    <div className="flex items-center justify-start gap-4 lg:justify-end">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div className="flex items-center justify-start gap-4">
                         <TransactionFieldLabel label={config.labels.documentNumber} required />
-                        <TransactionSwitch
-                            checked={values.autoNumber}
-                            onChange={(nextValue) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    autoNumber: nextValue,
-                                }))
-                            }
-                        />
                     </div>
 
-                    <SelectField
-                        value={values.numberingType}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                numberingType: event.target.value,
-                            }))
-                        }
-                        className="h-[40px] rounded-[4px] border-ui-border"
-                        selectClassName="text-xs sm:text-sm text-brand-dark"
-                    >
-                        {config.numberingOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </SelectField>
+                    <div className="max-w-[320px] w-full justify-self-end">
+                        <SelectField
+                            value={values.numberingType}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    numberingType: event.target.value,
+                                }))
+                            }
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
+                        >
+                            {config.numberingOptions.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </SelectField>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
 
-export function SupplierPriceDetailsSection({ config, values, setValues }) {
+export function SupplierPriceDetailsSection({ config, values, setValues, isDetail }) {
     return (
         <div className="flex min-h-[560px] flex-col">
             <div className="flex flex-col gap-3 pb-1 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-                    <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
-                        <TextInput
-                            value={values.itemSearch}
-                            onChange={(event) =>
-                                setValues((current) => ({
-                                    ...current,
-                                    itemSearch: event.target.value,
-                                }))
-                            }
-                            placeholder={config.itemSearchPlaceholder}
-                            trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
-                        />
-                    </div>
+                    {!isDetail && (
+                        <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
+                            <AccountLookupTextInput
+                                id="supplierPriceItemSearch"
+                                resource="products"
+                                value={values.itemSearch}
+                                placeholder={config.itemSearchPlaceholder}
+                                searchLabel="Cari barang atau jasa"
+                                onSelectAccount={(record, label) => {
+                                    if (record) {
+                                        const exists = (values.itemLines ?? []).some(
+                                            (line) => line.__productId === record.id
+                                        );
+                                        if (exists) return;
 
-                    <button
-                        type="button"
-                        className="inline-flex h-[36px] shrink-0 items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
-                    >
-                        <span>{config.takeButtonLabel}</span>
-                        <ChevronDownIcon className="h-4 w-4" />
-                    </button>
+                                        const newLine = {
+                                            id: `temp-${Date.now()}`,
+                                            __productId: record.id,
+                                            name: record.name || label,
+                                            code: record.code || '',
+                                            unit: record.unit?.name || 'PCS',
+                                            __unitId: record.unit?.id || null,
+                                            newPrice: 0,
+                                        };
+
+                                        setValues((current) => ({
+                                            ...current,
+                                            itemSearch: '',
+                                            itemLines: [...(current.itemLines ?? []), newLine],
+                                        }));
+                                    }
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
-                    <TransactionToolbarIconButton label="Cari rincian barang">
-                        <SearchIcon className="h-4.5 w-4.5" />
-                    </TransactionToolbarIconButton>
                     <div className="text-right text-2xl font-normal text-brand-dark">
                         {config.itemSectionTitle} <span className="text-tab-active-border-t">*</span>
                     </div>
@@ -172,14 +206,64 @@ export function SupplierPriceDetailsSection({ config, values, setValues }) {
                         </DataTableHeader>
 
                         <DataTableBody>
-                            <DataTableRow className="bg-white">
-                                <DataTableCell
-                                    colSpan={config.itemTable.columns.length}
-                                    className="px-3 py-3 text-center text-base text-text-workspace-dark"
-                                >
-                                    {config.itemTable.emptyLabel}
-                                </DataTableCell>
-                            </DataTableRow>
+                            {(values.itemLines ?? []).length > 0 ? (
+                                values.itemLines.map((row, index) => (
+                                    <DataTableRow key={row.id || index} className="bg-white border-ui-border-row">
+                                        <DataTableCell className="px-3 text-base text-text-workspace-dark">
+                                            {row.name}
+                                        </DataTableCell>
+                                        <DataTableCell className="px-3 text-base text-text-workspace-dark">
+                                            {row.code}
+                                        </DataTableCell>
+                                        <DataTableCell className="px-3 text-base text-text-workspace-dark">
+                                            {row.unit}
+                                        </DataTableCell>
+                                        <DataTableCell className="px-3 text-right text-base text-text-workspace-dark font-medium">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <TextInput
+                                                    type="number"
+                                                    value={row.newPrice || ''}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setValues((current) => ({
+                                                            ...current,
+                                                            itemLines: current.itemLines.map((line, idx) =>
+                                                                idx === index ? { ...line, newPrice: val } : line
+                                                            ),
+                                                        }));
+                                                    }}
+                                                    className="w-[140px] text-right h-[36px]"
+                                                    inputClassName="text-right text-xs sm:text-sm text-brand-dark"
+                                                />
+                                                {!isDetail && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setValues((current) => ({
+                                                                ...current,
+                                                                itemLines: current.itemLines.filter((_, idx) => idx !== index),
+                                                            }));
+                                                        }}
+                                                        className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[4px] border border-red-200 bg-red-50 text-red-500 hover:bg-red-100 transition duration-150 shrink-0 cursor-pointer"
+                                                        title="Hapus baris"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </DataTableCell>
+                                    </DataTableRow>
+                                ))
+                            ) : (
+                                <DataTableRow className="bg-white">
+                                    <DataTableCell
+                                        colSpan={config.itemTable.columns.length}
+                                        className="px-3 py-3 text-center text-base text-text-workspace-dark"
+                                    >
+                                        {config.itemTable.emptyLabel}
+                                    </DataTableCell>
+                                </DataTableRow>
+                            )}
                         </DataTableBody>
                     </DataTable>
                 </div>

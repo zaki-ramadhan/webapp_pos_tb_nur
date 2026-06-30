@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
 
 import {
@@ -10,12 +10,11 @@ import {
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
-import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
-import { TransactionToolbarIconButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import { RefreshIcon, PrintIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 
 function SupplierPriceFilterBar({ table, filters, setFilters }) {
     return (
@@ -62,7 +61,7 @@ function SupplierPriceFilterBar({ table, filters, setFilters }) {
     );
 }
 
-export default function SupplierPriceTableView({ config, onCreate }) {
+export default function SupplierPriceTableView({ config, onCreate, onOpenDetail }) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
         config.table.filters.reduce((result, filter) => {
@@ -100,6 +99,22 @@ export default function SupplierPriceTableView({ config, onCreate }) {
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
 
+    const schemaKey = getTableSchemaKey(config.table.columns);
+    const [visibleColumnIds] = useColumnVisibility(schemaKey, config.table.columns);
+
+    const visibleColumns = useMemo(() => {
+        return config.table.columns.filter(col => !visibleColumnIds || visibleColumnIds.includes(col.id));
+    }, [config.table.columns, visibleColumnIds]);
+
+    useEffect(() => {
+        tableRegistry.setActiveTable(config.table.columns, sortedRows, 'supplier-prices');
+        return () => {
+            if (tableRegistry.activeTable?.resource === 'supplier-prices') {
+                tableRegistry.setActiveTable(null, null, null);
+            }
+        };
+    }, [config.table.columns, sortedRows]);
+
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
@@ -114,16 +129,9 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                     label: config.table.refreshLabel,
                     icon: <RefreshIcon className="h-4.5 w-4.5" />,
                 }}
-                rightControls={
-                    <>
-                        <TransactionToolbarIconButton label={config.table.printLabel}>
-                            <PrintIcon className="h-4 w-4" />
-                        </TransactionToolbarIconButton>
-                        <TransactionToolbarIconButton label={config.table.settingsLabel}>
-                            <NavigationIcon type="settings" className="h-4 w-4" />
-                        </TransactionToolbarIconButton>
-                    </>
-                }
+                importButton={false}
+                exportConfig={false}
+                resourceName="supplier-prices"
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -142,7 +150,7 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                                     No.
                                 </DataTableHead>
                             )}
-                            {config.table.columns.map((column) => (
+                            {visibleColumns.map((column) => (
                                 <SortableTableHeaderCell
                                     key={column.id}
                                     label={column.label}
@@ -161,27 +169,28 @@ export default function SupplierPriceTableView({ config, onCreate }) {
                             sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
+                                    onClick={() => onOpenDetail?.({ recordId: String(row.id), label: row.number, tabLabel: row.number })}
+                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'} ${onOpenDetail ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''}`.trim()}
                                 >
                                         {sortedRows.length > 0 ? (
                                         <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                         {index + 1}
                                     </DataTableCell>
                                     ) : null}
-{config.table.columns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className={`text-left px-2.5 text-base text-text-workspace-dark`.trim()}
-                                        >
-                                            <span className="block truncate">{row[column.id] ?? ''}</span>
-                                        </DataTableCell>
-                                    ))}
+                                    {visibleColumns.map((column) => (
+                                         <DataTableCell
+                                             key={column.id}
+                                             className={`text-left px-2.5 text-base text-text-workspace-dark`.trim()}
+                                         >
+                                             <span className="block truncate">{row[column.id] ?? ''}</span>
+                                         </DataTableCell>
+                                     ))}
                                 </DataTableRow>
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell
-                                    colSpan={config.table.columns.length + 1}
+                                    colSpan={visibleColumns.length + 1}
                                     className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                 >
                                     {config.table.emptyLabel}
