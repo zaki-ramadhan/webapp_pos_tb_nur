@@ -11,17 +11,36 @@ export default function AccountLookupSuggestions({
     rows,
     selectedLabels,
     onSelectAccount,
-    emptyLabel = 'Belum ada data akun perkiraan.',
-    loadingLabel = 'Memuat akun perkiraan...',
+    emptyLabel,
+    loadingLabel,
     className = '',
     anchorRef = null,
     showType = false,
     resource = 'accounts',
 }) {
+    const entityLabels = {
+        accounts: 'akun perkiraan',
+        products: 'barang & jasa',
+        'shipping-methods': 'metode pengiriman',
+        'fob-terms': 'syarat FOB',
+        employees: 'kontak/karyawan',
+        customers: 'pelanggan',
+        vendors: 'pemasok',
+        suppliers: 'pemasok',
+        warehouses: 'gudang',
+        departments: 'departemen',
+        branches: 'cabang',
+        users: 'pengguna',
+    };
+
+    const entityName = entityLabels[resource] ?? 'data';
+    const resolvedEmptyLabel = emptyLabel ?? `Belum ada data ${entityName}.`;
+    const resolvedLoadingLabel = loadingLabel ?? `Memuat ${entityName}...`;
+
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
     const emptyMessage = query.trim()
-        ? 'Tidak ada akun perkiraan yang cocok.'
-        : emptyLabel;
+        ? `Tidak ada ${entityName} yang cocok.`
+        : resolvedEmptyLabel;
 
     if (!open) {
         return null;
@@ -31,7 +50,7 @@ export default function AccountLookupSuggestions({
         <LookupDropdownSurface className={className} anchorRef={anchorRef}>
             <div className="max-h-[280px] overflow-y-auto bg-white flex-1 min-h-0">
                 {loading ? (
-                    <div className="px-4 py-5 text-center text-sm text-text-workspace-muted">{loadingLabel}</div>
+                    <div className="px-4 py-5 text-center text-sm text-text-workspace-muted">{resolvedLoadingLabel}</div>
                 ) : error ? (
                     <div className="px-4 py-5 text-center text-sm text-red-850">{error}</div>
                 ) : rows.length ? (
@@ -87,7 +106,7 @@ export default function AccountLookupSuggestions({
                     <LookupEmptyState
                         title={emptyMessage}
                         description={!query.trim()
-                            ? 'Mulai ketik kode atau nama akun untuk melihat saran.'
+                            ? `Mulai ketik untuk mencari ${entityName}.`
                             : 'Coba kata kunci lain yang lebih spesifik.'}
                     />
                 )}
