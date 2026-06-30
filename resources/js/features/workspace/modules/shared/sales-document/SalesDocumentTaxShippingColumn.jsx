@@ -4,7 +4,7 @@ import { TransactionDateInput, TransactionFieldLabel, TransactionSectionHeading 
 import CheckboxField from '@/components/ui/CheckboxField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
-function SalesDocumentInvoiceTaxSection({ values }) {
+function SalesDocumentInvoiceTaxSection({ config, values }) {
     return (
         <div>
             <TransactionSectionHeading title="Info Pajak" icon="tax" />
@@ -64,24 +64,26 @@ function SalesDocumentInvoiceTaxSection({ values }) {
                         />
                     </div>
 
-                    <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                        <TransactionFieldLabel label="FOB" />
-                        <AccountLookupTextInput
-                            id="fob"
-                            resource="fob-terms"
-                            value={values.fobName || ''}
-                            placeholder="Cari/Pilih Syarat FOB..."
-                            searchLabel="Cari FOB"
-                            onSelectAccount={(record, label) => {
-                                values.setValues?.((current) => ({
-                                    ...current,
-                                    __fobId: record ? record.id : null,
-                                    fobName: label || '',
-                                    fob: label ? [label] : [],
-                                }));
-                            }}
-                        />
-                    </div>
+                    {config?.showFobInShippingInfo !== false && (
+                        <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                            <TransactionFieldLabel label="FOB" />
+                            <AccountLookupTextInput
+                                id="fob"
+                                resource="fob-terms"
+                                value={values.fobName || ''}
+                                placeholder="Cari/Pilih Syarat FOB..."
+                                searchLabel="Cari FOB"
+                                onSelectAccount={(record, label) => {
+                                    values.setValues?.((current) => ({
+                                        ...current,
+                                        __fobId: record ? record.id : null,
+                                        fobName: label || '',
+                                        fob: label ? [label] : [],
+                                    }));
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
@@ -91,7 +93,7 @@ function SalesDocumentInvoiceTaxSection({ values }) {
 export default function SalesDocumentTaxShippingColumn({ config, values, setValues, handlers }) {
     return (
         <section className="pb-6">
-            {config.taxInfoMode === 'invoice' ? <SalesDocumentInvoiceTaxSection values={{ ...values, setValues, handlers }} /> : null}
+            {config.taxInfoMode === 'invoice' ? <SalesDocumentInvoiceTaxSection config={config} values={{ ...values, setValues, handlers }} /> : null}
             {config.showTaxInfo !== false && config.taxInfoMode !== 'invoice' ? (
                 <>
                     <TransactionSectionHeading title={config.taxInfoTitle} icon="tax" />
@@ -154,24 +156,26 @@ export default function SalesDocumentTaxShippingColumn({ config, values, setValu
                             />
                         </div>
 
-                        <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                            <TransactionFieldLabel label="FOB" />
-                            <AccountLookupTextInput
-                                id="fob"
-                                resource="fob-terms"
-                                value={values.fobName || ''}
-                                placeholder="Cari/Pilih Syarat FOB..."
-                                searchLabel="Cari FOB"
-                                onSelectAccount={(record, label) => {
-                                    setValues?.((current) => ({
-                                        ...current,
-                                        __fobId: record ? record.id : null,
-                                        fobName: label || '',
-                                        fob: label ? [label] : [],
-                                    }));
-                                }}
-                            />
-                        </div>
+                        {config.showFobInShippingInfo !== false && (
+                            <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
+                                <TransactionFieldLabel label="FOB" />
+                                <AccountLookupTextInput
+                                    id="fob"
+                                    resource="fob-terms"
+                                    value={values.fobName || ''}
+                                    placeholder="Cari/Pilih Syarat FOB..."
+                                    searchLabel="Cari FOB"
+                                    onSelectAccount={(record, label) => {
+                                        setValues?.((current) => ({
+                                            ...current,
+                                            __fobId: record ? record.id : null,
+                                            fobName: label || '',
+                                            fob: label ? [label] : [],
+                                        }));
+                                    }}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             ) : null}

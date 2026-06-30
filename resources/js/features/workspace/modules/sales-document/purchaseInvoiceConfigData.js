@@ -13,7 +13,6 @@ export const purchaseInvoiceSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
     { id: 'additional-info', label: 'Info lainnya', icon: 'info' },
     { id: 'additional-costs', label: 'Biaya Lainnya', icon: 'payment' },
-    { id: 'order-info', label: 'Informasi Faktur', icon: 'receipt' },
 ];
 
 const purchaseInvoiceListColumns = [
@@ -28,7 +27,6 @@ const purchaseInvoiceListColumns = [
 ];
 
 const purchaseInvoiceItemColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[56%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[120px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[92px]', align: 'right' },
@@ -39,7 +37,6 @@ const purchaseInvoiceItemColumns = [
 ];
 
 const purchaseInvoiceCostColumns = [
-    { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'name', label: 'Nama Biaya', widthClassName: 'w-[58%]', align: 'left' },
     { id: 'code', label: 'Kode #', widthClassName: 'w-[120px]', align: 'center' },
     { id: 'amount', label: 'Jumlah', widthClassName: 'w-[120px]', align: 'right' },
@@ -202,6 +199,7 @@ export const defaultPurchaseInvoiceConfig = {
     showShippingInfo: true,
     showExtraInfo: true,
     showFobInShippingInfo: false,
+    showFobInAdditionalInfo: true,
     additionalInfoLookupFields: [
         {
             type: 'lookup',
@@ -214,6 +212,9 @@ export const defaultPurchaseInvoiceConfig = {
     itemModal: {
         enabled: true,
     },
+    itemSearchResource: 'products',
+    hideAddItemButton: true,
+    hideImportButton: true,
     secondaryActionLabel: '',
     showSecondaryHeaderAction: false,
     showFooter: true,
