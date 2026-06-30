@@ -7,7 +7,6 @@ import { TransactionSwitch, TransactionToolbarSplitButton } from '@/features/wor
 import {
     CircleCheckIcon,
     DownloadIcon,
-    FunnelIcon,
     RefreshIcon,
     PlusIcon,
     PrintIcon,
@@ -223,15 +222,6 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
                 </SelectField>
             ))}
 
-            {!config.hideFilterButton ? (
-                <button
-                    type="button"
-                    className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                    aria-label={config.table.filterButtonLabel}
-                >
-                    <FunnelIcon className="h-4.5 w-4.5" />
-                </button>
-            ) : null}
         </div>
     );
 }

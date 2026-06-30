@@ -3,7 +3,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { CloseIcon, FunnelIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
+import { CloseIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import TextareaField from '@/components/ui/TextareaField';
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -257,13 +257,6 @@ export function ExpenseTableFilters({ table, filters, setFilters }) {
                 </SelectField>
             ))}
 
-            <button
-                type="button"
-                className="inline-flex h-[34px] w-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue"
-                aria-label={table.filterButtonLabel}
-            >
-                <FunnelIcon className="h-5 w-5" />
-            </button>
         </div>
     );
 }

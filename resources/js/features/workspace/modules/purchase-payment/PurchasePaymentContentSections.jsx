@@ -5,7 +5,6 @@ import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { buildLookupLabel } from '@/features/workspace/shared/transactionFormatters';
 import {
-    FunnelIcon,
     SearchIcon,
     TableActionIcon,
 } from '@/features/workspace/shared/Icons';
@@ -204,14 +203,6 @@ export function PurchasePaymentTableFilterBar({ table, filters, setFilters }) {
 
             <div className="flex flex-wrap items-center gap-2">
                 {table.filters.slice(3).map(renderFilter)}
-
-                <button
-                    type="button"
-                    className="inline-flex h-[34px] w-[48px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-action-btn-active-bg text-brand-blue hover:bg-bg-action-btn-hover transition"
-                    aria-label={table.filterButtonLabel}
-                >
-                    <FunnelIcon className="h-4.5 w-4.5" />
-                </button>
             </div>
         </div>
     );
