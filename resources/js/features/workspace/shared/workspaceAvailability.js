@@ -41,7 +41,7 @@ const pageToFeatureMap = {
     'sales-return': 'sales-return',
     'price-adjustment': 'price-adjustment',
     'sales-commission': 'salesman',
-    'sales-target': 'salesman',
+    'sales-target': 'sales-target',
 
     // Pembelian
     'purchase-order': 'purchase-order',
@@ -75,7 +75,8 @@ const featureDefaults = {
     'sales-quote-order': false,
     'sales-return': true,
     'price-adjustment': true,
-    'salesman': true,
+    'salesman': false,
+    'sales-target': true,
     'delivery-service': false,
     'payment-terms': false,
     'purchase-order': false,
