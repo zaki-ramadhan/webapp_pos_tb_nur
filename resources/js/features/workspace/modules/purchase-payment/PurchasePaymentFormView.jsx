@@ -287,7 +287,7 @@ export default function PurchasePaymentFormView({
             >
                 <CrudStatusMessage status={status} className="mb-4" />
                 {activeSectionId === 'additional-info' ? (
-                    <PurchasePaymentAdditionalInfoSection config={config} values={values} isDetail={isDetail} handlers={handlers} />
+                    <PurchasePaymentAdditionalInfoSection config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />
                 ) : activeSectionId === 'payment-info' ? (
                     <PurchasePaymentInfoSection config={config} values={values} />
                 ) : (

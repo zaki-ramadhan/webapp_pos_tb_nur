@@ -1,7 +1,7 @@
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
+import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { CloseIcon, RefreshIcon } from '@/features/workspace/shared/Icons';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
@@ -57,12 +57,27 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
             <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.payee} required />
-                    <ChipLookupField
-                        values={values.payee}
+                    <AccountLookupTextInput
+                        id="purchasePaymentPayee"
+                        resource="suppliers"
+                        value={values.payee?.[0] ?? ''}
                         placeholder={config.payeePlaceholder}
-                        onRemove={(value) => handlers.onRemovePayee?.(value)}
                         searchLabel="Cari pemasok"
-                        onSearch={handlers.onSelectPayee}
+                        onSelectAccount={(record, label) => {
+                            if (record) {
+                                setValues((current) => ({
+                                    ...current,
+                                    __supplierId: record.id,
+                                    payee: [label],
+                                }));
+                            } else {
+                                setValues((current) => ({
+                                    ...current,
+                                    __supplierId: null,
+                                    payee: [],
+                                }));
+                            }
+                        }}
                     />
                 </div>
 
@@ -98,12 +113,16 @@ export function PurchasePaymentHeader({ config, values, setValues, isDetail, han
                             <PurchasePaymentAmountField values={values} setValues={setValues} />
                         </div>
                         <PurchasePaymentHeaderIconButton
-                            label="Hitung ulang"
+                            label="Reset nilai"
                             icon={<RefreshIcon className="h-4.5 w-4.5" />}
                             onClick={() =>
-                                setValues((current) =>
-                                    applyPurchasePaymentInvoices(current, current.invoices ?? []),
-                                )
+                                setValues((current) => ({
+                                    ...current,
+                                    paymentAmount: '0',
+                                    paymentAmountDisplay: '0',
+                                    paymentAmountPrefix: '',
+                                    footerPaymentValue: '0',
+                                }))
                             }
                         />
                     </div>

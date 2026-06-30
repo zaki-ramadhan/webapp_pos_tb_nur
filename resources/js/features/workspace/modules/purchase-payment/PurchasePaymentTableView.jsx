@@ -83,23 +83,7 @@ export default function PurchasePaymentTableView({
                     onClick: onRefresh,
                     loading,
                 }}
-                rightControls={
-                    <>
-                        <TransactionToolbarSplitButton
-                            label="Unduh"
-                            icon={<DownloadIcon className="h-4 w-4" />}
-                            items={config.table.downloadItems}
-                        />
-                        <TransactionToolbarIconButton label="Cetak">
-                            <PrintIcon className="h-4 w-4" />
-                        </TransactionToolbarIconButton>
-                        <TransactionToolbarSplitButton
-                            label="Pengaturan tabel"
-                            icon={<CogIcon className="h-4 w-4" />}
-                            items={config.table.settingsItems}
-                        />
-                    </>
-                }
+                exportConfig={false}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -108,6 +92,7 @@ export default function PurchasePaymentTableView({
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
                 pageValue={config.table.pageValue}
+                resourceName="purchase-payments"
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">

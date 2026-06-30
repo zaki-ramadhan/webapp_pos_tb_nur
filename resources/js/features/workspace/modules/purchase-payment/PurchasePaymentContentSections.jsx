@@ -25,17 +25,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
     return (
         <TransactionLineItemsSection
             title={
-                <div className="flex items-center gap-3">
-                    <button
-                        type="button"
-                        onClick={handlers.onSelectInvoice}
-                        className="inline-flex h-[40px] w-[40px] items-center justify-center rounded-[4px] border border-ui-border bg-white text-brand-blue-accent hover:bg-brand-blue-light transition"
-                        aria-label="Cari faktur"
-                    >
-                        <SearchIcon className="h-5 w-5" />
-                    </button>
-                    <span className="text-right text-2xl font-normal text-brand-dark">{values.invoiceTitle}</span>
-                </div>
+                <span className="text-right text-2xl font-normal text-brand-dark">{values.invoiceTitle}</span>
             }
             titleRequired={true}
             searchInput={
@@ -96,7 +86,7 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
     );
 }
 
-export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail, handlers = {} }) {
+export function PurchasePaymentAdditionalInfoSection({ config, values, setValues, isDetail, handlers = {} }) {
     return (
         <div className="flex-1 flex flex-col min-h-0">
             <div className="lg:max-w-[50%] w-full">
@@ -105,8 +95,22 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, isDetail,
                 <div className="mt-4 grid gap-y-3 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4 pl-3 sm:pl-5">
                     <TransactionFieldLabel label={config.labels.paymentMethod} />
                     <div className="max-w-[276px]">
-                        <SelectField value={values.paymentMethod} onChange={() => {}} className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
-                            <option value={values.paymentMethod}>{values.paymentMethod || 'Tunai'}</option>
+                        <SelectField
+                            value={values.paymentMethod}
+                            onChange={(event) =>
+                                setValues?.((current) => ({
+                                    ...current,
+                                    paymentMethod: event.target.value,
+                                }))
+                            }
+                            className="h-[40px] rounded-[4px] border-ui-border"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
+                        >
+                            {['Tunai', 'Cek/Giro', 'Transfer Bank', 'Kartu Debit', 'Kartu Kredit', 'QRIS', 'Dompet Digital', 'Non Tunai Lainnya'].map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
                         </SelectField>
                     </div>
 
@@ -196,14 +200,8 @@ export function PurchasePaymentTableFilterBar({ table, filters, setFilters }) {
     );
 
     return (
-        <div className="flex w-full flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-                {table.filters.slice(0, 3).map(renderFilter)}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-                {table.filters.slice(3).map(renderFilter)}
-            </div>
+        <div className="flex w-full flex-wrap items-center gap-2">
+            {table.filters.map(renderFilter)}
         </div>
     );
 }
