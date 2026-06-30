@@ -37,16 +37,19 @@ export default function SalesCheckinView({ page }) {
             refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
             emptyLabel: error || 'Belum ada data',
             onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+            importButton: false,
+            printButton: false,
+            exportConfig: false,
+            pagination: {
+                page: currentPage,
+                perPage,
+                total,
+                lastPage,
+                from,
+                to,
+                onPageChange: setPage,
+                onPerPageChange: setPerPage,
+            },
         };
     }, [error, loading, page.table, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
