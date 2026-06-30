@@ -53,30 +53,95 @@ export default function InventoryAdjustmentView({
 
             const mappedRows = buildInventoryAdjustmentTableRows(rows);
 
+            // Build dynamic filter options from loaded data
+            const uniqueMonths = [...new Set(mappedRows.map(r => {
+                if (!r.dateFilter) return null;
+                const [y, m] = r.dateFilter.split('-');
+                return y && m ? `${y}-${m}` : null;
+            }).filter(Boolean))].sort().reverse();
+
+            const uniqueTypes = [...new Set(mappedRows.map(r => r.adjustmentType).filter(Boolean))].sort();
+            const uniqueCategories = [...new Set(mappedRows.map(r => r.salesCategory).filter(Boolean))].sort();
+
+            const monthLabel = (ym) => {
+                const [y, m] = ym.split('-');
+                const d = new Date(Number(y), Number(m) - 1);
+                return d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            };
+
+            const dynamicFilters = (baseConfig.table.filters ?? []).map(f => {
+                if (f.id === 'date') {
+                    return {
+                        ...f,
+                        options: [
+                            { value: 'all', label: 'Tanggal: Semua' },
+                            ...uniqueMonths.map(ym => ({ value: ym, label: monthLabel(ym) })),
+                        ],
+                    };
+                }
+                if (f.id === 'type') {
+                    return {
+                        ...f,
+                        options: [
+                            { value: 'all', label: 'Tipe Penyesuaian: Semua' },
+                            ...uniqueTypes.map(t => ({ value: t, label: t })),
+                        ],
+                    };
+                }
+                if (f.id === 'category') {
+                    return {
+                        ...f,
+                        options: [
+                            { value: 'all', label: 'Kategori Penjualan: Semua' },
+                            ...uniqueCategories.map(c => ({ value: c, label: c })),
+                        ],
+                    };
+                }
+                if (f.id === 'inactive') {
+                    return {
+                        ...f,
+                        options: [
+                            { value: 'all', label: 'Status: Semua' },
+                            { value: 'active', label: 'Aktif' },
+                            { value: 'inactive', label: 'Non Aktif' },
+                        ],
+                    };
+                }
+                return f;
+            });
+
+            // matchesFilter di TableListView untuk dateFilter perlu exact match,
+            // kita pakai prefix month match lewat rowKey custom
+            const rowsWithMonthKey = mappedRows.map(r => ({
+                ...r,
+                dateFilter: r.dateFilter ? r.dateFilter.slice(0, 7) : '',
+            }));
+
             return {
                 ...baseConfig,
                 table: {
                     ...baseConfig.table,
-                    rows: mappedRows,
+                    rows: rowsWithMonthKey,
+                    filters: dynamicFilters,
                     pageValue: total.toLocaleString('id-ID'),
                     loading,
                     refreshLabel: loading ? 'Memuat data...' : baseConfig.table.refreshLabel,
                     emptyLabel: error || 'Belum ada data',
                     onRefresh: reload,
-                pagination: {
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                },
+                    pagination: {
+                        page: currentPage,
+                        perPage,
+                        total,
+                        lastPage,
+                        from,
+                        to,
+                        onPageChange: setPage,
+                        onPerPageChange: setPerPage,
+                    },
                 },
             };
         },
-        [backendConfig, error, loading, pageConfig, reload, rows, total],
+        [backendConfig, error, loading, pageConfig, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage],
     );
     const resolvedBuildRecord = useMemo(
         () => (row = {}) => {

@@ -29,6 +29,8 @@ import {
     buildLookupLabel,
     resolveInventoryDirtyState,
     validateInventoryAdjustmentValues,
+    buildItemFromProduct,
+    buildTotals,
 } from './inventoryAdjustmentShared';
 import {
     InventoryAdjustmentDetailsSection,
@@ -98,6 +100,14 @@ export function InventoryAdjustmentFormView({
 
     async function handleEditItem(item) {
         await applyInventoryPromptItemUpdate(item, setValues, setStatus);
+    }
+
+    function handleSelectItem(product) {
+        if (!product) return;
+        const nextItem = buildItemFromProduct(product, pageId);
+        setValues((current) =>
+            buildTotals(current, [...(current.items ?? []), nextItem])
+        );
     }
 
     async function onSaveClick() {
@@ -188,7 +198,7 @@ export function InventoryAdjustmentFormView({
     return (
         <>
             <TransactionFormLayout
-                header={<InventoryAdjustmentHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />}
+                header={<InventoryAdjustmentHeader pageId={pageId} config={config} values={values} setValues={setValues} isDetail={isDetail} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
@@ -199,15 +209,17 @@ export function InventoryAdjustmentFormView({
             >
                 <CrudStatusMessage status={status} className="mb-3" />
                 {activeSectionId === 'additional-info' ? (
-                    <InventoryAdjustmentInfoSection config={config} values={values} setValues={setValues} handlers={handlers} />
+                    <InventoryAdjustmentInfoSection pageId={pageId} config={config} values={values} setValues={setValues} handlers={handlers} />
                 ) : (
                     <InventoryAdjustmentDetailsSection
+                        pageId={pageId}
                         config={config}
                         values={values}
                         setValues={setValues}
                         isDetail={isDetail}
                         onOpenItem={isDetail ? setSelectedItem : handleEditItem}
                         onCreateItem={handleCreateItem}
+                        onSelectItem={isDetail ? undefined : handleSelectItem}
                     />
                 )}
             </TransactionFormLayout>
@@ -240,10 +252,10 @@ export function InventoryAdjustmentTableView({ config, onCreate, onOpenDetail })
     return (
         <TableListView
             table={config.table}
-            createButton={{
+            createButton={config.table.createLabel ? {
                 label: config.table.createLabel,
                 onClick: onCreate,
-            }}
+            } : null}
             rightControls={
                 <>
                     <TransactionToolbarIconButton label="Cetak">

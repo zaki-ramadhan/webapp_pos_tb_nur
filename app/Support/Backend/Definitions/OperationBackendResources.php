@@ -429,6 +429,8 @@ class OperationBackendResources
             'outstanding_amount' => ['nullable', 'numeric'],
             'flags' => ['sometimes', 'array'],
             'metadata' => ['sometimes', 'array'],
+            'metadata.salesCategory' => ['sometimes', 'array'],
+            'metadata.adjustmentType' => ['sometimes', 'string', 'max:80'],
             'metadata.name' => ['nullable', 'string', 'max:255'],
             'metadata.periodType' => ['nullable', 'string', 'max:80'],
             'metadata.sellerScope' => ['nullable', 'string', 'max:80'],

@@ -233,7 +233,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                         <button
                             type="button"
                             onClick={handleImportSubmit}
-                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-import-action-blue bg-import-action-blue px-4 text-xs font-medium text-white"
+                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-import-action-blue bg-import-action-blue px-4 text-xs font-normal text-white"
                         >
                             Mulai Impor
                         </button>
