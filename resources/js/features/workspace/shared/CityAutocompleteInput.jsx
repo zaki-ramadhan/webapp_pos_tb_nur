@@ -21,13 +21,13 @@ export default function CityAutocompleteInput({
     ...props
 }) {
     const [open, setOpen] = useState(false);
-    const [searchVal, setSearchVal] = useState(value);
+    const [searchVal, setSearchVal] = useState(value || '');
     const inputRef = useRef(null);
     const rootRef = useRef(null);
     const isSelectingRef = useRef(false);
 
     useEffect(() => {
-        setSearchVal(value);
+        setSearchVal(value || '');
     }, [value]);
 
     function focusInputFromWrapper(event) {

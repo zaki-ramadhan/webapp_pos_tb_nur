@@ -327,7 +327,7 @@ export default function ReportParameterModal({ report, open, onClose, onSubmit }
                     <button
                         type="submit"
                         onClick={handleTampilkan}
-                        className="h-8 px-4 text-xs font-medium text-white bg-brand-blue-hover hover:bg-illustration-danger-border rounded-[4px] shadow-sm transition-colors active:bg-blue-darkest"
+                        className="h-8 px-4 text-xs font-normal text-white bg-brand-blue-hover hover:bg-illustration-danger-border rounded-[4px] shadow-sm transition-colors active:bg-blue-darkest"
                     >
                         Tampilkan
                     </button>

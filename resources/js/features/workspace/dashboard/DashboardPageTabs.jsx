@@ -21,7 +21,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
             onClick={() => onSelect(tab.id)}
             className={`relative -mb-px inline-flex h-7.5 items-center rounded-t-[5px] border text-xs leading-normal cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[140px] sm:max-w-[180px] md:max-w-[220px] ${spacingClassName} ${
                 active
-                    ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-medium text-white'
+                    ? 'z-10 border-[2px] border-brand-primary bg-brand-primary font-normal text-white'
                     : 'border-tab-active-border-x bg-tab-primary-inactive-bg text-tab-primary-inactive-text hover:bg-tab-primary-inactive-hover-bg font-normal'
             } shrink-0 whitespace-nowrap`.trim()}
         >

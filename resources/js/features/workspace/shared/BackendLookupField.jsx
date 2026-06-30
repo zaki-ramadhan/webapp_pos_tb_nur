@@ -15,13 +15,14 @@ export default function BackendLookupField({
     emptyTitle,
     emptyDescription,
     className = '',
+    disabled = false,
 }) {
     const [items, setItems] = useState([]);
     const [searching, setSearching] = useState(false);
     const [hasActivated, setHasActivated] = useState(false);
 
     useEffect(() => {
-        if (!hasActivated) return;
+        if (!hasActivated || disabled) return;
 
         let ignore = false;
         async function fetchRecords() {
@@ -39,10 +40,10 @@ export default function BackendLookupField({
         }
         fetchRecords();
         return () => { ignore = true; };
-    }, [resource, hasActivated]);
+    }, [resource, hasActivated, disabled]);
 
     const handleActivate = () => {
-        if (!hasActivated) {
+        if (!hasActivated && !disabled) {
             setHasActivated(true);
         }
     };
@@ -69,6 +70,7 @@ export default function BackendLookupField({
                 emptyTitle={emptyTitle}
                 emptyDescription={emptyDescription}
                 className={className}
+                disabled={disabled}
             />
         </div>
     );

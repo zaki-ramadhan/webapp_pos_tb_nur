@@ -20,7 +20,7 @@ export default function PreferencesTabs({
 
     return (
         <div
-            className={`overflow-x-auto overflow-y-hidden bg-white pt-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:pt-1.5 ${leftPaddingClass} ${rightPaddingClass} ${className}`.trim()}
+            className={`overflow-x-auto overflow-y-hidden bg-transparent pt-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:pt-1.5 ${leftPaddingClass} ${rightPaddingClass} ${className}`.trim()}
         >
             <div className="flex w-max min-w-full items-end gap-[5px]">
                 {tabs.map((tab) => (

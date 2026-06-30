@@ -87,7 +87,7 @@ export default function DashboardTopBar({
                             aria-label="Buka menu pengguna"
                         >
                             <div className="hidden min-w-0 text-right leading-tight lg:block">
-                                <p className="truncate text-sm font-medium text-white md:text-sm">{user.name}</p>
+                                <p className="truncate text-sm font-normal text-white md:text-sm">{user.name}</p>
                                 <p className="truncate text-xs font-light text-white/70 md:text-xs">
                                     {user.role || 'Pengguna'}
                                 </p>

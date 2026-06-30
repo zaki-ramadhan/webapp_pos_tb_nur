@@ -98,7 +98,7 @@ export function toPartnerPayload(values) {
         }),
         tax_number: values.taxNumber ?? '',
         notes: values.notes ?? '',
-        credit_limit: values.creditLimit ?? 0,
+        credit_limit: values.creditLimit ? (parseFloat(String(values.creditLimit).replace(/[^0-9]/g, '')) || 0) : 0,
         is_active: values.isActive !== false,
         branch_ids: values.branchIds ?? [],
     };

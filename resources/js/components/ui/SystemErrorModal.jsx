@@ -118,12 +118,12 @@ export default function SystemErrorModal({
                         <ErrorIllustration />
                     </div>
 
-                    <div className="min-w-0 flex-1 space-y-2.5">
-                        <p className="text-xs sm:text-sm leading-6 text-brand-dark">{description}</p>
+                    <div className="min-w-0 flex-1 space-y-1">
+                        <p className="text-xs sm:text-sm leading-5 text-brand-dark">{description}</p>
 
-                        <div className="space-y-1.5">
+                        <div className="space-y-0.5">
                             {normalizedMessages.map((item, index) => (
-                                <p key={`${item}-${index}`} className="text-xs sm:text-sm leading-6 text-danger">
+                                <p key={`${item}-${index}`} className="text-xs sm:text-sm leading-5 text-danger">
                                     {item}
                                 </p>
                             ))}
@@ -131,27 +131,14 @@ export default function SystemErrorModal({
                     </div>
                 </div>
 
-                <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <Button
-                            variant="secondary"
-                            size="md"
-                            onClick={handleCopy}
-                            className="min-w-[80px] rounded-[6px] border-layout-bg text-brand-blue-dark shadow-none"
-                        >
-                            {copyState === 'copied' ? copiedLabel : copyLabel}
-                        </Button>
-                    </div>
-
-                    <div className="flex justify-end">
-                        <Button
-                            size="md"
-                            onClick={handleConfirm}
-                            className="min-w-[80px] rounded-[6px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover"
-                        >
-                            {confirmLabel}
-                        </Button>
-                    </div>
+                <div className="mt-4 flex justify-end">
+                    <Button
+                        size="md"
+                        onClick={handleConfirm}
+                        className="min-w-[80px] rounded-[6px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover"
+                    >
+                        {confirmLabel}
+                    </Button>
                 </div>
             </div>
         </ModalBase>

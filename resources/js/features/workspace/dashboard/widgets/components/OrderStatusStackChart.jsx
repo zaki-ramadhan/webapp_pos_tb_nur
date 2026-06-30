@@ -113,7 +113,7 @@ export default function OrderStatusStackChart({ segments = [] }) {
                         return (
                             <div
                                 key={segment.id}
-                                className="flex h-full items-center justify-center px-2 text-center text-sm font-medium text-white"
+                                className="flex h-full items-center justify-center px-2 text-center text-sm font-normal text-white"
                                 style={{ width: `${widthPercent}%` }}
                             >
                                 <span className="truncate">{segment.valueText}</span>

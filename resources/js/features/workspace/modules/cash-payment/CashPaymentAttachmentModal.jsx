@@ -96,7 +96,7 @@ export default function CashPaymentAttachmentModal({
                 </div>
 
                 <div>
-                    <label className="flex h-11 w-full cursor-pointer items-center justify-center rounded-[6px] border border-brand-blue-darker bg-brand-blue-dark text-xs sm:text-sm font-medium text-white shadow-sm hover:brightness-105 active:brightness-95 transition">
+                    <label className="flex h-11 w-full cursor-pointer items-center justify-center rounded-[6px] border border-brand-blue-darker bg-brand-blue-dark text-xs sm:text-sm font-normal text-white shadow-sm hover:brightness-105 active:brightness-95 transition">
                         {uploadingDoc ? (
                             <span className="animate-pulse">Mengunggah Dokumen...</span>
                         ) : (

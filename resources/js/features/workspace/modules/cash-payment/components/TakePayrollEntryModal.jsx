@@ -166,7 +166,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                         type="button"
                         onClick={handleLanjut}
                         disabled={selectedIds.size === 0}
-                        className="inline-flex h-9 items-center justify-center rounded-[4px] bg-[#0c50a4] hover:bg-[#0a4288] disabled:bg-slate-300 disabled:cursor-not-allowed px-6 text-sm font-medium text-white shadow-sm transition active:scale-[0.98] cursor-pointer"
+                        className="inline-flex h-9 items-center justify-center rounded-[4px] bg-[#0c50a4] hover:bg-[#0a4288] disabled:bg-slate-300 disabled:cursor-not-allowed px-6 text-sm font-normal text-white shadow-sm transition active:scale-[0.98] cursor-pointer"
                     >
                         Lanjut
                     </button>

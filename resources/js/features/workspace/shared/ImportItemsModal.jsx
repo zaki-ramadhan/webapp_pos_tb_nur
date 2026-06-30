@@ -177,7 +177,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                         <p className="text-sm text-slate-500 mb-4 text-center">
                             Mendukung format Excel (.xlsx, .xls) dan CSV (.csv)
                         </p>
-                        <label className="inline-flex h-[38px] cursor-pointer items-center justify-center rounded-[4px] bg-import-action-blue px-5 text-xs sm:text-sm font-medium text-white hover:bg-blue-900 transition">
+                        <label className="inline-flex h-[38px] cursor-pointer items-center justify-center rounded-[4px] bg-import-action-blue px-5 text-xs sm:text-sm font-normal text-white hover:bg-blue-900 transition">
                             Cari File
                             <input
                                 ref={fileInputRef}
@@ -280,7 +280,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             type="button"
                             onClick={handleConfirmImport}
                             disabled={validCount === 0}
-                            className={`inline-flex h-8 items-center justify-center rounded-[4px] px-4 text-xs font-medium text-white transition ${
+                            className={`inline-flex h-8 items-center justify-center rounded-[4px] px-4 text-xs font-normal text-white transition ${
                                 validCount > 0 ? 'bg-import-action-blue hover:bg-blue-900 cursor-pointer' : 'bg-slate-300 cursor-not-allowed'
                             }`}
                         >

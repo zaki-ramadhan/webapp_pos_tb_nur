@@ -125,7 +125,7 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
                             {openingBalance.columns.map((column) => (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white`.trim()}
+                                    className={`${column.widthClassName ?? ''} px-3 text-base font-normal text-white`.trim()}
                                 >
                                     <span className="flex items-center justify-center gap-2">
                                         <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
