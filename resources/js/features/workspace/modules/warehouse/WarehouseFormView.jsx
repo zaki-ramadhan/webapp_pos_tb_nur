@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
-import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -18,58 +17,71 @@ import {
     WarehouseGeneralTab,
     WarehouseUsersTab,
 } from './WarehouseSections';
-import { buildFormValues } from './warehouseShared';
 
+function entryToFormValues(entry) {
+    return {
+        name: entry.name ?? '',
+        description: entry.description ?? '',
+        responsiblePerson: entry.responsiblePerson ?? '',
+        isDamagedWarehouse: Boolean(entry.isDamagedWarehouse),
+        inactive: Boolean(entry.inactive),
+        allUsers: entry.allUsers ?? true,
+        street: entry.street ?? '',
+        city: entry.city ?? '',
+        postalCode: entry.postalCode ?? '',
+        province: entry.province ?? '',
+        country: entry.country ?? '',
+        groupBranch: Array.isArray(entry.groupBranch) ? [...entry.groupBranch] : [],
+        users: Array.isArray(entry.users) ? [...entry.users] : [],
+    };
+}
+
+/**
+ * Form view gudang.
+ * Menerima `entry` lengkap dari WarehouseView (pola SalaryAllowance).
+ * Sync via useEffect([entry]) – tidak ada race condition async fetch.
+ */
 export default function WarehouseFormView({
     config,
+    entry,
+    isDetailMode,
     activeLevel2Tab,
     onOpenContent,
     onOpenDetail,
     onCloseDetail,
     onRefresh,
+    onPersist,
 }) {
-    const detailRow = useMemo(() => {
-        const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-        if (!recordId) {
-            return null;
-        }
-        return config.table.rows.find((row) => String(row.id) === String(recordId)) ?? null;
-    }, [activeLevel2Tab, config.table.rows]);
-    const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'warehouse-general');
-    const initialValues = useMemo(() => buildFormValues(config, detailRow), [config, detailRow]);
-    const [values, setValues] = useState(() => initialValues);
+    const [values, setValues] = useState(() => entryToFormValues(entry));
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-    const isDirty = useMemo(
-        () => JSON.stringify(values) !== JSON.stringify(initialValues),
-        [initialValues, values]
-    );
-
-    const activeTabInstanceId = activeLevel2Tab?.id;
-
+    // Sync persis seperti SalaryAllowanceFormView tapi gunakan serialized entry
+    // supaya perubahan field apapun (termasuk boolean/array) pasti ter-trigger
+    const serializedEntry = JSON.stringify(entry);
     useEffect(() => {
-        setActiveTabId(config.tabs?.[0]?.id ?? 'warehouse-general');
-        setValues(initialValues);
+        setValues(entryToFormValues(entry));
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [activeTabInstanceId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [serializedEntry]);
 
-    useFormValuesSync({
-        initialValues,
-        recordId: detailRow?.id ?? null,
-        isDirty,
-        setValues,
-    });
+    // Reset tab saat berpindah antar tab level2
+    const activeTabInstanceId = activeLevel2Tab?.id;
+    useEffect(() => {
+        setActiveTabId(config.tabs?.[0]?.id ?? 'warehouse-general');
+    }, [activeTabInstanceId, config.tabs]);
 
-    function handleChange(field, nextValue) {
-        setValues((currentValues) => ({
-            ...currentValues,
-            [field]: nextValue,
-        }));
-    }
+    const initialValues = useMemo(() => entryToFormValues(entry), [serializedEntry]);
+
+    const [hasSaved, setHasSaved] = useState(false);
+
+    const isDirty = useMemo(
+        () => !hasSaved && JSON.stringify(values) !== JSON.stringify(initialValues),
+        [values, initialValues, hasSaved],
+    );
 
     useWorkspaceDirtyRegistration({
         pageId: 'warehouse-master',
@@ -77,6 +89,11 @@ export default function WarehouseFormView({
         dirty: isDirty,
         enabled: Boolean(activeLevel2Tab?.id),
     });
+
+    function handleChange(field, nextValue) {
+        setHasSaved(false);
+        setValues((cur) => ({ ...cur, [field]: nextValue }));
+    }
 
     async function handleSave() {
         if (!values.name?.trim()) {
@@ -88,30 +105,54 @@ export default function WarehouseFormView({
         }
 
         await executeCrudFormAction({
-            loadingMessage: isDetail ? 'Sedang memperbarui gudang.' : 'Sedang menyimpan gudang.',
-            successMessage: isDetail ? 'Gudang berhasil diperbarui.' : 'Gudang berhasil dibuat.',
+            loadingMessage: isDetailMode ? 'Sedang memperbarui gudang.' : 'Sedang menyimpan gudang.',
+            successMessage: isDetailMode ? 'Gudang berhasil diperbarui.' : 'Gudang berhasil dibuat.',
             setSaving,
             setStatus,
             execute: async () => {
                 const payload = {
-                    branch_id: detailRow?.branchId ?? 1,
-                    code: isDetail ? detailRow.code : 'WH-' + values.name.trim().replace(/\s+/g, '-').toUpperCase() + '-' + Date.now(),
+                    branch_id: entry.branchId ?? 1,
+                    code: isDetailMode
+                        ? entry.code
+                        : 'WH-' + values.name.trim().replace(/\s+/g, '-').toUpperCase() + '-' + Date.now(),
                     name: values.name.trim(),
+                    description: values.description ?? '',
+                    responsible_person: values.responsiblePerson ?? '',
                     warehouse_type: values.isDamagedWarehouse ? 'damaged' : 'main',
                     is_active: !values.inactive,
+                    street: values.street ?? '',
+                    city: values.city ?? '',
+                    postal_code: values.postalCode ?? '',
+                    province: values.province ?? '',
+                    country: values.country ?? '',
+                    all_users: values.allUsers,
                 };
 
-                const response = isDetail && detailRow?.id
-                    ? await updateBackendResource('warehouses', detailRow.id, payload)
+                const response = isDetailMode && entry.id
+                    ? await updateBackendResource('warehouses', entry.id, payload)
                     : await createBackendResource('warehouses', payload);
 
                 return response?.data ?? null;
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
+                setHasSaved(true);
+                if (isDetailMode && record && activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                tabId: activeLevel2Tab.id,
+                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                            },
+                        })
+                    );
+                }
                 await onRefresh?.();
-
-                if (!isDetail && record?.id) {
+                if (record) {
+                    onPersist?.(record);
+                }
+                if (!isDetailMode && record?.id) {
                     onOpenDetail?.({
                         recordId: String(record.id),
                         label: record.name ?? values.name.trim(),
@@ -123,28 +164,23 @@ export default function WarehouseFormView({
     }
 
     function requestDelete() {
-        if (!detailRow?.id || saving) {
-            return;
-        }
+        if (!entry.id || saving) return;
         setDeleteConfirmationOpen(true);
     }
 
     async function handleDelete() {
-        if (!detailRow?.id) {
-            return;
-        }
-
+        if (!entry.id) return;
         await executeCrudFormAction({
             loadingMessage: 'Sedang menghapus gudang.',
             successMessage: 'Gudang berhasil dihapus.',
             setSaving,
             setStatus,
             onStart: () => setDeleteConfirmationOpen(false),
-            execute: () => deleteBackendResource('warehouses', detailRow.id),
+            execute: () => deleteBackendResource('warehouses', entry.id),
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(detailRow.id);
+                onCloseDetail?.(entry.id);
                 onOpenContent?.();
             },
         });
@@ -163,7 +199,7 @@ export default function WarehouseFormView({
             saveDisabled={saving || !isDirty}
             onSave={handleSave}
             actionsSlot={
-                isDetail && config.deleteLabel ? (
+                isDetailMode && config.deleteLabel ? (
                     <DockActionButton
                         label={saving ? 'Memproses...' : config.deleteLabel}
                         tone="danger"
@@ -177,9 +213,9 @@ export default function WarehouseFormView({
             {activeTabId === 'warehouse-address' ? (
                 <WarehouseAddressTab config={config} values={values} onChange={handleChange} />
             ) : activeTabId === 'warehouse-users' ? (
-                <WarehouseUsersTab config={config} values={values} onChange={handleChange} isDetail={isDetail} />
+                <WarehouseUsersTab config={config} values={values} onChange={handleChange} isDetail={isDetailMode} />
             ) : (
-                <WarehouseGeneralTab config={config} values={values} onChange={handleChange} isDetail={isDetail} />
+                <WarehouseGeneralTab config={config} values={values} onChange={handleChange} isDetail={isDetailMode} />
             )}
 
             <ConfirmationModal
@@ -196,4 +232,3 @@ export default function WarehouseFormView({
         </ModuleFormTemplate>
     );
 }
-

@@ -98,6 +98,7 @@ export default function EmployeeView({
         />
     ) : (
         <EmployeeFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             pageId={page.id}
             form={resolvedPage.form}
             tableRows={resolvedPage.table?.rows ?? []}

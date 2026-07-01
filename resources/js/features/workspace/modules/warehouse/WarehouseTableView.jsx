@@ -9,6 +9,8 @@ export default function WarehouseTableView({ config, onCreate, onOpenDetail }) {
             exportTitle="Laporan Daftar Gudang"
             onCreate={onCreate}
             onOpenDetail={onOpenDetail}
+            disableImport={true}
+            disableExport={true}
         />
     );
 }

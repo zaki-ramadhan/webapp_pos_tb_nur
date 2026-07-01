@@ -85,6 +85,8 @@ export function useWorkspaceDirtyRegistration({
             clearTabDirty(pageId, tabId);
         }
 
-        return undefined;
+        return () => {
+            clearTabDirty(pageId, tabId);
+        };
     }, [clearTabDirty, dirty, enabled, pageId, setTabDirty, tabId]);
 }

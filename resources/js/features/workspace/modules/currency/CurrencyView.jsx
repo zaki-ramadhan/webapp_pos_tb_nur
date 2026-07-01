@@ -41,6 +41,7 @@ export default function CurrencyView({ page, mode, activeLevel2Tab, onOpenConten
         />
     ) : (
         <CurrencyFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             page={resolvedPage}
             activeLevel2Tab={activeLevel2Tab}
             tableRows={mappedRows}

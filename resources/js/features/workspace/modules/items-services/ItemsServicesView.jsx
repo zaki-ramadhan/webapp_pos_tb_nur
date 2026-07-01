@@ -89,6 +89,7 @@ export default function ItemsServicesView({
         />
     ) : (
         <ItemsServicesFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             pageId={page.id}
             config={config}
             activeLevel2Tab={activeLevel2Tab}

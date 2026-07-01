@@ -12,8 +12,16 @@ class Warehouse extends DomainModel
         'branch_id',
         'code',
         'name',
+        'description',
+        'responsible_person',
         'warehouse_type',
         'is_active',
+        'street',
+        'city',
+        'postal_code',
+        'province',
+        'country',
+        'all_users',
     ];
 
     protected array $searchable = ['code', 'name', 'warehouse_type'];
@@ -22,6 +30,7 @@ class Warehouse extends DomainModel
     {
         return [
             'is_active' => 'boolean',
+            'all_users' => 'boolean',
         ];
     }
 

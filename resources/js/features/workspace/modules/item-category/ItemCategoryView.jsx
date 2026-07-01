@@ -60,6 +60,7 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, onOpenCo
         <ItemCategoryTableView page={{ itemCategory: config }} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
     ) : (
         <ItemCategoryFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             page={{ itemCategory: config }}
             activeLevel2Tab={activeLevel2Tab}
             onOpenContent={onOpenContent}

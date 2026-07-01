@@ -68,6 +68,7 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
         />
     ) : (
         <AccountsFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             config={config}
             backendRows={backendRows}
             activeLevel2Tab={activeLevel2Tab}

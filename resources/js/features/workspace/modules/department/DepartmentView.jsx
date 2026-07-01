@@ -90,6 +90,7 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenCont
         />
     ) : (
         <DepartmentFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             pageId={page.id}
             form={resolvedPage.form}
             tableRows={resolvedPage.table?.rows ?? []}

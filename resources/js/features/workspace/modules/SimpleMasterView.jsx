@@ -61,6 +61,7 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, onOpenCo
         <SimpleMasterTableView table={resolvedPage.table} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
     ) : (
         <SimpleMasterFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             page={resolvedPage}
             activeLevel2Tab={activeLevel2Tab}
             backendConfig={backendConfig}
