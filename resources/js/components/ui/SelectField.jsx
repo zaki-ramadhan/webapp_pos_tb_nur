@@ -187,7 +187,7 @@ export default function SelectField({
                     </span>
                     <ChevronDown
                         aria-hidden="true"
-                        className={`h-4 w-4 shrink-0 transition-colors duration-150 ${disabled ? 'text-gray-400' : 'text-slate-500 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName.split(' ').filter(c => !c.startsWith('mr-') && !c.startsWith('mx-')).join(' ')}`.trim()}
+                        className={`h-4 w-4 shrink-0 transition-[colors,transform] duration-150 ${open ? 'rotate-180' : ''} ${disabled ? 'text-gray-400' : 'text-slate-500 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName.split(' ').filter(c => !c.startsWith('mr-') && !c.startsWith('mx-')).join(' ')}`.trim()}
                         strokeWidth={2.2}
                         absoluteStrokeWidth
                     />
@@ -219,12 +219,12 @@ export default function SelectField({
                                 aria-selected={isSelected}
                                 disabled={option.disabled}
                                 onClick={() => handleSelect(option.value)}
-                                className={`block w-full px-4 py-2.5 text-left text-xs sm:text-sm transition-colors duration-100 ${
+                                className={`block w-full border-b border-slate-200 last:border-b-0 px-4 py-2.5 text-left text-xs sm:text-sm transition-colors duration-100 ${
                                     isSelected 
-                                        ? 'bg-workspace-hover-bg font-medium text-brand-blue' 
+                                        ? 'bg-workspace-hover-bg font-normal text-brand-blue' 
                                         : isHighlighted 
-                                            ? 'bg-slate-50 text-slate-900 font-medium' 
-                                            : 'text-slate-700 hover:bg-slate-50'
+                                            ? 'bg-ui-bg-hover text-slate-900 font-normal' 
+                                            : 'text-slate-700 hover:bg-ui-bg-hover'
                                 } ${option.disabled ? 'opacity-50 cursor-default pointer-events-none' : 'cursor-pointer'}`.trim()}
                             >
                                 {option.label}

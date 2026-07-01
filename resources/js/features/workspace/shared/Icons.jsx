@@ -32,6 +32,7 @@ import {
     Trash2,
     Upload,
     ArrowRightLeft,
+    Calculator,
     X,
 } from 'lucide-react';
 
@@ -178,4 +179,8 @@ export function LogoutIcon({ className = 'h-4 w-4' }) {
 
 export function ArrowRightLeftIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={ArrowRightLeft} className={className} />;
+}
+
+export function CalculatorIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={Calculator} className={className} />;
 }

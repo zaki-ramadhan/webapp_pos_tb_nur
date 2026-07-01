@@ -42,3 +42,9 @@ export function finishCrudLoadingToast(toastId, message = 'Data berhasil disimpa
         dismissToast(toastId);
     }
 }
+
+export function dismissCrudLoadingToast(toastId) {
+    if (toastId) {
+        dismissToast(toastId);
+    }
+}

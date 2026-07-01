@@ -122,7 +122,23 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                       searchStr.includes('tahun') ||
                       searchStr.includes('bulan') ||
                       searchStr.includes('hari') ||
-                      searchStr.includes('umur');
+                      searchStr.includes('umur') ||
+                      searchStr.includes('length') ||
+                      searchStr.includes('width') ||
+                      searchStr.includes('height') ||
+                      searchStr.includes('weight') ||
+                      searchStr.includes('panjang') ||
+                      searchStr.includes('lebar') ||
+                      searchStr.includes('tinggi') ||
+                      searchStr.includes('berat') ||
+                      searchStr.includes('dimensi') ||
+                      searchStr.includes('dimension') ||
+                      searchStr.includes('ukuran') ||
+                      searchStr.includes('size') ||
+                      searchStr.includes('volume') ||
+                      searchStr.includes('jarak') ||
+                      searchStr.includes('tebal') ||
+                      searchStr.includes('thickness');
 
     const isCurrency = searchStr.includes('price') ||
                        searchStr.includes('amount') ||
@@ -134,6 +150,14 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                        searchStr.includes('piutang') ||
                        searchStr.includes('utang') ||
                        searchStr.includes('nilai') ||
+                       searchStr.includes('length') ||
+                       searchStr.includes('width') ||
+                       searchStr.includes('height') ||
+                       searchStr.includes('weight') ||
+                       searchStr.includes('panjang') ||
+                       searchStr.includes('lebar') ||
+                       searchStr.includes('tinggi') ||
+                       searchStr.includes('berat') ||
                        prefixStr === 'rp';
 
     if (isCurrency) {
@@ -377,6 +401,36 @@ export default function TextInput({
                 return;
             }
 
+            if (event.key === '0') {
+                const val = event.target.value;
+                const start = event.target.selectionStart;
+                const end = event.target.selectionEnd;
+
+                if (!(start === 0 && end === val.length)) {
+                    const isNegative = val.startsWith('-');
+                    const startOfInt = isNegative ? 1 : 0;
+                    const unsignedVal = isNegative ? val.slice(1) : val;
+                    const parts = unsignedVal.split(/[,.]/);
+                    const integerPart = parts[0];
+
+                    if (start === startOfInt && integerPart.length > 0) {
+                        event.preventDefault();
+                        return;
+                    }
+
+                    if (integerPart === '0') {
+                        const decimalIndex = val.indexOf(',');
+                        const dotIndex = val.indexOf('.');
+                        const separatorIndex = decimalIndex !== -1 ? decimalIndex : dotIndex;
+
+                        if (separatorIndex === -1 || start <= separatorIndex) {
+                            event.preventDefault();
+                            return;
+                        }
+                    }
+                }
+            }
+
             const isDigit = /^[0-9]$/.test(event.key);
             const isSeparator = event.key === '.' || event.key === ',';
             const isAllowedSeparator = isAccountCode ? event.key === '.' : isSeparator;
@@ -423,7 +477,23 @@ export default function TextInput({
                           searchStr.includes('tahun') ||
                           searchStr.includes('bulan') ||
                           searchStr.includes('hari') ||
-                          searchStr.includes('umur');
+                          searchStr.includes('umur') ||
+                          searchStr.includes('length') ||
+                          searchStr.includes('width') ||
+                          searchStr.includes('height') ||
+                          searchStr.includes('weight') ||
+                          searchStr.includes('panjang') ||
+                          searchStr.includes('lebar') ||
+                          searchStr.includes('tinggi') ||
+                          searchStr.includes('berat') ||
+                          searchStr.includes('dimensi') ||
+                          searchStr.includes('dimension') ||
+                          searchStr.includes('ukuran') ||
+                          searchStr.includes('size') ||
+                          searchStr.includes('volume') ||
+                          searchStr.includes('jarak') ||
+                          searchStr.includes('tebal') ||
+                          searchStr.includes('thickness');
 
         if (isNumeric) {
             const numVal = parseFloat(val);

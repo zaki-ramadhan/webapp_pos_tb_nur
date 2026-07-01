@@ -148,7 +148,7 @@ export default function PortalDropdown({
                     ref={panelRef}
                     style={positionStyle}
                     data-portal-dropdown="true"
-                    className={`flex flex-col min-h-0 overflow-hidden rounded-[3px] border border-chart-border bg-white shadow-md ${className}`.trim()}
+                    className={`flex flex-col min-h-0 overflow-hidden rounded-[6px] border border-slate-400 bg-white shadow-[0_4px_12px_rgba(15,23,42,0.15),0_1px_3px_rgba(15,23,42,0.08)] ${className}`.trim()}
                 >
                     <div className={`flex flex-col overflow-y-auto w-full min-h-0 ${panelClassName}`.trim()}>
                         {children}

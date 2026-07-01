@@ -7,7 +7,8 @@ export function LookupDropdownSurface({ className = '', children, maxHeightLimit
             open={true}
             onClose={onClose}
             maxHeightLimit={maxHeightLimit}
-            className={`!rounded-[3px] ${className}`.trim()}
+            side="auto"
+            className={className}
             anchorRef={anchorRef}
         >
             {children}

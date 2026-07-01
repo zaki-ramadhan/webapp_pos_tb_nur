@@ -1,5 +1,6 @@
 import {
     finishCrudLoadingToast,
+    dismissCrudLoadingToast,
     showCrudErrorToast,
     showCrudLoadingToast,
     showCrudSuccessToast,
@@ -83,7 +84,7 @@ export async function executeCrudFormAction({
             dispatchValidationErrors(flat);
         }
 
-        finishCrudLoadingToast(loadingToastId);
+        dismissCrudLoadingToast(loadingToastId);
         setStatus?.({
             tone: 'error',
             message: errorMessage,

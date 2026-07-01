@@ -92,7 +92,7 @@ export default function Tooltip({
         ? createPortal(
               <span
                   role="tooltip"
-                  className={`pointer-events-none fixed z-[120] max-w-[280px] whitespace-normal rounded-[8px] bg-section-tab-neutral-text px-3 py-2 text-xs font-medium leading-normal text-white shadow-tooltip ${portalSideClasses[side]} ${tooltipClassName}`.trim()}
+                  className={`pointer-events-none fixed z-[120] max-w-[280px] whitespace-normal rounded-[8px] bg-section-tab-neutral-text px-3 py-2 text-xs font-normal leading-normal text-white shadow-tooltip ${portalSideClasses[side]} ${tooltipClassName}`.trim()}
                   style={portalPosition}
               >
                   {content}
@@ -119,7 +119,7 @@ export default function Tooltip({
             {portal ? null : (
                 <span
                     role="tooltip"
-                    className={`pointer-events-none absolute z-40 max-w-[280px] whitespace-normal rounded-[8px] bg-section-tab-neutral-text px-3 py-2 text-xs font-medium leading-normal text-white opacity-0 shadow-panel-primary transition duration-150 group-hover:opacity-100 group-focus-within:opacity-100 ${sideClasses[side]} ${tooltipClassName}`.trim()}
+                    className={`pointer-events-none absolute z-40 max-w-[280px] whitespace-normal rounded-[8px] bg-section-tab-neutral-text px-3 py-2 text-xs font-normal leading-normal text-white opacity-0 shadow-panel-primary transition duration-150 group-hover:opacity-100 group-focus-within:opacity-100 ${sideClasses[side]} ${tooltipClassName}`.trim()}
                 >
                     {content}
                     <span

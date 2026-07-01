@@ -159,7 +159,7 @@ export default function ReferenceLookupInput({
                 onMouseDown={focusInput}
                 className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''}`.trim()}
             >
-                <div className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5">
+                <div className="flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5">
                     {selectedLabels.length ? (
                         selectedLabels.map((item) => (
                             <span
@@ -228,13 +228,13 @@ export default function ReferenceLookupInput({
                                     key={item.id ?? getOptionLabel(item)}
                                     type="button"
                                     onClick={() => handleSelect(item)}
-                                    className="flex w-full items-start gap-3 border-b border-border-ui-border-lightest px-3 py-3 text-left transition last:border-b-0 hover:bg-ui-bg-hover"
+                                    className="flex w-full items-start gap-3 border-b border-slate-200 px-3 py-3 text-left transition last:border-b-0 odd:bg-white even:bg-[#fafbfc] hover:!bg-ui-bg-hover"
                                 >
                                     {renderOption ? (
                                         renderOption(item)
                                     ) : (
                                         <div className="min-w-0">
-                                            <div className="truncate text-xs sm:text-sm font-medium text-text-workspace-dark">{getOptionLabel(item)}</div>
+                                            <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">{getOptionLabel(item)}</div>
                                         </div>
                                     )}
                                 </button>

@@ -16,10 +16,7 @@ const inactivePreferenceChecklistItemIds = new Set([
     'department-center',
 ]);
 
-const inactiveWorkspaceControlIds = new Set([
-    'item-brand-field',
-    'item-brand-filter',
-]);
+const inactiveWorkspaceControlIds = new Set([]);
 
 const pageToFeatureMap = {
     // Fitur dasar

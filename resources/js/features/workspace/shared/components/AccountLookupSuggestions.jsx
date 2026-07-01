@@ -86,7 +86,7 @@ export default function AccountLookupSuggestions({
                                 key={record.id}
                                 type="button"
                                 onClick={() => onSelectAccount(record, label)}
-                                className={`flex w-full items-start gap-3 border-t border-border-ui-border-lightest px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover ${selected ? 'bg-brand-blue-lightest' : 'bg-white'}`.trim()}
+                                className={`flex w-full items-start gap-3 border-t border-slate-200 px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
                                 <span className="min-w-0 flex-1">
                                     <span className="block truncate text-sm font-normal text-brand-dark">{title}</span>
