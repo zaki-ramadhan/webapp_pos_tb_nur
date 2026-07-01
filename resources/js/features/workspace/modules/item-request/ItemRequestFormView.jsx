@@ -206,6 +206,7 @@ export default function ItemRequestFormView({
                 })),
             onSelectItem: () =>
                 selectLookup('products', 'barang', (record) => applyItemUpdate(record)),
+            onSelectItemSuggestion: (record) => applyItemUpdate(record),
             onEditItem: (item) => applyItemUpdate(null, item),
             onImportClick: () => setImportModalOpen(true),
             onImportItems: (importedItems) => {

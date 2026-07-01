@@ -48,7 +48,7 @@ export function TransactionDataTable({
     const visibleColumns = useMemo(() => {
         const filtered = cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
         if (rows.length === 0) {
-            return filtered.filter(col => col.kind !== 'spacer' && col.id !== 'spacer' && col.id !== 'statusIcon' && col.id !== 'number');
+            return filtered.filter(col => col.kind !== 'spacer' && col.id !== 'spacer' && col.id !== 'statusIcon');
         }
         return filtered;
     }, [cleanedColumns, visibleColumnIds, rows.length]);

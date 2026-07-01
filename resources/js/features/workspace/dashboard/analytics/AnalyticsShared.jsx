@@ -4,7 +4,7 @@ export function WidgetSection({ title, caption = null, collapsible = false, expa
     return (
         <section className="min-w-0 rounded-[8px] border border-ui-border-light bg-white px-3 py-3 shadow-analytics-light">
             <div 
-                className={`border-b border-border-ui-border-lightest pb-2.5 ${collapsible ? 'cursor-pointer select-none hover:bg-slate-50/50 transition-colors' : ''}`}
+                className={`border-b border-ui-border-light pb-2.5 ${collapsible ? 'cursor-pointer select-none hover:bg-slate-50/50 transition-colors' : ''}`}
                 onClick={collapsible && onToggle ? onToggle : undefined}
             >
                 <div className="flex items-center justify-between gap-3">

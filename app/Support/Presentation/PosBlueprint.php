@@ -342,7 +342,7 @@ final class PosBlueprint
                 // self::navItem('work-completion', 'Penyelesaian Pesanan', 'stock', 'green'),
                 // self::navItem('stock-opname-order', 'Perintah Stok Opname', 'expense', 'green'),
                 // self::navItem('stock-opname-result', 'Hasil Stok Opname', 'stock', 'green'),
-                self::navItem('items-services', 'Barang dan Jasa', 'box', 'blue'),
+                self::navItem('items-services', 'Barang & Jasa', 'box', 'blue'),
                 self::navItem('warehouse-master', 'Gudang', 'warehouse', 'blue'),
                 self::navItem('item-unit', 'Satuan Barang', 'unit', 'blue'),
                 self::navItem('item-category', 'Kategori Barang', 'category', 'blue'),

@@ -112,11 +112,21 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                 {isDetail ? (
                                     <TextInput
                                         value={values.documentNumber}
-                                        readOnly
-                                        trailing={<span className="text-2xl font-semibold text-brand-dark">×</span>}
+                                        onChange={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                documentNumber: event.target.value,
+                                            }))
+                                        }
+                                        onBlur={(event) =>
+                                            setValues((current) => ({
+                                                ...current,
+                                                documentNumber: event.target.value.trim(),
+                                            }))
+                                        }
+                                        maxLength={120}
                                         className="h-[40px] rounded-[4px] border-ui-border w-full"
                                         inputClassName="text-xs sm:text-sm text-brand-dark"
-                                        trailingClassName="px-3"
                                     />
                                 ) : (
                                     <SelectField
@@ -167,53 +177,14 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                     </div>
                 </div>
 
-                {/* Right Column */}
                 <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
                     <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                         <div className="flex items-center justify-start gap-4">
                             <TransactionFieldLabel label={config.labels.documentNumber} required />
-                            {!isDetail && (
-                                <TransactionSwitch
-                                    checked={values.autoNumber}
-                                    onChange={(nextValue) =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            autoNumber: nextValue,
-                                        }))
-                                    }
-                                />
-                            )}
                         </div>
 
                         <div className="max-w-[282px] w-full justify-self-end">
                             {isDetail ? (
-                                <TextInput
-                                    value={values.documentNumber}
-                                    readOnly
-                                    trailing={<span className="text-2xl font-semibold text-brand-dark">×</span>}
-                                    className="h-[40px] rounded-[4px] border-ui-border w-full"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                                    trailingClassName="px-3"
-                                />
-                            ) : values.autoNumber ? (
-                                <SelectField
-                                    value={values.numberingType}
-                                    onChange={(event) =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            numberingType: event.target.value,
-                                        }))
-                                    }
-                                    className="h-[40px] rounded-[4px] border-ui-border w-full"
-                                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                                >
-                                    {config.numberingOptions.map((option) => (
-                                        <option key={option} value={option}>
-                                            {option}
-                                        </option>
-                                    ))}
-                                </SelectField>
-                            ) : (
                                 <TextInput
                                     value={values.documentNumber}
                                     onChange={(event) =>
@@ -232,6 +203,24 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                     className="h-[40px] rounded-[4px] border-ui-border w-full"
                                     inputClassName="text-xs sm:text-sm text-brand-dark"
                                 />
+                            ) : (
+                                <SelectField
+                                    value={values.numberingType}
+                                    onChange={(event) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            numberingType: event.target.value,
+                                        }))
+                                    }
+                                    className="h-[40px] rounded-[4px] border-ui-border w-full"
+                                    selectClassName="text-xs sm:text-sm text-brand-dark"
+                                >
+                                    {config.numberingOptions.map((option) => (
+                                        <option key={option} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </SelectField>
                             )}
                         </div>
                     </div>

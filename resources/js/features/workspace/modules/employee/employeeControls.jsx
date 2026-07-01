@@ -128,7 +128,7 @@ export function SuggestionTextInput({
                                         key={option}
                                         type="button"
                                         onClick={() => handleSelect(option)}
-                                        className={`block w-full border-t border-border-ui-border-lightest px-4 py-3 text-left text-sm text-brand-dark transition first:border-t-0 hover:bg-workspace-hover-bg ${selected ? 'bg-brand-blue-lightest font-medium' : 'bg-white'}`.trim()}
+                                        className={`block w-full border-t border-slate-300 px-4 py-3 text-left text-sm text-brand-dark transition first:border-t-0 hover:bg-workspace-hover-bg odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest font-medium' : ''}`.trim()}
                                     >
                                         {option}
                                     </button>

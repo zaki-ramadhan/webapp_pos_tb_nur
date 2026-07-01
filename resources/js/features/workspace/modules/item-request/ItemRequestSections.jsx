@@ -9,53 +9,37 @@ import {
     TransactionFieldLabel,
     TransactionSectionHeading,
     TransactionSwitch,
-    TransactionToolbarIconButton,
     TransactionToolbarSplitButton,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
+    CloseIcon,
     SearchIcon,
     TableActionIcon,
 } from '@/features/workspace/shared/Icons';
-
-function FormFieldRow({ label, required = false, children, labelClassName = '' }) {
-    return (
-        <div className="grid gap-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-            <TransactionFieldLabel label={label} required={required} className={labelClassName} />
-            <div>{children}</div>
-        </div>
-    );
-}
-
-function ItemRequestHeaderActions({ config }) {
-    return (
-        <div className="flex flex-wrap items-center justify-end gap-2">
-            <button
-                type="button"
-                className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
-            >
-                {config.takeButtonLabel}
-            </button>
-        </div>
-    );
-}
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
 export function ItemRequestFormHeader({ config, values, setValues, isDetail, handlers = {} }) {
     return (
-        <div className="px-4 pt-4 pb-0">
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] xl:items-start">
-                <div className="space-y-3">
-                    <FormFieldRow label={config.labels.requestDate} required>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.requestDate} required htmlFor="requestDate" />
+                    <div className="max-w-[320px] w-full">
                         <TransactionDateInput
+                            id="requestDate"
                             value={values.requestDate}
                             onChange={(nextValue) => setValues((current) => ({ ...current, requestDate: nextValue }))}
-                            className="max-w-[280px]"
                         />
-                    </FormFieldRow>
+                    </div>
+                </div>
 
-                    <FormFieldRow label={config.labels.requestType}>
+                <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                    <TransactionFieldLabel label={config.labels.requestType} required htmlFor="requestType" />
+                    <div className="max-w-[320px] w-full">
                         <SelectField
+                            id="requestType"
                             value={values.requestType}
                             onChange={(event) =>
                                 setValues((current) => ({
@@ -63,7 +47,7 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                     requestType: event.target.value,
                                 }))
                             }
-                            className="h-[40px] max-w-[280px] rounded-[4px] border-ui-border"
+                            className="h-[40px] rounded-[4px] border-ui-border"
                             selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
                             {config.requestTypeOptions.map((option) => (
@@ -72,86 +56,59 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
                                 </option>
                             ))}
                         </SelectField>
-                    </FormFieldRow>
+                    </div>
                 </div>
+            </div>
 
-                <div className="space-y-3">
-                    {isDetail ? (
-                        <div className="grid gap-3 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                            <div className="flex items-center justify-start sm:justify-end">
-                                <TransactionFieldLabel label={config.labels.documentNumber} required className="whitespace-nowrap sm:text-right" />
-                            </div>
-                            <div className="flex sm:justify-end">
-                                <TextInput
-                                    value={values.documentNumber}
-                                    readOnly
-                                    trailing={<span className="text-2xl font-semibold text-brand-dark">×</span>}
-                                    className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                                    trailingClassName="px-3"
-                                />
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="grid gap-3 sm:grid-cols-[230px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                            <div className="flex items-center justify-start gap-4 sm:justify-end">
-                                <TransactionFieldLabel label={config.labels.documentNumber} required className="whitespace-nowrap" />
-                                <TransactionSwitch
-                                    checked={values.autoNumber}
-                                    onChange={(nextValue) =>
-                                        setValues((current) => ({
-                                            ...current,
-                                            autoNumber: nextValue,
-                                        }))
-                                    }
-                                />
-                            </div>
+            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
+                <div className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] items-center gap-x-4 w-full">
+                    <div className="flex items-center justify-start gap-4">
+                        <TransactionFieldLabel label={config.labels.documentNumber} required htmlFor="documentNumber" />
+                    </div>
 
-                            <div className="flex sm:justify-end">
-                                {values.autoNumber ? (
-                                    <SelectField
-                                        value={values.numberingType}
-                                        onChange={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                numberingType: event.target.value,
-                                            }))
-                                        }
-                                        className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
-                                        selectClassName="text-xs sm:text-sm text-brand-dark"
-                                    >
-                                        {config.numberingOptions.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        ))}
-                                    </SelectField>
-                                ) : (
-                                    <TextInput
-                                        value={values.documentNumber}
-                                        onChange={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                documentNumber: event.target.value,
-                                            }))
-                                        }
-                                        onBlur={(event) =>
-                                            setValues((current) => ({
-                                                ...current,
-                                                documentNumber: event.target.value.trim(),
-                                            }))
-                                        }
-                                        maxLength={120}
-                                        className="h-[40px] rounded-[4px] border-ui-border max-w-[282px] w-full"
-                                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="flex sm:justify-end">
-                        <ItemRequestHeaderActions config={config} />
+                    <div className="max-w-[320px] w-full justify-self-end">
+                        {isDetail ? (
+                            <TextInput
+                                id="documentNumber"
+                                value={values.documentNumber}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value,
+                                    }))
+                                }
+                                onBlur={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        documentNumber: event.target.value.trim(),
+                                    }))
+                                }
+                                maxLength={120}
+                                trailing={<CloseIcon className="h-4 w-4 text-brand-dark" />}
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                                trailingClassName="px-3"
+                            />
+                        ) : (
+                            <SelectField
+                                id="documentNumber"
+                                value={values.numberingType}
+                                onChange={(event) =>
+                                    setValues((current) => ({
+                                        ...current,
+                                        numberingType: event.target.value,
+                                    }))
+                                }
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                selectClassName="text-xs sm:text-sm text-brand-dark"
+                            >
+                                {config.numberingOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </SelectField>
+                        )}
                     </div>
                 </div>
             </div>
@@ -175,32 +132,25 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
         );
     }, [values.itemSearch, values.items]);
 
-    // Satukan search input dan tombol aksi di sebelah kiri
     const customSearchInput = (
         <div className="flex gap-2 w-full items-center">
-            <div className="min-w-0 flex-1">
-                <input
-                    type="text"
-                    value={values.itemSearch || ''}
-                    onChange={(event) =>
-                        setValues((current) => ({
-                            ...current,
-                            itemSearch: event.target.value,
-                        }))
-                    }
-                    placeholder={config.detailSearchPlaceholder}
-                    className="h-[40px] w-full rounded-[4px] border border-ui-border px-3.5 text-xs sm:text-sm text-brand-dark outline-none focus:border-brand-blue-border"
-                />
-            </div>
-            {!isDetail ? (
-                <button
-                    type="button"
-                    onClick={handlers.onImportClick}
-                    className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent hover:bg-brand-blue-lightest transition shrink-0 cursor-pointer"
-                >
-                    Impor Excel/CSV
-                </button>
-            ) : (
+            {!isDetail && (
+                <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
+                    <AccountLookupTextInput
+                        id="itemRequestItemSearch"
+                        resource="products"
+                        value={values.itemSearch}
+                        placeholder={config.detailSearchPlaceholder}
+                        searchLabel="Cari barang atau jasa"
+                        onSelectAccount={(record, label) => {
+                            if (record) {
+                                handlers.onSelectItemSuggestion?.(record, label);
+                            }
+                        }}
+                    />
+                </div>
+            )}
+            {isDetail && (
                 <TransactionToolbarSplitButton
                     label="Opsi rincian barang"
                     icon={<TableActionIcon className="h-4.5 w-4.5" />}

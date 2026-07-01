@@ -1,6 +1,6 @@
 import TextareaField from '@/components/ui/TextareaField';
 import {
-    AccountLookupField,
+    AccountLookupTextInput,
 } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import {
@@ -20,29 +20,24 @@ export default function InventoryAdjustmentInfoSection({ pageId, config, values,
                     {!isPriceAdjustment && (
                         <>
                             <TransactionFieldLabel label={config.labels.adjustmentAccount} />
-                            <AccountLookupField
-                                values={values.adjustmentAccount}
-                                placeholder="Cari/Pilih..."
-                                searchLabel="Cari akun penyesuaian"
-                                dialogTitle="Pilih Akun Penyesuaian"
-                                onRemove={(accountValue) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        adjustmentAccount: current.adjustmentAccount.filter((item) => item !== accountValue),
-                                        __adjustmentAccountId: current.adjustmentAccount.filter((item) => item !== accountValue).length
-                                            ? current.__adjustmentAccountId
-                                            : null,
-                                    }))
-                                }
-                                onSelectAccount={(record, label) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        adjustmentAccount: label ? [label] : [],
-                                        __adjustmentAccountId: record?.id ?? null,
-                                    }))
-                                }
-                                heightClassName="h-[34px]"
-                            />
+                            <div className="w-full max-w-[282px]">
+                                <AccountLookupTextInput
+                                    id="inventoryAdjustmentAccount"
+                                    value={values.adjustmentAccount?.[0] ?? ''}
+                                    placeholder="Cari/Pilih..."
+                                    searchLabel="Cari akun penyesuaian"
+                                    dialogTitle="Pilih Akun Penyesuaian"
+                                    onSelectAccount={(record, label) =>
+                                        setValues((current) => ({
+                                            ...current,
+                                            adjustmentAccount: label ? [label] : [],
+                                            __adjustmentAccountId: record?.id ?? null,
+                                        }))
+                                    }
+                                    className="h-[40px] rounded-[4px] border-ui-border"
+                                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                                />
+                            </div>
                         </>
                     )}
 

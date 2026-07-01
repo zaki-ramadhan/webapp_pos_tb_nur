@@ -83,7 +83,7 @@ export default function InventoryAdjustmentDetailsSection({
 
     const customSearchInput = (
         <div className="flex gap-2 w-full items-center">
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 w-full sm:max-w-[320px] md:max-w-[380px]">
                 {isDetail ? (
                     <TextInput
                         value={values.itemSearch || ''}
@@ -173,7 +173,7 @@ export default function InventoryAdjustmentDetailsSection({
                 onRowClick={isDetail ? onOpenItem : undefined}
                 getRowClassName={() => (isDetail ? 'cursor-pointer hover:bg-workspace-hover-bg' : '')}
                 searchInput={customSearchInput}
-                searchWrapperClassName={isPriceAdjustment ? 'sm:max-w-[552px]' : 'sm:max-w-[380px]'}
+                searchWrapperClassName="w-full sm:max-w-none flex-1"
             />
 
             <InventoryAdjustmentImportModal

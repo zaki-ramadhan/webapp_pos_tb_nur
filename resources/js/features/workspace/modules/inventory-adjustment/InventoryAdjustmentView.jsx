@@ -43,9 +43,16 @@ export default function InventoryAdjustmentView({
         enabled: Boolean(backendConfig),
     });
     const pageConfig = page.inventoryAdjustment ?? page.priceAdjustment;
+    const isPriceAdjustment = page.id === 'price-adjustment';
     const config = useMemo(
         () => {
             const baseConfig = buildInventoryAdjustmentConfig(pageConfig);
+
+            baseConfig.labels = {
+                ...baseConfig.labels,
+                date: baseConfig.labels.date || 'Tanggal',
+                documentNumber: isPriceAdjustment ? (baseConfig.labels.documentNumber || 'Nomor #') : 'No Penyesuaian #',
+            };
 
             if (!backendConfig) {
                 return baseConfig;
@@ -125,7 +132,8 @@ export default function InventoryAdjustmentView({
                     filters: dynamicFilters,
                     pageValue: total.toLocaleString('id-ID'),
                     loading,
-                    refreshLabel: loading ? 'Memuat data...' : baseConfig.table.refreshLabel,
+                    refreshLabel: loading ? 'Memuat data...' : (baseConfig.table.refreshLabel || 'Muat ulang'),
+                    createLabel: baseConfig.table.createLabel || 'Tambah Penyesuaian',
                     emptyLabel: error || 'Belum ada data',
                     onRefresh: reload,
                     pagination: {

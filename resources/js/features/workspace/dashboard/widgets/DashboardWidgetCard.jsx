@@ -43,7 +43,7 @@ export default function DashboardWidgetCard({
             description: 'Widget ini menggunakan algoritma asosiasi penjualan (Apriori) dan klasifikasi omzet produk (ABC). Datanya diinput melalui:',
             sources: [
                 { pageId: 'sales-invoice', label: 'Faktur Penjualan' },
-                { pageId: 'items-services', label: 'Barang dan Jasa' },
+                { pageId: 'items-services', label: 'Barang & Jasa' },
             ]
         },
         'recent-activity': { pageId: 'activity-log', label: 'Log Aktivitas' },
@@ -79,7 +79,7 @@ export default function DashboardWidgetCard({
         'sales-summary': { pageId: 'sales-invoice', label: 'Faktur Penjualan' },
         'purchase-summary': { pageId: 'purchase-invoice', label: 'Faktur Pembelian' },
         'sales-team-performance': { pageId: 'employees', label: 'Karyawan' },
-        'top-products': { pageId: 'items-services', label: 'Barang dan Jasa' },
+        'top-products': { pageId: 'items-services', label: 'Barang & Jasa' },
         'overdue-activity': {
             title: 'Kegiatan Terlewat',
             description: 'Widget ini memantau faktur penjualan/pembelian yang melewati jatuh tempo:',

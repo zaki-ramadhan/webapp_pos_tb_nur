@@ -16,12 +16,13 @@ const itemRequestSectionTabs = [
 ];
 
 const itemRequestListColumns = [
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
-    { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
-    { id: 'requestType', label: 'Tipe Permintaan', widthClassName: 'w-[280px]', align: 'left' },
-    { id: 'notes', label: 'Keterangan', widthClassName: 'w-[250px]', align: 'left' },
-    { id: 'status', label: 'Status', widthClassName: 'w-[220px]', align: 'left' },
-    { id: 'estimatedTotal', label: 'Total Hrg Estimasi', widthClassName: 'w-[200px]', align: 'right' },
+    { id: 'number', label: 'Nomor #', widthClassName: 'w-[180px]', align: 'left' },
+    { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'left' },
+    { id: 'requestType', label: 'Tipe Permintaan', widthClassName: 'w-[180px]', align: 'left' },
+    { id: 'notes', label: 'Keterangan', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'status', label: 'Status', widthClassName: 'w-[150px]', align: 'left' },
+    { id: 'total', label: 'Total', widthClassName: 'w-[100px]', align: 'right' },
+    { id: 'estimatedTotal', label: 'Hrg Estimasi', widthClassName: 'w-[150px]', align: 'right' },
 ];
 
 const itemRequestDetailColumns = [
@@ -83,9 +84,8 @@ const defaultItemRequestConfig = {
         branch: 'Cabang',
         closeRequest: 'Tutup Permintaan',
     },
-    requestTypeOptions: ['Beli Barang'],
+    requestTypeOptions: ['Beli Barang', 'Kirim Barang'],
     numberingOptions: ['Permintaan Pembelian'],
-    takeButtonLabel: 'Ambil',
     table: {
         createLabel: 'Tambah Permintaan Barang',
         refreshLabel: 'Muat ulang',
@@ -114,22 +114,13 @@ const defaultItemRequestConfig = {
                 ],
             },
             {
-                id: 'printed',
-                label: 'Sudah dicetak',
-                value: 'all',
-                options: [
-                    { value: 'all', label: 'Semua' },
-                    { value: 'printed', label: 'Sudah' },
-                    { value: 'not-printed', label: 'Belum' },
-                ],
-            },
-            {
                 id: 'type',
                 label: 'Tipe Permintaan',
                 value: 'all',
                 options: [
                     { value: 'all', label: 'Semua' },
-                    { value: 'purchase-request', label: 'Beli Barang' },
+                    { value: 'Beli Barang', label: 'Beli Barang' },
+                    { value: 'Kirim Barang', label: 'Kirim Barang' },
                 ],
             },
         ],
@@ -140,7 +131,7 @@ const defaultItemRequestConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: itemRequestSectionTabs,
-    detailSearchPlaceholder: 'Cari/Pilih Barang dan Jasa...',
+    detailSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: itemRequestDetailColumns,

@@ -289,7 +289,7 @@ class GroupAccessPage
                                         \App\Support\Presentation\PosBlueprint::accessRow('item-request', 'Permintaan Barang', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('inventory-adjustment', 'Penyesuaian Persediaan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('minimum-stock', 'Barang stok minimum', ['active' => true, 'update' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('items-services', 'Barang dan Jasa', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
+                                        \App\Support\Presentation\PosBlueprint::accessRow('items-services', 'Barang & Jasa', ['create' => true, 'update' => true, 'delete' => true, 'view' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('warehouse-master', 'Gudang', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('item-unit', 'Satuan Barang', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('item-category', 'Kategori Barang', ['create' => true, 'update' => true, 'delete' => true]),

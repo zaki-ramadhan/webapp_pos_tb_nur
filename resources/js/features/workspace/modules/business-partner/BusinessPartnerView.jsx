@@ -247,9 +247,11 @@ export default function BusinessPartnerView({
                 rows: rowsWithFilters,
                 filters: updatedFilters,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
+                refreshLabel: tableProps.loading ? 'Memuat...' : (baseConfig.table.refreshLabel || 'Muat ulang'),
+                onRefresh: reload,
             },
         };
-    }, [pageConfig, partnerType, mappedRows, tableProps]);
+    }, [pageConfig, partnerType, mappedRows, tableProps, reload]);
 
     return mode === 'table' ? (
         <BusinessPartnerTableView

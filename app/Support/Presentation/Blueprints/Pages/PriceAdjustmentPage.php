@@ -48,7 +48,7 @@ class PriceAdjustmentPage
                     ['id' => 'details', 'label' => 'Rincian Barang', 'icon' => 'document'],
                     ['id' => 'additional-info', 'label' => 'Info lainnya', 'icon' => 'info'],
                 ],
-                'itemSearchPlaceholder' => 'Cari/Pilih Barang dan Jasa...',
+                'itemSearchPlaceholder' => 'Cari/Pilih Barang & Jasa...',
                 'detailModeLabel' => 'Rincian',
                 'detailViewLabel' => 'Tampilan rincian',
                 'itemLookupLabel' => 'Cari rincian barang',

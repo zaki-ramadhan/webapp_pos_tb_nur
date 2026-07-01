@@ -108,6 +108,7 @@ export function buildItemRequestRow(record) {
         requestType: record?.request_type ?? '',
         notes: record?.notes ?? '',
         status: record?.status ?? 'Draft',
+        total: (record.lines ?? []).reduce((sum, line) => sum + Number(line.quantity ?? 0), 0),
         estimatedTotal: formatCurrencyValue(totalAmount),
         dateFilter: documentDate,
         statusFilter: record?.status ?? 'Draft',

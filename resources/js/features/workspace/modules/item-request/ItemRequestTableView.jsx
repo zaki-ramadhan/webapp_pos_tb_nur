@@ -1,21 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import Pagination from '@/components/ui/Pagination';
-
-
 import SelectField from '@/components/ui/SelectField';
-import {
-    TransactionDataTable,
-    TransactionToolbarIconButton,
-    TransactionToolbarSplitButton,
-} from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { TransactionDataTable } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
-import {
-    DownloadIcon,
-    FunnelIcon,
-    PrintIcon,
-    SortIcon,
-    TableActionIcon,
-} from '@/features/workspace/shared/Icons';
+import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 
 function TableFilterField({ filter, value, onChange }) {
     return (
@@ -28,7 +18,7 @@ function TableFilterField({ filter, value, onChange }) {
         >
             {(filter.options ?? []).map((option) => (
                 <option key={option.value} value={option.value}>
-                    {filter.label}: {option.label}
+                    {option.label}
                 </option>
             ))}
         </SelectField>
@@ -67,7 +57,7 @@ export default function ItemRequestTableView({
         setSearchValue('');
     }, [config.table.filters]);
 
-    const rows = useMemo(() => {
+    const filteredRows = useMemo(() => {
         const keyword = searchValue.trim().toLowerCase();
 
         return (config.table.rows ?? []).filter((row) => {
@@ -79,9 +69,7 @@ export default function ItemRequestTableView({
                 return false;
             }
 
-            if (filters.printed && filters.printed !== 'all' && row.printedFilter !== filters.printed) {
-                return false;
-            }
+
 
             if (filters.type && filters.type !== 'all' && row.typeFilter !== filters.type) {
                 return false;
@@ -97,6 +85,7 @@ export default function ItemRequestTableView({
                 row.requestType,
                 row.notes,
                 row.status,
+                row.total,
                 row.estimatedTotal,
             ]
                 .join(' ')
@@ -104,6 +93,8 @@ export default function ItemRequestTableView({
                 .includes(keyword);
         });
     }, [config.table.rows, filters, searchValue]);
+
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
 
     const handleChangeFilter = (filterId, nextValue) => {
         setFilters((current) => ({
@@ -133,31 +124,28 @@ export default function ItemRequestTableView({
                     label: config.table.createLabel,
                     onClick: onCreate,
                 }}
-                rightControls={
-                    <>
-                        <TransactionToolbarSplitButton
-                            label="Unduh daftar"
-                            icon={<DownloadIcon className="h-4.5 w-4.5" />}
-                            items={config.table.downloadItems}
-                        />
-                        <TransactionToolbarIconButton label="Cetak daftar">
-                            <PrintIcon className="h-4.5 w-4.5" />
-                        </TransactionToolbarIconButton>
-                    </>
-                }
+                refreshButton={{
+                    label: config.table.refreshLabel || (loading ? 'Memuat...' : 'Perbarui'),
+                    icon: <RefreshIcon className="h-4.5 w-4.5" />,
+                    onClick: onRefresh,
+                    loading,
+                }}
+                exportConfig={false}
+                resourceName="item-requests"
                 search={{
                     value: searchValue,
                     onChange: (event) => setSearchValue(event.target.value),
                     placeholder: config.table.searchPlaceholder,
                     widthClassName: 'sm:w-[340px]',
+                    trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
-                pageValue={String(rows.length)}
+                pageValue={String(sortedRows.length)}
             />
 
             <div className="min-h-0 flex-1 overflow-x-auto">
                 <TransactionDataTable
                     columns={config.table.columns}
-                    rows={rows}
+                    rows={sortedRows}
                     emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
                     minWidthClassName="min-w-[1060px]"
                     onRowClick={(row) =>
@@ -168,20 +156,32 @@ export default function ItemRequestTableView({
                         })
                     }
                     getRowClassName={() => 'cursor-pointer hover:bg-workspace-hover-bg'}
-                    renderHeaderCell={(column) => (
-                        <span
-                            className={`flex items-center gap-2 ${
-                                column.align === 'right'
-                                    ? 'justify-end'
-                                    : column.align === 'center'
-                                      ? 'justify-center'
-                                      : 'justify-start'
-                            }`.trim()}
-                        >
-                            <SortIcon className="h-3 w-3 shrink-0 text-white/55" />
-                            <span>{column.label}</span>
-                        </span>
-                    )}
+                    renderHeaderCell={(column) => {
+                        const sortable = column.sortable !== false;
+                        const direction = sortKey === column.id ? sortDir : null;
+                        const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
+
+                        if (!sortable) {
+                            return <span className="block truncate">{column.label}</span>;
+                        }
+
+                        return (
+                            <button
+                                type="button"
+                                onClick={() => handleSort(column.id)}
+                                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
+                            >
+                                <span className="block whitespace-nowrap truncate min-w-0 flex-1">{column.label}</span>
+                                {direction === 'asc' ? (
+                                    <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
+                                ) : direction === 'desc' ? (
+                                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
+                                ) : (
+                                    <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white opacity-40" />
+                                )}
+                            </button>
+                        );
+                    }}
                 />
             </div>
 
