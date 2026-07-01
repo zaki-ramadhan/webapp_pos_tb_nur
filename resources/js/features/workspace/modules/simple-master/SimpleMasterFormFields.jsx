@@ -1,8 +1,10 @@
 import CheckboxField from '@/components/ui/CheckboxField';
+import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
 import Tooltip from '@/components/ui/Tooltip';
 import { CloseIcon, InfoIcon, SearchIcon } from '@/features/workspace/shared/Icons';
+import { taxUnitReferenceOptions } from '@/features/workspace/shared/referenceLookupData';
 
 function getFieldInfoTooltip(label) {
     const cleanLabel = String(label || '').trim().replace(/:$/, '');
@@ -30,8 +32,8 @@ export function FieldLabel({ field, className = '' }) {
 export function MasterFieldRow({ field, value, onChange }) {
     if (field.type === 'heading') {
         return (
-            <div className={`pt-1 ${field.containerClassName ?? ''}`.trim()}>
-                <div className="text-base font-semibold text-brand-dark">{field.label}</div>
+            <div className={`pt-2.5 pb-1 md:col-span-2 border-b border-ui-border-medium ${field.containerClassName ?? ''}`.trim()}>
+                <div className="text-xs font-semibold text-brand-dark uppercase tracking-wider">{field.label}</div>
             </div>
         );
     }
@@ -75,6 +77,30 @@ export function MasterFieldRow({ field, value, onChange }) {
     }
 
     if (field.type === 'lookup') {
+        if (field.id === 'taxCode') {
+            const selectedOption = taxUnitReferenceOptions.find((item) => item.code === value);
+            const displayValue = selectedOption ? `${selectedOption.code} - ${selectedOption.label}` : value;
+
+            return (
+                <div className="grid gap-3 lg:grid-cols-[170px_1fr] lg:items-center">
+                    <FieldLabel field={field} />
+                    <div>
+                        <ReferenceLookupInput
+                            id={field.id}
+                            name={field.id}
+                            placeholder={field.placeholder ?? 'Cari/Pilih...'}
+                            value={displayValue}
+                            items={taxUnitReferenceOptions}
+                            getOptionLabel={(option) => `${option.code} - ${option.label}`}
+                            getOptionSearchText={(option) => `${option.code} ${option.label}`}
+                            onSelect={(option) => onChange(field.id, option.code)}
+                            onClear={() => onChange(field.id, '')}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className="grid gap-3 lg:grid-cols-[170px_1fr] lg:items-center">
                 <FieldLabel field={field} />

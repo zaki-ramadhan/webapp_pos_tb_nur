@@ -101,11 +101,6 @@ class ItemUnitPage
                         'containerClassName' => 'max-w-[420px]',
                     ],
                     [
-                        'id' => 'tax-heading',
-                        'type' => 'heading',
-                        'label' => 'Pajak',
-                    ],
-                    [
                         'id' => 'taxCode',
                         'type' => 'lookup',
                         'label' => 'Ref Kode Pajak',
