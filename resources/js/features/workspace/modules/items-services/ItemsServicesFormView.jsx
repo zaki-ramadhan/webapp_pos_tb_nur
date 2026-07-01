@@ -28,6 +28,7 @@ import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspac
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
+import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNumberUtils';
 
 export default function ItemsServicesFormView({
     pageId,
@@ -83,7 +84,24 @@ export default function ItemsServicesFormView({
         }));
     }
 
-    const saveDisabled = saving || !isDirty || !values.name?.trim();
+    const filteredTabs = useMemo(() => {
+        const hasStockTab = values.kind === 'Persediaan' || values.kind === 'Grup';
+        return (config.tabs ?? []).filter((tab) => {
+            if (tab.id === 'stock') {
+                return hasStockTab;
+            }
+            return true;
+        });
+    }, [config.tabs, values.kind]);
+
+    useEffect(() => {
+        const tabExists = filteredTabs.some((tab) => tab.id === activeTabId);
+        if (!tabExists) {
+            setActiveTabId('general');
+        }
+    }, [filteredTabs, activeTabId]);
+
+    const saveDisabled = saving || !isDirty || !values.name?.trim() || (isDetail && !values.code?.trim());
 
     useWorkspaceDirtyRegistration({
         pageId,
@@ -97,6 +115,10 @@ export default function ItemsServicesFormView({
             rejectCrudFormAction('Nama Barang wajib diisi.', { setStatus });
             return;
         }
+        if (isDetail && !values.code?.trim()) {
+            rejectCrudFormAction('Kode Barang wajib diisi.', { setStatus });
+            return;
+        }
 
         await executeCrudFormAction({
             loadingMessage: isDetail ? 'Sedang memperbarui barang/jasa.' : 'Sedang menyimpan barang/jasa.',
@@ -105,7 +127,7 @@ export default function ItemsServicesFormView({
             setStatus,
             execute: async () => {
                 const payload = {
-                    code: values.code?.trim() || null,
+                    code: isDetail ? values.code?.trim() : buildGeneratedDocNumber('BRG'),
                     barcode: values.barcode?.trim() || null,
                     name: values.name?.trim(),
                     product_type: values.kind || 'Persediaan',
@@ -120,6 +142,14 @@ export default function ItemsServicesFormView({
                     notes: values.notes?.trim() || null,
                     is_active: values.isActive !== false,
                     attachment_ids: (values.attachments ?? []).map((att) => att.id),
+                    inventory_account_id: values.inventoryAccountId ?? null,
+                    sales_account_id: values.salesAccountId ?? null,
+                    sales_return_account_id: values.salesReturnAccountId ?? null,
+                    sales_discount_account_id: values.salesDiscountAccountId ?? null,
+                    delivered_goods_account_id: values.deliveredGoodsAccountId ?? null,
+                    cogs_account_id: values.cogsAccountId ?? null,
+                    purchase_return_account_id: values.purchaseReturnAccountId ?? null,
+                    uninvoiced_purchase_account_id: values.uninvoicedPurchaseAccountId ?? null,
                     unit_conversions: (values.unitConversions ?? [])
                         .map((conv) => ({
                             id: String(conv.id).startsWith('conversion-') ? undefined : conv.id,
@@ -179,7 +209,7 @@ export default function ItemsServicesFormView({
 
     return (
         <ModuleFormTemplate
-            form={config}
+            form={{ ...config, tabs: filteredTabs }}
             activeTabId={activeTabId}
             setActiveTabId={setActiveTabId}
             status={status}
@@ -211,7 +241,23 @@ export default function ItemsServicesFormView({
                 {activeTabId === 'sales-purchase' ? (
                     <ItemSalesPurchaseTab config={config} values={values} onChange={handleChange} />
                 ) : activeTabId === 'stock' ? (
-                    <ItemStockTab config={config} values={values} />
+                    (() => {
+                        const openingStockRows = values.openingStockRows || [];
+                        const totalQty = openingStockRows.reduce((sum, r) => sum + (parseFloat(String(r.quantity).replace(/[^0-9.-]/g, '')) || 0), 0);
+                        const totalCost = openingStockRows.reduce((sum, r) => {
+                            const qty = parseFloat(String(r.quantity).replace(/[^0-9.-]/g, '')) || 0;
+                            const cost = parseFloat(String(r.unitCost).replace(/[^0-9.-]/g, '')) || 0;
+                            return sum + (qty * cost);
+                        }, 0);
+                        const avgCost = totalQty > 0 ? (totalCost / totalQty) : 0;
+                        const stockValues = {
+                            ...values,
+                            stockQuantity: String(totalQty),
+                            stockUnitValue: String(avgCost),
+                            stockCostOfGoods: String(totalCost),
+                        };
+                        return <ItemStockTab config={config} values={stockValues} onChange={handleChange} />;
+                    })()
                 ) : activeTabId === 'accounts' ? (
                     <ItemAccountsTab config={config} values={values} onChange={handleChange} />
                 ) : activeTabId === 'images' ? (

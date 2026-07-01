@@ -25,11 +25,6 @@ export default function ItemsServicesTableView({ config, onOpenContent, onOpenDe
                         items={config.table.downloadItems}
                     />
                     <TransactionToolbarSplitButton
-                        label="Ekspor"
-                        icon={<ExternalLinkIcon className="h-4.5 w-4.5" />}
-                        items={config.table.shareItems}
-                    />
-                    <TransactionToolbarSplitButton
                         label="Cetak"
                         icon={<PrintIcon className="h-4.5 w-4.5" />}
                         items={config.table.printItems}

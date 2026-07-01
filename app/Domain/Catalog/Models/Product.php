@@ -25,6 +25,14 @@ class Product extends DomainModel
         'default_sale_price',
         'notes',
         'is_active',
+        'inventory_account_id',
+        'sales_account_id',
+        'sales_return_account_id',
+        'sales_discount_account_id',
+        'delivered_goods_account_id',
+        'cogs_account_id',
+        'purchase_return_account_id',
+        'uninvoiced_purchase_account_id',
     ];
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
@@ -77,5 +85,45 @@ class Product extends DomainModel
     public function supplierPrices(): HasMany
     {
         return $this->hasMany(SupplierPrice::class);
+    }
+
+    public function inventoryAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'inventory_account_id');
+    }
+
+    public function salesAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'sales_account_id');
+    }
+
+    public function salesReturnAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'sales_return_account_id');
+    }
+
+    public function salesDiscountAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'sales_discount_account_id');
+    }
+
+    public function deliveredGoodsAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'delivered_goods_account_id');
+    }
+
+    public function cogsAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'cogs_account_id');
+    }
+
+    public function purchaseReturnAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'purchase_return_account_id');
+    }
+
+    public function uninvoicedPurchaseAccount(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Finance\Models\Account::class, 'uninvoiced_purchase_account_id');
     }
 }

@@ -74,10 +74,11 @@ export default function ItemsServicesView({
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
+                refreshLabel: loading ? 'Memuat...' : (baseConfig.table.refreshLabel || 'Muat ulang'),
+                onRefresh: reload,
             },
         };
-    }, [loading, page.itemsServices, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [loading, page.itemsServices, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
     return mode === 'table' ? (
         <ItemsServicesTableView

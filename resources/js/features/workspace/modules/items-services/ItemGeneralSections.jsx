@@ -1,4 +1,5 @@
 import SelectField from '@/components/ui/SelectField';
+import RadioField from '@/components/ui/RadioField';
 import { TransactionSwitch } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import {
     ClearableTextInput,
@@ -13,34 +14,45 @@ import {
     WORKSPACE_INACTIVE_BADGE_LABEL,
     WORKSPACE_INACTIVE_HINT,
 } from '@/features/workspace/shared/workspaceAvailability';
+import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 
 export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
     return (
-        <section className="space-y-3">
+        <section className="space-y-2">
             <SectionHeading title={config.labels.generalInfo} />
 
             <FormRow label="Nama Barang" required>
                 <ClearableTextInput
                     value={values.name}
                     onChange={(event) => onChange('name', event.target.value)}
+                    maxLength={150}
+                    minLength={1}
                 />
             </FormRow>
 
             <FormRow label="Kategori Barang" required>
-                <LookupField
-                    values={values.category}
-                    placeholder="Cari/Pilih..."
+                <BackendLookupField
+                    resource="product-categories"
+                    values={(values.category || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                    placeholder="Cari/Pilih Kategori..."
                     searchLabel="Cari kategori barang"
-                    onRemove={(item) =>
-                        onChange(
-                            'category',
-                            values.category.filter((value) => value !== item),
-                        )
-                    }
+                    onSelect={(option) => {
+                        const current = values.category || [];
+                        if (!current.includes(option.name)) {
+                            onChange('category', [...current, option.name]);
+                        }
+                    }}
+                    onRemove={(option) => {
+                        const current = values.category || [];
+                        onChange('category', current.filter((x) => x !== option.name));
+                    }}
                 />
             </FormRow>
 
-            <FormRow label="Jenis Barang" info>
+            <FormRow
+                label="Jenis Barang"
+                info="Pilih jenis barang sesuai fungsinya. Untuk barang yang menghitung stok dan nilai persediaan, pilih Persediaan. Tipe tidak dapat diubah setelah disimpan."
+            >
                 <SelectField
                     value={values.kind}
                     onChange={(event) => onChange('kind', event.target.value)}
@@ -57,78 +69,33 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
 
             <CodeFieldRow values={values} onChange={onChange} isDetail={isDetail} />
 
-            <FormRow label="UPC/Barcode" info>
-                <ClearableTextInput
-                    value={values.barcode}
-                    onChange={(event) => onChange('barcode', event.target.value)}
-                />
-            </FormRow>
+            {values.kind !== 'Non Persediaan' && values.kind !== 'Jasa' && (
+                <FormRow
+                    label="UPC/Barcode"
+                    info="Kode barcode standar yang dapat dibaca oleh alat Scanner/Barcode Reader."
+                >
+                    <ClearableTextInput
+                        value={values.barcode}
+                        onChange={(event) => onChange('barcode', event.target.value)}
+                        maxLength={64}
+                    />
+                </FormRow>
+            )}
 
             <FormRow label="Satuan" required>
-                <div className="space-y-3">
-                    <LookupField
-                        values={values.primaryUnit}
-                        placeholder="Cari/Pilih..."
+                <div className="w-full max-w-[282px]">
+                    <BackendLookupField
+                        resource="units"
+                        values={(values.primaryUnit || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                        placeholder="Cari/Pilih Satuan..."
                         searchLabel="Cari satuan"
-                        onRemove={(item) =>
-                            onChange(
-                                'primaryUnit',
-                                values.primaryUnit.filter((value) => value !== item),
-                            )
-                        }
-                        className="max-w-[420px]"
+                        onSelect={(option) => {
+                            onChange('primaryUnit', [option.name]);
+                        }}
+                        onRemove={() => {
+                            onChange('primaryUnit', []);
+                        }}
                     />
-
-                    {values.unitConversions.map((conversion, index) => (
-                        <div
-                            key={conversion.id}
-                            className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_26px_86px_auto] sm:items-center"
-                        >
-                            <LookupField
-                                values={conversion.unit}
-                                placeholder="Cari/Pilih..."
-                                searchLabel={`Cari satuan konversi ${index + 1}`}
-                                onRemove={(item) =>
-                                    onChange(
-                                        'unitConversions',
-                                        values.unitConversions.map((entry) =>
-                                            entry.id === conversion.id
-                                                ? {
-                                                      ...entry,
-                                                      unit: entry.unit.filter(
-                                                          (value) => value !== item,
-                                                      ),
-                                                  }
-                                                : entry,
-                                        ),
-                                    )
-                                }
-                                className="max-w-[332px]"
-                            />
-                            <span className="text-center text-lg text-brand-dark">=</span>
-                            <SimpleTextField
-                                value={conversion.quantity}
-                                onChange={(event) =>
-                                    onChange(
-                                        'unitConversions',
-                                        values.unitConversions.map((entry) =>
-                                            entry.id === conversion.id
-                                                ? {
-                                                      ...entry,
-                                                      quantity: event.target.value,
-                                                  }
-                                                : entry,
-                                        ),
-                                    )
-                                }
-                                className="h-[34px]"
-                                inputClassName="text-right"
-                            />
-                            <span className="text-xs sm:text-sm text-brand-dark">
-                                {conversion.baseUnit}
-                            </span>
-                        </div>
-                    ))}
                 </div>
             </FormRow>
         </section>
@@ -139,43 +106,80 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
     const isBrandFieldInactive = isWorkspaceControlInactive('item-brand-field');
 
     return (
-        <section className="space-y-3">
+        <section className="space-y-2">
             <SectionHeading title={config.labels.moreInfo} />
 
-            <FormRow label="Merek Barang">
-                <div className="space-y-2">
-                    <LookupField
-                        values={values.brand}
-                        placeholder="Cari/Pilih Merek..."
-                        searchLabel="Cari merek"
-                        onRemove={(item) =>
-                            onChange(
-                                'brand',
-                                values.brand.filter((value) => value !== item),
-                            )
-                        }
-                        disabled={isBrandFieldInactive}
-                    />
-                    {isBrandFieldInactive ? (
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-warning-label-text">
-                            <span className="rounded-full bg-bg-warning-tag px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-warning-badge-text">
-                                {WORKSPACE_INACTIVE_BADGE_LABEL}
-                            </span>
-                            <span>{WORKSPACE_INACTIVE_HINT}</span>
-                        </div>
-                    ) : null}
-                </div>
-            </FormRow>
+            {values.kind !== 'Jasa' && (
+                <FormRow label="Merek Barang">
+                    <div className="space-y-2">
+                        <BackendLookupField
+                            resource="brands"
+                            values={(values.brand || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                            placeholder="Cari/Pilih Merek..."
+                            searchLabel="Cari merek"
+                            onSelect={(option) => {
+                                onChange('brand', [option.name]);
+                            }}
+                            onRemove={() => {
+                                onChange('brand', []);
+                            }}
+                            disabled={isBrandFieldInactive}
+                        />
+                        {isBrandFieldInactive ? (
+                            <div className="flex flex-wrap items-center gap-2 text-sm text-warning-label-text">
+                                <span className="rounded-full bg-bg-warning-tag px-2 py-0.5 text-xs font-semibold uppercase tracking-[0.08em] text-warning-badge-text">
+                                    {WORKSPACE_INACTIVE_BADGE_LABEL}
+                                </span>
+                                <span>{WORKSPACE_INACTIVE_HINT}</span>
+                            </div>
+                        ) : null}
+                    </div>
+                </FormRow>
+            )}
 
-            <div className="flex items-center gap-10 pt-2">
-                <TransactionSwitch
-                    checked={values.serialEnabled}
-                    onChange={(nextValue) => onChange('serialEnabled', nextValue)}
-                />
-                <span className="text-xs sm:text-sm text-brand-dark">
-                    Aktifkan No. Seri/Produksi
-                </span>
-            </div>
+            {values.kind !== 'Non Persediaan' && values.kind !== 'Jasa' && (
+                <div className="space-y-2 pt-2">
+                    <div className="flex items-center gap-3">
+                        <TransactionSwitch
+                            checked={values.serialEnabled}
+                            onChange={(nextValue) => onChange('serialEnabled', nextValue)}
+                        />
+                        <span className="text-xs sm:text-sm text-brand-dark">
+                            Aktifkan No. Seri/Produksi
+                        </span>
+                    </div>
+
+                    {values.serialEnabled && (
+                        <div className="pl-8 space-y-2">
+                            <RadioField
+                                id="serialTypeUnique"
+                                name="serialType"
+                                label="Nomor Unik"
+                                checked={values.serialType === 'unique'}
+                                onChange={() => onChange('serialType', 'unique')}
+                            />
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
+                                <RadioField
+                                    id="serialTypeProduction"
+                                    name="serialType"
+                                    label="Nomor Produksi"
+                                    checked={values.serialType === 'production'}
+                                    onChange={() => onChange('serialType', 'production')}
+                                />
+                                <div className="flex items-center gap-2 self-start sm:self-auto">
+                                    <TransactionSwitch
+                                        checked={values.useExpiryDate}
+                                        onChange={(nextValue) => onChange('useExpiryDate', nextValue)}
+                                    />
+                                    <span className="text-xs sm:text-sm text-brand-dark">
+                                        Pakai tanggal kadaluarsa
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </section>
     );
 }

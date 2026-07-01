@@ -105,6 +105,7 @@ export function toPartnerPayload(values) {
 }
 
 export function mapProductRow(record) {
+    const buildAccountVal = (acc) => acc ? [`[${acc.code}] ${acc.name}`] : [];
     return {
         id: record.id,
         code: record.code ?? '',
@@ -129,5 +130,23 @@ export function mapProductRow(record) {
         brand: record.brand?.name ?? '',
         categoryFilter: record.category?.name ?? 'Umum',
         kind: record.product_type ?? 'Persediaan',
+        inventoryAccountId: record.inventory_account_id ?? null,
+        salesAccountId: record.sales_account_id ?? null,
+        salesReturnAccountId: record.sales_return_account_id ?? null,
+        salesDiscountAccountId: record.sales_discount_account_id ?? null,
+        deliveredGoodsAccountId: record.delivered_goods_account_id ?? null,
+        cogsAccountId: record.cogs_account_id ?? null,
+        purchaseReturnAccountId: record.purchase_return_account_id ?? null,
+        uninvoicedPurchaseAccountId: record.uninvoiced_purchase_account_id ?? null,
+        accounts: {
+            inventory: buildAccountVal(record.inventory_account),
+            sales: buildAccountVal(record.sales_account),
+            salesReturn: buildAccountVal(record.sales_return_account),
+            salesDiscount: buildAccountVal(record.sales_discount_account),
+            deliveredGoods: buildAccountVal(record.delivered_goods_account),
+            costOfGoodsSold: buildAccountVal(record.cogs_account),
+            purchaseReturn: buildAccountVal(record.purchase_return_account),
+            uninvoicedPurchase: buildAccountVal(record.uninvoiced_purchase_account),
+        },
     };
 }

@@ -9,7 +9,7 @@ import {
 
 export function ItemGeneralTab({ config, values, onChange, isDetail }) {
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        <div className="grid gap-8 lg:grid-cols-2">
             <ItemGeneralInfoSection
                 config={config}
                 values={values}
@@ -23,7 +23,7 @@ export function ItemGeneralTab({ config, values, onChange, isDetail }) {
 
 export function ItemSalesPurchaseTab({ config, values, onChange }) {
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
+        <div className="grid gap-8 lg:grid-cols-2">
             <ItemSalesInfoSection config={config} values={values} onChange={onChange} />
             <ItemPurchaseTaxSection config={config} values={values} onChange={onChange} />
         </div>

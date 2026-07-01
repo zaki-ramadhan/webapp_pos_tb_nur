@@ -81,7 +81,7 @@ export function FormRow({
                 {required ? <span className="text-tab-active-border-t"> *</span> : null}
                 {info ? (
                     <Tooltip content={typeof info === 'string' ? info : getFormRowTooltip(label)} portal>
-                        <InfoIcon className="ml-1 inline-flex h-4.5 w-4.5 align-[-2px] text-filter-select-text cursor-help" />
+                        <InfoIcon className="ml-1 inline-flex h-3.5 w-3.5 align-middle text-filter-select-text cursor-help" />
                     </Tooltip>
                 ) : null}
             </label>
@@ -94,7 +94,7 @@ export function FormRow({
 export function SectionHeading({ title }) {
     return (
         <div className="border-b border-abc-card-border pb-1.5">
-            <h3 className="text-2xl font-normal text-input-brand">{title}</h3>
+            <h3 className="text-lg font-normal text-input-brand sm:text-lg xl:text-xl 2xl:text-2xl">{title}</h3>
         </div>
     );
 }
@@ -116,6 +116,8 @@ export function ClearableTextInput({
     placeholder = '',
     className = '',
     trailing = null,
+    maxLength,
+    minLength,
 }) {
     return (
         <TextInput
@@ -138,6 +140,8 @@ export function ClearableTextInput({
                 ) : null)
             }
             trailingClassName={value || trailing ? 'pr-2' : ''}
+            maxLength={maxLength}
+            minLength={minLength}
         />
     );
 }
@@ -152,6 +156,7 @@ export function SimpleTextField({
     inputClassName = '',
     formatAsAmount = false,
     maxLength = undefined,
+    ...props
 }) {
     const InputComponent = formatAsAmount ? FormattedAmountInput : TextInput;
 
@@ -167,6 +172,7 @@ export function SimpleTextField({
             prefixClassName={prefix ? 'min-w-[32px] border-r-ui-border-medium bg-input-prefix-bg px-3 text-xs sm:text-sm text-text-inactive' : ''}
             inputClassName={`text-xs sm:text-sm text-brand-dark ${inputClassName}`.trim()}
             trailingClassName={trailing ? 'px-3' : ''}
+            {...props}
         />
     );
 }
@@ -193,26 +199,32 @@ export function LookupField({
     );
 }
 
+import SelectField from '@/components/ui/SelectField';
+
 export function CodeFieldRow({ values, onChange, isDetail }) {
+    if (!isDetail) {
+        return (
+            <FormRow label="Kode Barang" required>
+                <SelectField
+                    value="auto"
+                    onChange={() => {}}
+                    className="h-[40px] rounded-[4px] border-ui-border bg-white"
+                    selectClassName="text-xs sm:text-sm text-brand-dark"
+                >
+                    <option value="auto">Barang & Jasa</option>
+                </SelectField>
+            </FormRow>
+        );
+    }
+
     return (
-        <div className="grid gap-3 lg:grid-cols-[170px_48px_minmax(0,1fr)] lg:items-center">
-            <label className="text-xs sm:text-sm leading-6 text-brand-dark">
-                Kode Barang <span className="text-tab-active-border-t">*</span>
-            </label>
-            {!isDetail ? (
-                <div className="pt-1 lg:pt-0">
-                    <TransactionSwitch
-                        checked={values.codeAuto}
-                        onChange={(nextValue) => onChange('codeAuto', nextValue)}
-                    />
-                </div>
-            ) : (
-                <div />
-            )}
+        <FormRow label="Kode Barang" required>
             <ClearableTextInput
                 value={values.code}
                 onChange={(event) => onChange('code', event.target.value)}
+                maxLength={50}
+                minLength={1}
             />
-        </div>
+        </FormRow>
     );
 }
