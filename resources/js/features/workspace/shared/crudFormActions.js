@@ -54,14 +54,15 @@ export async function executeCrudFormAction({
         const result = await execute();
 
         await onSuccess?.(result);
-        finishCrudLoadingToast(loadingToastId);
 
         if (successMessage) {
             setStatus?.({
                 tone: 'success',
                 message: successMessage,
             });
-            showCrudSuccessToast(successMessage);
+            finishCrudLoadingToast(loadingToastId, successMessage);
+        } else {
+            finishCrudLoadingToast(loadingToastId);
         }
 
         return {

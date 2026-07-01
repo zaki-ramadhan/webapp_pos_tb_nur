@@ -188,8 +188,7 @@ export default function SimpleMasterFormView({
             }
             const successMessage = isDetailMode ? 'Data berhasil diperbarui.' : 'Data berhasil dibuat.';
             setStatus({ tone: 'success', message: successMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
+            finishCrudLoadingToast(loadingToastId, successMessage);
 
             if (!isDetailMode && record && onOpenDetail) {
                 const row = backendConfig.toRow(record);
@@ -223,8 +222,7 @@ export default function SimpleMasterFormView({
             await onRefresh?.();
             const successMessage = 'Data berhasil dihapus.';
             setStatus({ tone: 'success', message: successMessage });
-            finishCrudLoadingToast(loadingToastId);
-            showCrudSuccessToast(successMessage);
+            finishCrudLoadingToast(loadingToastId, successMessage);
             setDeleteConfirmationOpen(false);
             onCloseDetail?.(detailRow.id);
             onOpenContent?.();
