@@ -190,6 +190,17 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akun perkiraan gagal disimpan.'),
             onSuccess: async ({ payload, savedRecord }) => {
                 await onReload?.();
+                if (isDetail && savedRecord && activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                tabId: activeLevel2Tab.id,
+                                label: savedRecord?.name ?? savedRecord?.full_name ?? savedRecord?.countryName ?? savedRecord?.country_name ?? savedRecord?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                            },
+                        })
+                    );
+                }
 
                 if (!isDetail && savedRecord?.id) {
                     onOpenDetail?.({

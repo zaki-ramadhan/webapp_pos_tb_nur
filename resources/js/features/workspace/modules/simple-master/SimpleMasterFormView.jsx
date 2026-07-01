@@ -7,6 +7,7 @@ import {
     createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
+    getBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
@@ -41,15 +42,42 @@ export default function SimpleMasterFormView({
     onRefresh,
 }) {
     const { form, table } = page;
-    const detailRow = findSimpleMasterDetailRow(table?.rows, activeLevel2Tab);
+    const [fetchedRow, setFetchedRow] = useState(null);
+
+    const detailRow = useMemo(() => {
+        const localRow = findSimpleMasterDetailRow(table?.rows, activeLevel2Tab);
+        return fetchedRow || localRow;
+    }, [table?.rows, activeLevel2Tab, fetchedRow]);
+
+    useEffect(() => {
+        setFetchedRow(null);
+        const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+        if (!recordId || !backendConfig?.resource) return;
+
+        let active = true;
+        async function fetchDetail() {
+            try {
+                const record = await getBackendResource(backendConfig.resource, recordId);
+                if (active && record) {
+                    setFetchedRow(record);
+                }
+            } catch (err) {
+                // Ignore
+            }
+        }
+        fetchDetail();
+        return () => { active = false; };
+    }, [activeLevel2Tab?.recordId, activeLevel2Tab?.tabType, backendConfig?.resource]);
+
     const isDetailMode = Boolean(detailRow);
     const [values, setValues] = useState(() => buildSimpleMasterFormValues(form, detailRow));
+    const [hasSaved, setHasSaved] = useState(false);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const initialValues = useMemo(() => buildSimpleMasterFormValues(form, detailRow), [detailRow, form]);
 
-    const isDirty = useMemo(() => !areComparableValuesEqual(values, initialValues), [initialValues, values]);
+    const isDirty = useMemo(() => !hasSaved && !areComparableValuesEqual(values, initialValues), [initialValues, values, hasSaved]);
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
@@ -63,10 +91,12 @@ export default function SimpleMasterFormView({
         initialValues,
         recordId: detailRow?.id ?? null,
         isDirty,
+        values,
         setValues,
     });
 
     function handleChange(fieldId, nextValue) {
+        setHasSaved(false);
         setValues((currentValues) => ({
             ...currentValues,
             [fieldId]: nextValue,
@@ -139,7 +169,23 @@ export default function SimpleMasterFormView({
                 : await createBackendResource(backendConfig.resource, payload);
             const record = response?.data ?? null;
 
+            setHasSaved(true);
             await onRefresh?.();
+            if (isDetailMode && record) {
+                setFetchedRow(record);
+                if (activeLevel2Tab?.id) {
+                    const row = backendConfig.toRow(record);
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId: page.id,
+                                tabId: activeLevel2Tab.id,
+                                label: row[backendConfig.labelField] ?? row.name ?? row.tabLabel ?? record.name,
+                            },
+                        })
+                    );
+                }
+            }
             const successMessage = isDetailMode ? 'Data berhasil diperbarui.' : 'Data berhasil dibuat.';
             setStatus({ tone: 'success', message: successMessage });
             finishCrudLoadingToast(loadingToastId);
@@ -211,7 +257,7 @@ export default function SimpleMasterFormView({
                 ) : null
             }
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 max-w-[980px]">
+            <div className={`grid grid-cols-1 gap-y-3.5 ${page.id === 'item-unit' ? 'max-w-[480px]' : 'md:grid-cols-2 gap-x-8 max-w-[980px]'}`}>
                 {(form.fields ?? []).map((field) => (
                     field.standalone ? (
                         <StandaloneCheckboxField

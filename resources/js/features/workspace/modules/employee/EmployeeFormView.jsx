@@ -62,6 +62,7 @@ export default function EmployeeFormView({
     const [activeTabId, setActiveTabId] = useState(tabs[0].id);
     const initialValues = useMemo(() => buildEmployeeFormValues(form, detailRow), [detailRow]);
     const [values, setValues] = useState(() => initialValues);
+    const [hasSaved, setHasSaved] = useState(false);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -72,8 +73,8 @@ export default function EmployeeFormView({
     }));
 
     const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildEmployeeSnapshot(values), buildEmployeeSnapshot(initialValues)),
-        [initialValues, values],
+        () => !hasSaved && !areComparableValuesEqual(buildEmployeeSnapshot(values), buildEmployeeSnapshot(initialValues)),
+        [initialValues, values, hasSaved],
     );
 
     const activeTabInstanceId = activeLevel2Tab?.id;
@@ -94,6 +95,7 @@ export default function EmployeeFormView({
         initialValues,
         recordId: detailRowId,
         isDirty,
+        values,
         setValues,
         onSync: (syncedValues) => {
             setErrors({
@@ -103,6 +105,7 @@ export default function EmployeeFormView({
     });
 
     function handleChange(field, nextValue) {
+        setHasSaved(false);
         if (errors[field]) {
             setErrors((prev) => ({ ...prev, [field]: null }));
         }
@@ -202,6 +205,18 @@ export default function EmployeeFormView({
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
+                setHasSaved(true);
+                if (isDetailMode && record && activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                tabId: activeLevel2Tab.id,
+                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                            },
+                        })
+                    );
+                }
                 await onRefresh?.();
 
                 if (!isDetailMode && record?.id) {

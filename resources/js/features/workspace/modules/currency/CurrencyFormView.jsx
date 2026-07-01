@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
@@ -39,14 +39,23 @@ export default function CurrencyFormView({
     const [activeTabId, setActiveTabId] = useState('currency-general');
     const initialValues = useMemo(() => buildCurrencyValuesFromRecord(detailRow, config), [config, detailRow]);
     const [values, setValues] = useState(() => initialValues);
+    const [hasSaved, setHasSaved] = useState(false);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildCurrencySnapshot(values), buildCurrencySnapshot(initialValues)),
-        [initialValues, values],
+        () => !hasSaved && !areComparableValuesEqual(buildCurrencySnapshot(values), buildCurrencySnapshot(initialValues)),
+        [initialValues, values, hasSaved],
     );
+
+    const prevValuesRef = useRef(values);
+    useEffect(() => {
+        if (JSON.stringify(values) !== JSON.stringify(prevValuesRef.current)) {
+            setHasSaved(false);
+            prevValuesRef.current = values;
+        }
+    }, [values]);
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
@@ -61,6 +70,7 @@ export default function CurrencyFormView({
         initialValues,
         recordId: detailRow?.id ?? null,
         isDirty,
+        values,
         setValues,
     });
 
@@ -109,6 +119,18 @@ export default function CurrencyFormView({
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
+                setHasSaved(true);
+                if (isDetailMode && record && activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                tabId: activeLevel2Tab.id,
+                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                            },
+                        })
+                    );
+                }
                 await onRefresh?.();
 
                 if (!isDetailMode && record?.id) {

@@ -161,6 +161,17 @@ export default function PurchasePaymentFormView({
             },
             onSuccess: async ({ record, resolvedDocumentNumber }) => {
                 await onRefresh?.();
+                if (isDetail && record && activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                tabId: activeLevel2Tab.id,
+                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                            },
+                        })
+                    );
+                }
 
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record, config) : record;

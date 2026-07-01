@@ -12,15 +12,43 @@ import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import useBackendResource from '@/features/workspace/backend/useBackendResource';
 import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/workspaceBackendAdapters';
-import { getBackendErrorMessage } from '@/features/workspace/backend/workspaceBackendApi';
+import { getBackendErrorMessage, getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
+    const [fetchedRow, setFetchedRow] = useState(null);
+
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     const partnerLabel = partnerType === 'supplier' ? 'Pemasok' : 'Pelanggan';
-    const sourceRow = config.table.rows.find((row) => row.id === recordId) ?? {};
+
+    const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
+
+    useEffect(() => {
+        setFetchedRow(null);
+        if (!recordId) return;
+
+        let active = true;
+        async function fetchDetail() {
+            try {
+                const record = await getBackendResource(resourceName, recordId);
+                if (active && record) {
+                    setFetchedRow(record);
+                }
+            } catch (err) {
+                // Ignore
+            }
+        }
+        fetchDetail();
+        return () => { active = false; };
+    }, [recordId, resourceName]);
+
+    const sourceRow = useMemo(() => {
+        const localRow = config.table.rows.find((row) => row.id === recordId) ?? null;
+        return fetchedRow || localRow || {};
+    }, [config.table.rows, recordId, fetchedRow]);
+
     const sourceRecord = useMemo(
         () => (isDetail ? buildBusinessPartnerRecord(partnerType, sourceRow, config) : config.formDefaults),
         [config, isDetail, partnerType, sourceRow],
@@ -39,7 +67,6 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         setStatus({ tone: '', message: '' });
     }, [sourceRecord]);
 
-    const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
     const { processing, store, update, remove } = useBackendResource({
         resource: resourceName,
         onResolved: () => onRefresh?.(),
@@ -135,6 +162,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     };
 
     function handleChange(field, nextValue) {
+        setHasSaved(false);
         setValues((currentValues) => ({
             ...currentValues,
             [field]: nextValue,
@@ -262,6 +290,7 @@ export default function BusinessPartnerView({
         />
     ) : (
         <BusinessPartnerFormView
+            key={activeLevel2Tab?.id ?? 'new'}
             config={config}
             activeLevel2Tab={activeLevel2Tab}
             partnerType={partnerType}

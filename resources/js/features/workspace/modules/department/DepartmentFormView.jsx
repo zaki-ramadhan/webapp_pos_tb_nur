@@ -43,6 +43,7 @@ export default function DepartmentFormView({
     const [activeTabId, setActiveTabId] = useState(form.tabs?.[0]?.id ?? 'department-general');
     const initialValues = useMemo(() => buildDefaultValues(form, detailRow), [detailRow, form]);
     const [values, setValues] = useState(() => initialValues);
+    const [hasSaved, setHasSaved] = useState(false);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -74,8 +75,8 @@ export default function DepartmentFormView({
     );
 
     const isDirty = useMemo(
-        () => !areComparableValuesEqual(buildDepartmentSnapshot(values), buildDepartmentSnapshot(initialValues)),
-        [initialValues, values],
+        () => !hasSaved && !areComparableValuesEqual(buildDepartmentSnapshot(values), buildDepartmentSnapshot(initialValues)),
+        [initialValues, values, hasSaved],
     );
 
     const activeTabInstanceId = activeLevel2Tab?.id;
@@ -91,10 +92,12 @@ export default function DepartmentFormView({
         initialValues,
         recordId: detailRow?.id ?? null,
         isDirty,
+        values,
         setValues,
     });
 
     function handleChange(field, nextValue) {
+        setHasSaved(false);
         setValues((currentValues) => applyDepartmentFormChange(currentValues, field, nextValue));
     }
 
@@ -136,6 +139,18 @@ export default function DepartmentFormView({
             },
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
+                setHasSaved(true);
+                if (isDetailMode && record && activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:update-tab-label', {
+                            detail: {
+                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                tabId: activeLevel2Tab.id,
+                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
+                            },
+                        })
+                    );
+                }
                 await onRefresh?.();
 
                 if (!isDetailMode && record?.id) {
