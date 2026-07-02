@@ -32,8 +32,12 @@ export default function SelectField({
     const heightClass = hasHeightClass ? '' : 'h-11';
     
     const toneClassName = resolvedError
-        ? 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
+        ? 'border-red-950 focus-within:border-red-950 focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
+
+    const cleanedClassName = resolvedError
+        ? className.replace(/\bborder-[^\s]+\b/g, '')
+        : className;
 
     const triggerRef = useRef(null);
     const listRef = useRef(null);
@@ -168,7 +172,8 @@ export default function SelectField({
             </select>
 
             <div
-                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : ''} ${className}`.trim()}
+                aria-invalid={Boolean(resolvedError)}
+                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : resolvedError ? 'bg-red-500/[0.06]' : 'bg-white'} ${cleanedClassName}`.trim()}
             >
                 <button
                     ref={triggerRef}
@@ -177,7 +182,7 @@ export default function SelectField({
                     disabled={disabled}
                     onClick={() => setOpen((o) => !o)}
                     onKeyDown={handleKeyDown}
-                    className={`h-full w-full bg-transparent pl-3 pr-2.5 text-left text-xs sm:text-sm outline-none disabled:cursor-default disabled:pointer-events-none flex items-center justify-between ${disabled ? 'text-gray-500' : 'text-slate-700'} ${selectClassName}`.trim()}
+                    className={`h-full w-full bg-transparent pl-3 pr-2.5 text-left text-xs sm:text-sm outline-none disabled:cursor-default disabled:pointer-events-none flex items-center justify-between ${disabled ? 'text-gray-500' : resolvedError ? 'text-red-950' : 'text-slate-700'} ${selectClassName}`.trim()}
                     aria-haspopup="listbox"
                     aria-expanded={open}
                     {...props}
@@ -187,7 +192,7 @@ export default function SelectField({
                     </span>
                     <ChevronDown
                         aria-hidden="true"
-                        className={`h-4 w-4 shrink-0 transition-[colors,transform] duration-150 ${open ? 'rotate-180' : ''} ${disabled ? 'text-gray-400' : 'text-slate-500 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName.split(' ').filter(c => !c.startsWith('mr-') && !c.startsWith('mx-')).join(' ')}`.trim()}
+                        className={`h-4 w-4 shrink-0 transition-[colors,transform] duration-150 ${open ? 'rotate-180' : ''} ${disabled ? 'text-gray-400' : resolvedError ? 'text-red-950' : 'text-slate-500 group-focus-within:text-[var(--color-input-focus)]'} ${iconClassName.split(' ').filter(c => !c.startsWith('mr-') && !c.startsWith('mx-')).join(' ')}`.trim()}
                         strokeWidth={2.2}
                         absoluteStrokeWidth
                     />

@@ -13,7 +13,15 @@ export default function AuthInput({
 }) {
     return (
         <FormField label={label} hint={hint} required={required}>
-            <TextInput type={type} placeholder={placeholder} trailing={trailing} error={error} {...props} />
+            <TextInput
+                type={type}
+                placeholder={placeholder}
+                trailing={trailing}
+                error={error}
+                containerClassName="w-full"
+                style={{ maxWidth: 'none' }}
+                {...props}
+            />
         </FormField>
     );
 }

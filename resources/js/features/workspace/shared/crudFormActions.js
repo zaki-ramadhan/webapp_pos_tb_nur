@@ -20,10 +20,6 @@ export function rejectCrudFormAction(message, { setStatus = null, fieldErrors = 
         return false;
     }
 
-    setStatus?.({
-        tone: 'error',
-        message,
-    });
     showCrudValidationToast(message);
 
     if (fieldErrors && typeof fieldErrors === 'object') {

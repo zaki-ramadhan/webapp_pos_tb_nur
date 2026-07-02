@@ -304,12 +304,20 @@ export default function TextInput({
     const isNonInteractive = disabled || (readOnly && !interactiveReadOnly);
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-red-150'
-            : 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
+            ? 'border-red-950'
+            : 'border-red-950 focus-within:border-red-950 focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
-    const disabledClassName = isNonInteractive ? 'bg-ui-bg-panel text-gray-500' : 'bg-white';
+    const disabledClassName = isNonInteractive
+        ? 'bg-ui-bg-panel text-gray-500'
+        : resolvedError
+            ? 'bg-red-500/[0.06]'
+            : 'bg-white';
+
+    const cleanedClassName = resolvedError
+        ? className.replace(/\bborder-[^\s]+\b/g, '')
+        : className;
 
     const resolvedType = type === 'number' ? 'text' : type;
     const resolvedInputMode = props.inputMode ?? (type === 'number' ? 'decimal' : undefined);
@@ -554,7 +562,8 @@ export default function TextInput({
         <div className={`${widthClass} ${containerClassName}`.trim()} style={computedStyle}>
             <div
                 onMouseDown={focusInputFromWrapper}
-                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${className}`.trim()}
+                aria-invalid={Boolean(resolvedError)}
+                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${cleanedClassName}`.trim()}
             >
                 {prefix ? (
                     <span
@@ -576,7 +585,7 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : 'text-slate-700'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : resolvedError ? 'bg-transparent text-red-800' : 'text-slate-700 bg-white'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}

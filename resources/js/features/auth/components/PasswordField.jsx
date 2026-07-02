@@ -48,6 +48,8 @@ export default function PasswordField({
                 onChange={onChange}
                 placeholder={placeholder}
                 error={error}
+                containerClassName="w-full"
+                style={{ maxWidth: 'none' }}
                 trailing={
                     <button
                         type="button"

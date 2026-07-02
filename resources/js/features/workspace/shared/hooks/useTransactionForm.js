@@ -5,10 +5,70 @@ import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspac
 import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import { buildLookupLabel } from '@/features/workspace/shared/transactionFormatters';
 
+function deriveFieldErrors(validationMessage) {
+    if (!validationMessage) return null;
+    const errors = {};
+    const msg = validationMessage.toLowerCase();
+
+    if (msg.includes('asal dan tujuan tidak boleh sama') || msg.includes('akun asal dan tujuan')) {
+        errors.fromBankAccounts = validationMessage;
+        errors.toBankAccounts = validationMessage;
+        errors.fromBank = validationMessage;
+        errors.toBank = validationMessage;
+    }
+    
+    if (msg.includes('dari kas/bank') || msg.includes('kas/bank asal') || msg.includes('bank pengirim') || msg.includes('kas/bank pengirim') || msg.includes('kas/bank pembayar')) {
+        errors.fromBankAccounts = validationMessage;
+        errors.fromBank = validationMessage;
+        errors.bankAccounts = validationMessage;
+    }
+    
+    if (msg.includes('ke kas/bank') || msg.includes('kas/bank tujuan') || msg.includes('bank penerima') || msg.includes('bank tujuan')) {
+        errors.toBankAccounts = validationMessage;
+        errors.toBank = validationMessage;
+        errors.bankAccounts = validationMessage;
+    }
+    
+    if (msg.includes('nilai transfer') || msg.includes('transfer value') || msg.includes('nilai pembayaran') || msg.includes('nilai penerimaan') || msg.includes('deposit amount') || msg.includes('uang muka')) {
+        errors.transferValue = validationMessage;
+        errors.paymentAmount = validationMessage;
+        errors.depositAmount = validationMessage;
+        errors.amount = validationMessage;
+    }
+    
+    if (msg.includes('tanggal') || msg.includes('date')) {
+        errors.entryDate = validationMessage;
+        errors.requestDate = validationMessage;
+        errors.effectiveDate = validationMessage;
+        errors.dueDate = validationMessage;
+    }
+    
+    if (msg.includes('nomor') || msg.includes('document number') || msg.includes('no bukti')) {
+        errors.documentNumber = validationMessage;
+    }
+
+    if (msg.includes('pemasok') || msg.includes('supplier')) {
+        errors.supplier = validationMessage;
+        errors.__supplierId = validationMessage;
+    }
+
+    if (msg.includes('pelanggan') || msg.includes('customer')) {
+        errors.customer = validationMessage;
+        errors.__partnerId = validationMessage;
+    }
+
+    if (msg.includes('gaji') || msg.includes('payroll')) {
+        errors.payroll = validationMessage;
+    }
+
+    return Object.keys(errors).length > 0 ? errors : null;
+}
+
 export function useTransactionForm({
     validationMessage = null,
     fieldErrors = null,
 } = {}) {
+    const resolvedFieldErrors = fieldErrors || deriveFieldErrors(validationMessage);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -30,7 +90,7 @@ export function useTransactionForm({
 
     async function handleSave({ execute, loadingMessage, successMessage, onSuccess }) {
         if (validationMessage) {
-            rejectCrudFormAction(validationMessage, { setStatus, fieldErrors });
+            rejectCrudFormAction(validationMessage, { setStatus, fieldErrors: resolvedFieldErrors });
             return { ok: false, errorMessage: validationMessage };
         }
 

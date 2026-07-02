@@ -27,10 +27,12 @@ export function FormErrorProvider({ children }) {
 
     useEffect(() => {
         function onSet(event) {
+            console.log('FormErrorProvider onSet Event:', event.detail);
             dispatch({ type: 'SET', errors: event.detail ?? {} });
         }
 
         function onClear() {
+            console.log('FormErrorProvider onClear Event');
             dispatch({ type: 'RESET' });
         }
 
@@ -64,6 +66,10 @@ export function useFormError(explicitError, name, id) {
     const contextError = contextKey
         ? (errors[name] ?? errors[id] ?? '')
         : '';
+
+    if (contextKey && (contextKey.includes('Bank') || contextKey.includes('bank'))) {
+        console.log('useFormError Check:', { name, id, contextKey, contextError, errors });
+    }
 
     // Prioritaskan error string
     const errorMessage =

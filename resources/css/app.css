@@ -661,20 +661,20 @@
 }
 
 /* Custom input borders for high visibility and contrast */
-.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(input:not(:disabled)),
-.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(select:not(:disabled)),
-.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(textarea:not(:disabled)),
-.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(button[aria-haspopup="listbox"]:not(:disabled)) {
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(input:not(:disabled)):not([aria-invalid="true"]),
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(select:not(:disabled)):not([aria-invalid="true"]),
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(textarea:not(:disabled)):not([aria-invalid="true"]),
+.group.border:not(:focus-within):not(.bg-ui-bg-panel):has(button[aria-haspopup="listbox"]:not(:disabled)):not([aria-invalid="true"]) {
     border-color: #8b99ab !important;
 }
 
-input[type="text"]:not(.sr-only):not(:focus):not(:disabled),
-input[type="number"]:not(.sr-only):not(:focus):not(:disabled),
-input[type="date"]:not(.sr-only):not(:focus):not(:disabled),
-select:not(.sr-only):not(:focus):not(:disabled),
-textarea:not(.sr-only):not(:focus):not(:disabled),
-input[type="checkbox"]:not(:focus):not(:disabled),
-input[type="radio"]:not(:focus):not(:disabled) {
+input[type="text"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="number"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="date"]:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+select:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+textarea:not(.sr-only):not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="checkbox"]:not(:focus):not(:disabled):not([aria-invalid="true"]),
+input[type="radio"]:not(:focus):not(:disabled):not([aria-invalid="true"]) {
     border-color: #8b99ab !important;
 }
 
