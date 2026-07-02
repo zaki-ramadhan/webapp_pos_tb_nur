@@ -231,6 +231,7 @@ export default function CashPaymentLineItemModal({
                                     value={selectedAccount ? buildAccountLookupLabel(selectedAccount) : ''}
                                     placeholder="Cari/Pilih Akun Perkiraan..."
                                     searchLabel="Cari akun perkiraan"
+                                    queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable'] }}
                                     onSelectAccount={(rec) => setSelectedAccount(rec)}
                                     onRemove={() => setSelectedAccount(null)}
                                 />
@@ -309,6 +310,7 @@ export default function CashPaymentLineItemModal({
                                         value={deferredAccount ? buildAccountLookupLabel(deferredAccount) : ''}
                                         placeholder="Cari/Pilih Akun Perkiraan..."
                                         searchLabel="Cari akun penangguhan"
+                                        queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable'] }}
                                         onSelectAccount={(rec) => setDeferredAccount(rec)}
                                         onRemove={() => setDeferredAccount(null)}
                                     />

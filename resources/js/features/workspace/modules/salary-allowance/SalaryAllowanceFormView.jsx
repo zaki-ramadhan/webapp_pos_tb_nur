@@ -241,6 +241,7 @@ export default function SalaryAllowanceFormView({
                             placeholder="Cari/Pilih Akun Perkiraan..."
                             searchLabel="Cari akun beban"
                             dialogTitle="Pilih Akun Beban"
+                            queryParams={{ account_type: ['Expense', 'Other Expense'] }}
                             heightClassName="min-h-[38px]"
                             className="rounded-[4px] border-ui-border"
                             contentClassName="px-3 py-1.5"

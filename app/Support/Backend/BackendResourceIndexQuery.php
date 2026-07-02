@@ -47,15 +47,27 @@ class BackendResourceIndexQuery
                 continue;
             }
             if ($key === 'exclude_type' && Schema::hasColumn($tableName, 'account_type')) {
-                $query->where("{$tableName}.account_type", '!=', $value);
+                if (is_array($value)) {
+                    $query->whereNotIn("{$tableName}.account_type", $value);
+                } else {
+                    $query->where("{$tableName}.account_type", '!=', $value);
+                }
                 continue;
             }
             if ($key === 'exclude_id' && Schema::hasColumn($tableName, 'id')) {
-                $query->where("{$tableName}.id", '!=', $value);
+                if (is_array($value)) {
+                    $query->whereNotIn("{$tableName}.id", $value);
+                } else {
+                    $query->where("{$tableName}.id", '!=', $value);
+                }
                 continue;
             }
             if (Schema::hasColumn($tableName, $key)) {
-                $query->where("{$tableName}.{$key}", $value);
+                if (is_array($value)) {
+                    $query->whereIn("{$tableName}.{$key}", $value);
+                } else {
+                    $query->where("{$tableName}.{$key}", $value);
+                }
             }
         }
 
