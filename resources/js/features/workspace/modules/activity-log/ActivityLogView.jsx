@@ -191,7 +191,7 @@ export default function ActivityLogView({ page }) {
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
-                    placeholder: table.searchPlaceholder ?? '',
+                    placeholder: table.searchPlaceholder || 'Cari...',
                     widthClassName: 'sm:w-[340px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
