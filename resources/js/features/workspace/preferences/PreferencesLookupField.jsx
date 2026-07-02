@@ -13,7 +13,7 @@ export default function PreferencesLookupField({
 
     return (
         <div
-            className={`flex min-h-[38px] w-full items-center gap-2 rounded-[6px] border border-ui-border bg-white px-2 py-1 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : ''} ${className}`.trim()}
+            className={`flex min-h-[38px] w-full items-center gap-2 rounded-[6px] border border-ui-border bg-white px-2 py-1 transition-[border-color,box-shadow] duration-150 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${disabled ? 'cursor-default bg-slate-100 text-slate-400 pointer-events-none' : 'cursor-text'} ${className}`.trim()}
         >
             <div className="min-w-0 flex-1">
                 {hasValue ? (

@@ -53,7 +53,7 @@ export default function AccountLookupSearchInput({
         <div
             ref={containerRef}
             onMouseDown={focusInputFromWrapper}
-            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400' : 'bg-white'} ${className}`.trim()}
+            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : 'bg-white cursor-text'} ${className}`.trim()}
         >
             <div className="flex min-w-0 flex-1 items-center gap-2 pl-1 pr-3">
                 {hasSelectedValue ? (

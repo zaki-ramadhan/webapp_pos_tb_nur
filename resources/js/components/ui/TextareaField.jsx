@@ -54,7 +54,7 @@ export default function TextareaField({
     return (
         <div className={`w-full ${containerClassName}`.trim()}>
             <span
-                className={`group flex w-full items-stretch overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : ''} ${className}`.trim()}
+                className={`group flex w-full items-stretch overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : ''} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${className}`.trim()}
             >
                 {prefix ? (
                     <span

@@ -157,7 +157,7 @@ export default function ReferenceLookupInput({
         <div ref={rootRef} className={`relative w-full ${className}`.trim()}>
             <div
                 onMouseDown={focusInput}
-                className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100' : ''}`.trim()}
+                className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'}`.trim()}
             >
                 <div className="flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5">
                     {selectedLabels.length ? (
