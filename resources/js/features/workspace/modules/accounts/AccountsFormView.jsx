@@ -47,7 +47,7 @@ function shouldShowSaldoTab(type) {
     return !noSaldoTypes.includes(normalized);
 }
 
-export default function AccountsFormView({ pageId, config, backendRows, activeLevel2Tab, onOpenDetail, onCloseDetail, onReload }) {
+export default function AccountsFormView({ pageId, config, backendRows, activeLevel2Tab, onOpenDetail, onCloseTab, onReload }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     
@@ -112,6 +112,8 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTabInstanceId]);
 
+    const [lastSavedAt, setLastSavedAt] = useState(null);
+
     useEffect(() => {
         if (!tabs.some((t) => t.id === activeTabId)) {
             setActiveTabId('general');
@@ -119,10 +121,10 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     }, [tabs, activeTabId]);
 
     useEffect(() => {
-        if (!hasChanges) {
+        if (!hasChanges || lastSavedAt) {
             setValues(initialValues);
         }
-    }, [initialValues, hasChanges]);
+    }, [initialValues, hasChanges, lastSavedAt]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -202,12 +204,17 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                     );
                 }
 
+                setLastSavedAt(Date.now());
+
                 if (!isDetail && savedRecord?.id) {
                     onOpenDetail?.({
                         recordId: String(savedRecord.id),
                         label: savedRecord.name ?? payload.name,
                         tabLabel: savedRecord.name ?? payload.name,
                     });
+                    if (activeLevel2Tab?.id) {
+                        onCloseTab?.(activeLevel2Tab.id);
+                    }
                 }
             },
         });
@@ -228,7 +235,9 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akun perkiraan gagal dihapus.'),
             onSuccess: async () => {
                 await onReload?.();
-                onCloseDetail?.(recordId);
+                if (activeLevel2Tab?.id) {
+                    onCloseTab?.(activeLevel2Tab.id);
+                }
             },
         });
     }

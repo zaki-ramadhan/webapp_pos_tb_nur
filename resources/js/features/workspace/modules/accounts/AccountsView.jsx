@@ -6,7 +6,7 @@ import AccountsFormView from './AccountsFormView';
 import AccountsTableView from './AccountsTableView';
 import { mapAccountRow } from './accountsShared';
 
-export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
+export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail, onCloseTab }) {
     const {
         mappedRows,
         rows: backendRows,
@@ -88,7 +88,7 @@ export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs =
             backendRows={backendRows}
             activeLevel2Tab={lastActiveFormTab}
             onOpenDetail={onOpenDetail}
-            onCloseDetail={onCloseDetail}
+            onCloseTab={onCloseTab}
             onReload={reload}
         />
                 </div>

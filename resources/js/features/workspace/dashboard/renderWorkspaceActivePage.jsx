@@ -25,6 +25,7 @@ export default function renderWorkspaceActivePage({
     createDetailTabOpener,
     handleOpenDefaultContentTab,
     handleCloseDetailTab,
+    closeLevel2TabNow,
 }) {
     const sharedProps = {
         page: activePage,
@@ -33,6 +34,7 @@ export default function renderWorkspaceActivePage({
         level2Tabs,
         onOpenContent: () => handleOpenDefaultContentTab(activePage.id),
         onCloseDetail: (recordId) => handleCloseDetailTab(activePage.id, recordId),
+        onCloseTab: (tabId) => closeLevel2TabNow(tabId),
     };
 
     const staticRenderer = STATIC_PAGE_RENDERERS[activePage.id];

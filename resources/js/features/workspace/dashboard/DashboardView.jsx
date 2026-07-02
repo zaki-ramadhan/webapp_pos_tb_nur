@@ -51,6 +51,7 @@ const DashboardView = forwardRef(function DashboardView(
         handleSelectLevel2Tab,
         requestCloseLevel2Tab,
         handleCloseDetailTab,
+        closeLevel2TabNow,
         handleConfirmPendingClose,
         activeLevel2Tabs,
         pageLevel2ContentTabs,
@@ -165,6 +166,7 @@ const DashboardView = forwardRef(function DashboardView(
                         createDetailTabOpener={createDetailTabOpener}
                         handleOpenDefaultContentTab={handleOpenDefaultContentTab}
                         handleCloseDetailTab={handleCloseDetailTab}
+                        closeLevel2TabNow={closeLevel2TabNow}
                         isDashboardPageActive={isDashboardPageActive}
                     />
                 </div>

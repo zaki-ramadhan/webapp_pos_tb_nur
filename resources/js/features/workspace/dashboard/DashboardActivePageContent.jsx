@@ -24,6 +24,7 @@ export default function DashboardActivePageContent({
     createDetailTabOpener,
     handleOpenDefaultContentTab,
     handleCloseDetailTab,
+    closeLevel2TabNow,
 }) {
     return (
         <div className="min-h-0 min-w-0 flex-1 flex flex-col overflow-y-auto">
@@ -84,6 +85,7 @@ export default function DashboardActivePageContent({
                                 createDetailTabOpener,
                                 handleOpenDefaultContentTab,
                                 handleCloseDetailTab,
+                                closeLevel2TabNow,
                             })}
                         </FormErrorProvider>
                     </div>
