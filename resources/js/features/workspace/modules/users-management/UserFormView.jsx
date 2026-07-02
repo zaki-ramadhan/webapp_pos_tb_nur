@@ -125,6 +125,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
     useFormValuesSync({
         initialValues,
         recordId,
+        values,
         isDirty,
         setValues,
         onSync: () => setStatus({ tone: '', message: '' }),

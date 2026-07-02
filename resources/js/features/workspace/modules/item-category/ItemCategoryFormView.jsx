@@ -65,6 +65,7 @@ export default function ItemCategoryFormView({
     useFormValuesSync({
         initialValues,
         recordId: detailRow?.id ?? null,
+        values,
         isDirty,
         setValues,
     });

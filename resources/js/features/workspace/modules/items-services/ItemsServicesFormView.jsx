@@ -73,6 +73,7 @@ export default function ItemsServicesFormView({
     useFormValuesSync({
         initialValues,
         recordId: detailRow?.id ?? null,
+        values,
         isDirty,
         setValues,
     });

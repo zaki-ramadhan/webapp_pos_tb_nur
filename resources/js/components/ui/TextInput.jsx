@@ -234,6 +234,7 @@ export default function TextInput({
     value,
     defaultValue,
     clearable = true,
+    onClear = null,
     ...props
 }) {
     const name = props.name ?? '';
@@ -563,7 +564,7 @@ export default function TextInput({
             <div
                 onMouseDown={focusInputFromWrapper}
                 aria-invalid={Boolean(resolvedError)}
-                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${cleanedClassName}`.trim()}
+                className={`group flex ${heightClass} w-full items-center overflow-hidden rounded-md border transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabledClassName} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${cleanedClassName}`.trim()}
             >
                 {prefix ? (
                     <span
