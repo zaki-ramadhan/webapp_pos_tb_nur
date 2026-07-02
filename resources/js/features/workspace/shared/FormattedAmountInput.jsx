@@ -46,6 +46,7 @@ export default function FormattedAmountInput({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             inputMode={inputMode}
+            containerClassName={`w-full max-w-[240px] ${props.containerClassName ?? ''}`.trim()}
         />
     );
 }

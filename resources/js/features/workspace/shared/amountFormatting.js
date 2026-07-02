@@ -1,5 +1,15 @@
 export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative = false } = {}) {
-    let normalizedValue = String(value ?? '')
+    let strValue = String(value ?? '').trim();
+
+    // Strip empty decimal suffixes (.00, ,00, .0, ,0) so they are not shown to lay users
+    strValue = strValue.replace(/[.,]00?$/, '');
+
+    // Convert database standard decimal string (e.g. 125000.50) to Indonesian standard (125000,50)
+    if (/^-?\d+\.\d+$/.test(strValue)) {
+        strValue = strValue.replace('.', ',');
+    }
+
+    let normalizedValue = strValue
         .replace(/Rp/gi, '')
         .replace(/\s+/g, '')
         .replace(/\./g, '')
