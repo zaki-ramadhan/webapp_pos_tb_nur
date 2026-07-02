@@ -45,6 +45,7 @@ export default function TransferFeeSection({ config, values, handlers = {} }) {
                     />
                 }
                 title={detailTitle}
+                titleRequired={false}
                 columns={config.feeTable.columns}
                 rows={values.feeRows}
                 emptyLabel={config.feeTable.emptyLabel}

@@ -7,7 +7,7 @@ export function validateBankTransferValues(values, config) {
         { label: config.labels.toBank, value: values.toBankAccounts, type: 'array' },
         { label: config.labels.entryDate, value: values.entryDate },
         ...(values.autoNumber
-            ? [{ label: 'Tipe penomoran', value: values.numberingType }]
+            ? []
             : [{ label: config.labels.documentNumber, value: values.documentNumber }]),
         { label: config.labels.transferValue, value: parseNumericInput(values.transferValue) > 0 ? values.transferValue : '' },
     ]);

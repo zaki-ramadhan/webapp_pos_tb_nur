@@ -53,7 +53,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
             return config.table.columns;
         }
         return [
-            { id: '__no', label: 'No.', widthClassName: 'w-[52px]' },
+            { id: '__no', label: 'No.', widthClassName: 'w-[64px]' },
             ...config.table.columns,
         ];
     }, [config.table.columns, filteredRows.length]);

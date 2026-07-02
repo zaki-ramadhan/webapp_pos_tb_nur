@@ -114,7 +114,7 @@ export default function BankTransferFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     const updateValues = useCallback((nextValues) => {
         setValues((currentValues) =>
@@ -380,6 +380,7 @@ export default function BankTransferFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={<BankTransferHeader config={config} values={values} setValues={updateValues} activeRecordId={activeRecordId} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
