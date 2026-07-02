@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ItemCategoryFormView from './ItemCategoryFormView';
 import ItemCategoryTableView from './ItemCategoryTableView';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 
-export default function ItemCategoryView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         rows,
         total,
@@ -34,9 +34,46 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, onOpenCo
             tabLabel: row.name ?? '',
         }));
 
+        const detailRecords = {
+            ...(baseConfig.detailRecords ?? {}),
+        };
+        rows.forEach((row) => {
+            const inv = row.inventory_account ?? row.inventoryAccount;
+            const exp = row.expense_account ?? row.expenseAccount;
+            const sal = row.sales_account ?? row.salesAccount;
+            const salRet = row.sales_return_account ?? row.salesReturnAccount;
+            const salDisc = row.sales_discount_account ?? row.salesDiscountAccount;
+            const transit = row.goods_in_transit_account ?? row.goodsInTransitAccount;
+            const cogs = row.cost_of_goods_sold_account ?? row.costOfGoodsSoldAccount;
+            const purRet = row.purchase_return_account ?? row.purchaseReturnAccount;
+            const unbilled = row.unbilled_purchase_account ?? row.unbilledPurchaseAccount;
+
+            detailRecords[String(row.id)] = {
+                name: row.name ?? '',
+                isDefault: Boolean(row.is_default),
+                isSubCategory: Boolean(row.parent_id),
+                parentId: row.parent_id ? String(row.parent_id) : '',
+                parentName: (row.parent?.name) ?? '',
+                accounts: {
+                    inventoryAccount: inv ? `[${inv.code}] ${inv.name}` : '',
+                    expenseAccount: exp ? `[${exp.code}] ${exp.name}` : '',
+                    salesAccount: sal ? `[${sal.code}] ${sal.name}` : '',
+                    salesReturnAccount: salRet ? `[${salRet.code}] ${salRet.name}` : '',
+                    salesDiscountAccount: salDisc ? `[${salDisc.code}] ${salDisc.name}` : '',
+                    goodsInTransitAccount: transit ? `[${transit.code}] ${transit.name}` : '',
+                    costOfGoodsSoldAccount: cogs ? `[${cogs.code}] ${cogs.name}` : '',
+                    purchaseReturnAccount: purRet ? `[${purRet.code}] ${purRet.name}` : '',
+                    unbilledPurchaseAccount: unbilled ? `[${unbilled.code}] ${unbilled.name}` : '',
+                }
+            };
+        });
+
         return {
             ...baseConfig,
+            detailRecords,
             table: {
+                loading,
+
                 ...baseConfig.table,
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
@@ -56,18 +93,35 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, onOpenCo
         };
     }, [loading, page.itemCategory, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
 
-    return mode === 'table' ? (
-        <ItemCategoryTableView page={{ itemCategory: config }} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
-    ) : (
-        <ItemCategoryFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <ItemCategoryTableView page={{ itemCategory: config }} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <ItemCategoryFormView
+            key={lastActiveFormTab.id}
             page={{ itemCategory: config }}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }
 

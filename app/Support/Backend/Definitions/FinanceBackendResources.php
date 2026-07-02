@@ -70,8 +70,8 @@ class FinanceBackendResources
                 modelClass: Account::class,
                 with: ['parent', 'currency', 'branches', 'users'],
                 indexRules: [
-                    'account_type' => ['nullable', 'string', 'max:60'],
-                    'exclude_type' => ['nullable', 'string', 'max:60'],
+                    'account_type' => ['sometimes'],
+                    'exclude_type' => ['sometimes'],
                 ],
                 storeRules: [
                     'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],

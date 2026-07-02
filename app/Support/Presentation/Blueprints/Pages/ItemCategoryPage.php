@@ -79,14 +79,6 @@ class ItemCategoryPage
                     ],
                     'columns' => [
                         [
-                            'id' => 'spacer',
-                            'label' => '',
-                            'kind' => 'spacer',
-                            'align' => 'center',
-                            'widthClassName' => 'w-[34px]',
-                            'cellClassName' => 'px-0',
-                        ],
-                        [
                             'id' => 'name',
                             'label' => 'Nama',
                             'align' => 'center',

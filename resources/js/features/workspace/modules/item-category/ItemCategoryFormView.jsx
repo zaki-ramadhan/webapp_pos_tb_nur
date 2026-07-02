@@ -45,6 +45,14 @@ export default function ItemCategoryFormView({
         [initialValues, values]
     );
 
+    const parentCategoryOptions = useMemo(() => {
+        const rows = config.table?.rows ?? [];
+        if (isDetail && detailRow) {
+            return rows.filter((row) => String(row.id) !== String(detailRow.id));
+        }
+        return rows;
+    }, [config.table?.rows, isDetail, detailRow]);
+
     const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
@@ -68,12 +76,16 @@ export default function ItemCategoryFormView({
         }));
     }
 
-    function handleAccountChange(field, nextValue) {
+    function handleAccountChange(field, nextValue, recordId = '') {
         setValues((currentValues) => ({
             ...currentValues,
             accounts: {
                 ...currentValues.accounts,
                 [field]: nextValue,
+            },
+            accountIds: {
+                ...currentValues.accountIds,
+                [field]: recordId,
             },
         }));
     }
@@ -100,8 +112,18 @@ export default function ItemCategoryFormView({
                 const payload = {
                     name: values.name.trim(),
                     code: isDetail ? detailRow.code : 'CAT-' + values.name.trim().replace(/\s+/g, '-').toUpperCase() + '-' + Date.now(),
-                    parent_id: null,
+                    parent_id: values.isSubCategory ? (values.parentId || null) : null,
+                    is_default: values.isDefault,
                     is_active: true,
+                    inventory_account_id: values.accountIds?.inventoryAccount ? parseInt(values.accountIds.inventoryAccount) : null,
+                    expense_account_id: values.accountIds?.expenseAccount ? parseInt(values.accountIds.expenseAccount) : null,
+                    sales_account_id: values.accountIds?.salesAccount ? parseInt(values.accountIds.salesAccount) : null,
+                    sales_return_account_id: values.accountIds?.salesReturnAccount ? parseInt(values.accountIds.salesReturnAccount) : null,
+                    sales_discount_account_id: values.accountIds?.salesDiscountAccount ? parseInt(values.accountIds.salesDiscountAccount) : null,
+                    goods_in_transit_account_id: values.accountIds?.goodsInTransitAccount ? parseInt(values.accountIds.goodsInTransitAccount) : null,
+                    cost_of_goods_sold_account_id: values.accountIds?.costOfGoodsSoldAccount ? parseInt(values.accountIds.costOfGoodsSoldAccount) : null,
+                    purchase_return_account_id: values.accountIds?.purchaseReturnAccount ? parseInt(values.accountIds.purchaseReturnAccount) : null,
+                    unbilled_purchase_account_id: values.accountIds?.unbilledPurchaseAccount ? parseInt(values.accountIds.unbilledPurchaseAccount) : null,
                 };
 
                 const response = isDetail && detailRow?.id
@@ -117,7 +139,7 @@ export default function ItemCategoryFormView({
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
                             detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                                pageId: page?.id ?? 'item-category',
                                 tabId: activeLevel2Tab.id,
                                 label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
                             },
@@ -174,7 +196,7 @@ export default function ItemCategoryFormView({
             setActiveTabId={setActiveTabId}
             status={status}
             saving={saving}
-            saveDisabled={saving || !isDirty}
+            saveDisabled={saving || !values.name?.trim() || (isDetail && !isDirty)}
             onSave={handleSave}
             actionsSlot={
                 isDetail && config.deleteLabel ? (
@@ -191,7 +213,7 @@ export default function ItemCategoryFormView({
             {activeTabId === 'item-category-accounts' ? (
                 <ItemCategoryAccountsTab config={config} values={values} onAccountChange={handleAccountChange} />
             ) : (
-                <ItemCategoryGeneralTab config={config} values={values} onChange={handleChange} />
+                <ItemCategoryGeneralTab config={config} values={values} onChange={handleChange} parentCategoryOptions={parentCategoryOptions} />
             )}
 
             <ConfirmationModal

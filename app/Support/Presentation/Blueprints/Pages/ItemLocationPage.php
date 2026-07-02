@@ -23,6 +23,7 @@ class ItemLocationPage
                         'value' => 'goods',
                         'options' => [
                             ['value' => 'goods', 'label' => 'Barang'],
+                            ['value' => 'warehouse', 'label' => 'Gudang'],
                         ],
                         'className' => 'w-[220px]',
                     ],
@@ -46,10 +47,10 @@ class ItemLocationPage
                         'label' => 'Muat ulang barang per gudang',
                     ],
                     [
-                        'id' => 'share',
+                        'id' => 'export-excel',
                         'type' => 'icon-button',
-                        'icon' => 'external-link',
-                        'label' => 'Bagikan barang per gudang',
+                        'icon' => 'download',
+                        'label' => 'Ekspor Excel',
                     ],
                 ],
                 'table' => [

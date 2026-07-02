@@ -11,6 +11,7 @@ export default function ItemCategoryTableView({ page, onCreate, onOpenDetail }) 
             exportTitle="Laporan Kategori Barang"
             onCreate={onCreate}
             onOpenDetail={onOpenDetail}
+            disableColumnSettings={true}
         />
     );
 }

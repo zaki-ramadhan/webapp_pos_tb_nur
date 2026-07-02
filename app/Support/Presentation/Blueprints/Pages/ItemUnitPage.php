@@ -39,14 +39,6 @@ class ItemUnitPage
                 ],
                 'columns' => [
                     [
-                        'id' => 'spacer',
-                        'label' => '',
-                        'kind' => 'spacer',
-                        'align' => 'left',
-                        'widthClassName' => 'w-[34px]',
-                        'cellClassName' => 'px-0',
-                    ],
-                    [
                         'id' => 'name',
                         'label' => 'Nama',
                         'align' => 'center',
