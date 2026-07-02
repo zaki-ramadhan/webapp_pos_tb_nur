@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import BankTransferFormView from './BankTransferFormView';
@@ -8,11 +8,10 @@ import { buildBankTransferFilters, buildBankTransferRow } from './bankTransferSh
 export default function BankTransferView({
     page,
     mode,
-    activeLevel2Tab,
+    activeLevel2Tab, level2Tabs = [],
     onOpenContent,
     onOpenDetail,
-    onCloseDetail,
-}) {
+    onCloseDetail,}) {
     const {
         rows,
         total,
@@ -81,17 +80,34 @@ export default function BankTransferView({
         [formConfig, page.bankTransfer, mappedRows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage],
     );
 
-    return mode === 'table' ? (
-        <BankTransferTableView config={tableConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
-    ) : (
-        <BankTransferFormView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <BankTransferTableView config={tableConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <BankTransferFormView
             pageId={page.id}
             config={formConfig}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

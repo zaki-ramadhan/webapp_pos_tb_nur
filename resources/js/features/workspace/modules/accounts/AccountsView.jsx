@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import { buildAccountsConfig } from './accountsConfig';
@@ -6,7 +6,7 @@ import AccountsFormView from './AccountsFormView';
 import AccountsTableView from './AccountsTableView';
 import { mapAccountRow } from './accountsShared';
 
-export default function AccountsView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         mappedRows,
         rows: backendRows,
@@ -57,8 +57,20 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
         };
     }, [mappedRows, page.accounts, tableProps]);
 
-    return mode === 'table' ? (
-        <AccountsTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <AccountsTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
@@ -66,16 +78,22 @@ export default function AccountsView({ page, mode, activeLevel2Tab, onOpenConten
             error={error}
             onReload={reload}
         />
-    ) : (
-        <AccountsFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <AccountsFormView
+            key={lastActiveFormTab.id}
+            pageId={page.id}
             config={config}
             backendRows={backendRows}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onReload={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }
 

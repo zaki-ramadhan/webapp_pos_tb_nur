@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildPurchasePaymentConfig } from './purchasePaymentConfig';
@@ -10,7 +10,7 @@ import {
     buildPurchasePaymentRow,
 } from './purchasePaymentShared';
 
-export default function PurchasePaymentView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function PurchasePaymentView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         rows,
         total,
@@ -40,6 +40,8 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, onOpe
                     return result;
                 }, {}),
                 table: {
+                loading,
+
                     ...baseConfig.table,
                     rows: mappedRows,
                     filters: buildPurchasePaymentFilters(baseConfig.table?.filters, mappedRows),
@@ -61,8 +63,20 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, onOpe
         [loading, page.purchasePayment, rows, total],
     );
 
-    return mode === 'table' ? (
-        <PurchasePaymentTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <PurchasePaymentTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
@@ -70,16 +84,21 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, onOpe
             error={error}
             onRefresh={reload}
         />
-    ) : (
-        <PurchasePaymentFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <PurchasePaymentFormView
             pageId={page.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
             buildRecord={buildPurchasePaymentRecordFromBackend}
         />
+                </div>
+            )}
+        </div>
     );
 }

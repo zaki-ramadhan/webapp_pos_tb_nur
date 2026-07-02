@@ -213,7 +213,7 @@ export default function InquiryWorkspaceView({
             return cols;
         }
         return [
-            { id: '__no', label: 'No.', widthClassName: 'w-[52px]' },
+            { id: '__no', label: 'No.', widthClassName: 'w-[64px]' },
             ...cols,
         ];
     }, [config.table.columns, filteredRows.length, isAlternativeView]);

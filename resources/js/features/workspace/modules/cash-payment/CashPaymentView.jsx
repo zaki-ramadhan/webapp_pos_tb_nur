@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import CashPaymentFormView from './CashPaymentFormView';
 import CashPaymentTableView from './CashPaymentTableView';
 import { buildCashPaymentFilters, buildCashPaymentRow } from './cashPaymentShared';
 
-export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function CashPaymentView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const resource = useWorkspaceResource({
         resource: 'cash-payments',
         initialPerPage: 25,
@@ -30,8 +30,20 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenCon
         };
     }, [page.cashPayment, mappedRows, tableProps, total]);
 
-    return mode === 'table' ? (
-        <CashPaymentTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <CashPaymentTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
@@ -39,15 +51,20 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, onOpenCon
             error={resource.error}
             onRefresh={resource.reload}
         />
-    ) : (
-        <CashPaymentFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <CashPaymentFormView
             pageId={page.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={resource.reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

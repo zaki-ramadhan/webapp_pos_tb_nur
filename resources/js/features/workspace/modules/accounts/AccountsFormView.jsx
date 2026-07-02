@@ -47,7 +47,7 @@ function shouldShowSaldoTab(type) {
     return !noSaldoTypes.includes(normalized);
 }
 
-export default function AccountsFormView({ config, backendRows, activeLevel2Tab, onOpenDetail, onCloseDetail, onReload }) {
+export default function AccountsFormView({ pageId, config, backendRows, activeLevel2Tab, onOpenDetail, onCloseDetail, onReload }) {
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     
@@ -151,7 +151,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
         values.isSubAccount,
         values.autoCode,
     ]);
-    const saveDisabled = saving || Boolean(validationMessage) || !hasChanges;
+    const saveDisabled = saving || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1'))) || !hasChanges;
 
     useWorkspaceDirtyRegistration({
         pageId: 'accounts',
@@ -235,6 +235,7 @@ export default function AccountsFormView({ config, backendRows, activeLevel2Tab,
 
     return (
         <ModuleFormTemplate
+            validationMessage={validationMessage}
             form={{
                 tabs: tabs,
                 saveLabel: 'Simpan',

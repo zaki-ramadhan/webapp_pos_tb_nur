@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import SupplierPriceFormView from './SupplierPriceFormView';
@@ -18,11 +18,10 @@ function mapSupplierPriceRow(record) {
 export default function SupplierPriceView({ 
     page, 
     mode, 
-    activeLevel2Tab, 
+    activeLevel2Tab, level2Tabs = [], 
     onOpenContent, 
     onOpenDetail, 
-    onCloseDetail 
-}) {
+    onCloseDetail}) {
     const config = page.supplierPrice;
 
     const supplierPriceResource = useWorkspaceResource({
@@ -45,20 +44,37 @@ export default function SupplierPriceView({
         };
     }, [config, supplierPriceResource.error, supplierPriceResource.loading, supplierPriceResource.tableProps, supplierPriceResource.total]);
 
-    return mode === 'table' ? (
-        <SupplierPriceTableView 
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <SupplierPriceTableView 
             config={resolvedConfig} 
             onCreate={onOpenContent} 
             onOpenDetail={onOpenDetail} 
         />
-    ) : (
-        <SupplierPriceFormView 
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <SupplierPriceFormView 
             config={resolvedConfig} 
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={supplierPriceResource.reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

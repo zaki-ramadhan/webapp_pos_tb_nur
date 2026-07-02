@@ -12,6 +12,8 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
 import Button from '@/components/ui/Button';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import { showSuccessToast } from '@/components/feedback/toast';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
@@ -19,6 +21,7 @@ import {
     LinkIcon,
     SearchIcon,
     RefreshIcon,
+    DownloadIcon,
 } from '@/features/workspace/shared/Icons';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
@@ -33,6 +36,7 @@ import {
     buildInventoryFilters,
     mapInventoryRows,
 } from '@/features/workspace/backend/workspaceBackendAdapters';
+import ToolbarExportSplitButton from '@/features/workspace/shared/toolbar/ToolbarExportSplitButton';
 
 function buildInitialValues(config) {
     return (config.controls ?? []).reduce((result, control) => {
@@ -49,31 +53,34 @@ function resolveCellAlignClassName(align) {
     return 'text-left';
 }
 
-
-function InquiryIconButton({ icon, label, onClick }) {
+function InquiryIconButton({ icon, label, onClick, loading = false }) {
     const IconComponent =
         icon === 'external-link'
             ? ExternalLinkIcon
             : icon === 'refresh'
             ? RefreshIcon
+            : icon === 'download'
+            ? DownloadIcon
             : LinkIcon;
 
     return (
         <ToolbarIconButton
             label={label}
             onClick={onClick}
-            className="inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition hover:bg-brand-blue-light h-[34px] w-[40px]"
+            disabled={loading}
+            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition hover:bg-brand-blue-light h-[40px] w-[40px] ${loading ? 'pointer-events-none opacity-70' : ''}`.trim()}
         >
-            <IconComponent className="h-4 w-4" />
+            <IconComponent className={`h-4 w-4 ${loading && icon === 'refresh' ? 'animate-spin' : ''}`.trim()} />
         </ToolbarIconButton>
     );
 }
 
-function InquiryTextButton({ label, tone = 'default' }) {
+function InquiryTextButton({ label, tone = 'default', onClick }) {
     return (
         <button
             type="button"
-            className={`inline-flex h-[34px] items-center justify-center rounded-[4px] border px-4 text-base ${
+            onClick={onClick}
+            className={`inline-flex h-[40px] items-center justify-center rounded-[4px] border px-3 sm:px-4 text-xs sm:text-sm ${
                 tone === 'primary'
                     ? 'border-brand-blue-border bg-bg-brand-blue-toggled text-brand-blue'
                     : 'border-brand-blue-border bg-white text-brand-blue'
@@ -89,12 +96,15 @@ function InquiryControl({
     value,
     onChange,
     onRefresh,
+    exportConfig,
     suppliers = [],
     warehouses = [],
     products = [],
     onLookupSelect,
     onLookupClear,
     searching = false,
+    loading = false,
+    onButtonClick,
 }) {
     if (control.type === 'select') {
         return (
@@ -127,11 +137,19 @@ function InquiryControl({
     }
 
     if (control.type === 'icon-button') {
-        return <InquiryIconButton icon={control.icon} label={control.label} onClick={control.id === 'refresh' ? onRefresh : undefined} />;
+        if (control.id === 'export-excel') {
+            return (
+                <ToolbarExportSplitButton
+                    exportConfig={exportConfig}
+                    sizeStyle={{ utilityButton: 'h-[40px] w-[40px]' }}
+                />
+            );
+        }
+        return <InquiryIconButton icon={control.icon} label={control.label} onClick={control.id === 'refresh' ? onRefresh : undefined} loading={loading} />;
     }
 
     if (control.type === 'button') {
-        return <InquiryTextButton label={control.label} tone={control.tone} />;
+        return <InquiryTextButton label={control.label} tone={control.tone} onClick={() => onButtonClick?.(control.id)} />;
     }
 
     if (control.type === 'lookup') {
@@ -150,9 +168,7 @@ function InquiryControl({
                 placeholder={control.placeholder ?? 'Cari/Pilih...'}
                 items={lookupItems}
                 searching={searching}
-                getOptionLabel={(option) =>
-                    option?.code ? `[${option.code}] ${option.name}` : (option?.name ?? option?.label ?? '')
-                }
+                getOptionLabel={(option) => option?.name ?? option?.label ?? ''}
                 onSelect={(option) => onLookupSelect(control.id, option)}
                 onClear={() => onLookupClear(control.id)}
                 className={control.className ?? 'w-full sm:w-[240px]'}
@@ -179,6 +195,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     const [keyword, setKeyword] = useState(config.search?.value ?? '');
     const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, {}));
     const [selectedIds, setSelectedIds] = useState(() => new Set());
+    const [warningModal, setWarningModal] = useState({ open: false, title: '', message: '' });
 
     const {
         rows: rawRows,
@@ -198,11 +215,21 @@ export default function InventoryInquiryView({ config, pageId }) {
     const tableRows = useMemo(() => mapInventoryRows(pageId, rawRows), [pageId, rawRows]);
 
     const cleanedColumns = useMemo(() => {
-        return (config.table.columns ?? []).map(col => ({
-            ...col,
-            label: cleanHeaderLabel(col.label)
-        }));
-    }, [config.table.columns]);
+        const columns = config.table.columns ?? [];
+        return columns.map(col => {
+            if (col.id === 'warehouse' && values.itemType === 'warehouse') {
+                return {
+                    ...col,
+                    id: 'productName',
+                    label: 'Barang',
+                };
+            }
+            return {
+                ...col,
+                label: cleanHeaderLabel(col.label)
+            };
+        });
+    }, [config.table.columns, values.itemType]);
 
     // Pisahkan kolom checkbox dari kolom data
     const firstColumnIsCheckbox = cleanedColumns[0]?.kind === 'checkbox';
@@ -269,6 +296,20 @@ export default function InventoryInquiryView({ config, pageId }) {
     const allSelected = sortedRows.length > 0 && sortedRows.every((r) => selectedIds.has(r.id));
     const someSelected = !allSelected && sortedRows.some((r) => selectedIds.has(r.id));
 
+    const resolvedControls = useMemo(() => {
+        return (config.controls ?? []).map((control) => {
+            if (control.id === 'itemSearch') {
+                const isWarehouseMode = values.itemType === 'warehouse';
+                return {
+                    ...control,
+                    id: isWarehouseMode ? 'warehouseSearch' : 'itemSearch',
+                    placeholder: isWarehouseMode ? 'Cari/Pilih Gudang' : 'Cari/Pilih Barang',
+                };
+            }
+            return control;
+        });
+    }, [config.controls, values.itemType]);
+
     function toggleAll() {
         setSelectedIds(allSelected ? new Set() : new Set(sortedRows.map((r) => r.id)));
     }
@@ -283,12 +324,35 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     function handleChange(controlId, nextValue) {
         const nextValues = { ...values, [controlId]: nextValue };
+        if (controlId === 'itemType') {
+            nextValues.itemSearch = '';
+            nextValues.itemSearchId = null;
+            nextValues.warehouseSearch = '';
+            nextValues.warehouseSearchId = null;
+        }
         setValues(nextValues);
         setFilters(buildInventoryFilters(pageId, nextValues));
     }
 
+    function handleButtonClick(controlId) {
+        if (controlId === 'order' || controlId === 'request') {
+            if (selectedIds.size === 0) {
+                setWarningModal({
+                    open: true,
+                    title: 'Peringatan',
+                    message: `Silakan pilih minimal satu barang terlebih dahulu untuk melakukan tindakan ${controlId === 'order' ? 'Pesan' : 'Minta'}.`,
+                });
+                return;
+            }
+            
+            showSuccessToast({
+                message: `Draf dokumen ${controlId === 'order' ? 'Pemesanan Pembelian' : 'Permintaan Barang'} berhasil dibuat untuk ${selectedIds.size} barang.`,
+            });
+        }
+    }
+
     function handleLookupSelect(controlId, option) {
-        const optionLabel = option.code ? `[${option.code}] ${option.name}` : (option.name ?? option.label ?? '');
+        const optionLabel = option.name ?? option.label ?? '';
         const nextValues = {
             ...values,
             [controlId]: optionLabel,
@@ -312,19 +376,26 @@ export default function InventoryInquiryView({ config, pageId }) {
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
-                    {(config.controls ?? []).map((control) => (
+                    {resolvedControls.map((control) => (
                         <div key={control.id} className={control.wrapperClassName ?? ''}>
                             <InquiryControl
                                 control={control}
                                 value={values[control.id] ?? ''}
                                 onChange={handleChange}
                                 onRefresh={reload}
+                                exportConfig={{
+                                    rows: sortedRows,
+                                    columns: cleanedColumns,
+                                    filename: 'barang-per-gudang'
+                                }}
                                 suppliers={suppliers}
                                 warehouses={warehouses}
                                 products={products}
                                 onLookupSelect={handleLookupSelect}
                                 onLookupClear={handleLookupClear}
                                 searching={loadingLookups}
+                                loading={loading}
+                                onButtonClick={handleButtonClick}
                             />
                         </div>
                     ))}
@@ -356,7 +427,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {firstColumnIsCheckbox ? (
-                                <DataTableHead className="w-[52px] px-2.5 text-center">
+                                <DataTableHead className="w-[64px] px-4 text-center">
                                     <input
                                         type="checkbox"
                                         checked={allSelected}
@@ -367,7 +438,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     />
                                 </DataTableHead>
                             ) : null}
-                            {filteredRows.length > 0 || !firstColumnIsCheckbox ? (
+                            {sortedRows.length > 0 ? (
                                 <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
                                     No.
                                 </DataTableHead>
@@ -394,7 +465,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
-                                        <DataTableCell className="px-2.5 text-center">
+                                        <DataTableCell className="px-4 text-center">
                                             <input
                                                 type="checkbox"
                                                 checked={selectedIds.has(row.id)}
@@ -412,7 +483,10 @@ export default function InventoryInquiryView({ config, pageId }) {
                                             key={column.id}
                                             className={`px-2.5 text-base text-text-workspace-dark ${resolveCellAlignClassName(column.align)}`.trim()}
                                         >
-                                            {formatTableTextValue(row[column.id])}
+                                            {column.id === 'productName' && row.productCode
+                                                ? `[${row.productCode}] ${row.productName}`
+                                                : formatTableTextValue(row[column.id])
+                                            }
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>
@@ -445,6 +519,28 @@ export default function InventoryInquiryView({ config, pageId }) {
                     className="mt-3"
                 />
             ) : null}
+
+            <WorkspaceDialog
+                open={warningModal.open}
+                onClose={() => setWarningModal((prev) => ({ ...prev, open: false }))}
+                title={warningModal.title}
+                footer={
+                    <div className="flex justify-end">
+                        <Button
+                            variant="primary"
+                            size="md"
+                            onClick={() => setWarningModal((prev) => ({ ...prev, open: false }))}
+                            className="bg-[#0c50a4] hover:bg-[#0a4288]"
+                        >
+                            OK
+                        </Button>
+                    </div>
+                }
+            >
+                <div className="text-sm text-brand-dark py-2">
+                    {warningModal.message}
+                </div>
+            </WorkspaceDialog>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildSalesReceiptConfig } from '@/features/workspace/modules/sales-receipt/salesReceiptConfig';
@@ -10,7 +10,7 @@ import {
     buildSalesReceiptRecord,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 
-export default function SalesReceiptView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function SalesReceiptView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         rows,
         total,
@@ -39,6 +39,8 @@ export default function SalesReceiptView({ page, mode, activeLevel2Tab, onOpenCo
                 return result;
             }, {}),
             table: {
+                loading,
+
                 ...baseConfig.table,
                 rows: mappedRows,
                 filters: buildSalesReceiptFilters(baseConfig.table?.filters, mappedRows),
@@ -58,8 +60,20 @@ export default function SalesReceiptView({ page, mode, activeLevel2Tab, onOpenCo
         };
     }, [loading, page.salesReceipt, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
-    return mode === 'table' ? (
-        <SalesReceiptTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <SalesReceiptTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
@@ -67,16 +81,21 @@ export default function SalesReceiptView({ page, mode, activeLevel2Tab, onOpenCo
             error={error}
             onRefresh={reload}
         />
-    ) : (
-        <SalesReceiptFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <SalesReceiptFormView
             pageId={page.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
             buildRecord={buildSalesReceiptRecord}
         />
+                </div>
+            )}
+        </div>
     );
 }

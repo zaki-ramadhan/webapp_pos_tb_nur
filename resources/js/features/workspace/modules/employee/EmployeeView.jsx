@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import EmployeeFormView from '@/features/workspace/modules/employee/EmployeeFormView';
@@ -9,11 +9,10 @@ import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAv
 export default function EmployeeView({
     page,
     mode,
-    activeLevel2Tab,
+    activeLevel2Tab, level2Tabs = [],
     onOpenContent,
     onOpenDetail,
-    onCloseDetail,
-}) {
+    onCloseDetail,}) {
     const employeeResource = useBackendIndexResource({
         resource: 'employees',
         initialPerPage: 25,
@@ -90,23 +89,40 @@ export default function EmployeeView({
         };
     }, [branchResource.rows, departmentResource.rows, userResource.rows, employeeResource.error, employeeResource.loading, employeeResource.reload, employeeResource.rows, employeeResource.total, employeeResource.page, employeeResource.perPage, employeeResource.lastPage, employeeResource.from, employeeResource.to, employeeResource.setPage, employeeResource.setPerPage, page]);
 
-    return mode === 'table' ? (
-        <EmployeeTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <EmployeeTableView
             table={resolvedPage.table}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
         />
-    ) : (
-        <EmployeeFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <EmployeeFormView
+            key={lastActiveFormTab.id}
             pageId={page.id}
             form={resolvedPage.form}
             tableRows={resolvedPage.table?.rows ?? []}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={employeeResource.reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

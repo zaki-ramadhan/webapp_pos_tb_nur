@@ -76,7 +76,7 @@ export default function CurrencyFormView({
 
     const tabs = isDetailMode ? config.detailTabs : config.createTabs;
     const validationMessage = useMemo(() => validateCurrencyValues(values, config), [config, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     useWorkspaceDirtyRegistration({
         pageId: page.id,
@@ -177,6 +177,7 @@ export default function CurrencyFormView({
 
     return (
         <ModuleFormTemplate
+            validationMessage={validationMessage}
             form={{
                 tabs: tabs,
                 saveLabel: config.saveLabel,

@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { mapUserRow } from '@/features/workspace/backend/workspaceBackendAdapters';
 import UserFormView from './UserFormView';
 import UserTableView from './UserTableView';
 
-export default function UsersManagementView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
+export default function UsersManagementView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail}) {
     const usersResource = useBackendIndexResource({ resource: 'users', initialPerPage: 25 });
     const groupsResource = useBackendIndexResource({ resource: 'access-groups', initialPerPage: 25 });
     const rolesResource = useBackendIndexResource({ resource: 'roles', initialPerPage: 25 });
@@ -35,21 +35,38 @@ export default function UsersManagementView({ page, mode, activeLevel2Tab, onOpe
         employees: employeesResource.rows,
     }), [groupsResource.rows, rolesResource.rows, employeesResource.rows]);
 
-    return mode === 'table' ? (
-        <UserTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <UserTableView
             table={resolvedTable}
             onRefresh={usersResource.reload}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
         />
-    ) : (
-        <UserFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <UserFormView
             form={page.form}
             tableRows={resolvedTable.rows}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onRefresh={usersResource.reload}
             onOpenDetail={onOpenDetail}
             lookupData={lookupData}
         />
+                </div>
+            )}
+        </div>
     );
 }

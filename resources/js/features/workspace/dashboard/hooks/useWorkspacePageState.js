@@ -336,5 +336,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         requestCloseLevel2Tab,
         handleCloseDetailTab,
         handleConfirmPendingClose,
+        activeLevel2Tabs,
+        pageLevel2ContentTabs,
     };
 }

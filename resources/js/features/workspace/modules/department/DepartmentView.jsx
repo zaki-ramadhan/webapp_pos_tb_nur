@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
@@ -27,7 +27,7 @@ function mapDepartmentRow(record) {
     };
 }
 
-export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function DepartmentView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const departmentResource = useWorkspaceResource({
         resource: 'departments',
         initialPerPage: 25,
@@ -73,6 +73,8 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenCont
                 },
             },
             table: {
+                loading,
+
                 ...page.table,
                 ...departmentResource.tableProps,
                 pageValue: departmentResource.total.toLocaleString('id-ID'),
@@ -82,23 +84,40 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, onOpenCont
         };
     }, [branchResource.rows, departmentResource.error, departmentResource.loading, departmentResource.mappedRows, departmentResource.tableProps, departmentResource.total, page, userResource.rows]);
 
-    return mode === 'table' ? (
-        <DepartmentTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <DepartmentTableView
             table={resolvedPage.table}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
         />
-    ) : (
-        <DepartmentFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <DepartmentFormView
+            key={lastActiveFormTab.id}
             pageId={page.id}
             form={resolvedPage.form}
             tableRows={resolvedPage.table?.rows ?? []}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={departmentResource.reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

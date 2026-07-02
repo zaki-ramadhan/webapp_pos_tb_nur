@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { buildItemsServicesConfig } from '@/features/workspace/modules/items-services/itemsServicesConfig';
 import ItemsServicesFormView from '@/features/workspace/modules/items-services/ItemsServicesFormView';
@@ -9,10 +9,9 @@ import { mapProductRow } from '@/features/workspace/backend/workspaceBackendAdap
 export default function ItemsServicesView({
     page,
     mode,
-    activeLevel2Tab,
+    activeLevel2Tab, level2Tabs = [],
     onOpenContent,
-    onOpenDetail,
-}) {
+    onOpenDetail,}) {
     const {
         rows,
         total,
@@ -60,6 +59,8 @@ export default function ItemsServicesView({
         return {
             ...baseConfig,
             table: {
+                loading,
+
                 ...baseConfig.table,
                 rows: mapped,
                 filters: updatedFilters,
@@ -80,22 +81,39 @@ export default function ItemsServicesView({
         };
     }, [loading, page.itemsServices, reload, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
-    return mode === 'table' ? (
-        <ItemsServicesTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <ItemsServicesTableView
             config={config}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onRefresh={reload}
         />
-    ) : (
-        <ItemsServicesFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <ItemsServicesFormView
+            key={lastActiveFormTab.id}
             pageId={page.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

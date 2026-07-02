@@ -9,6 +9,7 @@ import DashboardPageTabs from '@/features/workspace/dashboard/DashboardPageTabs'
 import DashboardViewModals from '@/features/workspace/dashboard/DashboardViewModals';
 import useDashboardPreferencesState from '@/features/workspace/dashboard/useDashboardPreferencesState';
 
+import { resolveLevel2State } from '@/features/workspace/dashboard/dashboardPageState';
 import useWorkspacePageState from './hooks/useWorkspacePageState';
 
 const DashboardView = forwardRef(function DashboardView(
@@ -51,6 +52,8 @@ const DashboardView = forwardRef(function DashboardView(
         requestCloseLevel2Tab,
         handleCloseDetailTab,
         handleConfirmPendingClose,
+        activeLevel2Tabs,
+        pageLevel2ContentTabs,
     } = useWorkspacePageState({
         dashboard,
         onCloseMobileWorkspaceMenu,
@@ -90,6 +93,24 @@ const DashboardView = forwardRef(function DashboardView(
         widgetTemplateMap,
         user,
     });
+
+    const renderedPages = useMemo(() => {
+        return openPages.map((page) => {
+            const pageContentTabs = pageLevel2ContentTabs[page.id] ?? [];
+            const {
+                level2Tabs: pageLevel2Tabs,
+                activeLevel2Tab,
+                activePageMode: pageMode,
+            } = resolveLevel2State(page, pageContentTabs, activeLevel2Tabs);
+
+            return {
+                page,
+                mode: pageMode,
+                activeLevel2Tab,
+                level2Tabs: pageLevel2Tabs,
+            };
+        });
+    }, [openPages, pageLevel2ContentTabs, activeLevel2Tabs]);
 
     return (
         <WorkspaceDraftStateProvider value={draftStateValue}>
@@ -138,10 +159,8 @@ const DashboardView = forwardRef(function DashboardView(
                         handleRefreshWidget={handleRefreshWidget}
                         handleRenameWidget={handleRenameWidget}
                         handleRemoveWidget={handleRemoveWidget}
-                        activePage={activePage}
-                        activePageMode={activePageMode}
-                        activeLevel2Tab={activeLevel2Tab}
-                        level2Tabs={decoratedLevel2Tabs}
+                        renderedPages={renderedPages}
+                        activePageId={activePageId}
                         detailTabOpeners={detailTabOpeners}
                         createDetailTabOpener={createDetailTabOpener}
                         handleOpenDefaultContentTab={handleOpenDefaultContentTab}

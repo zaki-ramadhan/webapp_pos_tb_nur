@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import CashReceiptFormView from '@/features/workspace/modules/cash-receipt/CashReceiptFormView';
 import CashReceiptTableView from '@/features/workspace/modules/cash-receipt/CashReceiptTableView';
 import { buildCashReceiptFilters, buildCashReceiptRow } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
 
-export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function CashReceiptView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const resource = useWorkspaceResource({
         resource: 'cash-receipts',
         initialPerPage: 25,
@@ -30,8 +30,20 @@ export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenCon
         };
     }, [page.cashReceipt, mappedRows, tableProps, total]);
 
-    return mode === 'table' ? (
-        <CashReceiptTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <CashReceiptTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
@@ -39,15 +51,20 @@ export default function CashReceiptView({ page, mode, activeLevel2Tab, onOpenCon
             error={resource.error}
             onRefresh={resource.reload}
         />
-    ) : (
-        <CashReceiptFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <CashReceiptFormView
             pageId={page.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={resource.reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

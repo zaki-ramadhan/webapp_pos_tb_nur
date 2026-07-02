@@ -102,7 +102,7 @@ export default function DepartmentFormView({
     }
 
     const validationMessage = useMemo(() => validateDepartmentValues(values, form), [form, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     useWorkspaceDirtyRegistration({
         pageId,
@@ -195,6 +195,7 @@ export default function DepartmentFormView({
 
     return (
         <ModuleFormTemplate
+            validationMessage={validationMessage}
             form={form}
             activeTabId={activeTabId}
             setActiveTabId={setActiveTabId}

@@ -18,19 +18,17 @@ export default function DashboardActivePageContent({
     handleRefreshWidget,
     handleRenameWidget,
     handleRemoveWidget,
-    activePage,
-    activePageMode,
-    activeLevel2Tab,
-    level2Tabs = [],
+    renderedPages = [],
+    activePageId,
     detailTabOpeners,
     createDetailTabOpener,
     handleOpenDefaultContentTab,
     handleCloseDetailTab,
-    isDashboardPageActive,
 }) {
-    if (isDashboardPageActive) {
-        return (
-            <>
+    return (
+        <div className="min-h-0 min-w-0 flex-1 flex flex-col overflow-y-auto">
+            {/* Dashboard Widget View */}
+            <div className={activePageId === 'dashboard' ? 'flex flex-1 flex-col min-h-0 min-w-0' : 'hidden'}>
                 <DashboardToolbar
                     dashboard={{
                         ...dashboard,
@@ -61,26 +59,36 @@ export default function DashboardActivePageContent({
                         isLoading={isLoading}
                     />
                 </div>
-            </>
-        );
-    }
+            </div>
 
-    const hasLevel2Tabs = activePage?.id !== 'dashboard' && level2Tabs?.length > 0;
-    const ptClassName = hasLevel2Tabs ? 'pt-0' : 'pt-2 sm:pt-2.5';
+            {/* Halaman-halaman lainnya (Dirender paralel agar state tersimpan saat pindah tab level 1) */}
+            {renderedPages.map(({ page, mode, activeLevel2Tab, level2Tabs }) => {
+                if (page.id === 'dashboard') return null;
 
-    return (
-        <div className={`min-h-0 min-w-0 flex-1 flex flex-col bg-tab-active-bg px-1 pb-2 sm:px-2 sm:pb-2.5 lg:pb-3 overflow-y-auto ${ptClassName}`}>
-            <FormErrorProvider>
-                {renderWorkspaceActivePage({
-                    activePage,
-                    activePageMode,
-                    activeLevel2Tab,
-                    detailTabOpeners,
-                    createDetailTabOpener,
-                    handleOpenDefaultContentTab,
-                    handleCloseDetailTab,
-                })}
-            </FormErrorProvider>
+                const isCurrent = activePageId === page.id;
+                const hasLevel2Tabs = level2Tabs?.length > 0;
+                const ptClassName = hasLevel2Tabs ? 'pt-0' : 'pt-2 sm:pt-2.5';
+
+                return (
+                    <div
+                        key={page.id}
+                        className={isCurrent ? `min-h-0 min-w-0 flex-1 flex flex-col bg-tab-active-bg px-1 pb-2 sm:px-2 sm:pb-2.5 lg:pb-3 overflow-y-auto ${ptClassName}` : 'hidden'}
+                    >
+                        <FormErrorProvider>
+                            {renderWorkspaceActivePage({
+                                activePage: page,
+                                activePageMode: mode,
+                                activeLevel2Tab,
+                                level2Tabs,
+                                detailTabOpeners,
+                                createDetailTabOpener,
+                                handleOpenDefaultContentTab,
+                                handleCloseDetailTab,
+                            })}
+                        </FormErrorProvider>
+                    </div>
+                );
+            })}
         </div>
     );
 }

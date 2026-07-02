@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     buildInventoryAdjustmentRecord as buildBackendInventoryAdjustmentRecord,
@@ -18,11 +18,10 @@ import {
 export default function InventoryAdjustmentView({
     page,
     mode,
-    activeLevel2Tab,
+    activeLevel2Tab, level2Tabs = [],
     onOpenContent,
     onOpenDetail,
-    onCloseDetail,
-}) {
+    onCloseDetail,}) {
     const backendConfig = INVENTORY_ADJUSTMENT_BACKEND_CONFIG[page.id] ?? null;
     const {
         rows,
@@ -162,17 +161,31 @@ export default function InventoryAdjustmentView({
         [config],
     );
 
-    return mode === 'table' ? (
-        <InventoryAdjustmentTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <InventoryAdjustmentTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
         />
-    ) : (
-        <InventoryAdjustmentFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <InventoryAdjustmentFormView
             pageId={page.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             buildRecord={resolvedBuildRecord}
             backendConfig={backendConfig}
             onOpenContent={onOpenContent}
@@ -180,5 +193,8 @@ export default function InventoryAdjustmentView({
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

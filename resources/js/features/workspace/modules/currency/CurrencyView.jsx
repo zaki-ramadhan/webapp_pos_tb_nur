@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import CurrencyFormView from './CurrencyFormView';
 import CurrencyTableView from './CurrencyTableView';
 import { mapCurrencyRow } from './currencyShared';
 
-export default function CurrencyView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function CurrencyView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         loading,
         error,
@@ -29,8 +29,20 @@ export default function CurrencyView({ page, mode, activeLevel2Tab, onOpenConten
         },
     }), [page, mappedRows, tableProps]);
 
-    return mode === 'table' ? (
-        <CurrencyTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <CurrencyTableView
             page={resolvedPage}
             rows={mappedRows}
             loading={loading}
@@ -39,16 +51,21 @@ export default function CurrencyView({ page, mode, activeLevel2Tab, onOpenConten
             onOpenDetail={onOpenDetail}
             onRefresh={reload}
         />
-    ) : (
-        <CurrencyFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <CurrencyFormView
+            key={lastActiveFormTab.id}
             page={resolvedPage}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             tableRows={mappedRows}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

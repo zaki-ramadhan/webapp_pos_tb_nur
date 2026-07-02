@@ -8,11 +8,10 @@ import { buildWarehouseEntry, mapWarehouseTableRow } from './warehouseShared';
 export default function WarehouseView({
     page,
     mode,
-    activeLevel2Tab,
+    activeLevel2Tab, level2Tabs = [],
     onOpenContent,
     onOpenDetail,
-    onCloseDetail,
-}) {
+    onCloseDetail,}) {
     const {
         rows,
         total,
@@ -44,10 +43,7 @@ export default function WarehouseView({
     const [fetchingId, setFetchingId] = useState(null);
 
     useEffect(() => {
-        if (!recordId) {
-            setFetchedDetailRow(null);
-            return;
-        }
+        if (!recordId) { if (activeLevel2Tab?.kind === 'view') { return; } setFetchedDetailRow(null); return; }
 
         // Cek mock dulu (string id seperti 'warehouse-jakarta')
         const mockDetail = page.warehouse?.detailRecords?.[recordId];
@@ -92,6 +88,8 @@ export default function WarehouseView({
         return {
             ...baseConfig,
             table: {
+                loading,
+
                 ...baseConfig.table,
                 rows: rows.map(mapWarehouseTableRow),
                 pageValue: total.toLocaleString('id-ID'),
@@ -114,25 +112,42 @@ export default function WarehouseView({
         setFetchedDetailRow({ ...record, __source: 'backend' });
     }, []);
 
-    return mode === 'table' ? (
-        <WarehouseTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <WarehouseTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
             onRefresh={reload}
         />
-    ) : (
-        <WarehouseFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <WarehouseFormView
+            key={lastActiveFormTab.id}
             config={config}
             entry={warehouseEntry}
             isDetailMode={Boolean(recordId)}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
             onPersist={handlePersist}
         />
+                </div>
+            )}
+        </div>
     );
 }

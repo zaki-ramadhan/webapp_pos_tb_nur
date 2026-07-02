@@ -14,7 +14,6 @@ export default function SimpleMasterTableView({ table, onCreate, onOpenDetail })
             disableImport={isItemUnit}
             disableExport={isItemUnit}
             disableColumnSettings={isItemUnit}
-            disableRefresh={isItemUnit}
         />
     );
 }

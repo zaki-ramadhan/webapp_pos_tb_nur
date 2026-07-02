@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildSalesDepositConfig, buildSalesDepositRecord } from '@/features/workspace/modules/sales-deposit/salesDepositConfig';
@@ -10,7 +10,7 @@ import {
 import ModuleTableTemplate from '@/components/ui/ModuleTableTemplate';
 import SalesDepositFormView from './SalesDepositFormView';
 
-export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function SalesDepositView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         rows,
         total,
@@ -72,8 +72,20 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
         return buildSalesDepositRecord(row);
     }, [config]);
 
-    return mode === 'table' ? (
-        <ModuleTableTemplate
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <ModuleTableTemplate
             table={config.table}
             resourceName="sales-deposits"
             exportFilename="uang-muka-penjualan"
@@ -82,16 +94,21 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, onOpenCo
             onOpenDetail={onOpenDetail}
             disableExport={true}
         />
-    ) : (
-        <SalesDepositFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <SalesDepositFormView
             pageId={page.id}
             config={config}
             buildRecord={buildRecord}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

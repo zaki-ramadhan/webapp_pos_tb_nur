@@ -12,7 +12,6 @@ import {
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
-import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { AttachmentSelectButton } from './employeeControls';
 import EmployeeAttachmentModal from './EmployeeAttachmentModal';
@@ -73,7 +72,7 @@ export default function EmployeeFormView({
     }));
 
     const isDirty = useMemo(
-        () => !hasSaved && !areComparableValuesEqual(buildEmployeeSnapshot(values), buildEmployeeSnapshot(initialValues)),
+        () => !hasSaved && JSON.stringify(values) !== JSON.stringify(initialValues),
         [initialValues, values, hasSaved],
     );
 
@@ -173,7 +172,7 @@ export default function EmployeeFormView({
     }
 
     const validationMessage = useMemo(() => validateEmployeeValues(values), [values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     useWorkspaceDirtyRegistration({
         pageId,
@@ -261,6 +260,7 @@ export default function EmployeeFormView({
 
     return (
         <ModuleFormTemplate
+            validationMessage={validationMessage}
             form={{
                 tabs: tabs,
                 saveLabel: form.saveLabel,

@@ -221,11 +221,10 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
 export default function BusinessPartnerView({
     page,
     mode,
-    activeLevel2Tab,
+    activeLevel2Tab, level2Tabs = [],
     onOpenContent,
     onOpenDetail,
-    partnerType = 'customer',
-}) {
+    partnerType = 'customer',}) {
     const resourceName = partnerType === 'supplier' ? 'suppliers' : 'customers';
     const {
         mappedRows,
@@ -281,21 +280,38 @@ export default function BusinessPartnerView({
         };
     }, [pageConfig, partnerType, mappedRows, tableProps, reload]);
 
-    return mode === 'table' ? (
-        <BusinessPartnerTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <BusinessPartnerTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
             onRefresh={reload}
         />
-    ) : (
-        <BusinessPartnerFormView
-            key={activeLevel2Tab?.id ?? 'new'}
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <BusinessPartnerFormView
+            key={lastActiveFormTab.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             partnerType={partnerType}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }
 

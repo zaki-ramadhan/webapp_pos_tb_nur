@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import ExpenseEntryFormView from './ExpenseEntryFormView';
@@ -9,7 +9,7 @@ import {
     buildExpenseEntryRow,
 } from './expenseEntryShared';
 
-export default function ExpenseEntryView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         rows,
         total,
@@ -37,6 +37,8 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, onOpenCo
                 return result;
             }, {}),
             table: {
+                loading,
+
                 ...page.expenseEntry.table,
                 rows: mappedRows,
                 filters: buildExpenseEntryFilters(page.expenseEntry.table?.filters, mappedRows),
@@ -57,8 +59,20 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, onOpenCo
         };
     }, [error, loading, page.expenseEntry, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
-    return mode === 'table' ? (
-        <ExpenseEntryTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <ExpenseEntryTableView
             config={config}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
@@ -66,16 +80,21 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, onOpenCo
             error={error}
             onRefresh={reload}
         />
-    ) : (
-        <ExpenseEntryFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <ExpenseEntryFormView
             pageId={page.id}
             config={config}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
             buildRecord={buildExpenseEntryRecord}
         />
+                </div>
+            )}
+        </div>
     );
 }

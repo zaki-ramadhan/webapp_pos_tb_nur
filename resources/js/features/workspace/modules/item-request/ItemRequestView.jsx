@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import { buildItemRequestConfig, buildItemRequestRecord as buildStaticItemRequestRecord } from './itemRequestConfig';
@@ -10,7 +10,7 @@ import {
     buildItemRequestRow,
 } from './itemRequestShared';
 
-export default function ItemRequestView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function ItemRequestView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail }) {
     const {
         rows,
         total,
@@ -39,6 +39,8 @@ export default function ItemRequestView({ page, mode, activeLevel2Tab, onOpenCon
                 return result;
             }, {}),
             table: {
+                loading,
+
                 ...baseConfig.table,
                 rows: mappedRows,
                 filters: buildItemRequestFilters(baseConfig.table?.filters, mappedRows),
@@ -66,29 +68,43 @@ export default function ItemRequestView({ page, mode, activeLevel2Tab, onOpenCon
         return buildStaticItemRequestRecord(row ?? {}, config);
     }, [config]);
 
-    if (mode === 'table') {
-        return (
-            <ItemRequestTableView
-                config={config}
-                onCreate={onOpenContent}
-                onOpenDetail={onOpenDetail}
-                loading={loading}
-                error={error}
-                onRefresh={reload}
-            />
-        );
-    }
+    const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
 
     return (
-        <ItemRequestFormView
-            pageId={page.id}
-            config={config}
-            activeLevel2Tab={activeLevel2Tab}
-            onOpenContent={onOpenContent}
-            onOpenDetail={onOpenDetail}
-            onCloseDetail={onCloseDetail}
-            onRefresh={reload}
-            buildRecord={buildRecord}
-        />
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <ItemRequestTableView
+                    config={config}
+                    onCreate={onOpenContent}
+                    onOpenDetail={onOpenDetail}
+                    loading={loading}
+                    error={error}
+                    onRefresh={reload}
+                />
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <ItemRequestFormView
+                        key={lastActiveFormTab.id}
+                        pageId={page.id}
+                        config={config}
+                        activeLevel2Tab={lastActiveFormTab}
+                        onOpenContent={onOpenContent}
+                        onOpenDetail={onOpenDetail}
+                        onCloseDetail={onCloseDetail}
+                        onRefresh={reload}
+                        buildRecord={buildRecord}
+                    />
+                </div>
+            )}
+        </div>
     );
 }

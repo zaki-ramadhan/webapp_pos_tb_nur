@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useWorkspaceResource from '@/features/workspace/backend/useWorkspaceResource';
 import {
@@ -13,11 +13,10 @@ import {
 export default function GroupAccessView({
     page,
     mode,
-    activeLevel2Tab,
+    activeLevel2Tab, level2Tabs = [],
     onOpenContent,
     onOpenDetail,
-    onCloseDetail,
-}) {
+    onCloseDetail,}) {
     const mapRow = useCallback(
         (record) => buildGroupAccessRow(record, page.form),
         [page.form],
@@ -55,20 +54,37 @@ export default function GroupAccessView({
         [page.table, tableProps],
     );
 
-    return mode === 'table' ? (
-        <GroupAccessTableView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <GroupAccessTableView
             table={resolvedTable}
             onCreate={onOpenContent}
             onOpenDetail={onOpenDetail}
         />
-    ) : (
-        <GroupAccessFormView
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <GroupAccessFormView
             pageId={page.id}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             form={resolvedForm}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
         />
+                </div>
+            )}
+        </div>
     );
 }

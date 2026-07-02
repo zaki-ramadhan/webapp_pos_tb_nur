@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import PayrollEntryFormView from './PayrollEntryFormView';
 import PayrollEntryTableView from './PayrollEntryTableView';
 import { mapPayrollEntryRow, buildPayrollEntryRecord } from './payrollEntryShared';
 
-export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail, onCloseDetail }) {
+export default function PayrollEntryView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail, onCloseDetail}) {
     const {
         rows: backendRows,
         total,
@@ -53,12 +53,26 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenCo
         },
     }), [error, loading, mappedRows, page.payrollEntry, reload, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
-    return mode === 'table' ? (
-        <PayrollEntryTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
-    ) : (
-        <PayrollEntryFormView
+        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
+
+    useEffect(() => {
+        if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
+            setLastActiveFormTab(activeLevel2Tab);
+        } else if (!activeLevel2Tab) {
+            setLastActiveFormTab(null);
+        }
+    }, [activeLevel2Tab]);
+
+    return (
+        <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
+            <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                <PayrollEntryTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
+            </div>
+            {lastActiveFormTab && (
+                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
+                    <PayrollEntryFormView
             pageId={page.id}
-            activeLevel2Tab={activeLevel2Tab}
+            activeLevel2Tab={lastActiveFormTab}
             config={resolvedConfig}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
@@ -66,5 +80,8 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, onOpenCo
             onRefresh={reload}
             buildRecord={buildPayrollEntryRecord}
         />
+                </div>
+            )}
+        </div>
     );
 }

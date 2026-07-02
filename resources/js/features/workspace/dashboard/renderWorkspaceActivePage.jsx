@@ -20,6 +20,7 @@ export default function renderWorkspaceActivePage({
     activePage,
     activePageMode,
     activeLevel2Tab,
+    level2Tabs = [],
     detailTabOpeners,
     createDetailTabOpener,
     handleOpenDefaultContentTab,
@@ -29,6 +30,7 @@ export default function renderWorkspaceActivePage({
         page: activePage,
         mode: activePageMode,
         activeLevel2Tab,
+        level2Tabs,
         onOpenContent: () => handleOpenDefaultContentTab(activePage.id),
         onCloseDetail: (recordId) => handleCloseDetailTab(activePage.id, recordId),
     };
