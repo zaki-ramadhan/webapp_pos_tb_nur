@@ -48,7 +48,7 @@ export function GroupAccessGeneralSection({
                 <label htmlFor={general.nameField?.id} className="pt-2 text-xs sm:text-sm text-section-tab-accent-text">
                     {general.nameField?.label} <span className="text-tab-active-border-t">*</span>
                 </label>
-                <div className="max-w-[580px]">
+                <div className="max-w-[430px] w-full">
                     <TextInputComponent
                         id={general.nameField?.id}
                         value={values.groupName}

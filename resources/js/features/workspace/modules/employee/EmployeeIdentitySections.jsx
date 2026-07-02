@@ -71,7 +71,7 @@ export function EmployeeGeneralTab({ form, values, errors, onChange }) {
                 </EmployeeFieldRow>
 
                 <EmployeeFieldRow label="Tgl Masuk">
-                    <TransactionDateInput name="joined_at" value={values.joinDate} onChange={(nextValue) => onChange('joinDate', nextValue)} className="w-full max-w-[354px]" inputClassName="text-xs sm:text-sm text-brand-dark" trailingClassName="w-[42px] shrink-0 justify-center px-0" />
+                    <TransactionDateInput name="joined_at" value={values.joinDate} onChange={(nextValue) => onChange('joinDate', nextValue)} disableAutoInit={true} className="w-full max-w-[354px]" inputClassName="text-xs sm:text-sm text-brand-dark" trailingClassName="w-[42px] shrink-0 justify-center px-0" />
                 </EmployeeFieldRow>
 
                 <EmployeeFieldRow label="No. KTP">
@@ -107,7 +107,7 @@ export function EmployeeGeneralTab({ form, values, errors, onChange }) {
                 )}
 
                 <EmployeeFieldRow label="Catatan">
-                    <TextareaField name="notes" value={values.note} onChange={(event) => onChange('note', event.target.value)} rows={4} className="rounded-[4px] border-ui-border w-full max-w-[600px]" textareaClassName="min-h-[80px] px-3 py-3 text-xs sm:text-sm text-brand-dark" />
+                    <TextareaField name="notes" value={values.note} onChange={(event) => onChange('note', event.target.value)} rows={4} className="rounded-[4px] border-ui-border w-full max-w-[430px]" textareaClassName="min-h-[80px] px-3 py-3 text-xs sm:text-sm text-brand-dark" />
                 </EmployeeFieldRow>
             </div>
         </div>

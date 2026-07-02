@@ -19,7 +19,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 
 function DepartmentFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,570px)] lg:items-start">
+        <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
             <label className="pt-2 text-xs sm:text-sm leading-6 text-brand-dark">
                 {label}
                 {required ? <span className="text-tab-active-border-t"> *</span> : null}
@@ -184,6 +184,7 @@ export function DepartmentOpeningBalanceTab({ form, values, onChange }) {
                     <TransactionDateInput
                         value={values.openingDate}
                         onChange={(nextValue) => onChange('openingDate', nextValue)}
+                        disableAutoInit={true}
                         className="h-[40px] w-[180px] rounded-[4px] border-ui-border"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                         trailingClassName="w-[42px] shrink-0 justify-center px-0"

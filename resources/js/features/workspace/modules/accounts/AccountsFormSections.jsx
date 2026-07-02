@@ -15,7 +15,7 @@ import {
     AccountsReadonlyTrailingIcon,
 } from './accountsViewShared';
 
-export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData }) {
+export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData, excludeId }) {
     const selectedParentAccount = useMemo(() => {
         if (!values.parentId) return [];
         const code = values.parentAccountCode ?? '';
@@ -73,6 +73,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             values={selectedParentAccount}
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari akun perkiraan"
+                            queryParams={excludeId ? { exclude_id: excludeId } : {}}
                             getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
                             onSelect={(option) => {
                                 onChange('parentId', option.id);
@@ -152,6 +153,7 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                     <TransactionDateInput
                         value={values.openingBalanceDate}
                         onChange={(nextValue) => onChange('openingBalanceDate', nextValue)}
+                        disableAutoInit={true}
                         className="max-w-[430px]"
                     />
                 </AccountsFormFieldRow>
@@ -181,7 +183,7 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
 
     return (
         <div className="space-y-4">
-            <AccountsFormFieldRow label={config.labels.notes} className="lg:grid-cols-[180px_minmax(0,570px)]">
+            <AccountsFormFieldRow label={config.labels.notes} className="lg:grid-cols-[180px_minmax(0,430px)]">
                 <TextareaField
                     value={values.notes}
                     onChange={(event) => onChange('notes', event.target.value)}
@@ -198,6 +200,7 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                         readOnly
                         className="h-[40px] rounded-[4px] border-green-370 bg-success-bg"
                         inputClassName="text-xs sm:text-sm text-green-820"
+                        containerClassName="w-full max-w-[280px]"
                     />
                 </AccountsFormFieldRow>
             ) : null}
