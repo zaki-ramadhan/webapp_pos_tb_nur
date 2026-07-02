@@ -45,6 +45,12 @@ export function formatDisplayDate(value) {
         return normalizedValue;
     }
 
+    const isoMatch = normalizedValue.match(/^(\d{4})-(\d{2})-(\d{2})[T ]/);
+    if (isoMatch) {
+        const [, year, month, day] = isoMatch;
+        return `${day}/${month}/${year}`;
+    }
+
     if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
         const [year, month, day] = normalizedValue.split('-');
         return `${day}/${month}/${year}`;

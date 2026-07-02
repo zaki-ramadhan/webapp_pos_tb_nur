@@ -84,6 +84,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                                 <TransactionDateInput 
                                     value={values.endDate ?? ''} 
                                     onChange={(nextVal) => setValues(curr => ({ ...curr, endDate: nextVal }))}
+                                    disableAutoInit={true}
                                     className="w-[160px] shrink-0" 
                                 />
                             </>

@@ -16,6 +16,12 @@ function normalizeDateValue(value) {
         return normalizedValue;
     }
 
+    const isoMatch = normalizedValue.match(/^(\d{4})-(\d{2})-(\d{2})[T ]/);
+    if (isoMatch) {
+        const [, year, month, day] = isoMatch;
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+
     const dateParts = normalizedValue.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
 
     if (!dateParts) {
@@ -82,6 +88,7 @@ export default function TransactionDateInput({
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
     disabled = false,
     ariaLabel = 'Pilih tanggal',
+    disableAutoInit = false,
     ...props
 }) {
     const classes = className.split(' ').filter(Boolean);
@@ -147,13 +154,13 @@ export default function TransactionDateInput({
             return;
         }
 
-        if (!onChange || disabled || autoInitializedRef.current) {
+        if (disableAutoInit || !onChange || disabled || autoInitializedRef.current) {
             return;
         }
 
         autoInitializedRef.current = true;
         applyDate(buildTodayDate());
-    }, [disabled, onChange, value]);
+    }, [disabled, onChange, value, disableAutoInit]);
 
     function applyDate(nextDate) {
         if (!nextDate) {
