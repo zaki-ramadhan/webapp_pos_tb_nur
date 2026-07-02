@@ -108,11 +108,19 @@ export default function useWorkspaceTabs({
             return;
         }
 
+        const viewTabId = `${activePage.id}-view`;
+        const currentActiveTabId = activeLevel2Tabs[activePage.id];
+
+        if (tabId === viewTabId && currentActiveTabId === viewTabId) {
+            handleOpenDefaultContentTab(activePage.id);
+            return;
+        }
+
         setActiveLevel2Tabs((currentTabs) => ({
             ...currentTabs,
             [activePage.id]: tabId,
         }));
-    }, [activePage.id, activePage.subtab, activePage.detailTabsOnly]);
+    }, [activePage.id, activePage.subtab, activePage.detailTabsOnly, activeLevel2Tabs, handleOpenDefaultContentTab]);
 
     const closeLevel2TabNow = useCallback((tabId) => {
         clearTabDirty(activePage.id, tabId);
