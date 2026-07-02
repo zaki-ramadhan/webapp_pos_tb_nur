@@ -238,15 +238,15 @@ export function printTable(columns, rows, title = 'Laporan') {
 
     // Nama Toko
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
+    doc.setFontSize(11);
     doc.setTextColor(30, 58, 138);
     doc.text('TB Nur', 36, 45);
 
     // Judul laporan
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(9);
     doc.setTextColor(71, 85, 105);
-    doc.text(cleanTitle, 36, 62);
+    doc.text(cleanTitle, 36, 58);
 
     // Tampilkan info waktu & statistik
     doc.setFont('helvetica', 'normal');
@@ -300,7 +300,7 @@ export function printTable(columns, rows, title = 'Laporan') {
             fillColor: [35, 83, 160],
             textColor: [255, 255, 255],
             fontStyle: 'bold',
-            halign: 'left',
+            halign: 'center',
         },
         alternateRowStyles: {
             fillColor: [248, 250, 252],
