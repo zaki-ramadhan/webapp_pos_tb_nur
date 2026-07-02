@@ -175,6 +175,7 @@ export default function SalaryAllowanceFormView({
     return (
         <>
             <ModuleFormTemplate
+            validationMessage={validationMessage}
                 form={config}
                 status={status}
                 saving={saving}
@@ -238,7 +239,6 @@ export default function SalaryAllowanceFormView({
                         <AccountLookupField
                             value={expenseAccount}
                             placeholder="Cari/Pilih Akun Perkiraan..."
-                            disabled={isDetail}
                             searchLabel="Cari akun beban"
                             dialogTitle="Pilih Akun Beban"
                             heightClassName="min-h-[38px]"
