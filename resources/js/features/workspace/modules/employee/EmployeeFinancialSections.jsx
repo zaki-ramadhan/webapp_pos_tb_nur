@@ -80,7 +80,7 @@ export function EmployeeBankTab({ form, values, onChange }) {
                     onClear={() => onChange('bankName', '')}
                     placeholder="Cari/Pilih Bank..."
                     searchLabel="Cari bank"
-                    className="w-full md:max-w-[568px]"
+                    className="w-full max-w-[430px]"
                     getOptionLabel={(option) => option.name}
                     getOptionSearchText={(option) => `${option.name} ${option.code}`}
                     renderOption={(option) => (
@@ -91,8 +91,8 @@ export function EmployeeBankTab({ form, values, onChange }) {
                     )}
                 />
             </EmployeeFieldRow>
-            <EmployeeFieldRow label="No Rekening"><TextInput name="bank_accounts.0.account_number" value={values.bankAccountNumber} onChange={(event) => onChange('bankAccountNumber', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[568px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
-            <EmployeeFieldRow label="Atas Nama Rekening"><TextInput name="bank_accounts.0.account_name" value={values.bankAccountHolder} onChange={(event) => onChange('bankAccountHolder', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[568px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
+            <EmployeeFieldRow label="No Rekening"><TextInput name="bank_accounts.0.account_number" value={values.bankAccountNumber} onChange={(event) => onChange('bankAccountNumber', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
+            <EmployeeFieldRow label="Atas Nama Rekening"><TextInput name="bank_accounts.0.account_name" value={values.bankAccountHolder} onChange={(event) => onChange('bankAccountHolder', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[430px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
         </div>
     );
 }

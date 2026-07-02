@@ -12,14 +12,15 @@ import {
     ToggleSwitch,
 } from '@/features/workspace/modules/employee/employeeControls';
 import CityAutocompleteInput from '@/features/workspace/shared/CityAutocompleteInput';
+import AddressStack from '@/features/workspace/shared/components/AddressStack';
 
 export function EmployeeGeneralTab({ form, values, errors, onChange }) {
     return (
         <div className="grid grid-cols-1 gap-x-12 gap-y-4 lg:grid-cols-2">
-            <div className="space-y-3.5">
+            <div className="space-y-3.5 min-w-0">
                 <EmployeeFieldRow label="Nama Lengkap" required>
                     <div className="flex w-full max-w-[430px] gap-3">
-                        <SelectField name="salutation" value={values.salutation} onChange={(event) => onChange('salutation', event.target.value)} containerClassName="w-[120px] shrink-0" className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
+                        <SelectField name="salutation" value={values.salutation} onChange={(event) => onChange('salutation', event.target.value)} containerClassName="w-[100px] shrink-0" className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                             <option value="">- Sapaan -</option>
                             {form.salutationOptions.map((option) => <option key={option} value={option}>{option}</option>)}
                         </SelectField>
@@ -49,7 +50,7 @@ export function EmployeeGeneralTab({ form, values, errors, onChange }) {
                 </EmployeeFieldRow>
             </div>
 
-            <div className="space-y-3.5">
+            <div className="space-y-3.5 min-w-0">
                 <EmployeeFieldRow label="Kewarganegaraan">
                     <SelectField name="nationality" value={values.nationality} onChange={(event) => onChange('nationality', event.target.value)} containerClassName="w-full max-w-[430px]" className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                         {form.nationalityOptions.map((option) => <option key={option} value={option}>{option}</option>)}
@@ -114,31 +115,23 @@ export function EmployeeGeneralTab({ form, values, errors, onChange }) {
 }
 
 export function EmployeeAddressTab({ values, onChange }) {
-    const handleSelectCity = (item) => {
-        onChange('city', item.city);
-        onChange('province', item.province);
-        onChange('postalCode', item.postalCode);
-        onChange('country', item.country);
-    };
-
     return (
         <div className="max-w-[900px]">
-            <div className="grid gap-3 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start">
+            <div className="grid gap-3 lg:grid-cols-[135px_minmax(0,1fr)] lg:items-start">
                 <label className="pt-2 text-xs sm:text-sm text-brand-dark">Alamat</label>
-                <div className="space-y-3">
-                    <PrefixedTextArea name="street" value={values.street} onChange={(event) => onChange('street', event.target.value)} prefix="Jalan" />
-                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_260px]">
-                        <CityAutocompleteInput
-                            id="city"
-                            value={values.city}
-                            onChange={(nextValue) => onChange('city', nextValue)}
-                            onSelectCity={handleSelectCity}
-                            prefix="Kota"
-                        />
-                        <PrefixedInput name="postal_code" value={values.postalCode} onChange={(event) => onChange('postalCode', event.target.value)} prefix="K.Pos" />
-                    </div>
-                    <PrefixedInput name="province" value={values.province} onChange={(event) => onChange('province', event.target.value)} prefix="Provinsi" />
-                    <PrefixedInput name="country" value={values.country} onChange={(event) => onChange('country', event.target.value)} prefix="Negara" />
+                <div className="w-full max-w-[430px]">
+                    <AddressStack
+                        prefixValue="Jalan"
+                        layout="grid"
+                        values={{
+                            street: values.street,
+                            city: values.city,
+                            postalCode: values.postalCode,
+                            province: values.province,
+                            country: values.country,
+                        }}
+                        onChange={onChange}
+                    />
                 </div>
             </div>
         </div>
