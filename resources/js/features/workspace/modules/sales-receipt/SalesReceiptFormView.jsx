@@ -61,6 +61,7 @@ export default function SalesReceiptFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={
                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
                         {/* Left Column */}

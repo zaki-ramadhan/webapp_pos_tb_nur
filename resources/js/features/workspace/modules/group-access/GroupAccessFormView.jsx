@@ -70,7 +70,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         return '';
     }, [generalValues.groupName]);
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     useWorkspaceDirtyRegistration({
         pageId,
@@ -163,6 +163,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
 
     return (
         <ModuleFormTemplate
+            validationMessage={validationMessage}
             form={form}
             activeTabId={activeTabId}
             setActiveTabId={setActiveTabId}

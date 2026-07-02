@@ -77,7 +77,7 @@ export default function GeneralJournalFormView({
 
     const validationMessage = useMemo(() => validateJournalValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     const dockActions = useMemo(
         () =>
@@ -284,6 +284,7 @@ export default function GeneralJournalFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={<GeneralJournalHeader config={config} values={values} setValues={setValues} activeRecordId={activeRecordId} handlers={handlers} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}

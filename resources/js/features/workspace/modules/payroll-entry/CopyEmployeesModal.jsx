@@ -158,7 +158,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                     <DataTable>
                         <DataTableHeader>
                             <DataTableRow className="border-t-0 text-white">
-                                <DataTableHead className="text-center" style={{ width: '48px', minWidth: '48px' }}>
+                                <DataTableHead className="text-center" style={{ width: '64px', minWidth: '64px' }}>
                                     <input
                                         type="checkbox"
                                         checked={isAllSelected}
@@ -198,7 +198,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                     const isSelected = selectedIds.includes(emp.id);
                                     return (
                                         <DataTableRow key={emp.id} className={isSelected ? 'bg-slate-50' : ''}>
-                                            <DataTableCell className="text-center" style={{ width: '48px', minWidth: '48px' }}>
+                                            <DataTableCell className="text-center" style={{ width: '64px', minWidth: '64px' }}>
                                                 <input
                                                     type="checkbox"
                                                     checked={isSelected}

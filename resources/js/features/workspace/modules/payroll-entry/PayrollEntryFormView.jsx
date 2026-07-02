@@ -174,7 +174,7 @@ export default function PayrollEntryFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     const handleCopyEmployees = useCallback((newEmployees) => {
         setEmployeeRows((prev) => {
@@ -431,6 +431,7 @@ export default function PayrollEntryFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={<PayrollHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}

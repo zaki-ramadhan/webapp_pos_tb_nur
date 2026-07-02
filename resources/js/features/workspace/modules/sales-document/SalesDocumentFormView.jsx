@@ -127,7 +127,7 @@ export default function SalesDocumentFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage, fieldErrors });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     useWorkspaceDirtyRegistration({
         pageId,
@@ -355,6 +355,7 @@ export default function SalesDocumentFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={
                     <SalesDocumentFormHeader
                         pageId={pageId}

@@ -121,15 +121,57 @@ export default function TableToolbar({
         : (importButton || (resolvedResourceName ? {
             label: 'Impor data',
             onImport: async ({ headers, rows }) => {
-                if (!rows.length) return;
+                if (!rows.length) {
+                    showErrorToast({
+                        title: 'Impor Gagal',
+                        message: 'File yang diunggah tidak berisi data.',
+                    });
+                    return;
+                }
+
+                // 1. Periksa kecocokan kolom header
+                const hasMatchingHeader = headers.some(header => {
+                    const normalizedHeader = String(header).toLowerCase().trim();
+                    return resolvedColumns.some(col => {
+                        if (!col.id || col.kind === 'spacer' || col.id === 'actions') return false;
+                        const colLabel = String(col.label || '').toLowerCase().trim();
+                        const colId = String(col.id).toLowerCase().trim();
+                        return normalizedHeader === colLabel || 
+                               normalizedHeader === colId ||
+                               colId.includes(normalizedHeader) ||
+                               normalizedHeader.includes(colId);
+                    });
+                });
+
+                if (!hasMatchingHeader) {
+                    showErrorToast({
+                        title: 'Format File Salah',
+                        message: 'Kolom pada file yang diunggah tidak cocok dengan kolom tabel (tidak ada kolom utama seperti Nama/Kode yang sesuai).',
+                    });
+                    return;
+                }
+
                 try {
                     const mappedRows = rows.map(row => mapImportRow(row, resolvedColumns));
+
+                    // Periksa apakah baris yang dipetakan kosong semua datanya
+                    const hasValidData = mappedRows.some(mappedRow => {
+                        return Object.values(mappedRow).some(val => val !== undefined && String(val).trim() !== '');
+                    });
+
+                    if (!hasValidData) {
+                        showErrorToast({
+                            title: 'Data Tidak Valid',
+                            message: 'Nilai pada baris data kosong atau tidak cocok dengan format kolom tabel.',
+                        });
+                        return;
+                    }
 
                     const response = await window.axios.post(`/api/backend/${resolvedResourceName}/import`, {
                         rows: mappedRows,
                     });
 
-                     showSuccessToast({
+                    showSuccessToast({
                         message: response.data?.message || 'Berhasil mengimpor data.',
                     });
                     if (typeof onRefresh === 'function') {
@@ -144,25 +186,31 @@ export default function TableToolbar({
                         const backendMsg = err.response.data?.message;
 
                         if (status === 404) {
-                            msg = 'Gagal mengimpor: Halaman ini tidak mendukung impor data atau alamat tujuan tidak ditemukan.';
+                            msg = 'Layanan impor tidak tersedia untuk halaman ini.';
                         } else if (status === 403) {
-                            msg = 'Gagal mengimpor: Anda tidak memiliki izin untuk mengimpor data ke halaman ini.';
+                            msg = 'Anda tidak memiliki akses untuk mengimpor data di halaman ini.';
                         } else if (status === 401) {
-                            msg = 'Gagal mengimpor: Sesi Anda telah berakhir, silakan login kembali.';
-                        } else if (status === 409) {
-                            msg = 'Gagal mengimpor: Terdapat duplikasi data atau pelanggaran relasi pada database.';
+                            msg = 'Sesi masuk Anda telah habis. Silakan masuk kembali.';
                         } else if (status === 422) {
-                            msg = backendMsg || 'Format data tidak valid.';
+                            const errors = err.response.data?.errors;
+                            if (errors && typeof errors === 'object') {
+                                const firstKey = Object.keys(errors)[0];
+                                const errorMessages = errors[firstKey];
+                                msg = Array.isArray(errorMessages) ? errorMessages[0] : String(errorMessages);
+                            } else {
+                                msg = backendMsg || 'Terdapat format nilai kolom yang tidak sesuai atau data wajib yang kosong.';
+                            }
                         } else if (status === 500) {
-                            msg = 'Gagal mengimpor: Terjadi kesalahan internal pada server. Silakan hubungi admin.';
-                        } else {
-                            msg = backendMsg || `Gagal mengimpor data (Error ${status}).`;
+                            msg = 'Format data pada file tidak sesuai (misal: kolom angka diisi teks, atau data referensi tidak terdaftar). Silakan periksa kembali isi file Anda.';
+                        } else if (backendMsg) {
+                            msg = backendMsg;
                         }
                     } else {
                         msg = err.message || 'Gagal menghubungkan ke server. Pastikan koneksi internet Anda aktif.';
                     }
 
                     showErrorToast({
+                        title: 'Impor Gagal',
                         message: msg,
                     });
                 }
@@ -204,7 +252,7 @@ export default function TableToolbar({
                                 type="button"
                                 onClick={createButton.onClick}
                                 title={createButton.label}
-                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-brand-blue-darker ${size === 'compact' ? 'h-[34px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
+                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-brand-blue-darker ${size === 'compact' ? 'h-[40px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
                             >
                                 <PlusIcon className={sizeStyle.createIcon} />
                             </button>

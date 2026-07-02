@@ -94,7 +94,7 @@ export default function ExpenseEntryFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     const dockActions = useMemo(() => {
         const baseActions = config.dockActions ?? [];
@@ -291,6 +291,7 @@ export default function ExpenseEntryFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={
                     <ExpenseEntryHeader
                         config={config}

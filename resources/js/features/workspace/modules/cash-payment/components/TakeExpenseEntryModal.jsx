@@ -101,7 +101,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
     }
 
     const columns = useMemo(() => [
-        { id: 'checkbox', label: '', widthClassName: 'w-[48px]', align: 'center' },
+        { id: 'checkbox', label: '', widthClassName: 'w-[64px]', align: 'center' },
         { id: 'document_number', label: 'No. Beban #' },
         { id: 'entry_date', label: 'Tanggal', widthClassName: 'w-[120px]' },
         { id: 'due_date', label: 'Jatuh Tempo', widthClassName: 'w-[120px]' },

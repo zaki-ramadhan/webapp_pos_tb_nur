@@ -117,7 +117,7 @@ export default function CashPaymentFormView({
     const [takeExpenseOpen, setTakeExpenseOpen] = useState(false);
     const [takePayrollOpen, setTakePayrollOpen] = useState(false);
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
 
 
@@ -441,6 +441,7 @@ export default function CashPaymentFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={
                     <CashPaymentHeader
                         config={config}

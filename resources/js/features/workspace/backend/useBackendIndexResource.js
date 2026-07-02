@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { showErrorToast } from '@/components/feedback/toast';
 
 import {
     extractBackendRows,
@@ -128,7 +129,14 @@ export default function useBackendIndexResource({
                     return;
                 }
 
-                setError(getBackendErrorMessage(requestError));
+                const errorMsg = getBackendErrorMessage(requestError);
+                setError(errorMsg);
+                if (isForceRefresh) {
+                    showErrorToast({
+                        title: 'Refresh Gagal',
+                        message: errorMsg,
+                    });
+                }
             } finally {
                 if (active) {
                     setLoading(false);

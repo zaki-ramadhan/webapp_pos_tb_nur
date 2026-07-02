@@ -2,11 +2,11 @@ import React from 'react';
 
 export const SIZE_STYLES = {
     compact: {
-        createButton: 'h-[34px] min-w-[60px] px-3',
-        utilityButton: 'h-[34px] w-[40px]',
-        menuButton: 'h-[34px] min-w-[48px] px-2',
-        searchInput: 'h-[34px]',
-        pageInput: 'h-[34px] w-[68px] sm:w-[74px]',
+        createButton: 'h-[40px] min-w-[60px] px-3',
+        utilityButton: 'h-[40px] w-[40px]',
+        menuButton: 'h-[40px] min-w-[48px] px-2',
+        searchInput: 'h-[40px]',
+        pageInput: 'h-[40px] w-[68px] sm:w-[74px]',
         createIcon: 'h-5 w-5',
         searchIcon: 'h-5 w-5',
         searchText: 'text-sm',

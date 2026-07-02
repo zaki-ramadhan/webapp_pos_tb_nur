@@ -10,7 +10,7 @@ export default function LoadingOverlay({ open, loading }) {
         >
             <div className="flex flex-col items-center py-1">
                 <Spinner className="h-12 w-12 text-tab-active-border-t animate-spin" />
-                <h2 className="mt-4 text-base font-semibold text-slate-900 tracking-tight">
+                <h2 className="mt-4 text-base font-normal text-slate-900 tracking-tight">
                     {loading.title}
                 </h2>
                 <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">

@@ -75,7 +75,7 @@ export default function SupplierPriceFormView({
                         return {
                             ...action,
                             tone: isDetail ? action.tone : 'primary',
-                            disabled: saving || Boolean(validationMessage),
+                            disabled: saving || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih'))),
                             label: saving ? 'Memproses...' : action.label,
                             onClick: onSave,
                         };
@@ -169,6 +169,7 @@ export default function SupplierPriceFormView({
 
     return (
         <TransactionFormLayout
+            validationMessage={validationMessage}
             header={<SupplierPriceHeader config={config} values={values} setValues={setValues} />}
             sectionTabs={config.sectionTabs}
             activeSectionId={activeSectionId}

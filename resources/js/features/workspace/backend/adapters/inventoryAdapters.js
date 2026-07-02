@@ -7,9 +7,11 @@ export const BACKEND_INVENTORY_RESOURCES = {
 
 export function buildInventoryFilters(pageId, values) {
     if (pageId === 'item-location') {
+        const isWarehouseMode = values.itemType === 'warehouse';
         return {
-            product_id: values.itemSearchId ?? null,
-            search: values.itemSearch?.trim() ?? '',
+            product_id: isWarehouseMode ? null : (values.itemSearchId ?? null),
+            warehouse_id: isWarehouseMode ? (values.warehouseSearchId ?? null) : null,
+            search: (isWarehouseMode ? values.warehouseSearch : values.itemSearch)?.trim() ?? '',
             as_of_date: normalizeDisplayDate(values.asOfDate),
             per_page: 100,
         };
@@ -29,6 +31,8 @@ export function mapInventoryRows(pageId, records) {
         return records.map((record) => ({
             id: record.id,
             warehouse: record.warehouse ?? '',
+            productName: record.product_name ?? '',
+            productCode: record.product_code ?? '',
             multiUnitQuantity: record.multi_unit_quantity ?? '',
             saleableStock: record.saleable_stock ?? '',
             address: record.address ?? '',

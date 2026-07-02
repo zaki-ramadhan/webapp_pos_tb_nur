@@ -100,7 +100,7 @@ export default function PurchasePaymentFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     const dockActions = useMemo(
         () =>
@@ -282,6 +282,7 @@ export default function PurchasePaymentFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={<PurchasePaymentHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
                 sectionTabs={sectionTabs}
                 activeSectionId={activeSectionId}

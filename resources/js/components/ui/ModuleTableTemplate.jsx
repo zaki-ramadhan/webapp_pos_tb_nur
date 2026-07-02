@@ -226,7 +226,10 @@ export default function ModuleTableTemplate({
                                         colSpan={visibleColumns.length + (filteredRows.length > 0 ? 1 : 0)}
                                         className="px-3 py-3 text-center text-base text-text-workspace-dark"
                                     >
-                                        {table.emptyLabel ?? 'Belum ada data'}
+                                        {table.loading 
+                                            ? 'Memuat data...' 
+                                            : (table.error || table.emptyLabel || 'Belum ada data')
+                                        }
                                     </DataTableCell>
                                 </DataTableRow>
                             )}

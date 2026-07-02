@@ -84,7 +84,7 @@ export default function ItemRequestFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     const dockActions = useMemo(() => {
         const baseActions = [...(values.dockActions ?? [])];
@@ -241,6 +241,7 @@ export default function ItemRequestFormView({
     return (
         <>
             <TransactionFormLayout
+            validationMessage={validationMessage}
                 header={<ItemRequestFormHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
