@@ -10,6 +10,7 @@ export default function BackendLookupField({
     searchLabel = 'Cari data',
     getOptionLabel = (option) => option?.label ?? option?.name ?? '',
     getOptionSearchText = (option) => getOptionLabel(option),
+    queryParams = {},
     onSelect,
     onRemove,
     emptyTitle,
@@ -21,6 +22,8 @@ export default function BackendLookupField({
     const [searching, setSearching] = useState(false);
     const [hasActivated, setHasActivated] = useState(false);
 
+    const queryParamsString = JSON.stringify(queryParams);
+
     useEffect(() => {
         if (!hasActivated || disabled) return;
 
@@ -28,7 +31,7 @@ export default function BackendLookupField({
         async function fetchRecords() {
             setSearching(true);
             try {
-                const payload = await listBackendResource(resource, { per_page: 150 });
+                const payload = await listBackendResource(resource, { per_page: 150, ...queryParams });
                 if (!ignore) {
                     setItems(extractBackendRows(payload));
                 }
@@ -40,7 +43,7 @@ export default function BackendLookupField({
         }
         fetchRecords();
         return () => { ignore = true; };
-    }, [resource, hasActivated, disabled]);
+    }, [resource, hasActivated, disabled, queryParamsString]);
 
     const handleActivate = () => {
         if (!hasActivated && !disabled) {

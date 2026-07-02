@@ -50,6 +50,10 @@ class BackendResourceIndexQuery
                 $query->where("{$tableName}.account_type", '!=', $value);
                 continue;
             }
+            if ($key === 'exclude_id' && Schema::hasColumn($tableName, 'id')) {
+                $query->where("{$tableName}.id", '!=', $value);
+                continue;
+            }
             if (Schema::hasColumn($tableName, $key)) {
                 $query->where("{$tableName}.{$key}", $value);
             }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
@@ -120,11 +120,18 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         }
     }, [tabs, activeTabId]);
 
+    const prevHasRecordRef = useRef(Boolean(backendRecord));
+
     useEffect(() => {
-        if (!hasChanges || lastSavedAt) {
+        const hasRecordChanged = Boolean(backendRecord) !== prevHasRecordRef.current;
+        if (!hasChanges || lastSavedAt || hasRecordChanged) {
             setValues(initialValues);
+            if (lastSavedAt) {
+                setLastSavedAt(null);
+            }
+            prevHasRecordRef.current = Boolean(backendRecord);
         }
-    }, [initialValues, hasChanges, lastSavedAt]);
+    }, [initialValues, hasChanges, lastSavedAt, backendRecord]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -275,7 +282,7 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                 ) : activeTabId === 'children' ? (
                     <AccountsChildrenTab values={values} />
                 ) : (
-                    <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
+                    <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} excludeId={recordId} />
                 )}
             </div>
 

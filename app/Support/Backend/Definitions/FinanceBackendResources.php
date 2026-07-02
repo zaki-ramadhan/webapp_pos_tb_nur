@@ -72,6 +72,7 @@ class FinanceBackendResources
                 indexRules: [
                     'account_type' => ['sometimes'],
                     'exclude_type' => ['sometimes'],
+                    'exclude_id' => ['sometimes', 'integer'],
                 ],
                 storeRules: [
                     'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],
@@ -91,7 +92,16 @@ class FinanceBackendResources
                     'user_ids.*' => ['integer', 'exists:users,id'],
                 ],
                 updateRules: fn (Model $record) => [
-                    'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],
+                    'parent_id' => [
+                        'nullable',
+                        'integer',
+                        'exists:accounts,id',
+                        function (string $attribute, mixed $value, \Closure $fail) use ($record) {
+                            if ((int) $value === (int) $record->id) {
+                                $fail('Akun tidak boleh menunjuk dirinya sendiri sebagai induk.');
+                            }
+                        },
+                    ],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
                     'code' => ['nullable', 'string', 'max:50'],
                     'name' => ['required', 'string', 'max:160'],
