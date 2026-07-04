@@ -3,142 +3,21 @@ import { useRef, useState, useEffect } from 'react';
 import { useFormError } from './FormErrorContext';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
+function unformatAmount(val) {
+    if (val === null || val === undefined) return '';
+    if (typeof val === 'number') return val;
+    let str = String(val);
+    let clean = str.replace(/\./g, '').replace(/,/g, '.');
+    const parsed = parseFloat(clean);
+    return isNaN(parsed) ? str : parsed;
+}
+
 function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false) {
     if (typeof val === 'string' && val.startsWith(' ')) {
         val = val.trimStart();
     }
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
-
-    // Lewati sanitasi untuk email/username
-    if (
-        searchStr.includes('email') ||
-        searchStr.includes('username') ||
-        searchStr.includes('identifier')
-    ) {
-        return val;
-    }
-
-    // Cek nomor telepon
-    const isPhone = searchStr.includes('phone') ||
-                    searchStr.includes('telp') ||
-                    searchStr.includes('telepon') ||
-                    searchStr.includes('whatsapp') ||
-                    searchStr.includes('wa') ||
-                    searchStr.includes('fax') ||
-                    searchStr.includes('hp') ||
-                    searchStr.includes('kontak') ||
-                    searchStr.includes('contact');
-
-    // Cek jika kolom angka saja
-    const isDigitOnly = (
-                            searchStr.includes('rekening') ||
-                            searchStr.includes('account_number') ||
-                            searchStr.includes('bank_number') ||
-                            searchStr.includes('tax_number') ||
-                            searchStr.includes('npwp') ||
-                            searchStr.includes('nitku') ||
-                            searchStr.includes('postal') ||
-                            searchStr.includes('kodepos') ||
-                            searchStr.includes('zip') ||
-                            searchStr.includes('k.pos') ||
-                            searchStr.includes('kode pos') ||
-                            /\bno\.?\b/.test(searchStr)
-                        ) && !searchStr.includes('note') && !searchStr.includes('document');
-
-    if (isPhone) {
-        // Izinkan angka, spasi, plus, minus
-        return val.replace(/[^0-9+\s-]/g, '');
-    }
-
-    if (isDigitOnly) {
-        // Bersihkan selain angka
-        let clean = val.replace(/[^0-9]/g, '');
-        if (searchStr.includes('npwp')) {
-            clean = clean.slice(0, 16);
-            if (/^0+$/.test(clean) && clean.length === 16) {
-                clean = '';
-            }
-        }
-        if (
-            searchStr.includes('postal') ||
-            searchStr.includes('kodepos') ||
-            searchStr.includes('zip') ||
-            searchStr.includes('k.pos') ||
-            searchStr.includes('kode pos')
-        ) {
-            clean = clean.slice(0, 5);
-        }
-        return clean;
-    }
-
-    // Cek jika kolom kode akun (account code)
-    const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) &&
-                          (searchStr.includes('code') || searchStr.includes('kode'));
-    if (isAccountCode) {
-        return val.replace(/[^0-9.]/g, '');
-    }
-
-    // Cek jika kolom huruf saja
-    const isLettersOnly = lettersOnly ||
-                          (
-                              (
-                                  searchStr.includes('province') ||
-                                  searchStr.includes('provinsi') ||
-                                  searchStr.includes('country') ||
-                                  searchStr.includes('negara') ||
-                                  searchStr.includes('city') ||
-                                  searchStr.includes('kota')
-                              ) && !searchStr.includes('code') && !searchStr.includes('no')
-                          );
-
-    if (isLettersOnly) {
-        // Izinkan huruf saja
-        return val.replace(/[^a-zA-Z\s'.-]/g, '');
-    }
-
-    // Check if it's a numeric field
-    const isNumeric = type === 'number' ||
-                      searchStr.includes('price') ||
-                      searchStr.includes('amount') ||
-                      searchStr.includes('percentage') ||
-                      searchStr.includes('rate') ||
-                      searchStr.includes('limit') ||
-                      searchStr.includes('age') ||
-                      searchStr.includes('range') ||
-                      searchStr.includes('days') ||
-                      searchStr.includes('qty') ||
-                      searchStr.includes('quantity') ||
-                      searchStr.includes('value') ||
-                      searchStr.includes('kurs') ||
-                      searchStr.includes('jumlah') ||
-                      searchStr.includes('persen') ||
-                      searchStr.includes('nominal') ||
-                      searchStr.includes('cost') ||
-                      searchStr.includes('piutang') ||
-                      searchStr.includes('utang') ||
-                      searchStr.includes('years') ||
-                      searchStr.includes('months') ||
-                      searchStr.includes('tahun') ||
-                      searchStr.includes('bulan') ||
-                      searchStr.includes('hari') ||
-                      searchStr.includes('umur') ||
-                      searchStr.includes('length') ||
-                      searchStr.includes('width') ||
-                      searchStr.includes('height') ||
-                      searchStr.includes('weight') ||
-                      searchStr.includes('panjang') ||
-                      searchStr.includes('lebar') ||
-                      searchStr.includes('tinggi') ||
-                      searchStr.includes('berat') ||
-                      searchStr.includes('dimensi') ||
-                      searchStr.includes('dimension') ||
-                      searchStr.includes('ukuran') ||
-                      searchStr.includes('size') ||
-                      searchStr.includes('volume') ||
-                      searchStr.includes('jarak') ||
-                      searchStr.includes('tebal') ||
-                      searchStr.includes('thickness');
 
     const isCurrency = searchStr.includes('price') ||
                        searchStr.includes('amount') ||
@@ -162,28 +41,6 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
 
     if (isCurrency) {
         return formatAmountInput(val, { allowDecimal: true });
-    }
-
-    const isAgeOrRange = searchStr.includes('age') || searchStr.includes('range');
-    if (isAgeOrRange) {
-        let clean = val.replace(/[^0-9]/g, '');
-        clean = clean.replace(/^0+/, '');
-        return clean;
-    }
-
-    if (isNumeric) {
-        // Izinkan angka desimal
-        let clean = val.replace(/[^0-9.]/g, '');
-        // Pastikan hanya satu desimal
-        const parts = clean.split('.');
-        if (parts.length > 2) {
-            clean = parts[0] + '.' + parts.slice(1).join('');
-        }
-        // Hapus nol di depan
-        if (clean.length > 1 && clean.startsWith('0') && clean[1] !== '.') {
-            clean = clean.replace(/^0+/, '');
-        }
-        return clean;
     }
 
     return val;
@@ -284,19 +141,38 @@ export default function TextInput({
     const resolvedMaxLength = props.maxLength ?? defaultMaxLength;
 
     const inputRef = useRef(null);
+    const isFocusedRef = useRef(false);
     const [localValue, setLocalValue] = useState(() => {
-        if (type === 'number') {
-            return value ?? defaultValue ?? '0';
+        const val = value ?? defaultValue ?? '';
+        if (isCurrency && val !== '') {
+            return formatAmountInput(val, { allowDecimal: true });
         }
-        return value ?? defaultValue ?? '';
+        if (type === 'number') {
+            return val || '0';
+        }
+        return val;
     });
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
 
+    const isEmpty = value === '' || value === null || value === undefined;
     useEffect(() => {
         if (value !== undefined) {
-            setLocalValue(value ?? '');
+            if (!isFocusedRef.current || isEmpty) {
+                const currentVal = isCurrency ? unformatAmount(localValue) : localValue;
+                const incomingVal = isCurrency ? unformatAmount(value) : value;
+
+                if (String(currentVal) === String(incomingVal)) {
+                    return;
+                }
+
+                let nextVal = value ?? '';
+                if (isCurrency && nextVal !== '') {
+                    nextVal = formatAmountInput(nextVal, { allowDecimal: true });
+                }
+                setLocalValue(nextVal);
+            }
         }
-    }, [value]);
+    }, [value, isCurrency, localValue, isEmpty]);
 
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
@@ -333,66 +209,37 @@ export default function TextInput({
         const prefixVal = typeof prefix === 'string' ? prefix : '';
         const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly);
 
-        if (event.target.value !== sanitizedValue) {
-            event.target.value = sanitizedValue;
-        }
-        setLocalValue(event.target.value);
+        setLocalValue(sanitizedValue);
         clearError(contextKey);
         if (onChange) {
-            onChange(event);
+            onChange({
+                target: {
+                    id: id || '',
+                    name: props.name || '',
+                    value: sanitizedValue,
+                },
+                currentTarget: {
+                    id: id || '',
+                    name: props.name || '',
+                    value: sanitizedValue,
+                },
+                preventDefault: () => {
+                    event.preventDefault?.();
+                },
+                stopPropagation: () => {
+                    event.stopPropagation?.();
+                },
+                isDefaultPrevented: () => event.isDefaultPrevented?.() ?? false,
+                isPropagationStopped: () => event.isPropagationStopped?.() ?? false,
+                persist: () => {},
+            });
         }
     }
 
     function handleWrappedKeyDown(event) {
-        const name = props.name ?? '';
-        const prefixVal = typeof prefix === 'string' ? prefix : '';
-        const searchStr = `${id || ''} ${name} ${placeholder} ${prefixVal}`.toLowerCase();
+        const isStrictNumeric = type === 'number' || isCurrency;
 
-        const isNumeric = type === 'number' ||
-                          searchStr.includes('price') ||
-                          searchStr.includes('amount') ||
-                          searchStr.includes('percentage') ||
-                          searchStr.includes('rate') ||
-                          searchStr.includes('limit') ||
-                          searchStr.includes('age') ||
-                          searchStr.includes('range') ||
-                          searchStr.includes('days') ||
-                          searchStr.includes('qty') ||
-                          searchStr.includes('quantity') ||
-                          searchStr.includes('value') ||
-                          searchStr.includes('kurs') ||
-                          searchStr.includes('jumlah') ||
-                          searchStr.includes('persen') ||
-                          searchStr.includes('nominal') ||
-                          searchStr.includes('cost') ||
-                          searchStr.includes('piutang') ||
-                          searchStr.includes('utang') ||
-                          searchStr.includes('years') ||
-                          searchStr.includes('months') ||
-                          searchStr.includes('tahun') ||
-                          searchStr.includes('bulan') ||
-                          searchStr.includes('hari') ||
-                          searchStr.includes('umur');
-
-        const isDigitOnly = (
-                                searchStr.includes('rekening') ||
-                                searchStr.includes('account_number') ||
-                                searchStr.includes('bank_number') ||
-                                searchStr.includes('tax_number') ||
-                                searchStr.includes('npwp') ||
-                                searchStr.includes('nitku') ||
-                                searchStr.includes('postal') ||
-                                searchStr.includes('kodepos') ||
-                                searchStr.includes('zip') ||
-                                searchStr.includes('k.pos') ||
-                                searchStr.includes('kode pos') ||
-                                /\bno\.?\b/.test(searchStr)
-                            ) && !searchStr.includes('note') && !searchStr.includes('document');
-
-        const isAccountCode = (searchStr.includes('account') || searchStr.includes('akun')) &&
-                              (searchStr.includes('code') || searchStr.includes('kode'));
-
-        if (isNumeric || isDigitOnly || isAccountCode) {
+        if (isStrictNumeric) {
             const allowedKeys = [
                 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'Enter', 'Home', 'End'
             ];
@@ -442,9 +289,8 @@ export default function TextInput({
 
             const isDigit = /^[0-9]$/.test(event.key);
             const isSeparator = event.key === '.' || event.key === ',';
-            const isAllowedSeparator = isAccountCode ? event.key === '.' : isSeparator;
 
-            if (!isDigit && (!isNumeric || !isSeparator) && (!isAccountCode || !isAllowedSeparator)) {
+            if (!isDigit && !isSeparator) {
                 event.preventDefault();
                 return;
             }
@@ -454,12 +300,19 @@ export default function TextInput({
     }
 
     function handleWrappedBlur(event) {
+        isFocusedRef.current = false;
+
         if (readOnly || disabled) {
             props.onBlur?.(event);
             return;
         }
 
         let val = event.target.value;
+        if (isCurrency && val !== '') {
+            const formatted = formatAmountInput(val, { allowDecimal: true });
+            setLocalValue(formatted);
+        }
+
         const name = props.name ?? '';
         const searchStr = `${id} ${name} ${placeholder}`.toLowerCase();
 
@@ -504,15 +357,60 @@ export default function TextInput({
                           searchStr.includes('tebal') ||
                           searchStr.includes('thickness');
 
+        let finalValue = val;
         if (isNumeric) {
             const numVal = parseFloat(val);
             if (val === '0' || numVal === 0) {
-                event.target.value = '';
+                finalValue = '';
                 setLocalValue('');
-                onChange?.(event);
+                if (onChange) {
+                    onChange({
+                        target: {
+                            id: id || '',
+                            name: props.name || '',
+                            value: '',
+                        },
+                        currentTarget: {
+                            id: id || '',
+                            name: props.name || '',
+                            value: '',
+                        },
+                        preventDefault: () => {
+                            event.preventDefault?.();
+                        },
+                        stopPropagation: () => {
+                            event.stopPropagation?.();
+                        },
+                        isDefaultPrevented: () => event.isDefaultPrevented?.() ?? false,
+                        isPropagationStopped: () => event.isPropagationStopped?.() ?? false,
+                        persist: () => {},
+                    });
+                }
             }
         }
-        props.onBlur?.(event);
+        if (props.onBlur) {
+            props.onBlur({
+                target: {
+                    id: id || '',
+                    name: props.name || '',
+                    value: finalValue,
+                },
+                currentTarget: {
+                    id: id || '',
+                    name: props.name || '',
+                    value: finalValue,
+                },
+                preventDefault: () => {
+                    event.preventDefault?.();
+                },
+                stopPropagation: () => {
+                    event.stopPropagation?.();
+                },
+                isDefaultPrevented: () => event.isDefaultPrevented?.() ?? false,
+                isPropagationStopped: () => event.isPropagationStopped?.() ?? false,
+                persist: () => {},
+            });
+        }
     }
 
     function focusInputFromWrapper(event) {
@@ -588,6 +486,10 @@ export default function TextInput({
                     aria-invalid={Boolean(resolvedError)}
                     className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : resolvedError ? 'bg-transparent text-red-800' : 'text-slate-700 bg-white'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
+                    onFocus={(e) => {
+                        isFocusedRef.current = true;
+                        props.onFocus?.(e);
+                    }}
                     onBlur={handleWrappedBlur}
                     maxLength={resolvedMaxLength}
                     minLength={isPostal ? 5 : props.minLength}

@@ -53,6 +53,21 @@ function formatCurrencyValue(value) {
     });
 }
 
+export function mapDocumentStatus(status) {
+    if (!status) return 'Draft';
+    const statusMap = {
+        'Draft': 'Draft',
+        'Posted': 'Terposting',
+        'Open': 'Terbuka',
+        'Closed': 'Tertutup',
+        'Partial': 'Sebagian',
+        'Paid': 'Lunas',
+        'Unpaid': 'Belum Lunas',
+        'Void': 'Batal',
+    };
+    return statusMap[status] ?? status;
+}
+
 function buildFilterOptions(labelPrefix, rows, rowKey, valueKey = rowKey) {
     const values = [...new Set(rows.map((row) => row[rowKey]).filter(Boolean))];
 
@@ -81,7 +96,7 @@ export function buildOperationDocumentTableRows(pageId, records) {
             shipping: record.shipping_method ?? '',
             shippingShort: truncateText(record.shipping_method ?? ''),
             notes: record.notes ?? '',
-            status: record.status ?? 'Draft',
+            status: mapDocumentStatus(record.status ?? 'Draft'),
             requiredIdType: record.metadata?.required_id_type ?? '',
             age: record.metadata?.age_days ?? '',
             total: totalText,
@@ -92,7 +107,7 @@ export function buildOperationDocumentTableRows(pageId, records) {
                   : 'pending',
             dateFilter: formatIsoDate(record.entry_date),
             partnerFilter: partnerName,
-            statusFilter: record.status ?? 'Draft',
+            statusFilter: mapDocumentStatus(record.status ?? 'Draft'),
             printedStatus: record.metadata?.printed_status ?? 'all',
             returnType: record.metadata?.return_source ?? 'Faktur',
             pageId,
@@ -121,7 +136,7 @@ export function buildOperationDocumentFilters(baseFilters, rows) {
 export function buildOperationDocumentRecord(record, config, pageId) {
     const partnerName = record.customer?.name ?? record.supplier?.name ?? '';
     const metadata = record.metadata ?? {};
-    const taxValue = Number(record.tax_total ?? 0) > 0 ? `Rp ${formatCurrencyValue(record.tax_total)}` : '';
+    const taxValue = Number(record.tax_total ?? 0) > 0 ? formatCurrencyValue(record.tax_total) : '';
     const subtotalValue = Number(record.subtotal ?? 0) > 0 ? record.subtotal : record.total_amount ?? 0;
     const totalValue = record.total_amount ?? record.subtotal ?? 0;
     const lines = (record.lines ?? []).map((line, index) => ({
@@ -179,7 +194,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         advancePayments: metadata.advance_payments ?? [],
         summary: [
             ['Total', `Rp ${formatCurrencyValue(totalValue)}`],
-            ['Status', record.status ?? 'Draft'],
+            ['Status', mapDocumentStatus(record.status ?? 'Draft')],
         ],
         processedBy: record.related_document?.document_number
             ? {
@@ -188,7 +203,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
               }
             : null,
         approvalStamp: '',
-        processStamp: record.status ? String(record.status).toUpperCase() : '',
+        processStamp: record.status ? String(mapDocumentStatus(record.status)).toUpperCase() : '',
         showProcessButton: false,
         processDisabled: true,
         subtotal: `Rp ${formatCurrencyValue(subtotalValue)}`,

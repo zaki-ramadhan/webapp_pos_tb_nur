@@ -195,10 +195,12 @@ export default function RegisterFormPanel({ register }) {
 
                     <Button
                         type="submit"
+                        size="md"
                         fullWidth
                         disabled={form.processing}
                         loading={form.processing}
                         loadingLabel="Memproses..."
+                        className="font-medium text-xs sm:text-sm py-3"
                     >
                         {register.submitLabel}
                     </Button>

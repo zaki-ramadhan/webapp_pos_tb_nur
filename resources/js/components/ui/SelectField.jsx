@@ -224,7 +224,7 @@ export default function SelectField({
                                 aria-selected={isSelected}
                                 disabled={option.disabled}
                                 onClick={() => handleSelect(option.value)}
-                                className={`block w-full border-b border-slate-200 last:border-b-0 px-4 py-2.5 text-left text-xs sm:text-sm transition-colors duration-100 ${
+                                className={`block w-full border-b border-slate-200 last:border-b-0 px-4 py-3 text-left text-xs sm:text-sm transition-colors duration-100 ${
                                     isSelected 
                                         ? 'bg-workspace-hover-bg font-normal text-brand-blue' 
                                         : isHighlighted 

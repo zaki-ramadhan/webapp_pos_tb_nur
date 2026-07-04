@@ -1,3 +1,4 @@
+import { useEffect, useState, useRef } from 'react';
 import { useFormError } from './FormErrorContext';
 
 export default function TextareaField({
@@ -18,29 +19,57 @@ export default function TextareaField({
     readOnly = false,
     tabIndex,
     onChange,
+    value,
+    defaultValue,
     ...props
 }) {
+    const isFocusedRef = useRef(false);
+    const [localValue, setLocalValue] = useState(() => value ?? defaultValue ?? '');
+
+    useEffect(() => {
+        if (value !== undefined) {
+            if (!isFocusedRef.current || value === '') {
+                setLocalValue(value ?? '');
+            }
+        }
+    }, [value]);
+
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, props.name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
     const isNonInteractive = disabled || readOnly;
 
     function handleChange(event) {
-        if (!onChange) return;
-        // Bersihkan tag HTML
-        let sanitized = event.target.value.replace(/<[^>]*>/g, '');
-        if (sanitized.startsWith(' ')) {
-            sanitized = sanitized.trimStart();
-        }
+        let sanitized = event.target.value;
         const maxLen = props.maxLength ?? 1000;
         if (sanitized.length > maxLen) {
             sanitized = sanitized.slice(0, maxLen);
         }
-        if (sanitized !== event.target.value) {
-            event.target.value = sanitized;
-        }
+        setLocalValue(sanitized);
         clearError(contextKey);
-        onChange(event);
+        if (onChange) {
+            onChange({
+                target: {
+                    id: id || '',
+                    name: props.name || '',
+                    value: sanitized,
+                },
+                currentTarget: {
+                    id: id || '',
+                    name: props.name || '',
+                    value: sanitized,
+                },
+                preventDefault: () => {
+                    event.preventDefault?.();
+                },
+                stopPropagation: () => {
+                    event.stopPropagation?.();
+                },
+                isDefaultPrevented: () => event.isDefaultPrevented?.() ?? false,
+                isPropagationStopped: () => event.isPropagationStopped?.() ?? false,
+                persist: () => {},
+            });
+        }
     }
 
     const toneClassName = resolvedError
@@ -74,8 +103,17 @@ export default function TextareaField({
                     readOnly={readOnly}
                     tabIndex={readOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`min-h-[92px] flex-1 resize-none bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default text-gray-500 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
+                    className={`min-h-[92px] flex-1 resize-y bg-transparent px-4 py-3 text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default text-gray-500 pointer-events-none' : 'text-slate-700'} ${textareaClassName}`.trim()}
+                    value={localValue}
                     onChange={handleChange}
+                    onFocus={(e) => {
+                        isFocusedRef.current = true;
+                        props.onFocus?.(e);
+                    }}
+                    onBlur={(e) => {
+                        isFocusedRef.current = false;
+                        props.onBlur?.(e);
+                    }}
                     maxLength={props.maxLength ?? 1000}
                 />
 

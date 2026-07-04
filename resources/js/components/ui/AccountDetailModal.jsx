@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import TextInput from '@/components/ui/TextInput';
+import TextareaField from '@/components/ui/TextareaField';
 import Button from '@/components/ui/Button';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { PencilIcon } from '@/features/workspace/shared/Icons';
@@ -21,21 +22,9 @@ function AccountDetailModalContainer({
     const [activeTab, setActiveTab] = useState('detail');
     const [side, setSide] = useState(defaultSide || 'debit');
 
-    // Format initial amount for debit and credit sides separately
-    const [debitAmount, setDebitAmount] = useState(() => {
-        if ((defaultSide || 'debit') === 'debit') {
-            const val = parseInt(String(defaultAmount || '').replace(/\D/g, ''), 10);
-            return isNaN(val) || val === 0 ? '0' : val.toLocaleString('id-ID');
-        }
-        return '0';
-    });
-
-    const [creditAmount, setCreditAmount] = useState(() => {
-        if (defaultSide === 'credit') {
-            const val = parseInt(String(defaultAmount || '').replace(/\D/g, ''), 10);
-            return isNaN(val) || val === 0 ? '0' : val.toLocaleString('id-ID');
-        }
-        return '0';
+    const [amount, setAmount] = useState(() => {
+        const val = parseInt(String(defaultAmount || '').replace(/\D/g, ''), 10);
+        return isNaN(val) || val === 0 ? '0' : val.toLocaleString('id-ID');
     });
 
     const [notes, setNotes] = useState(defaultNotes || '');
@@ -61,26 +50,17 @@ function AccountDetailModalContainer({
         const rawVal = e.target.value;
         const cleanVal = rawVal.replace(/\D/g, '');
         if (!cleanVal) {
-            if (side === 'debit') {
-                setDebitAmount('0');
-            } else {
-                setCreditAmount('0');
-            }
+            setAmount('0');
             return;
         }
         const num = parseInt(cleanVal, 10);
         const formatted = num.toLocaleString('id-ID');
-        if (side === 'debit') {
-            setDebitAmount(formatted);
-        } else {
-            setCreditAmount(formatted);
-        }
+        setAmount(formatted);
         setError('');
     }
 
     function handleSave() {
-        const activeAmount = side === 'debit' ? debitAmount : creditAmount;
-        const cleanAmount = parseInt(activeAmount.replace(/\D/g, ''), 10) || 0;
+        const cleanAmount = parseInt(amount.replace(/\D/g, ''), 10) || 0;
         if (cleanAmount <= 0) {
             setError('Nilai harus lebih besar dari 0.');
             return;
@@ -104,7 +84,7 @@ function AccountDetailModalContainer({
             title="Detail Akun"
             headerIcon={PencilIcon}
             maxWidthClassName="max-w-[480px]"
-            contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[420px] flex flex-col"
+            contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[320px] flex flex-col"
             footer={
                 <div className="flex items-center justify-between w-full">
                     <div>
@@ -134,13 +114,13 @@ function AccountDetailModalContainer({
                 </div>
             }
         >
-            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6">
+            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mt-2.5 mb-3">
                 <button
                     type="button"
                     onClick={() => setActiveTab('detail')}
-                    className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                    className={`px-4 py-2.5 text-sm font-normal border-b-2 -mb-[1px] transition-colors duration-150 cursor-pointer ${
                         activeTab === 'detail'
-                            ? 'border-pink-accent text-pink-accent'
+                            ? 'border-pink-accent text-pink-accent font-normal'
                             : 'border-transparent text-slate-500 hover:text-slate-700'
                     }`}
                 >
@@ -149,9 +129,9 @@ function AccountDetailModalContainer({
                 <button
                     type="button"
                     onClick={() => setActiveTab('info')}
-                    className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                    className={`px-4 py-2.5 text-sm font-normal border-b-2 -mb-[1px] transition-colors duration-150 cursor-pointer ${
                         activeTab === 'info'
-                            ? 'border-pink-accent text-pink-accent'
+                            ? 'border-pink-accent text-pink-accent font-normal'
                             : 'border-transparent text-slate-500 hover:text-slate-700'
                     }`}
                 >
@@ -208,7 +188,7 @@ function AccountDetailModalContainer({
                                 <TextInput
                                     type="number"
                                     prefix="Rp"
-                                    value={side === 'debit' ? debitAmount : creditAmount}
+                                    value={amount}
                                     onChange={handleAmountChange}
                                     error={error}
                                     className="h-[38px] rounded-[4px]"
@@ -226,13 +206,14 @@ function AccountDetailModalContainer({
                 <div className="space-y-4 pt-5 pb-5 flex-1">
                     <div className="grid grid-cols-[130px_minmax(0,1fr)] items-start gap-4">
                         <span className="text-sm text-slate-700 font-normal pt-1">Catatan / Keterangan</span>
-                        <textarea
+                        <TextareaField
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             placeholder="Catatan tambahan untuk baris ini..."
                             rows={4}
                             maxLength={200}
-                            className="w-full resize-none rounded-[4px] border border-ui-border px-3 py-2 text-sm text-slate-700 outline-none focus:border-control-active focus:ring-1 focus:ring-control-active"
+                            className="rounded-[4px] border-ui-border"
+                            textareaClassName="min-h-[92px] text-xs sm:text-sm font-normal text-slate-700"
                         />
                     </div>
                 </div>

@@ -115,7 +115,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                                 <button
                                     type="submit"
                                     disabled={form.processing}
-                                    className="h-9 px-5 rounded-[4px] bg-pink-accent hover:bg-brand-primary-hover text-sm font-semibold text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
+                                    className="py-2.5 px-5 rounded-[4px] bg-pink-accent hover:bg-brand-primary-hover text-xs sm:text-sm font-medium text-white shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
                                 >
                                     {form.processing ? 'Memproses...' : 'Reset Password'}
                                 </button>
@@ -139,7 +139,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="h-9 min-w-[70px] px-5 rounded-[4px] bg-pink-accent hover:bg-brand-primary-hover text-sm font-semibold text-white shadow-sm transition-colors cursor-pointer"
+                                className="py-2.5 min-w-[70px] px-5 rounded-[4px] bg-pink-accent hover:bg-brand-primary-hover text-xs sm:text-sm font-medium text-white shadow-sm transition-colors cursor-pointer"
                             >
                                 OK
                             </button>

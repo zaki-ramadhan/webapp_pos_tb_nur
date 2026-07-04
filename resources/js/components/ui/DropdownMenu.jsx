@@ -10,7 +10,7 @@ export default function DropdownMenu({
     widthClassName = 'w-[240px]',
     className = '',
     panelClassName = '',
-    noPadding = false,
+    noPadding = true,
 }) {
     const paddingClass = noPadding ? '' : 'p-1.5';
 
@@ -21,7 +21,7 @@ export default function DropdownMenu({
             anchorRef={anchorRef}
             align={align}
             side={side}
-            className={`rounded-[3px] shadow-md ${paddingClass} ${widthClassName} ${className}`.trim()}
+            className={`rounded-[6px] shadow-md ${paddingClass} ${widthClassName} ${className}`.trim()}
             panelClassName={panelClassName}
         >
             {children}

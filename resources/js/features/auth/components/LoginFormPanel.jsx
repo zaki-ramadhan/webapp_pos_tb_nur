@@ -52,7 +52,7 @@ export default function LoginFormPanel({ login }) {
         }
 
         const handleMessage = (event) => {
-            const isAuthorizedOrigin = event.origin === window.location.origin || 
+            const isAuthorizedOrigin = event.origin === window.location.origin ||
                 (event.origin.includes('localhost') && window.location.origin.includes('127.0.0.1')) ||
                 (event.origin.includes('127.0.0.1') && window.location.origin.includes('localhost'));
 
@@ -189,10 +189,12 @@ export default function LoginFormPanel({ login }) {
 
                     <Button
                         type="submit"
+                        size="md"
                         fullWidth
                         disabled={form.processing}
                         loading={form.processing}
                         loadingLabel="Memproses..."
+                        className="font-medium text-xs sm:text-sm py-3"
                     >
                         {login.submitLabel}
                     </Button>
@@ -202,7 +204,7 @@ export default function LoginFormPanel({ login }) {
                     </div>
 
                     <SocialButton
-                        label={`Masuk dengan ${login.googleLabel}`}
+                        label={`${login.googleLabel}`}
                         href={login.googleHref}
                         onClick={handleGoogleLogin}
                         disabled={form.processing}

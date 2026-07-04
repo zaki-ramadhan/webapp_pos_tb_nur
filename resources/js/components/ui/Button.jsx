@@ -6,7 +6,7 @@ const variantClasses = {
     danger:
         'border border-transparent bg-danger text-white shadow-button-primary',
     secondary:
-        'border border-slate-300 bg-white text-slate-500 shadow-button-secondary',
+        'border border-slate-300 bg-white text-slate-600 shadow-button-secondary',
     ghost: 'border border-transparent bg-transparent text-info',
     'brand-blue':
         'border border-transparent bg-brand-blue text-white shadow-button-primary',
@@ -24,9 +24,9 @@ const activeVariantClasses = {
 const disabledClasses = 'cursor-default opacity-55 shadow-none pointer-events-none';
 
 const sizeClasses = {
-    sm: 'h-8 px-3 text-xs',
-    md: 'h-9 px-4 text-xs sm:text-sm',
-    lg: 'h-11 px-5 text-xs sm:text-sm',
+    sm: 'h-9 px-4 text-sm',
+    md: 'h-10 px-5 text-sm sm:text-base',
+    lg: 'h-12 px-6 text-base',
 };
 
 export default function Button({
@@ -49,13 +49,27 @@ export default function Button({
     const variantClass = variantClasses[variant] || variantClasses.primary;
     const activeClass = isDisabled ? disabledClasses : (activeVariantClasses[variant] || activeVariantClasses.primary);
 
+    const hasFontWeight = className.split(' ').some((c) => c.startsWith('font-'));
+    const fontWeightClass = hasFontWeight ? '' : 'font-normal';
+
+    const hasHeight = className.split(' ').some((c) => c.startsWith('h-') || c.startsWith('py-'));
+    const sizeClass = sizeClasses[size] || sizeClasses.lg;
+    let resolvedSizeClass = hasHeight ? sizeClass.replace(/\bh-\d+\b/g, '') : sizeClass;
+
+    const hasText = className.split(' ').some((c) => c.startsWith('text-') || c.includes(':text-'));
+    if (hasText) {
+        resolvedSizeClass = resolvedSizeClass
+            .replace(/\btext-[a-z]+\b/g, '')
+            .replace(/\b[a-z]+:text-[a-z]+\b/g, '');
+    }
+
     return (
         <Component
             type={Component === 'button' ? type : undefined}
             disabled={Component === 'button' ? isDisabled : undefined}
             aria-disabled={isDisabled}
             aria-busy={loading}
-            className={`inline-flex items-center justify-center gap-3 rounded-md font-medium transition ${variantClass} ${activeClass} ${sizeClasses[size]} ${widthClass} ${className}`.trim()}
+            className={`inline-flex items-center justify-center gap-3 rounded-md ${fontWeightClass} transition ${variantClass} ${activeClass} ${resolvedSizeClass} ${widthClass} ${className}`.trim()}
             {...props}
         >
             {loading ? (

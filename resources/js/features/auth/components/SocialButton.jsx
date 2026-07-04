@@ -32,8 +32,9 @@ export default function SocialButton({ label, onClick, href = null, disabled = f
             onClick={onClick}
             disabled={disabled}
             variant="secondary"
-            size="lg"
+            size="md"
             fullWidth
+            className="font-medium text-xs sm:text-sm py-3"
         >
             <GoogleMark />
             <span>{label}</span>
