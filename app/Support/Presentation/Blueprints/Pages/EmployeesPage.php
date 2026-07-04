@@ -147,14 +147,13 @@ class EmployeesPage
                             'Karyawan',
                         ],
                         'branchOptions' => [
-                            'JAKARTA',
-                            'SURABAYA',
+                            'TOKO UTAMA',
+                            'CABANG KEDUA',
                         ],
                         'departmentOptions' => [
-                            'Accounting',
-                            'Gudang',
-                            'Keuangan',
-                            'Penjualan',
+                            'Pengelola / Owner',
+                            'Staf Toko & Kasir',
+                            'Staf Gudang & Sopir',
                         ],
                         'bankOptions' => [
                             'Bank BCA',
@@ -205,7 +204,7 @@ class EmployeesPage
                             'employeeIdType' => 'Karyawan',
                             'joinDate' => '24/04/2026',
                             'identityNumber' => '',
-                            'branch' => 'JAKARTA',
+                            'branch' => 'TOKO UTAMA',
                             'department' => '',
                             'isSalesperson' => false,
                             'note' => '',

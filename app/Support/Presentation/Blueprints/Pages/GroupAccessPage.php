@@ -35,15 +35,15 @@ class GroupAccessPage
                         'rows' => [
                             [
                                 'id' => 'ga-supervisor',
-                                'groupName' => 'TEAM SURABAYA',
+                                'groupName' => 'TEAM CABANG KEDUA',
                                 'userList' => 'AHMADYANI, Erick Szeto',
-                                'tabLabel' => 'TEAM SURABAYA',
+                                'tabLabel' => 'TEAM CABANG KEDUA',
                                 'detailForm' => [
                                     'defaultTabId' => 'general',
                                     'permissionPreset' => 'supervisor',
                                     'general' => [
                                         'nameField' => [
-                                            'value' => 'TEAM SURABAYA',
+                                            'value' => 'TEAM CABANG KEDUA',
                                         ],
                                         'accessLimitations' => [
                                             'options' => [
@@ -71,15 +71,15 @@ class GroupAccessPage
                             ],
                             [
                                 'id' => 'ga-sales-admin',
-                                'groupName' => 'TEAM JAKARTA',
+                                'groupName' => 'TEAM TOKO UTAMA',
                                 'userList' => 'Vando Rufi Sundawan, Darwin_SAC, Jhonni Haris Limbong',
-                                'tabLabel' => 'TEAM JAKARTA',
+                                'tabLabel' => 'TEAM TOKO UTAMA',
                                 'detailForm' => [
                                     'defaultTabId' => 'general',
                                     'permissionPreset' => 'administrator',
                                     'general' => [
                                         'nameField' => [
-                                            'value' => 'TEAM JAKARTA',
+                                            'value' => 'TEAM TOKO UTAMA',
                                         ],
                                         'accessLimitations' => [
                                             'options' => [

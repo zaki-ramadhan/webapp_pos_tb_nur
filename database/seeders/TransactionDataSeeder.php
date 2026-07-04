@@ -209,9 +209,9 @@ class TransactionDataSeeder extends Seeder
             'acquisition_cost' => 7350000,
             'book_value' => 5818750,
             'tax_enabled' => true,
-            'initial_location_name' => 'SURABAYA',
-            'initial_location_address' => 'Gedung Pawitra Lt 2 NO. 203 Jl. Kalijudan No. 98A Surabaya Jawa Timur 60114 Indonesia',
-            'notes' => 'Aset Kantor Surabaya',
+            'initial_location_name' => 'CABANG KEDUA',
+            'initial_location_address' => 'Lahan Terbuka Belakang Toko, Cirebon, Jawa Barat 45151 Indonesia',
+            'notes' => 'Aset Kantor',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
@@ -231,8 +231,8 @@ class TransactionDataSeeder extends Seeder
 
         DB::table('fixed_asset_locations')->insert([
             'fixed_asset_id' => $assetId,
-            'location_name' => 'SURABAYA',
-            'location_address' => 'Gedung Pawitra Lt 2 NO. 203 Jl. Kalijudan No. 98A Surabaya Jawa Timur 60114 Indonesia',
+            'location_name' => 'CABANG KEDUA',
+            'location_address' => 'Lahan Terbuka Belakang Toko, Cirebon, Jawa Barat 45151 Indonesia',
             'quantity' => 1,
             'is_current' => true,
             'created_at' => now(),

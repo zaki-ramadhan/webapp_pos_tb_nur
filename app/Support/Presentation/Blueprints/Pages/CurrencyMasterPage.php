@@ -57,7 +57,7 @@ class CurrencyMasterPage
                                 'countryCode' => 'ID',
                                 'defaultAccounts' => [
                                     'accountsPayable' => '[211.101-01] Hutang Usaha Jakarta - IDR',
-                                    'accountsReceivable' => '[112.101-01] Piutang Usaha Jakarta - IDR',
+                                    'accountsReceivable' => '[112.101-01] Piutang Usaha - IDR',
                                     'purchaseAdvance' => '[113.101-01] Uang Muka Pembelian Barang Jakarta - IDR',
                                     'salesAdvance' => '[212.101-01] Uang Muka Penjualan Barang Jakarta - IDR',
                                     'salesDiscount' => '[422.000-01] Potongan Penjualan IDR',
@@ -74,7 +74,7 @@ class CurrencyMasterPage
                                 'countryCode' => 'US',
                                 'defaultAccounts' => [
                                     'accountsPayable' => '[211.102-01] Hutang Usaha Jakarta - USD',
-                                    'accountsReceivable' => '[112.102-01] Piutang Usaha Jakarta - USD',
+                                    'accountsReceivable' => '[112.102-01] Piutang Usaha - USD',
                                     'purchaseAdvance' => '[113.102-01] Uang Muka Pembelian Barang Jakarta - USD',
                                     'salesAdvance' => '[212.102-01] Uang Muka Penjualan Barang Jakarta - USD',
                                     'salesDiscount' => '[422.000-02] Potongan Penjualan USD',
@@ -91,7 +91,7 @@ class CurrencyMasterPage
                                 'countryCode' => 'SG',
                                 'defaultAccounts' => [
                                     'accountsPayable' => '[211.103-01] Hutang Usaha Jakarta - SGD',
-                                    'accountsReceivable' => '[112.103-01] Piutang Usaha Jakarta - SGD',
+                                    'accountsReceivable' => '[112.103-01] Piutang Usaha - SGD',
                                     'purchaseAdvance' => '[113.103-01] Uang Muka Pembelian Barang Jakarta - SGD',
                                     'salesAdvance' => '[212.103-01] Uang Muka Penjualan Barang Jakarta - SGD',
                                     'salesDiscount' => '[422.000-03] Potongan Penjualan SGD',

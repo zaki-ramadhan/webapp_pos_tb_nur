@@ -103,7 +103,7 @@ class PayrollEntryPage
                         ],
                         'defaults' => [
                             'paymentType' => 'Bulanan',
-                            'branches' => ['JAKARTA'],
+                            'branches' => ['TOKO UTAMA'],
                     '__branchId' => 1,
                             'month' => 'April',
                             'year' => '2026',
@@ -112,7 +112,7 @@ class PayrollEntryPage
                             'entryDate' => date('d/m/Y'),
                             'dueDate' => date('d/m/Y'),
                             'employeeLookup' => '',
-                            'liabilityAccounts' => ['[214.100-01] BYMD - Gaji Jakarta'],
+                            'liabilityAccounts' => ['[214.100-01] BYMD - Gaji Karyawan'],
                             'notes' => '',
                         ],
                         'employeeTable' => [

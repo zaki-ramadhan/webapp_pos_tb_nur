@@ -68,14 +68,14 @@ class JournalActivityLogPage
                             [
                                 'id' => 'journal-log-detail-1',
                                 'accountCode' => '111.102-01',
-                                'accountName' => 'Bank BCA IDR Jakarta (069-773-3993)',
+                                'accountName' => 'Bank BCA IDR (069-773-3993)',
                                 'debit' => '33,600,000',
                                 'credit' => '',
                             ],
                             [
                                 'id' => 'journal-log-detail-2',
                                 'accountCode' => '112.101-01',
-                                'accountName' => 'Piutang Usaha Jakarta - IDR',
+                                'accountName' => 'Piutang Usaha - IDR',
                                 'debit' => '',
                                 'credit' => '33,600,000',
                             ],
