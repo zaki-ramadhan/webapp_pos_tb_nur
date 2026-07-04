@@ -158,6 +158,61 @@ export default function TableListView({
         return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
     }, [cleanedColumns, visibleColumnIds]);
 
+    // Resizable columns state
+    const [columnWidths, setColumnWidths] = useState({});
+
+    useEffect(() => {
+        if (!schemaKey) return;
+        const cached = localStorage.getItem(`col_width_${schemaKey}`);
+        if (cached) {
+            try {
+                setColumnWidths(JSON.parse(cached));
+            } catch (e) {}
+        } else {
+            setColumnWidths({});
+        }
+    }, [schemaKey]);
+
+    const handleResizeStart = useCallback((e, columnId) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const startX = e.clientX;
+        const thElement = e.target.closest('th');
+        if (!thElement) return;
+        const startWidth = thElement.getBoundingClientRect().width;
+
+        let animationFrameId = null;
+
+        const handleMouseMove = (moveEvent) => {
+            const diffX = moveEvent.clientX - startX;
+            const newWidth = Math.max(50, startWidth + diffX);
+
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+
+            animationFrameId = requestAnimationFrame(() => {
+                setColumnWidths((prev) => {
+                    const next = { ...prev, [columnId]: newWidth };
+                    localStorage.setItem(`col_width_${schemaKey}`, JSON.stringify(next));
+                    return next;
+                });
+            });
+        };
+
+        const handleMouseUp = () => {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+    }, [schemaKey]);
+
     useEffect(() => {
         tableRegistry.setActiveTable(cleanedColumns, displayRows, table.resource);
         return () => {
@@ -238,18 +293,32 @@ export default function TableListView({
                                     No.
                                 </DataTableHead>
                             )}
-                            {visibleColumns.map((column) => (
-                                <SortableTableHeaderCell
-                                    key={column.id}
-                                    label={column.label}
-                                    align={column.align}
-                                    widthClassName={column.widthClassName}
-                                    sortable={column.sortable !== false}
-                                    noWrap={column.noWrap === true}
-                                    sortDirection={sortKey === column.id ? sortDir : null}
-                                    onSort={column.sortable !== false ? () => handleSort(column.id) : null}
-                                />
-                            ))}
+                            {visibleColumns.map((column) => {
+                                const cachedWidth = columnWidths[column.id];
+                                const customStyle = {
+                                    position: 'relative',
+                                    ...(cachedWidth ? {
+                                        width: `${cachedWidth}px`,
+                                        minWidth: `${cachedWidth}px`,
+                                        maxWidth: `${cachedWidth}px`,
+                                    } : {})
+                                };
+
+                                return (
+                                    <SortableTableHeaderCell
+                                        key={column.id}
+                                        label={column.label}
+                                        align={column.align}
+                                        widthClassName={column.widthClassName}
+                                        sortable={column.sortable !== false}
+                                        noWrap={column.noWrap === true}
+                                        sortDirection={sortKey === column.id ? sortDir : null}
+                                        onSort={column.sortable !== false ? () => handleSort(column.id) : null}
+                                        style={customStyle}
+                                        onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                    />
+                                );
+                            })}
                         </tr>
                     </DataTableHeader>
 
@@ -266,18 +335,41 @@ export default function TableListView({
                                             {paginationConfig ? (paginationConfig.from + index) : (index + 1)}
                                         </DataTableCell>
                                     )}
-                                    {visibleColumns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')} px-2.5 text-base text-text-workspace-dark ${column.cellClassName ?? ''}`.trim()}
-                                        >
-                                            {column.truncate ? (
-                                                <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
-                                            ) : (
-                                                formatTableTextValue(row[column.id], column)
-                                            )}
-                                        </DataTableCell>
-                                    ))}
+                                    {visibleColumns.map((column) => {
+                                        const cachedWidth = columnWidths[column.id];
+                                        const cellStyle = cachedWidth ? {
+                                            width: `${cachedWidth}px`,
+                                            minWidth: `${cachedWidth}px`,
+                                            maxWidth: `${cachedWidth}px`,
+                                        } : undefined;
+
+                                        return (
+                                            <DataTableCell
+                                                key={column.id}
+                                                className={`${column.align === 'right' ? 'text-right' : (column.align === 'center' ? 'text-center' : 'text-left')} px-2.5 text-base text-text-workspace-dark ${column.cellClassName ?? ''}`.trim()}
+                                                style={cellStyle}
+                                            >
+                                                {column.type === 'image' || column.id === 'image' ? (
+                                                    row[column.id] ? (
+                                                        <div className="flex justify-center items-center py-1">
+                                                            <img
+                                                                src={row[column.id]}
+                                                                alt=""
+                                                                className="h-9 w-9 rounded-md object-cover border border-ui-border-medium bg-slate-50"
+                                                                loading="lazy"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-slate-400 font-medium select-none">-</span>
+                                                    )
+                                                ) : column.truncate ? (
+                                                    <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
+                                                ) : (
+                                                    formatTableTextValue(row[column.id], column)
+                                                )}
+                                            </DataTableCell>
+                                        );
+                                    })}
                                 </DataTableRow>
                             ))
                         ) : (

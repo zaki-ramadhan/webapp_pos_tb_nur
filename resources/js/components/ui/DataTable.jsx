@@ -51,7 +51,7 @@ export function DataTableRow({ className = '', children, ...props }) {
     );
 }
 
-export function DataTableHead({ className = '', children, style: propStyle, ...props }) {
+export function DataTableHead({ className = '', children, style: propStyle, onResizeStart = null, ...props }) {
     const hasAlign = /\btext-(left|center|right)\b/.test(className);
     const alignClass = hasAlign ? '' : 'text-left';
 
@@ -73,11 +73,18 @@ export function DataTableHead({ className = '', children, style: propStyle, ...p
 
     return (
         <th
-            className={`border-r border-tab-inactive-bg px-3 py-2 ${alignClass} text-xs font-normal leading-5 last:border-r-0 sm:px-4 sm:text-sm whitespace-nowrap truncate ${cleanedClassName}`.trim()}
-            style={style}
+            className={`border-r border-table-cell-border px-3 py-2 ${alignClass} text-xs font-normal leading-5 last:border-r-0 sm:px-4 sm:text-sm whitespace-nowrap truncate relative select-none ${cleanedClassName}`.trim()}
+            style={{ ...style, position: 'relative' }}
             {...props}
         >
             <div className="w-full truncate block min-w-0">{children}</div>
+            {onResizeStart && (
+                <div
+                    className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/40 active:bg-brand-blue/70 transition-colors z-20"
+                    onMouseDown={onResizeStart}
+                    style={{ touchAction: 'none' }}
+                />
+            )}
         </th>
     );
 }

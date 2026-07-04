@@ -30,17 +30,24 @@ export default function SortableTableHeaderCell({
     noWrap = false,
     sortDirection = null,
     onSort = null,
+    style: propStyle = {},
+    onResizeStart = null,
 }) {
     const alignClass = resolveAlignClassName(align);
     const justifyClass = resolveJustifyClassName(align);
     const textClass = 'block whitespace-nowrap truncate min-w-0 flex-1';
     const minWidth = getColumnMinWidth(label);
+    const resolvedStyle = {
+        ...(minWidth ? { minWidth: `${minWidth}px` } : {}),
+        ...propStyle,
+    };
 
     if (!sortable || !onSort) {
         return (
             <DataTableHead
                 className={`${widthClassName} px-2.5 py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
-                style={minWidth ? { minWidth } : undefined}
+                style={resolvedStyle}
+                onResizeStart={onResizeStart}
             >
                 <span className={textClass}>{label}</span>
             </DataTableHead>
@@ -50,7 +57,8 @@ export default function SortableTableHeaderCell({
     return (
         <DataTableHead
             className={`${widthClassName} px-2.5 py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
-            style={minWidth ? { minWidth } : undefined}
+            style={resolvedStyle}
+            onResizeStart={onResizeStart}
         >
             <button
                 type="button"
