@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
     DataTable,
     DataTableBody,
@@ -11,6 +11,7 @@ import TextInput from '@/components/ui/TextInput';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 import { TRANSACTION_LINE_TITLE_CLASS_NAME } from './transactionStyles';
 
@@ -53,60 +54,7 @@ export function TransactionDataTable({
         return filtered;
     }, [cleanedColumns, visibleColumnIds, rows.length]);
 
-    // Resizable columns state
-    const [columnWidths, setColumnWidths] = useState({});
-
-    useEffect(() => {
-        if (!schemaKey) return;
-        const cached = localStorage.getItem(`col_width_${schemaKey}`);
-        if (cached) {
-            try {
-                setColumnWidths(JSON.parse(cached));
-            } catch (e) {}
-        } else {
-            setColumnWidths({});
-        }
-    }, [schemaKey]);
-
-    const handleResizeStart = useCallback((e, columnId) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const startX = e.clientX;
-        const thElement = e.target.closest('th');
-        if (!thElement) return;
-        const startWidth = thElement.getBoundingClientRect().width;
-
-        let animationFrameId = null;
-
-        const handleMouseMove = (moveEvent) => {
-            const diffX = moveEvent.clientX - startX;
-            const newWidth = Math.max(50, startWidth + diffX);
-
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-
-            animationFrameId = requestAnimationFrame(() => {
-                setColumnWidths((prev) => {
-                    const next = { ...prev, [columnId]: newWidth };
-                    localStorage.setItem(`col_width_${schemaKey}`, JSON.stringify(next));
-                    return next;
-                });
-            });
-        };
-
-        const handleMouseUp = () => {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-    }, [schemaKey]);
+    const { handleResizeStart, getCellStyle } = useColumnResize(schemaKey);
 
     useEffect(() => {
         const activeRes = (typeof window !== 'undefined' ? window.__activePageId : null);
@@ -134,22 +82,11 @@ export function TransactionDataTable({
                         )}
                         {visibleColumns.map((column) => {
                             const minWidth = getColumnMinWidth(column.label);
-                            const cachedWidth = columnWidths[column.id];
-                            
-                            const customStyle = {
-                                position: 'relative',
-                                ...(cachedWidth ? {
-                                    width: `${cachedWidth}px`,
-                                    minWidth: `${cachedWidth}px`,
-                                    maxWidth: `${cachedWidth}px`,
-                                } : (minWidth ? { minWidth } : {}))
-                            };
-
                             return (
                                 <DataTableHead
                                     key={column.id}
                                     className={`${column.widthClassName ?? ''} px-3 text-sm font-normal text-white text-center`.trim()}
-                                    style={customStyle}
+                                    style={getCellStyle(column.id, { position: 'relative', ...(minWidth ? { minWidth } : {}) })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 >
                                     {renderHeaderCell
@@ -181,30 +118,18 @@ export function TransactionDataTable({
                                             {index + 1}
                                         </DataTableCell>
                                     )}
-                                    {visibleColumns.map((column) => {
-                                        const cachedWidth = columnWidths[column.id];
-                                        const cellStyle = cachedWidth ? {
-                                            width: `${cachedWidth}px`,
-                                            minWidth: `${cachedWidth}px`,
-                                            maxWidth: `${cachedWidth}px`,
-                                        } : undefined;
-
-                                        return (
-                                            <DataTableCell
-                                                key={column.id}
-                                                className={`px-3 text-sm text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
-                                                style={cellStyle}
-                                            >
-                                                {renderCell
-                                                    ? renderCell({
-                                                          row,
-                                                          column,
-                                                          index,
-                                                      })
-                                                    : formatTableTextValue(row[column.id])}
-                                            </DataTableCell>
-                                        );
-                                    })}
+                                    {visibleColumns.map((column) => (
+                                        <DataTableCell
+                                            key={column.id}
+                                            className={`px-3 text-sm text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
+                                            style={getCellStyle(column.id)}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                        >
+                                            {renderCell
+                                                ? renderCell({ row, column, index })
+                                                : formatTableTextValue(row[column.id], column)}
+                                        </DataTableCell>
+                                    ))}
                                 </DataTableRow>
                             );
                         })
@@ -295,12 +220,12 @@ export function TransactionLineItemsSection({
                     emptyLeadingCellContent={emptyLeadingCellContent}
                     onRowClick={onRowClick}
                     getRowClassName={getRowClassName}
-                    showNumbering={false}
+                    showNumbering={!columns?.some(c => c.kind === 'spacer' || c.id === 'spacer')}
                     renderHeaderCell={(column) => (column.kind === 'spacer' ? spacerHeaderContent : column.label)}
                     renderCell={({ row, column, index }) =>
                         column.kind === 'spacer'
                             ? spacerCellContent({ row, column, index })
-                            : formatTableTextValue(row[column.id])
+                            : formatTableTextValue(row[column.id], column)
                     }
                     cellClassName={cellClassName}
                 />

@@ -13,6 +13,7 @@ import formatTableTextValue from '@/features/workspace/shared/formatTableTextVal
 import { PlusIcon, RefreshIcon, CogIcon } from '@/features/workspace/shared/Icons';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 import Pagination from '@/components/ui/Pagination';
 
 function ApprovalFilterSlot({ filters: filterDefs, values, onChange }) {
@@ -58,6 +59,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
     }, [filterValues, table.filters, table.rows]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { handleResizeStart, getCellStyle } = useColumnResize('transaction-approval');
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -88,6 +90,8 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -104,11 +108,16 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                                     <DataTableCell className="px-3 text-center text-base text-table-row-number whitespace-nowrap">
                                         {table.pagination ? (table.pagination.from + index) : (index + 1)}
                                     </DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.transactionTypeLabel)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.valueLabel)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.approvedBy)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.createdBy)}</DataTableCell>
-                                    <DataTableCell className="px-3 text-base text-text-workspace-dark">{formatTableTextValue(row.branchLabel)}</DataTableCell>
+                                    {table.columns.map((column) => (
+                                        <DataTableCell
+                                            key={column.id}
+                                            className="px-3 text-base text-text-workspace-dark"
+                                            style={getCellStyle(column.id)}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                        >
+                                            {formatTableTextValue(row[column.id])}
+                                        </DataTableCell>
+                                    ))}
                                 </DataTableRow>
                             ))
                         ) : (

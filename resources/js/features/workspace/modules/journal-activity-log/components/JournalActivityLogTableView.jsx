@@ -17,6 +17,7 @@ import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -59,6 +60,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
 
     const schemaKey = getTableSchemaKey(cleanedColumns);
     const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
+    const { handleResizeStart, getCellStyle } = useColumnResize(schemaKey);
 
     const visibleColumns = useMemo(() => {
         return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
@@ -180,6 +182,8 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -208,6 +212,8 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                                         <DataTableCell
                                             key={column.id}
                                             className="px-2.5 text-base text-text-workspace-dark"
+                                            style={getCellStyle(column.id)}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
                                             {formatTableTextValue(row[column.id])}
                                         </DataTableCell>

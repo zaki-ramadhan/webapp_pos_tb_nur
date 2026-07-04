@@ -26,6 +26,7 @@ import {
 } from '@/features/workspace/shared/Icons';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 function DepositTableFilterBar({ table, filters, setFilters }) {
     return (
@@ -116,6 +117,7 @@ export default function DepositTableView({
     }, [config.table.filters, config.table.rows, filters, keyword, resolvedSearchFields]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { handleResizeStart, getCellStyle } = useColumnResize('deposit-workspace');
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -178,6 +180,8 @@ export default function DepositTableView({
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -208,6 +212,8 @@ export default function DepositTableView({
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-text-workspace-dark`.trim()}
+                                            style={getCellStyle(column.id)}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
                                             {column.render ? (
                                                 column.render({

@@ -77,8 +77,19 @@ export default function ExpenseEntryFormView({
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
+    }, [config.sectionTabs]);
+
+    // Sync form state when activeRecordId changes (switching to a different document)
+    useEffect(() => {
         setValues(buildFormState(sourceRecord));
-    }, [config.sectionTabs, sourceRecord]);
+    }, [activeRecordId]);
+
+    // Sync form state when localRecord is updated (after successful save/update)
+    useEffect(() => {
+        if (localRecord) {
+            setValues(buildFormState(localRecord));
+        }
+    }, [localRecord]);
 
     const validationMessage = useMemo(() => validateExpenseEntryValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);

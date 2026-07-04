@@ -122,7 +122,6 @@ class CashPaymentPage
                 ],
                 'lineTable' => [
                     'columns' => [
-                        ['id' => 'spacer', 'label' => '', 'kind' => 'spacer', 'widthClassName' => 'w-[40px]', 'align' => 'center'],
                         ['id' => 'accountCode', 'label' => 'Akun', 'widthClassName' => 'w-[130px]', 'align' => 'left'],
                         ['id' => 'accountName', 'label' => 'Nama Akun', 'align' => 'left'],
                         ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[150px]', 'align' => 'right'],

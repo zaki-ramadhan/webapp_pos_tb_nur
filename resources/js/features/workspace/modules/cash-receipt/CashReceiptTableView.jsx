@@ -17,6 +17,7 @@ import {
 } from '@/features/workspace/modules/cash-receipt/cashReceiptViewShared';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 export default function CashReceiptTableView({
     config,
@@ -66,6 +67,7 @@ export default function CashReceiptTableView({
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { handleResizeStart, getCellStyle } = useColumnResize('cash-receipts');
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -97,6 +99,8 @@ export default function CashReceiptTableView({
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -120,6 +124,8 @@ export default function CashReceiptTableView({
                                     <DataTableCell
                                         key={column.id}
                                         className={`text-left px-2.5 text-base text-text-workspace-dark`.trim()}
+                                        style={getCellStyle(column.id)}
+                                        onResizeStart={(e) => handleResizeStart(e, column.id)}
                                     >
                                         {formatTableTextValue(row[column.id])}
                                     </DataTableCell>

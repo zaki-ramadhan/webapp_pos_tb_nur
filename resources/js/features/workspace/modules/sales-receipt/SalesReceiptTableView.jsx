@@ -12,6 +12,7 @@ import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHe
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import useTableSort from '@/features/workspace/shared/useTableSort';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 import {
     RefreshIcon,
     PlusIcon,
@@ -100,6 +101,7 @@ export default function SalesReceiptTableView({
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { handleResizeStart, getCellStyle } = useColumnResize('sales-receipts');
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -155,6 +157,8 @@ export default function SalesReceiptTableView({
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -179,6 +183,8 @@ export default function SalesReceiptTableView({
                                         <DataTableCell
                                             key={column.id}
                                             className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-text-workspace-dark`.trim()}
+                                            style={getCellStyle(column.id)}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
                                             <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
                                         </DataTableCell>

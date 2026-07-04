@@ -134,7 +134,7 @@ export default function ExpenseEntryTableView({
                             </span>
                         )}
                         renderCell={({ row, column }) => (
-                            <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                            <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                         )}
                     />
                 </div>

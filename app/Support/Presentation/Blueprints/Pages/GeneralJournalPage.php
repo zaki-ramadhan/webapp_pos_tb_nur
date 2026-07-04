@@ -159,16 +159,9 @@ class GeneralJournalPage
                 'lineTable' => [
                     'columns' => [
                         [
-                            'id' => 'spacer',
-                            'label' => '',
-                            'kind' => 'spacer',
-                            'widthClassName' => 'w-[36px]',
-                            'align' => 'center',
-                        ],
-                        [
                             'id' => 'accountCode',
                             'label' => 'Kode #',
-                            'widthClassName' => 'w-[27%]',
+                            'widthClassName' => 'w-[30%]',
                             'align' => 'left',
                         ],
                         [

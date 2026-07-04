@@ -207,15 +207,13 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
-                    <div className="flex justify-end gap-2 w-full max-w-[320px] justify-self-end">
-
-
-                        <div className="relative flex-1 max-w-[120px]">
+                    <div className="flex justify-end relative justify-self-end w-full">
+                        <div className="relative flex-1 max-w-[120px] w-full">
                             <button
                                 ref={processAnchorRef}
                                 type="button"
                                 onClick={() => setProcessOpen(prev => !prev)}
-                                className="inline-flex h-[34px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent"
+                                className="inline-flex h-[34px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent cursor-pointer"
                             >
                                 <span>{config.processButtonLabel || 'Proses'}</span>
                                 <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} />

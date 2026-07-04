@@ -50,7 +50,7 @@ class JournalActivityLogPage
                                 $row['transactionTypeValue'] ?? '',
                                 $row['transactionTypeLabel'] ?? ''
                             ),
-                            'amount' => $row['totalCurrency'] ?? 'Rp 0',
+                            'amount' => $row['total'] ?? '0',
                         ],
                         $journalRows,
                     ),

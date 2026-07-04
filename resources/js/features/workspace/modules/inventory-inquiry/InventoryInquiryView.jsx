@@ -28,6 +28,7 @@ import { extractBackendRows, listBackendResource } from '@/features/workspace/ba
 import ToolbarIconButton from '@/features/workspace/shared/toolbar/ToolbarIconButton';
 
 import { cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 import useBackendIndexResource from '@/features/workspace/backend/useBackendIndexResource';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
@@ -288,6 +289,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }, [config.table.searchKeys, dataColumns, keyword, tableRows]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { handleResizeStart, getCellStyle } = useColumnResize('inventory-inquiry');
 
     // Reset selection jika data berubah
     const serializedIds = sortedRows.map((r) => r.id).join(',');
@@ -427,7 +429,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {firstColumnIsCheckbox ? (
-                                <DataTableHead className="w-[64px] px-4 text-center">
+                                <DataTableHead className="w-[36px] px-2 text-center">
                                     <input
                                         type="checkbox"
                                         checked={allSelected}
@@ -452,6 +454,8 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -465,7 +469,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
-                                        <DataTableCell className="px-4 text-center">
+                                        <DataTableCell className="px-2 text-center">
                                             <input
                                                 type="checkbox"
                                                 checked={selectedIds.has(row.id)}
@@ -482,6 +486,8 @@ export default function InventoryInquiryView({ config, pageId }) {
                                         <DataTableCell
                                             key={column.id}
                                             className={`px-2.5 text-base text-text-workspace-dark ${resolveCellAlignClassName(column.align)}`.trim()}
+                                            style={getCellStyle(column.id)}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
                                             {column.id === 'productName' && row.productCode
                                                 ? `[${row.productCode}] ${row.productName}`

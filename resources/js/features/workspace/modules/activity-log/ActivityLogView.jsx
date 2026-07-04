@@ -26,6 +26,7 @@ import {
 } from '@/features/workspace/shared/columnVisibility';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 function matchesFilter(row, filter, selectedValue) {
     if (!filter.rowKey || selectedValue === 'all') {
@@ -69,6 +70,7 @@ export default function ActivityLogView({ page }) {
 
     const schemaKey = getTableSchemaKey(cleanedColumns);
     const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
+    const { handleResizeStart, getCellStyle } = useColumnResize(schemaKey);
 
     const visibleColumns = useMemo(() => {
         return cleanedColumns.filter(col => visibleColumnIds.includes(col.id));
@@ -214,6 +216,8 @@ export default function ActivityLogView({ page }) {
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -233,6 +237,8 @@ export default function ActivityLogView({ page }) {
                                         <DataTableCell
                                             key={column.id}
                                             className="px-2.5 text-base text-text-workspace-dark whitespace-nowrap"
+                                            style={getCellStyle(column.id)}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
                                             <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
                                         </DataTableCell>

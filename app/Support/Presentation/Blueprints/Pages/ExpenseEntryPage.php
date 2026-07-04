@@ -274,16 +274,9 @@ class ExpenseEntryPage
                 'lineTable' => [
                     'columns' => [
                         [
-                            'id' => 'spacer',
-                            'label' => '',
-                            'kind' => 'spacer',
-                            'widthClassName' => 'w-[36px]',
-                            'align' => 'center',
-                        ],
-                        [
                             'id' => 'account',
                             'label' => 'Akun',
-                            'widthClassName' => 'w-[15%]',
+                            'widthClassName' => 'w-[18%]',
                             'align' => 'left',
                         ],
                         [

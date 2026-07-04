@@ -15,6 +15,7 @@ import { RefreshIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry } from '@/features/workspace/shared/columnVisibility';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 function SupplierPriceFilterBar({ table, filters, setFilters }) {
     return (
@@ -101,6 +102,7 @@ export default function SupplierPriceTableView({ config, onCreate, onOpenDetail 
 
     const schemaKey = getTableSchemaKey(config.table.columns);
     const [visibleColumnIds] = useColumnVisibility(schemaKey, config.table.columns);
+    const { handleResizeStart, getCellStyle } = useColumnResize(schemaKey);
 
     const visibleColumns = useMemo(() => {
         return config.table.columns.filter(col => !visibleColumnIds || visibleColumnIds.includes(col.id));
@@ -159,6 +161,8 @@ export default function SupplierPriceTableView({ config, onCreate, onOpenDetail 
                                     sortable={column.sortable !== false}
                                     sortDirection={sortKey === column.id ? sortDir : null}
                                     onSort={() => handleSort(column.id)}
+                                    style={getCellStyle(column.id, { position: 'relative' })}
+                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 />
                             ))}
                         </tr>
@@ -181,6 +185,8 @@ export default function SupplierPriceTableView({ config, onCreate, onOpenDetail 
                                          <DataTableCell
                                              key={column.id}
                                              className={`text-left px-2.5 text-base text-text-workspace-dark`.trim()}
+                                             style={getCellStyle(column.id)}
+                                             onResizeStart={(e) => handleResizeStart(e, column.id)}
                                          >
                                              <span className="block truncate">{row[column.id] ?? ''}</span>
                                          </DataTableCell>

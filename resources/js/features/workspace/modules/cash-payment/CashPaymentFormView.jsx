@@ -7,6 +7,8 @@ import {
     deleteBackendResource,
     updateBackendResource,
     getBackendResource,
+    listBackendResource,
+    extractBackendRows,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 import CashPaymentAttachmentModal from './CashPaymentAttachmentModal';
@@ -318,7 +320,104 @@ export default function CashPaymentFormView({
             window.__pendingImportExpenseEntry = null;
             handleApplyExpenseEntries([pending]);
         }
+        if (!isDetail && window.__pendingImportPayrollEntry) {
+            const pending = window.__pendingImportPayrollEntry;
+            window.__pendingImportPayrollEntry = null;
+            handleApplyPayrollEntriesFromImport([pending]);
+        }
     }, [isDetail]);
+
+    async function handleApplyPayrollEntriesFromImport(selectedRecords) {
+        try {
+            let allImportedLines = [];
+            let appendedNotes = [];
+
+            for (const record of selectedRecords) {
+                const fullRecord = (record.metadata && record.metadata.liability_accounts)
+                    ? record
+                    : await getBackendResource('payroll-entries', record.id);
+                
+                if (!fullRecord) continue;
+                
+                const liabilityAccount = fullRecord.primary_account;
+                const metadata = fullRecord.metadata ?? {};
+                const label = metadata.liability_accounts?.[0] ?? '';
+                const match = label.match(/^\[([^\]]+)\]\s*(.+)$/);
+                let accountCode = '';
+                let accountName = 'Hutang Beban - Gaji';
+                if (match) {
+                    accountCode = match[1];
+                    accountName = `${match[2]} - Gaji`;
+                }
+
+                let accountId = liabilityAccount?.id ?? fullRecord.primary_account_id ?? metadata.liability_account_id ?? null;
+                if (!accountId && accountCode) {
+                    try {
+                        const accountsData = await listBackendResource('accounts', { search: accountCode });
+                        const accounts = extractBackendRows(accountsData);
+                        const foundAccount = accounts.find(acc => acc.code === accountCode);
+                        if (foundAccount) {
+                            accountId = foundAccount.id;
+                        }
+                    } catch (e) {
+                        // ignore error
+                    }
+                }
+
+                let totalVal = parseFloat(fullRecord.total_amount ?? 0);
+                if (totalVal === 0 && fullRecord.lines && fullRecord.lines.length > 0) {
+                    totalVal = fullRecord.lines.reduce((sum, line) => sum + parseFloat(line.total_amount ?? 0), 0);
+                }
+
+                const importedLine = {
+                    id: `imported-payroll-line-${fullRecord.id}-${Date.now()}-${Math.random()}`,
+                    __lineId: null,
+                    __accountId: accountId,
+                    accountCode: liabilityAccount?.code ?? accountCode ?? '',
+                    accountName: liabilityAccount ? `${liabilityAccount.name} - Gaji` : accountName,
+                    amount: formatCurrencyValue(totalVal),
+                };
+
+                allImportedLines.push(importedLine);
+                if (fullRecord.notes?.trim()) {
+                    appendedNotes.push(fullRecord.notes.trim());
+                }
+            }
+
+            if (allImportedLines.length === 0) {
+                showErrorToast({ message: 'Tidak ada rincian gaji yang diimpor.' });
+                return;
+            }
+
+            setValues((current) => {
+                const combinedNotes = [current.notes?.trim(), ...appendedNotes]
+                    .filter(Boolean)
+                    .join('\n');
+                
+                return applyCashPaymentLineItems(
+                    {
+                        ...current,
+                        lineItems: [...(current.lineItems ?? []), ...allImportedLines],
+                        notes: combinedNotes,
+                    },
+                    [...(current.lineItems ?? []), ...allImportedLines],
+                );
+            });
+
+            setStatus({
+                tone: 'success',
+                message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
+            });
+            showSuccessToast({
+                message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Gaji.`,
+            });
+        } catch (err) {
+            setStatus({
+                tone: 'error',
+                message: 'Gagal mengambil rincian pencatatan gaji.',
+            });
+        }
+    }
 
     async function handleApplyPayrollEntries(selectedRecords) {
         try {

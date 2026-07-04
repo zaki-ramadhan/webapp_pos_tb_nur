@@ -64,11 +64,12 @@ export function buildTotals(values) {
     const fromAccountName = extractCleanAccountName(values.fromBankAccounts?.[0]);
     const toAccountName = extractCleanAccountName(values.toBankAccounts?.[0]);
 
+    const cleanPrefix = (p) => p && p.trim() !== 'Rp' ? `${p.trim()} ` : '';
     return {
         fromTotalLabel: fromAccountName ? `Total ${fromAccountName}` : 'Total',
-        fromTotalValue: fromVal > 0 ? `${transferPrefix} ${formatCurrencyValue(fromVal)}`.trim() : '0',
+        fromTotalValue: fromVal > 0 ? `${cleanPrefix(transferPrefix)}${formatCurrencyValue(fromVal)}`.trim() : '0',
         toTotalLabel: toAccountName ? `Total ${toAccountName}` : 'Total',
-        toTotalValue: toVal > 0 ? `${resultPrefix} ${formatCurrencyValue(toVal)}`.trim() : '0',
+        toTotalValue: toVal > 0 ? `${cleanPrefix(resultPrefix)}${formatCurrencyValue(toVal)}`.trim() : '0',
     };
 }
 
