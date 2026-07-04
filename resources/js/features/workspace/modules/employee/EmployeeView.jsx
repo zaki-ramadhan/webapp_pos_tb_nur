@@ -95,7 +95,6 @@ export default function EmployeeView({
                 pageValue: employeeResource.total.toLocaleString('id-ID'),
                 loading: employeeResource.loading,
                 refreshLabel: employeeResource.loading ? 'Memuat data...' : page.table?.refreshLabel,
-                onRefresh: reload,
                 emptyLabel: employeeResource.error || page.table?.emptyLabel || 'Belum ada data',
                 onRefresh: employeeResource.reload,
                 pagination: {

@@ -48,7 +48,7 @@ export default function ConfirmationModal({
             maxWidthClassName={maxWidthClassName}
             footer={(
             <div className="flex items-center justify-between w-full">
-                    {cancelLabel && (
+                    {cancelLabel ? (
                         <Button
                             variant="secondary"
                             size="md"
@@ -58,6 +58,8 @@ export default function ConfirmationModal({
                         >
                             {cancelLabel}
                         </Button>
+                    ) : (
+                        <span />
                     )}
 
                     <Button
