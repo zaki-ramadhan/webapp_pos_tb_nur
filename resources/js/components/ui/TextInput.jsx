@@ -437,9 +437,9 @@ export default function TextInput({
     const hasPrefixMinW = prefixClassName.includes('min-w-');
     const prefixMinWClass = hasPrefixMinW ? '' : (isCurrencyPrefix ? 'min-w-0 justify-center' : 'min-w-[86px]');
     const hasPrefixPx = prefixClassName.includes('px-') || prefixClassName.includes('pl-') || prefixClassName.includes('pr-');
-    const prefixPxClass = hasPrefixPx ? '' : (isCurrencyPrefix ? 'px-3' : 'px-5');
+    const prefixPxClass = hasPrefixPx ? '' : 'px-2';
     const hasPrefixColor = prefixClassName.includes('text-');
-    const prefixColorClass = hasPrefixColor ? '' : 'text-slate-500';
+    const prefixColorClass = hasPrefixColor ? '' : 'text-black';
 
     const hasTrailingPx = trailingClassName.includes('px-') || trailingClassName.includes('pl-') || trailingClassName.includes('pr-');
 
@@ -484,7 +484,7 @@ export default function TextInput({
                     readOnly={readOnly}
                     tabIndex={readOnly && !interactiveReadOnly ? -1 : tabIndex}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : resolvedError ? 'bg-transparent text-red-800' : 'text-slate-700 bg-white'} ${inputClassName}`.trim()}
+                    className={`h-full flex-1 min-w-0 ${inputClassName.includes('px-') || inputClassName.includes('pl-') ? '' : showTrailing ? 'pl-4 pr-1' : 'px-4'} text-xs sm:text-sm outline-none placeholder:text-disabled-border-t ${isNonInteractive ? 'cursor-default bg-ui-bg-panel text-gray-500 pointer-events-none' : resolvedError ? 'bg-transparent text-red-800' : 'text-black bg-white'} ${inputClassName}`.trim()}
                     onChange={handleWrappedChange}
                     onFocus={(e) => {
                         isFocusedRef.current = true;

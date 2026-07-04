@@ -47,7 +47,7 @@ export default function ConfirmationModal({
             closeLabel={closeLabel}
             maxWidthClassName={maxWidthClassName}
             footer={(
-            <div className="flex items-center justify-end gap-2.5">
+            <div className="flex items-center justify-between w-full">
                     {cancelLabel && (
                         <Button
                             variant="secondary"

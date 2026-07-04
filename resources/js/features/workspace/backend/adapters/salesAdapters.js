@@ -69,7 +69,7 @@ export function mapPartnerRow(record) {
 
         // Opsi kolom tambahan untuk Settings
         paymentTermsText: record.payment_term?.name ?? 'C.O.D',
-        creditLimitText: record.credit_limit ? 'Rp ' + Number(record.credit_limit).toLocaleString('id-ID') : 'Rp 0',
+        creditLimitText: record.credit_limit ? Number(record.credit_limit).toLocaleString('id-ID') : '0',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
     };
 }
@@ -117,7 +117,7 @@ export function mapProductRow(record) {
 
     const formatPrice = (p) => {
         const val = p !== null && p !== undefined && p !== '' ? Number(p) : 0;
-        return 'Rp ' + val.toLocaleString('id-ID');
+        return val.toLocaleString('id-ID');
     };
 
     const conversions = record.unit_conversions ?? [];

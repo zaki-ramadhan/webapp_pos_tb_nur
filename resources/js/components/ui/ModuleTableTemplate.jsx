@@ -15,6 +15,7 @@ import { useColumnVisibility, getTableSchemaKey, cleanHeaderLabel, tableRegistry
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 export default function ModuleTableTemplate({
     table,
@@ -46,6 +47,7 @@ export default function ModuleTableTemplate({
 
     const schemaKey = getTableSchemaKey(cleanedColumns);
     const [visibleColumnIds, setVisibleColumnIds] = useColumnVisibility(schemaKey, cleanedColumns);
+    const { handleResizeStart, getCellStyle } = useColumnResize(schemaKey);
 
     const visibleColumns = useMemo(() => {
         return cleanedColumns.filter((column) => visibleColumnIds.includes(column.id));
@@ -188,6 +190,8 @@ export default function ModuleTableTemplate({
                                         sortable={column.sortable !== false}
                                         sortDirection={sortKey === column.id ? sortDir : null}
                                         onSort={column.sortable !== false ? () => handleSort(column.id) : null}
+                                        style={getCellStyle(column.id, { position: 'relative' })}
+                                        onResizeStart={(e) => handleResizeStart(e, column.id)}
                                     />
                                 ))}
                             </tr>
@@ -214,6 +218,8 @@ export default function ModuleTableTemplate({
                                              <DataTableCell
                                                  key={column.id}
                                                  className={`px-3 text-base text-text-workspace-dark ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                                                 style={getCellStyle(column.id)}
+                                                 onResizeStart={(e) => handleResizeStart(e, column.id)}
                                              >
                                                  {column.type === 'image' || column.id === 'image' ? (
                                                      row[column.id] ? (
@@ -229,7 +235,7 @@ export default function ModuleTableTemplate({
                                                          <span className="text-slate-400 font-medium select-none">-</span>
                                                      )
                                                  ) : (
-                                                     <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                                     <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                                                  )}
                                              </DataTableCell>
                                          ))}

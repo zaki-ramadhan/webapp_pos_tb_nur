@@ -2,7 +2,7 @@ import Spinner from '@/components/ui/Spinner';
 
 const variantClasses = {
     primary:
-        'border border-transparent bg-brand-primary text-white shadow-button-primary',
+        'border border-transparent bg-brand-blue text-white shadow-button-primary',
     danger:
         'border border-transparent bg-danger text-white shadow-button-primary',
     secondary:
@@ -13,7 +13,7 @@ const variantClasses = {
 };
 
 const activeVariantClasses = {
-    primary: 'hover:bg-brand-primary-hover active:scale-[0.98] cursor-pointer',
+    primary: 'hover:bg-brand-blue-hover active:scale-[0.98] cursor-pointer',
     danger: 'hover:bg-danger-hover active:scale-[0.98] cursor-pointer',
     secondary: 'hover:bg-slate-50 active:scale-[0.98] cursor-pointer',
     ghost: 'hover:underline cursor-pointer',

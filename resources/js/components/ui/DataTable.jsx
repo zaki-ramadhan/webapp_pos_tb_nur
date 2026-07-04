@@ -64,7 +64,7 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
     const safeMinWidth = calculateMinWidth(textContent);
 
     const style = { ...propStyle };
-    if (preferredWidth) {
+    if (preferredWidth && !style.width) {
         style.width = preferredWidth;
     }
     if (!style.minWidth) {
@@ -89,12 +89,11 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
     );
 }
 
-export function DataTableCell({ className = '', children, ...props }) {
+export function DataTableCell({ className = '', children, onResizeStart = null, style: propStyle, ...props }) {
     const textContent = getTextContent(children).trim();
     let resolvedClassName = className;
 
     if (textContent === '-') {
-        // Hapus alignment text-left atau text-right dan paksa ke text-center secara global
         resolvedClassName = className
             .replace(/\btext-(left|right)\b/g, '')
             .trim() + ' text-center';
@@ -102,10 +101,18 @@ export function DataTableCell({ className = '', children, ...props }) {
 
     return (
         <td
-            className={`border-r border-table-cell-border px-3 py-2 text-sm leading-5 last:border-r-0 sm:px-4 whitespace-nowrap truncate ${resolvedClassName}`.trim()}
+            className={`border-r border-table-cell-border px-3 py-2 text-sm leading-5 last:border-r-0 sm:px-4 whitespace-nowrap truncate relative ${onResizeStart ? 'select-none' : ''} ${resolvedClassName}`.trim()}
+            style={{ ...propStyle, position: onResizeStart ? 'relative' : propStyle?.position }}
             {...props}
         >
             <div className="w-full truncate block min-w-0">{children}</div>
+            {onResizeStart && (
+                <div
+                    className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/20 active:bg-brand-blue/40 transition-colors z-10"
+                    onMouseDown={onResizeStart}
+                    style={{ touchAction: 'none' }}
+                />
+            )}
         </td>
     );
 }

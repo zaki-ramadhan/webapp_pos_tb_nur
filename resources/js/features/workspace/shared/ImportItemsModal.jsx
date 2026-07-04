@@ -267,7 +267,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     </div>
                 )}
 
-                <div className="flex items-center justify-end gap-2.5 border-t border-slate-200 mt-6 pt-3">
+                <div className="flex items-center justify-between border-t border-slate-200 mt-6 pt-3">
                     <button
                         type="button"
                         onClick={onClose}

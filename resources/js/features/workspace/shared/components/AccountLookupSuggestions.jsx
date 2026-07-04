@@ -75,11 +75,9 @@ export default function AccountLookupSuggestions({
 
                         const subtitleRight = isDoc
                             ? `Rp ${Number(record.outstanding_amount ?? record.total_amount ?? 0).toLocaleString('id-ID')}`
-                            : (showType
+                            : (resource === 'accounts'
                                 ? translateAccountType(record.account_type)
-                                : resource === 'accounts'
-                                    ? `Rp ${Number(record.opening_balance ?? 0).toLocaleString('id-ID')}`
-                                    : null);
+                                : null);
 
                         return (
                             <button
@@ -92,12 +90,12 @@ export default function AccountLookupSuggestions({
                                 className={`flex w-full items-start gap-3 border-t border-slate-200 px-4 py-3 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
                                 <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-sm font-normal text-brand-dark">{title}</span>
+                                    <span className="block truncate text-sm font-normal text-black">{title}</span>
                                     <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
-                                        <span className="truncate text-brand-dark">
+                                        <span className="truncate text-black">
                                             {subtitleLeft}
                                         </span>
-                                        <span className="shrink-0 text-text-workspace-muted italic">
+                                        <span className="shrink-0 text-black italic">
                                             {subtitleRight}
                                         </span>
                                     </span>

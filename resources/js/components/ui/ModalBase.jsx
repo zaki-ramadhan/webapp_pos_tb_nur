@@ -72,6 +72,9 @@ export default function ModalBase({
     const hasBg = className.split(' ').some((c) => c.startsWith('bg-'));
     const backdropBg = hasBg ? '' : 'bg-modal-overlay-bg';
 
+    const hasMaxWidth = panelClassName.split(' ').some((c) => c.startsWith('max-w-') || c.includes('max-w-['));
+    const resolvedMaxWidth = hasMaxWidth ? '' : 'max-w-lg';
+
     return (
         <div
             onClick={onBackdropClick ?? undefined}
@@ -80,7 +83,7 @@ export default function ModalBase({
             <div
                 ref={panelRef}
                 onClick={(event) => event.stopPropagation()}
-                className={`w-full max-w-lg max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-[16px] bg-white shadow-panel-primary sm:max-h-[calc(100vh-3rem)] sm:rounded-[12px] ${panelClassName}`.trim()}
+                className={`w-full ${resolvedMaxWidth} max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-[16px] bg-white shadow-panel-primary sm:max-h-[calc(100vh-3rem)] sm:rounded-[12px] ${panelClassName}`.trim()}
             >
                 {children}
             </div>

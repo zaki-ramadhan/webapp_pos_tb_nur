@@ -24,6 +24,10 @@ export default function formatTableTextValue(value, column = null) {
                           colId.includes('allowance') || 
                           colId.includes('value') ||
                           colId.includes('age') ||
+                          colId.includes('salary') ||
+                          colId.includes('income') ||
+                          colId.includes('debit') ||
+                          colId.includes('credit') ||
                           colLabel.includes('harga') ||
                           colLabel.includes('jumlah') ||
                           colLabel.includes('nominal') ||
