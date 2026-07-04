@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
@@ -11,11 +12,20 @@ import {
     TransactionHeaderButton,
     TransactionSectionHeading,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { SearchIcon, SortIcon } from '@/features/workspace/shared/Icons';
+import { SearchIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import TextareaField from '@/components/ui/TextareaField';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 
-export function PayrollHeader({ config, values, setValues, isDetail }) {
+export function PayrollHeader({ config, values, setValues, isDetail, handlers = {} }) {
+    const [processOpen, setProcessOpen] = useState(false);
+    const processAnchorRef = useRef(null);
+
+    const handleProcessGaji = async () => {
+        setProcessOpen(false);
+        handlers.onProcessGaji?.(values);
+    };
     return (
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-y-4 gap-x-8">
             <div className="flex flex-col gap-y-2 w-full lg:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
@@ -24,6 +34,7 @@ export function PayrollHeader({ config, values, setValues, isDetail }) {
                     <SelectField
                         value={values.paymentType}
                         onChange={(event) => setValues((current) => ({ ...current, paymentType: event.target.value }))}
+                        disabled={isDetail}
                         className="h-[40px] rounded-[4px] border-ui-border"
                         selectClassName="text-xs sm:text-sm text-brand-dark"
                     >
@@ -41,6 +52,7 @@ export function PayrollHeader({ config, values, setValues, isDetail }) {
                         <SelectField
                             value={values.month}
                             onChange={(event) => setValues((current) => ({ ...current, month: event.target.value }))}
+                            disabled={isDetail}
                             className="h-[40px] rounded-[4px] border-ui-border"
                             selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
@@ -54,6 +66,7 @@ export function PayrollHeader({ config, values, setValues, isDetail }) {
                         <SelectField
                             value={values.year}
                             onChange={(event) => setValues((current) => ({ ...current, year: event.target.value }))}
+                            disabled={isDetail}
                             className="h-[40px] rounded-[4px] border-ui-border"
                             selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
@@ -110,19 +123,35 @@ export function PayrollHeader({ config, values, setValues, isDetail }) {
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.dueDate} required />
-                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_88px]">
+                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_96px]">
                         <TransactionDateInput
                             value={values.dueDate}
                             onChange={(nextValue) => setValues((current) => ({ ...current, dueDate: nextValue }))}
                             className="w-full max-w-full"
                         />
-                        <button
-                            type="button"
-                            disabled
-                            className="inline-flex h-[38px] items-center justify-center rounded-[4px] border border-border-input-compact bg-input-prefix-bg px-3 text-base text-tab-inactive-border-l"
-                        >
-                            {config.processButtonLabel}
-                        </button>
+                        <div className="relative flex-1 max-w-[96px]">
+                            <button
+                                ref={processAnchorRef}
+                                type="button"
+                                disabled={!values.__backendRecordId}
+                                onClick={() => setProcessOpen(prev => !prev)}
+                                className="inline-flex h-[38px] w-full items-center justify-center gap-1 rounded-[4px] border border-[#2353a0] bg-white px-2.5 text-xs sm:text-sm text-[#2353a0] disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed cursor-pointer transition"
+                            >
+                                <span>{config.processButtonLabel || 'Proses'}</span>
+                                <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} />
+                            </button>
+                            <DropdownMenu
+                                open={processOpen}
+                                onClose={() => setProcessOpen(false)}
+                                anchorRef={processAnchorRef}
+                                align="start"
+                                widthClassName="w-[140px]"
+                            >
+                                <DropdownMenuItem onClick={handleProcessGaji}>
+                                    Gaji
+                                </DropdownMenuItem>
+                            </DropdownMenu>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -197,7 +226,7 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake, hand
                             column.label
                         )
                     }
-                    renderCell={({ row, column }) => (column.kind === 'spacer' ? '' : formatTableTextValue(row[column.id]))}
+                    renderCell={({ row, column }) => formatTableTextValue(row[column.id], column)}
                 />
             </div>
         </div>
@@ -220,15 +249,19 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
                             setValues((current) => ({
                                 ...current,
                                 liabilityAccounts: current.liabilityAccounts.filter((item) => item !== value),
+                                __liabilityAccountId: null,
                             }))
                         }
                         searchLabel="Cari akun hutang beban"
-                        onSelectAccount={(_, label) =>
+                        onSelectAccount={(record, label) =>
                             setValues((current) => ({
                                 ...current,
                                 liabilityAccounts: label ? [label] : [],
+                                __liabilityAccountId: record?.id ?? null,
                             }))
                         }
+                        queryParams={{ account_type: 'Other Current Liability' }}
+                        showType={true}
                     />
 
                     <TransactionFieldLabel label={config.additionalInfoFields.noteLabel} />

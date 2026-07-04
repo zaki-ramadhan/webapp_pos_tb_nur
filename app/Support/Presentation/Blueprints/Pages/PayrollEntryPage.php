@@ -50,7 +50,7 @@ class PayrollEntryPage
                             'November',
                             'Desember',
                         ],
-                        'yearOptions' => ['2027', '2026', '2025', '2024', '2023', '2022', '2021'],
+                        'yearOptions' => array_map('strval', range(intval(date('Y')) + 2, intval(date('Y')) - 8)),
                         'numberingOptions' => ['Pencatatan Gaji'],
                         'processButtonLabel' => 'Proses',
                         'takeButtonLabel' => 'Ambil',
@@ -118,16 +118,9 @@ class PayrollEntryPage
                         'employeeTable' => [
                             'columns' => [
                                 [
-                                    'id' => 'spacer',
-                                    'label' => '',
-                                    'kind' => 'spacer',
-                                    'widthClassName' => 'w-[36px]',
-                                    'align' => 'center',
-                                ],
-                                [
                                     'id' => 'employeeName',
                                     'label' => 'Nama Karyawan',
-                                    'widthClassName' => 'w-[48%]',
+                                    'widthClassName' => 'w-[52%]',
                                     'align' => 'center',
                                 ],
                                 [

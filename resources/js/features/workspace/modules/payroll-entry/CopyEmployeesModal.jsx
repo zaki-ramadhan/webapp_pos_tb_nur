@@ -25,7 +25,6 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
     const [allEmployees, setAllEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
-    const [valuesMap, setValuesMap] = useState({});
 
     useEffect(() => {
         if (open) {
@@ -43,7 +42,6 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
         } else {
             setAllEmployees([]);
             setSelectedIds([]);
-            setValuesMap({});
         }
     }, [open]);
 
@@ -75,18 +73,11 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
         }
     };
 
-    const handleValueChange = (id, val) => {
-        setValuesMap((prev) => ({
-            ...prev,
-            [id]: val,
-        }));
-    };
-
     const handleConfirm = () => {
         const selectedList = filteredEmployees
             .filter((emp) => selectedIds.includes(emp.id))
             .map((emp) => {
-                const rawValue = parseAmountInput(valuesMap[emp.id]) || 0;
+                const rawValue = Number(emp.previous_income || 0);
                 const taxRate = emp.subject_to_income_tax ? 0.05 : 0;
                 const taxAmount = rawValue * taxRate;
                 const paidSalary = rawValue - taxAmount;
@@ -94,14 +85,31 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 return {
                     id: String(emp.id),
                     employeeId: emp.id,
-                    employeeCode: emp.employee_code,
-                    employeeName: emp.full_name,
+                    employeeCode: emp.employee_code ?? '',
+                    employeeName: emp.full_name ?? '',
                     grossIncomeRaw: rawValue,
                     grossIncome: rawValue.toLocaleString('id-ID'),
                     incomeTaxRaw: taxAmount,
                     incomeTax: taxAmount.toLocaleString('id-ID'),
                     paidSalaryRaw: paidSalary,
                     paidSalary: paidSalary.toLocaleString('id-ID'),
+                    pensionAllowance: 0,
+                    basicSalary: rawValue,
+                    taxAllowance: 0,
+                    positionAllowance: 0,
+                    mealAllowance: 0,
+                    transportAllowance: 0,
+                    telecommunicationAllowance: 0,
+                    overtimeAllowance: 0,
+                    healthPremiAllowance: 0,
+                    jkkAllowance: 0,
+                    jkmAllowance: 0,
+                    salaryReduction: 0,
+                    monthlyDeduction: 0,
+                    installmentDeduction: 0,
+                    pensionDeduction: 0,
+                    healthPremiDeduction: 0,
+                    notes: '',
                 };
             });
 
@@ -116,11 +124,11 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
             open={open}
             onClose={onClose}
             title="Salin Karyawan"
-            maxWidthClassName="max-w-[720px]"
+            maxWidthClassName="max-w-[580px]"
             contentClassName="bg-white px-2.5 py-2.5 sm:px-3.5 sm:py-3.5"
             footerClassName="border-t border-ui-border-medium bg-white px-2.5 py-2 sm:px-3.5"
             footer={
-                <div className="flex justify-end gap-2.5">
+                <div className="flex justify-between items-center w-full">
                     <Button variant="secondary" size="md" onClick={onClose}>
                         Batal
                     </Button>
@@ -137,7 +145,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
         >
             <div className="flex flex-col gap-1.5">
                 {}
-                <div className="w-full sm:max-w-[75%]">
+                <div className="w-full sm:max-w-[50%]">
                     <SelectField
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
@@ -154,11 +162,11 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 </div>
 
                 {}
-                <div>
+                <div className="overflow-y-auto max-h-[380px] min-h-[320px] border border-slate-200 rounded-[4px] mt-2">
                     <DataTable>
                         <DataTableHeader>
                             <DataTableRow className="border-t-0 text-white">
-                                <DataTableHead className="text-center" style={{ width: '64px', minWidth: '64px' }}>
+                                <DataTableHead className="text-center" style={{ width: '36px', minWidth: '36px' }}>
                                     <input
                                         type="checkbox"
                                         checked={isAllSelected}
@@ -198,7 +206,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                     const isSelected = selectedIds.includes(emp.id);
                                     return (
                                         <DataTableRow key={emp.id} className={isSelected ? 'bg-slate-50' : ''}>
-                                            <DataTableCell className="text-center" style={{ width: '64px', minWidth: '64px' }}>
+                                            <DataTableCell className="text-center" style={{ width: '36px', minWidth: '36px' }}>
                                                 <input
                                                     type="checkbox"
                                                     checked={isSelected}
@@ -207,18 +215,10 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                                 />
                                             </DataTableCell>
                                             <DataTableCell className="text-left font-normal">
-                                                <span className="text-slate-800 font-semibold">{emp.full_name}</span>
-                                                {emp.position && <span className="text-xs text-slate-400 block">{emp.position}</span>}
+                                                <span className="text-black font-normal">{emp.full_name}</span>
                                             </DataTableCell>
-                                            <DataTableCell className="text-center w-[160px]">
-                                                <FormattedAmountInput
-                                                    placeholder="0"
-                                                    value={valuesMap[emp.id] ?? ''}
-                                                    onChange={(e) => handleValueChange(emp.id, e.target.value)}
-                                                    allowNegative={false}
-                                                    className="w-full h-8 rounded-[4px] border-slate-300"
-                                                    inputClassName="text-right text-xs text-brand-dark px-2"
-                                                />
+                                            <DataTableCell className="text-right text-black font-normal pr-4 w-[160px]">
+                                                {Number(emp.previous_income || 0).toLocaleString('id-ID')}
                                             </DataTableCell>
                                         </DataTableRow>
                                     );

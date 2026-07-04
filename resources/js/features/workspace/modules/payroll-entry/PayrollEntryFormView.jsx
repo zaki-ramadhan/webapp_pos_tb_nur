@@ -74,6 +74,7 @@ export default function PayrollEntryFormView({
     const configRef = useRef(config);
     configRef.current = config;
 
+    // Sync form state when activeRecordId changes (switching to a different document)
     useEffect(() => {
         const cfg = configRef.current;
         const initial = sourceRecord ? sourceRecord : buildDefaultValues(cfg);
@@ -82,7 +83,19 @@ export default function PayrollEntryFormView({
             ...initial,
         });
         setEmployeeRows(sourceRecord?.employeeRows ?? []);
-    }, [sourceRecord]);
+    }, [activeRecordId]);
+
+    // Sync form state when localRecord is updated (after successful save/update)
+    useEffect(() => {
+        if (localRecord) {
+            const cfg = configRef.current;
+            setValues({
+                ...buildDefaultValues(cfg),
+                ...localRecord,
+            });
+            setEmployeeRows(localRecord.employeeRows ?? []);
+        }
+    }, [localRecord]);
 
     const initialComparable = useMemo(() => {
         const cfg = configRef.current;
@@ -242,18 +255,26 @@ export default function PayrollEntryFormView({
                     ? values.documentNumber
                     : buildGeneratedPayrollEntryNumber();
 
+                const totalAmount = employeeRows.reduce((sum, row) => {
+                    const paid = typeof row.paidSalaryRaw === 'number' ? row.paidSalaryRaw : parseFloat(String(row.paidSalary ?? '').replace(/[^0-9.-]+/g, '')) || 0;
+                    return sum + paid;
+                }, 0);
+
                 const payload = {
                     entry_date: values.entryDate,
                     due_date: values.dueDate,
                     notes: values.notes,
                     document_number: resolvedDocumentNumber,
                     status: values.status ?? 'Draft',
+                    primary_account_id: values.__liabilityAccountId,
+                    total_amount: totalAmount,
                     metadata: {
                         payment_type: values.paymentType,
                         period_month: values.month,
                         period_year: values.year,
                         branches: values.branches,
                         liability_accounts: values.liabilityAccounts,
+                        liability_account_id: values.__liabilityAccountId,
                     },
                     lines: employeeRows.map((row, index) => {
                         const gross = typeof row.grossIncomeRaw === 'number' ? row.grossIncomeRaw : parseFloat(String(row.grossIncome ?? '').replace(/[^0-9.-]+/g, '')) || 0;
@@ -272,6 +293,23 @@ export default function PayrollEntryFormView({
                                 employee_id: row.employeeId,
                                 employee_code: row.employeeCode,
                                 employee_name: row.employeeName,
+                                pensionAllowance: row.pensionAllowance ?? 0,
+                                basicSalary: row.basicSalary ?? 0,
+                                taxAllowance: row.taxAllowance ?? 0,
+                                positionAllowance: row.positionAllowance ?? 0,
+                                mealAllowance: row.mealAllowance ?? 0,
+                                transportAllowance: row.transportAllowance ?? 0,
+                                telecommunicationAllowance: row.telecommunicationAllowance ?? 0,
+                                overtimeAllowance: row.overtimeAllowance ?? 0,
+                                healthPremiAllowance: row.healthPremiAllowance ?? 0,
+                                jkkAllowance: row.jkkAllowance ?? 0,
+                                jkmAllowance: row.jkmAllowance ?? 0,
+                                salaryReduction: row.salaryReduction ?? 0,
+                                monthlyDeduction: row.monthlyDeduction ?? 0,
+                                installmentDeduction: row.installmentDeduction ?? 0,
+                                pensionDeduction: row.pensionDeduction ?? 0,
+                                healthPremiDeduction: row.healthPremiDeduction ?? 0,
+                                notes: row.notes ?? '',
                             }
                         };
                     })
@@ -394,6 +432,23 @@ export default function PayrollEntryFormView({
                     incomeTax: '',
                     paidSalaryRaw: 0,
                     paidSalary: '',
+                    pensionAllowance: 0,
+                    basicSalary: 0,
+                    taxAllowance: 0,
+                    positionAllowance: 0,
+                    mealAllowance: 0,
+                    transportAllowance: 0,
+                    telecommunicationAllowance: 0,
+                    overtimeAllowance: 0,
+                    healthPremiAllowance: 0,
+                    jkkAllowance: 0,
+                    jkmAllowance: 0,
+                    salaryReduction: 0,
+                    monthlyDeduction: 0,
+                    installmentDeduction: 0,
+                    pensionDeduction: 0,
+                    healthPremiDeduction: 0,
+                    notes: '',
                 }
             ];
         });
@@ -411,15 +466,59 @@ export default function PayrollEntryFormView({
                     setWarningModalOpen(true);
                     return;
                 }
-                addEmployeeToRows(emp);
+                const existingIds = new Set(employeeRows.map((r) => String(r.employeeId)));
+                if (existingIds.has(String(emp.id))) {
+                    showErrorToast({ message: `Karyawan ${emp.full_name ?? emp.name} sudah ada di daftar.` });
+                    return;
+                }
+                setSelectedEmployeeRow({
+                    id: String(emp.id),
+                    employeeId: emp.id,
+                    employeeCode: emp.employee_code ?? '',
+                    employeeName: emp.full_name ?? emp.name ?? '',
+                    isNewRow: true,
+                });
+                setEmployeeModalOpen(true);
+            },
+            onProcessGaji: (formValues) => {
+                if (!formValues.__backendRecordId) return;
+
+                window.__pendingImportPayrollEntry = { id: formValues.__backendRecordId };
+
+                window.dispatchEvent(
+                    new CustomEvent('workspace:open-page', {
+                        detail: {
+                            pageId: 'cash-payment',
+                            targetTabId: 'cash-payment-create',
+                        },
+                    })
+                );
             },
         }),
-        [values.liabilityAccounts, addEmployeeToRows],
+        [values.liabilityAccounts, employeeRows],
     );
 
-    const handleSaveEmployee = useCallback((gross, tax, paid) => {
-        setEmployeeRows((current) =>
-            current.map((row) =>
+    const handleSaveEmployee = useCallback((gross, tax, paid, breakdown) => {
+        setEmployeeRows((current) => {
+            if (selectedEmployeeRow?.isNewRow) {
+                return [
+                    ...current,
+                    {
+                        id: String(selectedEmployeeRow.employeeId),
+                        employeeId: selectedEmployeeRow.employeeId,
+                        employeeCode: selectedEmployeeRow.employeeCode ?? '',
+                        employeeName: selectedEmployeeRow.employeeName ?? '',
+                        grossIncomeRaw: gross,
+                        grossIncome: gross.toLocaleString('id-ID'),
+                        incomeTaxRaw: tax,
+                        incomeTax: tax.toLocaleString('id-ID'),
+                        paidSalaryRaw: paid,
+                        paidSalary: paid.toLocaleString('id-ID'),
+                        ...breakdown,
+                    }
+                ];
+            }
+            return current.map((row) =>
                 row.employeeId === selectedEmployeeRow.employeeId
                     ? {
                           ...row,
@@ -429,14 +528,16 @@ export default function PayrollEntryFormView({
                           incomeTax: tax.toLocaleString('id-ID'),
                           paidSalaryRaw: paid,
                           paidSalary: paid.toLocaleString('id-ID'),
+                          ...breakdown,
                       }
                     : row
-            )
-        );
+            );
+        });
     }, [selectedEmployeeRow]);
 
     const handleDeleteEmployee = useCallback(() => {
         if (!selectedEmployeeRow) return;
+        if (selectedEmployeeRow.isNewRow) return;
         setEmployeeRows((current) =>
             current.filter((row) => row.employeeId !== selectedEmployeeRow.employeeId)
         );
@@ -446,7 +547,7 @@ export default function PayrollEntryFormView({
         <>
             <TransactionFormLayout
             validationMessage={validationMessage}
-                header={<PayrollHeader config={config} values={values} setValues={setValues} isDetail={isDetail} />}
+                header={<PayrollHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}

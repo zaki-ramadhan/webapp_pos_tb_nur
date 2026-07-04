@@ -12,6 +12,7 @@ export function buildDefaultValues(config) {
         dueDate: config.defaults?.dueDate ?? '',
         employeeLookup: config.defaults?.employeeLookup ?? '',
         liabilityAccounts: [...(config.defaults?.liabilityAccounts ?? [])],
+        __liabilityAccountId: null,
         notes: config.defaults?.notes ?? '',
     };
 }
@@ -21,6 +22,17 @@ export function mapPayrollEntryRow(record) {
     const month = record.metadata?.period_month ?? '';
     const year = record.metadata?.period_year ?? '';
 
+    const rawStatus = String(record.status ?? 'Draft').toLowerCase();
+    let statusText = 'Sedang diproses';
+    let statusVal = 'draft';
+    if (rawStatus === 'posted' || rawStatus === 'paid' || rawStatus === 'terbayar') {
+        statusText = 'Terbayar';
+        statusVal = 'paid';
+    } else if (rawStatus === 'partial' || rawStatus === 'sebagian dibayar') {
+        statusText = 'Sebagian dibayar';
+        statusVal = 'partial';
+    }
+
     return {
         id: String(record.id ?? ''),
         __backendRecord: record,
@@ -29,8 +41,8 @@ export function mapPayrollEntryRow(record) {
         dueDate: formatIsoDate(record.due_date),
         total: totalAmount.toLocaleString('id-ID'),
         paymentType: record.metadata?.payment_type ?? 'Bulanan',
-        status: record.status ?? 'Draft',
-        statusValue: (record.status ?? 'draft').toLowerCase(),
+        status: statusText,
+        statusValue: statusVal,
         period: `${month} ${year}`.trim() || '-',
         description: record.notes ?? '',
         dateFilter: record.entry_date ? new Date(record.entry_date).getFullYear().toString() : 'all',
@@ -58,13 +70,37 @@ export function buildPayrollEntryRecord(record = {}, config) {
             incomeTaxRaw: tax,
             paidSalary: paid.toLocaleString('id-ID'),
             paidSalaryRaw: paid,
+            pensionAllowance: attributes.pensionAllowance ?? 0,
+            basicSalary: attributes.basicSalary ?? 0,
+            taxAllowance: attributes.taxAllowance ?? 0,
+            positionAllowance: attributes.positionAllowance ?? 0,
+            mealAllowance: attributes.mealAllowance ?? 0,
+            transportAllowance: attributes.transportAllowance ?? 0,
+            telecommunicationAllowance: attributes.telecommunicationAllowance ?? 0,
+            overtimeAllowance: attributes.overtimeAllowance ?? 0,
+            healthPremiAllowance: attributes.healthPremiAllowance ?? 0,
+            jkkAllowance: attributes.jkkAllowance ?? 0,
+            jkmAllowance: attributes.jkmAllowance ?? 0,
+            salaryReduction: attributes.salaryReduction ?? 0,
+            monthlyDeduction: attributes.monthlyDeduction ?? 0,
+            installmentDeduction: attributes.installmentDeduction ?? 0,
+            pensionDeduction: attributes.pensionDeduction ?? 0,
+            healthPremiDeduction: attributes.healthPremiDeduction ?? 0,
+            notes: attributes.notes ?? '',
         };
     });
 
     const metadata = record.metadata ?? {};
+    let liabilityAccounts = [...(metadata.liability_accounts ?? config.defaults?.liabilityAccounts ?? [])];
+    if (liabilityAccounts.length === 0 && record.primary_account) {
+        liabilityAccounts = [`[${record.primary_account.code}] ${record.primary_account.name}`];
+    }
+    const liabilityAccountId = record.primary_account_id ?? metadata.liability_account_id ?? null;
+
     return {
         __backendRecordId: record.id ?? null,
         paymentType: metadata.payment_type ?? config.defaults?.paymentType ?? 'Bulanan',
+        status: record.status ?? 'Draft',
         branches: [...(metadata.branches ?? config.defaults?.branches ?? [])],
         month: metadata.period_month ?? config.defaults?.month ?? '',
         year: metadata.period_year ?? config.defaults?.year ?? '',
@@ -74,7 +110,8 @@ export function buildPayrollEntryRecord(record = {}, config) {
         entryDate: record.entry_date ? formatIsoDate(record.entry_date) : '',
         dueDate: record.due_date ? formatIsoDate(record.due_date) : '',
         employeeLookup: '',
-        liabilityAccounts: [...(metadata.liability_accounts ?? config.defaults?.liabilityAccounts ?? [])],
+        liabilityAccounts,
+        __liabilityAccountId: liabilityAccountId,
         notes: record.notes ?? '',
         employeeRows: lineItems,
     };
