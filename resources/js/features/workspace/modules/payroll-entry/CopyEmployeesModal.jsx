@@ -10,14 +10,7 @@ import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 const STATUS_OPTIONS = [
     { value: 'pegawai-tetap', label: 'Pegawai Tetap' },
-    { value: 'pegawai-tidak-tetap', label: 'Pegawai Tidak Tetap' },
-    { value: 'bukan-pegawai-mlm', label: 'Bukan Pegawai - Distributor MLM' },
-    { value: 'bukan-pegawai-asuransi', label: 'Bukan Pegawai - Petugas Dinas Luar Asuransi' },
-    { value: 'bukan-pegawai-penjaja', label: 'Bukan Pegawai - Penjaja Barang Dagangan' },
-    { value: 'bukan-pegawai-tenaga-ahli', label: 'Bukan Pegawai - Tenaga Ahli' },
-    { value: 'dewan-komisaris', label: 'Anggota Dewan Komisaris atau Dewan Pengawas' },
-    { value: 'bukan-pegawai-berkesinambungan', label: 'Bukan Pegawai yang Menerima Imbalan Bersifat Berkesinambungan' },
-    { value: 'bukan-pegawai-tidak-berkesinambungan', label: 'Bukan Pegawai yang Menerima Imbalan Tidak Bersifat Berkesinambungan' },
+    { value: 'pegawai-tidak-tetap', label: 'Pegawai Kontrak' },
 ];
 
 export default function CopyEmployeesModal({ open, onClose, onConfirm }) {

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import TextInput from '@/components/ui/TextInput';
 import SelectField from '@/components/ui/SelectField';
+import Button from '@/components/ui/Button';
 import { SearchIcon, LoadingIcon } from '@/features/workspace/shared/Icons';
 import { listBackendResource, extractBackendRows } from '@/features/workspace/backend/workspaceBackendApi';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
@@ -140,7 +141,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
     }
 
     const columns = useMemo(() => [
-        { id: 'checkbox', label: '', widthClassName: 'w-[36px]', align: 'center' },
+        { id: 'checkbox', label: '', widthClassName: 'w-px', align: 'center' },
         { id: 'document_number', label: 'No. Beban #' },
         { id: 'parsedPeriod', label: 'Periode', widthClassName: 'w-[160px]' },
         { id: 'due_date', label: 'Jatuh Tempo', widthClassName: 'w-[120px]' },
@@ -158,60 +159,69 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
             onClose={onClose}
             title="Pencatatan Gaji"
             headerIcon={() => null}
-            maxWidthClassName="!max-w-[1380px] w-full"
-            contentClassName="bg-[#f0f4f8] px-5 py-4 sm:px-6 flex flex-col gap-4 min-h-[480px] max-h-[85vh] overflow-y-auto"
+            maxWidthClassName="!max-w-[760px] w-full"
+            contentClassName="bg-white px-4 py-3 flex flex-col gap-3 min-h-[320px] max-h-[60vh] overflow-y-auto"
             footer={
-                <div className="flex justify-end">
-                    <button
-                        type="button"
+                <div className="flex justify-between items-center w-full">
+                    <Button
+                        variant="secondary"
+                        size="md"
+                        onClick={onClose}
+                        className="rounded-[4px] font-normal"
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        variant="primary"
+                        size="md"
                         onClick={handleLanjut}
                         disabled={selectedIds.size === 0}
-                        className="inline-flex h-9 items-center justify-center rounded-[4px] bg-[#0c50a4] hover:bg-[#0a4288] disabled:bg-slate-300 disabled:cursor-not-allowed px-6 text-sm font-normal text-white shadow-sm transition active:scale-[0.98] cursor-pointer"
+                        className="rounded-[4px] px-6 font-normal"
                     >
                         Lanjut
-                    </button>
+                    </Button>
                 </div>
             }
         >
             {/* Filter controls */}
-            <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-[6px] border border-slate-200">
-                <div className="w-full sm:max-w-[220px]">
+            <div className="flex flex-wrap items-center gap-2">
+                <div className="w-full sm:max-w-[180px]">
                     <TextInput
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Cari..."
                         trailing={
                             loading ? (
-                                <LoadingIcon className="h-4 w-4 animate-spin text-slate-400" />
+                                <LoadingIcon className="h-4.5 w-4.5 animate-spin text-slate-400" />
                             ) : (
-                                <SearchIcon className="h-4 w-4 text-slate-400" />
+                                <SearchIcon className="h-4.5 w-4.5 text-slate-400" />
                             )
                         }
-                        className="h-[40px] rounded-[4px] border-ui-border"
-                        inputClassName="text-sm text-brand-dark"
+                        className="h-[36px] rounded-[4px] border-ui-border"
+                        inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </div>
 
-                <div className="w-[140px]">
+                <div className="w-[120px]">
                     <SelectField
                         value={selectedType}
                         onChange={(e) => setSelectedType(e.target.value)}
-                        className="h-[40px] rounded-[4px] border-ui-border"
-                        selectClassName="text-sm text-brand-dark"
+                        className="h-[36px] rounded-[4px] border-ui-border bg-white"
+                        selectClassName="text-xs sm:text-sm text-brand-dark px-2"
                     >
                         <option value="all">Semua Tipe</option>
                         <option value="Bulanan">Bulanan</option>
                     </SelectField>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-brand-dark font-medium ml-auto">
-                    <span>Periode</span>
-                    <div className="w-[140px]">
+                <div className="flex items-center gap-1.5 text-xs sm:text-sm text-brand-dark font-normal ml-auto">
+                    <span>Periode:</span>
+                    <div className="w-[120px]">
                         <SelectField
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="h-[40px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-sm text-brand-dark"
+                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
+                            selectClassName="text-xs sm:text-sm text-brand-dark px-2"
                         >
                             <option value="all">Semua Bulan</option>
                             {INDONESIAN_MONTHS.map((month) => (
@@ -219,12 +229,12 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                             ))}
                         </SelectField>
                     </div>
-                    <div className="w-[110px]">
+                    <div className="w-[90px]">
                         <SelectField
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(e.target.value)}
-                            className="h-[40px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-sm text-brand-dark"
+                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
+                            selectClassName="text-xs sm:text-sm text-brand-dark px-2"
                         >
                             <option value="all">Semua Tahun</option>
                             {YEAR_OPTIONS.map((year) => (
@@ -236,12 +246,12 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
             </div>
 
             {/* Table */}
-            <div className="flex-1 overflow-x-auto border border-slate-200 rounded-[6px] bg-white min-h-[300px]">
+            <div className="flex-1 overflow-x-auto border border-slate-200 rounded-[4px] bg-white min-h-[220px]">
                 <TransactionDataTable
                     columns={columns}
                     rows={filteredRecords}
                     emptyLabel={loading ? 'Memuat data...' : 'Belum ada data'}
-                    minWidthClassName="min-w-[1100px]"
+                    minWidthClassName="min-w-[700px]"
                     showNumbering={false}
                     onRowClick={(row) => handleToggleRecord(row.id)}
                     getRowClassName={(row) => {

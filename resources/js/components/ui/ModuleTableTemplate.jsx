@@ -184,6 +184,7 @@ export default function ModuleTableTemplate({
                             {visibleColumns.map((column) => (
                                     <SortableTableHeaderCell
                                         key={column.id}
+                                        columnId={column.id}
                                         label={column.label}
                                         align={column.align}
                                         widthClassName={column.widthClassName}
@@ -214,11 +215,13 @@ export default function ModuleTableTemplate({
                                         <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                             {index + 1}
                                         </DataTableCell>
-                                         {visibleColumns.map((column) => (
+                                         {visibleColumns.map((column) => {
+                                             const isCheckbox = column.id === 'checkbox';
+                                             return (
                                              <DataTableCell
                                                  key={column.id}
-                                                 className={`px-3 text-base text-text-workspace-dark ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
-                                                 style={getCellStyle(column.id)}
+                                                 className={`${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-base text-text-workspace-dark ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                                                 style={getCellStyle(column.id, isCheckbox ? { minWidth: '0px', width: '1px' } : {})}
                                                  onResizeStart={(e) => handleResizeStart(e, column.id)}
                                              >
                                                  {column.type === 'image' || column.id === 'image' ? (
@@ -238,7 +241,8 @@ export default function ModuleTableTemplate({
                                                      <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                                                  )}
                                              </DataTableCell>
-                                         ))}
+                                             );
+                                         })}
                                     </DataTableRow>
                                 ))
                             ) : (

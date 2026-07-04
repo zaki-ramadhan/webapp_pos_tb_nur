@@ -32,20 +32,25 @@ export default function SortableTableHeaderCell({
     onSort = null,
     style: propStyle = {},
     onResizeStart = null,
+    columnId = null,
 }) {
     const alignClass = resolveAlignClassName(align);
     const justifyClass = resolveJustifyClassName(align);
     const textClass = 'block whitespace-nowrap truncate min-w-0 flex-1';
-    const minWidth = getColumnMinWidth(label);
+    const isCheckbox = columnId === 'checkbox' || (!label && widthClassName === 'w-px');
+    const minWidth = isCheckbox ? null : getColumnMinWidth(label);
     const resolvedStyle = {
         ...(minWidth ? { minWidth: `${minWidth}px` } : {}),
+        ...(isCheckbox ? { minWidth: '0px', width: '1px' } : {}),
         ...propStyle,
     };
+
+    const pxClass = isCheckbox ? '!px-2.5' : 'px-2.5';
 
     if (!sortable || !onSort) {
         return (
             <DataTableHead
-                className={`${widthClassName} px-2.5 py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
+                className={`${widthClassName} ${pxClass} py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
                 style={resolvedStyle}
                 onResizeStart={onResizeStart}
             >
@@ -56,7 +61,7 @@ export default function SortableTableHeaderCell({
 
     return (
         <DataTableHead
-            className={`${widthClassName} px-2.5 py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
+            className={`${widthClassName} ${pxClass} py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
             style={resolvedStyle}
             onResizeStart={onResizeStart}
         >

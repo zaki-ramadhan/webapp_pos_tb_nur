@@ -82,11 +82,16 @@ export function TransactionDataTable({
                         )}
                         {visibleColumns.map((column) => {
                             const minWidth = getColumnMinWidth(column.label);
+                            const isCheckbox = column.id === 'checkbox';
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} px-3 text-sm font-normal text-white text-center`.trim()}
-                                    style={getCellStyle(column.id, { position: 'relative', ...(minWidth ? { minWidth } : {}) })}
+                                    className={`${column.widthClassName ?? ''} ${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-sm font-normal text-white text-center`.trim()}
+                                    style={getCellStyle(column.id, {
+                                        position: 'relative',
+                                        ...(minWidth ? { minWidth } : {}),
+                                        ...(isCheckbox ? { minWidth: '0px', width: '1px' } : {})
+                                    })}
                                     onResizeStart={(e) => handleResizeStart(e, column.id)}
                                 >
                                     {renderHeaderCell
@@ -118,18 +123,21 @@ export function TransactionDataTable({
                                             {index + 1}
                                         </DataTableCell>
                                     )}
-                                    {visibleColumns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className={`px-3 text-sm text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
-                                            style={getCellStyle(column.id)}
-                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
-                                        >
-                                            {renderCell
-                                                ? renderCell({ row, column, index })
-                                                : formatTableTextValue(row[column.id], column)}
-                                        </DataTableCell>
-                                    ))}
+                                    {visibleColumns.map((column) => {
+                                        const isCheckbox = column.id === 'checkbox';
+                                        return (
+                                            <DataTableCell
+                                                key={column.id}
+                                                className={`${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-sm text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
+                                                style={getCellStyle(column.id, isCheckbox ? { minWidth: '0px', width: '1px' } : {})}
+                                                onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                            >
+                                                {renderCell
+                                                    ? renderCell({ row, column, index })
+                                                    : formatTableTextValue(row[column.id], column)}
+                                            </DataTableCell>
+                                        );
+                                    })}
                                 </DataTableRow>
                             );
                         })
