@@ -27,12 +27,25 @@ const defaultAccountValues = {
 };
 
 const listColumns = [
-    { id: 'name', label: 'Nama Barang', widthClassName: 'w-[44%]', align: 'left', truncate: true },
-    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[160px]', align: 'left' },
-    { id: 'kind', label: 'Jenis Barang', widthClassName: 'w-[150px]', align: 'left' },
-    { id: 'unit', label: 'Satuan', widthClassName: 'w-[100px]', align: 'left', noWrap: true },
-    { id: 'stockAtWarehouse', label: 'Kts (Gdng Peng...)', widthClassName: 'w-[170px]', align: 'right', noWrap: true },
-    { id: 'saleableStock', label: 'Stok dapat dijual', widthClassName: 'w-[190px]', align: 'right', noWrap: true },
+    { id: 'image', label: 'Foto', widthClassName: 'w-[70px]', align: 'center', type: 'image' },
+    { id: 'name', label: 'Nama Barang', widthClassName: 'w-[20%]', align: 'left', truncate: true },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[120px]', align: 'left' },
+    { id: 'kind', label: 'Jenis Barang', widthClassName: 'w-[120px]', align: 'left' },
+    { id: 'unit', label: 'Satuan', widthClassName: 'w-[90px]', align: 'left', noWrap: true },
+    { id: 'salePrice', label: 'Def. Hrg. Jual Satuan', widthClassName: 'w-[160px]', align: 'right', noWrap: true },
+    { id: 'stockAtWarehouse', label: 'Kts (Gdng Peng...)', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
+    { id: 'saleableStock', label: 'Stok dapat dijual', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
+    
+    // Kolom-kolom baru (default disembunyikan di Settings menu)
+    { id: 'purchasePrice', label: 'Harga Beli', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
+    { id: 'purchaseUnit', label: 'Satuan Beli', widthClassName: 'w-[110px]', align: 'left', defaultHidden: true, noWrap: true },
+    { id: 'barcode', label: 'Barcode', widthClassName: 'w-[140px]', align: 'left', defaultHidden: true },
+    { id: 'category', label: 'Kategori Barang', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
+    { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true },
+    { id: 'brand', label: 'Merek Dagang', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true },
+    { id: 'notes', label: 'Catatan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
+    { id: 'bulkPricingEnabledText', label: 'Barang Grosir', widthClassName: 'w-[120px]', align: 'center', defaultHidden: true },
+    { id: 'substituteProduct', label: 'Barang Substitusi', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
 ];
 
 const stockOpeningColumns = [
@@ -63,6 +76,7 @@ const createDefaults = {
     minimumSell: '',
     bulkPricingEnabled: false,
     substituteEnabled: false,
+    substituteProduct: [],
     mainSupplier: [],
     purchaseUnit: [],
     purchasePrice: '',
@@ -250,6 +264,9 @@ function buildFallbackDetailRecord(row, config) {
             ? []
             : [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: row.unit || 'PCS' }],
         brand: row.brand ? [row.brand] : [],
+        purchasePrice: row.purchasePrice ?? '0',
+        sellPriceLevel1: row.salePrice ?? '0',
+        notes: row.notes ?? '',
         stockQuantity: row.stockAtWarehouse ?? '0',
         stockUnitValue: '0',
         stockCostOfGoods: '0',

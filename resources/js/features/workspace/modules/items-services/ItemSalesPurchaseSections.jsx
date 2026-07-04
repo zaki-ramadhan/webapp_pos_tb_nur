@@ -71,10 +71,32 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                 <div className="flex items-center gap-3">
                     <TransactionSwitch
                         checked={values.substituteEnabled}
-                        onChange={(nextValue) => onChange('substituteEnabled', nextValue)}
+                        onChange={(nextValue) => {
+                            onChange('substituteEnabled', nextValue);
+                            if (!nextValue) {
+                                onChange('substituteProduct', []);
+                            }
+                        }}
                     />
                     <span className="text-xs sm:text-sm text-brand-dark">Substitusi dengan</span>
                 </div>
+
+                {values.substituteEnabled && (
+                    <FormRow label="Barang Substitusi">
+                        <BackendLookupField
+                            resource="products"
+                            values={(values.substituteProduct || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                            placeholder="Cari/Pilih Barang Substitusi..."
+                            searchLabel="Cari barang"
+                            onSelect={(option) => {
+                                onChange('substituteProduct', [option.name]);
+                            }}
+                            onRemove={() => {
+                                onChange('substituteProduct', []);
+                            }}
+                        />
+                    </FormRow>
+                )}
             </div>
         </section>
     );

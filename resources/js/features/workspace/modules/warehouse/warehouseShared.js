@@ -65,6 +65,14 @@ export function mapWarehouseTableRow(record) {
         address: record.street ?? '',
         branchId: record.branch_id ?? record.branch?.id ?? null,
         inactiveValue: record.is_active === false ? 'yes' : 'no',
+        
+        // Pemetaan kolom baru untuk Settings
+        description: record.description ?? '',
+        responsiblePerson: record.responsible_person ?? record.responsiblePerson ?? '',
+        isDamagedWarehouseText: record.warehouse_type === 'damaged' || record.isDamagedWarehouse ? 'Ya' : 'Tidak',
+        fullAddress: [record.street, record.city, record.province].filter(Boolean).join(', ') || '-',
+        allUsersText: record.all_users !== false ? 'Semua Pengguna' : 'Pengguna Tertentu',
+        isActiveText: record.is_active === false ? 'Ya' : 'Tidak',
     };
 }
 

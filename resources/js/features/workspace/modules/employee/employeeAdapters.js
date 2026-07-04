@@ -105,7 +105,7 @@ export function buildEmployeeRow(record) {
         taxStartYear: record.tax_start_year ?? '',
         previousIncome: previousIncome > 0 ? formatCurrencyValue(previousIncome) : '',
         previousTax: previousTax > 0 ? formatCurrencyValue(previousTax) : '',
-        payable: 'IDR 0',
+        payable: '0',
         bankName: primaryBankAccount?.bank_name ?? '',
         bankAccountNumber: primaryBankAccount?.account_number ?? '',
         bankAccountHolder: primaryBankAccount?.account_name ?? '',
@@ -118,6 +118,10 @@ export function buildEmployeeRow(record) {
         branchLabel: branchName,
         sellerValue: record.is_salesperson ? 'yes' : 'no',
         attachments: record.attachments ?? [],
+
+        // Opsi kolom tambahan untuk Settings
+        subjectToIncomeTaxText: record.subject_to_income_tax !== false ? 'Ya' : 'Tidak',
+        isSalespersonText: record.is_salesperson ? 'Ya' : 'Tidak',
         tabLabel: record.full_name ?? record.employee_code ?? `Karyawan #${record.id}`,
     };
 }

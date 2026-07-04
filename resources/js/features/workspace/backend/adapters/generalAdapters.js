@@ -8,12 +8,142 @@ import {
     buildSelectOptions,
 } from './dateHelpers';
 
+const RESOURCE_LABEL_TRANSLATIONS = {
+    'budget': 'Anggaran',
+    'general-journal': 'Jurnal Umum',
+    'general-journals': 'Jurnal Umum',
+    'employee': 'Karyawan',
+    'employees': 'Karyawan',
+    'product': 'Barang & Jasa',
+    'products': 'Barang & Jasa',
+    'preference': 'Preferensi',
+    'user': 'Pengguna',
+    'users': 'Pengguna',
+    'expense-entry': 'Pencatatan Beban',
+    'expense-entries': 'Pencatatan Beban',
+    'payroll-entry': 'Pencatatan Gaji',
+    'payroll-entries': 'Pencatatan Gaji',
+    'account': 'Akun Perkiraan',
+    'accounts': 'Akun Perkiraan',
+    'bank-inquiry': 'Rekonsiliasi Bank',
+    'bank-inquiries': 'Rekonsiliasi Bank',
+    'bank-transfer': 'Transfer Bank',
+    'bank-transfers': 'Transfer Bank',
+    'business-partner': 'Mitra Bisnis',
+    'business-partners': 'Mitra Bisnis',
+    'cash-payment': 'Pembayaran Kas & Bank',
+    'cash-payments': 'Pembayaran Kas & Bank',
+    'cash-receipt': 'Penerimaan Kas & Bank',
+    'cash-receipts': 'Penerimaan Kas & Bank',
+    'currency': 'Mata Uang',
+    'currencies': 'Mata Uang',
+    'department': 'Departemen',
+    'departments': 'Departemen',
+    'group-access': 'Hak Akses',
+    'group-accesses': 'Hak Akses',
+    'inventory-adjustment': 'Penyesuaian Persediaan',
+    'inventory-adjustments': 'Penyesuaian Persediaan',
+    'item-category': 'Kategori Barang & Jasa',
+    'item-categories': 'Kategori Barang & Jasa',
+    'item-request': 'Permintaan Barang',
+    'item-requests': 'Permintaan Barang',
+    'salary-allowance': 'Tunjangan & Gaji',
+    'salary-allowances': 'Tunjangan & Gaji',
+    'sales-checkin': 'Kunjungan Sales',
+    'sales-checkins': 'Kunjungan Sales',
+    'sales-commission': 'Komisi Penjualan',
+    'sales-commissions': 'Komisi Penjualan',
+    'sales-deposit': 'Uang Muka Penjualan',
+    'sales-deposits': 'Uang Muka Penjualan',
+    'sales-document': 'Dokumen Penjualan',
+    'sales-documents': 'Dokumen Penjualan',
+    'sales-receipt': 'Penerimaan Penjualan',
+    'sales-receipts': 'Penerimaan Penjualan',
+    'supplier-price': 'Harga Pemasok',
+    'supplier-prices': 'Harga Pemasok',
+    'transaction-approval': 'Persetujuan Transaksi',
+    'transaction-approvals': 'Persetujuan Transaksi',
+    'users-management': 'Manajemen Pengguna',
+    'users-managements': 'Manajemen Pengguna',
+    'warehouse': 'Gudang',
+    'warehouses': 'Gudang',
+    'brands': 'Merek',
+    'brand': 'Merek',
+    'units': 'Satuan',
+    'unit': 'Satuan',
+    'customers': 'Pelanggan',
+    'customer': 'Pelanggan',
+    'suppliers': 'Pemasok',
+    'supplier': 'Pemasok',
+    'expense entries': 'Pencatatan Beban',
+    'payroll entries': 'Pencatatan Gaji',
+    'general journals': 'Jurnal Umum',
+    'cash payments': 'Pembayaran Kas & Bank',
+    'cash receipts': 'Penerimaan Kas & Bank',
+    'bank transfers': 'Transfer Bank',
+    'bank inquiries': 'Rekonsiliasi Bank',
+    'inventory adjustments': 'Penyesuaian Persediaan',
+    'item categories': 'Kategori Barang & Jasa',
+    'item requests': 'Permintaan Barang',
+    'sales documents': 'Dokumen Penjualan',
+    'sales receipts': 'Penerimaan Penjualan',
+    'sales commissions': 'Komisi Penjualan',
+    'sales deposits': 'Uang Muka Penjualan',
+    'supplier prices': 'Harga Pemasok',
+    'transaction approvals': 'Persetujuan Transaksi',
+    'salary allowances': 'Tunjangan & Gaji',
+};
+
 function mapActivityActionLabel(action) {
-    return {
+    const actionMap = {
         create: 'Buat',
         update: 'Ubah',
         delete: 'Hapus',
-    }[action] ?? titleizeKey(action);
+        void: 'Batalkan',
+        post: 'Posting',
+        unpost: 'Batal Posting',
+        approve: 'Setujui',
+        reject: 'Tolak',
+    };
+    return actionMap[String(action).toLowerCase()] ?? titleizeKey(action);
+}
+
+function mapResourceLabel(key, permissionKey, label) {
+    const keysToCheck = [
+        permissionKey,
+        key,
+        label,
+    ].filter(Boolean);
+
+    for (const k of keysToCheck) {
+        const normalized = String(k).trim().toLowerCase();
+        if (RESOURCE_LABEL_TRANSLATIONS[normalized]) {
+            return RESOURCE_LABEL_TRANSLATIONS[normalized];
+        }
+    }
+
+    return label ?? titleizeKey(permissionKey ?? key);
+}
+
+function translateDescription(desc) {
+    if (!desc) return '-';
+    let result = String(desc);
+    const prefixes = {
+        'Create ': 'Buat ',
+        'Update ': 'Ubah ',
+        'Delete ': 'Hapus ',
+        'Void ': 'Batalkan ',
+        'Post ': 'Posting ',
+        'Unpost ': 'Batal Posting ',
+        'Approve ': 'Setujui ',
+        'Reject ': 'Tolak ',
+    };
+    for (const [eng, ind] of Object.entries(prefixes)) {
+        if (result.startsWith(eng)) {
+            return ind + result.substring(eng.length);
+        }
+    }
+    return result;
 }
 
 export function mapActivityLogRows(records) {
@@ -29,7 +159,7 @@ export function mapActivityLogRows(records) {
             actionTypeValue: record.action ?? '',
             actionLabel: mapActivityActionLabel(record.action),
             transactionTypeValue: record.resource_key ?? '',
-            transactionTypeLabel: record.resource_label ?? titleizeKey(record.permission_key ?? record.resource_key),
+            transactionTypeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
             loggedAt: formatDateTimeVerbose(record.occurred_at),
             userValue: String(record.actor_user_id ?? record.actor_email ?? ''),
             userName: record.actor_name ?? record.actor_user?.name ?? '-',
@@ -98,8 +228,8 @@ export function mapJournalActivityRows(records) {
             id: record.id,
             date: formatIsoDate(record.occurred_at),
             number: record.document_number ?? `LOG-${record.id}`,
-            transactionNumber: record.subject_label ?? record.description ?? '-',
-            typeLabel: record.resource_label ?? titleizeKey(record.permission_key ?? record.resource_key),
+            transactionNumber: record.subject_label ?? translateDescription(record.description) ?? '-',
+            typeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
             amount: record.metadata?.amount ?? '',
             dateValue: normalizeDisplayDate(record.occurred_at),
             transactionDateValue: transactionDate || 'empty',

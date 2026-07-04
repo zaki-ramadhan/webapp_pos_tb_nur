@@ -67,6 +67,28 @@ export default function EmployeeView({
             },
             table: {
                 ...page.table,
+                columns: (() => {
+                    const baseCols = page.table?.columns ?? [];
+                    const extraCols = [
+                        { id: 'email', label: 'Email', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
+                        { id: 'mobilePhone', label: 'Handphone', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
+                        { id: 'whatsApp', label: 'WhatsApp', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
+                        { id: 'nationality', label: 'Kewarganegaraan', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true },
+                        { id: 'identityNumber', label: 'No Identitas (NIK)', widthClassName: 'w-[160px]', align: 'left', defaultHidden: true },
+                        { id: 'joinDate', label: 'Tanggal Gabung', widthClassName: 'w-[140px]', align: 'center', defaultHidden: true },
+                        { id: 'subjectToIncomeTaxText', label: 'Pajak Penghasilan', widthClassName: 'w-[150px]', align: 'center', defaultHidden: true },
+                        { id: 'taxNumber', label: 'NPWP', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
+                        { id: 'employmentStatus', label: 'Status Kerja', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true },
+                        { id: 'isSalespersonText', label: 'Salesperson', widthClassName: 'w-[120px]', align: 'center', defaultHidden: true },
+                        { id: 'bankName', label: 'Bank Karyawan', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true },
+                        { id: 'bankAccountNumber', label: 'No Rekening', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
+                        { id: 'bankAccountHolder', label: 'Nama Pemilik Rekening', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
+                        { id: 'note', label: 'Catatan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
+                        { id: 'inactiveValue', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                    ];
+                    const filteredExtra = extraCols.filter(col => !baseCols.some(bc => bc.id === col.id));
+                    return [...baseCols, ...filteredExtra];
+                })(),
                 rows: mappedRows,
                 filters: buildEmployeeFilters(page.table?.filters ?? [], mappedRows)
                     .filter((filter) => !(filter.id === 'department' && isWorkspacePageInactive('department'))),

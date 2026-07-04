@@ -210,14 +210,29 @@ export default function ModuleTableTemplate({
                                         <DataTableCell className="px-3 text-center text-base text-table-row-number">
                                             {index + 1}
                                         </DataTableCell>
-                                        {visibleColumns.map((column) => (
-                                            <DataTableCell
-                                                key={column.id}
-                                                className={`px-3 text-base text-text-workspace-dark ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
-                                            >
-                                                <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
-                                            </DataTableCell>
-                                        ))}
+                                         {visibleColumns.map((column) => (
+                                             <DataTableCell
+                                                 key={column.id}
+                                                 className={`px-3 text-base text-text-workspace-dark ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                                             >
+                                                 {column.type === 'image' || column.id === 'image' ? (
+                                                     row[column.id] ? (
+                                                         <div className="flex justify-center items-center py-1">
+                                                             <img
+                                                                 src={row[column.id]}
+                                                                 alt=""
+                                                                 className="h-9 w-9 rounded-md object-cover border border-ui-border-medium bg-slate-50"
+                                                                 loading="lazy"
+                                                             />
+                                                         </div>
+                                                     ) : (
+                                                         <span className="text-slate-400 font-medium select-none">-</span>
+                                                     )
+                                                 ) : (
+                                                     <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                                 )}
+                                             </DataTableCell>
+                                         ))}
                                     </DataTableRow>
                                 ))
                             ) : (

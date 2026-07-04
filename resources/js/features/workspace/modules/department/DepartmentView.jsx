@@ -23,6 +23,7 @@ function mapDepartmentRow(record) {
         userIds: (record.users ?? []).map((user) => user.id),
         inactiveValue: record.is_active === false ? 'yes' : 'no',
         isActive: record.is_active !== false,
+        isActiveText: record.is_active ? 'Tidak' : 'Ya',
         tabLabel: record.name ?? '',
     };
 }
@@ -77,6 +78,17 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, level2Tabs
 
                 ...page.table,
                 ...departmentResource.tableProps,
+                columns: (() => {
+                    const baseCols = page.table?.columns ?? [];
+                    const extraCols = [
+                        { id: 'parentDepartmentName', label: 'Sub Departemen', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
+                        { id: 'userList', label: 'Pengguna Berhak', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'notes', label: 'Catatan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
+                        { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                    ];
+                    const filteredExtra = extraCols.filter(col => !baseCols.some(bc => bc.id === col.id));
+                    return [...baseCols, ...filteredExtra];
+                })(),
                 pageValue: departmentResource.total.toLocaleString('id-ID'),
                 refreshLabel: departmentResource.loading ? 'Memuat data...' : page.table?.refreshLabel,
                 emptyLabel: departmentResource.error || page.table?.emptyLabel || 'Tidak ada data',

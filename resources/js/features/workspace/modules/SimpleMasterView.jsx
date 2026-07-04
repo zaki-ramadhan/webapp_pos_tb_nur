@@ -38,6 +38,34 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, level2Ta
             table: {
                 ...page.table,
                 resource: backendConfig.resource,
+                columns: (() => {
+                    const baseCols = page.table?.columns ?? [];
+                    let extraCols = [];
+                    if (page.id === 'item-unit') {
+                        extraCols = [
+                            { id: 'precision', label: 'Presisi Desimal', widthClassName: 'w-[140px]', align: 'center', defaultHidden: true },
+                            { id: 'taxCode', label: 'Kode Pajak', widthClassName: 'w-[140px]', align: 'left', defaultHidden: true },
+                            { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                        ];
+                    } else if (page.id === 'sales-category') {
+                        extraCols = [
+                            { id: 'description', label: 'Keterangan', widthClassName: 'w-[250px]', align: 'left', defaultHidden: true, truncate: true },
+                            { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                        ];
+                    } else if (page.id === 'customer-category' || page.id === 'supplier-category') {
+                        extraCols = [
+                            { id: 'defaultLabel', label: 'Default', widthClassName: 'w-[120px]', align: 'center', defaultHidden: true },
+                            { id: 'isSubCategoryText', label: 'Sub Kategori', widthClassName: 'w-[130px]', align: 'center', defaultHidden: true },
+                            { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                        ];
+                    } else {
+                        extraCols = [
+                            { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                        ];
+                    }
+                    const filteredExtra = extraCols.filter(col => !baseCols.some(bc => bc.id === col.id));
+                    return [...baseCols, ...filteredExtra];
+                })(),
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
                 loading,

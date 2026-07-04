@@ -9,7 +9,9 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
                 id: record.id,
                 name: record.name ?? '',
                 tabLabel: record.name ?? '',
-                taxCode: record.tax_reference_code ?? '',
+                taxCode: record.tax_reference_code ?? '-',
+                precision: record.precision ?? 0,
+                isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
             };
         },
         toForm(record) {
@@ -33,8 +35,9 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
             return {
                 id: record.id,
                 name: record.name ?? '',
-                description: record.description ?? '',
+                description: record.description ?? '-',
                 tabLabel: record.name ?? '',
+                isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
             };
         },
         toForm(record) {
@@ -68,7 +71,9 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
                 defaultLabel: record.is_default ? 'Ya' : 'Tidak',
                 isDefault: Boolean(record.is_default),
                 isSubCategory: Boolean(record.parent_id),
+                isSubCategoryText: record.parent_id ? 'Ya' : 'Tidak',
                 tabLabel: record.name ?? '',
+                isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
             };
         },
         toForm(record) {
@@ -103,7 +108,9 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
                 defaultLabel: record.is_default ? 'Ya' : 'Tidak',
                 isDefault: Boolean(record.is_default),
                 isSubCategory: Boolean(record.parent_id),
+                isSubCategoryText: record.parent_id ? 'Ya' : 'Tidak',
                 tabLabel: record.name ?? '',
+                isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
             };
         },
         toForm(record) {

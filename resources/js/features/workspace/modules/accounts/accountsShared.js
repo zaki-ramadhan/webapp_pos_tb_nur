@@ -2,16 +2,40 @@ import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared
 
 const DB_TO_UI_TYPE_MAP = {
     'Cash/Bank': 'Kas dan Bank',
+    'Receivable': 'Piutang Usaha',
+    'Inventory': 'Persediaan',
+    'Other Current Asset': 'Aset Lancar Lainnya',
     'Fixed Asset': 'Aset Tetap',
     'Accumulated Depreciation': 'Akumulasi Penyusutan',
+    'Other Asset': 'Aset Lainnya',
+    'Payable': 'Utang Usaha',
+    'Other Current Liability': 'Liabilitas Jangka Pendek',
+    'Long Term Liability': 'Liabilitas Jangka Panjang',
+    'Equity': 'Modal',
+    'Revenue': 'Pendapatan',
+    'Cost of Sales': 'Beban Pokok Penjualan',
     'Expense': 'Beban',
+    'Other Expense': 'Beban Lainnya',
+    'Other Revenue': 'Pendapatan Lainnya',
 };
 
 const UI_TO_DB_TYPE_MAP = {
     'Kas dan Bank': 'Cash/Bank',
+    'Piutang Usaha': 'Receivable',
+    'Persediaan': 'Inventory',
+    'Aset Lancar Lainnya': 'Other Current Asset',
     'Aset Tetap': 'Fixed Asset',
     'Akumulasi Penyusutan': 'Accumulated Depreciation',
+    'Aset Lainnya': 'Other Asset',
+    'Utang Usaha': 'Payable',
+    'Liabilitas Jangka Pendek': 'Other Current Liability',
+    'Liabilitas Jangka Panjang': 'Long Term Liability',
+    'Modal': 'Equity',
+    'Pendapatan': 'Revenue',
+    'Beban Pokok Penjualan': 'Cost of Sales',
     'Beban': 'Expense',
+    'Beban Lainnya': 'Other Expense',
+    'Pendapatan Lainnya': 'Other Revenue',
 };
 
 export function mapDbToUiType(type) {
@@ -112,8 +136,15 @@ export function mapAccountRow(record) {
         type: mapDbToUiType(record.account_type ?? ''),
         balance: formatBalanceLabel(openingBalance),
         negative: openingBalance < 0,
-        level: 0,
+        level: record.parent_id ? 1 : 0,
         inactiveValue: record.is_active === false ? 'inactive' : 'active',
+        
+        // Pemetaan kolom baru
+        currencyName: record.currency?.name ?? '-',
+        openingBalanceDate: record.opening_balance_date ? formatDisplayDate(record.opening_balance_date) : '-',
+        isSubAccountText: record.parent ? `${record.parent.code} - ${record.parent.name}` : '-',
+        notes: record.notes ?? '',
+        isActiveText: record.is_active ? 'Tidak' : 'Ya',
     };
 }
 

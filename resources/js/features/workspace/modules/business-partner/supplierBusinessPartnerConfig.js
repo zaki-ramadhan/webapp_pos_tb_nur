@@ -64,10 +64,22 @@ export const supplierBusinessPartnerTemplate = createTemplate({
     table: createTableConfig({
         createLabel: 'Tambah Pemasok',
         columns: [
-            { id: 'name', label: 'Nama', widthClassName: 'w-[44%]', align: 'left' },
-            { id: 'primaryContact', label: 'Kontak Utama', widthClassName: 'w-[18%]', align: 'left', truncate: true },
-            { id: 'code', label: 'ID Pemasok', widthClassName: 'w-[170px]', align: 'left' },
-            { id: 'balance', label: 'Saldo', widthClassName: 'w-[22%]', align: 'right' },
+            { id: 'name', label: 'Nama', widthClassName: 'w-[25%]', align: 'left' },
+            { id: 'primaryContact', label: 'Kontak Utama', widthClassName: 'w-[130px]', align: 'left', truncate: true },
+            { id: 'code', label: 'ID Pemasok', widthClassName: 'w-[140px]', align: 'left' },
+            { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
+            
+            // Kolom-kolom baru (default disembunyikan)
+            { id: 'phone', label: 'Telepon Kantor', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
+            { id: 'mobilePhone', label: 'Handphone', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
+            { id: 'whatsapp', label: 'WhatsApp', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
+            { id: 'email', label: 'Email', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
+            { id: 'taxNumber', label: 'NPWP / NIK', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
+            { id: 'paymentTermsText', label: 'Syarat Pembayaran', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
+            { id: 'creditLimitText', label: 'Batas Piutang', widthClassName: 'w-[150px]', align: 'right', defaultHidden: true, noWrap: true },
+            { id: 'categoryName', label: 'Kategori', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true },
+            { id: 'notes', label: 'Catatan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
+            { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true },
         ],
         rows: SUPPLIER_ROWS,
         filters: [

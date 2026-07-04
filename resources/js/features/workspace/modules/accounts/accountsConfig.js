@@ -27,10 +27,17 @@ const accountTypeOptions = [
 ];
 
 const accountTableColumns = [
-    { id: 'code', label: 'Kode Perkiraan', widthClassName: 'w-[200px]', align: 'left' },
-    { id: 'name', label: 'Nama', widthClassName: 'w-[58%]', align: 'left' },
-    { id: 'type', label: 'Tipe Akun', widthClassName: 'w-[200px]', align: 'left' },
-    { id: 'balance', label: 'Saldo', widthClassName: 'w-[180px]', align: 'right' },
+    { id: 'code', label: 'Kode Perkiraan', widthClassName: 'w-[160px]', align: 'left' },
+    { id: 'name', label: 'Nama', widthClassName: 'w-[30%]', align: 'left' },
+    { id: 'type', label: 'Tipe Akun', widthClassName: 'w-[160px]', align: 'left' },
+    { id: 'balance', label: 'Saldo', widthClassName: 'w-[140px]', align: 'right' },
+    
+    // Opsi kolom tambahan (default disembunyikan)
+    { id: 'currencyName', label: 'Mata Uang', widthClassName: 'w-[120px]', align: 'left', defaultHidden: true },
+    { id: 'openingBalanceDate', label: 'Tgl Saldo Awal', widthClassName: 'w-[140px]', align: 'center', defaultHidden: true },
+    { id: 'isSubAccountText', label: 'Sub Akun Dari', widthClassName: 'w-[220px]', align: 'left', defaultHidden: true },
+    { id: 'notes', label: 'Catatan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
+    { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true },
 ];
 
 const accountRows = [];

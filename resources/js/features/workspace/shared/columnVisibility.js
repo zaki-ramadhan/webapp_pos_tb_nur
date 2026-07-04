@@ -5,7 +5,7 @@ const listeners = new Set();
 export function useColumnVisibility(schemaKey, initialColumns = []) {
     const getInitialVisibleIds = () => {
         if (!schemaKey) {
-            return initialColumns.map(c => c.id).filter(Boolean);
+            return initialColumns.filter(c => !c.defaultHidden).map(c => c.id).filter(Boolean);
         }
         const cached = localStorage.getItem(`col_vis_${schemaKey}`);
         if (cached) {
@@ -16,7 +16,7 @@ export function useColumnVisibility(schemaKey, initialColumns = []) {
                 }
             } catch (e) {}
         }
-        return initialColumns.map(c => c.id).filter(Boolean);
+        return initialColumns.filter(c => !c.defaultHidden).map(c => c.id).filter(Boolean);
     };
 
     const [visibleIds, setVisibleIds] = useState(getInitialVisibleIds);

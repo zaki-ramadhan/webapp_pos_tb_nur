@@ -24,15 +24,40 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
 
     const config = useMemo(() => {
         const baseConfig = page.itemCategory;
-        const mappedRows = rows.map((row) => ({
-            id: String(row.id),
-            code: row.code ?? '',
-            name: row.name ?? '',
-            defaultLabel: row.is_default ? 'Ya' : 'Tidak',
-            isDefault: Boolean(row.is_default),
-            isSubCategory: Boolean(row.parent_id),
-            tabLabel: row.name ?? '',
-        }));
+        const mappedRows = rows.map((row) => {
+            const inv = row.inventory_account ?? row.inventoryAccount;
+            const exp = row.expense_account ?? row.expenseAccount;
+            const sal = row.sales_account ?? row.salesAccount;
+            const salRet = row.sales_return_account ?? row.salesReturnAccount;
+            const salDisc = row.sales_discount_account ?? row.salesDiscountAccount;
+            const transit = row.goods_in_transit_account ?? row.goodsInTransitAccount;
+            const cogs = row.cost_of_goods_sold_account ?? row.costOfGoodsSoldAccount;
+            const purRet = row.purchase_return_account ?? row.purchaseReturnAccount;
+            const unbilled = row.unbilled_purchase_account ?? row.unbilledPurchaseAccount;
+
+            return {
+                id: String(row.id),
+                code: row.code ?? '',
+                name: row.name ?? '',
+                defaultLabel: row.is_default ? 'Ya' : 'Tidak',
+                isDefault: Boolean(row.is_default),
+                isSubCategory: Boolean(row.parent_id),
+                isSubCategoryText: row.parent_id ? 'Ya' : 'Tidak',
+                tabLabel: row.name ?? '',
+                
+                // Pemetaan akun tambahan untuk kolom settings
+                inventoryAccountLabel: inv ? `[${inv.code}] ${inv.name}` : '-',
+                expenseAccountLabel: exp ? `[${exp.code}] ${exp.name}` : '-',
+                salesAccountLabel: sal ? `[${sal.code}] ${sal.name}` : '-',
+                salesReturnAccountLabel: salRet ? `[${salRet.code}] ${salRet.name}` : '-',
+                salesDiscountAccountLabel: salDisc ? `[${salDisc.code}] ${salDisc.name}` : '-',
+                goodsInTransitAccountLabel: transit ? `[${transit.code}] ${transit.name}` : '-',
+                costOfGoodsSoldAccountLabel: cogs ? `[${cogs.code}] ${cogs.name}` : '-',
+                purchaseReturnAccountLabel: purRet ? `[${purRet.code}] ${purRet.name}` : '-',
+                unbilledPurchaseAccountLabel: unbilled ? `[${unbilled.code}] ${unbilled.name}` : '-',
+                isActiveText: row.is_active !== false ? 'Tidak' : 'Ya',
+            };
+        });
 
         const detailRecords = {
             ...(baseConfig.detailRecords ?? {}),
@@ -75,6 +100,24 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
                 loading,
 
                 ...baseConfig.table,
+                columns: (() => {
+                    const baseCols = baseConfig.table?.columns ?? [];
+                    const extraCols = [
+                        { id: 'isSubCategoryText', label: 'Sub Kategori', widthClassName: 'w-[130px]', align: 'center', defaultHidden: true },
+                        { id: 'inventoryAccountLabel', label: 'Akun Persediaan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'expenseAccountLabel', label: 'Akun Beban', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'salesAccountLabel', label: 'Akun Penjualan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'salesReturnAccountLabel', label: 'Akun Retur Penjualan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'salesDiscountAccountLabel', label: 'Akun Diskon Penjualan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'goodsInTransitAccountLabel', label: 'Akun Barang Terkirim', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'costOfGoodsSoldAccountLabel', label: 'Akun HPP', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'purchaseReturnAccountLabel', label: 'Akun Retur Pembelian', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'unbilledPurchaseAccountLabel', label: 'Akun Belum Tertagih', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true },
+                        { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                    ];
+                    const filteredExtra = extraCols.filter(col => !baseCols.some(bc => bc.id === col.id));
+                    return [...baseCols, ...filteredExtra];
+                })(),
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,

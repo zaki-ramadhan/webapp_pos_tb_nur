@@ -91,6 +91,19 @@ export default function WarehouseView({
                 loading,
 
                 ...baseConfig.table,
+                columns: (() => {
+                    const baseCols = baseConfig.table?.columns ?? [];
+                    const extraCols = [
+                        { id: 'responsiblePerson', label: 'Penanggung Jawab', widthClassName: 'w-[160px]', align: 'left', defaultHidden: true },
+                        { id: 'isDamagedWarehouseText', label: 'Gudang Barang Rusak', widthClassName: 'w-[180px]', align: 'center', defaultHidden: true },
+                        { id: 'fullAddress', label: 'Alamat Lengkap', widthClassName: 'w-[260px]', align: 'left', defaultHidden: true },
+                        { id: 'allUsersText', label: 'Hak Akses Pengguna', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
+                        { id: 'description', label: 'Keterangan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
+                        { id: 'isActiveText', label: 'Non Aktif', widthClassName: 'w-[110px]', align: 'center', defaultHidden: true }
+                    ];
+                    const filteredExtra = extraCols.filter(col => !baseCols.some(bc => bc.id === col.id));
+                    return [...baseCols, ...filteredExtra];
+                })(),
                 rows: rows.map(mapWarehouseTableRow),
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,

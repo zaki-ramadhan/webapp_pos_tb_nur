@@ -117,7 +117,7 @@ export default function ToolbarSettingsMenu({ menuButton, columnSettings, sizeSt
                     aria-label={menuButton?.label ?? 'Pengaturan kolom'}
                 >
                     {menuButton?.icon ?? <CogIcon className="h-4 w-4" />}
-                    <ChevronDownIcon />
+                    <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`.trim()} />
                 </button>
             </Tooltip>
 
