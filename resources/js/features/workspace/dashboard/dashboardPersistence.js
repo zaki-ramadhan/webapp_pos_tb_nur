@@ -5,7 +5,6 @@ const WIDGET_LIBRARY_TEMPLATE_IDS = {
     'cash-flow': 'cash-flow',
     'company-expense': 'company-expense',
     'minimum-stock': 'top-products',
-    'current-assets': 'profit-loss',
 };
 
 function canUseBrowserStorage() {

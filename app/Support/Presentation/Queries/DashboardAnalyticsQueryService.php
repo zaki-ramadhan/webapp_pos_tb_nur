@@ -113,10 +113,17 @@ class DashboardAnalyticsQueryService
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
 
             $totalExpensesVal = DB::table('operation_documents')
-                ->whereIn('document_type', ['payroll_entry', 'expense_entry'])
-                ->where('status', 'Posted')
+                ->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('document_type', 'payroll_entry')
+                            ->where('status', 'Posted');
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'expense_entry')
+                            ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                    });
+                })
                 ->sum('total_amount');
-
+ 
             $netProfitVal = $totalSalesVal - $totalHppVal - $totalExpensesVal;
             $profitMargin = $totalSalesVal > 0 ? (int) (($netProfitVal / $totalSalesVal) * 100) : 0;
             $profitPercentage = $profitMargin . '%';
@@ -124,7 +131,7 @@ class DashboardAnalyticsQueryService
             $pctRev = $legendSum > 0 ? round(($totalSalesVal / $legendSum) * 100) : 0;
             $pctHpp = $legendSum > 0 ? round(($totalHppVal / $legendSum) * 100) : 0;
             $pctExp = $legendSum > 0 ? round(($totalExpensesVal / $legendSum) * 100) : 0;
-
+ 
             $cashFlowLabels = [];
             $cashInSeries = [];
             $cashOutSeries = [];
@@ -138,21 +145,28 @@ class DashboardAnalyticsQueryService
                     ->where('entry_date', $date)
                     ->sum('total_amount');
                 $outflow = DB::table('operation_documents')
-                    ->whereIn('document_type', ['payroll_entry', 'expense_entry'])
-                    ->where('status', 'Posted')
                     ->where('entry_date', $date)
+                    ->where(function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->where('document_type', 'payroll_entry')
+                                ->where('status', 'Posted');
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'expense_entry')
+                                ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                        });
+                    })
                     ->sum('total_amount');
                 $cashInSeries[] = (float) $inflow;
                 $cashOutSeries[] = (float) $outflow;
             }
-
+ 
             $totalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
                 ->where('status', 'Posted')
                 ->sum('total_amount');
             $totalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
-                ->where('status', 'Posted')
+                ->whereIn('status', ['Sedang diproses', 'Terbayar'])
                 ->sum('total_amount');
             $totalExpense = $totalGaji + $totalOperasional;
             $pctGaji = $totalExpense > 0 ? round(($totalGaji / $totalExpense) * 100) : 0;
@@ -219,6 +233,7 @@ class DashboardAnalyticsQueryService
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->where('operation_documents.status', 'Posted')
                 ->select(
+                    'products.id as product_id',
                     'products.name',
                     DB::raw('SUM(operation_document_lines.quantity) as units_sold'),
                     DB::raw('SUM(operation_document_lines.total_amount) as revenue'),
@@ -231,11 +246,20 @@ class DashboardAnalyticsQueryService
             $topProductsItems = [];
             foreach ($dbTopProducts as $tp) {
                 $pctShare = $totalSalesVal > 0 ? ($tp->revenue / $totalSalesVal) * 100 : 0;
+                
+                $imageAttachment = DB::table('attachments')
+                    ->where('attachable_type', \App\Domain\Catalog\Models\Product::class)
+                    ->where('attachable_id', $tp->product_id)
+                    ->where('file_type', 'like', 'image/%')
+                    ->first();
+                $imageUrl = $imageAttachment ? asset('storage/' . $imageAttachment->file_path) : null;
+
                 $topProductsItems[] = [
                     'name' => $tp->name,
                     'units' => number_format($tp->units_sold, 0, ',', '.') . ' ' . ($tp->unit_name ?? 'pcs'),
                     'share' => number_format($pctShare, 1, ',', '.') . '%',
                     'revenue' => $formatCurrencyShort($tp->revenue),
+                    'imageUrl' => $imageUrl,
                 ];
             }
             if (empty($topProductsItems)) {
@@ -261,9 +285,16 @@ class DashboardAnalyticsQueryService
                     ->where('entry_date', '<=', $date)
                     ->sum('total_amount');
                 $outUpToDate = DB::table('operation_documents')
-                    ->whereIn('document_type', ['payroll_entry', 'expense_entry'])
-                    ->where('status', 'Posted')
                     ->where('entry_date', '<=', $date)
+                    ->where(function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->where('document_type', 'payroll_entry')
+                                ->where('status', 'Posted');
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'expense_entry')
+                                ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                        });
+                    })
                     ->sum('total_amount');
                 $cashAvailabilitySeries[] = 28000000000 + ($inUpToDate - $outUpToDate);
             }

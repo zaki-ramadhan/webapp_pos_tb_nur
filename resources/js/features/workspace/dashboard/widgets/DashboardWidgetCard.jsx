@@ -51,12 +51,12 @@ export default function DashboardWidgetCard({
         'sales-trend': { pageId: 'sales-invoice', label: 'Faktur Penjualan' },
         'profit-loss': {
             title: 'Laba/Rugi Tahun Ini',
-            description: 'Widget ini menghitung estimasi laba bersih berdasarkan data transaksi gabungan:',
+            description: 'Widget ini menghitung estimasi laba bersih dari total penjualan dikurangi HPP (kuantitas terjual × Harga Beli Barang) dan pengeluaran operasional:',
             sources: [
-                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Pendapatan)' },
-                { pageId: 'items-services', label: 'Harga Beli Standar Barang (HPP)' },
-                { pageId: 'expense-entry', label: 'Pencatatan Beban (Operasional)' },
-                { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Gaji Karyawan)' },
+                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Sumber Pendapatan)' },
+                { pageId: 'items-services', label: 'Barang & Jasa (Sumber Harga Beli / HPP)' },
+                { pageId: 'expense-entry', label: 'Pencatatan Beban (Beban Operasional)' },
+                { pageId: 'payroll-entry', label: 'Pencatatan Gaji (Beban Gaji Karyawan)' },
             ]
         },
         'cash-flow': {

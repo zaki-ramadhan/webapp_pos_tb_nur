@@ -18,7 +18,7 @@ function TopProductRow({ item, index }) {
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[6px] border border-chart-grid-light bg-ui-bg-hover px-2.5 py-1.5">
             <div className="relative h-9 w-9 shrink-0">
                 <img
-                    src={getProductImageUrl(item.name)}
+                    src={item.imageUrl || getProductImageUrl(item.name)}
                     alt={item.name}
                     className="h-9 w-9 rounded-[4px] border border-ui-border-light object-cover"
                 />

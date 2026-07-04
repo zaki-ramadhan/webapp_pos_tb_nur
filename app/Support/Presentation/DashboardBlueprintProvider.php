@@ -110,12 +110,7 @@ class DashboardBlueprintProvider
                             'description' => 'Grafik garis tren transaksi penjualan toko seminggu terakhir.',
                             'icon' => 'cash-flow',
                         ],
-                        [
-                            'id' => 'profit-loss',
-                            'title' => 'Laba/Rugi Tahun Ini',
-                            'description' => 'Analisa breakdown laba bersih, HPP, dan pengeluaran operasional.',
-                            'icon' => 'asset',
-                        ],
+
                         [
                             'id' => 'cash-flow',
                             'title' => 'Arus Kas',
@@ -295,35 +290,7 @@ class DashboardBlueprintProvider
                     'valueFormat' => 'currency',
                     'heightClass' => 'min-h-[310px]',
                 ],
-                [
-                    'id' => 'profit-loss',
-                    'title' => 'Laba/Rugi Tahun Ini',
-                    'type' => 'ring-breakdown',
-                    'percentage' => $profitPercentage,
-                    'totalLabel' => 'Estimasi Laba Bersih',
-                    'totalValue' => 'Rp ' . number_format($netProfitVal, 0, ',', '.'),
-                    'legend' => [
-                        [
-                            'label' => 'Total Pendapatan Penjualan',
-                            'value' => 'Rp ' . number_format($totalSalesVal, 0, ',', '.'),
-                            'percent' => $pctRev . '%',
-                            'color' => '#4ade80',
-                        ],
-                        [
-                            'label' => 'Total HPP',
-                            'value' => 'Rp ' . number_format($totalHppVal, 0, ',', '.'),
-                            'percent' => $pctHpp . '%',
-                            'color' => '#fb923c',
-                        ],
-                        [
-                            'label' => 'Total Pengeluaran Beban',
-                            'value' => 'Rp ' . number_format($totalExpensesVal, 0, ',', '.'),
-                            'percent' => $pctExp . '%',
-                            'color' => '#f87171',
-                        ],
-                    ],
-                    'heightClass' => 'min-h-[310px]',
-                ],
+
                 [
                     'id' => 'cash-flow',
                     'title' => 'Arus Kas',
