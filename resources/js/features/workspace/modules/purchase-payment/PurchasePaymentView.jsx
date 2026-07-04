@@ -57,10 +57,11 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, level
                     onPerPageChange: setPerPage,
                 },
                     refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
+                onRefresh: reload,
                 },
             };
         },
-        [loading, page.purchasePayment, rows, total],
+        [loading, page.purchasePayment, rows, total, reload],
     );
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);

@@ -56,9 +56,10 @@ export default function ItemRequestView({ page, mode, activeLevel2Tab, level2Tab
                     onPerPageChange: setPerPage,
                 },
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
+                onRefresh: reload,
             },
         };
-    }, [loading, page.itemRequest, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [loading, page.itemRequest, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
 
     const buildRecord = useCallback((row) => {
         if (row?.__backendRecord) {

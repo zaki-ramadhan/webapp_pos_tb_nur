@@ -55,9 +55,10 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
                 },
                 emptyLabel: error || page.expenseEntry.table?.emptyLabel,
                 refreshLabel: loading ? 'Memuat data...' : page.expenseEntry.table?.refreshLabel,
+                onRefresh: reload,
             },
         };
-    }, [error, loading, page.expenseEntry, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [error, loading, page.expenseEntry, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

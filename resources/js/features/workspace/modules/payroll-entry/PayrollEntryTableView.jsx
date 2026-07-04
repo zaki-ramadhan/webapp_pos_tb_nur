@@ -27,6 +27,8 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
             refreshButton={{
                 label: table.refreshLabel,
                 icon: <RefreshIcon className="h-5 w-5" />,
+                onClick: table.onRefresh,
+                loading: table.loading,
             }}
             printButton={{
                 label: table.printLabel,

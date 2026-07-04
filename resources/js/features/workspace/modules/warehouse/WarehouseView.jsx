@@ -107,6 +107,7 @@ export default function WarehouseView({
                 rows: rows.map(mapWarehouseTableRow),
                 pageValue: total.toLocaleString('id-ID'),
                 refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
+                onRefresh: reload,
                 pagination: {
                     page: currentPage,
                     perPage,
@@ -119,7 +120,7 @@ export default function WarehouseView({
                 },
             },
         };
-    }, [loading, page.warehouse, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [loading, page.warehouse, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
 
     const handlePersist = useCallback((record) => {
         setFetchedDetailRow({ ...record, __source: 'backend' });

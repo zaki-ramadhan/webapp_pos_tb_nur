@@ -54,10 +54,11 @@ export default function GeneralJournalView({ page, mode, activeLevel2Tab, level2
                     onPerPageChange: setPerPage,
                 },
                     refreshLabel: loading ? 'Memuat data...' : page.generalJournal.table?.refreshLabel,
+                onRefresh: reload,
                 },
             };
         },
-        [error, loading, page.generalJournal, rows, total],
+        [error, loading, page.generalJournal, rows, total, reload],
     );
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);

@@ -56,9 +56,10 @@ export default function SalesReceiptView({ page, mode, activeLevel2Tab, level2Ta
                     onPerPageChange: setPerPage,
                 },
                 refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
+                onRefresh: reload,
             },
         };
-    }, [loading, page.salesReceipt, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+    }, [loading, page.salesReceipt, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 
