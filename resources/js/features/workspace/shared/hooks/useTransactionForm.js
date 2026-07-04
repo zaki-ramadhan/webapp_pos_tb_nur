@@ -73,14 +73,14 @@ export function useTransactionForm({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-    async function selectLookup(resource, title, onApply, labelBuilder = buildLookupLabel) {
+    async function selectLookup(resource, title, onApply, labelBuilder = buildLookupLabel, queryParams = {}) {
         try {
-            const record = await promptSelectBackendRecord(resource, title, labelBuilder);
-
+            const record = await promptSelectBackendRecord(resource, title, labelBuilder, queryParams);
+ 
             if (!record) {
                 return;
             }
-
+ 
             onApply(record);
             setStatus({ tone: '', message: '' });
         } catch (error) {

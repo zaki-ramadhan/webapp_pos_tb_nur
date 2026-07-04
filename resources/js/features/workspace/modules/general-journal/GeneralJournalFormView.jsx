@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -79,34 +79,6 @@ export default function GeneralJournalFormView({
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
-    const dockActions = useMemo(
-        () =>
-            (config.dockActions ?? [])
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
-                .map((action) => {
-                    if (action.id === 'save') {
-                        return {
-                            ...action,
-                            tone: 'primary',
-                            disabled: saveDisabled,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: handleSave,
-                        };
-                    }
-
-                    if (action.id === 'delete') {
-                        return {
-                            ...action,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: requestDelete,
-                        };
-                    }
-
-                    return action;
-                }),
-        [config.dockActions, isDetail, saveDisabled, saving, values.saveTone],
-    );
-
     useWorkspaceDirtyRegistration({
         pageId,
         tabId: activeLevel2Tab?.id,
@@ -176,7 +148,7 @@ export default function GeneralJournalFormView({
         }
     }
 
-    async function handleSave() {
+    const handleSave = useCallback(async () => {
         if (validationMessage) {
             rejectCrudFormAction(validationMessage, { setStatus });
             return;
@@ -234,15 +206,46 @@ export default function GeneralJournalFormView({
                 }
             },
         });
-    }
+    }, [validationMessage, isDetail, values, config, onRefresh, activeLevel2Tab, pageId, onOpenDetail]);
 
-    function requestDelete() {
+    const requestDelete = useCallback(() => {
         if (!values.__backendRecordId || saving) {
             return;
         }
 
         setDeleteConfirmationOpen(true);
-    }
+    }, [values.__backendRecordId, saving]);
+
+    const isExternalTransaction = values.transactionTypeValue && values.transactionTypeValue !== 'general-journal';
+
+    const dockActions = useMemo(
+        () =>
+            (config.dockActions ?? [])
+                .filter((action) => (isDetail ? true : action.id !== 'delete'))
+                .map((action) => {
+                    if (action.id === 'save') {
+                        return {
+                            ...action,
+                            tone: 'primary',
+                            disabled: saveDisabled || isExternalTransaction,
+                            label: saving ? 'Memproses...' : action.label,
+                            onClick: handleSave,
+                        };
+                    }
+
+                    if (action.id === 'delete') {
+                        return {
+                            ...action,
+                            disabled: isExternalTransaction,
+                            label: saving ? 'Memproses...' : action.label,
+                            onClick: requestDelete,
+                        };
+                    }
+
+                    return action;
+                }),
+        [config.dockActions, isDetail, saveDisabled, saving, handleSave, requestDelete, isExternalTransaction],
+    );
 
     async function handleDelete() {
         if (!values.__backendRecordId) {

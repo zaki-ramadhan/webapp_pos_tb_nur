@@ -86,7 +86,7 @@ export function validateJournalValues(values, config) {
 
     const totals = buildJournalTotals(values.lineItems ?? []);
 
-    if (totals.debitAmount !== totals.creditAmount) {
+    if (Math.abs(totals.debitAmount - totals.creditAmount) >= 0.01) {
         return 'Total debit dan kredit harus seimbang.';
     }
 

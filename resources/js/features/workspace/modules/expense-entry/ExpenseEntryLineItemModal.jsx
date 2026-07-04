@@ -29,9 +29,9 @@ export default function ExpenseEntryLineItemModal({
             setLineModalTab('rincian');
             if (lineModalCurrentItem) {
                 setLineModalValues({
-                    accountCode: lineModalCurrentItem.accountCode ?? '',
+                    accountCode: lineModalCurrentItem.account ?? lineModalCurrentItem.accountCode ?? '',
                     accountName: lineModalCurrentItem.accountName ?? '',
-                    amount: formatCurrencyValue(lineModalCurrentItem.amountRaw ?? 0),
+                    amount: lineModalCurrentItem.amount ?? '',
                     notes: lineModalCurrentItem.notes ?? '',
                 });
             } else if (lineModalRecord) {
@@ -93,7 +93,6 @@ export default function ExpenseEntryLineItemModal({
                                 variant="secondary"
                                 size="md"
                                 onClick={handleLineModalDelete}
-                                className="border-red-150 hover:bg-danger-border text-error-border font-semibold"
                             >
                                 Hapus
                             </Button>
@@ -105,20 +104,19 @@ export default function ExpenseEntryLineItemModal({
                         variant="primary"
                         size="md"
                         onClick={handleLineModalSubmit}
-                        className="bg-brand-blue-dark hover:bg-brand-blue-darker font-semibold shadow-btn-blue-hover"
                     >
                         Lanjut
                     </Button>
                 </div>
             }
         >
-            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
+            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mt-2.5 mb-3">
                 <button
                     type="button"
                     onClick={() => setLineModalTab('rincian')}
-                    className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                    className={`px-5 py-2.5 text-sm font-normal border-b-2 -mb-[1px] transition-colors duration-150 cursor-pointer ${
                         lineModalTab === 'rincian'
-                            ? 'border-pink-accent text-pink-accent'
+                            ? 'border-pink-accent text-pink-accent font-normal'
                             : 'border-transparent text-slate-500 hover:text-slate-700'
                     }`}
                 >
@@ -127,9 +125,9 @@ export default function ExpenseEntryLineItemModal({
                 <button
                     type="button"
                     onClick={() => setLineModalTab('info')}
-                    className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                    className={`px-5 py-2.5 text-sm font-normal border-b-2 -mb-[1px] transition-colors duration-150 cursor-pointer ${
                         lineModalTab === 'info'
-                            ? 'border-pink-accent text-pink-accent'
+                            ? 'border-pink-accent text-pink-accent font-normal'
                             : 'border-transparent text-slate-500 hover:text-slate-700'
                     }`}
                 >

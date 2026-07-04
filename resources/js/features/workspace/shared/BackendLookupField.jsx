@@ -10,6 +10,7 @@ export default function BackendLookupField({
     searchLabel = 'Cari data',
     getOptionLabel = (option) => option?.label ?? option?.name ?? '',
     getOptionSearchText = (option) => getOptionLabel(option),
+    renderOption = null,
     queryParams = {},
     onSelect,
     onRemove,
@@ -65,6 +66,7 @@ export default function BackendLookupField({
                 searching={searching}
                 getOptionLabel={getOptionLabel}
                 getOptionSearchText={getOptionSearchText}
+                renderOption={renderOption}
                 onSelect={onSelect}
                 onRemove={(label) => {
                     const item = values.find((val) => getOptionLabel(val) === label);

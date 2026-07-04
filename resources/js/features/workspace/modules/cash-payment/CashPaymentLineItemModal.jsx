@@ -174,7 +174,6 @@ export default function CashPaymentLineItemModal({
                             onClick={() => {
                                 onSave({ action: 'delete' });
                             }}
-                            className="border-red-150 hover:bg-danger-border text-error-border font-medium"
                         >
                             Hapus
                         </Button>
@@ -185,7 +184,6 @@ export default function CashPaymentLineItemModal({
                         variant="primary"
                         size="md"
                         onClick={handleSave}
-                        className="bg-brand-blue-dark hover:bg-brand-blue-darker font-medium shadow-btn-blue-hover"
                     >
                         Lanjut
                     </Button>
@@ -193,7 +191,7 @@ export default function CashPaymentLineItemModal({
             }
         >
             {/* Tabs */}
-            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
+            <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mt-2.5 mb-3">
                 {tabs.map((tab) => {
                     const active = activeTab === tab.id;
                     return (
@@ -201,9 +199,9 @@ export default function CashPaymentLineItemModal({
                             key={tab.id}
                             type="button"
                             onClick={() => setActiveTab(tab.id)}
-                            className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
+                            className={`px-5 py-2.5 text-sm font-normal border-b-2 -mb-[1px] transition-colors duration-150 cursor-pointer ${
                                 active
-                                    ? 'border-pink-accent text-pink-accent'
+                                    ? 'border-pink-accent text-pink-accent font-normal'
                                     : 'border-transparent text-slate-500 hover:text-slate-700'
                             }`}
                         >
@@ -231,7 +229,8 @@ export default function CashPaymentLineItemModal({
                                     value={selectedAccount ? buildAccountLookupLabel(selectedAccount) : ''}
                                     placeholder="Cari/Pilih Akun Perkiraan..."
                                     searchLabel="Cari akun perkiraan"
-                                    queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable'] }}
+                                    showType={true}
+                                    queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable', 'Inventory', 'Accumulated Depreciation'] }}
                                     onSelectAccount={(rec) => setSelectedAccount(rec)}
                                     onRemove={() => setSelectedAccount(null)}
                                 />
@@ -310,7 +309,8 @@ export default function CashPaymentLineItemModal({
                                         value={deferredAccount ? buildAccountLookupLabel(deferredAccount) : ''}
                                         placeholder="Cari/Pilih Akun Perkiraan..."
                                         searchLabel="Cari akun penangguhan"
-                                        queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable'] }}
+                                        showType={true}
+                                        queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable', 'Inventory', 'Accumulated Depreciation'] }}
                                         onSelectAccount={(rec) => setDeferredAccount(rec)}
                                         onRemove={() => setDeferredAccount(null)}
                                     />

@@ -96,10 +96,10 @@ export function buildExpenseEntryRow(record) {
         dueDate,
         total: formatCurrencyValue(totalAmount),
         paid: formatCurrencyValue(paidAmount),
-        status: record?.status ?? 'Draft',
+        status: record?.status ?? 'Sedang diproses',
         note: record?.notes ?? '',
         dateFilter: entryDate,
-        statusFilter: record?.status ?? 'Draft',
+        statusFilter: record?.status ?? 'Sedang diproses',
     };
 }
 
@@ -132,7 +132,7 @@ export function buildExpenseEntryRecord(record = {}, config) {
             notes: record.notes ?? '',
             lineLookup: '',
             paidAmount: formatCurrencyLabel(paidAmount),
-            status: record.status ?? 'Draft',
+            status: record.status ?? 'Sedang diproses',
             saveTone: 'muted',
         },
         lineItems,
@@ -192,7 +192,7 @@ export function buildExpenseEntryPayload(values) {
         primary_account_id: values.__liabilityAccountId ?? null,
         document_number: values.documentNumber?.trim() || buildGeneratedExpenseEntryNumber(),
         numbering_type: values.numberingType?.trim() || null,
-        status: values.status?.trim() || 'Draft',
+        status: values.status?.trim() || 'Sedang diproses',
         entry_date: normalizeDisplayDate(values.entryDate) || new Date().toISOString().slice(0, 10),
         due_date: normalizeDisplayDate(values.dueDate) || null,
         notes: values.notes?.trim() || null,

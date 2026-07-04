@@ -2,12 +2,16 @@
 
 namespace App\Domain\Finance\Models;
 
-use App\Domain\Support\Models\ScopedOperationDocument;
+use App\Domain\Support\Models\OperationDocument;
 
-class GeneralJournal extends ScopedOperationDocument
+class GeneralJournal extends OperationDocument
 {
-    protected static function documentType(): string
+    protected static function booted(): void
     {
-        return 'general_journal';
+        static::creating(function (self $record): void {
+            if (! filled($record->document_type)) {
+                $record->document_type = 'general_journal';
+            }
+        });
     }
 }

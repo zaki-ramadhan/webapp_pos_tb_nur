@@ -220,21 +220,21 @@ export default function BankReconciliationWorkspace({
 
     const formatCurrency = (val) => {
         const num = typeof val === 'number' ? val : parseAmount(val);
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+        return new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(num);
     };
 
     const isAccountSelected = keyword.trim().length > 0;
 
-    const [lastKnownBalance, setLastKnownBalance] = useState('Rp 0');
+    const [lastKnownBalance, setLastKnownBalance] = useState('0');
 
     useEffect(() => {
         if (rows && rows.length > 0) {
             const finalRow = rows[rows.length - 1];
             if (finalRow && finalRow.balance) {
-                let num = 0;
                 const cleanStr = String(finalRow.balance).replace(/\./g, '').replace(/,/g, '.');
-                num = parseFloat(cleanStr) || 0;
-                setLastKnownBalance(new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num));
+                const num = parseFloat(cleanStr) || 0;
+                const formatted = new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(num);
+                setLastKnownBalance(formatted);
             }
         }
     }, [rows]);

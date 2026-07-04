@@ -57,20 +57,56 @@ export function buildGeneralJournalFilters(baseFilters = [], rows = []) {
 }
 
 export function buildGeneralJournalRow(record) {
+    const documentType = record?.document_type ?? 'general_journal';
     const lines = Array.isArray(record?.lines) ? record.lines : [];
-    const debitAmount = lines.reduce((sum, line) => sum + Number(line?.debit_amount ?? 0), 0);
-    const creditAmount = lines.reduce((sum, line) => sum + Number(line?.credit_amount ?? 0), 0);
-    const totalAmount = Math.max(debitAmount, creditAmount, Number(record?.total_amount ?? 0));
-    const metadata = record?.metadata ?? {};
-    const transactionTypeLabel = metadata.transaction_type_label ?? 'Jurnal Umum';
-    const transactionTypeValue = metadata.transaction_type_value ?? record?.process_type ?? 'general-journal';
+    
+    let transactionTypeValue = record?.metadata?.transaction_type_value ?? record?.process_type ?? documentType;
+    transactionTypeValue = String(transactionTypeValue).replace(/_/g, '-');
+    if (transactionTypeValue === 'general-journals') transactionTypeValue = 'general-journal';
+    if (transactionTypeValue === 'expense-entries') transactionTypeValue = 'expense-entry';
+    if (transactionTypeValue === 'payroll-entries') transactionTypeValue = 'payroll-entry';
+
+    const TYPE_LABEL_MAP = {
+        'general-journal': 'Jurnal Umum',
+        'expense-entry': 'Pencatatan Beban',
+        'payroll-entry': 'Pencatatan Gaji',
+        'cash-payment': 'Pembayaran Kas',
+        'cash-receipt': 'Penerimaan Kas',
+        'bank-transfer': 'Transfer Bank',
+        'period-end': 'Proses Akhir Bulan',
+        'purchase-invoice': 'Pembelian',
+        'sales-invoice': 'Penjualan',
+    };
+
+    const transactionTypeLabel = record?.metadata?.transaction_type_label ?? TYPE_LABEL_MAP[transactionTypeValue] ?? 'Jurnal Umum';
     const entryDate = formatIsoDate(record?.entry_date);
+
+    let debitAmount = 0;
+    let creditAmount = 0;
+
+    if (documentType === 'general_journal') {
+        debitAmount = lines.reduce((sum, line) => sum + Number(line?.debit_amount ?? 0), 0);
+        creditAmount = lines.reduce((sum, line) => sum + Number(line?.credit_amount ?? 0), 0);
+    } else {
+        const totalVal = Number(record?.total_amount ?? 0);
+        debitAmount = totalVal;
+        creditAmount = totalVal;
+    }
+
+    const totalAmount = Math.max(debitAmount, creditAmount, Number(record?.total_amount ?? 0));
+
+    let docNum = record?.document_number ?? '';
+    if (documentType !== 'general_journal' && docNum && !docNum.startsWith('JV')) {
+        docNum = `JV.${docNum}`;
+    }
 
     return {
         id: String(record?.id ?? ''),
         __backendRecord: record,
-        documentNumber: record?.document_number ?? '',
-        transactionNumber: metadata.transaction_number ?? record?.reference_number ?? record?.document_number ?? '',
+        documentNumber: docNum,
+        transactionNumber: transactionTypeValue === 'general-journal'
+            ? (record?.reference_number || '-')
+            : (record?.metadata?.transaction_number || record?.reference_number || record?.document_number || String(record?.id || '')),
         date: entryDate,
         description: record?.notes ?? '',
         total: formatCurrencyValue(totalAmount),
@@ -83,28 +119,97 @@ export function buildGeneralJournalRow(record) {
 }
 
 export function buildJournalRecordFromBackend(record = {}, config) {
-    const lineItems = (record.lines ?? []).map((line, index) => ({
-        id: String(line.id ?? `line-${index + 1}`),
-        __lineId: line.id ?? null,
-        __accountId: line.account_id ?? null,
-        accountCode: line.account?.code ?? line.reference_code ?? '',
-        accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
-        debit: formatCurrencyValue(line.debit_amount ?? 0),
-        credit: formatCurrencyValue(line.credit_amount ?? 0),
-        notes: line.description && line.description !== line.account?.name ? line.description : '',
-    }));
+    const documentType = record.document_type || 'general_journal';
+    let lineItems = [];
+
+    if (documentType === 'general_journal') {
+        lineItems = (record.lines ?? []).map((line, index) => ({
+            id: String(line.id ?? `line-${index + 1}`),
+            __lineId: line.id ?? null,
+            __accountId: line.account_id ?? null,
+            accountCode: line.account?.code ?? line.reference_code ?? '',
+            accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Baris ${index + 1}`,
+            debit: formatCurrencyValue(line.debit_amount ?? 0),
+            credit: formatCurrencyValue(line.credit_amount ?? 0),
+            notes: line.description && line.description !== line.account?.name ? line.description : '',
+        }));
+    } else {
+        const rawLines = record.lines ?? [];
+        const isExpense = documentType === 'expense_entry';
+        const isPayroll = documentType === 'payroll_entry';
+
+        let totalSum = 0;
+        rawLines.forEach((line, index) => {
+            const amount = Number(line.total_amount ?? 0);
+            totalSum += amount;
+
+            lineItems.push({
+                id: String(line.id ?? `line-${index + 1}`),
+                __lineId: line.id ?? null,
+                __accountId: line.account_id ?? null,
+                accountCode: line.account?.code ?? line.reference_code ?? '',
+                accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Rincian ${index + 1}`,
+                debit: isExpense || isPayroll ? formatCurrencyValue(amount) : '0',
+                credit: isExpense || isPayroll ? '0' : formatCurrencyValue(amount),
+                notes: line.description || '',
+            });
+        });
+
+        const primaryAcc = record.primary_account;
+        const secondaryAcc = record.secondary_account;
+        const balancingAcc = isPayroll ? (secondaryAcc || primaryAcc) : (primaryAcc || secondaryAcc);
+
+        if (balancingAcc) {
+            lineItems.push({
+                id: `balancing-${record.id}`,
+                __lineId: null,
+                __accountId: balancingAcc.id ?? null,
+                accountCode: balancingAcc.code ?? '',
+                accountName: balancingAcc.name ?? 'Akun Penyeimbang',
+                debit: isExpense || isPayroll ? '0' : formatCurrencyValue(totalSum),
+                credit: isExpense || isPayroll ? formatCurrencyValue(totalSum) : '0',
+                notes: 'Penyeimbang Transaksi Otomatis',
+            });
+        }
+    }
     const metadata = record.metadata ?? {};
+    let transactionTypeValue = metadata.transaction_type_value ?? record.process_type ?? documentType;
+    transactionTypeValue = String(transactionTypeValue).replace(/_/g, '-');
+    if (transactionTypeValue === 'general-journals') transactionTypeValue = 'general-journal';
+    if (transactionTypeValue === 'expense-entries') transactionTypeValue = 'expense-entry';
+    if (transactionTypeValue === 'payroll-entries') transactionTypeValue = 'payroll-entry';
+
+    const TYPE_LABEL_MAP = {
+        'general-journal': 'Jurnal Umum',
+        'expense-entry': 'Pencatatan Beban',
+        'payroll-entry': 'Pencatatan Gaji',
+        'cash-payment': 'Pembayaran Kas',
+        'cash-receipt': 'Penerimaan Kas',
+        'bank-transfer': 'Transfer Bank',
+        'period-end': 'Proses Akhir Bulan',
+        'purchase-invoice': 'Pembelian',
+        'sales-invoice': 'Penjualan',
+    };
+
+    const transactionTypeLabel = metadata.transaction_type_label ?? TYPE_LABEL_MAP[transactionTypeValue] ?? 'Jurnal Umum';
+
+    let docNum = record.document_number ?? '';
+    if (documentType !== 'general_journal' && docNum && !docNum.startsWith('JV')) {
+        docNum = `JV.${docNum}`;
+    }
 
     return applyJournalLineItems(
         {
             __backendRecordId: record.id ?? null,
-            documentNumber: record.document_number ?? '',
-            transactionNumber: metadata.transaction_number ?? record.reference_number ?? record.document_number ?? '',
+            documentNumber: docNum,
+            transactionNumber: transactionTypeValue === 'general-journal'
+                ? (record.reference_number || '')
+                : (metadata.transaction_number || record.reference_number || record.document_number || String(record.id || '')),
             entryDate: formatIsoDate(record.entry_date),
             autoNumber: false,
             numberingType: record.numbering_type ?? config.defaults?.numberingType ?? '',
-            transactionType: metadata.transaction_type_label ?? config.defaults?.transactionType ?? 'Jurnal Umum',
-            transactionTypeValue: metadata.transaction_type_value ?? record.process_type ?? 'general-journal',
+            transactionType: transactionTypeLabel,
+            transactionTypeValue: transactionTypeValue,
             __branchId: record.branch_id ?? null,
             branches: record.branch?.name ? [record.branch.name] : [],
             notes: record.notes ?? '',

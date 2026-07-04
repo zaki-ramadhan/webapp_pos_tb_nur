@@ -261,18 +261,17 @@ export default function CashPaymentFormView({
                     : await getBackendResource('expense-entries', record.id);
                 
                 if (!fullRecord) continue;
-                const lines = fullRecord.lines ?? [];
-                
-                const importedLines = lines.map((line, index) => ({
-                    id: `imported-expense-line-${index + 1}-${Date.now()}-${Math.random()}`,
+                const liabilityAccount = fullRecord.primary_account;
+                const importedLine = {
+                    id: `imported-expense-line-${fullRecord.id}-${Date.now()}-${Math.random()}`,
                     __lineId: null,
-                    __accountId: line.account_id ?? null,
-                    accountCode: line.account?.code ?? line.reference_code ?? '',
-                    accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Beban ${index + 1}`,
-                    amount: formatCurrencyValue(line.total_amount ?? 0),
-                }));
+                    __accountId: liabilityAccount?.id ?? fullRecord.primary_account_id ?? null,
+                    accountCode: liabilityAccount?.code ?? '',
+                    accountName: liabilityAccount?.name ?? 'Utang Beban',
+                    amount: formatCurrencyValue(fullRecord.total_amount ?? 0),
+                };
 
-                allImportedLines.push(...importedLines);
+                allImportedLines.push(importedLine);
                 if (fullRecord.notes?.trim()) {
                     appendedNotes.push(fullRecord.notes.trim());
                 }
@@ -312,6 +311,14 @@ export default function CashPaymentFormView({
             });
         }
     }
+
+    useEffect(() => {
+        if (!isDetail && window.__pendingImportExpenseEntry) {
+            const pending = window.__pendingImportExpenseEntry;
+            window.__pendingImportExpenseEntry = null;
+            handleApplyExpenseEntries([pending]);
+        }
+    }, [isDetail]);
 
     async function handleApplyPayrollEntries(selectedRecords) {
         try {
@@ -379,12 +386,17 @@ export default function CashPaymentFormView({
     const handlers = useMemo(
         () => ({
             onSelectBankAccount: () =>
-                selectLookup('accounts', 'kas atau bank', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __primaryAccountId: record.id,
-                        bankAccounts: [buildLookupLabel(record)],
-                    })),
+                selectLookup(
+                    'accounts',
+                    'kas atau bank',
+                    (record) =>
+                        setValues((current) => ({
+                            ...current,
+                            __primaryAccountId: record.id,
+                            bankAccounts: [buildLookupLabel(record)],
+                        })),
+                    buildLookupLabel,
+                    { account_type: 'Cash/Bank' }
                 ),
             onRemoveBankAccount: () =>
                 setValues((current) => ({

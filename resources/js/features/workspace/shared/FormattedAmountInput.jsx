@@ -12,7 +12,7 @@ export default function FormattedAmountInput({
     const formattedValue = formatAmountInput(value || '0', { allowDecimal, allowNegative });
 
     function handleChange(event) {
-        const nextValue = formatAmountInput(event.target.value, { allowDecimal, allowNegative });
+        const nextValue = formatAmountInput(event.target.value, { allowDecimal, allowNegative, isInput: true });
 
         onChange?.({
             target: {

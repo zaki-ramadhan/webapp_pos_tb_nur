@@ -9,7 +9,7 @@ import {
     listBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 
-function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve, onDestroy }) {
+function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve, onDestroy, queryParams = {} }) {
     const [open, setOpen] = useState(true);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
@@ -33,6 +33,8 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
         }, 300);
     }
 
+    const queryParamsStr = JSON.stringify(queryParams);
+
     useEffect(() => {
         let ignore = false;
         setLoading(true);
@@ -43,6 +45,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                 const payload = await listBackendResource(resource, {
                     search: query.trim(),
                     per_page: 15,
+                    ...queryParams,
                 });
                 if (!ignore) {
                     setRows(extractBackendRows(payload));
@@ -63,7 +66,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
             ignore = true;
             clearTimeout(timeoutId);
         };
-    }, [query, resource, title]);
+    }, [query, resource, title, queryParamsStr]);
 
     return (
         <WorkspaceDialog
@@ -124,7 +127,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
     );
 }
 
-export function promptSelectBackendRecord(resource, title, labelBuilder) {
+export function promptSelectBackendRecord(resource, title, labelBuilder, queryParams = {}) {
     return new Promise((resolve) => {
         const div = document.createElement('div');
         document.body.appendChild(div);
@@ -142,6 +145,7 @@ export function promptSelectBackendRecord(resource, title, labelBuilder) {
                 labelBuilder={labelBuilder}
                 resolve={resolve}
                 onDestroy={onDestroy}
+                queryParams={queryParams}
             />
         );
     });

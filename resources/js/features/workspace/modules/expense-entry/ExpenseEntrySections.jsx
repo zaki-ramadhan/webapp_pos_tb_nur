@@ -38,6 +38,8 @@ export function ExpenseLineItemsSection({ config, values, setValues, handlers = 
                     placeholder={config.lineSearchPlaceholder}
                     searchLabel="Cari akun rincian beban"
                     dialogTitle="Pilih Akun Rincian Beban"
+                    showType={true}
+                    queryParams={{ account_type: ['Expense', 'Other Expense', 'Cost of Sales'] }}
                     onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
                 />
             }
@@ -113,11 +115,15 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
 
     const handleProcessPembayaran = async () => {
         setProcessOpen(false);
-        await showSystemErrorModal({
-            title: 'Terjadi Permasalahan pada Pemrosesan',
-            description: 'Silakan perbaiki permasalahan berikut ini:',
-            message: 'Data tidak ditemukan atau sudah dihapus',
-        });
+        if (values.__backendRecordId) {
+            handlers.onProcessPembayaran?.(values);
+        } else {
+            await showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: 'Data tidak ditemukan atau sudah dihapus',
+            });
+        }
     };
 
     return (
@@ -131,6 +137,8 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                             values={values.liabilityAccounts}
                             placeholder={config.liabilityAccountPlaceholder}
                             dialogTitle="Pilih Akun Hutang Beban"
+                            showType={true}
+                            queryParams={{ account_type: ['Payable', 'Other Current Liability'] }}
                             onRemove={(value) =>
                                 handlers.onRemoveLiabilityAccount
                                     ? handlers.onRemoveLiabilityAccount(value)
@@ -210,7 +218,7 @@ export function ExpenseEntryHeader({ config, values, setValues, showAutoNumberSw
                                 className="inline-flex h-[34px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent"
                             >
                                 <span>{config.processButtonLabel || 'Proses'}</span>
-                                <ChevronDownIcon className="h-4 w-4" />
+                                <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} />
                             </button>
                             <DropdownMenu
                                 open={processOpen}

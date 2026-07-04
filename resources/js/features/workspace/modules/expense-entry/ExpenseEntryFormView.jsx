@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ExpenseEntryLineItemModal from './ExpenseEntryLineItemModal';
@@ -96,34 +96,6 @@ export default function ExpenseEntryFormView({
 
     const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
-    const dockActions = useMemo(() => {
-        const baseActions = config.dockActions ?? [];
-
-        return baseActions
-            .filter((action) => (isDetail ? true : action.id !== 'delete'))
-            .map((action) => {
-                if (action.id === 'save') {
-                    return {
-                        ...action,
-                        tone: 'primary',
-                        disabled: saveDisabled,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: onSave,
-                    };
-                }
-
-                if (action.id === 'delete') {
-                    return {
-                        ...action,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: onRequestDelete,
-                    };
-                }
-
-                return action;
-            });
-    }, [config.dockActions, isDetail, saveDisabled, saving, values.saveTone]);
-
     useWorkspaceDirtyRegistration({
         pageId,
         tabId: activeLevel2Tab?.id,
@@ -175,7 +147,7 @@ export default function ExpenseEntryFormView({
         );
     }
 
-    async function onSave() {
+    const onSave = useCallback(async () => {
         await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui pencatatan beban.' : 'Sedang menyimpan pencatatan beban.',
             successMessage: isDetail ? 'Pencatatan beban berhasil diperbarui.' : 'Pencatatan beban berhasil dibuat.',
@@ -225,14 +197,42 @@ export default function ExpenseEntryFormView({
                 }
             },
         });
-    }
+    }, [isDetail, values, buildRecord, config, onRefresh, activeLevel2Tab, pageId, onOpenDetail, handleSave]);
 
-    function onRequestDelete() {
+    const onRequestDelete = useCallback(() => {
         if (!values.__backendRecordId) {
             return;
         }
         requestDelete();
-    }
+    }, [values.__backendRecordId, requestDelete]);
+
+    const dockActions = useMemo(() => {
+        const baseActions = config.dockActions ?? [];
+
+        return baseActions
+            .filter((action) => (isDetail ? true : action.id !== 'delete'))
+            .map((action) => {
+                if (action.id === 'save') {
+                    return {
+                        ...action,
+                        tone: 'primary',
+                        disabled: saveDisabled,
+                        label: saving ? 'Memproses...' : action.label,
+                        onClick: onSave,
+                    };
+                }
+
+                if (action.id === 'delete') {
+                    return {
+                        ...action,
+                        label: saving ? 'Memproses...' : action.label,
+                        onClick: onRequestDelete,
+                    };
+                }
+
+                return action;
+            });
+    }, [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]);
 
     async function onDelete() {
         if (!values.__backendRecordId) {
@@ -285,6 +285,20 @@ export default function ExpenseEntryFormView({
                 return;
             }
             openLineModal(null, item);
+        },
+        onProcessPembayaran: (formValues) => {
+            if (!formValues.__backendRecordId) return;
+
+            window.__pendingImportExpenseEntry = { id: formValues.__backendRecordId };
+
+            window.dispatchEvent(
+                new CustomEvent('workspace:open-page', {
+                    detail: {
+                        pageId: 'cash-payment',
+                        targetTabId: 'cash-payment-create',
+                    },
+                })
+            );
         },
     };
 

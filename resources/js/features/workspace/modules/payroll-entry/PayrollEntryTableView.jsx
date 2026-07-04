@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import Pagination from '@/components/ui/Pagination';
 
 import SelectField from '@/components/ui/SelectField';
@@ -119,6 +120,13 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
             );
         });
     }, [config.table.columns, config.table.filters, config.table.rows, filters, keyword]);
+
+    useEffect(() => {
+        tableRegistry.setActiveTable(config.table.columns, filteredRows, 'payroll-entries');
+        return () => {
+            tableRegistry.setActiveTable(null, null, null);
+        };
+    }, [config.table.columns, filteredRows]);
 
     return (
         <div className="flex min-h-full flex-col gap-3">

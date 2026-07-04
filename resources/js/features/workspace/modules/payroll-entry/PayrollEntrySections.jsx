@@ -2,7 +2,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
+import BackendLookupTextInput from '@/features/workspace/shared/BackendLookupTextInput';
 import {
     TransactionDataTable,
     TransactionDateInput,
@@ -136,9 +136,9 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake, hand
             <div className="flex flex-col gap-3 pb-1.5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="w-full sm:max-w-[360px]">
-                        <BackendLookupField
+                        <BackendLookupTextInput
                             resource="employees"
-                            values={[]}
+                            value={values.employeeLookup}
                             placeholder={config.employeeLookupPlaceholder}
                             searchLabel="Cari karyawan"
                             getOptionLabel={(record) => record?.full_name ?? ''}
@@ -147,9 +147,19 @@ export function PayrollEmployeeSection({ config, values, setValues, onTake, hand
                                     .filter(Boolean)
                                     .join(' ')
                             }
+                            renderOption={(record) => (
+                                <div className="min-w-0 flex-1">
+                                    <span className="block truncate text-sm font-normal text-brand-dark">
+                                        {record?.full_name ?? record?.name ?? ''}
+                                    </span>
+                                    <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
+                                        <span className="truncate text-brand-dark font-normal">
+                                            {record?.employee_code ?? record?.code ?? String(record?.id ?? '')}
+                                        </span>
+                                    </span>
+                                </div>
+                            )}
                             onSelect={handlers.onSelectEmployee}
-                            emptyTitle="Karyawan tidak ditemukan"
-                            emptyDescription="Coba cari dengan nama atau jabatan lain."
                             className="h-[40px]"
                         />
                     </div>
@@ -198,7 +208,7 @@ export function PayrollAdditionalInfoSection({ config, values, setValues }) {
     return (
         <div className="min-h-0">
             <div className="lg:max-w-[50%] w-full">
-                <TransactionSectionHeading title={config.additionalInfoTitle} icon="form" />
+                <TransactionSectionHeading title={config.additionalInfoTitle} icon="info" />
 
                 <div className="mt-4 grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-start pl-3 sm:pl-5">
                     <TransactionFieldLabel label={config.additionalInfoFields.liabilityAccountLabel} required />

@@ -6,8 +6,8 @@ function DocumentModalTabButton({ active, label, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs font-medium cursor-pointer select-none max-w-[120px] sm:max-w-[160px] md:max-w-[200px] ${
-                active ? 'border-illustration-danger-bg text-illustration-danger-bg' : 'border-transparent text-tab-view-active-text'
+            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs font-normal cursor-pointer select-none max-w-[120px] sm:max-w-[160px] md:max-w-[200px] -mb-[1px] ${
+                active ? 'border-illustration-danger-bg text-illustration-danger-bg font-normal' : 'border-transparent text-tab-view-active-text'
             }`.trim()}
         >
             <span className="block truncate">{label}</span>
@@ -21,14 +21,14 @@ export function DocumentModalFooter({ deleteLabel = 'Hapus', submitLabel = 'Lanj
             <button
                 type="button"
                 onClick={onDelete}
-                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs font-medium text-brand-blue-accent"
+                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-slate-300 bg-white px-5 text-sm font-normal text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition cursor-pointer"
             >
                 {deleteLabel}
             </button>
             <button
                 type="button"
                 onClick={onSubmit}
-                className="inline-flex h-8 items-center justify-center rounded-[4px] border border-import-action-blue bg-import-action-blue px-4 text-xs font-medium text-white"
+                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-5 text-sm font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary"
             >
                 {submitLabel}
             </button>
@@ -62,7 +62,7 @@ export default function DocumentModalLayout({
                         <PencilIcon className="h-4 w-4 text-white" />
                         <h2 className="text-sm font-medium">{title}</h2>
                     </div>
-
+ 
                     <button
                         type="button"
                         onClick={onClose}
@@ -73,10 +73,10 @@ export default function DocumentModalLayout({
                     </button>
                 </div>
             </div>
-
+ 
             <div className="bg-white px-4 pb-4 pt-3">
                 {tabs?.length ? (
-                    <div className="flex flex-wrap border-b border-ui-border-medium">
+                    <div className="flex flex-wrap border-b border-ui-border-medium mt-2 mb-3">
                         {tabs.map((tab) => (
                             <DocumentModalTabButton
                                 key={tab.id}

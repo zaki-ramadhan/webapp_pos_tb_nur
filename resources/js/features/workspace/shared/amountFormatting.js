@@ -1,12 +1,24 @@
-export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative = false } = {}) {
+export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative = false, isInput = false } = {}) {
     let strValue = String(value ?? '').trim();
 
-    // Strip empty decimal suffixes (.00, ,00, .0, ,0) so they are not shown to lay users
-    strValue = strValue.replace(/[.,]00?$/, '');
+    // Strip empty decimal suffixes (,00, ,0) so they are not shown to lay users
+    if (!isInput) {
+        strValue = strValue.replace(/,00?$/, '');
+    }
 
     // Convert database standard decimal string (e.g. 125000.50) to Indonesian standard (125000,50)
-    if (/^-?\d+\.\d+$/.test(strValue)) {
-        strValue = strValue.replace('.', ',');
+    // Only convert if the dot is a true database decimal dot (not an Indonesian thousand separator)
+    if (!isInput && /^-?\d+\.\d+$/.test(strValue)) {
+        const parts = strValue.split('.');
+        if (parts.length === 2) {
+            const [integerPart, fractionPart] = parts;
+            const cleanInteger = integerPart.replace(/^-/, '');
+            if (fractionPart.length < 3 || cleanInteger.length > 3) {
+                strValue = strValue.replace('.', ',');
+                // Strip empty decimal suffixes that were converted from database decimals
+                strValue = strValue.replace(/,00?$/, '');
+            }
+        }
     }
 
     let normalizedValue = strValue
@@ -61,7 +73,7 @@ export function formatAmountInput(value, options = {}) {
 }
 
 export function parseAmountInput(value, { allowDecimal = true, allowNegative = false, emptyValue = null } = {}) {
-    const sanitizedValue = sanitizeAmountInput(value, { allowDecimal, allowNegative });
+    const sanitizedValue = sanitizeAmountInput(value, { allowDecimal, allowNegative, isInput: true });
 
     if (!sanitizedValue || sanitizedValue === '-') {
         return emptyValue;

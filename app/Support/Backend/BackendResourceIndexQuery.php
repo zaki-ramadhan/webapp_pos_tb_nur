@@ -71,8 +71,16 @@ class BackendResourceIndexQuery
             }
         }
 
+        if ($tableName === 'accounts') {
+            $query->orderBy("{$tableName}.code", 'asc');
+        } elseif (Schema::hasColumn($tableName, 'name')) {
+            $query->orderBy("{$tableName}.name", 'asc')
+                  ->orderBy("{$tableName}.id", 'asc');
+        } else {
+            $query->orderByDesc("{$tableName}.id");
+        }
+
         return $query
-            ->orderByDesc('id')
             ->paginate($perPage)
             ->withQueryString();
     }

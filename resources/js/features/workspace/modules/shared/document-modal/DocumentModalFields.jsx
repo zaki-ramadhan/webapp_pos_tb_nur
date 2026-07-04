@@ -63,7 +63,7 @@ export function ReadonlyDocumentTextarea({ value, rows = 3, className = '' }) {
             value={value}
             readOnly
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none ${className}`.trim()}
+            className={`w-full resize-y rounded-[4px] border border-ui-border px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none ${className}`.trim()}
         />
     );
 }

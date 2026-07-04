@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { tableRegistry } from '@/features/workspace/shared/columnVisibility';
 import Pagination from '@/components/ui/Pagination';
 
 
@@ -66,6 +67,13 @@ export default function ExpenseEntryTableView({
         });
     }, [config.table.columns, config.table.filters, config.table.rows, filters, keyword]);
 
+    useEffect(() => {
+        tableRegistry.setActiveTable(config.table.columns, filteredRows, 'expense-entries');
+        return () => {
+            tableRegistry.setActiveTable(null, null, null);
+        };
+    }, [config.table.columns, filteredRows]);
+
     return (
         <div className="flex min-h-full flex-col gap-3">
             <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -84,16 +92,6 @@ export default function ExpenseEntryTableView({
                         onClick: onRefresh,
                         loading,
                     }}
-                    rightControls={
-                        <>
-                            <TransactionToolbarIconButton label={config.table.downloadLabel}>
-                                <DownloadIcon className="h-4 w-4" />
-                            </TransactionToolbarIconButton>
-                            <TransactionToolbarIconButton label={config.table.printLabel}>
-                                <PrintIcon className="h-4 w-4" />
-                            </TransactionToolbarIconButton>
-                        </>
-                    }
                     menuButton={{
                         label: config.table.settingsLabel,
                         icon: <CogIcon className="h-4 w-4" />,
@@ -108,6 +106,7 @@ export default function ExpenseEntryTableView({
                         trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                     }}
                     pageValue={config.table.pageValue}
+                    resourceName="expense-entries"
                 />
 
                 <div className="mt-3 min-h-0 overflow-x-auto">

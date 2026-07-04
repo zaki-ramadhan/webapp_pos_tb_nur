@@ -21,6 +21,8 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
         ? `${values.lineItems.length} ${config.lineSectionTitle}`
         : config.lineSectionTitle;
 
+    const isManual = values.transactionTypeValue === 'general-journal';
+
     return (
         <TransactionLineItemsSection
             searchValue={values.lineLookup}
@@ -32,22 +34,25 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
             }
             searchPlaceholder={config.lineSearchPlaceholder}
             searchInput={
-                <AccountLookupTextInput
-                    value={values.lineLookup}
-                    placeholder={config.lineSearchPlaceholder}
-                    searchLabel="Cari akun jurnal"
-                    dialogTitle="Pilih Akun Jurnal"
-                    onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
-                />
+                isManual ? (
+                    <AccountLookupTextInput
+                        value={values.lineLookup}
+                        placeholder={config.lineSearchPlaceholder}
+                        searchLabel="Cari akun jurnal"
+                        dialogTitle="Pilih Akun Jurnal"
+                        onSelectAccount={(record) => handlers.onSelectLineAccount?.(record)}
+                        showType={true}
+                    />
+                ) : null
             }
             title={detailTitle}
             columns={config.lineTable.columns}
             rows={values.lineItems}
             emptyLabel={config.lineTable.emptyLabel}
             minWidthClassName="min-w-[820px]"
-            onRowClick={handlers.onEditLineItem}
+            onRowClick={isManual ? handlers.onEditLineItem : undefined}
             getRowClassName={
-                handlers.onEditLineItem
+                isManual && handlers.onEditLineItem
                     ? () => 'cursor-pointer transition hover:bg-workspace-hover-bg'
                     : undefined
             }
@@ -56,6 +61,8 @@ export function JournalLinesSection({ config, values, setValues, handlers = {} }
 }
 
 export function JournalAdditionalInfoSection({ config, values, setValues, handlers = {} }) {
+    const isManual = values.transactionTypeValue === 'general-journal';
+
     return (
         <div className="min-h-0">
             <div className="lg:max-w-[50%] w-full">
@@ -71,6 +78,7 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
                                 notes: event.target.value,
                             }))
                         }
+                        readOnly={!isManual}
                         rows={4}
                         className="border-ui-border"
                         textareaClassName="min-h-[70px] text-xs sm:text-sm text-brand-dark"
@@ -81,9 +89,18 @@ export function JournalAdditionalInfoSection({ config, values, setValues, handle
     );
 }
 
+const PROCESS_PAGE_MAP = {
+    'expense-entry': 'expense-entry',
+    'payroll-entry': 'payroll-entry',
+    'cash-payment': 'cash-payment',
+    'cash-receipt': 'cash-receipt',
+    'bank-transfer': 'bank-transfer',
+    'purchase-invoice': 'purchase-invoice',
+    'sales-invoice': 'sales-invoice',
+    'inventory-adjustment': 'inventory-adjustment',
+};
+
 export function GeneralJournalHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
-
-
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
@@ -146,6 +163,30 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                         </div>
                     </div>
                 </div>
+
+                {values.transactionTypeValue && values.transactionTypeValue !== 'general-journal' && (
+                    <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
+                        <TransactionFieldLabel label="No. Trans" />
+                        <div 
+                            onClick={() => {
+                                const pageId = PROCESS_PAGE_MAP[values.transactionTypeValue] || values.transactionTypeValue;
+                                window.dispatchEvent(
+                                    new CustomEvent('workspace:open-page', {
+                                        detail: {
+                                            pageId: pageId,
+                                            recordId: values.__backendRecordId,
+                                            label: values.transactionNumber || values.documentNumber,
+                                            tabLabel: values.transactionNumber || values.documentNumber,
+                                        },
+                                    })
+                                );
+                            }}
+                            className="flex items-center justify-between px-3 py-2 border rounded-[4px] cursor-pointer bg-emerald-50 border-emerald-600 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-700 transition duration-150 ease-in-out text-xs sm:text-sm font-medium h-[40px]"
+                        >
+                            <span>{values.transactionNumber || values.documentNumber}</span>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

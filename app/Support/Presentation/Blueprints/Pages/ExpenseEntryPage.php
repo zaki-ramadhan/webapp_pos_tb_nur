@@ -115,7 +115,7 @@ class ExpenseEntryPage
                     'lineLookup' => '',
                     'lineItems' => [],
                     'paidAmount' => 'Rp 0',
-                    'status' => 'Draft',
+                    'status' => 'Sedang diproses',
                     'totalValue' => '0',
                     'saveTone' => 'primary',
                 ],

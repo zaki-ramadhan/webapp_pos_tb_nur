@@ -130,9 +130,59 @@ class BackendActivityLogger
 
     protected function resolveDescription(string $action, BackendResourceBlueprint $blueprint, Model $record): string
     {
-        $subject = $this->resolveSubjectLabel($record) ?? $blueprint->label;
+        $actionMap = [
+            'create' => 'Buat',
+            'update' => 'Ubah',
+            'delete' => 'Hapus',
+            'void' => 'Batalkan',
+            'post' => 'Posting',
+            'unpost' => 'Batal Posting',
+            'approve' => 'Setujui',
+            'reject' => 'Tolak',
+        ];
+        $actionStr = $actionMap[strtolower($action)] ?? ucfirst($action);
 
-        return sprintf('%s %s', ucfirst($action), $subject);
+        $resourceMap = [
+            'brands' => 'Merek',
+            'units' => 'Satuan',
+            'products' => 'Barang & Jasa',
+            'expense-entries' => 'Pencatatan Beban',
+            'payroll-entries' => 'Pencatatan Gaji',
+            'accounts' => 'Akun Perkiraan',
+            'bank-inquiries' => 'Rekonsiliasi Bank',
+            'bank-transfers' => 'Transfer Bank',
+            'business-partners' => 'Mitra Bisnis',
+            'cash-payments' => 'Pembayaran Kas & Bank',
+            'cash-receipts' => 'Penerimaan Kas & Bank',
+            'currencies' => 'Mata Uang',
+            'departments' => 'Departemen',
+            'group-accesses' => 'Hak Akses',
+            'inventory-adjustments' => 'Penyesuaian Persediaan',
+            'item-categories' => 'Kategori Barang & Jasa',
+            'item-requests' => 'Permintaan Barang',
+            'salary-allowances' => 'Tunjangan & Gaji',
+            'sales-checkins' => 'Kunjungan Sales',
+            'sales-commissions' => 'Komisi Penjualan',
+            'sales-deposits' => 'Uang Muka Penjualan',
+            'sales-documents' => 'Dokumen Penjualan',
+            'sales-receipts' => 'Penerimaan Penjualan',
+            'supplier-prices' => 'Harga Pemasok',
+            'transaction-approvals' => 'Persetujuan Transaksi',
+            'users-managements' => 'Manajemen Pengguna',
+            'warehouses' => 'Gudang',
+            'users' => 'Pengguna',
+            'employees' => 'Karyawan',
+            'budgets' => 'Anggaran',
+            'general-journals' => 'Jurnal Umum',
+        ];
+
+        $subject = $this->resolveSubjectLabel($record);
+        if ($subject === null) {
+            $normLabel = strtolower(trim($blueprint->label));
+            $subject = $resourceMap[$blueprint->key] ?? ($resourceMap[$normLabel] ?? $blueprint->label);
+        }
+
+        return sprintf('%s %s', $actionStr, $subject);
     }
 
     /**

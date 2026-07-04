@@ -203,7 +203,7 @@ export function CashPaymentHeader({ config, values, setValues, activeRecordId, h
                             className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm font-medium text-brand-blue-accent"
                         >
                             <span>{config.takeButtonLabel}</span>
-                            <ChevronDownIcon className="h-4 w-4" />
+                            <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${openAmbil ? 'rotate-180' : ''}`.trim()} />
                         </button>
                         <DropdownMenu
                             open={openAmbil}

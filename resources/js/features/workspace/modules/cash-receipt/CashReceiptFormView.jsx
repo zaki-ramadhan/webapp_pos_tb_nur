@@ -220,12 +220,17 @@ export default function CashReceiptFormView({
     const handlers = useMemo(
         () => ({
             onSelectBankAccount: () =>
-                selectLookup('accounts', 'kas atau bank', (record) =>
-                    setValues((current) => ({
-                        ...current,
-                        __primaryAccountId: record.id,
-                        bankAccounts: [buildLookupLabel(record)],
-                    })),
+                selectLookup(
+                    'accounts',
+                    'kas atau bank',
+                    (record) =>
+                        setValues((current) => ({
+                            ...current,
+                            __primaryAccountId: record.id,
+                            bankAccounts: [buildLookupLabel(record)],
+                        })),
+                    buildLookupLabel,
+                    { account_type: 'Cash/Bank' }
                 ),
             onRemoveBankAccount: () =>
                 setValues((current) => ({

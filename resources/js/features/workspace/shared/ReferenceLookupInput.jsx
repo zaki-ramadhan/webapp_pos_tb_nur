@@ -57,13 +57,19 @@ export default function ReferenceLookupInput({
     }, [selectedLabel, selectedLabels]);
 
     useEffect(() => {
+        let timer = null;
         function handleOutsideClick(event) {
             const target = event.target;
+            if (target instanceof HTMLElement && !document.body.contains(target)) {
+                return;
+            }
             if (rootRef.current && !rootRef.current.contains(target)) {
                 if (target instanceof HTMLElement && target.closest('[data-portal-dropdown]')) {
                     return;
                 }
-                setOpen(false);
+                timer = setTimeout(() => {
+                    setOpen(false);
+                }, 0);
             }
         }
 
@@ -71,6 +77,7 @@ export default function ReferenceLookupInput({
 
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
+            if (timer) clearTimeout(timer);
         };
     }, []);
 
@@ -232,7 +239,10 @@ export default function ReferenceLookupInput({
                                 <button
                                     key={item.id ?? getOptionLabel(item)}
                                     type="button"
-                                    onClick={() => handleSelect(item)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSelect(item);
+                                    }}
                                     className="flex w-full items-start gap-3 border-b border-slate-200 px-3 py-3 text-left transition last:border-b-0 odd:bg-white even:bg-[#fafbfc] hover:!bg-ui-bg-hover"
                                 >
                                     {renderOption ? (

@@ -20,11 +20,11 @@ class TransactionDataSeeder extends Seeder
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id');
         $paymentTermId = DB::table('payment_terms')->where('code', 'COD')->value('id');
 
-        $accAssetId = DB::table('accounts')->where('code', '121.200-04')->value('id');
-        $accAkmPenyId = DB::table('accounts')->where('code', '122.200-03')->value('id');
-        $accBebanPenyId = DB::table('accounts')->where('code', '612.001-03')->value('id');
-        $accBebanGajiId = DB::table('accounts')->where('code', '611.002-01')->value('id');
-        $accKasId = DB::table('accounts')->where('code', '111.001-01')->value('id');
+        $accAssetId = DB::table('accounts')->where('code', '120101')->value('id');
+        $accAkmPenyId = DB::table('accounts')->where('code', '120201')->value('id');
+        $accBebanPenyId = DB::table('accounts')->where('code', '610201')->value('id');
+        $accBebanGajiId = DB::table('accounts')->where('code', '610101')->value('id');
+        $accKasId = DB::table('accounts')->where('code', '110101')->value('id');
 
         $customerId = DB::table('customers')->where('code', 'CUST-001')->value('id');
         $supplierId = DB::table('suppliers')->where('code', 'SUPP-001')->value('id');
@@ -306,6 +306,10 @@ class TransactionDataSeeder extends Seeder
         for ($i = 1; $i <= 8; $i++) {
             $totalVal = rand(1000000, 5000000);
             $entryDate = now()->subDays(10 - $i)->format('Y-m-d');
+            $isPaid = ($i > 4);
+            $paidAmount = $isPaid ? $totalVal : 0;
+            $outstandingAmount = $isPaid ? 0 : $totalVal;
+            $status = $isPaid ? 'Terbayar' : 'Sedang diproses';
 
             DB::table('operation_documents')->insert([
                 'document_type' => 'expense_entry',
@@ -313,15 +317,15 @@ class TransactionDataSeeder extends Seeder
                 'warehouse_id' => $warehouseId,
                 'currency_id' => $currencyId,
                 'document_number' => 'EXP.' . date('Y.m.d') . '.' . str_pad($i, 5, '0', STR_PAD_LEFT),
-                'status' => 'Posted',
+                'status' => $status,
                 'entry_date' => $entryDate,
                 'subtotal' => $totalVal,
                 'discount_total' => 0,
                 'tax_total' => 0,
                 'total_amount' => $totalVal,
-                'paid_amount' => $totalVal,
-                'outstanding_amount' => 0,
-                'is_closed' => true,
+                'paid_amount' => $paidAmount,
+                'outstanding_amount' => $outstandingAmount,
+                'is_closed' => $isPaid,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

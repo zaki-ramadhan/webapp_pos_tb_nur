@@ -83,17 +83,8 @@ export default function AttachmentUploadField({
                     return (
                         <div
                             key={item.id}
-                            className={`group relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-[8px] bg-ui-bg-hover transition ${
-                                index === 0
-                                    ? 'border-2 border-blue-900 shadow-md ring-2 ring-blue-900/10'
-                                    : 'border border-ui-border shadow-sm hover:border-google-blue'
-                            }`}
+                            className="group relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-[8px] bg-ui-bg-hover border border-ui-border shadow-sm hover:border-google-blue transition"
                         >
-                            {index === 0 && (
-                                <div className="absolute bottom-0 left-0 right-0 bg-blue-900 py-0.5 text-center text-[9px] font-bold tracking-wider text-white select-none z-10 uppercase">
-                                    UTAMA
-                                </div>
-                            )}
                             {isImage ? (
                                 <img
                                     src={item.url}

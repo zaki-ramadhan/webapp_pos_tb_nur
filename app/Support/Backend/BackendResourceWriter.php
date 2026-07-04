@@ -268,7 +268,7 @@ class BackendResourceWriter
                     if (!empty($payload['parent_id'])) {
                         $parent = \App\Domain\Finance\Models\Account::find($payload['parent_id']);
                         if ($parent) {
-                            $parentCode = $parent->code;
+                            $parentCode = (string) preg_replace('/[^0-9]/', '', $parent->code);
                             $needsGeneration = !$record->exists 
                                 || $record->parent_id != $payload['parent_id'] 
                                 || empty($record->code);
@@ -278,7 +278,7 @@ class BackendResourceWriter
                                 $index = count($existingChildren) + 1;
                                 do {
                                     $suffix = str_pad($index, 2, '0', STR_PAD_LEFT);
-                                    $generatedCode = $parentCode . '.' . $suffix;
+                                    $generatedCode = $parentCode . $suffix;
                                     $index++;
                                 } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->exists());
 
@@ -294,35 +294,30 @@ class BackendResourceWriter
 
                         if ($needsGeneration) {
                             $type = $payload['account_type'] ?? 'Cash/Bank';
-                            $typePrefixMap = [
-                                'Cash/Bank' => '111',
-                                'Accounts Receivable' => '112',
-                                'Inventory' => '113',
-                                'Other Current Asset' => '114',
-                                'Fixed Asset' => '121',
-                                'Accumulated Depreciation' => '122',
-                                'Other Asset' => '131',
-                                'Accounts Payable' => '211',
-                                'Other Current Liability' => '212',
-                                'Long Term Liability' => '221',
-                                'Equity' => '311',
-                                'Revenue' => '411',
-                                'Cost Of Goods Sold' => '511',
-                                'Expense' => '611',
-                                'Other Expense' => '711',
-                                'Other Revenue' => '811',
+                             $typePrefixMap = [
+                                'Cash/Bank' => '11',
+                                'Receivable' => '11',
+                                'Inventory' => '11',
+                                'Other Current Asset' => '11',
+                                'Fixed Asset' => '12',
+                                'Accumulated Depreciation' => '12',
+                                'Other Asset' => '13',
+                                'Payable' => '21',
+                                'Other Current Liability' => '21',
+                                'Long Term Liability' => '22',
+                                'Equity' => '31',
+                                'Revenue' => '41',
+                                'Cost of Sales' => '51',
+                                'Expense' => '61',
+                                'Other Expense' => '71',
+                                'Other Revenue' => '81',
                             ];
-                            $prefix = $typePrefixMap[$type] ?? '999';
-                            
-                            $branchSuffix = '00';
-                            if (!empty($payload['branch_ids']) && is_array($payload['branch_ids'])) {
-                                $branchSuffix = str_pad($payload['branch_ids'][0], 2, '0', STR_PAD_LEFT);
-                            }
+                            $prefix = $typePrefixMap[$type] ?? '99';
                             
                             $index = 1;
                             do {
-                                $seqNum = str_pad($index, 3, '0', STR_PAD_LEFT);
-                                $generatedCode = "{$prefix}.{$seqNum}-{$branchSuffix}";
+                                $seqNum = str_pad($index, 2, '0', STR_PAD_LEFT);
+                                $generatedCode = "{$prefix}{$seqNum}";
                                 $index++;
                             } while (\App\Domain\Finance\Models\Account::where('code', $generatedCode)->exists());
 

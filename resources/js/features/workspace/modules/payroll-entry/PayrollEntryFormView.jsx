@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
  
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import PayrollEntryEmployeeModal from './PayrollEntryEmployeeModal';
@@ -71,19 +71,24 @@ export default function PayrollEntryFormView({
 
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
+    const configRef = useRef(config);
+    configRef.current = config;
+
     useEffect(() => {
-        const initial = sourceRecord ? sourceRecord : buildDefaultValues(config);
+        const cfg = configRef.current;
+        const initial = sourceRecord ? sourceRecord : buildDefaultValues(cfg);
         setValues({
-            ...buildDefaultValues(config),
+            ...buildDefaultValues(cfg),
             ...initial,
         });
         setEmployeeRows(sourceRecord?.employeeRows ?? []);
-    }, [sourceRecord, config]);
+    }, [sourceRecord]);
 
     const initialComparable = useMemo(() => {
-        const initial = sourceRecord ? sourceRecord : buildDefaultValues(config);
+        const cfg = configRef.current;
+        const initial = sourceRecord ? sourceRecord : buildDefaultValues(cfg);
         const resolved = {
-            ...buildDefaultValues(config),
+            ...buildDefaultValues(cfg),
             ...initial,
         };
 
@@ -101,7 +106,7 @@ export default function PayrollEntryFormView({
             notes: resolved.notes,
             employeeRows: initial.employeeRows ?? [],
         };
-    }, [config, sourceRecord]);
+    }, [sourceRecord]);
 
     const currentComparable = useMemo(
         () => ({
@@ -367,7 +372,9 @@ export default function PayrollEntryFormView({
         };
     }, [config, employeeRows, totalGross, totalPaid]);
 
-    function addEmployeeToRows(emp) {
+    const [warningModalOpen, setWarningModalOpen] = useState(false);
+
+    const addEmployeeToRows = useCallback((emp) => {
         setEmployeeRows((prev) => {
             const existingIds = new Set(prev.map((r) => String(r.employeeId)));
             if (existingIds.has(String(emp.id))) {
@@ -390,20 +397,27 @@ export default function PayrollEntryFormView({
                 }
             ];
         });
-    }
+    }, []);
 
-    const handlers = {
-        onEditEmployeeRow: (row) => {
-            setSelectedEmployeeRow(row);
-            setEmployeeModalOpen(true);
-        },
-        onSelectEmployee: (emp) => {
-            if (!emp) return;
-            addEmployeeToRows(emp);
-        }
-    };
+    const handlers = useMemo(
+        () => ({
+            onEditEmployeeRow: (row) => {
+                setSelectedEmployeeRow(row);
+                setEmployeeModalOpen(true);
+            },
+            onSelectEmployee: (emp) => {
+                if (!emp) return;
+                if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
+                    setWarningModalOpen(true);
+                    return;
+                }
+                addEmployeeToRows(emp);
+            },
+        }),
+        [values.liabilityAccounts, addEmployeeToRows],
+    );
 
-    function handleSaveEmployee(gross, tax, paid) {
+    const handleSaveEmployee = useCallback((gross, tax, paid) => {
         setEmployeeRows((current) =>
             current.map((row) =>
                 row.employeeId === selectedEmployeeRow.employeeId
@@ -419,14 +433,14 @@ export default function PayrollEntryFormView({
                     : row
             )
         );
-    }
+    }, [selectedEmployeeRow]);
 
-    function handleDeleteEmployee() {
+    const handleDeleteEmployee = useCallback(() => {
         if (!selectedEmployeeRow) return;
         setEmployeeRows((current) =>
             current.filter((row) => row.employeeId !== selectedEmployeeRow.employeeId)
         );
-    }
+    }, [selectedEmployeeRow]);
 
     return (
         <>
@@ -447,7 +461,13 @@ export default function PayrollEntryFormView({
                         config={resolvedConfig}
                         values={values}
                         setValues={setValues}
-                        onTake={() => setCopyModalOpen(true)}
+                        onTake={() => {
+                            if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
+                                setWarningModalOpen(true);
+                                return;
+                            }
+                            setCopyModalOpen(true);
+                        }}
                         handlers={handlers}
                     />
                 )}
@@ -467,6 +487,15 @@ export default function PayrollEntryFormView({
                 onConfirm={onDelete}
                 onCancel={() => setDeleteConfirmationOpen(false)}
                 confirmLoading={saving}
+            />
+            <ConfirmationModal
+                open={warningModalOpen}
+                onClose={() => setWarningModalOpen(false)}
+                title="Peringatan"
+                message="Akun Hutang Beban (Utang Gaji) di tab Info Lainnya wajib diisi terlebih dahulu sebelum menambahkan rincian karyawan."
+                confirmLabel="OK"
+                confirmVariant="primary"
+                onConfirm={() => setWarningModalOpen(false)}
             />
             <PayrollEntryEmployeeModal
                 open={employeeModalOpen}

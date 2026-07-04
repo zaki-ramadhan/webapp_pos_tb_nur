@@ -89,7 +89,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                         className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm text-brand-blue-accent"
                     >
                         <span>{config.takeButtonLabel}</span>
-                        <ChevronDownIcon className="h-4 w-4" />
+                        <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${takeOpen ? 'rotate-180' : ''}`.trim()} />
                     </button>
                     <DropdownMenu open={takeOpen} onClose={() => setTakeOpen(false)} anchorRef={takeRef} widthClassName="w-[180px]">
                         <DropdownMenuItem onClick={() => handleTakeClick('Penawaran')}>Penawaran</DropdownMenuItem>
@@ -125,7 +125,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                         }`.trim()}
                     >
                         <span>{config.processButtonLabel}</span>
-                        {!values.processDisabled ? <ChevronDownIcon className="h-4 w-4" /> : null}
+                        {!values.processDisabled ? <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} /> : null}
                     </button>
                     {!values.processDisabled ? (
                         <DropdownMenu open={processOpen} onClose={() => setProcessOpen(false)} anchorRef={processRef} widthClassName="w-[180px]">

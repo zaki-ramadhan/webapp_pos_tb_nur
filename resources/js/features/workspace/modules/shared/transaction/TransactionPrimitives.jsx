@@ -7,7 +7,13 @@ import Tooltip from '@/components/ui/Tooltip';
 import { TRANSACTION_SECTION_TITLE_CLASS_NAME } from './transactionStyles';
 
 export function buildCurrencyValue(value = '0') {
-    return String(value).startsWith('Rp ') || String(value).startsWith('$ ') ? String(value) : `Rp ${value}`;
+    let str = String(value);
+    if (str.startsWith('Rp ')) {
+        str = str.substring(3);
+    } else if (str.startsWith('$ ')) {
+        str = str.substring(2);
+    }
+    return str;
 }
 
 export function TransactionFieldLabel({ label, required = false, className = '', htmlFor }) {
@@ -99,7 +105,7 @@ export function TransactionReadonlyTextarea({ value, rows = 3, className = '', o
             readOnly={readOnly}
             onChange={onChange}
             rows={rows}
-            className={`w-full resize-none rounded-[4px] border border-slate-400 px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none transition focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${className}`.trim()}
+            className={`w-full resize-y rounded-[4px] border border-slate-400 px-4 py-3 text-xs sm:text-sm text-brand-dark outline-none transition focus:border-[var(--color-input-focus)] focus:shadow-[0_0_0_3px_var(--color-input-focus-ring)] ${className}`.trim()}
         />
     );
 }

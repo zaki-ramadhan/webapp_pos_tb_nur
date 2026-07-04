@@ -75,7 +75,7 @@ export function TransactionToolbarSplitButton({ label, icon, items = [], disable
                 >
                     <span className="inline-flex w-[36px] items-center justify-center">{icon}</span>
                     <span className="inline-flex w-[28px] items-center justify-center border-l border-l-brand-blue-border">
-                        <ChevronDownIcon className="h-4 w-4" />
+                        <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`.trim()} />
                     </span>
                 </button>
             </Tooltip>
@@ -139,7 +139,7 @@ export function TransactionToolbarSettingsButton({ label = 'Pengaturan kolom', i
                 >
                     <span className="inline-flex w-[36px] items-center justify-center">{icon}</span>
                     <span className="inline-flex w-[28px] items-center justify-center border-l border-l-brand-blue-border">
-                        <ChevronDownIcon className="h-4 w-4" />
+                        <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`.trim()} />
                     </span>
                 </button>
             </Tooltip>
