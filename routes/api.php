@@ -52,6 +52,24 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
         }
     });
     Route::get('/resources', [BackendResourceController::class, 'resources']);
+    Route::get('/employees/{employee}/last-payroll-line', function ($employeeId) {
+        $line = \App\Domain\Support\Models\OperationDocumentLine::query()
+            ->whereHas('document', function ($query) {
+                $query->where('document_type', 'payroll_entry');
+            })
+            ->where('attributes->employee_id', $employeeId)
+            ->latest('id')
+            ->first();
+
+        return response()->json([
+            'data' => $line ? [
+                'gross_income' => (float)$line->unit_price,
+                'tax_amount' => (float)$line->tax_amount,
+                'total_amount' => (float)$line->total_amount,
+                'attributes' => $line->attributes,
+            ] : null
+        ]);
+    });
     Route::post('/bank-reconciliations/reconcile', [BackendResourceController::class, 'reconcileDocuments']);
     Route::post('/{resource}/import', [BackendResourceController::class, 'import']);
     Route::get('/{resource}', [BackendResourceController::class, 'index']);
