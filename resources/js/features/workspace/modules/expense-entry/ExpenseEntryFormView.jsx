@@ -79,7 +79,7 @@ export default function ExpenseEntryFormView({
         return () => {
             active = false;
         };
-    }, [activeRecordId, config, buildRecord]);
+    }, [activeRecordId, buildRecord]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {

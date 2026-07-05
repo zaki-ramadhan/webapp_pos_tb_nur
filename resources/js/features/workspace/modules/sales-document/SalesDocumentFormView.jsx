@@ -108,7 +108,7 @@ export default function SalesDocumentFormView({
         return () => {
             active = false;
         };
-    }, [activeRecordId, backendConfig?.resource, config, buildRecord]);
+    }, [activeRecordId, backendConfig?.resource, buildRecord]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {

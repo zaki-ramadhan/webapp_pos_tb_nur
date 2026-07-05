@@ -81,7 +81,7 @@ export default function GeneralJournalFormView({
         return () => {
             active = false;
         };
-    }, [activeRecordId, config]);
+    }, [activeRecordId]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {
