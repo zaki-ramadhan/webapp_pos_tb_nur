@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -60,14 +60,17 @@ export default function ItemRequestFormView({
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
     }, [activeRecordId]);
 
+    const lastInitialComparableRef = useRef(initialComparable);
+
     useEffect(() => {
         const nextValues = buildFormValues(sourceRecord);
         setValues((current) => {
-            const hasEdits = !areComparableValuesEqual(initialComparable, current);
-            return hasEdits ? current : nextValues;
+            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
+            return userHasEdited ? current : nextValues;
         });
         setImportModalOpen(false);
-    }, [sourceRecord]);
+        lastInitialComparableRef.current = initialComparable;
+    }, [sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => validateItemRequestValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);

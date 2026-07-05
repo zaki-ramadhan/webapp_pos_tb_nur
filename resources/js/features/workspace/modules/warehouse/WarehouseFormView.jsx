@@ -58,8 +58,6 @@ export default function WarehouseFormView({
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
-    // Sync persis seperti SalaryAllowanceFormView tapi gunakan serialized entry
-    // supaya perubahan field apapun (termasuk boolean/array) pasti ter-trigger
     const serializedEntry = JSON.stringify(entry);
     useEffect(() => {
         setValues(entryToFormValues(entry));
@@ -68,7 +66,6 @@ export default function WarehouseFormView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serializedEntry]);
 
-    // Reset tab saat berpindah antar tab level2
     const activeTabInstanceId = activeLevel2Tab?.id;
     useEffect(() => {
         setActiveTabId(config.tabs?.[0]?.id ?? 'warehouse-general');
