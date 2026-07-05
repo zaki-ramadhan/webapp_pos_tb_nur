@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -7,6 +7,7 @@ import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
+    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import {
     buildGeneratedDocumentNumber,
@@ -77,16 +78,54 @@ export default function SalesDocumentFormView({
 
     useEffect(() => {
         setLocalRecord(null);
-    }, [activeRecordId]);
+        if (!activeRecordId || !backendConfig?.resource) {
+            return;
+        }
+
+        let active = true;
+
+        async function load() {
+            try {
+                if (window.__savedRecordsCache?.[activeRecordId]) {
+                    return;
+                }
+                const row = config.table?.rows?.find((r) => r.id === activeRecordId);
+                if (row?.__backendRecord) {
+                    return;
+                }
+
+                const response = await getBackendResource(backendConfig.resource, activeRecordId);
+                if (!active) return;
+                if (response?.data) {
+                    const parsed = buildRecord ? buildRecord(response.data) : response.data;
+                    setLocalRecord(parsed);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        load();
+
+        return () => {
+            active = false;
+        };
+    }, [activeRecordId, backendConfig?.resource, config, buildRecord]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {
             return localRecord;
         }
 
-        return activeRecordId
-            ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId))
-            : config.draft;
+        if (activeRecordId) {
+            if (window.__savedRecordsCache?.[activeRecordId]) {
+                return window.__savedRecordsCache[activeRecordId];
+            }
+
+            return buildRecord(config.table.rows.find((row) => row.id === activeRecordId));
+        }
+
+        return config.draft;
     }, [activeRecordId, buildRecord, config.draft, config.table.rows, localRecord]);
     const [values, setValues] = useState(() => buildSalesDocumentFormState(sourceRecord));
     const isDetail = Boolean(activeRecordId);
@@ -102,15 +141,18 @@ export default function SalesDocumentFormView({
         setActiveSectionId(resolveInitialSectionId(config, isDetail));
     }, [activeRecordId]);
 
+    const lastInitialSnapshotRef = useRef(initialSnapshot);
+
     useEffect(() => {
         const nextValues = buildSalesDocumentFormState(sourceRecord);
         setValues((current) => {
-            const hasEdits = resolveSalesDocumentDirty(current, initialSnapshot);
-            return hasEdits ? current : nextValues;
+            const userHasEdited = resolveSalesDocumentDirty(current, lastInitialSnapshotRef.current);
+            return userHasEdited ? current : nextValues;
         });
         setItemModalOpen(false);
         setImportModalOpen(false);
-    }, [sourceRecord]);
+        lastInitialSnapshotRef.current = initialSnapshot;
+    }, [sourceRecord, initialSnapshot]);
 
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);
     const fieldErrors = useMemo(() => validateSalesDocumentFields(values, config), [config, values]);
@@ -202,6 +244,8 @@ export default function SalesDocumentFormView({
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record) : record;
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(record.id)] = parsed;
                 }
 
                 if (!isDetail && record?.id && onOpenDetail) {

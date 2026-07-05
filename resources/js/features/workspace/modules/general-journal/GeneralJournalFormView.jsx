@@ -7,6 +7,7 @@ import {
     deleteBackendResource,
     getBackendErrorMessage,
     updateBackendResource,
+    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionDualTotalCard, TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -29,6 +30,7 @@ import {
     buildJournalRecordFromBackend,
     promptJournalLineItem,
     validateJournalValues,
+    buildGeneralJournalRow,
 } from './generalJournalShared';
 
 export default function GeneralJournalFormView({
@@ -49,7 +51,39 @@ export default function GeneralJournalFormView({
 
     useEffect(() => {
         setLocalRecord(null);
-    }, [activeRecordId]);
+        if (!activeRecordId) {
+            return;
+        }
+
+        let active = true;
+
+        async function load() {
+            try {
+                if (window.__savedRecordsCache?.[activeRecordId]) {
+                    return;
+                }
+                const row = config.rowMap?.[activeRecordId];
+                if (row?.__backendRecord) {
+                    return;
+                }
+
+                const response = await getBackendResource('general-journals', activeRecordId);
+                if (!active) return;
+                if (response?.data) {
+                    const parsed = buildRecordFromTableRow(buildGeneralJournalRow(response.data), config);
+                    setLocalRecord(parsed);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        load();
+
+        return () => {
+            active = false;
+        };
+    }, [activeRecordId, config]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {

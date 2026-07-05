@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import TextInput from '@/components/ui/TextInput';
@@ -6,6 +6,7 @@ import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
+    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import {
@@ -51,16 +52,54 @@ export default function SalesDepositFormView({
 
     useEffect(() => {
         setLocalRecord(null);
-    }, [activeRecordId]);
+        if (!activeRecordId) {
+            return;
+        }
+
+        let active = true;
+
+        async function load() {
+            try {
+                if (window.__savedRecordsCache?.[activeRecordId]) {
+                    return;
+                }
+                const row = config.rowMap?.[activeRecordId] ?? config.table?.rows?.find((r) => r.id === activeRecordId);
+                if (row?.__backendRecord) {
+                    return;
+                }
+
+                const response = await getBackendResource('sales-deposits', activeRecordId);
+                if (!active) return;
+                if (response?.data) {
+                    const parsed = buildRecord ? buildRecord(response.data) : response.data;
+                    setLocalRecord(parsed);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        load();
+
+        return () => {
+            active = false;
+        };
+    }, [activeRecordId, config, buildRecord]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {
             return localRecord;
         }
 
-        return activeRecordId
-            ? buildRecord(config.rowMap?.[activeRecordId] ?? config.table.rows.find((row) => row.id === activeRecordId))
-            : config.draft;
+        if (activeRecordId) {
+            if (window.__savedRecordsCache?.[activeRecordId]) {
+                return window.__savedRecordsCache[activeRecordId];
+            }
+
+            return buildRecord(config.rowMap?.[activeRecordId] ?? config.table.rows.find((row) => row.id === activeRecordId));
+        }
+
+        return config.draft;
     }, [activeRecordId, buildRecord, config, localRecord]);
     const [values, setValues] = useState(() => buildSalesDepositFormState(sourceRecord, config));
     const isDetail = Boolean(activeRecordId);
@@ -70,13 +109,16 @@ export default function SalesDepositFormView({
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'deposit');
     }, [activeRecordId]);
 
+    const lastInitialComparableRef = useRef(initialComparable);
+
     useEffect(() => {
         const nextValues = buildSalesDepositFormState(sourceRecord, config);
         setValues((current) => {
-            const hasEdits = !areComparableValuesEqual(initialComparable, current);
-            return hasEdits ? current : nextValues;
+            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
+            return userHasEdited ? current : nextValues;
         });
-    }, [sourceRecord]);
+        lastInitialComparableRef.current = initialComparable;
+    }, [sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => validateSalesDepositValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
@@ -163,6 +205,8 @@ export default function SalesDepositFormView({
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record) : record;
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(record.id)] = parsed;
                 }
 
                 if (!values.__backendRecordId && record?.id) {

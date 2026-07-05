@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ExpenseEntryLineItemModal from './ExpenseEntryLineItemModal';
@@ -8,6 +8,7 @@ import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
+    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout, TransactionTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
@@ -48,7 +49,39 @@ export default function ExpenseEntryFormView({
 
     useEffect(() => {
         setLocalRecord(null);
-    }, [activeRecordId]);
+        if (!activeRecordId) {
+            return;
+        }
+
+        let active = true;
+
+        async function load() {
+            try {
+                if (window.__savedRecordsCache?.[activeRecordId]) {
+                    return;
+                }
+                const row = config.rowMap?.[activeRecordId];
+                if (row?.__backendRecord) {
+                    return;
+                }
+
+                const response = await getBackendResource('expense-entries', activeRecordId);
+                if (!active) return;
+                if (response?.data) {
+                    const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
+                    setLocalRecord(parsed);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        load();
+
+        return () => {
+            active = false;
+        };
+    }, [activeRecordId, config, buildRecord]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {
@@ -56,6 +89,10 @@ export default function ExpenseEntryFormView({
         }
 
         if (activeRecordId) {
+            if (window.__savedRecordsCache?.[activeRecordId]) {
+                return window.__savedRecordsCache[activeRecordId];
+            }
+
             const row = config.rowMap?.[activeRecordId];
 
             if (row?.__backendRecord && buildRecord) {
@@ -79,17 +116,16 @@ export default function ExpenseEntryFormView({
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
     }, [config.sectionTabs]);
 
-    // Sync form state when activeRecordId changes (switching to a different document)
-    useEffect(() => {
-        setValues(buildFormState(sourceRecord));
-    }, [activeRecordId]);
+    const lastInitialComparableRef = useRef(initialComparable);
 
-    // Sync form state when localRecord is updated (after successful save/update)
     useEffect(() => {
-        if (localRecord) {
-            setValues(buildFormState(localRecord));
-        }
-    }, [localRecord]);
+        const nextValues = buildFormState(sourceRecord);
+        setValues((current) => {
+            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
+            return userHasEdited ? current : nextValues;
+        });
+        lastInitialComparableRef.current = initialComparable;
+    }, [sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => validateExpenseEntryValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
@@ -197,6 +233,8 @@ export default function ExpenseEntryFormView({
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record, config) : record;
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(record.id)] = parsed;
                 }
 
                 if (!isDetail && record?.id) {

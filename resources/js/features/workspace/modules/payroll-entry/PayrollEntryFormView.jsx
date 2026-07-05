@@ -17,8 +17,10 @@ import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
+    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { normalizeDisplayDate } from '@/features/workspace/backend/adapters/dateHelpers';
 
 export default function PayrollEntryFormView({
     pageId,
@@ -36,7 +38,39 @@ export default function PayrollEntryFormView({
 
     useEffect(() => {
         setLocalRecord(null);
-    }, [activeRecordId]);
+        if (!activeRecordId) {
+            return;
+        }
+
+        let active = true;
+
+        async function load() {
+            try {
+                if (window.__savedRecordsCache?.[activeRecordId]) {
+                    return;
+                }
+                const row = config.rowMap?.[activeRecordId];
+                if (row?.__backendRecord) {
+                    return;
+                }
+
+                const response = await getBackendResource('payroll-entries', activeRecordId);
+                if (!active) return;
+                if (response?.data) {
+                    const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
+                    setLocalRecord(parsed);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        load();
+
+        return () => {
+            active = false;
+        };
+    }, [activeRecordId, config, buildRecord]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {
@@ -44,6 +78,10 @@ export default function PayrollEntryFormView({
         }
 
         if (activeRecordId) {
+            if (window.__savedRecordsCache?.[activeRecordId]) {
+                return window.__savedRecordsCache[activeRecordId];
+            }
+
             const row = config.rowMap?.[activeRecordId];
 
             if (row?.__backendRecord && buildRecord) {
@@ -73,29 +111,6 @@ export default function PayrollEntryFormView({
 
     const configRef = useRef(config);
     configRef.current = config;
-
-    // Sync form state when activeRecordId changes (switching to a different document)
-    useEffect(() => {
-        const cfg = configRef.current;
-        const initial = sourceRecord ? sourceRecord : buildDefaultValues(cfg);
-        setValues({
-            ...buildDefaultValues(cfg),
-            ...initial,
-        });
-        setEmployeeRows(sourceRecord?.employeeRows ?? []);
-    }, [activeRecordId]);
-
-    // Sync form state when localRecord is updated (after successful save/update)
-    useEffect(() => {
-        if (localRecord) {
-            const cfg = configRef.current;
-            setValues({
-                ...buildDefaultValues(cfg),
-                ...localRecord,
-            });
-            setEmployeeRows(localRecord.employeeRows ?? []);
-        }
-    }, [localRecord]);
 
     const initialComparable = useMemo(() => {
         const cfg = configRef.current;
@@ -138,6 +153,56 @@ export default function PayrollEntryFormView({
         }),
         [values, employeeRows],
     );
+
+    const lastInitialComparableRef = useRef(initialComparable);
+
+    useEffect(() => {
+        const cfg = configRef.current;
+        const initial = sourceRecord ? sourceRecord : buildDefaultValues(cfg);
+        const nextValues = {
+            ...buildDefaultValues(cfg),
+            ...initial,
+        };
+        const nextEmployeeRows = sourceRecord?.employeeRows ?? [];
+
+        setValues((current) => {
+            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, {
+                paymentType: current.paymentType,
+                month: current.month,
+                year: current.year,
+                autoNumber: current.autoNumber,
+                numberingType: current.numberingType,
+                documentNumber: current.documentNumber,
+                entryDate: current.entryDate,
+                dueDate: current.dueDate,
+                employeeLookup: current.employeeLookup,
+                liabilityAccounts: current.liabilityAccounts,
+                notes: current.notes,
+                employeeRows,
+            });
+            return userHasEdited ? current : nextValues;
+        });
+
+        setEmployeeRows((current) => {
+            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, {
+                paymentType: values.paymentType,
+                month: values.month,
+                year: values.year,
+                autoNumber: values.autoNumber,
+                numberingType: values.numberingType,
+                documentNumber: values.documentNumber,
+                entryDate: values.entryDate,
+                dueDate: values.dueDate,
+                employeeLookup: values.employeeLookup,
+                liabilityAccounts: values.liabilityAccounts,
+                notes: values.notes,
+                employeeRows: current,
+            });
+            return userHasEdited ? current : nextEmployeeRows;
+        });
+
+        lastInitialComparableRef.current = initialComparable;
+    }, [sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => {
         const requiredMessage = validateRequiredChecks([
@@ -261,8 +326,8 @@ export default function PayrollEntryFormView({
                 }, 0);
 
                 const payload = {
-                    entry_date: values.entryDate,
-                    due_date: values.dueDate,
+                    entry_date: normalizeDisplayDate(values.entryDate) || new Date().toISOString().slice(0, 10),
+                    due_date: normalizeDisplayDate(values.dueDate) || null,
                     notes: values.notes,
                     document_number: resolvedDocumentNumber,
                     status: values.status ?? 'Draft',
@@ -330,6 +395,8 @@ export default function PayrollEntryFormView({
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record, config) : record;
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(record.id)] = parsed;
                 }
 
                 if (!isDetail && record?.id && onOpenDetail) {

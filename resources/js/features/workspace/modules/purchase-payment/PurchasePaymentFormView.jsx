@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
+    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import PurchasePaymentInvoiceModal from '@/features/workspace/modules/purchase-payment/PurchasePaymentInvoiceModal';
 import {
@@ -46,7 +47,39 @@ export default function PurchasePaymentFormView({
 
     useEffect(() => {
         setLocalRecord(null);
-    }, [activeRecordId]);
+        if (!activeRecordId) {
+            return;
+        }
+
+        let active = true;
+
+        async function load() {
+            try {
+                if (window.__savedRecordsCache?.[activeRecordId]) {
+                    return;
+                }
+                const row = config.rowMap?.[activeRecordId];
+                if (row?.__backendRecord) {
+                    return;
+                }
+
+                const response = await getBackendResource('purchase-payments', activeRecordId);
+                if (!active) return;
+                if (response?.data) {
+                    const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
+                    setLocalRecord(parsed);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        load();
+
+        return () => {
+            active = false;
+        };
+    }, [activeRecordId, config, buildRecord]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {
@@ -55,6 +88,10 @@ export default function PurchasePaymentFormView({
 
         if (!activeRecordId) {
             return config.draft;
+        }
+
+        if (window.__savedRecordsCache?.[activeRecordId]) {
+            return window.__savedRecordsCache[activeRecordId];
         }
 
         const row = config.rowMap?.[activeRecordId];
@@ -76,14 +113,17 @@ export default function PurchasePaymentFormView({
         setActiveSectionId((isDetail ? config.detailSectionTabs : config.sectionTabs)?.[0]?.id ?? 'details');
     }, [activeRecordId]);
 
+    const lastInitialComparableRef = useRef(initialComparable);
+
     useEffect(() => {
         const nextValues = buildFormState(sourceRecord, config);
         setValues((current) => {
-            const hasEdits = !areComparableValuesEqual(initialComparable, current);
-            return hasEdits ? current : nextValues;
+            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
+            return userHasEdited ? current : nextValues;
         });
         setActiveInvoice(null);
-    }, [sourceRecord]);
+        lastInitialComparableRef.current = initialComparable;
+    }, [sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => validatePurchasePaymentValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
@@ -176,6 +216,8 @@ export default function PurchasePaymentFormView({
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record, config) : record;
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(record.id)] = parsed;
                 }
 
                 if (!values.__backendRecordId && record?.id) {
