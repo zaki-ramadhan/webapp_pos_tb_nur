@@ -466,6 +466,24 @@
         pointer-events: none;
     }
 
+    button:disabled,
+    button[disabled],
+    input:disabled,
+    input[disabled],
+    select:disabled,
+    select[disabled],
+    textarea:disabled,
+    textarea[disabled],
+    [disabled],
+    [disabled] *,
+    [aria-disabled='true'],
+    [aria-disabled='true'] * {
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+    }
+
     button:disabled *,
     button[disabled] *,
     [role='button'][aria-disabled='true'] *,

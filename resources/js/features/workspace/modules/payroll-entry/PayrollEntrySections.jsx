@@ -123,19 +123,19 @@ export function PayrollHeader({ config, values, setValues, isDetail, handlers = 
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.dueDate} required />
-                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_96px]">
+                    <div className="grid gap-3 grid-cols-[minmax(0,1fr)_120px]">
                         <TransactionDateInput
                             value={values.dueDate}
                             onChange={(nextValue) => setValues((current) => ({ ...current, dueDate: nextValue }))}
                             className="w-full max-w-full"
                         />
-                        <div className="relative flex-1 max-w-[96px]">
+                        <div className="relative flex-1 max-w-[120px]">
                             <button
                                 ref={processAnchorRef}
                                 type="button"
                                 disabled={!values.__backendRecordId}
                                 onClick={() => setProcessOpen(prev => !prev)}
-                                className="inline-flex h-[38px] w-full items-center justify-center gap-1 rounded-[4px] border border-[#2353a0] bg-white px-2.5 text-xs sm:text-sm text-[#2353a0] disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed cursor-pointer transition"
+                                className="inline-flex h-[40px] w-full items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-3 text-xs sm:text-sm text-brand-blue-accent disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed cursor-pointer transition hover:bg-brand-blue-lightest"
                             >
                                 <span>{config.processButtonLabel || 'Proses'}</span>
                                 <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`.trim()} />

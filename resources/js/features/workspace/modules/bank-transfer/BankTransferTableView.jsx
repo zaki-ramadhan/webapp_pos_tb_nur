@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
+import useTableSort from '@/features/workspace/shared/useTableSort';
 import Pagination from '@/components/ui/Pagination';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import {
@@ -6,7 +8,6 @@ import {
     PrintIcon,
     CogIcon,
     SearchIcon,
-    SortIcon,
     PlusIcon,
     RefreshIcon,
 } from '@/features/workspace/shared/Icons';
@@ -47,6 +48,8 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
         });
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+
     // Inject row-number column at the front
     const columnsWithNo = useMemo(() => {
         if (filteredRows.length === 0) {
@@ -57,6 +60,8 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
             ...config.table.columns,
         ];
     }, [config.table.columns, filteredRows.length]);
+
+    
 
     const rowsWithNo = useMemo(() => {
         const { page = 1, perPage = 25 } = config.table.pagination ?? {};
@@ -92,7 +97,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     widthClassName: 'sm:w-[342px]',
                     trailing: <SearchIcon className="h-5 w-5 text-text-darkest" />,
                 }}
-                pageValue={config.table.pageValue}
+                pageValue={sortedRows.length.toLocaleString('id-ID')}
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
@@ -103,12 +108,32 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     minWidthClassName="min-w-[1280px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                     getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
-                    renderHeaderCell={(column) => (
-                        <span className={`flex items-center gap-2 ${column.align === 'right' ? 'justify-end' : 'justify-start'}`.trim()}>
-                            {column.id !== '__no' && <SortIcon className="h-3 w-3 shrink-0 text-white/55" />}
-                            <span>{column.label}</span>
-                        </span>
-                    )}
+                                            renderHeaderCell={(column) => {
+                            const sortable = column.sortable !== false;
+                            const direction = sortKey === column.id ? sortDir : null;
+                            const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
+
+                            if (!sortable) {
+                                return <span className="block truncate">{column.label}</span>;
+                            }
+
+                            return (
+                                <button
+                                    type="button"
+                                    onClick={() => handleSort(column.id)}
+                                    className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
+                                >
+                                    <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
+                                    {direction === 'asc' ? (
+                                        <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
+                                    ) : direction === 'desc' ? (
+                                        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
+                                    ) : (
+                                        <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white opacity-40" />
+                                    )}
+                                </button>
+                            );
+                        }}
                 />
             </div>
 
