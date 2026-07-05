@@ -20,9 +20,9 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedType, setSelectedType] = useState('all');
     
-    // Default to "Juni" and "2026" based on current local time
-    const [selectedMonth, setSelectedMonth] = useState('Juni');
-    const [selectedYear, setSelectedYear] = useState('2026');
+    // Default to "all" to show all records initially
+    const [selectedMonth, setSelectedMonth] = useState('all');
+    const [selectedYear, setSelectedYear] = useState('all');
     
     const [loading, setLoading] = useState(false);
     const [records, setRecords] = useState([]);
@@ -68,8 +68,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
         if (!open) {
             setSearchQuery('');
             setSelectedType('all');
-            setSelectedMonth('Juni');
-            setSelectedYear('2026');
+            setSelectedMonth('all');
+            setSelectedYear('all');
             setSelectedIds(new Set());
         }
     }, [open]);

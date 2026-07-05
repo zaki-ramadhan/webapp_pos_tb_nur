@@ -35,6 +35,7 @@ export function buildCashPaymentPayload(values) {
     return {
         branch_id: values.__branchId ?? 1,
         primary_account_id: values.__primaryAccountId ?? null,
+        related_document_id: values.__relatedDocumentId ?? null,
         document_number: values.documentNumber?.trim() || buildGeneratedCashPaymentNumber(),
         numbering_type: values.numberingType?.trim() || null,
         payment_method: values.bankAccounts?.[0] ?? values.numberingType?.trim() ?? null,

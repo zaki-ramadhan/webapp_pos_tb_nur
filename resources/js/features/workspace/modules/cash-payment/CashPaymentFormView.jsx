@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
-import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
+import { showSuccessToast, showErrorToast, showLoadingToast, updateToastToSuccess, updateToastToError } from '@/components/feedback/toast';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -253,7 +253,13 @@ export default function CashPaymentFormView({
 
 
     async function handleApplyExpenseEntries(selectedRecords) {
+        let toastId = null;
         try {
+            toastId = showLoadingToast({
+                title: 'Mengambil Data',
+                message: 'Sedang mengambil rincian pencatatan beban...',
+            });
+
             let allImportedLines = [];
             let appendedNotes = [];
 
@@ -280,7 +286,10 @@ export default function CashPaymentFormView({
             }
 
             if (allImportedLines.length === 0) {
-                showErrorToast({ message: 'Tidak ada rincian beban yang diimpor.' });
+                updateToastToError(toastId, {
+                    title: 'Gagal',
+                    message: 'Tidak ada rincian beban yang diimpor.',
+                });
                 return;
             }
 
@@ -292,6 +301,7 @@ export default function CashPaymentFormView({
                 return applyCashPaymentLineItems(
                     {
                         ...current,
+                        __relatedDocumentId: selectedRecords[0]?.id ?? null,
                         lineItems: [...(current.lineItems ?? []), ...allImportedLines],
                         notes: combinedNotes,
                     },
@@ -303,7 +313,8 @@ export default function CashPaymentFormView({
                 tone: 'success',
                 message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
             });
-            showSuccessToast({
+            updateToastToSuccess(toastId, {
+                title: 'Berhasil',
                 message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Beban.`,
             });
         } catch (err) {
@@ -311,6 +322,12 @@ export default function CashPaymentFormView({
                 tone: 'error',
                 message: 'Gagal mengambil rincian pencatatan beban.',
             });
+            if (toastId) {
+                updateToastToError(toastId, {
+                    title: 'Gagal',
+                    message: 'Gagal mengambil rincian pencatatan beban.',
+                });
+            }
         }
     }
 
@@ -323,17 +340,23 @@ export default function CashPaymentFormView({
         if (!isDetail && window.__pendingImportPayrollEntry) {
             const pending = window.__pendingImportPayrollEntry;
             window.__pendingImportPayrollEntry = null;
-            handleApplyPayrollEntriesFromImport([pending]);
+            handleApplyPayrollEntries([pending]);
         }
-    }, [isDetail]);
+    }, [isDetail, activeLevel2Tab]);
 
-    async function handleApplyPayrollEntriesFromImport(selectedRecords) {
+    async function handleApplyPayrollEntries(selectedRecords) {
+        let toastId = null;
         try {
+            toastId = showLoadingToast({
+                title: 'Mengambil Data',
+                message: 'Sedang mengambil rincian pencatatan gaji...',
+            });
+
             let allImportedLines = [];
             let appendedNotes = [];
 
             for (const record of selectedRecords) {
-                const fullRecord = (record.metadata && record.metadata.liability_accounts)
+                const fullRecord = (record.primary_account)
                     ? record
                     : await getBackendResource('payroll-entries', record.id);
                 
@@ -385,7 +408,10 @@ export default function CashPaymentFormView({
             }
 
             if (allImportedLines.length === 0) {
-                showErrorToast({ message: 'Tidak ada rincian gaji yang diimpor.' });
+                updateToastToError(toastId, {
+                    title: 'Gagal',
+                    message: 'Tidak ada rincian gaji yang diimpor.',
+                });
                 return;
             }
 
@@ -397,6 +423,7 @@ export default function CashPaymentFormView({
                 return applyCashPaymentLineItems(
                     {
                         ...current,
+                        __relatedDocumentId: selectedRecords[0]?.id ?? null,
                         lineItems: [...(current.lineItems ?? []), ...allImportedLines],
                         notes: combinedNotes,
                     },
@@ -408,7 +435,8 @@ export default function CashPaymentFormView({
                 tone: 'success',
                 message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
             });
-            showSuccessToast({
+            updateToastToSuccess(toastId, {
+                title: 'Berhasil',
                 message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Gaji.`,
             });
         } catch (err) {
@@ -416,69 +444,12 @@ export default function CashPaymentFormView({
                 tone: 'error',
                 message: 'Gagal mengambil rincian pencatatan gaji.',
             });
-        }
-    }
-
-    async function handleApplyPayrollEntries(selectedRecords) {
-        try {
-            let allImportedLines = [];
-            let appendedNotes = [];
-
-            for (const record of selectedRecords) {
-                const fullRecord = (record.lines && record.lines.length > 0)
-                    ? record
-                    : await getBackendResource('payroll-entries', record.id);
-                
-                if (!fullRecord) continue;
-                const lines = fullRecord.lines ?? [];
-                
-                const importedLines = lines.map((line, index) => ({
-                    id: `imported-payroll-line-${index + 1}-${Date.now()}-${Math.random()}`,
-                    __lineId: null,
-                    __accountId: line.account_id ?? null,
-                    accountCode: line.account?.code ?? line.reference_code ?? '',
-                    accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Gaji ${index + 1}`,
-                    amount: formatCurrencyValue(line.total_amount ?? 0),
-                }));
-
-                allImportedLines.push(...importedLines);
-                if (fullRecord.notes?.trim()) {
-                    appendedNotes.push(fullRecord.notes.trim());
-                }
+            if (toastId) {
+                updateToastToError(toastId, {
+                    title: 'Gagal',
+                    message: 'Gagal mengambil rincian pencatatan gaji.',
+                });
             }
-
-            if (allImportedLines.length === 0) {
-                showErrorToast({ message: 'Tidak ada rincian gaji yang diimpor.' });
-                return;
-            }
-
-            setValues((current) => {
-                const combinedNotes = [current.notes?.trim(), ...appendedNotes]
-                    .filter(Boolean)
-                    .join('\n');
-                
-                return applyCashPaymentLineItems(
-                    {
-                        ...current,
-                        lineItems: [...(current.lineItems ?? []), ...allImportedLines],
-                        notes: combinedNotes,
-                    },
-                    [...(current.lineItems ?? []), ...allImportedLines],
-                );
-            });
-
-            setStatus({
-                tone: 'success',
-                message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
-            });
-            showSuccessToast({
-                message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Gaji.`,
-            });
-        } catch (err) {
-            setStatus({
-                tone: 'error',
-                message: 'Gagal mengambil rincian pencatatan gaji.',
-            });
         }
     }
 

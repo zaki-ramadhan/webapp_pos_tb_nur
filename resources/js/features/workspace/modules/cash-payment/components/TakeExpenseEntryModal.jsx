@@ -167,14 +167,14 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                     <span>Jatuh Tempo:</span>
                     <TransactionDateInput
                         value={startDate}
-                        onChange={setStartDate}
+                        onChange={(_, nativeVal) => setStartDate(nativeVal)}
                         className="max-w-[155px]"
                         inputClassName="text-xs sm:text-sm text-brand-dark h-[36px] px-2"
                     />
                     <span>s/d</span>
                     <TransactionDateInput
                         value={endDate}
-                        onChange={setEndDate}
+                        onChange={(_, nativeVal) => setEndDate(nativeVal)}
                         className="max-w-[155px]"
                         inputClassName="text-xs sm:text-sm text-brand-dark h-[36px] px-2"
                     />
@@ -224,7 +224,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                             );
                         }
                         if (column.id === 'entry_date' || column.id === 'due_date') {
-                            return formatIsoDate(row[column.id]);
+                            return row[column.id] ? formatIsoDate(row[column.id]) : '-';
                         }
                         if (column.id === 'total_amount') {
                             return formatCurrencyValue(row[column.id] ?? 0);

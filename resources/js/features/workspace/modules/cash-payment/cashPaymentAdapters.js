@@ -77,6 +77,7 @@ export function buildCashPaymentRecord(record = {}, config) {
         {
             __backendRecordId: record.id ?? null,
             __primaryAccountId: record.primary_account_id ?? null,
+            __relatedDocumentId: record.related_document_id ?? null,
             __branchId: record.branch_id ?? null,
             bankAccounts: bankLabel ? [bankLabel] : [],
             entryDate: formatIsoDate(record.entry_date),
@@ -148,6 +149,7 @@ export function buildFormState(source = {}, config) {
         {
             __backendRecordId: source.__backendRecordId ?? null,
             __primaryAccountId: source.__primaryAccountId ?? config.draft?.__primaryAccountId ?? null,
+            __relatedDocumentId: source.__relatedDocumentId ?? config.draft?.__relatedDocumentId ?? null,
             __branchId: source.__branchId ?? config.draft?.__branchId ?? null,
             bankAccounts: [...(source.bankAccounts ?? config.draft?.bankAccounts ?? [])],
             entryDate: source.entryDate ?? config.draft?.entryDate ?? '',

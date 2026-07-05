@@ -55,14 +55,15 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, level2Tab
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <CashPaymentFormView
-            pageId={page.id}
-            config={config}
-            activeLevel2Tab={lastActiveFormTab}
-            onOpenContent={onOpenContent}
-            onOpenDetail={onOpenDetail}
-            onCloseDetail={onCloseDetail}
-            onRefresh={resource.reload}
-        />
+                        key={lastActiveFormTab.id}
+                        pageId={page.id}
+                        config={config}
+                        activeLevel2Tab={lastActiveFormTab}
+                        onOpenContent={onOpenContent}
+                        onOpenDetail={onOpenDetail}
+                        onCloseDetail={onCloseDetail}
+                        onRefresh={resource.reload}
+                    />
                 </div>
             )}
         </div>
