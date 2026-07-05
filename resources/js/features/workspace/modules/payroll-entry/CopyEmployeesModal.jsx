@@ -9,12 +9,13 @@ import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInp
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 const STATUS_OPTIONS = [
-    { value: 'pegawai-tetap', label: 'Pegawai Tetap' },
-    { value: 'pegawai-tidak-tetap', label: 'Pegawai Kontrak' },
+    { value: 'all', label: 'Semua Karyawan' },
+    { value: 'karyawan-tetap', label: 'Karyawan Tetap' },
+    { value: 'karyawan-kontrak', label: 'Karyawan Kontrak' },
 ];
 
 export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
-    const [selectedStatus, setSelectedStatus] = useState('pegawai-tetap');
+    const [selectedStatus, setSelectedStatus] = useState('all');
     const [allEmployees, setAllEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedIds, setSelectedIds] = useState([]);
@@ -39,11 +40,14 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
     }, [open]);
 
     const filteredEmployees = allEmployees.filter((emp) => {
+        if (selectedStatus === 'all') {
+            return true;
+        }
         const status = String(emp.employment_status || '').toLowerCase();
-        if (selectedStatus === 'pegawai-tetap') {
+        if (selectedStatus === 'karyawan-tetap') {
             return status === 'permanent' || status === 'tetap';
         }
-        if (selectedStatus === 'pegawai-tidak-tetap') {
+        if (selectedStatus === 'karyawan-kontrak') {
             return status === 'contract' || status === 'tidak tetap' || status === 'temporary' || status === 'kontrak';
         }
         return false;

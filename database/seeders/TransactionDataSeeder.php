@@ -143,22 +143,56 @@ class TransactionDataSeeder extends Seeder
                 'notes' => 'Anggaran Biaya Gaji Q2 2026',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'document_type' => 'payroll_entry',
-                'branch_id' => $branchId,
-                'department_id' => $deptId,
-                'primary_account_id' => $accBebanGajiId,
-                'secondary_account_id' => $accKasId,
-                'document_number' => 'PAY.2026.04001',
-                'status' => 'Posted',
-                'entry_date' => '2026-04-30',
-                'total_amount' => 45000000.00,
-                'notes' => 'Gaji Karyawan Bulan April 2026',
-                'created_at' => now(),
-                'updated_at' => now(),
             ]
         ]);
+
+        $payrollId = DB::table('operation_documents')->insertGetId([
+            'document_type' => 'payroll_entry',
+            'branch_id' => $branchId,
+            'department_id' => $deptId,
+            'primary_account_id' => $accBebanGajiId,
+            'secondary_account_id' => $accKasId,
+            'document_number' => 'PAY.2026.04001',
+            'status' => 'Posted',
+            'entry_date' => '2026-04-30',
+            'total_amount' => 45000000.00,
+            'notes' => 'Gaji Karyawan Bulan April 2026',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $employees = DB::table('employees')->get();
+        $totalPaid = 0;
+        foreach ($employees as $index => $employee) {
+            $gross = 8000000.00;
+            $tax = 500000.00;
+            $paid = 7500000.00;
+            $totalPaid += $paid;
+
+            DB::table('operation_document_lines')->insert([
+                'operation_document_id' => $payrollId,
+                'line_type' => 'payroll_entry',
+                'description' => $employee->full_name,
+                'quantity' => 1,
+                'unit_price' => $gross,
+                'tax_amount' => $tax,
+                'total_amount' => $paid,
+                'sort_order' => $index,
+                'attributes' => json_encode([
+                    'employee_id' => $employee->id,
+                    'employee_code' => $employee->employee_code,
+                    'employee_name' => $employee->full_name,
+                    'basicSalary' => $gross,
+                    'grossIncome' => $gross,
+                    'paidSalary' => $paid,
+                    'incomeTax' => $tax,
+                ]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        DB::table('operation_documents')->where('id', $payrollId)->update(['total_amount' => $totalPaid]);
 
         // Seed fixed assets categories & taxes
         $assetCatId = DB::table('asset_categories')->insertGetId([

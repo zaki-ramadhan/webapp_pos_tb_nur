@@ -112,7 +112,7 @@ class PayrollEntryPage
                             'entryDate' => date('d/m/Y'),
                             'dueDate' => date('d/m/Y'),
                             'employeeLookup' => '',
-                            'liabilityAccounts' => ['[214.100-01] BYMD - Gaji Karyawan'],
+                            'liabilityAccounts' => [],
                             'notes' => '',
                         ],
                         'employeeTable' => [
