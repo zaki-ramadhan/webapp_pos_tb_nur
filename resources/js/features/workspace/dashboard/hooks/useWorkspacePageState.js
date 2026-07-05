@@ -63,6 +63,11 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
     useEffect(() => {
         window.__activePageId = activePageId;
+        if (activePageId) {
+            window.dispatchEvent(new CustomEvent('workspace:page-activated', {
+                detail: { activePageId }
+            }));
+        }
     }, [activePageId]);
 
     // Helper penutupan halaman

@@ -96,11 +96,9 @@ export default function useBackendIndexResource({
             }
         }
 
-        // Lewati fetch jika cache segar
-        if (isFresh && !isForceRefresh) {
+        // Tampilkan data cache segera (SWR) jika ada, tetapi tetap jalankan revalidasi di background
+        if (cachedEntry) {
             setPayload(cachedEntry.payload);
-            setLoading(false);
-            return undefined;
         }
 
         async function run() {
@@ -151,6 +149,26 @@ export default function useBackendIndexResource({
         };
     }, [enabled, requestFilters, resource]);
 
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        function handlePageActivated(e) {
+            const { activePageId } = e.detail || {};
+            if (activePageId && isResourceMatchingPageId(resource, activePageId)) {
+                // Hapus cache lokal agar selalu mengambil data segar dari backend
+                for (const key of globalCache.keys()) {
+                    if (key.startsWith(`${resource}::`)) {
+                        globalCache.delete(key);
+                    }
+                }
+                setReloadVersion((currentValue) => currentValue + 1);
+            }
+        }
+
+        window.addEventListener('workspace:page-activated', handlePageActivated);
+        return () => window.removeEventListener('workspace:page-activated', handlePageActivated);
+    }, [resource]);
+
     const rows = useMemo(() => extractBackendRows(payload), [payload]);
     const total = useMemo(() => extractBackendTotal(payload), [payload]);
 
@@ -200,4 +218,62 @@ if (typeof window !== 'undefined') {
             }
         }
     };
+}
+
+function isResourceMatchingPageId(resource, pageId) {
+    if (!resource || !pageId) return false;
+    
+    const r = resource.toLowerCase().replace(/_/g, '-');
+    const p = pageId.toLowerCase().replace(/_/g, '-');
+    
+    if (r === p || r === `${p}s` || `${r}s` === p) {
+        return true;
+    }
+    
+    const singularize = (str) => {
+        if (str.endsWith('ies')) return str.slice(0, -3) + 'y';
+        if (str.endsWith('s')) return str.slice(0, -1);
+        return str;
+    };
+    
+    if (singularize(r) === singularize(p)) {
+        return true;
+    }
+    
+    const specialCases = {
+        'expense-entries': 'expense-entry',
+        'payroll-entries': 'payroll-entry',
+        'general-journals': 'general-journal',
+        'cash-payments': 'cash-payment',
+        'cash-receipts': 'cash-receipt',
+        'bank-transfers': 'bank-transfer',
+        'sales-documents': 'sales-document',
+        'sales-receipts': 'sales-receipt',
+        'purchase-payments': 'purchase-payment',
+        'item-requests': 'item-request',
+        'inventory-adjustments': 'inventory-adjustment',
+        'inventory-inquiries': 'inventory-inquiry',
+        'items-services': 'items-services',
+        'departments': 'department',
+        'accounts': 'accounts',
+        'employees': 'employee',
+        'business-partners': 'customers',
+        'partners': 'customers',
+    };
+    
+    if (specialCases[r] === p || specialCases[p] === r) {
+        return true;
+    }
+    
+    if (p === 'customers' || p === 'suppliers') {
+        if (r === 'business-partners' || r === 'partners' || r === 'customers' || r === 'suppliers') {
+            return true;
+        }
+    }
+    
+    if (r.includes(p) || p.includes(r)) {
+        return true;
+    }
+    
+    return false;
 }
