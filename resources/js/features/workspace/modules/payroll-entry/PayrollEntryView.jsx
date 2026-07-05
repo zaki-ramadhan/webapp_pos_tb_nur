@@ -71,6 +71,7 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, level2Ta
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <PayrollEntryFormView
+            key={lastActiveFormTab.id}
             pageId={page.id}
             activeLevel2Tab={lastActiveFormTab}
             config={resolvedConfig}

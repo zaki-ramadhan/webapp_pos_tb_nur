@@ -89,6 +89,7 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, level
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <PurchasePaymentFormView
+            key={lastActiveFormTab.id}
             pageId={page.id}
             config={config}
             activeLevel2Tab={lastActiveFormTab}

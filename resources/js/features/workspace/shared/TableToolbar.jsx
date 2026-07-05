@@ -94,8 +94,9 @@ export default function TableToolbar({
             });
             return;
         }
+        const activeVisibleIds = columnSettings?.visibleIds ?? visibleColumnIds;
         let activeCols = resolvedColumns.filter(col => {
-            if (visibleColumnIds && !visibleColumnIds.includes(col.id)) return false;
+            if (activeVisibleIds && !activeVisibleIds.includes(col.id)) return false;
             return col && col.kind !== 'spacer' && col.id !== 'actions';
         });
         if (activeCols.length === 0) {
@@ -285,7 +286,7 @@ export default function TableToolbar({
                         <ToolbarExportSplitButton
                             exportConfig={resolvedExportConfig}
                             sizeStyle={sizeStyle}
-                            visibleColumnIds={visibleColumnIds}
+                            visibleColumnIds={columnSettings?.visibleIds ?? visibleColumnIds}
                         />
                     ) : null}
 

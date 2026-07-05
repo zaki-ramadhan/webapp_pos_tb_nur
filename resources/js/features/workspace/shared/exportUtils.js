@@ -214,15 +214,28 @@ export function printTable(columns, rows, title = 'Laporan') {
         ];
     });
 
-    const isLandscape = activeCols.length > 6;
-    const orientation = isLandscape ? 'landscape' : 'portrait';
-    const fontSize = isLandscape ? 7 : 8;
-    const cellPadding = isLandscape ? 3 : 4;
+    const colCount = activeCols.length;
+    let orientation = 'portrait';
+    let format = 'a4';
+
+    if (colCount <= 5) {
+        orientation = 'portrait';
+        format = 'a4';
+    } else if (colCount <= 8) {
+        orientation = 'landscape';
+        format = 'a4';
+    } else {
+        orientation = 'landscape';
+        format = 'a3';
+    }
+
+    const fontSize = 9;
+    const cellPadding = 4;
 
     const doc = new jsPDF({
         orientation: orientation,
         unit: 'pt',
-        format: 'a4',
+        format: format,
     });
 
     // Atur properti metadata

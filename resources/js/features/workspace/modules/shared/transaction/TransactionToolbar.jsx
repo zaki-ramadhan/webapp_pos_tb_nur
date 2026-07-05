@@ -251,10 +251,29 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
 }
 
 export function TransactionExportExcelButton({ columns, rows, filename = 'export', label = 'Ekspor Excel' }) {
+    const cleanedColumns = React.useMemo(() => {
+        return (columns ?? [])
+            .map(col => col ? { ...col, label: cleanHeaderLabel(col.label) } : col)
+            .filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
+    }, [columns]);
+
+    const schemaKey = getTableSchemaKey(cleanedColumns);
+    const [visibleIds] = useColumnVisibility(schemaKey, cleanedColumns);
+
+    const handleExport = () => {
+        const activeCols = cleanedColumns.filter(col => {
+            if (visibleIds && visibleIds.length > 0) {
+                return visibleIds.includes(col.id);
+            }
+            return true;
+        });
+        exportToExcelXML(activeCols, rows, filename);
+    };
+
     return (
         <TransactionToolbarIconButton
             label={label}
-            onClick={() => exportToExcelXML(columns, rows, filename)}
+            onClick={handleExport}
         >
             <ExternalLinkIcon className="h-4 w-4" />
         </TransactionToolbarIconButton>

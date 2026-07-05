@@ -98,6 +98,7 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, level2Ta
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <SalesDepositFormView
+            key={lastActiveFormTab.id}
             pageId={page.id}
             config={config}
             buildRecord={buildRecord}
