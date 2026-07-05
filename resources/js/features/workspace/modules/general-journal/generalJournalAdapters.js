@@ -138,34 +138,41 @@ export function buildJournalRecordFromBackend(record = {}, config) {
         const isExpense = documentType === 'expense_entry';
         const isPayroll = documentType === 'payroll_entry';
 
+        const primaryAcc = record.primary_account;
+        const secondaryAcc = record.secondary_account;
+        const balancingAcc = isPayroll ? (secondaryAcc || primaryAcc) : (primaryAcc || secondaryAcc);
+
         let totalSum = 0;
         rawLines.forEach((line, index) => {
             const amount = Number(line.total_amount ?? 0);
             totalSum += amount;
 
+            const fallbackCode = isPayroll ? '610101' : '';
+            const fallbackName = isPayroll ? `Beban Gaji - ${line.description}` : `Rincian ${index + 1}`;
+
             lineItems.push({
                 id: String(line.id ?? `line-${index + 1}`),
                 __lineId: line.id ?? null,
                 __accountId: line.account_id ?? null,
-                accountCode: line.account?.code ?? line.reference_code ?? '',
-                accountName: line.account?.name ?? line.description ?? line.reference_code ?? `Rincian ${index + 1}`,
+                accountCode: line.account?.code ?? fallbackCode ?? line.reference_code ?? '',
+                accountName: line.account?.name ?? fallbackName ?? line.description ?? line.reference_code ?? `Rincian ${index + 1}`,
                 debit: isExpense || isPayroll ? formatCurrencyValue(amount) : '0',
                 credit: isExpense || isPayroll ? '0' : formatCurrencyValue(amount),
                 notes: line.description || '',
             });
         });
 
-        const primaryAcc = record.primary_account;
-        const secondaryAcc = record.secondary_account;
-        const balancingAcc = isPayroll ? (secondaryAcc || primaryAcc) : (primaryAcc || secondaryAcc);
+        const balancingCode = balancingAcc?.code ?? (isPayroll ? '210201' : '');
+        const balancingName = balancingAcc?.name ?? (isPayroll ? 'Utang Beban Gaji Karyawan' : 'Akun Penyeimbang');
+        const balancingId = balancingAcc?.id ?? null;
 
-        if (balancingAcc) {
+        if (balancingAcc || isPayroll) {
             lineItems.push({
                 id: `balancing-${record.id}`,
                 __lineId: null,
-                __accountId: balancingAcc.id ?? null,
-                accountCode: balancingAcc.code ?? '',
-                accountName: balancingAcc.name ?? 'Akun Penyeimbang',
+                __accountId: balancingId,
+                accountCode: balancingCode,
+                accountName: balancingName,
                 debit: isExpense || isPayroll ? '0' : formatCurrencyValue(totalSum),
                 credit: isExpense || isPayroll ? formatCurrencyValue(totalSum) : '0',
                 notes: 'Penyeimbang Transaksi Otomatis',
