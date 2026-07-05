@@ -105,3 +105,16 @@ export async function uploadBackendAttachment(file) {
 
     return response.data?.data ?? null;
 }
+
+export async function lookupRecordByDocumentNumber(resource, documentNumber) {
+    try {
+        const response = await getBackendClient().get(`/api/backend/${resource}`, {
+            params: normalizeQueryParams({ document_number: documentNumber, per_page: 1 }),
+        });
+        const rows = Array.isArray(response.data?.data) ? response.data.data : [];
+        return rows[0] ?? null;
+    } catch {
+        return null;
+    }
+}
+

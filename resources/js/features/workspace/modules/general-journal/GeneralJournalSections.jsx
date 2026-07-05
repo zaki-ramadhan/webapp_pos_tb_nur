@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import { lookupRecordByDocumentNumber } from '@/features/workspace/backend/workspaceBackendApi';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
@@ -100,7 +101,50 @@ const PROCESS_PAGE_MAP = {
     'inventory-adjustment': 'inventory-adjustment',
 };
 
+const RESOURCE_LOOKUP_MAP = {
+    'expense-entry': 'expense-entries',
+    'payroll-entry': 'payroll-entries',
+    'cash-payment': 'cash-payments',
+    'cash-receipt': 'cash-receipts',
+    'bank-transfer': 'bank-transfers',
+    'purchase-invoice': 'purchase-invoices',
+    'sales-invoice': 'sales-invoices',
+    'inventory-adjustment': 'inventory-adjustments',
+};
+
 export function GeneralJournalHeader({ config, values, setValues, activeRecordId, handlers = {} }) {
+    const [lookupLoading, setLookupLoading] = useState(false);
+
+    async function openSourceTransaction() {
+        const pageId = PROCESS_PAGE_MAP[values.transactionTypeValue] || values.transactionTypeValue;
+        const resourceKey = RESOURCE_LOOKUP_MAP[values.transactionTypeValue];
+        const docNumber = values.transactionNumber || values.documentNumber;
+
+        // Navigasi ke halaman tujuan dulu
+        window.dispatchEvent(new CustomEvent('workspace:open-page', { detail: { pageId } }));
+
+        if (!resourceKey || !docNumber) return;
+
+        setLookupLoading(true);
+        try {
+            const record = await lookupRecordByDocumentNumber(resourceKey, docNumber);
+            if (record?.id) {
+                window.dispatchEvent(
+                    new CustomEvent('workspace:open-page', {
+                        detail: {
+                            pageId,
+                            recordId: String(record.id),
+                            label: docNumber,
+                            tabLabel: docNumber,
+                        },
+                    })
+                );
+            }
+        } finally {
+            setLookupLoading(false);
+        }
+    }
+
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
@@ -167,24 +211,19 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
                 {values.transactionTypeValue && values.transactionTypeValue !== 'general-journal' && (
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label="No. Trans" />
-                        <div 
-                            onClick={() => {
-                                const pageId = PROCESS_PAGE_MAP[values.transactionTypeValue] || values.transactionTypeValue;
-                                window.dispatchEvent(
-                                    new CustomEvent('workspace:open-page', {
-                                        detail: {
-                                            pageId: pageId,
-                                            recordId: values.__backendRecordId,
-                                            label: values.transactionNumber || values.documentNumber,
-                                            tabLabel: values.transactionNumber || values.documentNumber,
-                                        },
-                                    })
-                                );
-                            }}
-                            className="flex items-center justify-between px-3 py-2 border rounded-[4px] cursor-pointer bg-emerald-50 border-emerald-600 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-700 transition duration-150 ease-in-out text-xs sm:text-sm font-medium h-[40px]"
+                        <button
+                            type="button"
+                            onClick={openSourceTransaction}
+                            disabled={lookupLoading}
+                            title="Klik untuk membuka transaksi asal"
+                            className={`flex items-center px-3 py-2 border rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-normal h-[40px] ${
+                                lookupLoading
+                                    ? 'cursor-wait opacity-70 bg-emerald-50 border-emerald-400 text-emerald-600'
+                                    : 'cursor-pointer bg-emerald-50 border-emerald-600 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-700'
+                            }`}
                         >
-                            <span>{values.transactionNumber || values.documentNumber}</span>
-                        </div>
+                            <span className="truncate">{values.transactionNumber || values.documentNumber}</span>
+                        </button>
                     </div>
                 )}
             </div>

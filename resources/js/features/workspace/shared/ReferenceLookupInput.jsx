@@ -231,7 +231,7 @@ export default function ReferenceLookupInput({
                     {searching ? (
                         <div className="flex flex-col items-center justify-center py-6 px-4 text-center">
                             <LoadingIcon className="h-6 w-6 animate-spin text-slate-500 mb-2" />
-                            <div className="text-xs sm:text-sm font-medium text-slate-500">Mencari data...</div>
+                            <div className="text-xs sm:text-sm font-normal text-slate-500">Mencari data...</div>
                         </div>
                     ) : filteredItems.length ? (
                         <div className="max-h-[260px] overflow-y-auto flex-1 min-h-0">

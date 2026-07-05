@@ -50,7 +50,7 @@ export default function AccountLookupSuggestions({
         <LookupDropdownSurface className={className} anchorRef={anchorRef}>
             <div className="max-h-[280px] overflow-y-auto bg-white flex-1 min-h-0">
                 {loading ? (
-                    <div className="px-4 py-5 text-center text-sm text-text-workspace-muted">{resolvedLoadingLabel}</div>
+                    <div className="px-4 py-5 text-center text-sm font-normal text-text-workspace-muted">{resolvedLoadingLabel}</div>
                 ) : error ? (
                     <div className="px-4 py-5 text-center text-sm text-red-850">{error}</div>
                 ) : rows.length ? (
