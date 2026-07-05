@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 
 export function getUserInitials(name = '') {
     return name
@@ -10,7 +10,7 @@ export function getUserInitials(name = '') {
         .toUpperCase();
 }
 
-export default function UserAvatar({
+const UserAvatar = memo(function UserAvatar({
     name = '',
     initials,
     imageUrl = null,
@@ -46,4 +46,6 @@ export default function UserAvatar({
             ) : null}
         </div>
     );
-}
+});
+
+export default UserAvatar;

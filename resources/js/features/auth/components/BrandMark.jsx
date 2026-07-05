@@ -1,4 +1,6 @@
-export default function BrandMark({
+import { memo } from 'react';
+
+const BrandMark = memo(function BrandMark({
     className = '',
     variant = 'default',
     titleClassName = '',
@@ -29,4 +31,6 @@ export default function BrandMark({
             </div>
         </div>
     );
-}
+});
+
+export default BrandMark;
