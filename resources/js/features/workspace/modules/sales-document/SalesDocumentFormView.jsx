@@ -89,16 +89,14 @@ export default function SalesDocumentFormView({
                 if (window.__savedRecordsCache?.[activeRecordId]) {
                     return;
                 }
-                const row = config.table?.rows?.find((r) => r.id === activeRecordId);
-                if (row?.__backendRecord) {
-                    return;
-                }
 
                 const response = await getBackendResource(backendConfig.resource, activeRecordId);
                 if (!active) return;
                 if (response?.data) {
                     const parsed = buildRecord ? buildRecord(response.data) : response.data;
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
                 }
             } catch (e) {
                 console.error(e);

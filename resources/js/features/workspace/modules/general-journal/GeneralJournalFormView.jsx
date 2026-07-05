@@ -62,16 +62,14 @@ export default function GeneralJournalFormView({
                 if (window.__savedRecordsCache?.[activeRecordId]) {
                     return;
                 }
-                const row = config.rowMap?.[activeRecordId];
-                if (row?.__backendRecord) {
-                    return;
-                }
 
                 const response = await getBackendResource('general-journals', activeRecordId);
                 if (!active) return;
                 if (response?.data) {
                     const parsed = buildRecordFromTableRow(buildGeneralJournalRow(response.data), config);
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
                 }
             } catch (e) {
                 console.error(e);

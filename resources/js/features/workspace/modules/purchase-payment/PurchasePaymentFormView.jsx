@@ -58,16 +58,14 @@ export default function PurchasePaymentFormView({
                 if (window.__savedRecordsCache?.[activeRecordId]) {
                     return;
                 }
-                const row = config.rowMap?.[activeRecordId];
-                if (row?.__backendRecord) {
-                    return;
-                }
 
                 const response = await getBackendResource('purchase-payments', activeRecordId);
                 if (!active) return;
                 if (response?.data) {
                     const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
                     setLocalRecord(parsed);
+                    window.__savedRecordsCache = window.__savedRecordsCache || {};
+                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
                 }
             } catch (e) {
                 console.error(e);
