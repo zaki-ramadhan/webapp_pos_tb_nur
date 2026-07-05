@@ -189,6 +189,7 @@ export default function LoginFormPanel({ login }) {
 
                     <Button
                         type="submit"
+                        variant="brand-pink"
                         size="md"
                         fullWidth
                         disabled={form.processing}

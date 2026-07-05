@@ -10,6 +10,8 @@ const variantClasses = {
     ghost: 'border border-transparent bg-transparent text-info',
     'brand-blue':
         'border border-transparent bg-brand-blue text-white shadow-button-primary',
+    'brand-pink':
+        'border border-transparent bg-brand-primary text-white shadow-button-primary',
 };
 
 const activeVariantClasses = {
@@ -19,6 +21,8 @@ const activeVariantClasses = {
     ghost: 'hover:underline cursor-pointer',
     'brand-blue':
         'hover:bg-brand-blue-hover active:scale-[0.98] cursor-pointer',
+    'brand-pink':
+        'hover:bg-brand-primary-hover active:scale-[0.98] cursor-pointer',
 };
 
 const disabledClasses = 'cursor-default opacity-55 shadow-none pointer-events-none';

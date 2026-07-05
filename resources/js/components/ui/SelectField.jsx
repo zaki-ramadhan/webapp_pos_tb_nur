@@ -78,7 +78,22 @@ export default function SelectField({
         return options.find((opt) => String(opt.value) === String(currentValue)) ?? null;
     }, [options, currentValue]);
 
-    const displayLabel = selectedOption ? selectedOption.label : (currentValue || placeholder);
+    const prefix = useMemo(() => {
+        const allOption = options.find((opt) => String(opt.value) === 'all');
+        if (allOption && allOption.label.includes(':')) {
+            return allOption.label.split(':')[0] + ': ';
+        }
+        return '';
+    }, [options]);
+
+    const displayLabel = useMemo(() => {
+        if (!selectedOption) return currentValue || placeholder;
+        const baseLabel = selectedOption.label;
+        if (prefix && !baseLabel.startsWith(prefix)) {
+            return prefix + baseLabel;
+        }
+        return baseLabel;
+    }, [selectedOption, prefix, currentValue, placeholder]);
 
     // Track scroll keyboard
     useEffect(() => {
@@ -216,6 +231,10 @@ export default function SelectField({
                     {options.map((option, index) => {
                         const isSelected = String(option.value) === String(currentValue);
                         const isHighlighted = index === highlightedIndex;
+                        let optionLabel = option.label;
+                        if (prefix && optionLabel.startsWith(prefix)) {
+                            optionLabel = optionLabel.slice(prefix.length);
+                        }
                         return (
                             <button
                                 key={option.value}
@@ -232,7 +251,7 @@ export default function SelectField({
                                             : 'text-slate-700 hover:bg-ui-bg-hover'
                                 } ${option.disabled ? 'opacity-50 cursor-default pointer-events-none' : 'cursor-pointer'}`.trim()}
                             >
-                                {option.label}
+                                {optionLabel}
                             </button>
                         );
                     })}

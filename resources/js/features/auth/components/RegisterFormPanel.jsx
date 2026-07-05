@@ -195,6 +195,7 @@ export default function RegisterFormPanel({ register }) {
 
                     <Button
                         type="submit"
+                        variant="brand-pink"
                         size="md"
                         fullWidth
                         disabled={form.processing}
