@@ -8,6 +8,30 @@ import {
     showErrorToast,
 } from '@/components/feedback/toast';
 
+function normalizeName(name) {
+    if (!name) return '';
+    return name
+        .toLowerCase()
+        .replace(/-/g, '')
+        .replace(/ies$/, 'y')
+        .replace(/s$/, '');
+}
+
+/**
+ * Check if the resource loading belongs to the currently active page.
+ * Prevents background tabs from displaying toast notifications.
+ */
+function isResourceActive(resourceName) {
+    if (typeof window === 'undefined') return true;
+    const activePageId = window.__activePageId;
+    if (!activePageId) return true;
+
+    const cleanResource = normalizeName(resourceName);
+    const cleanPage = normalizeName(activePageId);
+
+    return cleanResource === cleanPage || cleanResource.includes(cleanPage) || cleanPage.includes(cleanResource);
+}
+
 export function useTransactionDetailLoader({ resourceName, activeRecordId, buildRecord, config }) {
     const [localRecord, setLocalRecord] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -61,28 +85,34 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         let active = true;
         setIsLoading(true);
 
+        const shouldShowToast = isResourceActive(resourceName);
+
         // Delay showing the loading toast slightly (150ms) to prevent flash of loading toasts
         // on fast network requests and eliminate double toasts from React double-mounting effects.
         let toastId = null;
-        const toastTimer = setTimeout(() => {
-            if (active) {
-                toastId = showLoadingToast({
-                    title: 'Memuat data',
-                    message: 'Memuat data...'
-                });
-            }
-        }, 150);
+        let toastTimer = null;
+
+        if (shouldShowToast) {
+            toastTimer = setTimeout(() => {
+                if (active) {
+                    toastId = showLoadingToast({
+                        title: 'Memuat data',
+                        message: 'Memuat data...'
+                    });
+                }
+            }, 150);
+        }
 
         async function load() {
             try {
                 const response = await getBackendResource(resourceName, normalizedRecordId);
                 if (!active) {
-                    clearTimeout(toastTimer);
+                    if (toastTimer) clearTimeout(toastTimer);
                     if (toastId) dismissToast(toastId);
                     return;
                 }
 
-                clearTimeout(toastTimer);
+                if (toastTimer) clearTimeout(toastTimer);
 
                 if (response) {
                     const parsed = buildRecordRef.current
@@ -92,7 +122,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(normalizedRecordId)] = parsed;
 
-                    if (toastId) {
+                    if (shouldShowToast && toastId) {
                         updateToastToSuccess(toastId, {
                             title: 'Berhasil',
                             message: 'Data berhasil dimuat.'
@@ -103,18 +133,20 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
                 }
             } catch (e) {
                 console.error(e);
-                clearTimeout(toastTimer);
+                if (toastTimer) clearTimeout(toastTimer);
                 if (active) {
-                    if (toastId) {
-                        updateToastToError(toastId, {
-                            title: 'Gagal',
-                            message: 'Gagal memuat data.'
-                        });
-                    } else {
-                        showErrorToast({
-                            title: 'Gagal',
-                            message: 'Gagal memuat data.'
-                        });
+                    if (shouldShowToast) {
+                        if (toastId) {
+                            updateToastToError(toastId, {
+                                title: 'Gagal',
+                                message: 'Gagal memuat data.'
+                            });
+                        } else {
+                            showErrorToast({
+                                title: 'Gagal',
+                                message: 'Gagal memuat data.'
+                            });
+                        }
                     }
                 } else {
                     if (toastId) dismissToast(toastId);
@@ -128,7 +160,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
         return () => {
             active = false;
-            clearTimeout(toastTimer);
+            if (toastTimer) clearTimeout(toastTimer);
             if (toastId) dismissToast(toastId);
         };
         // Only re-fetch when the identity of the record changes
