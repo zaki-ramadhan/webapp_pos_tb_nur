@@ -22,7 +22,6 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
     useEffect(() => {
         // Only clear if the record ID itself has changed (switching to another document).
-        // If it's the same ID, keep the old values so we don't blink/go blank during refresh.
         if (lastRecordIdRef.current !== activeRecordId) {
             setLocalRecord(null);
             lastRecordIdRef.current = activeRecordId;
@@ -32,9 +31,26 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
             return;
         }
 
-        // Check in-memory cache first (survives HMR, not page refresh)
+        // 1. Check in-memory cache first (survives HMR, not page refresh)
         if (window.__savedRecordsCache?.[activeRecordId]) {
             setLocalRecord(window.__savedRecordsCache[activeRecordId]);
+            return;
+        }
+
+        // 2. Check if config has it in rowMap (opening from view data page)
+        const row = configRef.current?.rowMap?.[activeRecordId];
+        if (row?.__backendRecord) {
+            const parsed = buildRecordRef.current
+                ? buildRecordRef.current(row.__backendRecord, configRef.current)
+                : row.__backendRecord;
+            setLocalRecord(parsed);
+            return;
+        }
+
+        // 3. Check if config has it in detailRecords
+        const detailRecord = configRef.current?.detailRecords?.[activeRecordId];
+        if (detailRecord) {
+            setLocalRecord(detailRecord);
             return;
         }
 
@@ -42,8 +58,8 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         setIsLoading(true);
 
         const toastId = showLoadingToast({
-            title: 'Memuat Rincian',
-            message: 'Sedang mengambil data terbaru dari server...'
+            title: 'Memuat data',
+            message: 'Memuat data...'
         });
 
         async function load() {
@@ -63,7 +79,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
                     updateToastToSuccess(toastId, {
                         title: 'Berhasil',
-                        message: 'Rincian data berhasil diperbarui.'
+                        message: 'Data berhasil dimuat.'
                     });
                 } else {
                     dismissToast(toastId);
@@ -73,7 +89,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
                 if (active) {
                     updateToastToError(toastId, {
                         title: 'Gagal',
-                        message: 'Gagal mengambil rincian data terbaru.'
+                        message: 'Gagal memuat data.'
                     });
                 } else {
                     dismissToast(toastId);
