@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -47,34 +48,21 @@ export default function useSalesReceiptForm({
         config,
     });
 
-    const [values, setValues] = useState(() => buildSalesReceiptFormState(sourceRecord));
+    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+        sourceRecord,
+        buildFormState: buildSalesReceiptFormState,
+        initialComparable: useMemo(() => buildSalesReceiptFormState(sourceRecord), [sourceRecord]),
+        onValuesUpdated: useCallback(() => {
+            setActiveInvoiceModal(null);
+            setStatus({ tone: '', message: '' });
+            setDeleteConfirmationOpen(false);
+        }, [setStatus]),
+    });
     const isDetail = Boolean(activeRecordId);
-    const initialComparable = useMemo(() => buildSalesReceiptFormState(sourceRecord), [sourceRecord]);
-    const lastInitialComparableRef = useRef(initialComparable);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
     }, [activeRecordId]);
-
-    useEffect(() => {
-        const nextValues = buildSalesReceiptFormState(sourceRecord);
-        setValues((current) => {
-            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
-            const currentRecordId = current?.__backendRecordId || current?.id;
-            if (recordId !== currentRecordId) {
-                return nextValues;
-            }
-            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
-            if (!userHasEdited) {
-                return nextValues;
-            }
-            return current;
-        });
-        lastInitialComparableRef.current = initialComparable;
-        setActiveInvoiceModal(null);
-        setStatus({ tone: '', message: '' });
-        setDeleteConfirmationOpen(false);
-    }, [sourceRecord, initialComparable]);
 
     async function handleApplySalesDeposit(pendingId) {
         await executeImportPendingAction({
@@ -121,7 +109,6 @@ export default function useSalesReceiptForm({
     }, [isDetail, activeLevel2Tab]);
 
     const validationMessage = useMemo(() => validateSalesReceiptValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({

@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
@@ -52,33 +53,19 @@ export default function PurchasePaymentFormView({
     const isDetail = Boolean(activeRecordId);
     const sectionTabs = isDetail ? config.detailSectionTabs : config.sectionTabs;
     const [activeSectionId, setActiveSectionId] = useState(sectionTabs?.[0]?.id ?? 'details');
-    const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
+    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+        sourceRecord,
+        buildFormState: useCallback((record) => buildFormState(record, config), [config]),
+        initialComparable: useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]),
+        onValuesUpdated: useCallback(() => setActiveInvoice(null), []),
+    });
     const [activeInvoice, setActiveInvoice] = useState(null);
-    const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
 
     useEffect(() => {
         setActiveSectionId((isDetail ? config.detailSectionTabs : config.sectionTabs)?.[0]?.id ?? 'details');
     }, [activeRecordId]);
 
-    const lastInitialComparableRef = useRef(initialComparable);
-
-    useEffect(() => {
-        const nextValues = buildFormState(sourceRecord, config);
-        setValues((current) => {
-            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
-            const currentRecordId = current?.__backendRecordId || current?.id;
-            if (recordId !== currentRecordId) {
-                return nextValues;
-            }
-            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
-            return userHasEdited ? current : nextValues;
-        });
-        setActiveInvoice(null);
-        lastInitialComparableRef.current = initialComparable;
-    }, [sourceRecord, initialComparable]);
-
     const validationMessage = useMemo(() => validatePurchasePaymentValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
 
     const {
         status,

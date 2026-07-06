@@ -9,6 +9,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
+import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -83,10 +84,14 @@ export default function SalesDepositFormView({
         buildRecord,
         config,
     });
-    const [values, setValues] = useState(() => buildSalesDepositFormState(sourceRecord, config));
+    const [values, setValues,, lastInitialComparableRef] = useSyncFormState({
+        sourceRecord,
+        buildFormState: useCallback((record) => buildSalesDepositFormState(record, config), [config]),
+        initialComparable: useMemo(() => buildSalesDepositFormState(sourceRecord, config), [config, sourceRecord]),
+        onValuesUpdated: useCallback((nextValues) => setCommittedDepositAmount(nextValues.depositAmount), []),
+    });
     const [committedDepositAmount, setCommittedDepositAmount] = useState(() => values.depositAmount);
     const isDetail = Boolean(activeRecordId);
-    const initialComparable = useMemo(() => buildSalesDepositFormState(sourceRecord, config), [config, sourceRecord]);
 
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'deposit');
 
@@ -101,27 +106,6 @@ export default function SalesDepositFormView({
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'deposit');
     }, [activeRecordId]);
-
-    const lastInitialComparableRef = useRef(initialComparable);
-
-    useEffect(() => {
-        const nextValues = buildSalesDepositFormState(sourceRecord, config);
-        setValues((current) => {
-            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
-            const currentRecordId = current?.__backendRecordId || current?.id;
-            if (recordId !== currentRecordId) {
-                setCommittedDepositAmount(nextValues.depositAmount);
-                return nextValues;
-            }
-            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
-            if (!userHasEdited) {
-                setCommittedDepositAmount(nextValues.depositAmount);
-                return nextValues;
-            }
-            return current;
-        });
-        lastInitialComparableRef.current = initialComparable;
-    }, [sourceRecord, initialComparable]);
 
     useEffect(() => {
         const baseAmount = parseNumericInput(committedDepositAmount);

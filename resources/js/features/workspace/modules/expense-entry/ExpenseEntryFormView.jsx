@@ -11,6 +11,7 @@ import {
     getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
+import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout, TransactionTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
@@ -52,9 +53,12 @@ export default function ExpenseEntryFormView({
         buildRecord,
         config,
     });
-    const [values, setValues] = useState(() => buildFormState(sourceRecord));
+    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+        sourceRecord,
+        buildFormState,
+        initialComparable: useMemo(() => buildFormState(sourceRecord), [sourceRecord]),
+    });
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
-    const initialComparable = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
 
     const [lineModalOpen, setLineModalOpen] = useState(false);
     const [lineModalRecord, setLineModalRecord] = useState(null);
@@ -64,24 +68,7 @@ export default function ExpenseEntryFormView({
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
     }, [config.sectionTabs]);
 
-    const lastInitialComparableRef = useRef(initialComparable);
-
-    useEffect(() => {
-        const nextValues = buildFormState(sourceRecord);
-        setValues((current) => {
-            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
-            const currentRecordId = current?.__backendRecordId || current?.id;
-            if (recordId !== currentRecordId) {
-                return nextValues;
-            }
-            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
-            return userHasEdited ? current : nextValues;
-        });
-        lastInitialComparableRef.current = initialComparable;
-    }, [sourceRecord, initialComparable]);
-
     const validationMessage = useMemo(() => validateExpenseEntryValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
 
     const {
         status,

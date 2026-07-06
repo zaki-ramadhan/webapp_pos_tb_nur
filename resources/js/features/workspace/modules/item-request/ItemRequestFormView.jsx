@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -52,33 +53,19 @@ export default function ItemRequestFormView({
                 : config.draft,
         [activeRecordId, buildRecord, config],
     );
-    const [values, setValues] = useState(() => buildFormValues(sourceRecord));
+    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+        sourceRecord,
+        buildFormState: buildFormValues,
+        initialComparable: useMemo(() => buildFormValues(sourceRecord), [sourceRecord]),
+        onValuesUpdated: useCallback(() => setImportModalOpen(false), []),
+    });
     const isDetail = Boolean(activeRecordId);
-    const initialComparable = useMemo(() => buildFormValues(sourceRecord), [sourceRecord]);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
     }, [activeRecordId]);
 
-    const lastInitialComparableRef = useRef(initialComparable);
-
-    useEffect(() => {
-        const nextValues = buildFormValues(sourceRecord);
-        setValues((current) => {
-            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
-            const currentRecordId = current?.__backendRecordId || current?.id;
-            if (recordId !== currentRecordId) {
-                return nextValues;
-            }
-            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
-            return userHasEdited ? current : nextValues;
-        });
-        setImportModalOpen(false);
-        lastInitialComparableRef.current = initialComparable;
-    }, [sourceRecord, initialComparable]);
-
     const validationMessage = useMemo(() => validateItemRequestValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
 
     const {
         status,
