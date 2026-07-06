@@ -20,10 +20,60 @@ const UserAvatar = memo(function UserAvatar({
 }) {
     const [hasImageError, setHasImageError] = useState(false);
     const resolvedInitials = initials ?? getUserInitials(name);
-    const shouldShowImage = Boolean(imageUrl) && !hasImageError;
+
+    const [cachedUrl, setCachedUrl] = useState(() => {
+        if (typeof window === 'undefined' || !imageUrl) return imageUrl;
+        try {
+            return localStorage.getItem(`avatar_cache_${imageUrl}`) || imageUrl;
+        } catch {
+            return imageUrl;
+        }
+    });
+
+    const shouldShowImage = Boolean(cachedUrl) && !hasImageError;
 
     useEffect(() => {
         setHasImageError(false);
+        if (!imageUrl) {
+            setCachedUrl(null);
+            return;
+        }
+
+        if (typeof window !== 'undefined') {
+            try {
+                const cached = localStorage.getItem(`avatar_cache_${imageUrl}`);
+                if (cached) {
+                    setCachedUrl(cached);
+                    return;
+                }
+            } catch {}
+        }
+
+        setCachedUrl(imageUrl);
+
+        let active = true;
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = imageUrl;
+        img.onload = () => {
+            if (!active) return;
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const dataUrl = canvas.toDataURL('image/png');
+                localStorage.setItem(`avatar_cache_${imageUrl}`, dataUrl);
+                setCachedUrl(dataUrl);
+            } catch (e) {
+                // Ignore canvas security errors for external CDNs (CORS)
+            }
+        };
+
+        return () => {
+            active = false;
+        };
     }, [imageUrl]);
 
     return (
@@ -32,7 +82,7 @@ const UserAvatar = memo(function UserAvatar({
         >
             {shouldShowImage ? (
                 <img
-                    src={imageUrl}
+                    src={cachedUrl}
                     alt={name ? `Foto profil ${name}` : 'Foto profil pengguna'}
                     className="h-full w-full object-cover"
                     referrerPolicy="no-referrer"

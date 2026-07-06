@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title inertia>{{ config('app.name', 'TB Nur POS') }}</title>
         <link rel="icon" type="image/png" href="/logo_icon.png" />
+        <link rel="preload" as="image" href="/logo_icon.png" />
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link
             href="https://fonts.bunny.net/css?family=montserrat:400,500,600,700,800"
