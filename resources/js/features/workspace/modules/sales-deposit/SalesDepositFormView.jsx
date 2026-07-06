@@ -107,6 +107,12 @@ export default function SalesDepositFormView({
     useEffect(() => {
         const nextValues = buildSalesDepositFormState(sourceRecord, config);
         setValues((current) => {
+            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
+            const currentRecordId = current?.__backendRecordId || current?.id;
+            if (recordId !== currentRecordId) {
+                setCommittedDepositAmount(nextValues.depositAmount);
+                return nextValues;
+            }
             const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
             if (!userHasEdited) {
                 setCommittedDepositAmount(nextValues.depositAmount);

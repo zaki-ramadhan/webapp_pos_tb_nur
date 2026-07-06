@@ -59,6 +59,11 @@ export default function useSalesReceiptForm({
     useEffect(() => {
         const nextValues = buildSalesReceiptFormState(sourceRecord);
         setValues((current) => {
+            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
+            const currentRecordId = current?.__backendRecordId || current?.id;
+            if (recordId !== currentRecordId) {
+                return nextValues;
+            }
             const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
             if (!userHasEdited) {
                 return nextValues;

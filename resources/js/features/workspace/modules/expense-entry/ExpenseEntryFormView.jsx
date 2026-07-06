@@ -69,6 +69,11 @@ export default function ExpenseEntryFormView({
     useEffect(() => {
         const nextValues = buildFormState(sourceRecord);
         setValues((current) => {
+            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
+            const currentRecordId = current?.__backendRecordId || current?.id;
+            if (recordId !== currentRecordId) {
+                return nextValues;
+            }
             const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
             return userHasEdited ? current : nextValues;
         });

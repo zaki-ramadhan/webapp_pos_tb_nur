@@ -113,7 +113,14 @@ export default function PayrollEntryFormView({
         };
         const nextEmployeeRows = sourceRecord?.employeeRows ?? [];
 
+        const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
+        const currentRecordId = values?.__backendRecordId || values?.id;
+        const isRecordIdChanged = recordId !== currentRecordId;
+
         setValues((current) => {
+            if (isRecordIdChanged) {
+                return nextValues;
+            }
             const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, {
                 paymentType: current.paymentType,
                 month: current.month,
@@ -132,6 +139,9 @@ export default function PayrollEntryFormView({
         });
 
         setEmployeeRows((current) => {
+            if (isRecordIdChanged) {
+                return nextEmployeeRows;
+            }
             const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, {
                 paymentType: values.paymentType,
                 month: values.month,
