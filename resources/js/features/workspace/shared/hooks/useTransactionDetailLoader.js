@@ -5,11 +5,15 @@ import {
     updateToastToSuccess,
     updateToastToError,
     dismissToast,
+    showErrorToast,
 } from '@/components/feedback/toast';
 
 export function useTransactionDetailLoader({ resourceName, activeRecordId, buildRecord, config }) {
     const [localRecord, setLocalRecord] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    // Normalize activeRecordId to string to prevent string/number type switching from triggering useEffect twice
+    const normalizedRecordId = activeRecordId !== null && activeRecordId !== undefined ? String(activeRecordId) : null;
 
     // Refs so the async closure always uses latest values
     // without making config/buildRecord trigger a new fetch
@@ -18,27 +22,27 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
     useEffect(() => { configRef.current = config; }, [config]);
     useEffect(() => { buildRecordRef.current = buildRecord; }, [buildRecord]);
 
-    const lastRecordIdRef = useRef(activeRecordId);
+    const lastRecordIdRef = useRef(normalizedRecordId);
 
     useEffect(() => {
         // Only clear if the record ID itself has changed (switching to another document).
-        if (lastRecordIdRef.current !== activeRecordId) {
+        if (lastRecordIdRef.current !== normalizedRecordId) {
             setLocalRecord(null);
-            lastRecordIdRef.current = activeRecordId;
+            lastRecordIdRef.current = normalizedRecordId;
         }
 
-        if (!activeRecordId) {
+        if (!normalizedRecordId) {
             return;
         }
 
         // 1. Check in-memory cache first (survives HMR, not page refresh)
-        if (window.__savedRecordsCache?.[activeRecordId]) {
-            setLocalRecord(window.__savedRecordsCache[activeRecordId]);
+        if (window.__savedRecordsCache?.[normalizedRecordId]) {
+            setLocalRecord(window.__savedRecordsCache[normalizedRecordId]);
             return;
         }
 
         // 2. Check if config has it in rowMap (opening from view data page)
-        const row = configRef.current?.rowMap?.[activeRecordId];
+        const row = configRef.current?.rowMap?.[normalizedRecordId];
         if (row?.__backendRecord) {
             const parsed = buildRecordRef.current
                 ? buildRecordRef.current(row.__backendRecord, configRef.current)
@@ -48,7 +52,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         }
 
         // 3. Check if config has it in detailRecords
-        const detailRecord = configRef.current?.detailRecords?.[activeRecordId];
+        const detailRecord = configRef.current?.detailRecords?.[normalizedRecordId];
         if (detailRecord) {
             setLocalRecord(detailRecord);
             return;
@@ -57,42 +61,63 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         let active = true;
         setIsLoading(true);
 
-        const toastId = showLoadingToast({
-            title: 'Memuat data',
-            message: 'Memuat data...'
-        });
+        // Delay showing the loading toast slightly (150ms) to prevent flash of loading toasts
+        // on fast network requests and eliminate double toasts from React double-mounting effects.
+        let toastId = null;
+        const toastTimer = setTimeout(() => {
+            if (active) {
+                toastId = showLoadingToast({
+                    title: 'Memuat data',
+                    message: 'Memuat data...'
+                });
+            }
+        }, 150);
 
         async function load() {
             try {
-                const response = await getBackendResource(resourceName, activeRecordId);
+                const response = await getBackendResource(resourceName, normalizedRecordId);
                 if (!active) {
-                    dismissToast(toastId);
+                    clearTimeout(toastTimer);
+                    if (toastId) dismissToast(toastId);
                     return;
                 }
+
+                clearTimeout(toastTimer);
+
                 if (response) {
                     const parsed = buildRecordRef.current
                         ? buildRecordRef.current(response, configRef.current)
                         : response;
                     setLocalRecord(parsed);
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
+                    window.__savedRecordsCache[String(normalizedRecordId)] = parsed;
 
-                    updateToastToSuccess(toastId, {
-                        title: 'Berhasil',
-                        message: 'Data berhasil dimuat.'
-                    });
+                    if (toastId) {
+                        updateToastToSuccess(toastId, {
+                            title: 'Berhasil',
+                            message: 'Data berhasil dimuat.'
+                        });
+                    }
                 } else {
-                    dismissToast(toastId);
+                    if (toastId) dismissToast(toastId);
                 }
             } catch (e) {
                 console.error(e);
+                clearTimeout(toastTimer);
                 if (active) {
-                    updateToastToError(toastId, {
-                        title: 'Gagal',
-                        message: 'Gagal memuat data.'
-                    });
+                    if (toastId) {
+                        updateToastToError(toastId, {
+                            title: 'Gagal',
+                            message: 'Gagal memuat data.'
+                        });
+                    } else {
+                        showErrorToast({
+                            title: 'Gagal',
+                            message: 'Gagal memuat data.'
+                        });
+                    }
                 } else {
-                    dismissToast(toastId);
+                    if (toastId) dismissToast(toastId);
                 }
             } finally {
                 if (active) setIsLoading(false);
@@ -103,32 +128,33 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
         return () => {
             active = false;
-            dismissToast(toastId);
+            clearTimeout(toastTimer);
+            if (toastId) dismissToast(toastId);
         };
         // Only re-fetch when the identity of the record changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeRecordId, resourceName]);
+    }, [normalizedRecordId, resourceName]);
 
     const sourceRecord = useMemo(() => {
         if (localRecord) {
             return localRecord;
         }
 
-        if (activeRecordId) {
-            if (window.__savedRecordsCache?.[activeRecordId]) {
-                return window.__savedRecordsCache[activeRecordId];
+        if (normalizedRecordId) {
+            if (window.__savedRecordsCache?.[normalizedRecordId]) {
+                return window.__savedRecordsCache[normalizedRecordId];
             }
 
-            const row = config?.rowMap?.[activeRecordId];
+            const row = config?.rowMap?.[normalizedRecordId];
             if (row?.__backendRecord && buildRecord) {
                 return buildRecord(row.__backendRecord, config);
             }
 
-            return config?.records?.[activeRecordId] ?? config?.detailRecords?.[activeRecordId] ?? config?.draft ?? config?.defaults;
+            return config?.records?.[normalizedRecordId] ?? config?.detailRecords?.[normalizedRecordId] ?? config?.draft ?? config?.defaults;
         }
 
         return config?.draft ?? config?.defaults;
-    }, [activeRecordId, config, localRecord, buildRecord]);
+    }, [normalizedRecordId, config, localRecord, buildRecord]);
 
     return [sourceRecord, setLocalRecord, isLoading];
 }
