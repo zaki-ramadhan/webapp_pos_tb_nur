@@ -1,36 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
-import {
-    showLoadingToast,
-    updateToastToSuccess,
-    updateToastToError,
-    dismissToast,
-    showErrorToast,
-} from '@/components/feedback/toast';
-
-function normalizeName(name) {
-    if (!name) return '';
-    return name
-        .toLowerCase()
-        .replace(/-/g, '')
-        .replace(/ies$/, 'y')
-        .replace(/s$/, '');
-}
-
-/**
- * Check if the resource loading belongs to the currently active page.
- * Prevents background tabs from displaying toast notifications.
- */
-function isResourceActive(resourceName) {
-    if (typeof window === 'undefined') return true;
-    const activePageId = window.__activePageId;
-    if (!activePageId) return true;
-
-    const cleanResource = normalizeName(resourceName);
-    const cleanPage = normalizeName(activePageId);
-
-    return cleanResource === cleanPage || cleanResource.includes(cleanPage) || cleanPage.includes(cleanResource);
-}
+import { showErrorToast } from '@/components/feedback/toast';
 
 export function useTransactionDetailLoader({ resourceName, activeRecordId, buildRecord, config }) {
     const [localRecord, setLocalRecord] = useState(null);
@@ -85,34 +55,12 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         let active = true;
         setIsLoading(true);
 
-        const shouldShowToast = isResourceActive(resourceName);
-
-        // Delay showing the loading toast slightly (150ms) to prevent flash of loading toasts
-        // on fast network requests and eliminate double toasts from React double-mounting effects.
-        let toastId = null;
-        let toastTimer = null;
-
-        if (shouldShowToast) {
-            toastTimer = setTimeout(() => {
-                if (active) {
-                    toastId = showLoadingToast({
-                        title: 'Memuat data',
-                        message: 'Memuat data...'
-                    });
-                }
-            }, 150);
-        }
-
         async function load() {
             try {
                 const response = await getBackendResource(resourceName, normalizedRecordId);
                 if (!active) {
-                    if (toastTimer) clearTimeout(toastTimer);
-                    if (toastId) dismissToast(toastId);
                     return;
                 }
-
-                if (toastTimer) clearTimeout(toastTimer);
 
                 if (response) {
                     const parsed = buildRecordRef.current
@@ -121,35 +69,14 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
                     setLocalRecord(parsed);
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(normalizedRecordId)] = parsed;
-
-                    if (shouldShowToast && toastId) {
-                        updateToastToSuccess(toastId, {
-                            title: 'Berhasil',
-                            message: 'Data berhasil dimuat.'
-                        });
-                    }
-                } else {
-                    if (toastId) dismissToast(toastId);
                 }
             } catch (e) {
                 console.error(e);
-                if (toastTimer) clearTimeout(toastTimer);
                 if (active) {
-                    if (shouldShowToast) {
-                        if (toastId) {
-                            updateToastToError(toastId, {
-                                title: 'Gagal',
-                                message: 'Gagal memuat data.'
-                            });
-                        } else {
-                            showErrorToast({
-                                title: 'Gagal',
-                                message: 'Gagal memuat data.'
-                            });
-                        }
-                    }
-                } else {
-                    if (toastId) dismissToast(toastId);
+                    showErrorToast({
+                        title: 'Gagal',
+                        message: 'Gagal memuat data detail transaksi.'
+                    });
                 }
             } finally {
                 if (active) setIsLoading(false);
@@ -160,8 +87,6 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
         return () => {
             active = false;
-            if (toastTimer) clearTimeout(toastTimer);
-            if (toastId) dismissToast(toastId);
         };
         // Only re-fetch when the identity of the record changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
