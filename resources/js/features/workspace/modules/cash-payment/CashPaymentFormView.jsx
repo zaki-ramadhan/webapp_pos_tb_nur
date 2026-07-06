@@ -53,7 +53,7 @@ export default function CashPaymentFormView({
     const buildRecord = useCallback((data, cfg) => {
         return buildCashPaymentRecord(data, cfg);
     }, []);
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'cash-payments',
         activeRecordId,
         buildRecord,
@@ -513,6 +513,7 @@ export default function CashPaymentFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={
                     <CashPaymentHeader

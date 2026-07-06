@@ -58,7 +58,7 @@ export default function BankTransferFormView({
     const buildRecord = useCallback((data, cfg) => {
         return buildBankTransferRecord(data, cfg);
     }, []);
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'bank-transfers',
         activeRecordId,
         buildRecord,
@@ -395,6 +395,7 @@ export default function BankTransferFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={<BankTransferHeader config={config} values={values} setValues={updateValues} activeRecordId={activeRecordId} />}
                 sectionTabs={config.sectionTabs}

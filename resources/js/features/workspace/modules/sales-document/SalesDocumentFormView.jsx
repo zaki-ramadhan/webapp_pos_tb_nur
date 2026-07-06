@@ -74,7 +74,7 @@ export default function SalesDocumentFormView({
     const [itemModalOpen, setItemModalOpen] = useState(false);
     const [importModalOpen, setImportModalOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [sourceRecord] = useTransactionDetailLoader({
+    const [sourceRecord,, isLoading] = useTransactionDetailLoader({
         resourceName: backendConfig?.resource ?? 'sales-documents',
         activeRecordId,
         buildRecord,
@@ -352,6 +352,7 @@ export default function SalesDocumentFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={
                     <SalesDocumentFormHeader

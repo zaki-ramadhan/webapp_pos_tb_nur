@@ -51,7 +51,7 @@ export default function CashReceiptFormView({
     const buildRecord = useCallback((data, cfg) => {
         return buildCashReceiptRecord(data, cfg);
     }, []);
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'cash-receipts',
         activeRecordId,
         buildRecord,
@@ -265,6 +265,7 @@ export default function CashReceiptFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={
                     <CashReceiptHeader

@@ -43,7 +43,7 @@ export default function PurchasePaymentFormView({
     buildRecord,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [sourceRecord] = useTransactionDetailLoader({
+    const [sourceRecord,, isLoading] = useTransactionDetailLoader({
         resourceName: 'purchase-payments',
         activeRecordId,
         buildRecord,
@@ -271,6 +271,7 @@ export default function PurchasePaymentFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={<PurchasePaymentHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
                 sectionTabs={sectionTabs}

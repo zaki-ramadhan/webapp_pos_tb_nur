@@ -51,7 +51,7 @@ export default function GeneralJournalFormView({
     const buildRecord = useCallback((data, cfg) => {
         return buildRecordFromTableRow(buildGeneralJournalRow(data), cfg);
     }, []);
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'general-journals',
         activeRecordId,
         buildRecord,
@@ -283,6 +283,7 @@ export default function GeneralJournalFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={<GeneralJournalHeader config={config} values={values} setValues={setValues} activeRecordId={activeRecordId} handlers={handlers} />}
                 sectionTabs={config.sectionTabs}

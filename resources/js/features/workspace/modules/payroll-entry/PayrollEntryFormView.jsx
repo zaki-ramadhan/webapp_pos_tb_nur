@@ -35,7 +35,7 @@ export default function PayrollEntryFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'employees');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'payroll-entries',
         activeRecordId,
         buildRecord,
@@ -561,6 +561,7 @@ export default function PayrollEntryFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={<PayrollHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
                 sectionTabs={config.sectionTabs}

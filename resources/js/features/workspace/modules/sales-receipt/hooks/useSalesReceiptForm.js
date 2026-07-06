@@ -40,7 +40,7 @@ export default function useSalesReceiptForm({
 
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
 
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'sales-receipts',
         activeRecordId,
         buildRecord,
@@ -287,6 +287,7 @@ export default function useSalesReceiptForm({
         setValues,
         isDetail,
         isDirty,
+        isLoading,
         saveDisabled,
         dockActions,
         handlers,

@@ -77,7 +77,7 @@ export default function SalesDepositFormView({
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
 
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'sales-deposits',
         activeRecordId,
         buildRecord,
@@ -311,6 +311,7 @@ export default function SalesDepositFormView({
     return (
         <>
             <TransactionFormLayout
+                isLoading={isLoading}
                 validationMessage={validationMessage}
                 header={<SalesDepositHeader config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} />}
                 sectionTabs={sectionTabs}

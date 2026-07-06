@@ -46,7 +46,7 @@ export default function ExpenseEntryFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const showAutoNumberSwitch = !activeRecordId;
-    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'expense-entries',
         activeRecordId,
         buildRecord,
@@ -302,6 +302,7 @@ export default function ExpenseEntryFormView({
     return (
         <>
             <TransactionFormLayout
+            isLoading={isLoading}
             validationMessage={validationMessage}
                 header={
                     <ExpenseEntryHeader
