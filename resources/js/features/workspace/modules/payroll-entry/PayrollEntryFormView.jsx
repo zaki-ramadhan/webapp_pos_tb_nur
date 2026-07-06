@@ -191,8 +191,8 @@ export default function PayrollEntryFormView({
     }, [config, values, employeeRows, isDetail]);
 
     const isDirty = useMemo(
-        () => !areComparableValuesEqual(initialComparable, currentComparable),
-        [initialComparable, currentComparable]
+        () => !areComparableValuesEqual(lastInitialComparableRef.current, currentComparable),
+        [currentComparable]
     );
 
     const {

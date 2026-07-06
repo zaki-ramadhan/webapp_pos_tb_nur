@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -50,6 +50,7 @@ export default function useSalesReceiptForm({
     const [values, setValues] = useState(() => buildSalesReceiptFormState(sourceRecord));
     const isDetail = Boolean(activeRecordId);
     const initialComparable = useMemo(() => buildSalesReceiptFormState(sourceRecord), [sourceRecord]);
+    const lastInitialComparableRef = useRef(initialComparable);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
@@ -58,13 +59,17 @@ export default function useSalesReceiptForm({
     useEffect(() => {
         const nextValues = buildSalesReceiptFormState(sourceRecord);
         setValues((current) => {
-            const hasEdits = !areComparableValuesEqual(initialComparable, current);
-            return hasEdits ? current : nextValues;
+            const userHasEdited = !areComparableValuesEqual(lastInitialComparableRef.current, current);
+            if (!userHasEdited) {
+                return nextValues;
+            }
+            return current;
         });
+        lastInitialComparableRef.current = initialComparable;
         setActiveInvoiceModal(null);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [sourceRecord]);
+    }, [sourceRecord, initialComparable]);
 
     async function handleApplySalesDeposit(pendingId) {
         await executeImportPendingAction({
@@ -111,7 +116,7 @@ export default function useSalesReceiptForm({
     }, [isDetail, activeLevel2Tab]);
 
     const validationMessage = useMemo(() => validateSalesReceiptValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({

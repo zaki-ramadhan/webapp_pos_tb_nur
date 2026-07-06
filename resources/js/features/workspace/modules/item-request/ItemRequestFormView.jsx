@@ -73,7 +73,7 @@ export default function ItemRequestFormView({
     }, [sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => validateItemRequestValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
 
     const {
         status,

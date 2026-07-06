@@ -76,7 +76,7 @@ export default function ExpenseEntryFormView({
     }, [sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => validateExpenseEntryValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
 
     const {
         status,

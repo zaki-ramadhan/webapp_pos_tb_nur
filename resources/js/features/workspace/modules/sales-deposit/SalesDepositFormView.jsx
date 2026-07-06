@@ -161,10 +161,10 @@ export default function SalesDepositFormView({
     const validationMessage = useMemo(() => validateSalesDepositValues(values, config), [config, values]);
     const isDirty = useMemo(() => {
         return !areComparableValuesEqual(
-            getComparableTransactionFields(initialComparable),
+            getComparableTransactionFields(lastInitialComparableRef.current),
             getComparableTransactionFields(values)
         );
-    }, [initialComparable, values]);
+    }, [values]);
 
     const {
         status,

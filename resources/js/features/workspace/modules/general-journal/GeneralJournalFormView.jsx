@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -61,15 +61,18 @@ export default function GeneralJournalFormView({
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
 
+    const lastInitialComparableRef = useRef(initialComparable);
+
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
         setValues(buildFormState(sourceRecord, config));
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [config, sourceRecord]);
+        lastInitialComparableRef.current = initialComparable;
+    }, [config, sourceRecord, initialComparable]);
 
     const validationMessage = useMemo(() => validateJournalValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);
+    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     useWorkspaceDirtyRegistration({
