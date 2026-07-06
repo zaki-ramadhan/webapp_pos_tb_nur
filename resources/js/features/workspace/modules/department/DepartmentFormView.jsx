@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -44,9 +45,6 @@ export default function DepartmentFormView({
     const initialValues = useMemo(() => buildDefaultValues(form, detailRow), [detailRow, form]);
     const [values, setValues] = useState(() => initialValues);
     const [hasSaved, setHasSaved] = useState(false);
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const isDetailMode = Boolean(detailRow);
     const parentDepartmentOptions = useMemo(
         () => (form.lookupOptions?.parentDepartments ?? [])
@@ -102,7 +100,15 @@ export default function DepartmentFormView({
     }
 
     const validationMessage = useMemo(() => validateDepartmentValues(values, form), [form, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+    const {
+        status,
+        setStatus,
+        saving,
+        setSaving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
     useWorkspaceDirtyRegistration({
         pageId,

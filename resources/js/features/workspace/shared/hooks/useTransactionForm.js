@@ -67,11 +67,20 @@ function deriveFieldErrors(validationMessage) {
 export function useTransactionForm({
     validationMessage = null,
     fieldErrors = null,
+    isDirty = false,
 } = {}) {
     const resolvedFieldErrors = fieldErrors || deriveFieldErrors(validationMessage);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
+    const saveDisabled = saving || !isDirty || Boolean(
+        validationMessage && (
+            validationMessage.includes('wajib diisi') ||
+            validationMessage.includes('wajib dipilih') ||
+            validationMessage.includes('wajib diisi minimal 1')
+        )
+    );
 
     async function selectLookup(resource, title, onApply, labelBuilder = buildLookupLabel, queryParams = {}) {
         try {
@@ -136,5 +145,6 @@ export function useTransactionForm({
         handleSave,
         requestDelete,
         handleDelete,
+        saveDisabled,
     };
 }

@@ -105,9 +105,8 @@ export default function BankTransferFormView({
         handleSave,
         requestDelete,
         handleDelete,
-    } = useTransactionForm({ validationMessage });
-
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
     const updateValues = useCallback((nextValues) => {
         setValues((currentValues) =>

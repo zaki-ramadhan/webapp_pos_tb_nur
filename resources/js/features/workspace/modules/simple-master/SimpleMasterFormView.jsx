@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -72,9 +73,6 @@ export default function SimpleMasterFormView({
     const isDetailMode = Boolean(detailRow);
     const [values, setValues] = useState(() => buildSimpleMasterFormValues(form, detailRow));
     const [hasSaved, setHasSaved] = useState(false);
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const initialValues = useMemo(() => buildSimpleMasterFormValues(form, detailRow), [detailRow, form]);
 
     const isDirty = useMemo(() => !hasSaved && !areComparableValuesEqual(values, initialValues), [initialValues, values, hasSaved]);
@@ -119,7 +117,15 @@ export default function SimpleMasterFormView({
 
         return backendConfig?.validate?.(values) ?? '';
     }, [backendConfig, form.fields, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+    const {
+        status,
+        setStatus,
+        saving,
+        setSaving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
     useWorkspaceDirtyRegistration({
         pageId: page.id,

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -62,9 +63,6 @@ export default function EmployeeFormView({
     const initialValues = useMemo(() => buildEmployeeFormValues(form, detailRow), [detailRow]);
     const [values, setValues] = useState(() => initialValues);
     const [hasSaved, setHasSaved] = useState(false);
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
     const [attachmentModalOpen, setAttachmentModalOpen] = useState(false);
     const isDetailMode = Boolean(detailRow);
     const [errors, setErrors] = useState(() => ({
@@ -172,7 +170,15 @@ export default function EmployeeFormView({
     }
 
     const validationMessage = useMemo(() => validateEmployeeValues(values), [values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+    const {
+        status,
+        setStatus,
+        saving,
+        setSaving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
     useWorkspaceDirtyRegistration({
         pageId,

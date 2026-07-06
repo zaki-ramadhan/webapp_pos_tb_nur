@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import TextInput from '@/components/ui/TextInput';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -30,9 +31,6 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
     const [permissionCategories, setPermissionCategories] = useState(() =>
         buildInitialPermissionCategories(form.permissions, form.permissionPreset),
     );
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
     const [isDuplicated, setIsDuplicated] = useState(false);
 
     const recordId = activeLevel2Tab?.tabType === 'detail' && !isDuplicated ? activeLevel2Tab.recordId : null;
@@ -70,7 +68,15 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         return '';
     }, [generalValues.groupName]);
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+    const {
+        status,
+        setStatus,
+        saving,
+        setSaving,
+        deleteConfirmationOpen: isDeleteConfirmationOpen,
+        setDeleteConfirmationOpen: setIsDeleteConfirmationOpen,
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
     useWorkspaceDirtyRegistration({
         pageId,

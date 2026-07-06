@@ -125,9 +125,10 @@ export default function SalesDocumentFormView({
         handleSave,
         requestDelete,
         handleDelete,
-    } = useTransactionForm({ validationMessage, fieldErrors });
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, fieldErrors, isDirty });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+
 
     useWorkspaceDirtyRegistration({
         pageId,

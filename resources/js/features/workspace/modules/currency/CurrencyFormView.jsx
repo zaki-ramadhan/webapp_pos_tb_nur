@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
+import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -40,9 +41,6 @@ export default function CurrencyFormView({
     const initialValues = useMemo(() => buildCurrencyValuesFromRecord(detailRow, config), [config, detailRow]);
     const [values, setValues] = useState(() => initialValues);
     const [hasSaved, setHasSaved] = useState(false);
-    const [status, setStatus] = useState({ tone: '', message: '' });
-    const [saving, setSaving] = useState(false);
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const isDirty = useMemo(
         () => !hasSaved && !areComparableValuesEqual(buildCurrencySnapshot(values), buildCurrencySnapshot(initialValues)),
@@ -76,7 +74,15 @@ export default function CurrencyFormView({
 
     const tabs = isDetailMode ? config.detailTabs : config.createTabs;
     const validationMessage = useMemo(() => validateCurrencyValues(values, config), [config, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+    const {
+        status,
+        setStatus,
+        saving,
+        setSaving,
+        deleteConfirmationOpen,
+        setDeleteConfirmationOpen,
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
     useWorkspaceDirtyRegistration({
         pageId: page.id,

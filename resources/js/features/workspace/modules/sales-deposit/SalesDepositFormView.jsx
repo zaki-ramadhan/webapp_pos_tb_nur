@@ -165,9 +165,10 @@ export default function SalesDepositFormView({
         handleSave,
         requestDelete,
         handleDelete,
-    } = useTransactionForm({ validationMessage });
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+
 
     const dockActions = useMemo(
         () =>

@@ -84,7 +84,8 @@ export default function CashReceiptFormView({
         handleSave,
         requestDelete,
         handleDelete,
-    } = useTransactionForm({ validationMessage });
+        saveDisabled,
+    } = useTransactionForm({ validationMessage, isDirty });
 
     const {
         lineItemModalOpen,
@@ -102,7 +103,7 @@ export default function CashReceiptFormView({
         onDeleteMessage: 'Rincian penerimaan dihapus.',
     });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+
 
     const dockActions = useMemo(
         () =>
