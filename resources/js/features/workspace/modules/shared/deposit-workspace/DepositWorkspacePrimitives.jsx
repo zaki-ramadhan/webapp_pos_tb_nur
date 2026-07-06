@@ -1,4 +1,4 @@
-import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
+import DocumentStamp from '@/components/ui/DocumentStamp';
 
 export function buildDepositFormState(source = {}) {
     return Object.fromEntries(
@@ -17,30 +17,8 @@ export function ReadonlyTransactionTextarea({ value, rows = 3, className = '' })
     );
 }
 
-export function DepositStamp({ label, tone = 'blue', className = '' }) {
-    const toneClassName =
-        tone === 'gray'
-            ? 'border-border-badge-neutral text-text-badge-neutral'
-            : tone === 'green'
-              ? 'border-status-success-badge-border text-status-success-badge-text'
-              : 'border-blue-80 text-blue-80';
-
-    return (
-        <div
-            className={`pointer-events-none absolute flex h-[98px] w-[144px] rotate-[-18deg] items-center justify-center opacity-55 ${className}`.trim()}
-        >
-            <div
-                className={`relative flex h-[82px] w-[82px] items-center justify-center rounded-full border-[4px] ${toneClassName}`.trim()}
-            >
-                <div className={`absolute h-[96px] w-[96px] rounded-full border-[2px] ${toneClassName}`.trim()} />
-            </div>
-            <div
-                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-sm font-bold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
-            >
-                {label}
-            </div>
-        </div>
-    );
+export function DepositStamp(props) {
+    return <DocumentStamp {...props} />;
 }
 
 export function DepositStatusPill({ value }) {
@@ -50,7 +28,7 @@ export function DepositStatusPill({ value }) {
             : 'border-status-warning-badge-border bg-bg-badge-warning-alt text-status-warning-badge-text';
 
     return (
-        <span className={`inline-flex rounded-[4px] border px-3 py-1 text-base ${toneClassName}`.trim()}>
+        <span className={`inline-flex rounded-[4px] border px-3 py-0.5 text-xs sm:text-sm font-semibold ${toneClassName}`.trim()}>
             {value}
         </span>
     );

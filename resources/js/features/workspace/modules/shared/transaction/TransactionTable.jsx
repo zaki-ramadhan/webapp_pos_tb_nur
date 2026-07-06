@@ -76,7 +76,7 @@ export function TransactionDataTable({
                 <DataTableHeader className="bg-table-header-bg">
                     <tr>
                         {activeShowNumbering && (
-                            <DataTableHead className="w-[50px] px-3 text-center text-sm font-normal text-white">
+                            <DataTableHead className="w-[50px] px-3 text-center text-base font-normal text-white">
                                 No.
                             </DataTableHead>
                         )}
@@ -86,7 +86,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} ${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-sm font-normal text-white text-center`.trim()}
+                                    className={`${column.widthClassName ?? ''} ${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-base font-normal text-white text-center`.trim()}
                                     style={getCellStyle(column.id, {
                                         position: 'relative',
                                         ...(minWidth ? { minWidth } : {}),
@@ -119,7 +119,7 @@ export function TransactionDataTable({
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {activeShowNumbering && (
-                                        <DataTableCell className={`px-3 text-center text-sm text-table-row-number ${cellClassName}`.trim()}>
+                                        <DataTableCell className={`px-3 text-center text-base text-table-row-number ${cellClassName}`.trim()}>
                                             {index + 1}
                                         </DataTableCell>
                                     )}
@@ -128,7 +128,7 @@ export function TransactionDataTable({
                                         return (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-sm text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
+                                                className={`${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-base text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
                                                 style={getCellStyle(column.id, isCheckbox ? { minWidth: '0px', width: '1px' } : {})}
                                                 onResizeStart={(e) => handleResizeStart(e, column.id)}
                                             >

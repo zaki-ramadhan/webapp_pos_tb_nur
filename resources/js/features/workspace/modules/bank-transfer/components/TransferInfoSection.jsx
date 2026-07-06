@@ -22,8 +22,8 @@ export default function TransferInfoSection({ config, values, setValues, isDetai
 
                     {isDetail ? (
                         <>
-                            <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                            <div className="space-y-3 pt-1">
+                            <TransactionFieldLabel label={config.labels.reconcileStatus} className="mt-6 sm:mt-8" />
+                            <div className="space-y-3 pt-1 mt-6 sm:mt-8">
                                 {values.reconciliations.map((item) => (
                                     <div key={item.id} className="grid gap-1 sm:grid-cols-[160px_1fr]">
                                         <div className="text-xs sm:text-sm text-brand-dark">{item.bank}</div>

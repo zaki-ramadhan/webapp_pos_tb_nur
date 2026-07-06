@@ -20,7 +20,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
                         placeholder={config.bankPlaceholder}
                         searchLabel="Cari kas/bank asal"
                         dialogTitle="Pilih Kas/Bank Asal"
-                        queryParams={{ account_type: 'Cash/Bank' }}
+                        queryParams={{ account_type: 'Cash/Bank', exclude_id: values.__toAccountId }}
                         showType={false}
                         onRemove={handlers.onRemoveFromBankAccount}
                         onSelectAccount={handlers.onSelectFromBankAccount}
@@ -63,7 +63,7 @@ export default function TransferMoneySection({ config, values, setValues, handle
                         placeholder={config.bankPlaceholder}
                         searchLabel="Cari kas/bank tujuan"
                         dialogTitle="Pilih Kas/Bank Tujuan"
-                        queryParams={{ account_type: 'Cash/Bank' }}
+                        queryParams={{ account_type: 'Cash/Bank', exclude_id: values.__fromAccountId }}
                         showType={false}
                         onRemove={handlers.onRemoveToBankAccount}
                         onSelectAccount={handlers.onSelectToBankAccount}

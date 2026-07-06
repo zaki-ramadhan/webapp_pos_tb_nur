@@ -10,6 +10,7 @@ import {
     updateBackendResource,
     getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { TransactionFormLayout, TransactionTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
@@ -45,63 +46,12 @@ export default function ExpenseEntryFormView({
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const showAutoNumberSwitch = !activeRecordId;
-    const [localRecord, setLocalRecord] = useState(null);
-
-    useEffect(() => {
-        setLocalRecord(null);
-        if (!activeRecordId) {
-            return;
-        }
-
-        let active = true;
-
-        async function load() {
-            try {
-                if (window.__savedRecordsCache?.[activeRecordId]) {
-                    return;
-                }
-
-                const response = await getBackendResource('expense-entries', activeRecordId);
-                if (!active) return;
-                if (response?.data) {
-                    const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
-                    setLocalRecord(parsed);
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        load();
-
-        return () => {
-            active = false;
-        };
-    }, [activeRecordId, buildRecord]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (activeRecordId) {
-            if (window.__savedRecordsCache?.[activeRecordId]) {
-                return window.__savedRecordsCache[activeRecordId];
-            }
-
-            const row = config.rowMap?.[activeRecordId];
-
-            if (row?.__backendRecord && buildRecord) {
-                return buildRecord(row.__backendRecord, config);
-            }
-
-            return config.records?.[activeRecordId] ?? config.draft;
-        }
-
-        return config.draft;
-    }, [activeRecordId, buildRecord, config, localRecord]);
+    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+        resourceName: 'expense-entries',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);

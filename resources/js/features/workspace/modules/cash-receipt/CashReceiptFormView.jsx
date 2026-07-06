@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -34,7 +34,7 @@ import {
 } from '@/features/workspace/modules/cash-receipt/components/CashReceiptFormSections';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
-import { useFormLineItems } from '@/features/workspace/shared/hooks/useFormLineItems';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 
 export default function CashReceiptFormView({
     pageId,
@@ -47,24 +47,16 @@ export default function CashReceiptFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [localRecord, setLocalRecord] = useState(null);
     const [kasBankWarningOpen, setKasBankWarningOpen] = useState(false);
-
-    useEffect(() => {
-        setLocalRecord(null);
-    }, [activeRecordId]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (!activeRecordId) {
-            return config.draft;
-        }
-
-        return config.detailRecords?.[activeRecordId] ?? buildCashReceiptDetailRecordFromRow(config.rowMap?.[activeRecordId], config);
-    }, [activeRecordId, config, localRecord]);
+    const buildRecord = useCallback((data, cfg) => {
+        return buildCashReceiptRecord(data, cfg);
+    }, []);
+    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+        resourceName: 'cash-receipts',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
 
     const [values, setValues, isDirty] = useFormDraftState({
         sourceRecord,

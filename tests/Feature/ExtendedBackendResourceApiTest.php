@@ -114,7 +114,7 @@ class ExtendedBackendResourceApiTest extends TestCase
         $response1->assertCreated();
         $this->assertDatabaseHas('accounts', [
             'name' => 'Kas Kecil A',
-            'code' => '111.001-01.01',
+            'code' => '1110010101',
             'parent_id' => $parent->id,
             'auto_code' => 1,
         ]);
@@ -130,7 +130,7 @@ class ExtendedBackendResourceApiTest extends TestCase
         $response2->assertCreated();
         $this->assertDatabaseHas('accounts', [
             'name' => 'Kas Kecil B',
-            'code' => '111.001-01.02',
+            'code' => '1110010102',
             'parent_id' => $parent->id,
             'auto_code' => 1,
         ]);
@@ -165,7 +165,7 @@ class ExtendedBackendResourceApiTest extends TestCase
         $this->assertDatabaseHas('accounts', [
             'id' => $childId,
             'name' => 'Kas Kecil A Edited',
-            'code' => '111.001-01.01',
+            'code' => '1110010101',
         ]);
 
         $newParent = \App\Domain\Finance\Models\Account::query()->create([
@@ -187,7 +187,7 @@ class ExtendedBackendResourceApiTest extends TestCase
         $this->assertDatabaseHas('accounts', [
             'id' => $childId,
             'name' => 'Kas Kecil A Moved',
-            'code' => '222.002-02.01',
+            'code' => '2220020201',
             'parent_id' => $newParent->id,
         ]);
     }

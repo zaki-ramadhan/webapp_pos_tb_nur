@@ -3,6 +3,7 @@ import {
     createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
+    getBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
@@ -18,6 +19,7 @@ import {
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
+import { executeImportPendingAction } from '@/features/workspace/shared/crudFeedback';
 
 export default function useSalesReceiptForm({
     pageId,
@@ -79,6 +81,50 @@ export default function useSalesReceiptForm({
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
     }, [sourceRecord]);
+
+    async function handleApplySalesDeposit(pendingId) {
+        await executeImportPendingAction({
+            loadingMessage: 'Sedang mengambil rincian uang muka penjualan...',
+            successMessage: 'Berhasil memindahkan data rincian uang muka penjualan.',
+            errorMessage: 'Gagal mengambil rincian uang muka penjualan.',
+            action: async () => {
+                const fullRecord = await getBackendResource('sales-deposits', pendingId);
+                if (!fullRecord) throw new Error('Record not found');
+
+                const outstanding = parseFloat(fullRecord.outstanding_amount ?? fullRecord.total_amount ?? 0);
+
+                setValues((current) => {
+                    const updatedInvoices = [
+                        ...(current.invoices ?? []),
+                        buildSalesReceiptInvoiceFromRecord(fullRecord),
+                    ];
+
+                    return applySalesReceiptInvoices(
+                        {
+                            ...current,
+                            __customerId: fullRecord.customer_id ?? null,
+                            customer: fullRecord.customer ? [buildLookupLabel(fullRecord.customer)] : [],
+                            paymentAmount: String(outstanding),
+                            paymentAmountDisplay: String(outstanding),
+                            paymentAmountForSummary: String(outstanding),
+                            invoices: updatedInvoices,
+                        },
+                        updatedInvoices
+                    );
+                });
+            },
+        });
+    }
+
+    useEffect(() => {
+        if (!isDetail && window.__pendingImportSalesDeposit) {
+            const pending = window.__pendingImportSalesDeposit;
+            window.__pendingImportSalesDeposit = null;
+            if (pending && pending.id) {
+                handleApplySalesDeposit(pending.id);
+            }
+        }
+    }, [isDetail, activeLevel2Tab]);
 
     const validationMessage = useMemo(() => validateSalesReceiptValues(values, config), [config, values]);
     const isDirty = useMemo(() => !areComparableValuesEqual(initialComparable, values), [initialComparable, values]);

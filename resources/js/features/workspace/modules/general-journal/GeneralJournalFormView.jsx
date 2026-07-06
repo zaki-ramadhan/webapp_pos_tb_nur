@@ -10,6 +10,7 @@ import {
     getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { TransactionDualTotalCard, TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
@@ -46,56 +47,16 @@ export default function GeneralJournalFormView({
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-    const [localRecord, setLocalRecord] = useState(null);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-
-    useEffect(() => {
-        setLocalRecord(null);
-        if (!activeRecordId) {
-            return;
-        }
-
-        let active = true;
-
-        async function load() {
-            try {
-                if (window.__savedRecordsCache?.[activeRecordId]) {
-                    return;
-                }
-
-                const response = await getBackendResource('general-journals', activeRecordId);
-                if (!active) return;
-                if (response?.data) {
-                    const parsed = buildRecordFromTableRow(buildGeneralJournalRow(response.data), config);
-                    setLocalRecord(parsed);
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        load();
-
-        return () => {
-            active = false;
-        };
-    }, [activeRecordId]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (!activeRecordId) {
-            return config.defaults;
-        }
-
-        return config.rowMap?.[activeRecordId]
-            ? buildRecordFromTableRow(config.rowMap[activeRecordId], config)
-            : config.records?.[activeRecordId] ?? config.defaults;
-    }, [activeRecordId, config, localRecord]);
+    const buildRecord = useCallback((data, cfg) => {
+        return buildRecordFromTableRow(buildGeneralJournalRow(data), cfg);
+    }, []);
+    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+        resourceName: 'general-journals',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
     const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
     const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);

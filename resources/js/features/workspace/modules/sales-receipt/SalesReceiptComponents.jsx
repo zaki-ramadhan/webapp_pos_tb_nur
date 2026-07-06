@@ -1,6 +1,10 @@
 import { TransactionToolbarIconButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { RefreshIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
-import { buildSalesReceiptSummaryValue } from './salesReceiptCalculations';
+import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
+import {
+    buildSalesReceiptTotal,
+    formatCurrencyLabel,
+} from './salesReceiptCalculations';
 
 export function ReadonlyTextarea({ value, rows = 3, className = '' }) {
     return (
@@ -46,19 +50,26 @@ export function ReceiptAmountActionButton({ type, onClick }) {
     );
 }
 
-export function ReceiptSummaryFooter({ paymentAmount }) {
+export function ReceiptSummaryFooter({ paymentAmount, invoices = [] }) {
+    const headerPayment = parseNumericInput(paymentAmount);
+    const totalInvoices = buildSalesReceiptTotal(invoices);
+    const overpayment = totalInvoices - headerPayment;
+
     const items = [
-        { id: 'payment', label: 'Nilai Pembayaran', value: buildSalesReceiptSummaryValue(paymentAmount) },
-        { id: 'paid', label: 'Faktur Dibayar', value: buildSalesReceiptSummaryValue(paymentAmount) },
+        { id: 'payment', label: 'Nilai Pembayaran', value: formatCurrencyLabel(headerPayment) },
+        { id: 'paid', label: 'Faktur Dibayar', value: formatCurrencyLabel(totalInvoices) },
+        { id: 'overpayment', label: 'Lebih Bayar', value: formatCurrencyLabel(overpayment) },
     ];
 
     return (
         <div className="flex justify-end">
-            <div className="grid w-full max-w-[566px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium md:grid-cols-2">
+            <div className="grid w-full max-w-[850px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium md:grid-cols-3">
                 {items.map((item) => (
                     <div key={item.id} className="border-b border-ui-border-light px-4 py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5">
                         <div className="text-xs sm:text-sm text-brand-dark">{item.label}</div>
-                        <div className="mt-2 text-right text-lg font-semibold text-text-darkest">{item.value}</div>
+                        <div className={`mt-2 text-right text-lg font-semibold ${item.id === 'overpayment' && overpayment < 0 ? 'text-brand-danger-accent' : 'text-text-darkest'}`.trim()}>
+                            {item.value}
+                        </div>
                     </div>
                 ))}
             </div>

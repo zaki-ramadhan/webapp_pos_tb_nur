@@ -34,7 +34,6 @@ const salesDepositListColumns = [
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[190px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[45%]', align: 'left' },
     { id: 'status', label: 'Status', widthClassName: 'w-[150px]', align: 'left' },
-    { id: 'requiredIdType', label: 'Tipe ID Wajib Pajak', widthClassName: 'w-[140px]', align: 'left' },
     { id: 'age', label: 'Umur (hr)', widthClassName: 'w-[100px]', align: 'right' },
     { id: 'total', label: 'Total', widthClassName: 'w-[150px]', align: 'right' },
 ];

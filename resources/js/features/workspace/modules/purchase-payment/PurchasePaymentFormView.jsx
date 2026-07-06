@@ -5,8 +5,8 @@ import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
-    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import PurchasePaymentInvoiceModal from '@/features/workspace/modules/purchase-payment/PurchasePaymentInvoiceModal';
 import {
     TransactionDualTotalCard,
@@ -43,63 +43,12 @@ export default function PurchasePaymentFormView({
     buildRecord,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [localRecord, setLocalRecord] = useState(null);
-
-    useEffect(() => {
-        setLocalRecord(null);
-        if (!activeRecordId) {
-            return;
-        }
-
-        let active = true;
-
-        async function load() {
-            try {
-                if (window.__savedRecordsCache?.[activeRecordId]) {
-                    return;
-                }
-
-                const response = await getBackendResource('purchase-payments', activeRecordId);
-                if (!active) return;
-                if (response?.data) {
-                    const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
-                    setLocalRecord(parsed);
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        load();
-
-        return () => {
-            active = false;
-        };
-    }, [activeRecordId, buildRecord]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (!activeRecordId) {
-            return config.draft;
-        }
-
-        if (window.__savedRecordsCache?.[activeRecordId]) {
-            return window.__savedRecordsCache[activeRecordId];
-        }
-
-        const row = config.rowMap?.[activeRecordId];
-
-        if (row?.__backendRecord && buildRecord) {
-            return buildRecord(row.__backendRecord, config);
-        }
-
-        return config.detailRecords?.[activeRecordId] ?? config.draft;
-    }, [activeRecordId, buildRecord, config, localRecord]);
+    const [sourceRecord] = useTransactionDetailLoader({
+        resourceName: 'purchase-payments',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
     const isDetail = Boolean(activeRecordId);
     const sectionTabs = isDetail ? config.detailSectionTabs : config.sectionTabs;
     const [activeSectionId, setActiveSectionId] = useState(sectionTabs?.[0]?.id ?? 'details');

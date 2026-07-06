@@ -8,10 +8,15 @@ export function formatCurrencyValue(value) {
         return '0';
     }
 
-    return numericValue.toLocaleString('id-ID', {
+    const isNegative = numericValue < 0;
+    const absValue = Math.abs(numericValue);
+
+    const formatted = absValue.toLocaleString('id-ID', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
+
+    return isNegative ? `-${formatted}` : formatted;
 }
 
 export function formatCurrencyLabel(value) {

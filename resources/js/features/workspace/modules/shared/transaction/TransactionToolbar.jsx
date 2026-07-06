@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -29,7 +29,7 @@ export function TransactionToolbarIconButton({ label, children, className = '', 
                 disabled={resolvedDisabled}
                 aria-label={label}
                 onClick={onClick}
-                className={`inline-flex h-[34px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
+                className={`inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
                     resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
                 } ${className}`.trim()}
                 {...props}
@@ -68,7 +68,7 @@ export function TransactionToolbarSplitButton({ label, icon, items = [], disable
                         if (resolvedDisabled) return;
                         setOpen((current) => !current);
                     }}
-                    className={`inline-flex h-[34px] shrink-0 overflow-hidden rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
+                    className={`inline-flex h-[40px] shrink-0 overflow-hidden rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
                         resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
                     }`}
                     aria-label={label}
@@ -134,7 +134,7 @@ export function TransactionToolbarSettingsButton({ label = 'Pengaturan kolom', i
                 <button
                     type="button"
                     onClick={() => setOpen(c => !c)}
-                    className="inline-flex h-[34px] shrink-0 overflow-hidden rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
+                    className="inline-flex h-[40px] shrink-0 overflow-hidden rounded-[4px] border border-brand-blue-border bg-white text-brand-blue"
                     aria-label={label}
                 >
                     <span className="inline-flex w-[36px] items-center justify-center">{icon}</span>
@@ -251,7 +251,7 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
 }
 
 export function TransactionExportExcelButton({ columns, rows, filename = 'export', label = 'Ekspor Excel' }) {
-    const cleanedColumns = React.useMemo(() => {
+    const cleanedColumns = useMemo(() => {
         return (columns ?? [])
             .map(col => col ? { ...col, label: cleanHeaderLabel(col.label) } : col)
             .filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);

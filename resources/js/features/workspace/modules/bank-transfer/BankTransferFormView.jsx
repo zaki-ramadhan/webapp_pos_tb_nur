@@ -15,8 +15,10 @@ import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
+    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
@@ -38,6 +40,7 @@ import {
     promptBankTransferFeeItem,
     validateBankTransferValues,
     buildBankTransferRecord,
+    extractCleanAccountName,
 } from './bankTransferShared';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
 
@@ -52,25 +55,15 @@ export default function BankTransferFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [localRecord, setLocalRecord] = useState(null);
-
-    useEffect(() => {
-        setLocalRecord(null);
-    }, [activeRecordId]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (!activeRecordId) {
-            return config.draft;
-        }
-
-        return config.rowMap?.[activeRecordId]
-            ? buildDetailRecordFromRow(config.rowMap[activeRecordId], config)
-            : config.detailRecords?.[activeRecordId] ?? config.draft;
-    }, [activeRecordId, config, localRecord]);
+    const buildRecord = useCallback((data, cfg) => {
+        return buildBankTransferRecord(data, cfg);
+    }, []);
+    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+        resourceName: 'bank-transfers',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
     const [values, setValues, isDirty] = useFormDraftState({
         sourceRecord,
         buildFormState,
@@ -124,81 +117,7 @@ export default function BankTransferFormView({
         );
     }, []);
 
-    const dockActions = useMemo(
-        () =>
-            (config.dockActions ?? [])
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
-                .map((action) => {
-                    if (action.id === 'save') {
-                        return {
-                            ...action,
-                            tone: 'primary',
-                            disabled: saveDisabled,
-                            label: validationMessage ? `${action.label} (${validationMessage})` : (saving ? 'Memproses...' : action.label),
-                            onClick: onSave,
-                        };
-                    }
-
-                    if (action.id === 'delete') {
-                        return {
-                            ...action,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onRequestDelete,
-                        };
-                    }
-
-                    return action;
-                }),
-        [config.dockActions, isDetail, saveDisabled, saving, values.saveTone],
-    );
-
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
-
-    const applyFeeUpdate = useCallback(async (record, currentItem = null) => {
-        try {
-            const nextItem = await promptBankTransferFeeItem(record, currentItem);
-
-            if (!nextItem) {
-                return;
-            }
-
-            if (nextItem.action === 'delete') {
-                if (currentItem) {
-                    updateValues((current) => ({
-                        ...current,
-                        feeLookup: '',
-                        feeRows: (current.feeRows ?? []).filter((item) => item.id !== currentItem.id),
-                    }));
-                    showSuccessToast({
-                        message: 'Biaya transfer dihapus.',
-                    });
-                }
-                return;
-            }
-
-            updateValues((current) => ({
-                ...current,
-                feeLookup: '',
-                feeRows: currentItem
-                    ? (current.feeRows ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
-                    : [...(current.feeRows ?? []), nextItem],
-            }));
-            showSuccessToast({
-                message: currentItem ? 'Biaya transfer diperbarui.' : 'Biaya transfer ditambahkan.',
-            });
-        } catch (error) {
-            showErrorToast({
-                message: error?.message ?? 'Biaya transfer tidak valid.',
-            });
-        }
-    }, [updateValues]);
-
-    async function onSave() {
+    const onSave = useCallback(async () => {
         await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui transfer bank.' : 'Sedang menyimpan transfer bank.',
             successMessage: isDetail ? 'Transfer bank berhasil diperbarui.' : 'Transfer bank berhasil dibuat.',
@@ -248,7 +167,7 @@ export default function BankTransferFormView({
                 }
             },
         });
-    }
+    }, [values, isDetail, handleSave, config, pageId, activeLevel2Tab, onRefresh, onCloseDetail, onOpenDetail]);
 
     function onRequestDelete() {
         if (!values.__backendRecordId) {
@@ -274,14 +193,99 @@ export default function BankTransferFormView({
         });
     }
 
+    const dockActions = useMemo(
+        () =>
+            (config.dockActions ?? [])
+                .filter((action) => (isDetail ? true : action.id !== 'delete'))
+                .map((action) => {
+                    if (action.id === 'save') {
+                        return {
+                            ...action,
+                            tone: 'primary',
+                            disabled: saveDisabled,
+                            label: validationMessage ? `${action.label} (${validationMessage})` : (saving ? 'Memproses...' : action.label),
+                            onClick: onSave,
+                        };
+                    }
+
+                    if (action.id === 'delete') {
+                        return {
+                            ...action,
+                            label: saving ? 'Memproses...' : action.label,
+                            onClick: onRequestDelete,
+                        };
+                    }
+
+                    return action;
+                }),
+        [config.dockActions, isDetail, saveDisabled, saving, values.saveTone, onSave],
+    );
+
+    useWorkspaceDirtyRegistration({
+        pageId,
+        tabId: activeLevel2Tab?.id,
+        dirty: isDirty,
+        enabled: Boolean(pageId && activeLevel2Tab?.id),
+    });
+
+    const applyFeeUpdate = useCallback(async (record, currentItem = null) => {
+        try {
+            const nextItem = await promptBankTransferFeeItem(record, currentItem);
+
+            if (!nextItem) {
+                return;
+            }
+
+            if (nextItem.action === 'delete') {
+                if (currentItem) {
+                    updateValues((current) => ({
+                        ...current,
+                        feeLookup: '',
+                        feeRows: (current.feeRows ?? []).filter((item) => item.id !== currentItem.id),
+                    }));
+                    showSuccessToast({
+                        message: 'Biaya transfer dihapus.',
+                    });
+                }
+                return;
+            }
+
+            updateValues((current) => ({
+                ...current,
+                feeLookup: '',
+                feeRows: currentItem
+                    ? (current.feeRows ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
+                    : [...(current.feeRows ?? []), nextItem],
+            }));
+            showSuccessToast({
+                message: currentItem ? 'Biaya transfer diperbarui.' : 'Biaya transfer ditambahkan.',
+            });
+        } catch (error) {
+            showErrorToast({
+                message: error?.message ?? 'Biaya transfer tidak valid.',
+            });
+        }
+    }, [updateValues]);
+
     const handlers = useMemo(
         () => ({
             onSelectFromBankAccount: (record, label) =>
-                updateValues((current) => ({
-                    ...current,
-                    __fromAccountId: record ? record.id : null,
-                    fromBankAccounts: record ? [label] : [],
-                })),
+                updateValues((current) => {
+                    const cleanLabel = extractCleanAccountName(label);
+                    const currentRecons = current.reconciliations ?? [];
+                    const nextRecons = currentRecons.map(item =>
+                        item.id === 'from' ? { ...item, bank: cleanLabel } : item
+                    );
+                    if (!nextRecons.some(item => item.id === 'from')) {
+                        nextRecons.push({ id: 'from', bank: cleanLabel, status: 'Belum', date: null });
+                    }
+                    return {
+                        ...current,
+                        __fromAccountId: record ? record.id : null,
+                        fromBankAccounts: record ? [label] : [],
+                        reconciliations: nextRecons,
+                    };
+                }),
             onRemoveFromBankAccount: () =>
                 updateValues((current) => ({
                     ...current,
@@ -289,11 +293,22 @@ export default function BankTransferFormView({
                     fromBankAccounts: [],
                 })),
             onSelectToBankAccount: (record, label) =>
-                updateValues((current) => ({
-                    ...current,
-                    __toAccountId: record ? record.id : null,
-                    toBankAccounts: record ? [label] : [],
-                })),
+                updateValues((current) => {
+                    const cleanLabel = extractCleanAccountName(label);
+                    const currentRecons = current.reconciliations ?? [];
+                    const nextRecons = currentRecons.map(item =>
+                        item.id === 'to' ? { ...item, bank: cleanLabel } : item
+                    );
+                    if (!nextRecons.some(item => item.id === 'to')) {
+                        nextRecons.push({ id: 'to', bank: cleanLabel, status: 'Belum', date: null });
+                    }
+                    return {
+                        ...current,
+                        __toAccountId: record ? record.id : null,
+                        toBankAccounts: record ? [label] : [],
+                        reconciliations: nextRecons,
+                    };
+                }),
             onRemoveToBankAccount: () =>
                 updateValues((current) => ({
                     ...current,
@@ -513,7 +528,7 @@ export default function BankTransferFormView({
                             }}
                             className="bg-brand-blue-dark hover:bg-brand-blue-darker font-medium shadow-btn-blue-hover"
                         >
-                            Lanjut
+                            {activeTab === 'detail' ? 'Lanjut' : 'Simpan'}
                         </Button>
                     </div>
                 }

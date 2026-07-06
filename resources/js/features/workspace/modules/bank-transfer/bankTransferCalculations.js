@@ -33,7 +33,7 @@ export function deriveTransferAmounts(record) {
     };
 }
 
-function extractCleanAccountName(label) {
+export function extractCleanAccountName(label) {
     if (!label) return '';
     const match = label.match(/^\[.*?\]\s*(.*)$/);
     return match ? match[1].trim() : label.trim();

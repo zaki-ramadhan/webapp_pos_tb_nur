@@ -7,8 +7,8 @@ import {
     createBackendResource,
     deleteBackendResource,
     updateBackendResource,
-    getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import {
     buildGeneratedDocumentNumber,
     buildOperationDocumentPayload,
@@ -74,57 +74,12 @@ export default function SalesDocumentFormView({
     const [itemModalOpen, setItemModalOpen] = useState(false);
     const [importModalOpen, setImportModalOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [localRecord, setLocalRecord] = useState(null);
-
-    useEffect(() => {
-        setLocalRecord(null);
-        if (!activeRecordId || !backendConfig?.resource) {
-            return;
-        }
-
-        let active = true;
-
-        async function load() {
-            try {
-                if (window.__savedRecordsCache?.[activeRecordId]) {
-                    return;
-                }
-
-                const response = await getBackendResource(backendConfig.resource, activeRecordId);
-                if (!active) return;
-                if (response?.data) {
-                    const parsed = buildRecord ? buildRecord(response.data) : response.data;
-                    setLocalRecord(parsed);
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        load();
-
-        return () => {
-            active = false;
-        };
-    }, [activeRecordId, backendConfig?.resource, buildRecord]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (activeRecordId) {
-            if (window.__savedRecordsCache?.[activeRecordId]) {
-                return window.__savedRecordsCache[activeRecordId];
-            }
-
-            return buildRecord(config.table.rows.find((row) => row.id === activeRecordId));
-        }
-
-        return config.draft;
-    }, [activeRecordId, buildRecord, config.draft, config.table.rows, localRecord]);
+    const [sourceRecord] = useTransactionDetailLoader({
+        resourceName: backendConfig?.resource ?? 'sales-documents',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
     const [values, setValues] = useState(() => buildSalesDocumentFormState(sourceRecord));
     const isDetail = Boolean(activeRecordId);
     const [activeSectionId, setActiveSectionId] = useState(() => resolveInitialSectionId(config, isDetail));

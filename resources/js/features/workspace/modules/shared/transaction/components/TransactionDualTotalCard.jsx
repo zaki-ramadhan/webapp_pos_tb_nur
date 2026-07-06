@@ -5,9 +5,11 @@ export function TransactionDualTotalCard({ items = [], className = '' }) {
         return null;
     }
 
+    const maxWClass = items.length === 3 ? 'max-w-[600px]' : items.length === 1 ? 'max-w-[200px]' : 'max-w-[400px]';
+
     return (
         <div
-            className={`grid w-full max-w-[400px] overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${className}`.trim()}
+            className={`grid w-full ${maxWClass} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${className}`.trim()}
             style={{
                 gridTemplateColumns: items.length > 1 ? `repeat(${items.length}, minmax(0,1fr))` : undefined,
             }}

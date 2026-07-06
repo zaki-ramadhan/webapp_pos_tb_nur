@@ -65,28 +65,10 @@ export function ReadonlyDocumentTextarea({ value, rows = 3, className = '' }) {
     );
 }
 
-export function DocumentStamp({ label, tone, className = '' }) {
-    const toneClassName =
-        tone === 'blue'
-            ? 'border-blue-80 text-blue-80'
-            : tone === 'gray'
-              ? 'border-border-badge-neutral text-text-badge-neutral'
-              : 'border-status-success-badge-border text-status-success-badge-text';
+import DocumentStampShared from '@/components/ui/DocumentStamp';
 
-    return (
-        <div
-            className={`pointer-events-none absolute flex h-[92px] w-[136px] rotate-[-18deg] items-center justify-center opacity-55 ${className}`.trim()}
-        >
-            <div className={`relative flex h-[78px] w-[78px] items-center justify-center rounded-full border-[4px] ${toneClassName}`.trim()}>
-                <div className={`absolute h-[92px] w-[92px] rounded-full border-[2px] ${toneClassName}`.trim()} />
-            </div>
-            <div
-                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-sm font-bold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
-            >
-                {label}
-            </div>
-        </div>
-    );
+export function DocumentStamp(props) {
+    return <DocumentStampShared {...props} />;
 }
 
 function resolveCellAlignClassName(align) {

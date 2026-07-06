@@ -40,7 +40,7 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                        prefixStr === 'rp';
 
     if (isCurrency) {
-        return formatAmountInput(val, { allowDecimal: true });
+        return formatAmountInput(val, { allowDecimal: true, isInput: true });
     }
 
     return val;
@@ -201,7 +201,18 @@ export default function TextInput({
     const resolvedMin = type === 'number' ? 0 : undefined;
 
     function handleWrappedChange(event) {
-        let originalValue = event.target.value;
+        const inputEl = event.target;
+        const selectionStart = inputEl.selectionStart;
+        const rawValue = inputEl.value;
+
+        let digitsBeforeCursor = 0;
+        for (let i = 0; i < selectionStart; i++) {
+            if (/\d/.test(rawValue[i])) {
+                digitsBeforeCursor++;
+            }
+        }
+
+        let originalValue = rawValue;
         if (resolvedMaxLength && originalValue.length > resolvedMaxLength) {
             originalValue = originalValue.slice(0, resolvedMaxLength);
         }
@@ -232,6 +243,26 @@ export default function TextInput({
                 isDefaultPrevented: () => event.isDefaultPrevented?.() ?? false,
                 isPropagationStopped: () => event.isPropagationStopped?.() ?? false,
                 persist: () => {},
+            });
+        }
+
+        if (isCurrency) {
+            requestAnimationFrame(() => {
+                if (!inputEl) return;
+                const newFormattedValue = inputEl.value;
+                let newCursorPosition = 0;
+                let digitsFound = 0;
+                for (let i = 0; i < newFormattedValue.length; i++) {
+                    if (/\d/.test(newFormattedValue[i])) {
+                        digitsFound++;
+                    }
+                    if (digitsFound === digitsBeforeCursor) {
+                        newCursorPosition = i + 1;
+                        break;
+                    }
+                    newCursorPosition = i + 1;
+                }
+                inputEl.setSelectionRange(newCursorPosition, newCursorPosition);
             });
         }
     }
@@ -309,7 +340,7 @@ export default function TextInput({
 
         let val = event.target.value;
         if (isCurrency && val !== '') {
-            const formatted = formatAmountInput(val, { allowDecimal: true });
+            const formatted = formatAmountInput(val, { allowDecimal: true, isInput: true });
             setLocalValue(formatted);
         }
 

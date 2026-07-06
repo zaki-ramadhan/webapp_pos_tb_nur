@@ -48,3 +48,22 @@ export function dismissCrudLoadingToast(toastId) {
         dismissToast(toastId);
     }
 }
+
+export async function executeImportPendingAction({
+    loadingMessage = 'Sedang memproses...',
+    successMessage = 'Berhasil memindahkan data.',
+    errorMessage = 'Gagal memindahkan data.',
+    action,
+}) {
+    const toastId = showCrudLoadingToast(loadingMessage);
+    try {
+        const result = await action();
+        finishCrudLoadingToast(toastId, successMessage);
+        return result;
+    } catch (err) {
+        console.error(err);
+        dismissToast(toastId);
+        showCrudErrorToast(errorMessage);
+        throw err;
+    }
+}

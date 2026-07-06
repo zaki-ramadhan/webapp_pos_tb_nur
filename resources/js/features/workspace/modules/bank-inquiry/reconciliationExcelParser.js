@@ -1,7 +1,29 @@
 export const parseAmount = (val) => {
     if (!val) return 0;
     if (typeof val === 'number') return val;
-    return parseFloat(String(val).replace(/[^0-9.-]+/g, '')) || 0;
+    let str = String(val).trim();
+    if (str.includes('.') && str.includes(',')) {
+        const dotIdx = str.indexOf('.');
+        const commaIdx = str.indexOf(',');
+        if (dotIdx < commaIdx) {
+            str = str.replace(/\./g, '').replace(',', '.');
+        } else {
+            str = str.replace(/,/g, '');
+        }
+    } else if (str.includes(',')) {
+        const parts = str.split(',');
+        if (parts[parts.length - 1].length === 3) {
+            str = str.replace(/,/g, '');
+        } else {
+            str = str.replace(',', '.');
+        }
+    } else if (str.includes('.')) {
+        const parts = str.split('.');
+        if (parts[parts.length - 1].length === 3) {
+            str = str.replace(/\./g, '');
+        }
+    }
+    return parseFloat(str.replace(/[^0-9.-]+/g, '')) || 0;
 };
 
 export function parseExcelRows(rawData) {

@@ -111,6 +111,8 @@ export function buildSalesDepositRecord(record = {}, config) {
     return {
         __backendRecordId: record.id ?? null,
         __customerId: record.customer_id ?? null,
+        __salesOrderId: record.related_document_id ?? null,
+        salesOrderNumber: record.related_document ? buildLookupLabel(record.related_document) : '',
         __paymentTermId: record.payment_term_id ?? null,
         paymentTermName: record.payment_term ? buildLookupLabel(record.payment_term) : '',
         __branchId: null,
@@ -126,6 +128,10 @@ export function buildSalesDepositRecord(record = {}, config) {
         taxName: record.tax ? buildLookupLabel(record.tax) : '',
         taxEnabled: Boolean(record.tax_id),
         taxIncluded: Boolean(record.metadata?.tax_included),
+        taxInvoiceDate: formatIsoDate(record.metadata?.tax_invoice_date ?? record.entry_date),
+        taxTransactionType: record.metadata?.tax_transaction_type ?? 'Faktur Pajak',
+        taxInvoiceNumber: record.metadata?.tax_invoice_number ?? '',
+        taxRate: record.tax ? parseFloat(record.tax.rate) : 0,
         paymentTerms: [],
         address: record.metadata?.address ?? '',
         branches: [],
@@ -137,7 +143,8 @@ export function buildSalesDepositRecord(record = {}, config) {
         statusTone: status === 'Lunas' ? 'green' : 'gray',
         processButtonLabel: 'Proses',
         dockActions: config.detailRecords?.[record.document_number]?.dockActions ?? config.draft?.dockActions ?? [],
-        subtotal: formatCurrencyLabel(totalAmount),
+        subtotal: formatCurrencyLabel(record.subtotal ?? totalAmount),
+        taxTotalFormatted: formatCurrencyLabel(record.tax_total ?? 0),
         total: formatCurrencyLabel(totalAmount),
         printStatus,
     };
@@ -152,6 +159,8 @@ export function buildSalesDepositFormState(source = {}, config) {
     return {
         __backendRecordId: source.__backendRecordId ?? null,
         __customerId: source.__customerId ?? null,
+        __salesOrderId: source.__salesOrderId ?? null,
+        salesOrderNumber: source.salesOrderNumber ?? '',
         __paymentTermId: source.__paymentTermId ?? null,
         paymentTermName: source.paymentTermName ?? '',
         __branchId: null,
@@ -167,6 +176,10 @@ export function buildSalesDepositFormState(source = {}, config) {
         taxName: source.taxName ?? '',
         taxEnabled: source.taxEnabled ?? config.draft?.taxEnabled ?? false,
         taxIncluded: source.taxIncluded ?? config.draft?.taxIncluded ?? false,
+        taxInvoiceDate: source.taxInvoiceDate ?? source.entryDate ?? '',
+        taxTransactionType: source.taxTransactionType ?? 'Faktur Pajak',
+        taxInvoiceNumber: source.taxInvoiceNumber ?? '',
+        taxRate: source.taxRate ?? 0,
         paymentTerms: [],
         address: source.address ?? config.draft?.address ?? '',
         branches: [],
@@ -179,6 +192,7 @@ export function buildSalesDepositFormState(source = {}, config) {
         processButtonLabel: source.processButtonLabel ?? config.draft?.processButtonLabel ?? '',
         dockActions: source.dockActions ?? config.draft?.dockActions ?? [],
         subtotal: source.subtotal ?? formatCurrencyLabel(totalAmount),
+        taxTotalFormatted: source.taxTotalFormatted ?? 'Rp 0',
         total: source.total ?? formatCurrencyLabel(totalAmount),
         printStatus,
     };
@@ -195,10 +209,25 @@ export function buildGeneratedSalesDepositNumber() {
 }
 
 export function buildSalesDepositPayload(values) {
-    const totalAmount = parseNumericInput(values.depositAmount);
+    const baseAmount = parseNumericInput(values.depositAmount);
+    const taxRate = (values.taxEnabled && values.__taxId) ? (values.taxRate ?? 0) / 100 : 0;
+
+    let taxTotal = 0;
+    let totalAmount = baseAmount;
+
+    if (taxRate > 0) {
+        if (values.taxIncluded) {
+            taxTotal = Math.round(baseAmount - (baseAmount / (1 + taxRate)));
+            totalAmount = baseAmount;
+        } else {
+            taxTotal = Math.round(baseAmount * taxRate);
+            totalAmount = baseAmount + taxTotal;
+        }
+    }
 
     return {
         customer_id: values.__customerId ?? null,
+        related_document_id: values.__salesOrderId ?? null,
         payment_term_id: values.__paymentTermId ?? null,
         branch_id: null,
         document_number: values.documentNumber?.trim() || buildGeneratedSalesDepositNumber(),
@@ -206,7 +235,8 @@ export function buildSalesDepositPayload(values) {
         reference_number: values.purchaseOrderNumber?.trim() || null,
         status: totalAmount > 0 ? 'Belum Lunas' : 'Draft',
         entry_date: normalizeDisplayDate(values.entryDate) || new Date().toISOString().slice(0, 10),
-        subtotal: totalAmount,
+        subtotal: baseAmount,
+        tax_total: taxTotal,
         total_amount: totalAmount,
         paid_amount: 0,
         outstanding_amount: totalAmount,
@@ -217,6 +247,9 @@ export function buildSalesDepositPayload(values) {
             branch_label: null,
             print_status: values.printStatus ?? 'Belum cetak/email',
             tax_included: Boolean(values.taxIncluded),
+            tax_invoice_date: normalizeDisplayDate(values.taxInvoiceDate) || null,
+            tax_transaction_type: values.taxTransactionType ?? null,
+            tax_invoice_number: values.taxTransactionType === 'Faktur Pajak' ? (values.taxInvoiceNumber?.trim() || null) : null,
         },
     };
 }
@@ -247,6 +280,17 @@ export function validateSalesDepositValues(values, config) {
 
     if (values.taxEnabled && (!values.taxName || !values.__taxId)) {
         return 'PPN wajib diisi jika Kena Pajak dicentang.';
+    }
+
+    if (values.taxEnabled && values.__taxId && values.taxTransactionType === 'Faktur Pajak' && values.taxInvoiceNumber) {
+        const raw = values.taxInvoiceNumber.trim();
+        if (!/^[0-9.-]+$/.test(raw)) {
+            return 'Nomor Faktur Pajak hanya boleh berisi angka, titik, dan strip.';
+        }
+        const cleaned = raw.replace(/\D/g, '');
+        if (cleaned.length !== 16) {
+            return 'Nomor Faktur Pajak harus terdiri dari 16 digit angka.';
+        }
     }
 
     return '';

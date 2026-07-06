@@ -83,6 +83,7 @@ class BankInquiryQueryService
                     'debit' => $row['debit'],
                     'credit' => $row['credit'],
                     'status' => $row['status'],
+                    'balance' => $row['balance'],
                     'account_id' => $row['account_id'],
                     'account_name' => $row['account_name'],
                 ];
@@ -317,13 +318,27 @@ class BankInquiryQueryService
     ): array {
         $netAmount = $debit - $credit;
 
+        $typeTranslations = [
+            'general_journal' => 'Jurnal Umum',
+            'bank_transfer' => 'Transfer Bank',
+            'cash_receipt' => 'Penerimaan',
+            'sales_receipt' => 'Penerimaan Penjualan',
+            'cash_payment' => 'Pembayaran',
+            'purchase_payment' => 'Pembayaran Pembelian',
+            'payroll_entry' => 'Pencatatan Gaji',
+            'expense_entry' => 'Pencatatan Beban',
+        ];
+
+        $docType = $document->document_type;
+        $transactionType = $typeTranslations[$docType] ?? str($docType)->replace('_', ' ')->title()->toString();
+
         return [
             'id' => $id,
             'account_id' => $accountId,
             'account_name' => $accountName,
             'document_number' => (string) $document->document_number,
             'check_number' => (string) ($document->external_number ?? ''),
-            'transaction_type' => str($document->document_type)->replace('_', ' ')->title()->toString(),
+            'transaction_type' => $transactionType,
             'description' => $description,
             'debit' => $this->formatNumber($debit),
             'credit' => $this->formatNumber($credit),

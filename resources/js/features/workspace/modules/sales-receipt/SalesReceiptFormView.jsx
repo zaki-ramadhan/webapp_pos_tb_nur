@@ -47,6 +47,7 @@ export default function SalesReceiptFormView({
         dockActions,
         handlers,
         handleDelete,
+        validationMessage,
     } = useSalesReceiptForm({
         pageId,
         config,
@@ -140,23 +141,25 @@ export default function SalesReceiptFormView({
                                         />
                                     </div>
                                     <div className="flex shrink-0 items-center gap-1.5">
-                                        {values.amountButtons.map((buttonType) => (
-                                            <ReceiptAmountActionButton
-                                                key={buttonType}
-                                                type={buttonType}
-                                                onClick={
-                                                    buttonType === 'refresh'
-                                                        ? () => {
-                                                              setValues((current) => ({
-                                                                  ...current,
-                                                                  paymentAmount: '0',
-                                                                  paymentAmountDisplay: '0',
-                                                                  paymentAmountForSummary: '0',
-                                                              }));
-                                                          }
-                                                        : undefined
-                                                }
-                                            />
+                                        {(values.amountButtons ?? [])
+                                            .filter((buttonType) => buttonType === 'refresh')
+                                            .map((buttonType) => (
+                                                <ReceiptAmountActionButton
+                                                    key={buttonType}
+                                                    type={buttonType}
+                                                    onClick={
+                                                        buttonType === 'refresh'
+                                                            ? () => {
+                                                                  setValues((current) => ({
+                                                                      ...current,
+                                                                      paymentAmount: '0',
+                                                                      paymentAmountDisplay: '0',
+                                                                      paymentAmountForSummary: '0',
+                                                                  }));
+                                                              }
+                                                            : undefined
+                                                    }
+                                                />
                                         ))}
                                     </div>
                                 </div>
@@ -229,8 +232,12 @@ export default function SalesReceiptFormView({
                 }
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
-                onSectionChange={setActiveSectionId}
-                footer={<ReceiptSummaryFooter paymentAmount={values.paymentAmountForSummary ?? values.paymentAmount} />}
+                footer={
+                    <ReceiptSummaryFooter
+                        paymentAmount={values.paymentAmountForSummary ?? values.paymentAmount}
+                        invoices={values.invoices}
+                    />
+                }
                 dockActions={dockActions}
             >
                 <CrudStatusMessage status={status} className="mb-4" />

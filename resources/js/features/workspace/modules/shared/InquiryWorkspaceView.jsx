@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import { TransactionDateInput, TransactionDataTable, TransactionToolbarIconButton, TransactionExportExcelButton, TransactionSwitchViewButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { TransactionDateInput, TransactionToolbarIconButton, TransactionExportExcelButton, TransactionSwitchViewButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     ColumnsIcon,
@@ -16,6 +16,18 @@ import {
 import SelectField from '@/components/ui/SelectField';
 import Pagination from '@/components/ui/Pagination';
 import Button from '@/components/ui/Button';
+
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableHead,
+    DataTableHeader,
+    DataTableRow,
+} from '@/components/ui/DataTable';
+import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
+import useTableSort from '@/features/workspace/shared/useTableSort';
+import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 
 const CONTENT_MIN_HEIGHT_CLASS_NAME = 'min-h-[280px] sm:min-h-[360px] xl:min-h-[60vh]';
 
@@ -60,7 +72,7 @@ function InquiryActionButton({ action, onClick }) {
             onClick={onClick}
             variant="secondary"
             size="sm"
-            className={`h-[34px] min-w-[40px] px-3 font-normal active:scale-[0.98] focus:outline-none ${toneClassName}`.trim()}
+            className={`h-[40px] min-w-[40px] px-3 font-normal active:scale-[0.98] focus:outline-none ${toneClassName}`.trim()}
         >
             {resolveActionIcon(action)}
         </Button>
@@ -73,7 +85,7 @@ function InquiryControl({ control, value, onChange }) {
             <SelectField
                 value={value}
                 onChange={(event) => onChange(control.id, event.target.value)}
-                className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
                 selectClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
             >
                 {(control.options ?? []).map((option) => (
@@ -94,7 +106,7 @@ function InquiryControl({ control, value, onChange }) {
             <TransactionDateInput
                 value={value}
                 onChange={(nextValue) => onChange(control.id, nextValue)}
-                className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
                 inputClassName="text-sm text-brand-dark py-1 h-full"
                 trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
             />
@@ -110,7 +122,7 @@ function InquiryControl({ control, value, onChange }) {
                 searchLabel="Cari kas/bank"
                 dialogTitle="Pilih Kas/Bank"
                 queryParams={{ account_type: 'Cash/Bank' }}
-                className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+                className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
                 inputClassName="text-sm text-brand-dark py-1 h-full"
                 trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
                 onSelectAccount={(record, label) => {
@@ -126,7 +138,7 @@ function InquiryControl({ control, value, onChange }) {
             onChange={(event) => onChange(control.id, event.target.value)}
             placeholder={control.placeholder ?? ''}
             trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
-            className={`h-[34px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
+            className={`h-[40px] rounded-[4px] border-ui-border ${control.className ?? ''}`.trim()}
             inputClassName="text-sm text-brand-dark sm:text-xs sm:text-sm"
             trailingClassName="px-3"
         />
@@ -194,40 +206,25 @@ export default function InquiryWorkspaceView({
     const searchControl = controls.find(c => c.type === 'search');
     const dateControls = controls.filter(c => c.type === 'date' || c.type === 'label');
 
-    // Inject row numbering column with pagination offset
-    const columnsWithNo = useMemo(() => {
-        let cols = config.table.columns;
-        if (isAlternativeView) {
-            cols = config.table.columns.map((col) => {
+    const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
+    const { handleResizeStart, getCellStyle } = useColumnResize(config.id || 'bank-inquiry');
+
+    const resolvedColumns = useMemo(() => {
+        return config.table.columns.map((col) => {
+            if (isAlternativeView) {
                 if (col.id === 'mutation') {
                     return { ...col, id: 'debit', label: 'Debit' };
                 }
                 if (col.id === 'type') {
                     return { ...col, id: 'credit', label: 'Kredit' };
                 }
-                return col;
-            });
-        }
-
-        if (filteredRows.length === 0) {
-            return cols;
-        }
-        return [
-            { id: '__no', label: 'No.', widthClassName: 'w-[64px]' },
-            ...cols,
-        ];
-    }, [config.table.columns, filteredRows.length, isAlternativeView]);
-
-    const rowsWithNo = useMemo(() => {
-        const offset = pagination ? pagination.from - 1 : 0;
-        return filteredRows.map((row, index) => ({
-            ...row,
-            __no: offset + index + 1,
-        }));
-    }, [filteredRows, pagination]);
+            }
+            return col;
+        });
+    }, [config.table.columns, isAlternativeView]);
 
     return (
-        <div className="flex min-h-full flex-col gap-3 pt-3">
+        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
                     {searchControl ? (
@@ -291,25 +288,109 @@ export default function InquiryWorkspaceView({
             </div>
 
             {error ? (
-                <div className="rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850">
+                <div className="rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850 mt-3">
                     {error}
                 </div>
             ) : null}
 
             <div
-                className={`grid min-h-0 flex-1 gap-3 ${
+                className={`grid min-h-0 flex-1 gap-3 mt-3 ${
                     hasSidePanel ? 'xl:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_380px]' : ''
                 }`.trim()}
             >
-                <div className="min-w-0 overflow-hidden rounded-[6px] border border-ui-border-medium bg-white shadow-card-light">
+                <div className="min-w-0 overflow-hidden flex flex-col">
                     <div className="min-h-0 overflow-x-auto">
-                        <TransactionDataTable
-                            columns={columnsWithNo}
-                            rows={rowsWithNo}
-                            emptyLabel={loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
-                            minWidthClassName={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'}
-                            showNumbering={false}
-                        />
+                        <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-table-wrapper-border">
+                            <DataTableHeader className="bg-table-header-bg">
+                                <tr>
+                                    {sortedRows.length > 0 && (
+                                        <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-normal text-white">
+                                            No.
+                                        </DataTableHead>
+                                    )}
+                                    {resolvedColumns.map((column) => (
+                                        <SortableTableHeaderCell
+                                            key={column.id}
+                                            label={column.label}
+                                            align={column.align}
+                                            widthClassName={column.widthClassName}
+                                            sortable={column.sortable !== false}
+                                            sortDirection={sortKey === column.id ? sortDir : null}
+                                            onSort={() => handleSort(column.id)}
+                                            style={getCellStyle(column.id, { position: 'relative' })}
+                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                        />
+                                    ))}
+                                </tr>
+                            </DataTableHeader>
+
+                            <DataTableBody>
+                                {sortedRows.length ? (
+                                    sortedRows.map((row, index) => {
+                                        const offset = pagination ? pagination.from - 1 : 0;
+                                        const displayIndex = offset + index + 1;
+                                        return (
+                                            <DataTableRow
+                                                key={row.id || index}
+                                                className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
+                                                    index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
+                                                }`.trim()}
+                                            >
+                                                <DataTableCell className="px-3 text-center text-base text-table-row-number">
+                                                    {displayIndex}
+                                                </DataTableCell>
+                                                {resolvedColumns.map((column) => {
+                                                    let cellContent = null;
+                                                    const val = row[column.id];
+
+                                                    if (column.id === 'type') {
+                                                        const valStr = String(val || '').toLowerCase();
+                                                        if (valStr.includes('debit') || valStr.includes('db') || valStr.includes('dr')) {
+                                                            cellContent = <span className="text-slate-700">Dr</span>;
+                                                        } else if (valStr.includes('credit') || valStr.includes('cr') || valStr.includes('kredit')) {
+                                                            cellContent = <span className="text-slate-700">Cr</span>;
+                                                        } else {
+                                                            cellContent = formatTableTextValue(val, column);
+                                                        }
+                                                    } else if (column.id === 'mutation') {
+                                                        const typeVal = String(row['type'] || '').toLowerCase();
+                                                        const isCredit = typeVal.includes('credit') || typeVal.includes('cr') || typeVal.includes('kredit');
+                                                        const formattedVal = formatTableTextValue(val, column);
+                                                        if (isCredit) {
+                                                            cellContent = <span className="text-rose-600">{formattedVal}</span>;
+                                                        } else {
+                                                            cellContent = <span className="text-slate-700">{formattedVal}</span>;
+                                                        }
+                                                    } else {
+                                                        cellContent = formatTableTextValue(val, column);
+                                                    }
+
+                                                    return (
+                                                        <DataTableCell
+                                                            key={column.id}
+                                                            className={`px-2.5 text-base text-text-workspace-dark ${
+                                                                column.align === 'right' ? 'text-right' : 
+                                                                column.align === 'center' ? 'text-center' : 'text-left'
+                                                            }`.trim()}
+                                                            style={getCellStyle(column.id)}
+                                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                                        >
+                                                            {cellContent}
+                                                        </DataTableCell>
+                                                    );
+                                                })}
+                                            </DataTableRow>
+                                        );
+                                    })
+                                ) : (
+                                    <DataTableRow className="bg-white">
+                                        <DataTableCell colSpan={resolvedColumns.length + 1} className="px-3 py-3 text-center text-base text-text-workspace-dark">
+                                            {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
+                                        </DataTableCell>
+                                    </DataTableRow>
+                                )}
+                            </DataTableBody>
+                        </DataTable>
                     </div>
 
                     {!hasRows ? (
@@ -317,18 +398,17 @@ export default function InquiryWorkspaceView({
                     ) : null}
 
                     {pagination ? (
-                        <div className="border-t border-table-row-border bg-ui-bg-hover px-3 py-2">
-                            <Pagination
-                                page={pagination.page}
-                                perPage={pagination.perPage}
-                                total={pagination.total}
-                                lastPage={pagination.lastPage}
-                                from={pagination.from}
-                                to={pagination.to}
-                                onPageChange={pagination.onPageChange}
-                                onPerPageChange={pagination.onPerPageChange}
-                            />
-                        </div>
+                        <Pagination
+                            page={pagination.page}
+                            perPage={pagination.perPage}
+                            total={pagination.total}
+                            lastPage={pagination.lastPage}
+                            from={pagination.from}
+                            to={pagination.to}
+                            onPageChange={pagination.onPageChange}
+                            onPerPageChange={pagination.onPerPageChange}
+                            className="mt-3"
+                        />
                     ) : null}
                 </div>
 

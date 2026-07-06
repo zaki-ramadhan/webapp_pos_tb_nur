@@ -27,5 +27,15 @@ export function validateSalesReceiptValues(values, config) {
         return 'Setiap faktur penerimaan wajib memiliki nilai pembayaran lebih dari 0.';
     }
 
+    const headerPayment = parseNumericInput(values.paymentAmount);
+    const totalInvoicesAmount = (values.invoices ?? []).reduce(
+        (sum, invoice) => sum + parseNumericInput(invoice.payment ?? invoice.paid ?? invoice.invoiceTotal),
+        0
+    );
+
+    if (headerPayment !== totalInvoicesAmount) {
+        return 'Nilai Pembayaran wajib sama dengan total rincian faktur yang dibayar.';
+    }
+
     return '';
 }

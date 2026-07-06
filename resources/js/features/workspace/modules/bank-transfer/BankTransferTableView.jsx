@@ -104,6 +104,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                 <TransactionDataTable
                     columns={columnsWithNo}
                     rows={rowsWithNo}
+                    showNumbering={false}
                     emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Belum ada data')}
                     minWidthClassName="min-w-[1280px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}

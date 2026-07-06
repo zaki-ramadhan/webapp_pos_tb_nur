@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import PayrollEntryEmployeeModal from './PayrollEntryEmployeeModal';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { TransactionFormLayout, TransactionDualTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -34,63 +35,12 @@ export default function PayrollEntryFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'employees');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [localRecord, setLocalRecord] = useState(null);
-
-    useEffect(() => {
-        setLocalRecord(null);
-        if (!activeRecordId) {
-            return;
-        }
-
-        let active = true;
-
-        async function load() {
-            try {
-                if (window.__savedRecordsCache?.[activeRecordId]) {
-                    return;
-                }
-
-                const response = await getBackendResource('payroll-entries', activeRecordId);
-                if (!active) return;
-                if (response?.data) {
-                    const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
-                    setLocalRecord(parsed);
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(activeRecordId)] = parsed;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        load();
-
-        return () => {
-            active = false;
-        };
-    }, [activeRecordId, buildRecord]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (activeRecordId) {
-            if (window.__savedRecordsCache?.[activeRecordId]) {
-                return window.__savedRecordsCache[activeRecordId];
-            }
-
-            const row = config.rowMap?.[activeRecordId];
-
-            if (row?.__backendRecord && buildRecord) {
-                return buildRecord(row.__backendRecord, config);
-            }
-
-            return config.records?.[activeRecordId] ?? config.draft;
-        }
-
-        return config.draft;
-    }, [activeRecordId, buildRecord, config, localRecord]);
+    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+        resourceName: 'payroll-entries',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
 
     const [values, setValues] = useState(() => {
         const initial = sourceRecord ? sourceRecord : buildDefaultValues(config);

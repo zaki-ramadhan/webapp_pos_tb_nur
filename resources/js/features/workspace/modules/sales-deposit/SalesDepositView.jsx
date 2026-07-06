@@ -68,6 +68,9 @@ export default function SalesDepositView({ page, mode, activeLevel2Tab, level2Ta
         if (row?.__backendRecord) {
             return buildSalesDepositRecordFromBackend(row.__backendRecord, config);
         }
+        if (row?.id || row?.document_number || row?.customer_id) {
+            return buildSalesDepositRecordFromBackend(row, config);
+        }
 
         return buildSalesDepositRecord(row);
     }, [config]);

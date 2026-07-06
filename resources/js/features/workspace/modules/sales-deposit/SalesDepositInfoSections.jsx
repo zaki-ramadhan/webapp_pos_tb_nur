@@ -1,8 +1,10 @@
+import { useRef, useState } from 'react';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import DropdownMenu from '@/components/ui/DropdownMenu';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
 import {
     DepositAmountField,
-    DepositLinkedRowsSection,
     DepositStamp,
     DepositStatusPill,
     ReadonlyTransactionTextarea,
@@ -23,14 +25,21 @@ import TextareaField from '@/components/ui/TextareaField';
 export { DepositAmountField, DepositStamp };
 
 export function DepositFooter({ values }) {
-    return (
-        <TransactionDualTotalCard
-            items={[
-                { label: 'Sub Total', value: values.subtotal },
-                { label: 'Total', value: values.total },
-            ]}
-        />
-    );
+    const items = [
+        { label: 'Sub Total', value: values.subtotal },
+    ];
+
+    if (values.taxEnabled && values.__taxId) {
+        const rateLabel = values.taxRate ? ` (${values.taxRate}%)` : '';
+        items.push({
+            label: `PPN${rateLabel}`,
+            value: values.taxTotalFormatted || 'Rp 0',
+        });
+    }
+
+    items.push({ label: 'Total', value: values.total });
+
+    return <TransactionDualTotalCard items={items} />;
 }
 
 export function DepositInfoSection({ config, values, setValues, isDetail }) {
@@ -55,6 +64,8 @@ export function DepositInfoSection({ config, values, setValues, isDetail }) {
                                     paymentTermName: label || '',
                                 }));
                             }}
+                            className="h-[40px] rounded-[4px] border-slate-400 bg-slate-50"
+                            inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
                         />
                     </div>
 
@@ -70,8 +81,8 @@ export function DepositInfoSection({ config, values, setValues, isDetail }) {
                             }
                             readOnly={isDetail}
                             rows={4}
-                            className="border-ui-border"
-                            textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
+                            className="border-ui-border bg-slate-50"
+                            textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark bg-transparent"
                         />
                     </div>
 
@@ -86,8 +97,8 @@ export function DepositInfoSection({ config, values, setValues, isDetail }) {
                                 }))
                             }
                             rows={4}
-                            className="border-ui-border"
-                            textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark"
+                            className="border-ui-border bg-slate-50"
+                            textareaClassName="min-h-[84px] text-xs sm:text-sm text-brand-dark bg-transparent"
                         />
                     </div>
                 </div>
@@ -116,22 +127,20 @@ export function DepositSmartlinkSection({ config }) {
 
 export function DepositSummarySection({ config, values }) {
     return (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
-            <section className="rounded-[4px] border border-table-cell-border bg-white">
-                <div className="border-b border-ui-border-medium px-4 py-3">
-                    <TransactionSectionHeading title={config.summaryTitle} icon="payment" />
-                </div>
-                <div className="-mt-3 pb-1 pt-2">
+        <div className="w-full max-w-[540px]">
+            <TransactionSectionHeading title={config.summaryTitle} icon="payment" />
+            <section className="mt-4 rounded-[4px] border border-ui-border bg-white">
+                <div className="py-1">
                     {values.summary.map(([label, value]) => (
                         label === 'Status' ? (
-                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border-ui-border-lightest px-4 py-2.5">
-                                <span className="text-xs sm:text-sm text-brand-dark">{label}</span>
+                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-ui-border-lightest px-4 py-2">
+                                <span className="text-xs sm:text-sm text-brand-dark font-normal">{label}</span>
                                 <DepositStatusPill value={value} />
                             </div>
                         ) : (
-                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border-ui-border-lightest px-4 py-2.5 last:border-b-0">
-                                <span className="text-xs sm:text-sm text-brand-dark">{label}</span>
-                                <span className={`text-right text-base ${label === 'Dicetak/email' ? 'font-semibold text-text-darkest' : 'text-text-darkest'}`.trim()}>
+                            <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-ui-border-lightest px-4 py-2 last:border-b-0">
+                                <span className="text-xs sm:text-sm text-brand-dark font-normal">{label}</span>
+                                <span className="text-right text-xs sm:text-sm font-semibold text-text-darkest">
                                     {value}
                                 </span>
                             </div>
@@ -139,17 +148,32 @@ export function DepositSummarySection({ config, values }) {
                     ))}
                 </div>
             </section>
-
-            <DepositLinkedRowsSection
-                title={config.usedDepositTitle}
-                icon="payment"
-                rows={values.usedDepositRows}
-            />
         </div>
     );
 }
 
-export function SalesDepositHeader({ config, values, setValues, isDetail }) {
+export function SalesDepositHeader({ config, values, setValues, isDetail, handlers }) {
+    const processAnchorRef = useRef(null);
+    const [processOpen, setProcessOpen] = useState(false);
+
+    const handleProcessPembayaran = () => {
+        setProcessOpen(false);
+        if (handlers?.onProcessPembayaran) {
+            handlers.onProcessPembayaran(values);
+        } else {
+            if (!values.__backendRecordId) return;
+            window.__pendingImportSalesDeposit = { id: values.__backendRecordId };
+            window.dispatchEvent(
+                new CustomEvent('workspace:open-page', {
+                    detail: {
+                        pageId: 'sales-receipt',
+                        targetTabId: 'sales-receipt-create',
+                    },
+                })
+            );
+        }
+    };
+
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             {/* Left Column */}
@@ -168,6 +192,8 @@ export function SalesDepositHeader({ config, values, setValues, isDetail }) {
                                     ...current,
                                     __customerId: record ? record.id : null,
                                     customer: label ? [label] : [],
+                                    __salesOrderId: null,
+                                    salesOrderNumber: '',
                                 }));
                             }}
                         />
@@ -229,20 +255,40 @@ export function SalesDepositHeader({ config, values, setValues, isDetail }) {
                     </div>
                 </div>
 
-                {isDetail && values.processButtonLabel ? (
+                {((isDetail && values.processButtonLabel) || !isDetail) && (
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4 w-full">
                         <div />
-                        <div className="flex justify-end w-full max-w-[320px] justify-self-end">
+                        <div className="flex justify-end w-full max-w-[320px] justify-self-end relative">
                             <button
+                                ref={processAnchorRef}
                                 type="button"
-                                className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent"
+                                disabled={!isDetail}
+                                onClick={() => setProcessOpen((prev) => !prev)}
+                                className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-xs sm:text-sm transition ${
+                                    !isDetail
+                                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
+                                        : 'border-brand-blue-border bg-white text-brand-blue-accent hover:bg-brand-blue-lightest'
+                                }`}
                             >
-                                <span>{values.processButtonLabel}</span>
-                                <ChevronDownIcon className="h-4 w-4" />
+                                <span>{values.processButtonLabel || 'Proses'}</span>
+                                <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`} />
                             </button>
+                            {isDetail && (
+                                <DropdownMenu
+                                    open={processOpen}
+                                    onClose={() => setProcessOpen(false)}
+                                    anchorRef={processAnchorRef}
+                                    align="end"
+                                    widthClassName="w-[140px]"
+                                >
+                                    <DropdownMenuItem onClick={handleProcessPembayaran}>
+                                        Penerimaan
+                                    </DropdownMenuItem>
+                                </DropdownMenu>
+                            )}
                         </div>
                     </div>
-                ) : null}
+                )}
             </div>
         </div>
     );

@@ -10,6 +10,7 @@ import {
     buildTotals,
     applyBankTransferComputedValues,
     truncateText,
+    extractCleanAccountName,
 } from './bankTransferCalculations';
 
 export function buildBankTransferRow(record) {
@@ -42,10 +43,10 @@ export function buildBankTransferRow(record) {
         __backendRecord: record,
         number: record.document_number ?? '',
         date: entryDate,
-        fromBank: truncateText(primaryAccountLabel),
-        fromBankFull: primaryAccountLabel,
-        toBank: truncateText(secondaryAccountLabel),
-        toBankFull: secondaryAccountLabel,
+        fromBank: truncateText(extractCleanAccountName(primaryAccountLabel)),
+        fromBankFull: extractCleanAccountName(primaryAccountLabel),
+        toBank: truncateText(extractCleanAccountName(secondaryAccountLabel)),
+        toBankFull: extractCleanAccountName(secondaryAccountLabel),
         description: record.notes ?? '',
         purchasePayment: record.reference_number ?? '',
         fromTotal: fromTotal,
@@ -96,6 +97,8 @@ export function buildBankTransferRecord(record = {}, config) {
     const { feeLines, transferAmount } = deriveTransferAmounts(record);
     const fromBankLabel = metadata.from_bank_label ?? buildLookupLabel(record.primary_account ?? {});
     const toBankLabel = metadata.to_bank_label ?? buildLookupLabel(record.secondary_account ?? {});
+    const cleanFromBank = fromBankLabel ? extractCleanAccountName(fromBankLabel) : '';
+    const cleanToBank = toBankLabel ? extractCleanAccountName(toBankLabel) : '';
     const feeRows = feeLines.map((line, index) => ({
         id: String(line.id ?? `fee-${index + 1}`),
         __lineId: line.id ?? null,
@@ -133,7 +136,12 @@ export function buildBankTransferRecord(record = {}, config) {
         feeLookup: '',
         feeRows,
         saveTone: 'muted',
-        reconciliations: metadata.reconciliations ?? [],
+        reconciliations: (metadata.reconciliations && metadata.reconciliations.length > 0)
+            ? metadata.reconciliations
+            : [
+                { id: 'from', bank: cleanFromBank || 'Kas/Bank Asal', status: 'Belum', date: null },
+                { id: 'to', bank: cleanToBank || 'Kas/Bank Tujuan', status: 'Belum', date: null }
+            ],
     };
 
     return {
@@ -171,7 +179,12 @@ export function buildDetailRecordFromRow(row = {}, config) {
         feeLookup: '',
         feeRows: row.feeRows ?? [],
         saveTone: 'muted',
-        reconciliations: row.reconciliations ?? [],
+        reconciliations: (row.reconciliations && row.reconciliations.length > 0)
+            ? row.reconciliations
+            : [
+                { id: 'from', bank: (row.fromBankFull ? extractCleanAccountName(row.fromBankFull) : '') || 'Kas/Bank Asal', status: 'Belum', date: null },
+                { id: 'to', bank: (row.toBankFull ? extractCleanAccountName(row.toBankFull) : '') || 'Kas/Bank Tujuan', status: 'Belum', date: null }
+            ],
     });
 }
 
