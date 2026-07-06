@@ -20,6 +20,7 @@ import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspac
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import { executeImportPendingAction } from '@/features/workspace/shared/crudFeedback';
+import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 
 export default function useSalesReceiptForm({
     pageId,
@@ -39,29 +40,12 @@ export default function useSalesReceiptForm({
 
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
 
-    const [localRecord, setLocalRecord] = useState(null);
-
-    useEffect(() => {
-        setLocalRecord(null);
-    }, [activeRecordId]);
-
-    const sourceRecord = useMemo(() => {
-        if (localRecord) {
-            return localRecord;
-        }
-
-        if (!activeRecordId) {
-            return config.draft;
-        }
-
-        const row = config.rowMap?.[activeRecordId];
-
-        if (row?.__backendRecord && buildRecord) {
-            return buildRecord(row.__backendRecord, config);
-        }
-
-        return config.detailRecords?.[activeRecordId] ?? config.draft;
-    }, [activeRecordId, buildRecord, config, localRecord]);
+    const [sourceRecord, setLocalRecord] = useTransactionDetailLoader({
+        resourceName: 'sales-receipts',
+        activeRecordId,
+        buildRecord,
+        config,
+    });
 
     const [values, setValues] = useState(() => buildSalesReceiptFormState(sourceRecord));
     const isDetail = Boolean(activeRecordId);

@@ -21,8 +21,8 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
                 const response = await getBackendResource(resourceName, activeRecordId);
                 if (!active) return;
-                if (response?.data) {
-                    const parsed = buildRecord ? buildRecord(response.data, config) : response.data;
+                if (response) {
+                    const parsed = buildRecord ? buildRecord(response, config) : response;
                     setLocalRecord(parsed);
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(activeRecordId)] = parsed;
