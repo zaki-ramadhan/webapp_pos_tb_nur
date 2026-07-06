@@ -53,12 +53,12 @@ export function ReceiptAmountActionButton({ type, onClick }) {
 
 export function ReceiptSummaryFooter({ paymentAmount, invoices = [] }) {
     const headerPayment = parseNumericInput(paymentAmount);
-    const totalInvoicesOutstanding = buildSalesReceiptTotalOutstanding(invoices);
-    const overpayment = headerPayment - totalInvoicesOutstanding;
+    const totalInvoices = buildSalesReceiptTotal(invoices);
+    const overpayment = headerPayment - totalInvoices;
 
     const items = [
         { id: 'payment', label: 'Nilai Pembayaran', value: formatCurrencyLabel(headerPayment) },
-        { id: 'outstanding', label: 'Total Nilai Faktur', value: formatCurrencyLabel(totalInvoicesOutstanding) },
+        { id: 'paid', label: 'Faktur Dibayar', value: formatCurrencyLabel(totalInvoices) },
         { id: 'overpayment', label: 'Lebih Bayar', value: formatCurrencyLabel(overpayment) },
     ];
 
