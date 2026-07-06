@@ -3,6 +3,7 @@ import { RefreshIcon, TableActionIcon } from '@/features/workspace/shared/Icons'
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
     buildSalesReceiptTotal,
+    buildSalesReceiptTotalOutstanding,
     formatCurrencyLabel,
 } from './salesReceiptCalculations';
 
@@ -52,12 +53,12 @@ export function ReceiptAmountActionButton({ type, onClick }) {
 
 export function ReceiptSummaryFooter({ paymentAmount, invoices = [] }) {
     const headerPayment = parseNumericInput(paymentAmount);
-    const totalInvoices = buildSalesReceiptTotal(invoices);
-    const overpayment = totalInvoices - headerPayment;
+    const totalInvoicesOutstanding = buildSalesReceiptTotalOutstanding(invoices);
+    const overpayment = headerPayment - totalInvoicesOutstanding;
 
     const items = [
         { id: 'payment', label: 'Nilai Pembayaran', value: formatCurrencyLabel(headerPayment) },
-        { id: 'paid', label: 'Faktur Dibayar', value: formatCurrencyLabel(totalInvoices) },
+        { id: 'outstanding', label: 'Total Nilai Faktur', value: formatCurrencyLabel(totalInvoicesOutstanding) },
         { id: 'overpayment', label: 'Lebih Bayar', value: formatCurrencyLabel(overpayment) },
     ];
 

@@ -27,6 +27,10 @@ export function buildSalesReceiptTotal(invoices = []) {
     return invoices.reduce((sum, invoice) => sum + parseNumericInput(invoice.payment ?? invoice.paid ?? invoice.invoiceTotal), 0);
 }
 
+export function buildSalesReceiptTotalOutstanding(invoices = []) {
+    return invoices.reduce((sum, invoice) => sum + parseNumericInput(invoice.outstanding ?? invoice.invoiceTotal), 0);
+}
+
 export function applySalesReceiptInvoices(values, invoices) {
     const totalAmount = buildSalesReceiptTotal(invoices);
 
