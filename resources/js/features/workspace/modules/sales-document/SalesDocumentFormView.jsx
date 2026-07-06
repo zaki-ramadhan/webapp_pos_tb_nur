@@ -99,6 +99,11 @@ export default function SalesDocumentFormView({
     useEffect(() => {
         const nextValues = buildSalesDocumentFormState(sourceRecord);
         setValues((current) => {
+            const recordId = sourceRecord?.__backendRecordId || sourceRecord?.id;
+            const currentRecordId = current?.__backendRecordId || current?.id;
+            if (recordId !== currentRecordId) {
+                return nextValues;
+            }
             const userHasEdited = resolveSalesDocumentDirty(current, lastInitialSnapshotRef.current);
             return userHasEdited ? current : nextValues;
         });
