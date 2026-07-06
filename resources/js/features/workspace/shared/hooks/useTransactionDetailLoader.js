@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import {
+    showLoadingToast,
+    updateToastToSuccess,
+    updateToastToError,
+    dismissToast,
+} from '@/components/feedback/toast';
 
 export function useTransactionDetailLoader({ resourceName, activeRecordId, buildRecord, config }) {
     const [localRecord, setLocalRecord] = useState(null);
@@ -12,8 +18,16 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
     useEffect(() => { configRef.current = config; }, [config]);
     useEffect(() => { buildRecordRef.current = buildRecord; }, [buildRecord]);
 
+    const lastRecordIdRef = useRef(activeRecordId);
+
     useEffect(() => {
-        setLocalRecord(null);
+        // Only clear if the record ID itself has changed (switching to another document).
+        // If it's the same ID, keep the old values so we don't blink/go blank during refresh.
+        if (lastRecordIdRef.current !== activeRecordId) {
+            setLocalRecord(null);
+            lastRecordIdRef.current = activeRecordId;
+        }
+
         if (!activeRecordId) {
             return;
         }
@@ -27,10 +41,18 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         let active = true;
         setIsLoading(true);
 
+        const toastId = showLoadingToast({
+            title: 'Memuat Rincian',
+            message: 'Sedang mengambil data terbaru dari server...'
+        });
+
         async function load() {
             try {
                 const response = await getBackendResource(resourceName, activeRecordId);
-                if (!active) return;
+                if (!active) {
+                    dismissToast(toastId);
+                    return;
+                }
                 if (response) {
                     const parsed = buildRecordRef.current
                         ? buildRecordRef.current(response, configRef.current)
@@ -38,9 +60,24 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
                     setLocalRecord(parsed);
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(activeRecordId)] = parsed;
+
+                    updateToastToSuccess(toastId, {
+                        title: 'Berhasil',
+                        message: 'Rincian data berhasil diperbarui.'
+                    });
+                } else {
+                    dismissToast(toastId);
                 }
             } catch (e) {
                 console.error(e);
+                if (active) {
+                    updateToastToError(toastId, {
+                        title: 'Gagal',
+                        message: 'Gagal mengambil rincian data terbaru.'
+                    });
+                } else {
+                    dismissToast(toastId);
+                }
             } finally {
                 if (active) setIsLoading(false);
             }
@@ -50,6 +87,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
         return () => {
             active = false;
+            dismissToast(toastId);
         };
         // Only re-fetch when the identity of the record changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
