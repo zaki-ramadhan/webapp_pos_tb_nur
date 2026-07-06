@@ -11,6 +11,8 @@ import {
 import {
     ReceiptAmountActionButton,
     ReceiptSummaryFooter,
+    formatCurrencyLabel,
+    formatCurrencyValue,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 import {
     TransactionDateInput,
@@ -271,7 +273,8 @@ export default function SalesReceiptFormView({
                     setValues((current) => {
                         const updatedInvoices = (current.invoices ?? []).map((inv) => {
                             if (inv.id === activeInvoiceModal.id) {
-                                const paymentAmountValue = updatedModalValues.payment;
+                                const parsedPayment = parseNumericInput(updatedModalValues.payment);
+                                const paymentAmountValue = formatCurrencyLabel(parsedPayment);
                                 return {
                                     ...inv,
                                     paid: paymentAmountValue,
@@ -279,6 +282,7 @@ export default function SalesReceiptFormView({
                                     modal: {
                                         ...inv.modal,
                                         ...updatedModalValues,
+                                        payment: formatCurrencyValue(parsedPayment),
                                     }
                                 };
                             }
