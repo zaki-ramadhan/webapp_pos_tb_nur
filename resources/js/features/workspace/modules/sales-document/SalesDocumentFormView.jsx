@@ -73,6 +73,7 @@ export default function SalesDocumentFormView({
 }) {
     const [itemModalOpen, setItemModalOpen] = useState(false);
     const [importModalOpen, setImportModalOpen] = useState(false);
+    const [advanceDeleteTarget, setAdvanceDeleteTarget] = useState(null);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const [sourceRecord,, isLoading] = useTransactionDetailLoader({
         resourceName: backendConfig?.resource ?? 'sales-documents',
@@ -289,6 +290,24 @@ export default function SalesDocumentFormView({
                 updateItems((existingItems) => [...existingItems, newItem]);
                 showSuccessToast({ message: `Barang [${record.code ?? ''}] ${record.name} ditambahkan.` });
             },
+            onSelectAdvancePayment: (record) => {
+                const newAdvance = {
+                    id: `advance-item-${Date.now()}-${Math.random()}`,
+                    __lineId: null,
+                    __depositId: record.id,
+                    number: record.document_number || record.number || '',
+                    amount: formatCurrencyValue(Number(record.deposit_amount || record.total_amount || record.amount || 0)),
+                    notes: record.notes ?? '',
+                };
+                setValues((current) => ({
+                    ...current,
+                    advancePayments: [...(current.advancePayments ?? []), newAdvance],
+                }));
+                showSuccessToast({ message: `Uang muka [${record.document_number || record.number || ''}] ditambahkan.` });
+            },
+            onEditAdvancePayment: (advanceItem) => {
+                setAdvanceDeleteTarget(advanceItem);
+            },
             onSelectCostAccount: (record) => {
                 const newCost = {
                     id: `cost-item-${Date.now()}-${Math.random()}`,
@@ -417,6 +436,22 @@ export default function SalesDocumentFormView({
                 cancelLabel="Batal"
                 confirmVariant="primary"
                 confirmLoading={saving}
+            />
+            <ConfirmationModal
+                open={Boolean(advanceDeleteTarget)}
+                onClose={() => setAdvanceDeleteTarget(null)}
+                onConfirm={() => {
+                    setValues((current) => ({
+                        ...current,
+                        advancePayments: (current.advancePayments ?? []).filter((item) => item.id !== advanceDeleteTarget.id),
+                    }));
+                    setAdvanceDeleteTarget(null);
+                }}
+                title="Hapus Uang Muka"
+                message={`Apakah Anda yakin ingin menghapus rujukan uang muka [${advanceDeleteTarget?.number}] dari dokumen ini?`}
+                confirmLabel="Ya"
+                cancelLabel="Batal"
+                confirmVariant="primary"
             />
             <ImportItemsModal
                 open={importModalOpen}

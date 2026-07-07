@@ -173,7 +173,7 @@ export function SearchableTableSection({
                                 {columns.map((column) => (
                                     <DataTableHead
                                         key={column.id}
-                                        className={`${column.widthClassName ?? ''} px-3 text-base font-medium text-white ${resolveCellAlignClassName(column.align)}`.trim()}
+                                        className={`${column.widthClassName ?? ''} px-3 text-base font-normal text-white ${resolveCellAlignClassName(column.align)}`.trim()}
                                     >
                                         {column.kind === 'spacer' ? (
                                             <span className="flex justify-center">

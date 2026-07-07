@@ -35,16 +35,29 @@ export function SalesDocumentAdditionalCostSection({ config, values, setValues, 
     );
 }
 
-export function SalesDocumentAdvancePaymentsSection({ config, values }) {
+export function SalesDocumentAdvancePaymentsSection({ config, values, handlers }) {
+    const searchInput = config.advancePaymentSearchResource ? (
+        <AccountLookupTextInput
+            resource={config.advancePaymentSearchResource}
+            placeholder={config.advancePaymentSearchPlaceholder}
+            searchLabel={`Cari ${config.advancePaymentTitle ?? 'Uang Muka'}`}
+            dialogTitle={`Pilih ${config.advancePaymentTitle ?? 'Uang Muka'}`}
+            onSelectAccount={(record) => handlers?.onSelectAdvancePayment?.(record)}
+        />
+    ) : null;
+
     return (
         <SearchableTableSection
             searchValue={values.advancePaymentSearch ?? ''}
             searchPlaceholder={config.advancePaymentSearchPlaceholder ?? 'Cari/Pilih...'}
+            searchInput={searchInput}
             title={config.advancePaymentTitle ?? 'Uang Muka'}
             columns={config.advancePaymentTable?.columns ?? []}
             rows={values.advancePayments ?? []}
             emptyLabel={config.advancePaymentTable?.emptyLabel ?? 'Belum ada data'}
             minWidthClassName={config.advancePaymentTable?.minWidthClassName ?? 'min-w-[760px]'}
+            titleRequired={false}
+            onRowClick={handlers?.onEditAdvancePayment}
         />
     );
 }

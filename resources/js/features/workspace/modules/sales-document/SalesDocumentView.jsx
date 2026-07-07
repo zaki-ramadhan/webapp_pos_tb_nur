@@ -100,17 +100,17 @@ export default function SalesDocumentView({
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <SalesDocumentFormView
-            key={lastActiveFormTab.id}
-            pageId={pageId}
-            config={resolvedConfig}
-            buildRecord={resolvedBuildRecord}
-            activeLevel2Tab={lastActiveFormTab}
-            backendConfig={backendConfig}
-            onOpenContent={onOpenContent}
-            onOpenDetail={onOpenDetail}
-            onCloseDetail={onCloseDetail}
-            onRefresh={reload}
-        />
+                        key={lastActiveFormTab.id}
+                        pageId={pageId}
+                        config={resolvedConfig}
+                        buildRecord={resolvedBuildRecord}
+                        activeLevel2Tab={lastActiveFormTab}
+                        backendConfig={backendConfig}
+                        onOpenContent={onOpenContent}
+                        onOpenDetail={onOpenDetail}
+                        onCloseDetail={onCloseDetail}
+                        onRefresh={reload}
+                    />
                 </div>
             )}
         </div>

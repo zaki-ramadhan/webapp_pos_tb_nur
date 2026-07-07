@@ -92,6 +92,13 @@ export function buildDocumentComparableSnapshot(values) {
         relatedDocumentId: values.__relatedDocumentId,
         returnSource: values.returnSource,
         returnSourceReferences: values.returnSourceReferences,
+        invoiceSource: values.invoiceSource,
+        invoiceSourceReferences: values.invoiceSourceReferences,
+        advancePayments: (values.advancePayments ?? []).map((adv) => ({
+            number: adv.number,
+            amount: adv.amount,
+            notes: adv.notes,
+        })),
         items: (values.items ?? []).map((item) => ({
             name: item.name,
             code: item.code,

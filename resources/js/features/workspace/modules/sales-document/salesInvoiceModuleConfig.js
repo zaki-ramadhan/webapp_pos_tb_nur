@@ -39,6 +39,7 @@ export const salesInvoiceSectionTabs = [
     { id: 'details', label: 'Rincian Barang', icon: 'document' },
     { id: 'additional-info', label: 'Info lainnya', icon: 'info' },
     { id: 'additional-costs', label: 'Biaya Lainnya', icon: 'payment' },
+    { id: 'advance-payments', label: 'Uang Muka', icon: 'receipt' },
 ];
 
 const salesOrderListColumns = [
@@ -203,6 +204,8 @@ const salesInvoiceDraft = {
     taxInvoiceNumber: '',
     advancePaymentSearch: '',
     advancePayments: [],
+    invoiceSource: 'Uang Muka',
+    invoiceSourceReferences: [],
     dockActions: [
         createSaveDockAction(),
         createDocumentDockAction(),
@@ -245,6 +248,7 @@ export const defaultSalesInvoiceConfig = {
     additionalInfoTitle: 'Info lainnya',
     advancePaymentTitle: 'Uang Muka',
     advancePaymentSearchPlaceholder: 'Cari/Pilih...',
+    advancePaymentSearchResource: 'sales-deposits',
     advancePaymentTable: {
         columns: salesInvoiceAdvanceColumns,
         emptyLabel: 'Belum ada data',
@@ -257,6 +261,7 @@ export const defaultSalesInvoiceConfig = {
     showPreInvoiceOption: false,
     showContactField: true,
     showAddressPinButton: true,
+    showFobInShippingInfo: false,
     taxInfoMode: 'invoice',
     itemModal: {
         enabled: true,
