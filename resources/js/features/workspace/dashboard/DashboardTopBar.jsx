@@ -54,8 +54,12 @@ export default function DashboardTopBar({
     }
 
     return (
-        <header className="relative z-20 border-b border-brand-primary bg-header-gradient px-3 py-1 text-white shadow-topbar sm:px-4 sm:py-1.5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+        <header className="relative z-20 border-b border-brand-primary bg-header-gradient px-3 py-1 text-white shadow-topbar sm:px-4 sm:py-1.5 overflow-hidden">
+            <div 
+                className="absolute inset-0 z-0 bg-cover bg-no-repeat bg-center pointer-events-none"
+                style={{ backgroundImage: "url('/assets/images/panel-header-background_2.svg')" }}
+            />
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center">
                     <BrandMark
                         className="shrink-0 scale-[0.85] origin-left sm:scale-[0.9]"
