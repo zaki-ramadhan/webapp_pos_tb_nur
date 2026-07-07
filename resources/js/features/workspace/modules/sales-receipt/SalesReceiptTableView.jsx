@@ -80,7 +80,7 @@ export default function SalesReceiptTableView({
             }
 
             const searchCols = config.table.columns.filter(col => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label);
-            return searchCols.slice(0, 2).some((column) =>
+            return searchCols.some((column) =>
                 String(row[column.id] ?? '')
                     .toLowerCase()
                     .includes(normalizedKeyword),

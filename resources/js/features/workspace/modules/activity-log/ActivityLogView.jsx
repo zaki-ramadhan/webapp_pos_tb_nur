@@ -125,7 +125,7 @@ export default function ActivityLogView({ page }) {
             if (!passesFilters) return false;
             if (!normalizedKeyword) return true;
 
-            return cleanedColumns.slice(0, 2).some((col) =>
+            return cleanedColumns.some((col) =>
                 String(row[col.id] ?? '').toLowerCase().includes(normalizedKeyword),
             );
         });
