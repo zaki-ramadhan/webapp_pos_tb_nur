@@ -117,7 +117,7 @@ export default function SalesDocumentTableView({ config, onCreate, onOpenDetail 
                                             onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
                                             <SalesDocumentStatusCell columnId={column.id} row={row}>
-                                                <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                                <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                                             </SalesDocumentStatusCell>
                                         </DataTableCell>
                                     ))}

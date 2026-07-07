@@ -6,6 +6,20 @@ export default function formatTableTextValue(value, column = null) {
             const colId = String(column.id ?? '').toLowerCase();
             const colLabel = String(column.label ?? '').toLowerCase();
             
+            const isNameColumn = colId.includes('customer') || 
+                                 colId.includes('supplier') || 
+                                 colId.includes('payee') || 
+                                 colId.includes('client') ||
+                                 colId.includes('employee') ||
+                                 colLabel.includes('pelanggan') || 
+                                 colLabel.includes('pemasok') || 
+                                 colLabel.includes('penerima') ||
+                                 colLabel.includes('karyawan');
+                                 
+            if (isNameColumn && typeof value === 'string') {
+                value = value.replace(/^(?:bapak|bapak\.|bpk|bpk\.|ibu|ibu\.|ib|ib\.|saudara|saudara\.|sdr|sdr\.|tuan|tuan\.|tn|tn\.|nyonya|nyonya\.|ny|ny\.)\s+/i, '');
+            }
+
             const isNumeric = column.align === 'right' ||
                               colId.includes('price') || 
                               colId.includes('amount') || 

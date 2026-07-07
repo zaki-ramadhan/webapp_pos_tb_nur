@@ -5,6 +5,7 @@ import {
     DataTableBody,
     DataTableCell,
     DataTableHeader,
+    DataTableHead,
     DataTableRow,
 } from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
@@ -40,19 +41,6 @@ function SalesReceiptFilterBar({ config, filters, setFilters }) {
                 </SelectField>
             ))}
 
-            {config.table.pagination ? (
-                <Pagination
-                    page={config.table.pagination.page}
-                    perPage={config.table.pagination.perPage}
-                    total={config.table.pagination.total}
-                    lastPage={config.table.pagination.lastPage}
-                    from={config.table.pagination.from}
-                    to={config.table.pagination.to}
-                    onPageChange={config.table.pagination.onPageChange}
-                    onPerPageChange={config.table.pagination.onPerPageChange}
-                    className="mt-3"
-                />
-            ) : null}
         </div>
     );
 }
@@ -124,12 +112,7 @@ export default function SalesReceiptTableView({
                 onRefresh={onRefresh}
                 importButton={null}
                 printButton={null}
-                exportConfig={{
-                    columns: config.table.columns,
-                    rows: filteredRows,
-                    filename: 'penerimaan-penjualan',
-                    title: 'Laporan Penerimaan Penjualan',
-                }}
+                exportConfig={false}
                 search={{
                     value: keyword,
                     onChange: (event) => setKeyword(event.target.value),
@@ -186,7 +169,7 @@ export default function SalesReceiptTableView({
                                             style={getCellStyle(column.id)}
                                             onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
-                                            <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                            <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>

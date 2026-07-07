@@ -127,7 +127,7 @@ export default function CashReceiptTableView({
                                         style={getCellStyle(column.id)}
                                         onResizeStart={(e) => handleResizeStart(e, column.id)}
                                     >
-                                        {formatTableTextValue(row[column.id])}
+                                        {formatTableTextValue(row[column.id], column)}
                                     </DataTableCell>
                                 ))}
                             </DataTableRow>

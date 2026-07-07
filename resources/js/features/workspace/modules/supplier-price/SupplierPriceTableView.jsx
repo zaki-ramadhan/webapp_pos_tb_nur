@@ -45,19 +45,6 @@ function SupplierPriceFilterBar({ table, filters, setFilters }) {
 
 
 
-            {table.pagination ? (
-                <Pagination
-                    page={table.pagination.page}
-                    perPage={table.pagination.perPage}
-                    total={table.pagination.total}
-                    lastPage={table.pagination.lastPage}
-                    from={table.pagination.from}
-                    to={table.pagination.to}
-                    onPageChange={table.pagination.onPageChange}
-                    onPerPageChange={table.pagination.onPerPageChange}
-                    className="mt-3"
-                />
-            ) : null}
         </div>
     );
 }

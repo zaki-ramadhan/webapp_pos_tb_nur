@@ -56,19 +56,6 @@ function DepositTableFilterBar({ table, filters, setFilters }) {
 
 
 
-            {config.table.pagination ? (
-                <Pagination
-                    page={config.table.pagination.page}
-                    perPage={config.table.pagination.perPage}
-                    total={config.table.pagination.total}
-                    lastPage={config.table.pagination.lastPage}
-                    from={config.table.pagination.from}
-                    to={config.table.pagination.to}
-                    onPageChange={config.table.pagination.onPageChange}
-                    onPerPageChange={config.table.pagination.onPerPageChange}
-                    className="mt-3"
-                />
-            ) : null}
         </div>
     );
 }
@@ -222,7 +209,7 @@ export default function DepositTableView({
                                                     column,
                                                 })
                                             ) : (
-                                                <span className="block truncate">{formatTableTextValue(row[column.id])}</span>
+                                                <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                                             )}
                                         </DataTableCell>
                                     ))}

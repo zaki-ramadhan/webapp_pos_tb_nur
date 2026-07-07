@@ -82,6 +82,10 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
                 <div
                     className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/40 active:bg-brand-blue/70 transition-colors z-20"
                     onMouseDown={onResizeStart}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }}
                     style={{ touchAction: 'none' }}
                 />
             )}
@@ -110,6 +114,10 @@ export function DataTableCell({ className = '', children, onResizeStart = null, 
                 <div
                     className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/20 active:bg-brand-blue/40 transition-colors z-10"
                     onMouseDown={onResizeStart}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }}
                     style={{ touchAction: 'none' }}
                 />
             )}
