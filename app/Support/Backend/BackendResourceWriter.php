@@ -78,6 +78,11 @@ class BackendResourceWriter
                 ->where('related_document_id', $record->id)
                 ->delete();
 
+            $oldDocs = [];
+            if (in_array($blueprint->key, ['sales-receipts', 'purchase-payments']) && method_exists($record, 'lines')) {
+                $oldDocs = $record->lines()->pluck('reference_code')->filter()->unique()->toArray();
+            }
+
             $record->delete();
             $this->activityLogger->logMutation(
                 $blueprint,
@@ -89,6 +94,9 @@ class BackendResourceWriter
 
             // Invalidate dashboard caches on mutation
             $this->invalidateDashboardCache();
+
+            // Reconcile payment status on delete
+            $this->reconcilePayments($blueprint, $record, $oldDocs);
         });
     }
 
@@ -356,6 +364,11 @@ class BackendResourceWriter
             $record->fill(Arr::only($payload, $record->getFillable()));
             $record->save();
 
+            $oldDocs = [];
+            if ($record->exists && in_array($blueprint->key, ['sales-receipts', 'purchase-payments']) && method_exists($record, 'lines')) {
+                $oldDocs = $record->lines()->pluck('reference_code')->filter()->unique()->toArray();
+            }
+
             $blueprint->sync($record, $payload);
 
             if ($blueprint->key === 'cash-payments') {
@@ -424,6 +437,9 @@ class BackendResourceWriter
 
             // Post to Jurnal Umum
             $this->postToGeneralJournal($freshRecord);
+
+            // Reconcile payment status
+            $this->reconcilePayments($blueprint, $freshRecord, $oldDocs);
 
             return $freshRecord;
         });
@@ -953,6 +969,54 @@ class BackendResourceWriter
         $journal->lines()->delete();
         foreach ($lines as $line) {
             $journal->lines()->create($line);
+        }
+    }
+
+    /**
+     * Reconcile payment statuses of source documents.
+     */
+    protected function reconcilePayments(BackendResourceBlueprint $blueprint, Model $record, ?array $oldDocs = null): void
+    {
+        if (!in_array($blueprint->key, ['sales-receipts', 'purchase-payments'], true)) {
+            return;
+        }
+
+        $currentDocs = [];
+        if (method_exists($record, 'lines')) {
+            $currentDocs = $record->lines()->pluck('reference_code')->filter()->unique()->toArray();
+        }
+
+        $allDocs = array_unique(array_merge($currentDocs, $oldDocs ?? []));
+        if (empty($allDocs)) {
+            return;
+        }
+
+        foreach ($allDocs as $docNum) {
+            $sourceDoc = \App\Domain\Support\Models\OperationDocument::where('document_number', $docNum)->first();
+            if (!$sourceDoc) {
+                continue;
+            }
+
+            // Sum up active payments for this document number
+            $totalPaid = (float) DB::table('operation_document_lines')
+                ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+                ->where('operation_document_lines.reference_code', $docNum)
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled'])
+                ->sum('operation_document_lines.total_amount');
+
+            $totalAmount = (float) $sourceDoc->total_amount;
+            $outstanding = max(0.00, $totalAmount - $totalPaid);
+            
+            // For safety and floats comparison, round to 2 decimals
+            $outstanding = round($outstanding, 2);
+
+            $status = $outstanding <= 0.01 ? 'Lunas' : 'Belum Lunas';
+
+            $sourceDoc->update([
+                'paid_amount' => $totalPaid,
+                'outstanding_amount' => $outstanding,
+                'status' => $status,
+            ]);
         }
     }
 }

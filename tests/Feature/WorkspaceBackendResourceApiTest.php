@@ -386,4 +386,117 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'id' => $employeeId,
         ]);
     }
+
+    public function test_sales_receipt_reconciles_sales_deposit_status(): void
+    {
+        $user = User::factory()->create();
+        $branch = Branch::query()->create([
+            'code' => 'BR-01',
+            'name' => 'Cabang Pusat',
+            'is_active' => true,
+        ]);
+        
+        $customer = \App\Domain\Partner\Models\Customer::query()->create([
+            'code' => 'CUST-01',
+            'name' => 'Pelanggan A',
+            'is_active' => true,
+        ]);
+
+        $account = Account::query()->create([
+            'code' => '11001',
+            'name' => 'Kas Besar',
+            'account_type' => 'Cash/Bank',
+            'is_active' => true,
+        ]);
+
+        // 1. Create a Sales Deposit (Uang Muka Penjualan)
+        $depositResponse = $this->actingAs($user)->postJson('/api/backend/sales-deposits', [
+            'customer_id' => $customer->id,
+            'document_number' => 'DP.2026.07.00001',
+            'entry_date' => '2026-07-07',
+            'subtotal' => 1000.00,
+            'tax_total' => 110.00,
+            'total_amount' => 1110.00,
+            'outstanding_amount' => 1110.00,
+            'status' => 'Belum Lunas',
+        ]);
+        $depositResponse->assertCreated();
+        $depositId = $depositResponse->json('data.id');
+
+        $this->assertDatabaseHas('operation_documents', [
+            'id' => $depositId,
+            'document_number' => 'DP.2026.07.00001',
+            'status' => 'Belum Lunas',
+            'outstanding_amount' => 1110.00,
+        ]);
+
+        // 2. Create a Sales Receipt (Penerimaan Penjualan) that pays the deposit
+        $receiptResponse = $this->actingAs($user)->postJson('/api/backend/sales-receipts', [
+            'customer_id' => $customer->id,
+            'primary_account_id' => $account->id,
+            'document_number' => 'SR.2026.07.00001',
+            'entry_date' => '2026-07-07',
+            'paid_amount' => 1110.00,
+            'total_amount' => 1110.00,
+            'status' => 'Draft',
+            'lines' => [
+                [
+                    'description' => 'DP.2026.07.00001',
+                    'reference_code' => 'DP.2026.07.00001',
+                    'total_amount' => 1110.00,
+                    'sort_order' => 0,
+                ]
+            ]
+        ]);
+        $receiptResponse->assertCreated();
+        $receiptId = $receiptResponse->json('data.id');
+
+        // Verify the Sales Deposit status is updated to 'Lunas' and outstanding_amount is 0
+        $this->assertDatabaseHas('operation_documents', [
+            'id' => $depositId,
+            'status' => 'Lunas',
+            'outstanding_amount' => 0.00,
+            'paid_amount' => 1110.00,
+        ]);
+
+        // 3. Update the Sales Receipt to pay only 500.00 (partial payment)
+        $updateResponse = $this->actingAs($user)->putJson("/api/backend/sales-receipts/{$receiptId}", [
+            'customer_id' => $customer->id,
+            'primary_account_id' => $account->id,
+            'document_number' => 'SR.2026.07.00001',
+            'entry_date' => '2026-07-07',
+            'paid_amount' => 500.00,
+            'total_amount' => 500.00,
+            'status' => 'Draft',
+            'lines' => [
+                [
+                    'description' => 'DP.2026.07.00001',
+                    'reference_code' => 'DP.2026.07.00001',
+                    'total_amount' => 500.00,
+                    'sort_order' => 0,
+                ]
+            ]
+        ]);
+        $updateResponse->assertOk();
+
+        // Verify the Sales Deposit status goes back to 'Belum Lunas' with correct outstanding
+        $this->assertDatabaseHas('operation_documents', [
+            'id' => $depositId,
+            'status' => 'Belum Lunas',
+            'outstanding_amount' => 610.00,
+            'paid_amount' => 500.00,
+        ]);
+
+        // 4. Delete the Sales Receipt
+        $deleteResponse = $this->actingAs($user)->deleteJson("/api/backend/sales-receipts/{$receiptId}");
+        $deleteResponse->assertOk();
+
+        // Verify the Sales Deposit returns to fully unpaid
+        $this->assertDatabaseHas('operation_documents', [
+            'id' => $depositId,
+            'status' => 'Belum Lunas',
+            'outstanding_amount' => 1110.00,
+            'paid_amount' => 0.00,
+        ]);
+    }
 }
