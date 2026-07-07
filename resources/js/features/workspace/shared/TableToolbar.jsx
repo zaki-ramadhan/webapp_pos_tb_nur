@@ -66,6 +66,20 @@ export default function TableToolbar({
         });
     }, [rawResolvedColumns]);
     const resolvedRows = exportConfig?.rows ?? activeTableState?.rows ?? [];
+    const searchPlaceholder = React.useMemo(() => {
+        const rawPlaceholder = String(search?.placeholder ?? '').trim();
+        if (rawPlaceholder && rawPlaceholder.toLowerCase() !== 'cari...' && rawPlaceholder.toLowerCase() !== 'cari' && rawPlaceholder.toLowerCase() !== 'cari data...') {
+            return rawPlaceholder;
+        }
+        const searchCols = (resolvedColumns ?? []).filter(
+            (col) => col && col.kind !== 'spacer' && col.id !== 'actions' && col.label
+        );
+        if (!searchCols.length) {
+            return 'Cari data...';
+        }
+        const labels = searchCols.map(col => col.label);
+        return `Cari ${labels.slice(0, 3).join(', ')}${labels.length > 3 ? '...' : ''}`;
+    }, [search?.placeholder, resolvedColumns]);
     const rawResourceName = resourceName ?? activeTableState?.resource ?? (typeof window !== 'undefined' ? window.__activePageId : null) ?? null;
     const resolvedResourceName = PAGE_ID_TO_RESOURCE_MAP[rawResourceName] ?? rawResourceName;
 
@@ -314,7 +328,7 @@ export default function TableToolbar({
                     {search ? (
                         <TextInput
                             type="text"
-                            placeholder={search.placeholder ?? 'Cari data...'}
+                            placeholder={searchPlaceholder}
                             value={search.value}
                             onChange={(event) => search.onChange?.(event)}
                             onClear={() => search.onChange?.({ target: { value: '' } })}
