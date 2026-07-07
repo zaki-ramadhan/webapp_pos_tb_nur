@@ -3,23 +3,7 @@ import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 
 function ConfirmationIllustration() {
     return (
-        <svg viewBox="0 0 56 56" className="h-16 w-16 shrink-0" aria-hidden="true">
-            <path
-                d="M28 6 45 18v20L28 50 11 38V18 18L28 6Z"
-                fill="var(--color-confirmation-warning-bg)"
-                stroke="var(--color-confirmation-warning-border)"
-                strokeWidth="2.4"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M28 18v13"
-                fill="none"
-                stroke="var(--color-tab-view-inactive-text)"
-                strokeWidth="4.2"
-                strokeLinecap="round"
-            />
-            <circle cx="28" cy="37.5" r="2.5" fill="var(--color-tab-view-inactive-text)" />
-        </svg>
+        <img src="/assets/images/pop-up-confirm-icon.svg" className="h-14 w-14 shrink-0" alt="Confirm" aria-hidden="true" />
     );
 }
 
@@ -32,7 +16,7 @@ export default function ConfirmationModal({
     closeLabel = 'Tutup modal konfirmasi',
     onClose,
     onConfirm,
-    maxWidthClassName = 'max-w-[620px]',
+    maxWidthClassName = 'max-w-[480px]',
     confirmVariant = 'brand-blue',
     confirmDisabled = false,
     confirmLoading = false,

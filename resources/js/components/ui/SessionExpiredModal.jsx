@@ -5,23 +5,7 @@ import Button from '@/components/ui/Button';
 
 function SessionExpiredIllustration() {
     return (
-        <svg viewBox="0 0 56 56" className="h-16 w-16 shrink-0" aria-hidden="true">
-            <path
-                d="M28 6 45 18v20L28 50 11 38V18 18L28 6Z"
-                fill="none"
-                stroke="var(--color-warning)"
-                strokeWidth="2.4"
-                strokeLinejoin="round"
-            />
-            <circle cx="28" cy="20" r="3" fill="var(--color-warning)" />
-            <path
-                d="M28 27v14"
-                fill="none"
-                stroke="var(--color-warning)"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-            />
-        </svg>
+        <img src="/assets/images/pop-up-warning-icon.svg" className="h-14 w-14 shrink-0" alt="Warning" aria-hidden="true" />
     );
 }
 
@@ -31,7 +15,7 @@ export default function SessionExpiredModal({ open, onClose, onConfirm }) {
             open={open}
             onClose={onClose}
             title="Sesi Login Berakhir"
-            maxWidthClassName="max-w-[480px]"
+            maxWidthClassName="max-w-[440px]"
             footer={
                 <div className="flex justify-end">
                     <Button onClick={onConfirm} variant="primary" size="md" className="min-w-[80px] rounded-[4px]">

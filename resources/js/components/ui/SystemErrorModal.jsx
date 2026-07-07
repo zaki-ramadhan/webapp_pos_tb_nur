@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
 import ErrorIllustration from '@/components/ui/ErrorIllustration';
-import { CloseIcon } from '@/features/workspace/shared/Icons';
+import { AlertTriangleIcon, CloseIcon } from '@/features/workspace/shared/Icons';
 
 function normalizeMessages(messages = [], message = '') {
     if (messages.length) {
@@ -32,7 +32,7 @@ export default function SystemErrorModal({
     onConfirm,
     onCopy,
     dismissible = true,
-    maxWidthClassName = 'max-w-[780px]',
+    maxWidthClassName = 'max-w-[520px]',
 }) {
     const [copyState, setCopyState] = useState('idle');
     const normalizedMessages = useMemo(() => normalizeMessages(messages, message), [message, messages]);
@@ -86,6 +86,16 @@ export default function SystemErrorModal({
         onClose?.();
     }
 
+    const finalDescription = (normalizedMessages.length === 0 && description !== 'Silakan perbaiki permasalahan berikut ini:')
+        ? 'Silakan perbaiki permasalahan berikut ini:'
+        : description;
+
+    const finalMessages = (normalizedMessages.length === 0 && description !== 'Silakan perbaiki permasalahan berikut ini:')
+        ? [description]
+        : normalizedMessages;
+
+    const hasMessages = finalMessages.length > 0;
+
     return (
         <ModalBase
             open={open}
@@ -93,10 +103,11 @@ export default function SystemErrorModal({
             className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-dialog-large`.trim()}
         >
-            <div className="border-b border-blue-900 bg-illustration-danger-border px-4 py-2.5 text-white sm:px-5">
+            <div className="border-b border-[#081f3b] bg-[#0A2A55] px-4 py-2.5 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
-                    <div className="flex min-w-0 items-center gap-2.5">
-                        <h2 className="truncate text-sm font-medium">{title}</h2>
+                    <div className="flex min-w-0 items-center gap-2">
+                        <AlertTriangleIcon className="h-5 w-5 text-white shrink-0" strokeWidth={2.4} />
+                        <h2 className="truncate text-sm font-normal">{title}</h2>
                     </div>
 
                     {dismissible ? (
@@ -118,16 +129,18 @@ export default function SystemErrorModal({
                         <ErrorIllustration />
                     </div>
 
-                    <div className="min-w-0 flex-1 space-y-1">
-                        <p className="text-xs sm:text-sm leading-5 text-brand-dark">{description}</p>
+                    <div className={`min-w-0 flex-1 flex flex-col min-h-[56px] ${hasMessages ? 'justify-between py-0.5' : 'justify-center'}`}>
+                        <p className="text-sm sm:text-[15px] font-normal leading-5 text-brand-dark">{finalDescription}</p>
 
-                        <div className="space-y-0.5">
-                            {normalizedMessages.map((item, index) => (
-                                <p key={`${item}-${index}`} className="text-xs sm:text-sm leading-5 text-danger">
-                                    {item}
-                                </p>
-                            ))}
-                        </div>
+                        {hasMessages && (
+                            <div className="space-y-0.5">
+                                {finalMessages.map((item, index) => (
+                                    <p key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-5 text-[#991b1b]">
+                                        {item}
+                                    </p>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 

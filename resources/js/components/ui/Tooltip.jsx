@@ -16,12 +16,12 @@ const portalSideClasses = {
 };
 
 const arrowClasses = {
-    top: 'left-1/2 top-full -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent border-t-tooltip-bg-dark',
+    top: 'left-1/2 top-full -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent border-t-[#31394e]',
     bottom:
-        'left-1/2 bottom-full -translate-x-1/2 border-x-[6px] border-b-[6px] border-x-transparent border-b-tooltip-bg-dark',
-    left: 'left-full top-1/2 -translate-y-1/2 border-y-[6px] border-l-[6px] border-y-transparent border-l-tooltip-bg-dark',
+        'left-1/2 bottom-full -translate-x-1/2 border-x-[6px] border-b-[6px] border-x-transparent border-b-[#31394e]',
+    left: 'left-full top-1/2 -translate-y-1/2 border-y-[6px] border-l-[6px] border-y-transparent border-l-[#31394e]',
     right:
-        'right-full top-1/2 -translate-y-1/2 border-y-[6px] border-r-[6px] border-y-transparent border-r-tooltip-bg-dark',
+        'right-full top-1/2 -translate-y-1/2 border-y-[6px] border-r-[6px] border-y-transparent border-r-[#31394e]',
 };
 
 export default function Tooltip({
