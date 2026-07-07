@@ -148,3 +148,41 @@ export function useTransactionForm({
         saveDisabled,
     };
 }
+
+export function buildWorkspaceDockActions({
+    dockActions,
+    isDetail,
+    saveDisabled,
+    saving,
+    onSave,
+    onDelete,
+    additionalMaps = {}
+}) {
+    return (dockActions ?? [])
+        .filter((action) => (isDetail ? true : action.id !== 'delete'))
+        .map((action) => {
+            if (additionalMaps[action.id]) {
+                return additionalMaps[action.id](action);
+            }
+
+            if (action.id === 'save') {
+                return {
+                    ...action,
+                    tone: 'primary',
+                    disabled: saveDisabled,
+                    label: saving ? 'Memproses...' : action.label,
+                    onClick: onSave,
+                };
+            }
+
+            if (action.id === 'delete') {
+                return {
+                    ...action,
+                    label: saving ? 'Memproses...' : action.label,
+                    onClick: onDelete,
+                };
+            }
+
+            return action;
+        });
+}

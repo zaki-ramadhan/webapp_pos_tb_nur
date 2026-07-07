@@ -9,6 +9,8 @@ export function useFormDraftState({
     config,
     pageId,
     activeTabId,
+    onSync,
+    isEqual,
 }) {
     const sourceRecordId = sourceRecord?.__backendRecordId || sourceRecord?.id || '';
 
@@ -28,10 +30,18 @@ export function useFormDraftState({
             setPrevKeys({ sourceRecordId, activeTabId });
             setDbState(incomingDbState);
             setValues(incomingDbState);
+            if (onSync) {
+                onSync(incomingDbState);
+            }
         }
-    }, [sourceRecordId, activeTabId, incomingDbState, dbState, prevKeys]);
+    }, [sourceRecordId, activeTabId, incomingDbState, dbState, prevKeys, onSync]);
 
-    const isDirty = useMemo(() => !areComparableValuesEqual(dbState, values), [dbState, values]);
+    const isDirty = useMemo(() => {
+        if (isEqual) {
+            return !isEqual(dbState, values);
+        }
+        return !areComparableValuesEqual(dbState, values);
+    }, [dbState, values, isEqual]);
 
     useWorkspaceDirtyRegistration({
         pageId,

@@ -7,9 +7,8 @@ import {
     deleteBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
-import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -34,7 +33,7 @@ import {
     parseNumericInput,
     validateSalesDepositValues,
 } from './salesDepositShared';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import CheckboxField from '@/components/ui/CheckboxField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
@@ -84,11 +83,21 @@ export default function SalesDepositFormView({
         buildRecord,
         config,
     });
-    const [values, setValues,, lastInitialComparableRef] = useSyncFormState({
+    const [values, setValues, isDirty] = useFormDraftState({
         sourceRecord,
-        buildFormState: useCallback((record) => buildSalesDepositFormState(record, config), [config]),
-        initialComparable: useMemo(() => buildSalesDepositFormState(sourceRecord, config), [config, sourceRecord]),
-        onValuesUpdated: useCallback((nextValues) => setCommittedDepositAmount(nextValues.depositAmount), []),
+        buildFormState: buildSalesDepositFormState,
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+        onSync: useCallback((nextValues) => setCommittedDepositAmount(nextValues.depositAmount), []),
+        isEqual: useCallback(
+            (a, b) =>
+                areComparableValuesEqual(
+                    getComparableTransactionFields(a),
+                    getComparableTransactionFields(b),
+                ),
+            [],
+        ),
     });
     const [committedDepositAmount, setCommittedDepositAmount] = useState(() => values.depositAmount);
     const isDetail = Boolean(activeRecordId);
@@ -149,12 +158,6 @@ export default function SalesDepositFormView({
     }, [committedDepositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
 
     const validationMessage = useMemo(() => validateSalesDepositValues(values, config), [config, values]);
-    const isDirty = useMemo(() => {
-        return !areComparableValuesEqual(
-            getComparableTransactionFields(lastInitialComparableRef.current),
-            getComparableTransactionFields(values)
-        );
-    }, [values]);
 
     const {
         status,
@@ -168,37 +171,19 @@ export default function SalesDepositFormView({
         saveDisabled,
     } = useTransactionForm({ validationMessage, isDirty });
 
-
-
     const dockActions = useMemo(
-        () =>
-            (values.dockActions ?? [])
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
-                .map((action) =>
-                    action.id === 'save'
-                        ? {
-                              ...action,
-                              disabled: saveDisabled,
-                              label: saving ? 'Memproses...' : action.label,
-                              onClick: onSave,
-                          }
-                        : action.id === 'delete'
-                          ? {
-                                ...action,
-                                label: saving ? 'Memproses...' : action.label,
-                                onClick: onRequestDelete,
-                            }
-                          : action,
-                ),
-        [isDetail, saveDisabled, saving, values.dockActions],
+        () => buildWorkspaceDockActions({
+            dockActions: values.dockActions,
+            isDetail,
+            saveDisabled,
+            saving,
+            onSave,
+            onDelete: onRequestDelete
+        }),
+        [values.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
     );
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     async function onSave() {
         await handleSave({
@@ -238,11 +223,7 @@ export default function SalesDepositFormView({
 
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record) : record;
-                    const nextValues = buildSalesDepositFormState(parsed, config);
                     setLocalRecord(parsed);
-                    setValues(nextValues);
-                    setCommittedDepositAmount(nextValues.depositAmount);
-                    lastInitialComparableRef.current = nextValues;
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(record.id)] = parsed;
                 }

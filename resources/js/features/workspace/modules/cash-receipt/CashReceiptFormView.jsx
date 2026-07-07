@@ -32,7 +32,7 @@ import {
     ReceiptLineItemsSection,
     CashReceiptHeader,
 } from '@/features/workspace/modules/cash-receipt/components/CashReceiptFormSections';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 
@@ -106,31 +106,15 @@ export default function CashReceiptFormView({
 
 
     const dockActions = useMemo(
-        () =>
-            (config.dockActions ?? [])
-                .filter((action) => (activeRecordId ? true : action.id !== 'delete'))
-                .map((action) => {
-                    if (action.id === 'save') {
-                        return {
-                            ...action,
-                            tone: 'primary',
-                            disabled: saveDisabled,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onSave,
-                        };
-                    }
-
-                    if (action.id === 'delete') {
-                        return {
-                            ...action,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onRequestDelete,
-                        };
-                    }
-
-                    return action;
-                }),
-        [activeRecordId, config.dockActions, saveDisabled, saving, values.saveTone],
+        () => buildWorkspaceDockActions({
+            dockActions: config.dockActions,
+            isDetail,
+            saveDisabled,
+            saving,
+            onSave,
+            onDelete: onRequestDelete
+        }),
+        [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
     );
 
 

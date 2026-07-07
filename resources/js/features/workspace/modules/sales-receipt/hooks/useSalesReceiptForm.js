@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -7,7 +7,7 @@ import {
     getBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+
 import {
     applySalesReceiptInvoices,
     buildGeneratedSalesReceiptNumber,
@@ -48,11 +48,13 @@ export default function useSalesReceiptForm({
         config,
     });
 
-    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+    const [values, setValues, isDirty] = useFormDraftState({
         sourceRecord,
         buildFormState: buildSalesReceiptFormState,
-        initialComparable: useMemo(() => buildSalesReceiptFormState(sourceRecord), [sourceRecord]),
-        onValuesUpdated: useCallback(() => {
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+        onSync: useCallback(() => {
             setActiveInvoiceModal(null);
             setStatus({ tone: '', message: '' });
             setDeleteConfirmationOpen(false);
@@ -111,12 +113,7 @@ export default function useSalesReceiptForm({
     const validationMessage = useMemo(() => validateSalesReceiptValues(values, config), [config, values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage);
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     async function selectLookup(resource, title, labelBuilder, onApply) {
         try {

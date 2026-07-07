@@ -42,7 +42,7 @@ import {
     buildBankTransferRecord,
     extractCleanAccountName,
 } from './bankTransferShared';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function BankTransferFormView({
     pageId,
@@ -193,31 +193,24 @@ export default function BankTransferFormView({
     }
 
     const dockActions = useMemo(
-        () =>
-            (config.dockActions ?? [])
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
-                .map((action) => {
-                    if (action.id === 'save') {
-                        return {
-                            ...action,
-                            tone: 'primary',
-                            disabled: saveDisabled,
-                            label: validationMessage ? `${action.label} (${validationMessage})` : (saving ? 'Memproses...' : action.label),
-                            onClick: onSave,
-                        };
-                    }
-
-                    if (action.id === 'delete') {
-                        return {
-                            ...action,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onRequestDelete,
-                        };
-                    }
-
-                    return action;
-                }),
-        [config.dockActions, isDetail, saveDisabled, saving, values.saveTone, onSave],
+        () => buildWorkspaceDockActions({
+            dockActions: config.dockActions,
+            isDetail,
+            saveDisabled,
+            saving,
+            onSave,
+            onDelete: onRequestDelete,
+            additionalMaps: {
+                save: (action) => ({
+                    ...action,
+                    tone: 'primary',
+                    disabled: saveDisabled,
+                    label: validationMessage ? `${action.label} (${validationMessage})` : (saving ? 'Memproses...' : action.label),
+                    onClick: onSave,
+                })
+            }
+        }),
+        [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete, validationMessage]
     );
 
     useWorkspaceDirtyRegistration({

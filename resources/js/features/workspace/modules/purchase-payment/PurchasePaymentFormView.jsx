@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
@@ -13,7 +13,7 @@ import {
     TransactionDualTotalCard,
     TransactionFormLayout,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import {
@@ -31,7 +31,7 @@ import {
     buildPurchasePaymentPayload,
     validatePurchasePaymentValues,
 } from './purchasePaymentShared';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function PurchasePaymentFormView({
     pageId,
@@ -53,11 +53,13 @@ export default function PurchasePaymentFormView({
     const isDetail = Boolean(activeRecordId);
     const sectionTabs = isDetail ? config.detailSectionTabs : config.sectionTabs;
     const [activeSectionId, setActiveSectionId] = useState(sectionTabs?.[0]?.id ?? 'details');
-    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+    const [values, setValues, isDirty] = useFormDraftState({
         sourceRecord,
-        buildFormState: useCallback((record) => buildFormState(record, config), [config]),
-        initialComparable: useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]),
-        onValuesUpdated: useCallback(() => setActiveInvoice(null), []),
+        buildFormState,
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+        onSync: useCallback(() => setActiveInvoice(null), []),
     });
     const [activeInvoice, setActiveInvoice] = useState(null);
 
@@ -83,39 +85,16 @@ export default function PurchasePaymentFormView({
 
 
     const dockActions = useMemo(
-        () =>
-            (values.dockActions ?? config.draft?.dockActions ?? [])
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
-                .map((action) => {
-                    if (action.id === 'save') {
-                        return {
-                            ...action,
-                            tone: isDetail ? action.tone : 'primary',
-                            disabled: saveDisabled,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onSave,
-                        };
-                    }
-
-                    if (action.id === 'delete') {
-                        return {
-                            ...action,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onRequestDelete,
-                        };
-                    }
-
-                    return action;
-                }),
-        [config.draft?.dockActions, isDetail, saveDisabled, saving, values.dockActions],
+        () => buildWorkspaceDockActions({
+            dockActions: values.dockActions ?? config.draft?.dockActions,
+            isDetail,
+            saveDisabled,
+            saving,
+            onSave,
+            onDelete: onRequestDelete
+        }),
+        [values.dockActions, config.draft?.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
     );
-
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
 
     async function onSave() {
         await handleSave({

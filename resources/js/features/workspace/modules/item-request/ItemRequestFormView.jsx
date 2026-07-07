@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
@@ -10,7 +10,7 @@ import {
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
@@ -19,7 +19,8 @@ import {
     ItemRequestDetailsSection,
     ItemRequestFormHeader,
 } from './ItemRequestSections';
-import { createDeleteDockAction, mapDockActions } from '@/features/workspace/modules/shared/workspaceDockActions';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils';
 import {
     applyItemRequestItems,
     buildFormValues,
@@ -29,8 +30,6 @@ import {
     promptItemRequestItem,
     validateItemRequestValues,
 } from './itemRequestShared';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
-import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils';
 
 
 export default function ItemRequestFormView({
@@ -53,11 +52,13 @@ export default function ItemRequestFormView({
                 : config.draft,
         [activeRecordId, buildRecord, config],
     );
-    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+    const [values, setValues, isDirty] = useFormDraftState({
         sourceRecord,
         buildFormState: buildFormValues,
-        initialComparable: useMemo(() => buildFormValues(sourceRecord), [sourceRecord]),
-        onValuesUpdated: useCallback(() => setImportModalOpen(false), []),
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+        onSync: useCallback(() => setImportModalOpen(false), []),
     });
     const isDetail = Boolean(activeRecordId);
 
@@ -82,30 +83,24 @@ export default function ItemRequestFormView({
 
 
 
-    const dockActions = useMemo(() => {
-        const baseActions = [...(values.dockActions ?? [])];
+    const dockActions = useMemo(
+        () => buildWorkspaceDockActions({
+            dockActions: values.dockActions,
+            isDetail,
+            saveDisabled,
+            saving,
+            onSave,
+            onDelete: onRequestDelete
+        }),
+        [values.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
+    );
 
-        if (isDetail && !baseActions.some((action) => action.id === 'delete')) {
-            baseActions.push(createDeleteDockAction());
+    function onRequestDelete() {
+        if (!values.__backendRecordId) {
+            return;
         }
-
-        return mapDockActions(
-            baseActions.filter((action) => (isDetail ? true : action.id !== 'delete')),
-            {
-                saving,
-                saveDisabled,
-                onSave: onSaveClick,
-                onDelete: requestDelete,
-            }
-        );
-    }, [isDetail, saveDisabled, saving, values.dockActions]);
-
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+        requestDelete();
+    }
 
     async function applyItemUpdate(record, currentItem = null) {
         try {
@@ -131,7 +126,7 @@ export default function ItemRequestFormView({
         }
     }
 
-    async function onSaveClick() {
+    async function onSave() {
         await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui permintaan barang.' : 'Sedang menyimpan permintaan barang.',
             successMessage: isDetail ? 'Permintaan barang berhasil diperbarui.' : 'Permintaan barang berhasil dibuat.',

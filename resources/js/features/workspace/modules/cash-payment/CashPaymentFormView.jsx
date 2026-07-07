@@ -35,7 +35,7 @@ import {
     buildCashPaymentRecord,
 } from './cashPaymentShared';
 import MoneyMovementLineItemModal from '@/features/workspace/shared/MoneyMovementLineItemModal';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 
@@ -115,54 +115,27 @@ export default function CashPaymentFormView({
 
 
     const dockActions = useMemo(
-        () =>
-            (config.dockActions ?? [])
-                .filter((action) => action.id !== 'print')
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
-                .map((action) => {
-                    if (action.id === 'save') {
-                        return {
-                            ...action,
-                            tone: 'primary',
-                            disabled: saveDisabled,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onSave,
-                        };
-                    }
-
-                    if (action.id === 'delete') {
-                        return {
-                            ...action,
-                            label: saving ? 'Memproses...' : action.label,
-                            onClick: onRequestDelete,
-                        };
-                    }
-
-                    if (action.id === 'print') {
-                        return {
-                            ...action,
-                            onClick: () => window.print(),
-                            items: action.items?.map((item) => ({
-                                ...item,
-                                onClick: () => window.print(),
-                            })),
-                        };
-                    }
-
-                    if (action.id === 'attachment') {
-                        return {
-                            ...action,
-                            onClick: () => setAttachmentModalOpen(true),
-                            items: action.items?.map((item) => ({
-                                ...item,
-                                onClick: () => setAttachmentModalOpen(true),
-                            })),
-                        };
-                    }
-
-                    return action;
+        () => buildWorkspaceDockActions({
+            dockActions: config.dockActions,
+            isDetail,
+            saveDisabled,
+            saving,
+            onSave,
+            onDelete: onRequestDelete,
+            additionalMaps: {
+                print: (action) => ({
+                    ...action,
+                    onClick: () => window.print(),
+                    items: action.items?.map((item) => ({ ...item, onClick: () => window.print() })),
                 }),
-        [config.dockActions, isDetail, saveDisabled, saving, values.saveTone],
+                attachment: (action) => ({
+                    ...action,
+                    onClick: () => setAttachmentModalOpen(true),
+                    items: action.items?.map((item) => ({ ...item, onClick: () => setAttachmentModalOpen(true) })),
+                })
+            }
+        }),
+        [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
     );
 
 

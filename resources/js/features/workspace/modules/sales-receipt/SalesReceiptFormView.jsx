@@ -13,6 +13,7 @@ import {
     ReceiptSummaryFooter,
     formatCurrencyLabel,
     formatCurrencyValue,
+    buildSalesReceiptTotal,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
 import {
     TransactionDateInput,
@@ -154,11 +155,13 @@ export default function SalesReceiptFormView({
                                                     onClick={
                                                         buttonType === 'refresh'
                                                             ? () => {
+                                                                  const total = buildSalesReceiptTotal(values.invoices ?? []);
+                                                                  const formatted = formatCurrencyValue(total);
                                                                   setValues((current) => ({
                                                                       ...current,
-                                                                      paymentAmount: '0',
-                                                                      paymentAmountDisplay: '0',
-                                                                      paymentAmountForSummary: '0',
+                                                                      paymentAmount: formatted,
+                                                                      paymentAmountDisplay: formatted,
+                                                                      paymentAmountForSummary: formatted,
                                                                   }));
                                                               }
                                                             : undefined
@@ -236,6 +239,7 @@ export default function SalesReceiptFormView({
                 }
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
+                onSectionChange={setActiveSectionId}
                 footer={
                     <ReceiptSummaryFooter
                         paymentAmount={values.paymentAmountForSummary ?? values.paymentAmount}

@@ -69,7 +69,10 @@ export function buildSalesReceiptFilters(baseFilters = [], rows = []) {
 
 export function buildSalesReceiptRow(record) {
     const primaryAccountLabel = record?.primary_account ? buildLookupLabel(record.primary_account, 'code') : '';
-    const bankLabel = record?.metadata?.bank_label ?? primaryAccountLabel;
+    let bankLabel = record?.metadata?.bank_label ?? primaryAccountLabel;
+    if (bankLabel) {
+        bankLabel = bankLabel.replace(/^\[.*?\]\s*/, '');
+    }
     const totalAmount = Number(record?.paid_amount ?? record?.total_amount ?? 0);
     const entryDate = formatIsoDate(record?.entry_date);
     const checkDate = formatIsoDate(record?.check_date);
@@ -99,7 +102,7 @@ export function buildSalesReceiptRow(record) {
 export function buildSalesReceiptInvoiceFromRecord(record) {
     const totalAmount = Number(record?.total_amount ?? 0);
     const outstandingAmount = Number(record?.outstanding_amount ?? totalAmount);
-    const paidAmount = Number(record?.paid_amount ?? Math.min(outstandingAmount, totalAmount));
+    const paidAmount = outstandingAmount;
     const invoiceNumber = record?.reference_number ?? record?.document_number ?? '';
     const invoiceDate = formatIsoDate(record?.entry_date);
 

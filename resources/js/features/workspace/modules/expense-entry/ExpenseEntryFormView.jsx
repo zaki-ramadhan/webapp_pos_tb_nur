@@ -11,8 +11,7 @@ import {
     getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
-import { useSyncFormState } from '@/features/workspace/shared/hooks/useSyncFormState';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { TransactionFormLayout, TransactionTotalCard } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
@@ -32,7 +31,7 @@ import {
     formatCurrencyValue,
     parseNumericInput,
 } from './expenseEntryShared';
-import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 
 export default function ExpenseEntryFormView({
     pageId,
@@ -53,10 +52,12 @@ export default function ExpenseEntryFormView({
         buildRecord,
         config,
     });
-    const [values, setValues, isDirty, lastInitialComparableRef] = useSyncFormState({
+    const [values, setValues, isDirty] = useFormDraftState({
         sourceRecord,
         buildFormState,
-        initialComparable: useMemo(() => buildFormState(sourceRecord), [sourceRecord]),
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
     });
     const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
@@ -83,13 +84,6 @@ export default function ExpenseEntryFormView({
     } = useTransactionForm({ validationMessage, isDirty });
 
 
-
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
 
     function openLineModal(record, currentItem = null) {
         setLineModalRecord(record);
@@ -196,33 +190,17 @@ export default function ExpenseEntryFormView({
         requestDelete();
     }, [values.__backendRecordId, requestDelete]);
 
-    const dockActions = useMemo(() => {
-        const baseActions = config.dockActions ?? [];
-
-        return baseActions
-            .filter((action) => (isDetail ? true : action.id !== 'delete'))
-            .map((action) => {
-                if (action.id === 'save') {
-                    return {
-                        ...action,
-                        tone: 'primary',
-                        disabled: saveDisabled,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: onSave,
-                    };
-                }
-
-                if (action.id === 'delete') {
-                    return {
-                        ...action,
-                        label: saving ? 'Memproses...' : action.label,
-                        onClick: onRequestDelete,
-                    };
-                }
-
-                return action;
-            });
-    }, [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]);
+    const dockActions = useMemo(
+        () => buildWorkspaceDockActions({
+            dockActions: config.dockActions,
+            isDetail,
+            saveDisabled,
+            saving,
+            onSave,
+            onDelete: onRequestDelete
+        }),
+        [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]
+    );
 
     async function onDelete() {
         if (!values.__backendRecordId) {

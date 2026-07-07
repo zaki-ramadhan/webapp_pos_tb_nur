@@ -105,6 +105,7 @@ export function buildSalesDepositRow(record) {
 
 export function buildSalesDepositRecord(record = {}, config) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
+    const subtotalAmount = Number(record?.subtotal ?? totalAmount);
     const status = record?.status ?? 'Draft';
     const printStatus = record?.metadata?.print_status ?? 'Belum cetak/email';
 
@@ -122,7 +123,7 @@ export function buildSalesDepositRecord(record = {}, config) {
         numberingType: record.numbering_type ?? config.draft?.numberingType ?? '',
         documentNumber: record.document_number ?? '',
         currency: record.currency?.code ?? 'IDR',
-        depositAmount: formatCurrencyValue(totalAmount),
+        depositAmount: formatCurrencyValue(subtotalAmount),
         purchaseOrderNumber: record.reference_number ?? '',
         __taxId: record.tax_id ?? null,
         taxName: record.tax ? buildLookupLabel(record.tax) : '',

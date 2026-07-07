@@ -264,11 +264,7 @@ export function SalesDepositHeader({ config, values, setValues, isDetail, handle
                                 type="button"
                                 disabled={!isDetail}
                                 onClick={() => setProcessOpen((prev) => !prev)}
-                                className={`inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border px-4 text-xs sm:text-sm transition ${
-                                    !isDetail
-                                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
-                                        : 'border-brand-blue-border bg-white text-brand-blue-accent hover:bg-brand-blue-lightest'
-                                }`}
+                                className="inline-flex h-[34px] items-center justify-center gap-1 rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs sm:text-sm text-brand-blue-accent transition hover:bg-brand-blue-lightest disabled:opacity-50 disabled:bg-zinc-50 disabled:border-slate-350 disabled:text-tab-inactive-border-l disabled:cursor-not-allowed"
                             >
                                 <span>{values.processButtonLabel || 'Proses'}</span>
                                 <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${processOpen ? 'rotate-180' : ''}`} />
