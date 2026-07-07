@@ -315,13 +315,6 @@ export default function TableToolbar({
                         </ToolbarIconButton>
                     ) : null}
 
-                    {resolvedColumnSettings ? (
-                        <ToolbarSettingsMenu
-                            menuButton={menuButton}
-                            columnSettings={resolvedColumnSettings}
-                            sizeStyle={sizeStyle}
-                        />
-                    ) : null}
 
                     {cleanedRightControls}
 
