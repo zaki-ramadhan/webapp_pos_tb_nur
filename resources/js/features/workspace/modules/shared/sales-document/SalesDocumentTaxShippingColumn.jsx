@@ -44,46 +44,6 @@ function SalesDocumentInvoiceTaxSection({ config, values }) {
                             className="w-full"
                         />
                     </div>
-
-                    <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                        <TransactionFieldLabel label="Pengiriman" />
-                        <AccountLookupTextInput
-                            id="shippingMethod"
-                            resource="shipping-methods"
-                            value={values.shippingMethodName || ''}
-                            placeholder="Cari/Pilih Metode Pengiriman..."
-                            searchLabel="Cari pengiriman"
-                            onSelectAccount={(record, label) => {
-                                values.setValues?.((current) => ({
-                                    ...current,
-                                    __shippingMethodId: record ? record.id : null,
-                                    shippingMethodName: label || '',
-                                    shippingMethod: label ? [label] : [],
-                                }));
-                            }}
-                        />
-                    </div>
-
-                    {config?.showFobInShippingInfo !== false && (
-                        <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                            <TransactionFieldLabel label="FOB" />
-                            <AccountLookupTextInput
-                                id="fob"
-                                resource="fob-terms"
-                                value={values.fobName || ''}
-                                placeholder="Cari/Pilih Syarat FOB..."
-                                searchLabel="Cari FOB"
-                                onSelectAccount={(record, label) => {
-                                    values.setValues?.((current) => ({
-                                        ...current,
-                                        __fobId: record ? record.id : null,
-                                        fobName: label || '',
-                                        fob: label ? [label] : [],
-                                    }));
-                                }}
-                            />
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
@@ -136,46 +96,6 @@ export default function SalesDocumentTaxShippingColumn({ config, values, setValu
                                 className="w-full"
                             />
                         </div>
-
-                        <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                            <TransactionFieldLabel label="Pengiriman" />
-                            <AccountLookupTextInput
-                                id="shippingMethod"
-                                resource="shipping-methods"
-                                value={values.shippingMethodName || ''}
-                                placeholder="Cari/Pilih Metode Pengiriman..."
-                                searchLabel="Cari pengiriman"
-                                onSelectAccount={(record, label) => {
-                                    setValues?.((current) => ({
-                                        ...current,
-                                        __shippingMethodId: record ? record.id : null,
-                                        shippingMethodName: label || '',
-                                        shippingMethod: label ? [label] : [],
-                                    }));
-                                }}
-                            />
-                        </div>
-
-                        {config.showFobInShippingInfo !== false && (
-                            <div className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                                <TransactionFieldLabel label="FOB" />
-                                <AccountLookupTextInput
-                                    id="fob"
-                                    resource="fob-terms"
-                                    value={values.fobName || ''}
-                                    placeholder="Cari/Pilih Syarat FOB..."
-                                    searchLabel="Cari FOB"
-                                    onSelectAccount={(record, label) => {
-                                        setValues?.((current) => ({
-                                            ...current,
-                                            __fobId: record ? record.id : null,
-                                            fobName: label || '',
-                                            fob: label ? [label] : [],
-                                        }));
-                                    }}
-                                />
-                            </div>
-                        )}
                     </div>
                 </div>
             ) : null}

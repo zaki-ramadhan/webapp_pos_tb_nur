@@ -49,26 +49,6 @@ export function DepositInfoSection({ config, values, setValues, isDetail }) {
                 <TransactionSectionHeading title={config.infoTitle} icon="info" />
 
                 <div className="mt-4 grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4 pl-3 sm:pl-5">
-                    <TransactionFieldLabel label={config.labels.paymentTerms} />
-                    <div className="max-w-[320px] w-full">
-                        <AccountLookupTextInput
-                            id="paymentTerm"
-                            resource="payment-terms"
-                            value={values.paymentTermName || ''}
-                            placeholder="Cari/Pilih Syarat Pembayaran..."
-                            searchLabel="Cari syarat pembayaran"
-                            onSelectAccount={(record, label) => {
-                                setValues((current) => ({
-                                    ...current,
-                                    __paymentTermId: record ? record.id : null,
-                                    paymentTermName: label || '',
-                                }));
-                            }}
-                            className="h-[40px] rounded-[4px] border-slate-400 bg-slate-50"
-                            inputClassName="text-xs sm:text-sm text-brand-dark bg-transparent"
-                        />
-                    </div>
-
                     <TransactionFieldLabel label={config.labels.address} />
                     <div className="max-w-[480px] w-full">
                         <TextareaField

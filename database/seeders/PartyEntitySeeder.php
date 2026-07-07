@@ -10,7 +10,6 @@ class PartyEntitySeeder extends Seeder
     public function run(): void
     {
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id');
-        $paymentTermId = DB::table('payment_terms')->where('code', 'COD')->value('id');
         $accBebanGajiId = DB::table('accounts')->where('code', '611.002-01')->value('id');
 
         $branchId = DB::table('branches')->where('code', 'JKT-01')->value('id');
@@ -292,7 +291,6 @@ class PartyEntitySeeder extends Seeder
         DB::table('customers')->insert([
             'category_id' => $custCatId,
             'currency_id' => $currencyId,
-            'payment_term_id' => $paymentTermId,
             'code' => 'CUST-001',
             'name' => 'Bpk. Ahmad Junaedi',
             'business_phone' => '08123456789',
@@ -306,7 +304,6 @@ class PartyEntitySeeder extends Seeder
         DB::table('suppliers')->insert([
             'category_id' => $suppCatId,
             'currency_id' => $currencyId,
-            'payment_term_id' => $paymentTermId,
             'code' => 'SUPP-001',
             'name' => 'PT Semen Sentosa',
             'business_phone' => '021-998877',

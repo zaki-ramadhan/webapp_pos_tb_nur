@@ -17,20 +17,6 @@ export function SalesTab({ config, values, onChange }) {
         <div className="max-w-[500px] space-y-3">
             <SectionHeading title={config.headingLabels.salesLeft} />
 
-            <FormFieldRow label={config.labels.paymentTerms}>
-                <AccountLookupTextInput
-                    id="paymentTerms"
-                    resource="payment-terms"
-                    value={(values.paymentTerms || [])[0] || ''}
-                    placeholder="Cari/Pilih Syarat Pembayaran..."
-                    searchLabel="Cari syarat pembayaran"
-                    onSelectAccount={(record, label) => {
-                        onChange('paymentTerms', label ? [label] : []);
-                        onChange('paymentTermId', record ? record.id : null);
-                    }}
-                />
-            </FormFieldRow>
-
             <FormFieldRow label="Batas Saldo Piutang">
                 <TextInput
                     id="creditLimit"

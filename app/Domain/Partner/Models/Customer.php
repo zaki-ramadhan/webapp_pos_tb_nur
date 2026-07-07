@@ -3,7 +3,6 @@
 namespace App\Domain\Partner\Models;
 
 use App\Domain\Finance\Models\Currency;
-use App\Domain\Finance\Models\PaymentTerm;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Support\Models\DomainModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +13,6 @@ class Customer extends DomainModel
     protected $fillable = [
         'category_id',
         'currency_id',
-        'payment_term_id',
         'code',
         'name',
         'business_phone',
@@ -49,11 +47,6 @@ class Customer extends DomainModel
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
-    }
-
-    public function paymentTerm(): BelongsTo
-    {
-        return $this->belongsTo(PaymentTerm::class);
     }
 
     public function branches(): BelongsToMany

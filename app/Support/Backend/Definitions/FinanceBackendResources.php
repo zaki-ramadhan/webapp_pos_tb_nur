@@ -4,7 +4,6 @@ namespace App\Support\Backend\Definitions;
 
 use App\Domain\Finance\Models\Account;
 use App\Domain\Finance\Models\Currency;
-use App\Domain\Finance\Models\PaymentTerm;
 use App\Domain\Finance\Models\SalaryAllowance;
 use App\Domain\Finance\Models\Tax;
 use App\Support\Backend\BackendRelationSync;
@@ -149,26 +148,6 @@ class FinanceBackendResources
                     'rate' => ['required', 'numeric', 'min:0'],
                     'output_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'input_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-            ),
-            'payment-terms' => new BackendResourceBlueprint(
-                key: 'payment-terms',
-                label: 'Payment Terms',
-                searchColumns: ['code', 'name', 'notes'],
-                modelClass: PaymentTerm::class,
-                storeRules: [
-                    'code' => ['nullable', 'string', 'max:50', 'unique:payment_terms,code'],
-                    'name' => ['required', 'string', 'max:120'],
-                    'due_days' => ['nullable', 'integer', 'min:0'],
-                    'notes' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'code' => ['nullable', 'string', 'max:50', Rule::unique('payment_terms', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
-                    'due_days' => ['nullable', 'integer', 'min:0'],
-                    'notes' => ['nullable', 'string'],
                     'is_active' => ['sometimes', 'boolean'],
                 ],
             ),

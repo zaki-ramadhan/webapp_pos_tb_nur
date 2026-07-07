@@ -67,7 +67,7 @@ export default function AccountLookupSuggestions({
                             dateStr = String(rawDate).split('T')[0];
                         }
                         
-                        const counterpart = record.customer?.name || record.supplier?.name || '';
+                        const counterpart = resource === 'sales-deposits' ? '' : (record.customer?.name || record.supplier?.name || '');
                         
                         const subtitleLeft = isDoc
                             ? [dateStr, counterpart].filter(Boolean).join(' • ')

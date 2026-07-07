@@ -137,20 +137,6 @@ function SupplierPurchaseTab({ config, values, onChange }) {
         <div className="max-w-[500px] space-y-3">
             <SectionHeading title={purchaseConfig.titleLeft} />
 
-            <FormFieldRow label={purchaseConfig.paymentTermsLabel}>
-                <AccountLookupTextInput
-                    id="paymentTerms"
-                    resource="payment-terms"
-                    value={(values.paymentTerms || [])[0] || ''}
-                    placeholder="Cari/Pilih Syarat Pembayaran..."
-                    searchLabel="Cari syarat pembayaran"
-                    onSelectAccount={(record, label) => {
-                        onChange('paymentTerms', label ? [label] : []);
-                        onChange('paymentTermId', record ? record.id : null);
-                    }}
-                />
-            </FormFieldRow>
-
             <FormFieldRow label="Batas Saldo Utang">
                 <TextInput
                     id="creditLimit"

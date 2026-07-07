@@ -5,8 +5,6 @@ namespace App\Support\Backend\Definitions;
 use App\Domain\Organization\Models\Branch;
 use App\Domain\Organization\Models\Department;
 use App\Domain\Organization\Models\Employee;
-use App\Domain\Organization\Models\FobTerm;
-use App\Domain\Organization\Models\ShippingMethod;
 use App\Support\Backend\BackendRelationSync;
 use App\Support\Backend\BackendResourceBlueprint;
 use Illuminate\Database\Eloquent\Model;
@@ -89,42 +87,6 @@ class OrganizationBackendResources
                         BackendRelationSync::syncBelongsToMany($record, 'users', $payload['user_ids']);
                     }
                 },
-            ),
-            'shipping-methods' => new BackendResourceBlueprint(
-                key: 'shipping-methods',
-                label: 'Shipping Methods',
-                searchColumns: ['code', 'name', 'notes'],
-                modelClass: ShippingMethod::class,
-                storeRules: [
-                    'code' => ['nullable', 'string', 'max:50', 'unique:shipping_methods,code'],
-                    'name' => ['required', 'string', 'max:120'],
-                    'notes' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'code' => ['nullable', 'string', 'max:50', Rule::unique('shipping_methods', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
-                    'notes' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-            ),
-            'fob-terms' => new BackendResourceBlueprint(
-                key: 'fob-terms',
-                label: 'FOB Terms',
-                searchColumns: ['code', 'name', 'notes'],
-                modelClass: FobTerm::class,
-                storeRules: [
-                    'code' => ['nullable', 'string', 'max:50', 'unique:fob_terms,code'],
-                    'name' => ['required', 'string', 'max:120'],
-                    'notes' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'code' => ['nullable', 'string', 'max:50', Rule::unique('fob_terms', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
-                    'notes' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
             ),
             'employees' => new BackendResourceBlueprint(
                 key: 'employees',

@@ -32,9 +32,6 @@ class RealisticDataSeeder extends Seeder
         DB::table('accounts')->truncate();
         DB::table('currencies')->truncate();
         DB::table('taxes')->truncate();
-        DB::table('payment_terms')->truncate();
-        DB::table('shipping_methods')->truncate();
-        DB::table('fob_terms')->truncate();
         DB::table('employee_bank_accounts')->truncate();
         DB::table('employees')->truncate();
         DB::table('departments')->truncate();

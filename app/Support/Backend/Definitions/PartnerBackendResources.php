@@ -87,11 +87,10 @@ class PartnerBackendResources
                 label: 'Customers',
                 searchColumns: ['code', 'name', 'business_phone', 'mobile_phone', 'email'],
                 modelClass: Customer::class,
-                with: ['category', 'currency', 'paymentTerm', 'branches'],
+                with: ['category', 'currency', 'branches'],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:customer_categories,id'],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
-                    'payment_term_id' => ['nullable', 'integer', 'exists:payment_terms,id'],
                     'code' => ['required', 'string', 'max:50', 'unique:customers,code'],
                     'name' => ['required', 'string', 'max:160'],
                     'business_phone' => ['nullable', 'string', 'max:50'],
@@ -112,7 +111,6 @@ class PartnerBackendResources
                 updateRules: fn (Model $record) => [
                     'category_id' => ['nullable', 'integer', 'exists:customer_categories,id'],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
-                    'payment_term_id' => ['nullable', 'integer', 'exists:payment_terms,id'],
                     'code' => ['required', 'string', 'max:50', Rule::unique('customers', 'code')->ignore($record)],
                     'name' => ['required', 'string', 'max:160'],
                     'business_phone' => ['nullable', 'string', 'max:50'],
@@ -141,11 +139,10 @@ class PartnerBackendResources
                 label: 'Suppliers',
                 searchColumns: ['code', 'name', 'business_phone', 'mobile_phone', 'email'],
                 modelClass: Supplier::class,
-                with: ['category', 'currency', 'paymentTerm', 'branches'],
+                with: ['category', 'currency', 'branches'],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:supplier_categories,id'],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
-                    'payment_term_id' => ['nullable', 'integer', 'exists:payment_terms,id'],
                     'code' => ['required', 'string', 'max:50', 'unique:suppliers,code'],
                     'name' => ['required', 'string', 'max:160'],
                     'business_phone' => ['nullable', 'string', 'max:50'],
@@ -165,7 +162,6 @@ class PartnerBackendResources
                 updateRules: fn (Model $record) => [
                     'category_id' => ['nullable', 'integer', 'exists:supplier_categories,id'],
                     'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
-                    'payment_term_id' => ['nullable', 'integer', 'exists:payment_terms,id'],
                     'code' => ['required', 'string', 'max:50', Rule::unique('suppliers', 'code')->ignore($record)],
                     'name' => ['required', 'string', 'max:160'],
                     'business_phone' => ['nullable', 'string', 'max:50'],

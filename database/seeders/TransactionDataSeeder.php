@@ -18,7 +18,6 @@ class TransactionDataSeeder extends Seeder
         $deptId = DB::table('departments')->where('code', 'ACC')->value('id');
 
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id');
-        $paymentTermId = DB::table('payment_terms')->where('code', 'COD')->value('id');
 
         $accAssetId = DB::table('accounts')->where('code', '120101')->value('id');
         $accAkmPenyId = DB::table('accounts')->where('code', '120201')->value('id');
