@@ -13,6 +13,7 @@ const implementedWorkspacePageIds = new Set([
     'cash-receipt',
     'department',
     'item-unit',
+    'item-brand',
     'employees',
     'journal-activity-log',
     'salary-allowance',

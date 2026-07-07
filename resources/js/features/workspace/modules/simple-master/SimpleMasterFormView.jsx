@@ -262,7 +262,7 @@ export default function SimpleMasterFormView({
                 ) : null
             }
         >
-            <div className={`grid grid-cols-1 gap-y-3.5 ${page.id === 'item-unit' ? 'max-w-[480px]' : 'md:grid-cols-2 gap-x-8 max-w-[980px]'}`}>
+            <div className={`grid grid-cols-1 gap-y-3.5 ${page.id === 'item-unit' || page.id === 'item-brand' ? 'max-w-[480px]' : 'md:grid-cols-2 gap-x-8 max-w-[980px]'}`}>
                 {(form.fields ?? []).map((field) => (
                     field.standalone ? (
                         <StandaloneCheckboxField

@@ -71,6 +71,7 @@ export const LEVEL2_DETAIL_PAGE_COMPONENTS = {
     'warehouse-master': WarehouseView,
     'items-services': ItemsServicesView,
     'item-unit': SimpleMasterView,
+    'item-brand': SimpleMasterView,
     'item-category': ItemCategoryView,
     'price-adjustment': InventoryAdjustmentView,
     'inventory-adjustment': InventoryAdjustmentView,

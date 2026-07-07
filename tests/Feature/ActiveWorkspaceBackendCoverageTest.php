@@ -39,6 +39,7 @@ class ActiveWorkspaceBackendCoverageTest extends TestCase
             'warehouse-master' => 'warehouses',
             'items-services' => 'products',
             'item-unit' => 'units',
+            'item-brand' => 'brands',
             'item-category' => 'product-categories',
             'supplier-price' => 'supplier-prices',
             'group-access' => 'access-groups',

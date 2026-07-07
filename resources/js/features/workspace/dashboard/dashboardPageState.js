@@ -15,6 +15,7 @@ const DETAIL_TAB_PAGE_IDS = [
     'warehouse-master',
     'items-services',
     'item-unit',
+    'item-brand',
     'item-category',
     'customer-category',
     'supplier-category',

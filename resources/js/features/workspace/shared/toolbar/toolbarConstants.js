@@ -28,6 +28,7 @@ export const PAGE_ID_TO_RESOURCE_MAP = {
     'warehouse-master': 'warehouses',
     'items-services': 'products',
     'item-unit': 'units',
+    'item-brand': 'brands',
     'item-category': 'product-categories',
     'customer-category': 'customer-categories',
     'supplier-category': 'supplier-categories',

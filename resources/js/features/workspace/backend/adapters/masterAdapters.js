@@ -1,6 +1,29 @@
 import { emptyStringToNull } from './dateHelpers';
 
 export const SIMPLE_MASTER_BACKEND_CONFIG = {
+    'item-brand': {
+        resource: 'brands',
+        labelField: 'name',
+        toRow(record) {
+            return {
+                id: record.id,
+                name: record.name ?? '',
+                tabLabel: record.name ?? '',
+                isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
+            };
+        },
+        toForm(record) {
+            return {
+                name: record.name ?? '',
+            };
+        },
+        toPayload(values) {
+            return {
+                name: values.name?.trim() ?? '',
+                is_active: true,
+            };
+        },
+    },
     'item-unit': {
         resource: 'units',
         labelField: 'name',

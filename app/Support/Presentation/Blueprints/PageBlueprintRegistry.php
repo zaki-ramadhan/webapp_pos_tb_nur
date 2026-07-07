@@ -30,6 +30,7 @@ class PageBlueprintRegistry
             'warehouse-master' => Pages\WarehouseMasterPage::get($navigationPages),
             'items-services' => Pages\ItemsServicesPage::get($navigationPages),
             'item-unit' => Pages\ItemUnitPage::get($navigationPages),
+            'item-brand' => Pages\ItemBrandPage::get($navigationPages),
             'item-category' => Pages\ItemCategoryPage::get($navigationPages),
             'item-location' => Pages\ItemLocationPage::get($navigationPages),
             'minimum-stock' => Pages\MinimumStockPage::get($navigationPages),
