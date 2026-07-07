@@ -59,7 +59,7 @@ export default function AccountLookupSuggestions({
                         const selected = selectedLabelSet.has(label);
 
                         const isDoc = Boolean(record.document_number);
-                        const title = isDoc ? record.document_number : (record.name ?? '-');
+                        const title = isDoc ? record.document_number : (record.name ?? record.full_name ?? record.label ?? '-');
                         
                         const rawDate = record.entry_date || record.document_date || record.date;
                         let dateStr = '';
@@ -71,7 +71,7 @@ export default function AccountLookupSuggestions({
                         
                         const subtitleLeft = isDoc
                             ? [dateStr, counterpart].filter(Boolean).join(' • ')
-                            : (record.code ?? '-');
+                            : (record.code ?? record.employee_code ?? '-');
 
                         const subtitleRight = isDoc
                             ? `Rp ${Number(record.outstanding_amount ?? record.total_amount ?? 0).toLocaleString('id-ID')}`

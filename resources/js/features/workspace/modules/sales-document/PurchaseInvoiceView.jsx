@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { buildPurchaseInvoiceConfig, buildPurchaseInvoiceRecord } from '@/features/workspace/modules/sales-document/purchaseInvoiceConfig';
 import SalesDocumentView from '@/features/workspace/modules/sales-document/SalesDocumentView';
 
-export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, onOpenContent, onOpenDetail }) {
+export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, level2Tabs = [], onOpenContent, onOpenDetail }) {
     const config = useMemo(() => buildPurchaseInvoiceConfig(page.purchaseInvoice), [page.purchaseInvoice]);
     const buildRecord = useMemo(() => (row = {}) => buildPurchaseInvoiceRecord(row, config), [config]);
 
@@ -14,6 +14,7 @@ export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, onOpe
             buildRecord={buildRecord}
             mode={mode}
             activeLevel2Tab={activeLevel2Tab}
+            level2Tabs={level2Tabs}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
         />

@@ -97,7 +97,13 @@ export function buildSalesDocumentRecord(row = {}, draft, detailRecords, fallbac
 
     return {
         ...draft,
-        customer: row.customer ? [`${fallback.customerPrefix ?? '[CJKT-0001]'} ${row.customer}`] : [],
+        customer: row.customer
+            ? [
+                  typeof row.customer === 'object'
+                      ? row.customer.name
+                      : `${fallback.customerPrefix ?? '[CJKT-0001]'} ${row.customer}`,
+              ]
+            : [],
         entryDate: row.date ?? draft.entryDate,
         autoNumber: false,
         documentNumber: row.number ?? '',

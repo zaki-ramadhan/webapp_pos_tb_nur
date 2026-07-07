@@ -151,19 +151,28 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
             <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                 <ItemCategoryTableView page={{ itemCategory: config }} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
             </div>
-            {lastActiveFormTab && (
-                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
-                    <ItemCategoryFormView
-            key={lastActiveFormTab.id}
+            {level2Tabs.map((tab) => {
+                if (tab.kind !== 'content') return null;
+
+                const isCurrentForm = mode === 'form' && activeLevel2Tab?.id === tab.id;
+
+                return (
+                    <div
+                        key={tab.id}
+                        className={isCurrentForm ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}
+                    >
+                        <ItemCategoryFormView
+                            key={tab.id}
             page={{ itemCategory: config }}
-            activeLevel2Tab={lastActiveFormTab}
+            activeLevel2Tab={tab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
-        />
-                </div>
-            )}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 }

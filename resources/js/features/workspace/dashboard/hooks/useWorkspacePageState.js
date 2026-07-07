@@ -243,10 +243,15 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
             openPageById(pageId);
 
             if (targetTabId) {
-                setActiveLevel2Tabs((currentTabs) => ({
-                    ...currentTabs,
-                    [pageId]: targetTabId,
-                }));
+                const page = pages[pageId];
+                if (page?.subtab && targetTabId === page.subtab.id) {
+                    handleOpenDefaultContentTab(pageId);
+                } else {
+                    setActiveLevel2Tabs((currentTabs) => ({
+                        ...currentTabs,
+                        [pageId]: targetTabId,
+                    }));
+                }
             }
 
             if (recordId != null) {
@@ -263,7 +268,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         }
         window.addEventListener('workspace:open-page', handleOpenPage);
         return () => window.removeEventListener('workspace:open-page', handleOpenPage);
-    }, [openPageById, detailTabBuilders, handleOpenContentTab, setActiveLevel2Tabs]);
+    }, [openPageById, detailTabBuilders, handleOpenContentTab, setActiveLevel2Tabs, handleOpenDefaultContentTab, pages]);
 
     useEffect(() => {
         if (!pageOpeningLoading) {

@@ -79,20 +79,29 @@ export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs =
             onReload={reload}
         />
             </div>
-            {lastActiveFormTab && (
-                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
-                    <AccountsFormView
-            key={lastActiveFormTab.id}
+            {level2Tabs.map((tab) => {
+                if (tab.kind !== 'content') return null;
+
+                const isCurrentForm = mode === 'form' && activeLevel2Tab?.id === tab.id;
+
+                return (
+                    <div
+                        key={tab.id}
+                        className={isCurrentForm ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}
+                    >
+                        <AccountsFormView
+                            key={tab.id}
             pageId={page.id}
             config={config}
             backendRows={backendRows}
-            activeLevel2Tab={lastActiveFormTab}
+            activeLevel2Tab={tab}
             onOpenDetail={onOpenDetail}
             onCloseTab={onCloseTab}
             onReload={reload}
-        />
-                </div>
-            )}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 }

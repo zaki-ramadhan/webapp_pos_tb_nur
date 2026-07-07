@@ -12,7 +12,6 @@ import {
 } from '@/features/workspace/modules/items-services/ItemsServicesSecondaryTabs';
 import {
     buildItemsServicesFormValues,
-    DetailActionButton,
     renderItemsServicesDockIcon,
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
@@ -214,6 +213,7 @@ export default function ItemsServicesFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async () => {
                 await onRefresh?.();
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });
@@ -242,13 +242,6 @@ export default function ItemsServicesFormView({
                 </>
             }
         >
-            {isDetail && config.detailQuickActions?.length > 0 ? (
-                <div className="flex flex-wrap items-center gap-1.5 mb-4 shrink-0 pb-[1px]">
-                    {config.detailQuickActions.map((label) => (
-                        <DetailActionButton key={label} label={label} />
-                    ))}
-                </div>
-            ) : null}
             <div className="flex-1 min-h-0">
                 {activeTabId === 'sales-purchase' ? (
                     <ItemSalesPurchaseTab config={config} values={values} onChange={handleChange} />

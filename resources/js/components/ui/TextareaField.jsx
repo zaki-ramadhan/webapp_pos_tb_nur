@@ -74,8 +74,8 @@ export default function TextareaField({
 
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-red-150'
-            : 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
+            ? 'border-danger'
+            : 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
@@ -83,6 +83,7 @@ export default function TextareaField({
     return (
         <div className={`w-full ${containerClassName}`.trim()}>
             <span
+                aria-invalid={Boolean(resolvedError)}
                 className={`group flex w-full items-stretch overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-ui-bg-panel' : ''} ${isNonInteractive ? 'cursor-default' : 'cursor-text'} ${className}`.trim()}
             >
                 {prefix ? (

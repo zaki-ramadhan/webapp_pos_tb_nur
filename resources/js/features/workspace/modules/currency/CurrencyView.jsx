@@ -52,20 +52,29 @@ export default function CurrencyView({ page, mode, activeLevel2Tab, level2Tabs =
             onRefresh={reload}
         />
             </div>
-            {lastActiveFormTab && (
-                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
-                    <CurrencyFormView
-            key={lastActiveFormTab.id}
+            {level2Tabs.map((tab) => {
+                if (tab.kind !== 'content') return null;
+
+                const isCurrentForm = mode === 'form' && activeLevel2Tab?.id === tab.id;
+
+                return (
+                    <div
+                        key={tab.id}
+                        className={isCurrentForm ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}
+                    >
+                        <CurrencyFormView
+                            key={tab.id}
             page={resolvedPage}
-            activeLevel2Tab={lastActiveFormTab}
+            activeLevel2Tab={tab}
             tableRows={mappedRows}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
-        />
-                </div>
-            )}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 }

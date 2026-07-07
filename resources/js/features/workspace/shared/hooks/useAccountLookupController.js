@@ -9,8 +9,8 @@ export function buildAccountLookupLabel(record) {
     if (record?.document_number) {
         return record.document_number;
     }
-    const code = String(record?.code ?? '').trim();
-    const name = String(record?.name ?? '').trim();
+    const code = String(record?.code ?? record?.employee_code ?? '').trim();
+    const name = String(record?.name ?? record?.full_name ?? '').trim();
 
     if (code && name) {
         return `[${code}] ${name}`;
@@ -46,7 +46,7 @@ export function translateAccountType(type) {
 export function buildAccountLookupMeta(record) {
     const rawType = String(record?.account_type ?? '').trim();
     const type = translateAccountType(rawType);
-    const notes = String(record?.notes ?? '').trim();
+    const notes = String(record?.notes ?? record?.position ?? '').trim();
 
     return [type, notes].filter(Boolean).join(' • ');
 }

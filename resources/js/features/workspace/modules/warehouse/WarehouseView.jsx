@@ -146,22 +146,31 @@ export default function WarehouseView({
             onRefresh={reload}
         />
             </div>
-            {lastActiveFormTab && (
-                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
-                    <WarehouseFormView
-            key={lastActiveFormTab.id}
+            {level2Tabs.map((tab) => {
+                if (tab.kind !== 'content') return null;
+
+                const isCurrentForm = mode === 'form' && activeLevel2Tab?.id === tab.id;
+
+                return (
+                    <div
+                        key={tab.id}
+                        className={isCurrentForm ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}
+                    >
+                        <WarehouseFormView
+                            key={tab.id}
             config={config}
             entry={warehouseEntry}
             isDetailMode={Boolean(recordId)}
-            activeLevel2Tab={lastActiveFormTab}
+            activeLevel2Tab={tab}
             onOpenContent={onOpenContent}
             onOpenDetail={onOpenDetail}
             onCloseDetail={onCloseDetail}
             onRefresh={reload}
             onPersist={handlePersist}
-        />
-                </div>
-            )}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 }

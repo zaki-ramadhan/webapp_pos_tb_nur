@@ -110,8 +110,6 @@ export default function SalesReceiptTableView({
                 }}
                 resourceName="sales-receipts"
                 onRefresh={onRefresh}
-                importButton={null}
-                printButton={null}
                 exportConfig={false}
                 search={{
                     value: keyword,

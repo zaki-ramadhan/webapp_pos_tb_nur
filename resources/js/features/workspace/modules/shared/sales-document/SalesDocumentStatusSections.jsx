@@ -3,7 +3,7 @@ import { Calculator } from 'lucide-react';
 import { buildCurrencyValue, TransactionSectionHeading } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { TableActionIcon } from '@/features/workspace/shared/Icons';
 import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
-import { formatCurrencyValue, applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
+import { formatCurrencyValue, formatCurrencyLabel, applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
 
 function SummaryValue({ label, value, highlight = false }) {
     return (
@@ -132,26 +132,44 @@ export function SalesDocumentFooter({ values, setValues }) {
         });
     };
 
+    const subtotalCosts = (values.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
+    const advanceAmount = (values.advancePayments ?? []).reduce((sum, adv) => sum + parseNumericInput(adv.amount), 0);
+
     const footerParts = [
         { id: 'subtotal', label: 'Sub Total', value: buildCurrencyValue(values.subtotal), align: 'right' },
         { id: 'discount', label: 'Diskon', value: values.discountValue, isInput: true, prefix: values.discountPrefix },
+        { id: 'costs', label: 'Total Biaya', value: formatCurrencyValue(subtotalCosts), align: 'right' },
+        { id: 'advance', label: 'Uang Muka', value: formatCurrencyValue(advanceAmount), align: 'right' },
         ...(values.taxLabel ? [{ id: 'tax', label: values.taxLabel, value: buildCurrencyValue(values.taxValue), align: 'right' }] : []),
         { id: 'total', label: 'Total', value: buildCurrencyValue(values.total), align: 'right' },
     ];
     const gridClassName =
-        footerParts.length === 4
-            ? 'md:grid-cols-4'
-            : footerParts.length === 3
-              ? 'md:grid-cols-3'
-              : footerParts.length === 2
-                ? 'md:grid-cols-2'
-                : 'md:grid-cols-1';
+        footerParts.length === 6
+            ? 'md:grid-cols-6'
+            : footerParts.length === 5
+              ? 'md:grid-cols-5'
+              : footerParts.length === 4
+                ? 'md:grid-cols-4'
+                : footerParts.length === 3
+                  ? 'md:grid-cols-3'
+                  : footerParts.length === 2
+                    ? 'md:grid-cols-2'
+                    : 'md:grid-cols-1';
+
+    const widthClassName =
+        footerParts.length >= 5
+            ? 'md:w-[83%]'
+            : footerParts.length === 4
+              ? 'md:w-2/3'
+              : footerParts.length === 3
+                ? 'md:w-1/2'
+                : 'md:w-1/3';
 
     return (
         <div className="flex w-full justify-end">
-            <div className={`grid w-full md:w-1/2 overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
+            <div className={`grid w-full ${widthClassName} overflow-hidden rounded-[4px] border border-table-cell-border bg-white shadow-card-medium ${gridClassName}`.trim()}>
                 {footerParts.map((part) => (
-                    <div key={part.id} className="border-b border-ui-border-light px-4 py-3 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5">
+                    <div key={part.id} className="border-b border-ui-border-light px-4 py-2.5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 md:px-5 flex flex-col justify-between min-h-[72px]">
                         <div className="flex items-start justify-between gap-3">
                             <span className="text-xs sm:text-sm text-brand-dark">
                                 {part.label}
@@ -164,8 +182,8 @@ export function SalesDocumentFooter({ values, setValues }) {
                         </div>
 
                         {part.isInput ? (
-                            <div className="flex justify-end">
-                                <div className="mt-2 flex h-[34px] w-full min-w-[120px] max-w-[50%] overflow-hidden rounded-[4px] border border-ui-border focus-within:ring-2 focus-within:ring-input-focus/30 focus-within:border-brand-blue-border">
+                            <div className="w-full">
+                                <div className="mt-1 flex h-[32px] w-full overflow-hidden rounded-[4px] border border-ui-border focus-within:ring-2 focus-within:ring-input-focus/30 focus-within:border-brand-blue-border">
                                     {part.prefix ? (
                                         <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-2 text-sm text-text-inactive">
                                             {part.prefix}
@@ -173,8 +191,8 @@ export function SalesDocumentFooter({ values, setValues }) {
                                     ) : null}
                                     <input
                                         type="text"
-                                        maxLength={3}
-                                        className="flex-1 w-0 bg-transparent px-2 text-right text-base font-semibold text-text-darkest outline-none border-none"
+                                        maxLength={values.discountPrefix === '%' ? 3 : 15}
+                                        className="flex-1 w-0 bg-transparent px-2 text-right text-sm sm:text-base font-semibold text-text-darkest outline-none border-none"
                                         value={discountInputVal}
                                         onChange={(e) => {
                                             const val = e.target.value.replace(/[^0-9]/g, '');
@@ -182,13 +200,10 @@ export function SalesDocumentFooter({ values, setValues }) {
                                         }}
                                         onBlur={handleDiscountBlur}
                                     />
-                                    <span className="inline-flex w-8 items-center justify-center border-l border-ui-border-medium text-brand-dark">
-                                        <Calculator className="h-4 w-4" />
-                                    </span>
                                 </div>
                             </div>
                         ) : (
-                            <div className={`mt-2 text-lg font-semibold text-text-darkest ${part.align === 'right' ? 'text-right' : (part.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>
+                            <div className={`mt-1 text-sm sm:text-base font-semibold text-text-darkest ${part.align === 'right' ? 'text-right' : (part.align === 'center' ? 'text-center' : 'text-left')}`.trim()}>
                                 {part.value}
                             </div>
                         )}

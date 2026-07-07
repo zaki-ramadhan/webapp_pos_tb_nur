@@ -123,7 +123,6 @@ export default function ReferenceLookupInput({
             return;
         }
 
-        event.preventDefault();
         inputRef.current?.focus();
     }
 
@@ -157,16 +156,17 @@ export default function ReferenceLookupInput({
     }
 
     const toneClassName = resolvedError
-        ? 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
+        ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div ref={rootRef} className={`relative w-full ${className}`.trim()}>
             <div
                 onMouseDown={focusInput}
+                aria-invalid={Boolean(resolvedError)}
                 className={`group flex w-full items-center overflow-hidden rounded-md border bg-white transition-[border-color,box-shadow] duration-150 ${toneClassName} ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'}`.trim()}
             >
-                <div className="flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5">
+                <div className={`flex min-w-0 flex-1 items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
                     {selectedLabels.length ? (
                         selectedLabels.map((item) => (
                             <span
@@ -206,7 +206,7 @@ export default function ReferenceLookupInput({
                             }}
                             onChange={handleChange}
                             aria-label={searchLabel}
-                            className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
+                            className={`h-[28px] min-w-[72px] flex-1 bg-transparent px-1 text-xs sm:text-sm text-brand-dark outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-default disabled:text-slate-400 ${inputClassName}`.trim()}
                         />
                     )}
                 </div>

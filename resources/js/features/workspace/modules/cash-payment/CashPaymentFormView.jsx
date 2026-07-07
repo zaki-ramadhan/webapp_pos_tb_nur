@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { showSuccessToast, showErrorToast, showLoadingToast, updateToastToSuccess, updateToastToError } from '@/components/feedback/toast';
 import {
     createBackendResource,
@@ -37,6 +38,7 @@ import {
 import MoneyMovementLineItemModal from '@/features/workspace/shared/MoneyMovementLineItemModal';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
+import { useFormLineItems } from '@/features/workspace/shared/hooks/useFormLineItems';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 
 export default function CashPaymentFormView({
@@ -106,7 +108,6 @@ export default function CashPaymentFormView({
     });
 
     const [attachmentModalOpen, setAttachmentModalOpen] = useState(false);
-    const [kasBankWarningOpen, setKasBankWarningOpen] = useState(false);
     const [takeExpenseOpen, setTakeExpenseOpen] = useState(false);
     const [takePayrollOpen, setTakePayrollOpen] = useState(false);
 
@@ -209,7 +210,7 @@ export default function CashPaymentFormView({
             execute: () => deleteBackendResource('cash-payments', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(values.__backendRecordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });
@@ -454,28 +455,60 @@ export default function CashPaymentFormView({
                 })),
             onSelectLineAccount: (record) => {
                 if (!values.__primaryAccountId || !values.bankAccounts?.length) {
-                    setKasBankWarningOpen(true);
+                    window.dispatchEvent(new CustomEvent('form-validation-error', {
+                        detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
+                    }));
+                    showSystemErrorModal({
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                        message: 'Akun Kas/Bank harus diisi.',
+                        confirmLabel: 'OK',
+                    });
                     return;
                 }
                 applyLineItemUpdate(record);
             },
             onEditLineItem: (item) => {
                 if (!values.__primaryAccountId || !values.bankAccounts?.length) {
-                    setKasBankWarningOpen(true);
+                    window.dispatchEvent(new CustomEvent('form-validation-error', {
+                        detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
+                    }));
+                    showSystemErrorModal({
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                        message: 'Akun Kas/Bank harus diisi.',
+                        confirmLabel: 'OK',
+                    });
                     return;
                 }
                 applyLineItemUpdate(null, item);
             },
             onTakeExpenseEntry: () => {
                 if (!values.__primaryAccountId) {
-                    setKasBankWarningOpen(true);
+                    window.dispatchEvent(new CustomEvent('form-validation-error', {
+                        detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
+                    }));
+                    showSystemErrorModal({
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                        message: 'Akun Kas/Bank harus diisi.',
+                        confirmLabel: 'OK',
+                    });
                     return;
                 }
                 setTakeExpenseOpen(true);
             },
             onTakePayrollEntry: () => {
                 if (!values.__primaryAccountId) {
-                    setKasBankWarningOpen(true);
+                    window.dispatchEvent(new CustomEvent('form-validation-error', {
+                        detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
+                    }));
+                    showSystemErrorModal({
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                        message: 'Akun Kas/Bank harus diisi.',
+                        confirmLabel: 'OK',
+                    });
                     return;
                 }
                 setTakePayrollOpen(true);
@@ -527,16 +560,6 @@ export default function CashPaymentFormView({
                 cancelLabel="Batal"
                 confirmVariant="primary"
                 confirmLoading={saving}
-            />
-            <ConfirmationModal
-                open={kasBankWarningOpen}
-                onClose={() => setKasBankWarningOpen(false)}
-                onConfirm={() => setKasBankWarningOpen(false)}
-                title="Peringatan"
-                message="Akun Kas/Bank harus diisi terlebih dahulu."
-                confirmLabel="OK"
-                cancelLabel={null}
-                confirmVariant="primary"
             />
             <CashPaymentAttachmentModal
                 open={attachmentModalOpen}

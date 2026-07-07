@@ -46,16 +46,17 @@ export default function AccountLookupSearchInput({
     }
 
     const toneClassName = error
-        ? 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
+        ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div
             ref={containerRef}
             onMouseDown={focusInputFromWrapper}
+            aria-invalid={error}
             className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 text-slate-400 cursor-default' : 'bg-white cursor-text'} ${className}`.trim()}
         >
-            <div className="flex h-full min-w-0 flex-1 items-center gap-2 pl-1 pr-3">
+            <div className={`flex h-full min-w-0 flex-1 items-center gap-2 pl-1 pr-3 ${disabled ? 'cursor-default' : 'cursor-text'}`.trim()}>
                 {hasSelectedValue ? (
                     <span className="inline-flex max-w-full items-center gap-2 rounded-md border border-border-chip-blue bg-bg-chip-blue px-2 py-1 text-sm text-text-chip-blue-dark">
                         <span className="truncate">{extractCleanAccountName(selectedValue)}</span>
@@ -90,7 +91,7 @@ export default function AccountLookupSearchInput({
                         autoComplete="off"
                         autoCorrect="off"
                         spellCheck={false}
-                        className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-0 text-sm outline-none placeholder:text-disabled-border-t disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} indent-2 ${inputClassName}`.trim()}
+                        className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-0 text-sm outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} indent-2 ${inputClassName}`.trim()}
                     />
                 )}
             </div>

@@ -242,9 +242,7 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akun perkiraan gagal dihapus.'),
             onSuccess: async () => {
                 await onReload?.();
-                if (activeLevel2Tab?.id) {
-                    onCloseTab?.(activeLevel2Tab.id);
-                }
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
             },
         });
     }

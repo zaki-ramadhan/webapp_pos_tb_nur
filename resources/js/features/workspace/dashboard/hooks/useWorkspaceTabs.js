@@ -216,6 +216,19 @@ export default function useWorkspaceTabs({
         });
     }, [clearTabDirty, initialLevel2ContentTabs, initialLevel2Tabs]);
 
+    useEffect(() => {
+        const handleCloseTabEvent = (event) => {
+            const { pageId, tabId, recordId } = event.detail ?? {};
+            if (tabId) {
+                closeLevel2TabNow(tabId);
+            } else if (pageId && recordId != null) {
+                handleCloseDetailTab(pageId, recordId);
+            }
+        };
+        window.addEventListener('workspace:close-tab', handleCloseTabEvent);
+        return () => window.removeEventListener('workspace:close-tab', handleCloseTabEvent);
+    }, [closeLevel2TabNow, handleCloseDetailTab]);
+
     return {
         activeLevel2Tabs,
         setActiveLevel2Tabs,

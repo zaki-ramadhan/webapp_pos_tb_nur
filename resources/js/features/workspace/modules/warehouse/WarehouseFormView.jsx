@@ -177,7 +177,7 @@ export default function WarehouseFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(entry.id);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });

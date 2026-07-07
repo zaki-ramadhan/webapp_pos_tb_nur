@@ -48,7 +48,7 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             rows={values.items}
             emptyLabel={config.itemTable.emptyLabel}
             minWidthClassName={config.itemTable.minWidthClassName ?? 'min-w-[1000px]'}
-            showTitleSearchButton={config.showItemTitleSearchButton ?? isDetail}
+            showTitleSearchButton={config.showItemTitleSearchButton ?? false}
             hideSearchField={config.hideItemSearchField}
             leadingAction={itemLeadingAction}
             extraActions={importButton}

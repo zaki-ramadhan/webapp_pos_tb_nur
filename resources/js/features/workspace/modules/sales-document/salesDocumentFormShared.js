@@ -52,10 +52,13 @@ export function applyComputedTotals(currentValues, nextItems) {
           })
         : currentValues.summary;
 
+    const totalQty = nextItems.reduce((sum, item) => sum + parseNumericInput(item.quantity), 0);
+    const formattedQty = Number(totalQty.toFixed(2)).toLocaleString('id-ID', { maximumFractionDigits: 2 });
+
     return {
         ...currentValues,
         items: nextItems,
-        itemCountLabel: nextItems.length ? `${nextItems.length} ${currentValues.pageId ? 'Barang' : 'Rincian Barang'}` : 'Rincian Barang',
+        itemCountLabel: nextItems.length ? `${nextItems.length} ${currentValues.pageId ? 'Barang' : 'Rincian Barang'} (${formattedQty})` : 'Rincian Barang',
         subtotal: formatCurrencyLabel(subtotalAmount),
         discountValue: formatCurrencyValue(discountAmount),
         taxLabel: currentValues.taxEnabled ? currentValues.taxLabel || 'Pajak' : '',
@@ -136,6 +139,19 @@ export function validateSalesDocumentValues(values, config) {
 
     if (invalidItem) {
         return 'Setiap item wajib memiliki nama, kuantitas lebih dari 0, dan satuan.';
+    }
+
+    if (config?.pageId === 'sales-invoice') {
+        const totalAdvance = (values.advancePayments ?? []).reduce((sum, adv) => sum + parseNumericInput(adv.amount), 0);
+        const totalInvoice = parseNumericInput(values.total);
+        if (totalAdvance > totalInvoice) {
+            return `Total alokasi Uang Muka tidak boleh melebihi Total Faktur Penjualan (Total Uang Muka: Rp ${formatCurrencyValue(totalAdvance)}, Total Faktur: Rp ${formatCurrencyValue(totalInvoice)}).`;
+        }
+
+        const hasTaxedDeposit = (values.advancePayments ?? []).some((adv) => adv.tax_id || adv.taxId);
+        if (hasTaxedDeposit && !values.taxEnabled) {
+            return 'Uang Muka yang digunakan memiliki Pajak (PPN). Faktur Penjualan ini juga wajib mengenakan Pajak (PPN) agar dapat menggunakan uang muka tersebut.';
+        }
     }
 
     return '';

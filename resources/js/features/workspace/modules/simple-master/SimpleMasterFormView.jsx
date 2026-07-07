@@ -230,7 +230,7 @@ export default function SimpleMasterFormView({
             setStatus({ tone: 'success', message: successMessage });
             finishCrudLoadingToast(loadingToastId, successMessage);
             setDeleteConfirmationOpen(false);
-            onCloseDetail?.(detailRow.id);
+            window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
             onOpenContent?.();
         } catch (error) {
             const errorMessage = getBackendErrorMessage(error);

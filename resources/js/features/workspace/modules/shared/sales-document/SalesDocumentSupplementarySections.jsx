@@ -39,9 +39,10 @@ export function SalesDocumentAdvancePaymentsSection({ config, values, handlers }
     const searchInput = config.advancePaymentSearchResource ? (
         <AccountLookupTextInput
             resource={config.advancePaymentSearchResource}
-            placeholder={config.advancePaymentSearchPlaceholder}
+            placeholder={config.advancePaymentSearchPlaceholder ?? 'Cari/Pilih...'}
             searchLabel={`Cari ${config.advancePaymentTitle ?? 'Uang Muka'}`}
             dialogTitle={`Pilih ${config.advancePaymentTitle ?? 'Uang Muka'}`}
+            queryParams={{ customer_id: values.__partnerId, only_available: 'true' }}
             onSelectAccount={(record) => handlers?.onSelectAdvancePayment?.(record)}
         />
     ) : null;

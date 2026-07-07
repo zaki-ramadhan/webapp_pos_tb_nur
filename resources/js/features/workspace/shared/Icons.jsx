@@ -56,7 +56,7 @@ export function CogIcon({ className = 'h-5 w-5 text-current' }) {
     return <AppIcon icon={Settings} className={className} />;
 }
 
-export function CloseIcon({ className = 'h-4 w-4', strokeWidth = 1.9 }) {
+export function CloseIcon({ className = 'h-4 w-4', strokeWidth = 2.8 }) {
     return <AppIcon icon={X} className={className} strokeWidth={strokeWidth} />;
 }
 
@@ -124,8 +124,8 @@ export function TrashIcon({ className = 'h-7 w-7' }) {
     return <AppIcon icon={Trash2} className={className} />;
 }
 
-export function ChevronDownIcon({ className = 'h-4 w-4' }) {
-    return <AppIcon icon={ChevronDown} className={`shrink-0 ${className}`.trim()} />;
+export function ChevronDownIcon({ className = 'h-4 w-4', strokeWidth = 1.9 }) {
+    return <AppIcon icon={ChevronDown} className={`shrink-0 ${className}`.trim()} strokeWidth={strokeWidth} />;
 }
 
 export function SortIcon({ className = 'h-3 w-3 text-white/55' }) {
@@ -136,6 +136,11 @@ export function SortIcon({ className = 'h-3 w-3 text-white/55' }) {
 export function TableActionIcon({ className = 'h-4 w-4' }) {
     return <AppIcon icon={Rows3} className={className} />;
 }
+
+export function CalcIcon({ className = 'h-4 w-4' }) {
+    return <AppIcon icon={Calculator} className={className} />;
+}
+
 
 export function CrossStatusIcon({ className = 'h-5 w-5 text-red-700' }) {
     return <AppIcon icon={CircleX} className={className} />;

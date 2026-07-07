@@ -152,6 +152,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
                 title: 'Berhasil',
                 message: `${partnerLabel} berhasil dihapus.`,
             });
+            window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
         } catch (err) {
             dismissToast(loadingToastId);
             showErrorToast({
@@ -300,17 +301,26 @@ export default function BusinessPartnerView({
             onRefresh={reload}
         />
             </div>
-            {lastActiveFormTab && (
-                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
-                    <BusinessPartnerFormView
-            key={lastActiveFormTab.id}
+            {level2Tabs.map((tab) => {
+                if (tab.kind !== 'content') return null;
+
+                const isCurrentForm = mode === 'form' && activeLevel2Tab?.id === tab.id;
+
+                return (
+                    <div
+                        key={tab.id}
+                        className={isCurrentForm ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}
+                    >
+                        <BusinessPartnerFormView
+                            key={tab.id}
             config={config}
-            activeLevel2Tab={lastActiveFormTab}
+            activeLevel2Tab={tab}
             partnerType={partnerType}
             onRefresh={reload}
-        />
-                </div>
-            )}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import Button from '@/components/ui/Button';
 import TextInput from '@/components/ui/TextInput';
@@ -71,9 +72,6 @@ export default function BankTransferFormView({
         pageId,
         activeTabId: activeLevel2Tab?.id,
     });
-
-    const [requiredWarningOpen, setRequiredWarningOpen] = useState(false);
-    const [requiredWarningList, setRequiredWarningList] = useState([]);
 
     const [feeModalOpen, setFeeModalOpen] = useState(false);
     const [feeModalRecord, setFeeModalRecord] = useState(null);
@@ -186,7 +184,7 @@ export default function BankTransferFormView({
             execute: () => deleteBackendResource('bank-transfers', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(values.__backendRecordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });
@@ -349,8 +347,21 @@ export default function BankTransferFormView({
                     }
                     
                     if (missing.length > 0) {
-                        setRequiredWarningList(missing);
-                        setRequiredWarningOpen(true);
+                        if (missing.length === 1) {
+                            showSystemErrorModal({
+                                title: 'Terjadi Permasalahan pada Pemrosesan',
+                                description: 'Silakan perbaiki permasalahan berikut ini:',
+                                message: `${missing[0]} harus diisi.`,
+                                confirmLabel: 'OK',
+                            });
+                        } else {
+                            showSystemErrorModal({
+                                title: 'Terjadi Permasalahan pada Pemrosesan',
+                                description: 'Silakan perbaiki data input berikut terlebih dahulu:',
+                                messages: missing.map((item) => `${item} harus diisi.`),
+                                confirmLabel: 'OK',
+                            });
+                        }
                         return;
                     }
                     
@@ -421,21 +432,6 @@ export default function BankTransferFormView({
                 cancelLabel="Batal"
                 confirmVariant="primary"
                 confirmLoading={saving}
-            />
-            <ConfirmationModal
-                open={requiredWarningOpen}
-                onClose={() => setRequiredWarningOpen(false)}
-                onConfirm={() => setRequiredWarningOpen(false)}
-                title="Peringatan"
-                message={
-                    requiredWarningList.length === 1
-                        ? `${requiredWarningList[0]} harus diisi terlebih dahulu.`
-                        : `Harap lengkapi data input berikut terlebih dahulu:\n` +
-                          requiredWarningList.map((item) => `- ${item} harus diisi`).join('\n')
-                }
-                confirmLabel="OK"
-                cancelLabel={null}
-                confirmVariant="primary"
             />
             <WorkspaceDialog
                 open={feeModalOpen}

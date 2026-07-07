@@ -5,6 +5,10 @@ export default function formatTableTextValue(value, column = null) {
         if (column) {
             const colId = String(column.id ?? '').toLowerCase();
             const colLabel = String(column.label ?? '').toLowerCase();
+
+            if ((colId.includes('unit') || colLabel.includes('satuan')) && typeof value === 'string') {
+                return value.replace(/\s*\[[^\]]+\]|\[[^\]]+\]\s*/g, '').trim();
+            }
             
             const isNameColumn = colId.includes('customer') || 
                                  colId.includes('supplier') || 

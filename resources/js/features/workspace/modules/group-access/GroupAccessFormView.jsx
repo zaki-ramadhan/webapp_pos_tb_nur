@@ -162,7 +162,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
             execute: () => deleteBackendResource('access-groups', recordId),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(recordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
             },
         });
     }

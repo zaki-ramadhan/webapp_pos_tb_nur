@@ -6,7 +6,7 @@ function DocumentModalTabButton({ active, label, onClick }) {
         <button
             type="button"
             onClick={onClick}
-            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs font-normal cursor-pointer select-none max-w-[120px] sm:max-w-[160px] md:max-w-[200px] -mb-[1px] ${
+            className={`shrink-0 border-b-2 px-2.5 py-1.5 text-xs sm:text-sm font-normal text-brand-dark cursor-pointer select-none max-w-[120px] sm:max-w-[160px] md:max-w-[200px] -mb-[1px] ${
                 active ? 'border-illustration-danger-bg text-illustration-danger-bg font-normal' : 'border-transparent text-tab-view-active-text'
             }`.trim()}
         >
@@ -60,7 +60,7 @@ export default function DocumentModalLayout({
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
                         <PencilIcon className="h-4 w-4 text-white" />
-                        <h2 className="text-sm font-medium">{title}</h2>
+                        <h2 className="text-sm font-normal">{title}</h2>
                     </div>
  
                     <button
@@ -74,9 +74,9 @@ export default function DocumentModalLayout({
                 </div>
             </div>
  
-            <div className="bg-white px-4 pb-4 pt-3">
+            <div className="bg-white px-4 pb-3 pt-2">
                 {tabs?.length ? (
-                    <div className="flex flex-wrap border-b border-ui-border-medium mt-2 mb-3">
+                    <div className="flex flex-wrap border-b border-ui-border-medium mt-0 mb-2">
                         {tabs.map((tab) => (
                             <DocumentModalTabButton
                                 key={tab.id}

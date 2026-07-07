@@ -315,8 +315,13 @@ export default function TableToolbar({
                         </ToolbarIconButton>
                     ) : null}
 
-
-                    {cleanedRightControls}
+                    {resolvedColumnSettings || menuButton ? (
+                        <ToolbarSettingsMenu
+                            columnSettings={resolvedColumnSettings}
+                            menuButton={menuButton}
+                            sizeStyle={sizeStyle}
+                        />
+                    ) : null}                    {cleanedRightControls}
 
                     {search ? (
                         <TextInput

@@ -122,9 +122,9 @@
     /* Custom palette colors */
 
     /* Custom overlay & shadow tokens */
-    --color-modal-overlay-bg: rgba(0, 0, 0, 0.80);
-    --color-modal-overlay-dark: rgba(0, 0, 0, 0.90);
-    --color-modal-overlay-light: rgba(0, 0, 0, 0.68);
+    --color-modal-overlay-bg: rgba(0, 0, 0, 0.55);
+    --color-modal-overlay-dark: rgba(0, 0, 0, 0.70);
+    --color-modal-overlay-light: rgba(0, 0, 0, 0.45);
     --color-sidebar-item-active-bg: rgba(71, 84, 108, 0.92);
     --background-image-bg-gradient-radial: radial-gradient(circle at top, rgba(222, 146, 72, 0.18), transparent 28%);
     --background-image-bg-gradient-linear: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(237, 247, 255, 0.84) 100%);
@@ -707,4 +707,22 @@ th,
 th * {
     text-align: center !important;
     justify-content: center !important;
+}
+
+/* Force red border color for all validation errors globally */
+.group.border[aria-invalid="true"],
+[aria-invalid="true"].border,
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+    border-color: var(--color-danger) !important;
+}
+
+/* Force prominent red placeholder color for all validation errors globally */
+[aria-invalid="true"] input::placeholder,
+input[aria-invalid="true"]::placeholder,
+[aria-invalid="true"] textarea::placeholder,
+textarea[aria-invalid="true"]::placeholder {
+    color: var(--color-danger) !important;
+    opacity: 0.8 !important;
 }

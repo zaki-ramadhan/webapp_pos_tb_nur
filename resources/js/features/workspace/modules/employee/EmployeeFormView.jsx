@@ -258,7 +258,7 @@ export default function EmployeeFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(values.__backendRecordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });

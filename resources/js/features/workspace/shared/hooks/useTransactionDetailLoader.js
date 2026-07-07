@@ -60,7 +60,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         }
 
         // 1. Check in-memory cache first (survives HMR, not page refresh)
-        if (window.__savedRecordsCache?.[normalizedRecordId]) {
+        if (window.__savedRecordsCache?.[normalizedRecordId] && window.__savedRecordsCache[normalizedRecordId]?.dockActions?.length) {
             setLocalRecord(window.__savedRecordsCache[normalizedRecordId]);
             return;
         }
@@ -185,7 +185,7 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
         }
 
         if (normalizedRecordId) {
-            if (window.__savedRecordsCache?.[normalizedRecordId]) {
+            if (window.__savedRecordsCache?.[normalizedRecordId] && window.__savedRecordsCache[normalizedRecordId]?.dockActions?.length) {
                 return window.__savedRecordsCache[normalizedRecordId];
             }
 

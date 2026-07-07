@@ -152,6 +152,9 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         total: formatCurrencyValue(line.total_amount ?? 0),
     }));
 
+    const totalQty = lines.reduce((sum, line) => sum + parseNumericInput(line.quantity), 0);
+    const formattedQty = Number(totalQty.toFixed(2)).toLocaleString('id-ID', { maximumFractionDigits: 2 });
+
     return {
         __backendRecordId: record.id,
         __partnerId: record.customer_id ?? record.supplier_id ?? null,
@@ -173,7 +176,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         currency: record.currency?.code ?? '',
         itemSearch: '',
         items: lines,
-        itemCountLabel: lines.length ? `${lines.length} ${config.itemSectionTitle}` : config.itemSectionTitle,
+        itemCountLabel: lines.length ? `${lines.length} ${config.itemSectionTitle} (${formattedQty})` : config.itemSectionTitle,
         paymentTerms: record.payment_term?.name ? [record.payment_term.name] : [],
         purchaseOrderNumber: record.reference_number ?? '',
         address:

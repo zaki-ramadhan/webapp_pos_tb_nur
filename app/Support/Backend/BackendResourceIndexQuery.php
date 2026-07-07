@@ -40,10 +40,15 @@ class BackendResourceIndexQuery
             $this->applySearch($query, $search, $blueprint->searchColumns);
         }
 
+        if ($blueprint->key === 'sales-deposits' && filter_var($filters['only_available'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            $query->where('outstanding_amount', '>', 0)
+                  ->whereNotIn('status', ['Void', 'Cancelled']);
+        }
+
         $modelInstance = new $modelClass();
         $tableName = $modelInstance->getTable();
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['search', 'per_page', 'page'], true)) {
+            if (in_array($key, ['search', 'per_page', 'page', 'only_available'], true)) {
                 continue;
             }
             if ($key === 'exclude_type' && Schema::hasColumn($tableName, 'account_type')) {

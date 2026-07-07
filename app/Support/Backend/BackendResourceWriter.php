@@ -83,7 +83,21 @@ class BackendResourceWriter
                 $oldDocs = $record->lines()->pluck('reference_code')->filter()->unique()->toArray();
             }
 
+            $oldDepositIds = [];
+            if ($blueprint->key === 'sales-invoices' && $record->metadata && isset($record->metadata['advance_payments'])) {
+                foreach ($record->metadata['advance_payments'] as $adv) {
+                    if (isset($adv['__depositId'])) {
+                        $oldDepositIds[] = (int) $adv['__depositId'];
+                    }
+                }
+            }
+
             $record->delete();
+
+            if ($blueprint->key === 'sales-invoices' && !empty($oldDepositIds)) {
+                $this->reconcileSalesDeposits($record, $oldDepositIds);
+            }
+
             $this->activityLogger->logMutation(
                 $blueprint,
                 'delete',
@@ -180,30 +194,68 @@ class BackendResourceWriter
             }
 
             if ($blueprint->key === 'sales-invoices') {
-                $warehouseId = $payload['warehouse_id'] ?? null;
-                if ($warehouseId) {
-                    $lines = $payload['lines'] ?? [];
-                    foreach ($lines as $index => $line) {
-                        $productId = $line['product_id'] ?? null;
-                        $qtyRequested = (float) ($line['quantity'] ?? 0);
-                        if ($productId && $qtyRequested > 0) {
-                            $stockMap = app(\App\Support\Backend\Queries\InventoryInquiryQueryService::class)->paginateItemLocations([
-                                'product_id' => $productId,
-                                'warehouse_id' => $warehouseId,
-                                'per_page' => 1,
+                $advancePayments = $payload['metadata']['advance_payments'] ?? [];
+                $totalAdvance = 0.0;
+                foreach ($advancePayments as $adv) {
+                    $amt = $adv['amount'] ?? 0;
+                    if (is_string($amt)) {
+                        $amt = (float) preg_replace('/[^\d]/', '', $amt);
+                    }
+                    $totalAdvance += (float) $amt;
+                }
+
+                $totalInvoice = (float) ($payload['total_amount'] ?? 0.0);
+                if ($totalAdvance > $totalInvoice) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'advance_payments' => ["Total alokasi Uang Muka tidak boleh melebihi Total Faktur Penjualan (Total Uang Muka: Rp " . number_format($totalAdvance, 0, ',', '.') . ", Total Faktur: Rp " . number_format($totalInvoice, 0, ',', '.') . ")."]
+                    ]);
+                }
+
+                $invoiceTaxId = $payload['tax_id'] ?? null;
+                foreach ($advancePayments as $adv) {
+                    $depositId = $adv['__depositId'] ?? null;
+                    if ($depositId) {
+                        $deposit = DB::table('operation_documents')->where('id', $depositId)->first();
+                        if ($deposit && $deposit->tax_id && !$invoiceTaxId) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'tax_id' => ["Uang Muka [{$deposit->document_number}] menggunakan Pajak (PPN). Faktur Penjualan ini juga wajib mengenakan Pajak (PPN) agar dapat menggunakan uang muka tersebut."]
                             ]);
-                            
-                            $qtyAvailable = 0.0;
-                            if (count($stockMap->items()) > 0) {
-                                $item = $stockMap->items()[0];
-                                $qtyAvailable = (float) ($item['saleable_stock'] ?? 0.0);
-                            }
-                            
-                            if ($qtyRequested > $qtyAvailable) {
-                                $productName = DB::table('products')->where('id', $productId)->value('name') ?? 'Barang';
-                                throw \Illuminate\Validation\ValidationException::withMessages([
-                                    "lines.{$index}.quantity" => ["Stok tidak mencukupi untuk {$productName}. Stok tersedia: {$qtyAvailable}, diminta: {$qtyRequested}."]
+                        }
+                    }
+                }
+
+                $ignoreStockWarning = filter_var($payload['metadata']['ignore_stock_warning'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+                if (!$ignoreStockWarning) {
+                    $warehouseId = $payload['warehouse_id'] ?? null;
+                    if ($warehouseId) {
+                        $lines = $payload['lines'] ?? [];
+                        foreach ($lines as $index => $line) {
+                            $productId = $line['product_id'] ?? null;
+                            $qtyRequested = (float) ($line['quantity'] ?? 0);
+                            if ($productId && $qtyRequested > 0) {
+                                $stockMap = app(\App\Support\Backend\Queries\InventoryInquiryQueryService::class)->paginateItemLocations([
+                                    'product_id' => $productId,
+                                    'warehouse_id' => $warehouseId,
+                                    'per_page' => 1,
                                 ]);
+                                
+                                $qtyAvailable = 0.0;
+                                if (count($stockMap->items()) > 0) {
+                                    $item = $stockMap->items()[0];
+                                    $qtyAvailable = (float) ($item['saleable_stock'] ?? 0.0);
+                                }
+                                
+                                if ($qtyRequested > $qtyAvailable) {
+                                    $productName = DB::table('products')->where('id', $productId)->value('name') ?? 'Barang';
+                                    $warehouseName = DB::table('warehouses')->where('id', $warehouseId)->value('name') ?? 'Utama';
+                                    throw \Illuminate\Validation\ValidationException::withMessages([
+                                        'stock_warning' => [
+                                            'product_name' => $productName,
+                                            'warehouse_name' => $warehouseName,
+                                        ]
+                                    ]);
+                                }
                             }
                         }
                     }
@@ -370,6 +422,19 @@ class BackendResourceWriter
             }
 
             $blueprint->sync($record, $payload);
+
+            if ($blueprint->key === 'sales-invoices') {
+                $oldMetadata = json_decode($record->getOriginal('metadata') ?? '{}', true);
+                $oldDepositIds = [];
+                if (isset($oldMetadata['advance_payments'])) {
+                    foreach ($oldMetadata['advance_payments'] as $adv) {
+                        if (isset($adv['__depositId'])) {
+                            $oldDepositIds[] = (int) $adv['__depositId'];
+                        }
+                    }
+                }
+                $this->reconcileSalesDeposits($record, $oldDepositIds);
+            }
 
             if ($blueprint->key === 'cash-payments') {
                 if ($wasExisting) {
@@ -1016,6 +1081,63 @@ class BackendResourceWriter
                 'paid_amount' => $totalPaid,
                 'outstanding_amount' => $outstanding,
                 'status' => $status,
+            ]);
+        }
+    }
+
+    /**
+     * Reconcile outstanding amount of used sales deposits.
+     */
+    protected function reconcileSalesDeposits(Model $record, ?array $oldDepositIds = null): void
+    {
+        $currentIds = [];
+        if ($record->metadata && isset($record->metadata['advance_payments'])) {
+            foreach ($record->metadata['advance_payments'] as $adv) {
+                if (isset($adv['__depositId'])) {
+                    $currentIds[] = (int) $adv['__depositId'];
+                }
+            }
+        }
+        
+        $allIds = array_unique(array_merge($currentIds, $oldDepositIds ?? []));
+        if (empty($allIds)) {
+            return;
+        }
+
+        foreach ($allIds as $depositId) {
+            $deposit = \App\Domain\Support\Models\OperationDocument::find($depositId);
+            if (!$deposit) {
+                continue;
+            }
+
+            $totalAllocated = 0.0;
+            
+            // Search all operation_documents of type 'sales_invoice' that are active
+            $invoices = \App\Domain\Support\Models\OperationDocument::where('document_type', 'sales_invoice')
+                ->whereNotIn('status', ['Void', 'Cancelled'])
+                ->get();
+
+            foreach ($invoices as $invoice) {
+                if ($invoice->metadata && isset($invoice->metadata['advance_payments'])) {
+                    foreach ($invoice->metadata['advance_payments'] as $adv) {
+                        if (isset($adv['__depositId']) && (int) $adv['__depositId'] === (int) $depositId) {
+                            $amt = $adv['amount'] ?? 0;
+                            if (is_string($amt)) {
+                                $amt = (float) preg_replace('/[^\d]/', '', $amt);
+                            }
+                            $totalAllocated += (float) $amt;
+                        }
+                    }
+                }
+            }
+
+            $totalAmount = (float) $deposit->total_amount;
+            $outstanding = max(0.00, $totalAmount - $totalAllocated);
+            $outstanding = round($outstanding, 2);
+
+            $deposit->update([
+                'paid_amount' => $totalAllocated,
+                'outstanding_amount' => $outstanding,
             ]);
         }
     }

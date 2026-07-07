@@ -258,7 +258,7 @@ export default function GeneralJournalFormView({
             execute: () => deleteBackendResource('general-journals', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(values.__backendRecordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });

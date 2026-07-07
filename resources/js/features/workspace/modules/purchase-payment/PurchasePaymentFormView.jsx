@@ -44,7 +44,7 @@ export default function PurchasePaymentFormView({
     buildRecord,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [sourceRecord,, isLoading] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: 'purchase-payments',
         activeRecordId,
         buildRecord,
@@ -168,7 +168,7 @@ export default function PurchasePaymentFormView({
             execute: () => deleteBackendResource('purchase-payments', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(values.__backendRecordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });

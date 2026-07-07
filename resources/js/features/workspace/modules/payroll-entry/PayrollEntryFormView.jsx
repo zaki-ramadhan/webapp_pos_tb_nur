@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
  
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import PayrollEntryEmployeeModal from './PayrollEntryEmployeeModal';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
@@ -261,11 +262,7 @@ export default function PayrollEntryFormView({
                         })
                     );
                 }
-                if (onCloseDetail) {
-                    onCloseDetail(activeLevel2Tab?.id);
-                } else if (onOpenContent) {
-                    onOpenContent(null);
-                }
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
             },
         });
     }, [values.__backendRecordId, handleDelete, onRefresh, onCloseDetail, activeLevel2Tab, onOpenContent]);
@@ -436,8 +433,6 @@ export default function PayrollEntryFormView({
         };
     }, [config, employeeRows, totalGross, totalPaid]);
 
-    const [warningModalOpen, setWarningModalOpen] = useState(false);
-
     const addEmployeeToRows = useCallback((emp) => {
         setEmployeeRows((prev) => {
             const existingIds = new Set(prev.map((r) => String(r.employeeId)));
@@ -489,7 +484,12 @@ export default function PayrollEntryFormView({
             onSelectEmployee: (emp) => {
                 if (!emp) return;
                 if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
-                    setWarningModalOpen(true);
+                    showSystemErrorModal({
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                        message: 'Akun Hutang Beban (Utang Gaji) harus diisi.',
+                        confirmLabel: 'OK',
+                    });
                     return;
                 }
                 const existingIds = new Set(employeeRows.map((r) => String(r.employeeId)));
@@ -591,7 +591,12 @@ export default function PayrollEntryFormView({
                         setValues={setValues}
                         onTake={() => {
                             if (!values.liabilityAccounts || values.liabilityAccounts.length === 0) {
-                                setWarningModalOpen(true);
+                                showSystemErrorModal({
+                                    title: 'Terjadi Permasalahan pada Pemrosesan',
+                                    description: 'Silakan perbaiki permasalahan berikut ini:',
+                                    message: 'Akun Hutang Beban (Utang Gaji) harus diisi.',
+                                    confirmLabel: 'OK',
+                                });
                                 return;
                             }
                             setCopyModalOpen(true);
@@ -615,15 +620,6 @@ export default function PayrollEntryFormView({
                 onConfirm={onDelete}
                 onCancel={() => setDeleteConfirmationOpen(false)}
                 confirmLoading={saving}
-            />
-            <ConfirmationModal
-                open={warningModalOpen}
-                onClose={() => setWarningModalOpen(false)}
-                title="Peringatan"
-                message="Akun Hutang Beban (Utang Gaji) di tab Info Lainnya wajib diisi terlebih dahulu sebelum menambahkan rincian karyawan."
-                confirmLabel="OK"
-                confirmVariant="primary"
-                onConfirm={() => setWarningModalOpen(false)}
             />
             <PayrollEntryEmployeeModal
                 open={employeeModalOpen}

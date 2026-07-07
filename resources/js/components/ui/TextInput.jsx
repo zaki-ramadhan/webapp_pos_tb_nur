@@ -181,8 +181,8 @@ export default function TextInput({
     const isNonInteractive = disabled || (readOnly && !interactiveReadOnly);
     const toneClassName = resolvedError
         ? isNonInteractive
-            ? 'border-red-950'
-            : 'border-red-950 focus-within:border-red-950 focus-within:shadow-input-error-focus'
+            ? 'border-danger'
+            : 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
         : isNonInteractive
             ? 'border-slate-400'
             : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
@@ -530,7 +530,7 @@ export default function TextInput({
 
                 {showTrailing ? (
                     <span
-                        className={`flex h-full items-center ${hasTrailingPx ? '' : 'px-3'} transition-colors duration-150 ${isNonInteractive ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
+                        className={`flex h-full items-center ${hasTrailingPx ? '' : 'pl-1 pr-2'} transition-colors duration-150 ${isNonInteractive ? 'text-slate-300' : 'text-slate-400 group-focus-within:text-[var(--color-input-focus)]'} ${trailingClassName}`.trim()}
                     >
                         {trailing ?? (
                             <button

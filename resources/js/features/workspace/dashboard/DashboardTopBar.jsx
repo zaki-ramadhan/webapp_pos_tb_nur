@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -35,6 +35,47 @@ export default function DashboardTopBar({
     const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
     const userMenuButtonRef = useRef(null);
 
+    const [headerBg, setHeaderBg] = useState(() => {
+        if (typeof window === 'undefined') return '/assets/images/panel-header-background_2.svg';
+        try {
+            return localStorage.getItem('header_bg_cache') || '/assets/images/panel-header-background_2.svg';
+        } catch {
+            return '/assets/images/panel-header-background_2.svg';
+        }
+    });
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        try {
+            const cached = localStorage.getItem('header_bg_cache');
+            if (cached) {
+                setHeaderBg(cached);
+                return;
+            }
+        } catch {}
+
+        let active = true;
+        fetch('/assets/images/panel-header-background_2.svg')
+            .then((res) => {
+                if (!res.ok) throw new Error();
+                return res.text();
+            })
+            .then((svgText) => {
+                if (!active) return;
+                try {
+                    const base64 = btoa(unescape(encodeURIComponent(svgText)));
+                    const dataUrl = `data:image/svg+xml;base64,${base64}`;
+                    localStorage.setItem('header_bg_cache', dataUrl);
+                    setHeaderBg(dataUrl);
+                } catch {}
+            })
+            .catch(() => {});
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
     function handleLogout() {
         setIsUserMenuOpen(false);
         setIsLogoutConfirmOpen(true);
@@ -54,14 +95,15 @@ export default function DashboardTopBar({
     }
 
     return (
-        <header className="relative z-20 border-b border-brand-primary bg-header-gradient px-3 py-1 text-white shadow-topbar sm:px-4 sm:py-1.5 overflow-hidden">
+        <header className="relative z-20 bg-[#f2f2f2] h-[46px] text-white shadow-topbar overflow-hidden">
             <div 
-                className="absolute inset-0 z-0 bg-cover bg-no-repeat bg-center pointer-events-none"
-                style={{ backgroundImage: "url('/assets/images/panel-header-background_2.svg')" }}
+                className="absolute inset-0 z-0 bg-left-top bg-no-repeat pointer-events-none"
+                style={{ backgroundImage: `url(${headerBg})`, backgroundSize: '1920px 46px' }}
             />
-            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+            <div className="relative z-10 flex h-full items-center justify-between pl-3 sm:pl-4">
                 <div className="flex min-w-0 items-center">
                     <BrandMark
+                        variant="decorative"
                         className="shrink-0 scale-[0.85] origin-left sm:scale-[0.9]"
                         titleClassName="!text-sm sm:!text-[15px] md:!text-base !font-semibold"
                         subtitleClassName="!text-[11px] sm:!text-[11.5px] md:!text-xs"
@@ -69,7 +111,7 @@ export default function DashboardTopBar({
 
                 </div>
 
-                <div className="ml-auto flex items-center gap-1 sm:gap-1.5 lg:gap-1.5">
+                <div className="ml-auto flex h-full items-center gap-1 bg-gradient-to-l from-[#162b48] via-[#1c3e6b] to-transparent pl-12 pr-3 sm:gap-1.5 lg:gap-1.5 sm:pr-4">
                     <div className="lg:hidden">
                         <TopBarIcon label="Menu workspace" onClick={onToggleWorkspaceMenu}>
                             <ViewModeIcon
@@ -92,7 +134,7 @@ export default function DashboardTopBar({
                         >
                             <div className="hidden min-w-0 text-right leading-tight lg:block">
                                 <p className="truncate text-sm font-normal text-white md:text-sm">{user.name}</p>
-                                <p className="truncate text-xs font-light text-white/70 md:text-xs">
+                                <p className="truncate text-xs font-light text-white md:text-xs">
                                     {user.role || 'Pengguna'}
                                 </p>
                             </div>
@@ -104,8 +146,8 @@ export default function DashboardTopBar({
                                 showStatusIndicator={false}
                             />
 
-                            <span className="text-white/80">
-                                <ChevronDownIcon className="h-4 w-4" />
+                            <span className="text-white">
+                                <ChevronDownIcon className="h-4 w-4" strokeWidth={2.8} />
                             </span>
                         </button>
 

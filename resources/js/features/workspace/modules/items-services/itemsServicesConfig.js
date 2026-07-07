@@ -4,7 +4,6 @@ import {
     WORKSPACE_INACTIVE_HINT,
 } from '@/features/workspace/shared/workspaceAvailability';
 
-const detailQuickActions = ['Harga Jual', 'Mutasi', 'Gudang'];
 
 const itemTabs = [
     { id: 'general', label: 'Umum' },
@@ -108,7 +107,6 @@ const defaultConfig = {
             tone: 'warning',
         },
     ],
-    detailQuickActions,
     tabs: itemTabs,
     categoryOptions: ['Umum', 'Accessories', 'Handphone', 'Jasa'],
     kindOptions: ['Persediaan', 'Non Persediaan', 'Jasa', 'Grup'],
@@ -289,7 +287,6 @@ export function buildItemsServicesConfig(pageConfig = {}) {
         ...defaultConfig,
         ...pageConfig,
         topActions: pageConfig.topActions ?? defaultConfig.topActions,
-        detailQuickActions: pageConfig.detailQuickActions ?? defaultConfig.detailQuickActions,
         tabs: pageConfig.tabs ?? defaultConfig.tabs,
         labels: {
             ...defaultConfig.labels,

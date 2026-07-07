@@ -12,11 +12,14 @@ import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/us
 import {
     buildGeneratedDocumentNumber,
     buildOperationDocumentPayload,
+    parseNumericInput,
 } from '@/features/workspace/backend/operationDocumentBackend';
 import SalesDocumentItemModal from '@/features/workspace/modules/sales-document/SalesDocumentItemModal';
+import SalesDocumentItemEditModal from '@/features/workspace/modules/sales-document/SalesDocumentItemEditModal';
+import SalesDocumentCostEditModal from '@/features/workspace/modules/sales-document/SalesDocumentCostEditModal';
+import SalesDocumentAdvanceEditModal from '@/features/workspace/modules/sales-document/SalesDocumentAdvanceEditModal';
 import {
     buildSalesDocumentFormState,
-    DocumentStamp,
     SalesDocumentAdditionalCostSection,
     SalesDocumentAdditionalInfoSection,
     SalesDocumentAdvancePaymentsSection,
@@ -41,14 +44,13 @@ import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils
 import SalesDocumentFormHeader from './SalesDocumentFormHeader';
 import {
     applyComputedTotals,
-    applyPromptItemUpdate,
     buildDocumentComparableSnapshot,
     buildLookupLabel,
     resolveSalesDocumentDirty,
     validateSalesDocumentValues,
     validateSalesDocumentFields,
-    formatCurrencyValue,
     promptCostEditor,
+    formatCurrencyValue,
 } from './salesDocumentFormShared';
 
 const sectionComponentMap = {
@@ -73,9 +75,17 @@ export default function SalesDocumentFormView({
 }) {
     const [itemModalOpen, setItemModalOpen] = useState(false);
     const [importModalOpen, setImportModalOpen] = useState(false);
-    const [advanceDeleteTarget, setAdvanceDeleteTarget] = useState(null);
+    const [editAdvanceOpen, setEditAdvanceOpen] = useState(false);
+    const [editingAdvanceItem, setEditingAdvanceItem] = useState(null);
+    const [editItemOpen, setEditItemOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
+    const [editingProduct, setEditingProduct] = useState(null);
+    const [stockWarningOpen, setStockWarningOpen] = useState(false);
+    const [stockWarningData, setStockWarningData] = useState(null);
+    const [editCostOpen, setEditCostOpen] = useState(false);
+    const [editingCostItem, setEditingCostItem] = useState(null);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [sourceRecord,, isLoading] = useTransactionDetailLoader({
+    const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: backendConfig?.resource ?? 'sales-documents',
         activeRecordId,
         buildRecord,
@@ -145,15 +155,35 @@ export default function SalesDocumentFormView({
         });
     }
 
-    async function handleCreateItem() {
-        await applyPromptItemUpdate(null, updateItems, setStatus);
+    function handleCreateItem() {
+        setEditingProduct(null);
+        setEditingItem(null);
+        setEditItemOpen(true);
     }
 
-    async function handleEditItem(item) {
-        await applyPromptItemUpdate(item, updateItems, setStatus);
+    function handleEditItem(item) {
+        setEditingProduct(null);
+        setEditingItem(item);
+        setEditItemOpen(true);
     }
 
-    async function onSave() {
+    function handleItemEditSubmit(nextItem) {
+        updateItems((items) =>
+            editingItem
+                ? items.map((entry) => (entry.id === editingItem.id ? nextItem : entry))
+                : [...items, nextItem]
+        );
+        showSuccessToast({ message: editingItem ? 'Item diperbarui.' : 'Item ditambahkan ke dokumen.' });
+        setEditItemOpen(false);
+    }
+
+    function handleItemDelete(item) {
+        updateItems((items) => items.filter((entry) => entry.id !== item.id));
+        showSuccessToast({ message: 'Item dihapus.' });
+        setEditItemOpen(false);
+    }
+
+    async function performSave(shouldIgnoreStock = false) {
         if (!backendConfig) {
             const errorMessage = 'Konfigurasi backend dokumen belum tersedia.';
             setStatus({ tone: 'error', message: errorMessage });
@@ -161,7 +191,7 @@ export default function SalesDocumentFormView({
             return;
         }
 
-        await handleSave({
+        const result = await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui dokumen.' : 'Sedang menyimpan dokumen.',
             successMessage: isDetail ? 'Dokumen berhasil diperbarui.' : 'Dokumen berhasil dibuat.',
             execute: async () => {
@@ -173,6 +203,7 @@ export default function SalesDocumentFormView({
                     {
                         ...values,
                         documentNumber: resolvedDocumentNumber,
+                        ignoreStockWarning: shouldIgnoreStock,
                     },
                     pageId,
                     backendConfig,
@@ -217,6 +248,20 @@ export default function SalesDocumentFormView({
                 }
             },
         });
+
+        if (result && result.isStockWarning) {
+            setStockWarningData(result.warningData);
+            setStockWarningOpen(true);
+        }
+    }
+
+    async function onSave() {
+        await performSave(false);
+    }
+
+    async function handleContinueSave() {
+        setStockWarningOpen(false);
+        await performSave(true);
     }
 
     function onRequestDelete() {
@@ -237,7 +282,7 @@ export default function SalesDocumentFormView({
             execute: () => deleteBackendResource(backendConfig.resource, values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(values.__backendRecordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });
@@ -272,23 +317,9 @@ export default function SalesDocumentFormView({
                 showSuccessToast({ message: `${importedItems.length} item berhasil diimpor.` });
             },
             onSelectItem: (record) => {
-                const unitPriceAmount = Number(record.default_sale_price ?? 0);
-                const totalAmount = 1 * unitPriceAmount;
-                const newItem = {
-                    id: `product-item-${Date.now()}-${Math.random()}`,
-                    __lineId: null,
-                    __productId: record.id,
-                    name: record.name,
-                    code: record.code ?? '',
-                    quantity: '1',
-                    unit: record.sales_unit?.name ?? record.base_unit?.name ?? 'PCS',
-                    price: formatCurrencyValue(unitPriceAmount),
-                    discount: '0',
-                    discountValue: '0',
-                    total: formatCurrencyValue(totalAmount),
-                };
-                updateItems((existingItems) => [...existingItems, newItem]);
-                showSuccessToast({ message: `Barang [${record.code ?? ''}] ${record.name} ditambahkan.` });
+                setEditingProduct(record);
+                setEditingItem(null);
+                setEditItemOpen(true);
             },
             onSelectAdvancePayment: (record) => {
                 const newAdvance = {
@@ -296,17 +327,17 @@ export default function SalesDocumentFormView({
                     __lineId: null,
                     __depositId: record.id,
                     number: record.document_number || record.number || '',
-                    amount: formatCurrencyValue(Number(record.deposit_amount || record.total_amount || record.amount || 0)),
+                    amount: formatCurrencyValue(Number(record.outstanding_amount ?? record.deposit_amount ?? record.total_amount ?? record.amount ?? 0)),
                     notes: record.notes ?? '',
+                    tax_id: record.tax_id ?? null,
+                    isNew: true,
                 };
-                setValues((current) => ({
-                    ...current,
-                    advancePayments: [...(current.advancePayments ?? []), newAdvance],
-                }));
-                showSuccessToast({ message: `Uang muka [${record.document_number || record.number || ''}] ditambahkan.` });
+                setEditingAdvanceItem(newAdvance);
+                setEditAdvanceOpen(true);
             },
             onEditAdvancePayment: (advanceItem) => {
-                setAdvanceDeleteTarget(advanceItem);
+                setEditingAdvanceItem(advanceItem);
+                setEditAdvanceOpen(true);
             },
             onSelectCostAccount: (record) => {
                 const newCost = {
@@ -317,33 +348,12 @@ export default function SalesDocumentFormView({
                     code: record.code ?? '',
                     amount: '0',
                 };
-                setValues((current) => {
-                    const updatedValues = {
-                        ...current,
-                        additionalCosts: [...(current.additionalCosts ?? []), newCost],
-                    };
-                    return applyComputedTotals(updatedValues, updatedValues.items);
-                });
-                showSuccessToast({ message: `Biaya [${record.code ?? ''}] ${record.name} ditambahkan.` });
+                setEditingCostItem(newCost);
+                setEditCostOpen(true);
             },
-            onEditCostItem: async (costItem) => {
-                try {
-                    const nextCost = await promptCostEditor(costItem);
-                    if (!nextCost) return;
-
-                    setValues((current) => {
-                        const updatedValues = {
-                            ...current,
-                            additionalCosts: current.additionalCosts.map((entry) =>
-                                entry.id === costItem.id ? nextCost : entry
-                            ),
-                        };
-                        return applyComputedTotals(updatedValues, updatedValues.items);
-                    });
-                    showSuccessToast({ message: 'Biaya diperbarui.' });
-                } catch (error) {
-                    showErrorToast({ message: error.message });
-                }
+            onEditCostItem: (costItem) => {
+                setEditingCostItem(costItem);
+                setEditCostOpen(true);
             },
         }),
         [updateItems, setStatus],
@@ -398,21 +408,6 @@ export default function SalesDocumentFormView({
             >
                 <CrudStatusMessage status={status} className="mb-4" />
                 <div className="relative flex-1 flex flex-col min-h-0">
-                    {isDetail && values.approvalStamp ? <DocumentStamp label={values.approvalStamp} tone="blue" className="right-[12%] top-[-6px]" /> : null}
-                    {isDetail && values.processStamp ? (
-                        <DocumentStamp
-                            label={values.processStamp}
-                            tone={values.processStampTone ?? 'green'}
-                            className={
-                                activeSectionId === 'additional-info'
-                                    ? 'left-[49%] top-[34%]'
-                                    : activeSectionId === 'advance-payments'
-                                      ? 'left-[49%] top-[36%]'
-                                      : 'left-[50%] top-[40%]'
-                            }
-                        />
-                    ) : null}
-
                     <ActiveSectionComponent
                         {...buildSectionProps(activeSectionId, config, values, setValues, isDetail, handlers)}
                     />
@@ -420,6 +415,54 @@ export default function SalesDocumentFormView({
             </TransactionFormLayout>
 
             <SalesDocumentItemModal open={itemModalOpen} onClose={() => setItemModalOpen(false)} modal={values.itemModal} />
+            <SalesDocumentItemEditModal
+                open={editItemOpen}
+                onClose={() => setEditItemOpen(false)}
+                product={editingProduct}
+                item={editingItem}
+                onSubmit={handleItemEditSubmit}
+                onDelete={handleItemDelete}
+            />
+            <SalesDocumentCostEditModal
+                open={editCostOpen}
+                onClose={() => {
+                    setEditCostOpen(false);
+                    setEditingCostItem(null);
+                }}
+                item={editingCostItem}
+                onSubmit={(nextCost) => {
+                    const exists = (values.additionalCosts ?? []).some((entry) => entry.id === editingCostItem?.id);
+                    setValues((current) => {
+                        const nextCosts = exists
+                            ? (current.additionalCosts ?? []).map((entry) =>
+                                  entry.id === editingCostItem.id ? nextCost : entry
+                              )
+                            : [...(current.additionalCosts ?? []), nextCost];
+                        const updatedValues = {
+                            ...current,
+                            additionalCosts: nextCosts,
+                        };
+                        return applyComputedTotals(updatedValues, updatedValues.items);
+                    });
+                    showSuccessToast({
+                        message: exists
+                            ? 'Biaya diperbarui.'
+                            : `Biaya [${nextCost.code ?? ''}] ${nextCost.name} ditambahkan.`
+                    });
+                }}
+                onDelete={(target) => {
+                    setValues((current) => {
+                        const updatedValues = {
+                            ...current,
+                            additionalCosts: (current.additionalCosts ?? []).filter((entry) =>
+                                entry.id !== target.id
+                            ),
+                        };
+                        return applyComputedTotals(updatedValues, updatedValues.items);
+                    });
+                    showSuccessToast({ message: 'Biaya dihapus.' });
+                }}
+            />
             <ConfirmationModal
                 open={deleteConfirmationOpen}
                 onClose={() => setDeleteConfirmationOpen(false)}
@@ -437,21 +480,40 @@ export default function SalesDocumentFormView({
                 confirmVariant="primary"
                 confirmLoading={saving}
             />
-            <ConfirmationModal
-                open={Boolean(advanceDeleteTarget)}
-                onClose={() => setAdvanceDeleteTarget(null)}
-                onConfirm={() => {
+            <SalesDocumentAdvanceEditModal
+                open={editAdvanceOpen}
+                onClose={() => setEditAdvanceOpen(false)}
+                item={editingAdvanceItem}
+                maxAllowed={Math.max(0, parseNumericInput(values.total) - (values.advancePayments ?? [])
+                    .filter((entry) => entry.id !== editingAdvanceItem?.id && entry.__depositId !== editingAdvanceItem?.__depositId)
+                    .reduce((sum, entry) => sum + parseNumericInput(entry.amount), 0))}
+                onSubmit={(nextAdvance) => {
+                    const exists = (values.advancePayments ?? []).some((entry) => entry.id === nextAdvance.id || entry.__depositId === nextAdvance.__depositId);
+                    setValues((current) => {
+                        const list = current.advancePayments ?? [];
+                        const nextList = exists
+                            ? list.map((entry) => (entry.id === nextAdvance.id || entry.__depositId === nextAdvance.__depositId) ? nextAdvance : entry)
+                            : [...list, nextAdvance];
+                        return {
+                            ...current,
+                            advancePayments: nextList,
+                        };
+                    });
+                    showSuccessToast({
+                        message: exists
+                            ? `Uang muka [${nextAdvance.number}] diperbarui.`
+                            : `Uang muka [${nextAdvance.number}] ditambahkan.`
+                    });
+                }}
+                onDelete={(target) => {
                     setValues((current) => ({
                         ...current,
-                        advancePayments: (current.advancePayments ?? []).filter((item) => item.id !== advanceDeleteTarget.id),
+                        advancePayments: (current.advancePayments ?? []).filter((entry) =>
+                            entry.id !== target.id && entry.__depositId !== target.__depositId
+                        ),
                     }));
-                    setAdvanceDeleteTarget(null);
+                    showSuccessToast({ message: `Rujukan uang muka [${target.number}] dihapus.` });
                 }}
-                title="Hapus Uang Muka"
-                message={`Apakah Anda yakin ingin menghapus rujukan uang muka [${advanceDeleteTarget?.number}] dari dokumen ini?`}
-                confirmLabel="Ya"
-                cancelLabel="Batal"
-                confirmVariant="primary"
             />
             <ImportItemsModal
                 open={importModalOpen}
@@ -459,6 +521,18 @@ export default function SalesDocumentFormView({
                 onImport={handlers.onImportItems}
                 mode={String(pageId || '').toLowerCase().includes('purchase') || String(pageId || '').toLowerCase().includes('receipt') ? 'purchasing' : 'sales'}
             />
+            {stockWarningOpen && stockWarningData && (
+                <ConfirmationModal
+                    open={stockWarningOpen}
+                    onClose={() => setStockWarningOpen(false)}
+                    title="Faktur Penjualan"
+                    message={`Stok barang "${stockWarningData.product_name}" di gudang "${stockWarningData.warehouse_name}" tidak mencukupi.\n\nStok untuk dijual dari barang "${stockWarningData.product_name}" tidak mencukupi.`}
+                    confirmLabel="Lanjutkan"
+                    cancelLabel="Batal"
+                    confirmVariant="success"
+                    onConfirm={handleContinueSave}
+                />
+            )}
         </>
     );
 }

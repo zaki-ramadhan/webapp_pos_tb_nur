@@ -96,16 +96,6 @@ export function SectionHeading({ title }) {
     );
 }
 
-export function DetailActionButton({ label }) {
-    return (
-        <button
-            type="button"
-            className="inline-flex h-[34px] items-center justify-center rounded-[4px] border border-tab-active-border-x bg-tab-primary-inactive-hover-bg px-3.5 text-base text-tab-inactive-text"
-        >
-            {label}
-        </button>
-    );
-}
 
 export function ClearableTextInput({
     value,

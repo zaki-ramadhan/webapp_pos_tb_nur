@@ -80,7 +80,7 @@ export function AccountLookupField({
                     placeholder={placeholder}
                     searchLabel={searchLabel}
                     disabled={disabled}
-                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-red-150' : 'border-slate-400'} ${className}`.trim()}
+                    className={`${heightClassName} rounded-[4px] ${resolvedError ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus' : 'border-slate-400'} ${className}`.trim()}
                     inputClassName="text-xs sm:text-sm text-brand-dark"
                     trailingClassName="gap-1 pr-2"
                     loading={controller.loading && controller.open}
@@ -160,7 +160,7 @@ export function AccountLookupTextInput({
                 placeholder={placeholder}
                 searchLabel={searchLabel}
                 disabled={disabled}
-                className={`${resolvedError ? 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus' : ''} ${className}`.trim()}
+                className={`${resolvedError ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus' : ''} ${className}`.trim()}
                 inputClassName={inputClassName}
                 trailingClassName={trailingClassName}
                 loading={controller.loading && controller.open}

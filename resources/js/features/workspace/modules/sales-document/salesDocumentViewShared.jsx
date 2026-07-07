@@ -17,6 +17,7 @@ import {
 import { showWarningToast, showSuccessToast } from '@/components/feedback/toast';
 import { applyComputedTotals } from './salesDocumentFormShared';
 import SalesDocumentCopyModal from './SalesDocumentCopyModal';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail }) {
     const secondaryActionLabel = values.secondaryHeaderActionLabel ?? config.secondaryActionLabel;
@@ -35,9 +36,23 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
     const handleTakeClick = (optionName) => {
         setTakeOpen(false);
         if (!values.__partnerId) {
+            const partnerLabel = config.labels.customer || 'Pelanggan';
+            const errorKey = config.labels.customer ? 'customer' : 'supplier';
+            window.dispatchEvent(new CustomEvent('form-validation-error', {
+                detail: {
+                    [errorKey]: `${partnerLabel} harus diisi.`,
+                    __partnerId: `${partnerLabel} harus diisi.`
+                }
+            }));
             showWarningToast({
                 title: 'Perhatian',
-                message: `${config.labels.customer || 'Pelanggan'} harus diisi terlebih dahulu.`,
+                message: `${partnerLabel} harus diisi terlebih dahulu.`,
+            });
+            showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: `${partnerLabel} harus diisi.`,
+                confirmLabel: 'OK',
             });
             return;
         }
@@ -47,9 +62,23 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
     const handleProcessClick = (actionName) => {
         setProcessOpen(false);
         if (!values.__partnerId) {
+            const partnerLabel = config.labels.customer || 'Pelanggan';
+            const errorKey = config.labels.customer ? 'customer' : 'supplier';
+            window.dispatchEvent(new CustomEvent('form-validation-error', {
+                detail: {
+                    [errorKey]: `${partnerLabel} harus diisi.`,
+                    __partnerId: `${partnerLabel} harus diisi.`
+                }
+            }));
             showWarningToast({
                 title: 'Perhatian',
-                message: `${config.labels.customer || 'Pelanggan'} harus diisi terlebih dahulu.`,
+                message: `${partnerLabel} harus diisi terlebih dahulu.`,
+            });
+            showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: `${partnerLabel} harus diisi.`,
+                confirmLabel: 'OK',
             });
             return;
         }

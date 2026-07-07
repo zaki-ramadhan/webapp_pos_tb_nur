@@ -89,7 +89,11 @@ const UserAvatar = memo(function UserAvatar({
                     onError={() => setHasImageError(true)}
                 />
             ) : (
-                resolvedInitials
+                <img
+                    src="/assets/images/default-user-profile.svg"
+                    alt={name ? `Foto profil ${name}` : 'Foto profil pengguna'}
+                    className="h-full w-full object-cover select-none pointer-events-none"
+                />
             )}
             {showStatusIndicator ? (
                 <span className={`absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full ${statusClassName}`} />

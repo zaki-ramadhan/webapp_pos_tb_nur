@@ -259,7 +259,7 @@ export const defaultSalesInvoiceConfig = {
     processedByEmptyLabel: 'Belum ada data.',
     showSummarySecondarySection: false,
     showPreInvoiceOption: false,
-    showContactField: true,
+    showContactField: false,
     showAddressPinButton: true,
     showFobInShippingInfo: false,
     taxInfoMode: 'invoice',

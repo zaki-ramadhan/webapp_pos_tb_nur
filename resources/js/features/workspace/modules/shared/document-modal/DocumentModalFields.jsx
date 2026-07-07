@@ -18,13 +18,14 @@ export function DocumentModalCurrencyField({
             readOnly={readOnly}
             prefix={prefix}
             maxLength={11}
-            className={`h-[36px] rounded-[4px] border-ui-border ${className}`.trim()}
-            prefixClassName="min-w-[48px] justify-center bg-input-prefix-bg-compact px-0 text-text-inactive"
+            className={`h-[38px] rounded-[4px] border-ui-border ${className}`.trim()}
+            prefixClassName="min-w-0 px-2 justify-center bg-input-prefix-bg-compact text-xs text-text-inactive"
             inputClassName={`text-right text-xs sm:text-sm text-text-darkest ${inputClassName}`.trim()}
             {...props}
         />
     );
 }
+
 
 export function DocumentModalCurrencyReadonlyField({
     value,

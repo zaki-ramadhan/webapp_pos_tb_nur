@@ -208,7 +208,7 @@ export function SearchableTableSection({
                                                             <TableActionIcon className="h-4 w-4" />
                                                         </span>
                                                     ) : (
-                                                        formatTableTextValue(row[column.id])
+                                                        formatTableTextValue(row[column.id], column)
                                                     )}
                                                 </DataTableCell>
                                             ))}

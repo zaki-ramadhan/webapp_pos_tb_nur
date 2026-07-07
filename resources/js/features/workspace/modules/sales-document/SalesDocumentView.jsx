@@ -73,8 +73,17 @@ export default function SalesDocumentView({
 
     const resolvedBuildRecord = useMemo(
         () => (row = {}) => {
-            if (row.__backendRecord && backendConfig) {
-                return buildOperationDocumentRecord(row.__backendRecord, resolvedConfig, pageId);
+            if (backendConfig) {
+                const backendRecord = row.__backendRecord ?? (row.entry_date || row.document_number ? row : null);
+                if (backendRecord) {
+                    const parsed = buildOperationDocumentRecord(backendRecord, resolvedConfig, pageId);
+                    const baseRecord = buildRecord(row);
+                    return {
+                        ...baseRecord,
+                        ...parsed,
+                        dockActions: baseRecord.dockActions ?? parsed.dockActions,
+                    };
+                }
             }
 
             return buildRecord(row);
@@ -97,22 +106,31 @@ export default function SalesDocumentView({
             <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                 <SalesDocumentTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
             </div>
-            {lastActiveFormTab && (
-                <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
-                    <SalesDocumentFormView
-                        key={lastActiveFormTab.id}
+            {level2Tabs.map((tab) => {
+                if (tab.kind !== 'content') return null;
+
+                const isCurrentForm = mode === 'form' && activeLevel2Tab?.id === tab.id;
+
+                return (
+                    <div
+                        key={tab.id}
+                        className={isCurrentForm ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}
+                    >
+                        <SalesDocumentFormView
+                            key={tab.id}
                         pageId={pageId}
                         config={resolvedConfig}
                         buildRecord={resolvedBuildRecord}
-                        activeLevel2Tab={lastActiveFormTab}
+                        activeLevel2Tab={tab}
                         backendConfig={backendConfig}
                         onOpenContent={onOpenContent}
                         onOpenDetail={onOpenDetail}
                         onCloseDetail={onCloseDetail}
                         onRefresh={reload}
-                    />
-                </div>
-            )}
+                        />
+                    </div>
+                );
+            })}
         </div>
     );
 }

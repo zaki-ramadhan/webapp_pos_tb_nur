@@ -48,16 +48,17 @@ export default function ChipLookupField({
     }
 
     const toneClassName = error
-        ? 'border-red-150 focus-within:border-error-border focus-within:shadow-input-error-focus'
+        ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus'
         : 'border-slate-400 focus-within:border-[var(--color-input-focus)] focus-within:shadow-[0_0_0_3px_var(--color-input-focus-ring)]';
 
     return (
         <div
             ref={containerRef}
             onMouseDown={focusLookup}
-            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100' : ''} ${heightClassName} ${className}`.trim()}
+            aria-invalid={error}
+            className={`group flex w-full items-center overflow-hidden rounded-md border ${toneClassName} bg-white transition-[border-color,box-shadow] duration-150 ${disabled ? 'bg-slate-100 cursor-default' : 'cursor-text'} ${heightClassName} ${className}`.trim()}
         >
-            <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 pl-1.5 pr-2 py-1.5 ${contentClassName}`.trim()}>
+            <div className={`flex min-w-0 flex-1 flex-wrap items-center gap-2 pl-1.5 pr-2 py-1.5 ${disabled ? 'cursor-default' : 'cursor-text'} ${contentClassName}`.trim()}>
                 {items.length ? (
                     items.map((item) => (
                         <span

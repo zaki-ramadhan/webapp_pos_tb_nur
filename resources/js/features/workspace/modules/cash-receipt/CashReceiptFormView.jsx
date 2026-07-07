@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import MoneyMovementLineItemModal from '@/features/workspace/shared/MoneyMovementLineItemModal';
 import {
@@ -35,6 +36,7 @@ import {
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
+import { useFormLineItems } from '@/features/workspace/shared/hooks/useFormLineItems';
 
 export default function CashReceiptFormView({
     pageId,
@@ -47,7 +49,6 @@ export default function CashReceiptFormView({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
-    const [kasBankWarningOpen, setKasBankWarningOpen] = useState(false);
     const buildRecord = useCallback((data, cfg) => {
         return buildCashReceiptRecord(data, cfg);
     }, []);
@@ -188,7 +189,7 @@ export default function CashReceiptFormView({
             execute: () => deleteBackendResource('cash-receipts', values.__backendRecordId),
             onSuccess: async () => {
                 await onRefresh?.();
-                onCloseDetail?.(values.__backendRecordId);
+                window.dispatchEvent(new CustomEvent('workspace:close-tab', { detail: { tabId: activeLevel2Tab?.id } }));
                 onOpenContent?.();
             },
         });
@@ -231,14 +232,30 @@ export default function CashReceiptFormView({
                 })),
             onSelectLineAccount: (record) => {
                 if (!values.__primaryAccountId || !values.bankAccounts?.length) {
-                    setKasBankWarningOpen(true);
+                    window.dispatchEvent(new CustomEvent('form-validation-error', {
+                        detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
+                    }));
+                    showSystemErrorModal({
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                        message: 'Akun Kas/Bank harus diisi.',
+                        confirmLabel: 'OK',
+                    });
                     return;
                 }
                 applyLineItemUpdate(record);
             },
             onEditLineItem: (item) => {
                 if (!values.__primaryAccountId || !values.bankAccounts?.length) {
-                    setKasBankWarningOpen(true);
+                    window.dispatchEvent(new CustomEvent('form-validation-error', {
+                        detail: { cashBank: 'Akun Kas/Bank harus diisi.' }
+                    }));
+                    showSystemErrorModal({
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                        message: 'Akun Kas/Bank harus diisi.',
+                        confirmLabel: 'OK',
+                    });
                     return;
                 }
                 applyLineItemUpdate(null, item);
@@ -289,16 +306,6 @@ export default function CashReceiptFormView({
                 cancelLabel="Batal"
                 confirmVariant="primary"
                 confirmLoading={saving}
-            />
-            <ConfirmationModal
-                open={kasBankWarningOpen}
-                onClose={() => setKasBankWarningOpen(false)}
-                onConfirm={() => setKasBankWarningOpen(false)}
-                title="Peringatan"
-                message="Akun Kas/Bank harus diisi terlebih dahulu."
-                confirmLabel="OK"
-                cancelLabel={null}
-                confirmVariant="primary"
             />
             <MoneyMovementLineItemModal
                 open={lineItemModalOpen}
