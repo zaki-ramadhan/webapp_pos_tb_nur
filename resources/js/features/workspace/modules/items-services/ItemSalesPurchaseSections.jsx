@@ -150,17 +150,6 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                     />
                 </FormRow>
 
-                <FormRow label="Minimum Beli">
-                    <SimpleTextField
-                        value={values.minimumBuy}
-                        onChange={(event) => onChange('minimumBuy', event.target.value)}
-                        className="max-w-[420px]"
-                        formatAsAmount
-                        allowDecimal={false}
-                        maxLength={13}
-                    />
-                </FormRow>
-
                 <FormRow label="Batas Minimum Stok">
                     <SimpleTextField
                         value={values.minimumStock}
@@ -169,56 +158,6 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                         formatAsAmount
                         allowDecimal={false}
                         maxLength={11}
-                    />
-                </FormRow>
-            </div>
-
-            <div className="space-y-2">
-                <SectionHeading title={config.labels.taxInfo} />
-
-                <FormRow label="Ref Kode Pajak" info>
-                    <BackendLookupField
-                        resource="taxes"
-                        values={(values.taxReference || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
-                        placeholder="Cari/Pilih..."
-                        searchLabel="Cari referensi pajak"
-                        onSelect={(option) => {
-                            onChange('taxReference', [option.name]);
-                        }}
-                        onRemove={() => {
-                            onChange('taxReference', []);
-                        }}
-                        className="max-w-[460px]"
-                    />
-                </FormRow>
-
-                <FormRow label="PPN">
-                    <BackendLookupField
-                        resource="taxes"
-                        values={(values.ppn || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
-                        placeholder="Cari/Pilih..."
-                        searchLabel="Cari PPN"
-                        onSelect={(option) => {
-                            onChange('ppn', [option.name]);
-                        }}
-                        onRemove={() => {
-                            onChange('ppn', []);
-                        }}
-                    />
-                </FormRow>
-
-                <FormRow label="PPh">
-                    <BackendLookupField
-                        resource="taxes"
-                        values={(values.pph || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
-                        placeholder="Cari/Pilih..."
-                        searchLabel="Cari PPh"
-                        onSelect={(option) => {
-                            onChange('pph', [option.name]);
-                        }}
-                        onRemove={() => {
-                            onChange('pph', []);
-                        }}
                     />
                 </FormRow>
             </div>

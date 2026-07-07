@@ -32,9 +32,6 @@ export function buildItemsServicesFormValues(config, detailRow = null) {
         brand: cloneList(source.brand),
         mainSupplier: cloneList(source.mainSupplier),
         purchaseUnit: cloneList(source.purchaseUnit),
-        taxReference: cloneList(source.taxReference),
-        ppn: cloneList(source.ppn),
-        pph: cloneList(source.pph),
         accounts: cloneAccounts(source.accounts),
         unitConversions: (source.unitConversions ?? []).map((item, index) => ({
             id: item.id ?? `conversion-${index + 1}`,
