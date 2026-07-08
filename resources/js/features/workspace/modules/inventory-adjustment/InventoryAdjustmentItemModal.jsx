@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { showErrorToast } from '@/components/feedback/toast';
 
 import DocumentModalLayout, {
     DocumentModalFooter,
@@ -44,7 +45,7 @@ function ModalFieldRow({ label, required = false, children }) {
     );
 }
 
-function DetailTab({ values, setValues, modal }) {
+function DetailTab({ values, setValues, modal, errors = {} }) {
     return (
         <div className="space-y-3">
             <ModalFieldRow label="Kode #">
@@ -56,6 +57,7 @@ function DetailTab({ values, setValues, modal }) {
                     value={values.name}
                     readOnly
                     placeholder="Klik cari untuk pilih produk..."
+                    error={errors.name}
                     trailing={
                         <button
                             type="button"
@@ -117,6 +119,7 @@ function DetailTab({ values, setValues, modal }) {
                             }))
                         }
                         trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                        error={errors.quantity}
                         className="h-[36px] rounded-[4px] border-ui-border"
                         inputClassName="text-right text-xs text-brand-dark"
                         trailingClassName="px-3"
@@ -177,6 +180,7 @@ function DetailTab({ values, setValues, modal }) {
                             warehouse: current.warehouse.filter((item) => item !== warehouseValue),
                         }))
                     }
+                    error={errors.warehouse}
                     heightClassName="h-[36px]"
                     className="max-w-[204px]"
                 />
@@ -229,17 +233,47 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
     const tabs = modal?.tabs ?? [];
     const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? 'details');
     const [values, setValues] = useState(() => buildInitialValues(item));
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         setActiveTabId(tabs[0]?.id ?? 'details');
         setValues(buildInitialValues(item));
+        setErrors({});
     }, [item, tabs]);
+
+    const handleValuesChange = useCallback((updater) => {
+        setValues(updater);
+        setErrors({});
+    }, []);
 
     if (!modal || !item) {
         return null;
     }
 
     const activeTabIdSafe = tabs.some((tab) => tab.id === activeTabId) ? activeTabId : tabs[0]?.id ?? 'details';
+
+    function handleSubmit() {
+        const newErrors = {};
+        if (!String(values.name ?? '').trim()) {
+            newErrors.name = 'Nama barang harus diisi.';
+        }
+        const qty = parseFloat(String(values.quantity).replace(/\./g, '').replace(/,/g, '.'));
+        if (!qty || qty <= 0) {
+            newErrors.quantity = 'Kuantitas harus lebih besar dari 0.';
+        }
+        if (!values.warehouse?.length) {
+            newErrors.warehouse = 'Gudang harus diisi.';
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            setActiveTabId(tabs[0]?.id ?? 'details');
+            showErrorToast({ message: Object.values(newErrors)[0] });
+            return;
+        }
+
+        onClose();
+    }
 
     return (
         <DocumentModalLayout
@@ -257,14 +291,14 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
                     deleteLabel={modal.deleteLabel}
                     submitLabel={modal.submitLabel}
                     onDelete={onClose}
-                    onSubmit={onClose}
+                    onSubmit={handleSubmit}
                 />
             }
         >
             {activeTabIdSafe === 'info' ? (
-                <InfoTab values={values} setValues={setValues} />
+                <InfoTab values={values} setValues={handleValuesChange} />
             ) : (
-                <DetailTab values={values} setValues={setValues} modal={modal} />
+                <DetailTab values={values} setValues={handleValuesChange} modal={modal} errors={errors} />
             )}
         </DocumentModalLayout>
     );

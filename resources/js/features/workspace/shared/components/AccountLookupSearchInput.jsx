@@ -91,7 +91,7 @@ export default function AccountLookupSearchInput({
                         autoComplete="off"
                         autoCorrect="off"
                         spellCheck={false}
-                        className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-0 text-sm outline-none placeholder:text-disabled-border-t cursor-text disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} indent-2 ${inputClassName}`.trim()}
+                        className={`h-full min-w-[2.5rem] flex-1 bg-transparent py-0 text-sm outline-none placeholder:${error ? 'text-red-400' : 'text-disabled-border-t'} cursor-text disabled:cursor-not-allowed disabled:text-slate-400 ${disabled ? 'text-slate-400' : 'text-slate-700'} indent-2 ${inputClassName}`.trim()}
                     />
                 )}
             </div>

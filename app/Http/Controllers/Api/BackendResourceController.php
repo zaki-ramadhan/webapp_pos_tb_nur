@@ -306,7 +306,7 @@ class BackendResourceController extends Controller
         ];
 
         $messages = [
-            'required' => 'Kolom :attribute tidak boleh kosong.',
+            'required' => 'Kolom :attribute harus diisi.',
             'unique' => 'Kolom :attribute dengan nilai ini sudah terdaftar di sistem (harus unik).',
             'max' => 'Kolom :attribute tidak boleh melebihi :max karakter.',
             'min' => 'Kolom :attribute tidak boleh kurang dari :min.',

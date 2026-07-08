@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { showErrorToast } from '@/components/feedback/toast';
 
 import DocumentModalLayout, { DocumentModalFooter } from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import { DocumentModalCurrencyField } from '@/features/workspace/modules/shared/document-modal/DocumentModalFields';
@@ -45,15 +46,24 @@ export default function SalesDocumentAdvanceEditModal({
 }) {
     const isEdit = Boolean(item && !item.isNew);
     const [form, setForm] = useState(() => buildInitialForm(item));
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (open) {
             setForm(buildInitialForm(item));
+            setErrors({});
         }
     }, [open, item]);
 
     const handleChange = useCallback((patch) => {
         setForm((prev) => ({ ...prev, ...patch }));
+        setErrors((prev) => {
+            const next = { ...prev };
+            for (const key of Object.keys(patch)) {
+                delete next[key];
+            }
+            return next;
+        });
     }, []);
 
     function handleOpenSource() {
@@ -70,22 +80,19 @@ export default function SalesDocumentAdvanceEditModal({
         );
         onClose();
     }
-
     function handleSubmit() {
+        const newErrors = {};
         const amountValue = parseNumericInput(form.amount);
         if (amountValue <= 0) {
-            showSystemErrorModal({
-                title: 'Gagal Menyimpan',
-                description: 'Nilai Uang Muka harus lebih besar dari 0.',
-            });
-            return;
+            newErrors.amount = 'Nilai uang muka harus lebih besar dari 0.';
+        } else if (maxAllowed != null && amountValue > maxAllowed) {
+            newErrors.amount = `Nilai uang muka tidak boleh melebihi sisa faktur (Maksimal Rp ${formatCurrencyValue(maxAllowed)}).`;
         }
 
-        if (maxAllowed != null && amountValue > maxAllowed) {
-            showSystemErrorModal({
-                title: 'Gagal Menyimpan',
-                description: `Nilai Uang Muka tidak boleh melebihi Total Faktur Penjualan (Maksimal yang diperbolehkan: Rp ${formatCurrencyValue(maxAllowed)}).`,
-            });
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            const firstErrorMsg = Object.values(newErrors)[0];
+            showErrorToast({ message: firstErrorMsg });
             return;
         }
 
@@ -148,6 +155,7 @@ export default function SalesDocumentAdvanceEditModal({
                 <DocumentModalCurrencyField
                     value={form.amount}
                     onChange={(e) => handleChange({ amount: e.target.value })}
+                    error={errors.amount}
                     className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
                 />
             </div>

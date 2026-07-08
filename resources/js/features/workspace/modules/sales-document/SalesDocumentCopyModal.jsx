@@ -315,6 +315,11 @@ export default function SalesDocumentCopyModal({
     }
 
     function handleLanjut() {
+        if (!hasData || (selectedItems.size === 0 && selectedCosts.size === 0 && selectedAdvances.size === 0)) {
+            onClose();
+            return;
+        }
+
         const finalItems = items
             .filter((item, index) => selectedItems.has(getItemKey(item, index)))
             .map((line, index) => {
@@ -381,7 +386,6 @@ export default function SalesDocumentCopyModal({
                     <Button
                         variant="brand-blue"
                         onClick={handleLanjut}
-                        disabled={!hasData || (selectedItems.size === 0 && selectedCosts.size === 0 && selectedAdvances.size === 0)}
                         className="px-6 py-1 !text-lg !font-normal"
                     >
                         Lanjut
@@ -389,7 +393,7 @@ export default function SalesDocumentCopyModal({
                 </div>
             }
         >
-            <div className="relative mb-4" ref={suggestionsRef}>
+            <div className="relative mb-4 max-w-[50%]" ref={suggestionsRef}>
                 <TextInput
                     value={query}
                     onChange={(e) => {
@@ -410,7 +414,7 @@ export default function SalesDocumentCopyModal({
                             <SearchIcon className="h-4 w-4 text-slate-400" />
                         )
                     }
-                    className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[50%]"
+                    className="h-[40px] rounded-[4px] border-ui-border w-full"
                     inputClassName="text-xs sm:text-sm text-brand-dark"
                 />
 
@@ -457,7 +461,7 @@ export default function SalesDocumentCopyModal({
                                 key={tab}
                                 type="button"
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 text-sm font-medium transition border-b-2 -mb-[2px] ${
+                                className={`px-4 py-2 text-sm font-normal transition border-b-2 -mb-[2px] ${
                                     activeTab === tab
                                         ? 'border-brand-primary text-brand-primary'
                                         : 'border-transparent text-slate-500 hover:text-slate-700'
@@ -485,26 +489,26 @@ export default function SalesDocumentCopyModal({
                                 <DataTable>
                                     <DataTableHeader>
                                         <DataTableRow>
-                                            <DataTableHead className="w-[48px] text-center text-white">
+                                            <DataTableHead className="w-[38px] text-center text-white">
                                                 <CheckboxField
                                                     id="select-all-items"
                                                     checked={filteredItems.length > 0 && filteredItems.every((item, i) => selectedItems.has(getItemKey(item, i)))}
                                                     onChange={toggleSelectAllItems}
                                                     align="center"
                                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                    containerClassName="w-auto"
                                                 />
                                             </DataTableHead>
                                             <DataTableHead className="w-[140px] text-white">Kode #</DataTableHead>
                                             <DataTableHead className="text-white">Nama Barang</DataTableHead>
                                             <DataTableHead className="w-[100px] text-right text-white">Kuantitas</DataTableHead>
                                             <DataTableHead className="w-[80px] text-center text-white">Satuan</DataTableHead>
-                                            {!selectedDoc && <DataTableHead className="w-[140px] text-white">Ref Dokumen</DataTableHead>}
                                         </DataTableRow>
                                     </DataTableHeader>
                                     <DataTableBody>
                                         {isLoading ? (
                                             <DataTableRow className="bg-white">
-                                                <DataTableCell colSpan={selectedDoc ? 5 : 6} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
+                                                <DataTableCell colSpan={5} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
                                                     Memuat data...
                                                 </DataTableCell>
                                             </DataTableRow>
@@ -513,13 +517,14 @@ export default function SalesDocumentCopyModal({
                                                 const key = getItemKey(item, index);
                                                 return (
                                                     <DataTableRow key={key}>
-                                                        <DataTableCell className="text-center">
+                                                        <DataTableCell className="text-center px-1">
                                                             <CheckboxField
                                                                 id={`select-item-${key}`}
                                                                 checked={selectedItems.has(key)}
                                                                 onChange={() => toggleSelectItem(key)}
                                                                 align="center"
                                                                 inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                                containerClassName="w-auto"
                                                             />
                                                         </DataTableCell>
                                                         <DataTableCell className="font-medium text-slate-700 truncate max-w-[140px]">
@@ -534,17 +539,12 @@ export default function SalesDocumentCopyModal({
                                                         <DataTableCell className="text-slate-600 text-center">
                                                             {item.unit ?? item.unit?.name ?? '-'}
                                                         </DataTableCell>
-                                                        {!selectedDoc && (
-                                                            <DataTableCell className="text-brand-blue font-medium truncate max-w-[140px]">
-                                                                {item.__docNumber ?? '-'}
-                                                            </DataTableCell>
-                                                        )}
                                                     </DataTableRow>
                                                 );
                                             })
                                         ) : (
                                             <DataTableRow className="bg-white">
-                                                <DataTableCell colSpan={selectedDoc ? 5 : 6} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
+                                                <DataTableCell colSpan={5} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
                                                     Belum ada data barang.
                                                 </DataTableCell>
                                             </DataTableRow>
@@ -560,25 +560,25 @@ export default function SalesDocumentCopyModal({
                             <DataTable>
                                 <DataTableHeader>
                                     <DataTableRow>
-                                        <DataTableHead className="w-[48px] text-center text-white">
+                                        <DataTableHead className="w-[38px] text-center text-white">
                                             <CheckboxField
                                                 id="select-all-costs"
                                                 checked={additionalCosts.length > 0 && additionalCosts.every((c, i) => selectedCosts.has(getCostKey(c, i)))}
                                                 onChange={toggleSelectAllCosts}
                                                 align="center"
                                                 inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                containerClassName="w-auto"
                                             />
                                         </DataTableHead>
                                         <DataTableHead className="w-[140px] text-white">Kode #</DataTableHead>
                                         <DataTableHead className="text-white">Nama Biaya</DataTableHead>
                                         <DataTableHead className="w-[140px] text-right text-white">Jumlah</DataTableHead>
-                                        {!selectedDoc && <DataTableHead className="w-[140px] text-white">Ref Dokumen</DataTableHead>}
                                     </DataTableRow>
                                 </DataTableHeader>
                                 <DataTableBody>
                                     {isLoading ? (
                                         <DataTableRow className="bg-white">
-                                            <DataTableCell colSpan={selectedDoc ? 4 : 5} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
+                                            <DataTableCell colSpan={4} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
                                                 Memuat data...
                                             </DataTableCell>
                                         </DataTableRow>
@@ -587,13 +587,14 @@ export default function SalesDocumentCopyModal({
                                             const key = getCostKey(cost, i);
                                             return (
                                                 <DataTableRow key={key}>
-                                                    <DataTableCell className="text-center">
+                                                    <DataTableCell className="text-center px-1">
                                                         <CheckboxField
                                                             id={`select-cost-${key}`}
                                                             checked={selectedCosts.has(key)}
                                                             onChange={() => toggleSelectCost(key)}
                                                             align="center"
                                                             inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                            containerClassName="w-auto"
                                                         />
                                                     </DataTableCell>
                                                     <DataTableCell className="font-medium text-slate-700 truncate max-w-[140px]">
@@ -605,17 +606,12 @@ export default function SalesDocumentCopyModal({
                                                     <DataTableCell className="text-slate-600 text-right font-mono">
                                                         Rp {Number(cost.amount ?? 0).toLocaleString('id-ID')}
                                                     </DataTableCell>
-                                                    {!selectedDoc && (
-                                                        <DataTableCell className="text-brand-blue font-medium truncate max-w-[140px]">
-                                                            {cost.__docNumber ?? '-'}
-                                                        </DataTableCell>
-                                                    )}
                                                 </DataTableRow>
                                             );
                                         })
                                     ) : (
                                         <DataTableRow className="bg-white">
-                                            <DataTableCell colSpan={selectedDoc ? 4 : 5} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
+                                            <DataTableCell colSpan={4} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
                                                 Belum ada data biaya lainnya.
                                             </DataTableCell>
                                         </DataTableRow>
@@ -630,25 +626,25 @@ export default function SalesDocumentCopyModal({
                             <DataTable>
                                 <DataTableHeader>
                                     <DataTableRow>
-                                        <DataTableHead className="w-[48px] text-center text-white">
+                                        <DataTableHead className="w-[38px] text-center text-white">
                                             <CheckboxField
                                                 id="select-all-advances"
                                                 checked={advancePayments.length > 0 && advancePayments.every((a, i) => selectedAdvances.has(getAdvanceKey(a, i)))}
                                                 onChange={toggleSelectAllAdvances}
                                                 align="center"
                                                 inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                containerClassName="w-auto"
                                             />
                                         </DataTableHead>
                                         <DataTableHead className="w-[180px] text-white">No Faktur #</DataTableHead>
                                         <DataTableHead className="text-white">Tanggal</DataTableHead>
                                         <DataTableHead className="w-[140px] text-right text-white">Uang Muka</DataTableHead>
-                                        {!selectedDoc && <DataTableHead className="w-[140px] text-white">Ref Dokumen</DataTableHead>}
                                     </DataTableRow>
                                 </DataTableHeader>
                                 <DataTableBody>
                                     {isLoading ? (
                                         <DataTableRow className="bg-white">
-                                            <DataTableCell colSpan={selectedDoc ? 4 : 5} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
+                                            <DataTableCell colSpan={4} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
                                                 Memuat data...
                                             </DataTableCell>
                                         </DataTableRow>
@@ -657,13 +653,14 @@ export default function SalesDocumentCopyModal({
                                             const key = getAdvanceKey(adv, i);
                                             return (
                                                 <DataTableRow key={key}>
-                                                    <DataTableCell className="text-center">
+                                                    <DataTableCell className="text-center px-1">
                                                         <CheckboxField
                                                             id={`select-adv-${key}`}
                                                             checked={selectedAdvances.has(key)}
                                                             onChange={() => toggleSelectAdvance(key)}
                                                             align="center"
                                                             inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                            containerClassName="w-auto"
                                                         />
                                                     </DataTableCell>
                                                     <DataTableCell className="font-medium text-slate-700 truncate max-w-[180px]">
@@ -675,17 +672,12 @@ export default function SalesDocumentCopyModal({
                                                     <DataTableCell className="text-slate-600 text-right font-mono">
                                                         Rp {Number(adv.amount ?? adv.total_amount ?? 0).toLocaleString('id-ID')}
                                                     </DataTableCell>
-                                                    {!selectedDoc && (
-                                                        <DataTableCell className="text-brand-blue font-medium truncate max-w-[140px]">
-                                                            {adv.__docNumber ?? '-'}
-                                                        </DataTableCell>
-                                                    )}
                                                 </DataTableRow>
                                             );
                                         })
                                     ) : (
                                         <DataTableRow className="bg-white">
-                                            <DataTableCell colSpan={selectedDoc ? 4 : 5} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
+                                            <DataTableCell colSpan={4} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
                                                 Belum ada data uang muka.
                                             </DataTableCell>
                                         </DataTableRow>

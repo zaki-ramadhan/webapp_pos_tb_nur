@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { showErrorToast } from '@/components/feedback/toast';
 
 import DocumentModalLayout, { DocumentModalFooter } from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import { DocumentModalCurrencyField } from '@/features/workspace/modules/shared/document-modal/DocumentModalFields';
@@ -71,7 +72,7 @@ function ToggleSwitch({ label, checked, onChange, disabled }) {
 
 // ─── Tab: Biaya Lainnya ───────────────────────────────────────────────────────
 
-function CostDetailTab({ form, onChange }) {
+function CostDetailTab({ form, onChange, errors = {} }) {
     const { code, name, amount } = form;
 
     return (
@@ -88,6 +89,7 @@ function CostDetailTab({ form, onChange }) {
                 value={name}
                 onChange={(e) => onChange({ name: e.target.value })}
                 placeholder="Masukkan nama biaya"
+                error={errors.name}
                 className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
                 inputClassName={FIELD_INPUT_CLS}
             />
@@ -97,6 +99,7 @@ function CostDetailTab({ form, onChange }) {
             <DocumentModalCurrencyField
                 value={amount}
                 onChange={(e) => onChange({ amount: e.target.value })}
+                error={errors.amount}
                 className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
             />
         </div>
@@ -121,7 +124,7 @@ function CostInfoTab({ form, onChange }) {
 
 // ─── Tab: Penangguhan ─────────────────────────────────────────────────────────
 
-function CostDeferralTab({ form, onChange }) {
+function CostDeferralTab({ form, onChange, errors = {} }) {
     const { isDeferred, deferredAccount, recognitionMonths, recognitionMode, recognitionStartMonth, recognitionStartYear } = form;
 
     return (
@@ -148,6 +151,7 @@ function CostDeferralTab({ form, onChange }) {
                         onSelectAccount={(rec) =>
                             onChange({ deferredAccount: [rec.name], __deferredAccountId: rec.id })
                         }
+                        error={errors.deferredAccount}
                         heightClassName={FIELD_H}
                     />
 
@@ -161,6 +165,7 @@ function CostDeferralTab({ form, onChange }) {
                             allowNegative={false}
                             maxLength={3}
                             clearable={false}
+                            error={errors.recognitionMonths}
                             containerClassName="!w-20 !max-w-none"
                             style={{ width: '80px' }}
                             className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
@@ -284,47 +289,58 @@ export default function SalesDocumentCostEditModal({
     const isEdit = Boolean(item);
     const [activeTabId, setActiveTabId] = useState('cost');
     const [form, setForm] = useState(() => buildInitialForm(item));
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (open) {
             setForm(buildInitialForm(item));
             setActiveTabId('cost');
+            setErrors({});
         }
     }, [open, item]);
 
     const handleChange = useCallback((patch) => {
         setForm((prev) => ({ ...prev, ...patch }));
+        setErrors((prev) => {
+            const next = { ...prev };
+            for (const key of Object.keys(patch)) {
+                delete next[key];
+            }
+            return next;
+        });
     }, []);
 
     function handleSubmit() {
-        if (!form.__accountId) {
-            showSystemErrorModal({
-                title: 'Gagal Menyimpan',
-                description: 'Nama Biaya harus diisi.',
-            });
-            return;
+        const newErrors = {};
+        if (!String(form.name ?? '').trim()) {
+            newErrors.name = 'Nama biaya harus diisi.';
+        }
+        const amountValue = parseNumericInput(form.amount);
+        if (amountValue <= 0) {
+            newErrors.amount = 'Jumlah biaya harus lebih besar dari 0.';
         }
 
         if (form.isDeferred) {
             if (!form.__deferredAccountId) {
-                showSystemErrorModal({
-                    title: 'Gagal Menyimpan',
-                    description: 'Akun Penangguhan harus diisi.',
-                });
-                return;
+                newErrors.deferredAccount = 'Akun penangguhan harus diisi.';
             }
-
             const monthsNum = parseNumericInput(form.recognitionMonths);
             if (monthsNum <= 0) {
-                showSystemErrorModal({
-                    title: 'Gagal Menyimpan',
-                    description: 'Pengakuan/bln selama harus lebih dari 0 Bulan.',
-                });
-                return;
+                newErrors.recognitionMonths = 'Durasi pengakuan harus lebih besar dari 0 bulan.';
             }
         }
 
-        const amountValue = parseNumericInput(form.amount);
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            if (newErrors.deferredAccount || newErrors.recognitionMonths) {
+                setActiveTabId('deferral');
+            } else {
+                setActiveTabId('cost');
+            }
+            const firstErrorMsg = Object.values(newErrors)[0];
+            showErrorToast({ message: firstErrorMsg });
+            return;
+        }
 
         const nextCost = {
             ...(item ?? {}),
@@ -378,9 +394,9 @@ export default function SalesDocumentCostEditModal({
             {activeTabId === 'info' ? (
                 <CostInfoTab form={form} onChange={handleChange} />
             ) : activeTabId === 'deferral' ? (
-                <CostDeferralTab form={form} onChange={handleChange} />
+                <CostDeferralTab form={form} onChange={handleChange} errors={errors} />
             ) : (
-                <CostDetailTab form={form} onChange={handleChange} />
+                <CostDetailTab form={form} onChange={handleChange} errors={errors} />
             )}
         </DocumentModalLayout>
     );

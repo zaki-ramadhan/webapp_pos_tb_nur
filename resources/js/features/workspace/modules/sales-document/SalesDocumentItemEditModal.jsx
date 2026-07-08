@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { showErrorToast } from '@/components/feedback/toast';
 
 import DocumentModalLayout, { DocumentModalFooter } from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import { DocumentModalCurrencyField } from '@/features/workspace/modules/shared/document-modal/DocumentModalFields';
@@ -49,7 +50,7 @@ const FIELD_INPUT_RIGHT_CLS = 'text-right text-xs sm:text-sm text-brand-dark';
 
 // ─── Tab: Rincian Barang ─────────────────────────────────────────────────────
 
-function ItemDetailEditTab({ form, onChange }) {
+function ItemDetailEditTab({ form, onChange, errors = {} }) {
     const { name, code, quantity, unit, price, discountPercent, discountValue, total } = form;
 
     const totalLabel = total ?? computeTotal(quantity, price, discountValue);
@@ -120,6 +121,7 @@ function ItemDetailEditTab({ form, onChange }) {
             <TextInput
                 value={name ?? ''}
                 onChange={(e) => onChange({ name: e.target.value })}
+                error={errors.name}
                 className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
                 inputClassName={FIELD_INPUT_CLS}
             />
@@ -134,6 +136,7 @@ function ItemDetailEditTab({ form, onChange }) {
                     allowDecimal
                     allowNegative={false}
                     trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
+                    error={errors.quantity}
                     className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
                     inputClassName={FIELD_INPUT_RIGHT_CLS}
                     trailingClassName="px-3"
@@ -144,8 +147,9 @@ function ItemDetailEditTab({ form, onChange }) {
                     placeholder="Pilih Satuan..."
                     searchLabel="Cari satuan"
                     resource="units"
-                    onSelectAccount={(record, label) => onChange({ unit: label })}
-                    onRemove={() => onChange({ unit: '' })}
+                    onSelectAccount={(record, label) => onChange({ unit: label, __unitId: record.id })}
+                    onRemove={() => onChange({ unit: '', __unitId: null })}
+                    error={errors.unit}
                     heightClassName={FIELD_H}
                 />
             </div>
@@ -206,6 +210,7 @@ function ItemDetailEditTab({ form, onChange }) {
                         onSelectAccount={(rec) =>
                             onChange({ warehouse: [rec.name], __warehouseId: rec.id })
                         }
+                        error={errors.warehouse}
                         heightClassName={FIELD_H}
                     />
                 </div>
@@ -262,6 +267,8 @@ function buildInitialForm(product, existingItem) {
             canSell: existingItem.canSell ?? 0,
             quantity: existingItem.quantity ?? '1',
             unit: existingItem.unit ?? 'PCS',
+            __unitId: existingItem.__unitId ?? existingItem.unit_id ?? null,
+            __productId: existingItem.__productId ?? existingItem.product_id ?? null,
             price: existingItem.price ?? '0',
             discountPercent: existingItem.discountPercent ?? '0',
             discountValue: existingItem.discountValue ?? existingItem.discount ?? '0',
@@ -283,6 +290,8 @@ function buildInitialForm(product, existingItem) {
             canSell: product.can_be_sold ?? 0,
             quantity: '1',
             unit: product.sales_unit?.name ?? product.base_unit?.name ?? 'PCS',
+            __unitId: product.sales_unit_id ?? product.base_unit_id ?? null,
+            __productId: product.id ?? null,
             price: formatCurrencyValue(unitPriceAmount),
             discountPercent: '0',
             discountValue: '0',
@@ -302,6 +311,8 @@ function buildInitialForm(product, existingItem) {
         canSell: 0,
         quantity: '1',
         unit: 'PCS',
+        __unitId: null,
+        __productId: null,
         price: '0',
         discountPercent: '0',
         discountValue: '0',
@@ -326,20 +337,51 @@ export default function SalesDocumentItemEditModal({
     const isEdit = Boolean(item);
     const [activeTabId, setActiveTabId] = useState('details');
     const [form, setForm] = useState(() => buildInitialForm(product, item));
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (open) {
             setForm(buildInitialForm(product, item));
             setActiveTabId('details');
+            setErrors({});
         }
     }, [open, product, item]);
 
     const handleChange = useCallback((patch) => {
         setForm((prev) => ({ ...prev, ...patch }));
+        setErrors((prev) => {
+            const next = { ...prev };
+            for (const key of Object.keys(patch)) {
+                delete next[key];
+            }
+            return next;
+        });
     }, []);
 
     function handleSubmit() {
+        const newErrors = {};
+        if (!String(form.name ?? '').trim()) {
+            newErrors.name = 'Nama barang harus diisi.';
+        }
         const qtyNum = parseNumericInput(form.quantity);
+        if (qtyNum <= 0) {
+            newErrors.quantity = 'Kuantitas barang harus lebih besar dari 0.';
+        }
+        if (!String(form.unit ?? '').trim()) {
+            newErrors.unit = 'Satuan barang harus diisi.';
+        }
+        if (!form.__warehouseId) {
+            newErrors.warehouse = 'Gudang harus diisi.';
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            setActiveTabId('details');
+            const firstErrorMsg = Object.values(newErrors)[0];
+            showErrorToast({ message: firstErrorMsg });
+            return;
+        }
+
         const priceNum = parseNumericInput(form.price);
         const discNum = parseNumericInput(form.discountValue);
         const totalAmount = Math.max(0, qtyNum * priceNum - discNum);
@@ -348,11 +390,12 @@ export default function SalesDocumentItemEditModal({
             ...(item ?? {}),
             id: item?.id ?? `product-item-${Date.now()}-${Math.random()}`,
             __lineId: item?.__lineId ?? null,
-            __productId: item?.__productId ?? product?.id ?? null,
+            __productId: form.__productId ?? item?.__productId ?? product?.id ?? null,
             name: form.name,
             code: form.code,
             quantity: String(qtyNum || 0),
             unit: form.unit,
+            __unitId: form.__unitId,
             price: form.price,
             discountPercent: form.discountPercent,
             discount: form.discountValue,
@@ -398,7 +441,7 @@ export default function SalesDocumentItemEditModal({
             {activeTabId === 'info' ? (
                 <ItemInfoEditTab form={form} onChange={handleChange} />
             ) : (
-                <ItemDetailEditTab form={form} onChange={handleChange} />
+                <ItemDetailEditTab form={form} onChange={handleChange} errors={errors} />
             )}
         </DocumentModalLayout>
     );

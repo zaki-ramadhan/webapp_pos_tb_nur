@@ -82,7 +82,7 @@ export default function ChipLookupField({
                         </span>
                     ))
                 ) : (
-                    <span className="block truncate px-1 text-xs sm:text-sm text-disabled-border-t">{placeholder}</span>
+                    <span className={`block truncate px-1 text-xs sm:text-sm ${error ? 'text-red-400' : 'text-disabled-border-t'}`.trim()}>{placeholder}</span>
                 )}
             </div>
 
