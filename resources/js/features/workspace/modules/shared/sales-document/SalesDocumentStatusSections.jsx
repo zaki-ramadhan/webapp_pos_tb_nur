@@ -135,11 +135,14 @@ export function SalesDocumentFooter({ values, setValues }) {
     const subtotalCosts = (values.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
     const advanceAmount = (values.advancePayments ?? []).reduce((sum, adv) => sum + parseNumericInput(adv.amount), 0);
 
+    const hasCosts = (values.additionalCosts ?? []).length > 0;
+    const hasAdvances = (values.advancePayments ?? []).length > 0;
+
     const footerParts = [
         { id: 'subtotal', label: 'Sub Total', value: buildCurrencyValue(values.subtotal), align: 'right' },
         { id: 'discount', label: 'Diskon', value: values.discountValue, isInput: true, prefix: values.discountPrefix },
-        { id: 'costs', label: 'Total Biaya', value: formatCurrencyValue(subtotalCosts), align: 'right' },
-        { id: 'advance', label: 'Uang Muka', value: formatCurrencyValue(advanceAmount), align: 'right' },
+        ...(hasCosts ? [{ id: 'costs', label: 'Total Biaya', value: formatCurrencyValue(subtotalCosts), align: 'right' }] : []),
+        ...(hasAdvances ? [{ id: 'advance', label: 'Uang Muka', value: formatCurrencyValue(advanceAmount), align: 'right' }] : []),
         ...(values.taxLabel ? [{ id: 'tax', label: values.taxLabel, value: buildCurrencyValue(values.taxValue), align: 'right' }] : []),
         { id: 'total', label: 'Total', value: buildCurrencyValue(values.total), align: 'right' },
     ];

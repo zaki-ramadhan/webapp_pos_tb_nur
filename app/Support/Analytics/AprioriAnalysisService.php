@@ -18,7 +18,7 @@ class AprioriAnalysisService
         // Ambil invoice penjualan
         $transactions = DB::table('operation_documents')
             ->where('document_type', 'sales_invoice')
-            ->where('status', 'Posted')
+            ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
             ->select('id')
             ->get();
 
@@ -111,7 +111,7 @@ class AprioriAnalysisService
         $abcSalesData = DB::table('operation_document_lines')
             ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
             ->where('operation_documents.document_type', 'sales_invoice')
-            ->where('operation_documents.status', 'Posted')
+            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
             ->select(
                 'operation_document_lines.product_id',
                 DB::raw('SUM(operation_document_lines.total_amount) as revenue')

@@ -19,7 +19,7 @@ class AbcAnalysisService
             ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
             ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
             ->where('operation_documents.document_type', 'sales_invoice')
-            ->where('operation_documents.status', 'Posted')
+            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
             ->select(
                 'products.id as product_id',
                 'products.name as product_name',

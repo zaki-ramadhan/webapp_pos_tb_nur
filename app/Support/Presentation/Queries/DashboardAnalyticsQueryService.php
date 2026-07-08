@@ -79,7 +79,7 @@ class DashboardAnalyticsQueryService
 
             $latestSalesInvoiceDate = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->where('status', 'Posted')
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->max('entry_date') ?? date('Y-m-d');
 
             $salesTrendLabels = [];
@@ -94,7 +94,7 @@ class DashboardAnalyticsQueryService
                 $salesTrendLabels[] = $dayNameIndo;
                 $totalSales = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
-                    ->where('status', 'Posted')
+                    ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                     ->where('entry_date', $date)
                     ->sum('total_amount');
                 $salesTrendData[] = (float) $totalSales;
@@ -102,14 +102,14 @@ class DashboardAnalyticsQueryService
 
             $totalSalesVal = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->where('status', 'Posted')
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->sum('total_amount');
 
             $totalHppVal = DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
-                ->where('operation_documents.status', 'Posted')
+                ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
 
             $totalExpensesVal = DB::table('operation_documents')
@@ -141,7 +141,7 @@ class DashboardAnalyticsQueryService
                 $cashFlowLabels[] = $formattedDate;
                 $inflow = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
-                    ->where('status', 'Posted')
+                    ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                     ->where('entry_date', $date)
                     ->sum('total_amount');
                 $outflow = DB::table('operation_documents')
@@ -174,7 +174,7 @@ class DashboardAnalyticsQueryService
 
             $salesInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->where('status', 'Posted');
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
             $fakturLunasSales = (float) (clone $salesInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasSales = (float) (clone $salesInvoiceQuery)->sum('outstanding_amount');
             $belumJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
@@ -183,7 +183,7 @@ class DashboardAnalyticsQueryService
 
             $purchaseInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'purchase_invoice')
-                ->where('status', 'Posted');
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
             $fakturLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('outstanding_amount');
             $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
@@ -202,7 +202,7 @@ class DashboardAnalyticsQueryService
                 if ($spUser) {
                     $totalVal = DB::table('operation_documents')
                         ->where('document_type', 'sales_invoice')
-                        ->where('status', 'Posted')
+                        ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                         ->where('responsible_user_id', $spUser->id)
                         ->sum('total_amount');
                 }
@@ -281,7 +281,7 @@ class DashboardAnalyticsQueryService
                 $cashAvailabilityLabels[] = $formattedDate;
                 $inUpToDate = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
-                    ->where('status', 'Posted')
+                    ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                     ->where('entry_date', '<=', $date)
                     ->sum('total_amount');
                 $outUpToDate = DB::table('operation_documents')
@@ -332,14 +332,14 @@ class DashboardAnalyticsQueryService
             // Hitung catatan jatuh tempo
             $overdueSalesInvoicesCount = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->where('status', 'Posted')
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->where('outstanding_amount', '>', 0)
                 ->where('due_date', '<', date('Y-m-d'))
                 ->count();
 
             $overduePurchaseInvoicesCount = DB::table('operation_documents')
                 ->where('document_type', 'purchase_invoice')
-                ->where('status', 'Posted')
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->where('outstanding_amount', '>', 0)
                 ->where('due_date', '<', date('Y-m-d'))
                 ->count();

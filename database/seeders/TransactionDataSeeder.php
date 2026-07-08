@@ -110,6 +110,7 @@ class TransactionDataSeeder extends Seeder
                 'paid_amount' => $paidAmount,
                 'outstanding_amount' => $outstandingAmount,
                 'due_date' => $dueDate,
+                'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
             ]);
         }
 
@@ -320,7 +321,7 @@ class TransactionDataSeeder extends Seeder
                 'supplier_id' => $supplierId,
                 'currency_id' => $currencyId,
                 'document_number' => 'PI.' . date('Y.m.d') . '.' . str_pad($i, 5, '0', STR_PAD_LEFT),
-                'status' => 'Posted',
+                'status' => $isPaid ? 'Lunas' : 'Belum Lunas',
                 'entry_date' => $entryDate,
                 'due_date' => $dueDate,
                 'subtotal' => $totalVal,

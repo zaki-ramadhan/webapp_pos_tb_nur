@@ -1,5 +1,6 @@
 import {
     createAttachmentDockAction,
+    createDeleteDockAction,
     createDocumentDockAction,
     createMoreDockAction,
     createSaveDockAction,
@@ -190,6 +191,7 @@ const salesInvoiceTableRows = [];
 const salesInvoiceDraft = {
     ...salesOrderDraft,
     showProcessButton: true,
+    processDisabled: true,
     numberingType: 'Faktur Penjualan',
     shippingDate: todayDisplayDate,
     preInvoice: false,
@@ -218,6 +220,7 @@ const salesInvoiceDetailRecords = {};
 
 export const defaultSalesInvoiceConfig = {
     ...defaultSalesOrderConfig,
+    showProcessButton: true,
     showProcessButtonOnCreate: true,
     hideFilterButton: true,
     labels: {
@@ -277,15 +280,35 @@ export function buildSalesInvoiceConfig(pageConfig = {}) {
     return mergeSalesDocumentConfigWithPage(defaultSalesInvoiceConfig, pageConfig);
 }
 
+export const salesInvoiceDetailDockActions = [
+    createSaveDockAction({ tone: 'muted', items: [] }),
+    createDocumentDockAction(),
+    createAttachmentDockAction(),
+    createMoreDockAction(),
+    createDeleteDockAction(),
+];
+
 export function buildSalesInvoiceRecord(row = {}) {
-    return buildSalesDocumentRecord(row, salesInvoiceDraft, salesInvoiceDetailRecords, {
+    const record = buildSalesDocumentRecord(row, salesInvoiceDraft, salesInvoiceDetailRecords, {
         customerPrefix: '[CSBY-0005]',
         includeAdvanceSummary: false,
         includePrintedSummary: true,
-        dockActions: sharedDetailDockActions,
+        dockActions: salesInvoiceDetailDockActions,
         approvalStamp: 'DISETUJUI',
         processStamp: 'BELUM\nLUNAS',
         taxLabel: 'PPN 10%',
         taxValue: 'Rp 0',
     });
+
+    if (row.status === 'Lunas') {
+        record.processDisabled = true;
+        record.processStamp = 'LUNAS';
+        record.processStampTone = 'green';
+    } else {
+        record.processDisabled = false;
+        record.processStamp = 'BELUM\nLUNAS';
+        record.processStampTone = 'gray';
+    }
+
+    return record;
 }
