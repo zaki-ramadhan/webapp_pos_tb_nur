@@ -73,6 +73,17 @@ export function formatAmountInput(value, options = {}) {
 }
 
 export function parseAmountInput(value, { allowDecimal = true, allowNegative = false, emptyValue = null } = {}) {
+    if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : emptyValue;
+    }
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+            const num = Number(trimmed);
+            return Number.isFinite(num) ? num : emptyValue;
+        }
+    }
+
     const sanitizedValue = sanitizeAmountInput(value, { allowDecimal, allowNegative, isInput: true });
 
     if (!sanitizedValue || sanitizedValue === '-') {

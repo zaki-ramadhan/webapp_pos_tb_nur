@@ -146,6 +146,9 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         code: line.reference_code ?? line.product?.code ?? '',
         quantity: String(line.quantity ?? ''),
         unit: line.unit?.name ?? '',
+        __unitId: line.unit_id ?? null,
+        __productId: line.product_id ?? null,
+        __warehouseId: line.warehouse_id ?? null,
         price: formatCurrencyValue(line.unit_price ?? 0),
         discount: formatCurrencyValue(line.discount_amount ?? 0),
         discountValue: formatCurrencyValue(line.discount_amount ?? 0),
@@ -207,8 +210,8 @@ export function buildOperationDocumentRecord(record, config, pageId) {
             : null,
         approvalStamp: '',
         processStamp: record.status ? String(mapDocumentStatus(record.status)).toUpperCase() : '',
-        showProcessButton: false,
-        processDisabled: true,
+        showProcessButton: config.showProcessButton ?? false,
+        processDisabled: record.status === 'Lunas',
         subtotal: `Rp ${formatCurrencyValue(subtotalValue)}`,
         discountValue: formatCurrencyValue(record.discount_total ?? 0),
         discountPrefix: 'Rp',
@@ -246,6 +249,9 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
             discount_amount: parseNumericInput(item.discountValue ?? item.discount),
             total_amount: parseNumericInput(item.total),
             sort_order: index,
+            product_id: item.__productId ?? null,
+            unit_id: item.__unitId ?? null,
+            warehouse_id: item.__warehouseId ?? null,
         }))
         .filter((item) => item.description || item.reference_code || item.quantity > 0 || item.total_amount > 0);
     const subtotalAmount = lines.reduce((sum, line) => sum + Number(line.total_amount ?? 0), 0);
