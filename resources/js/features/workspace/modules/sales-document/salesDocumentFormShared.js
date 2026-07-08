@@ -130,15 +130,18 @@ export function validateSalesDocumentValues(values, config) {
         return requiredMessage;
     }
 
-    const invalidItem = (values.items ?? []).find(
-        (item) =>
-            !String(item?.name ?? '').trim()
-            || Number.parseFloat(String(item?.quantity ?? '0').replace(',', '.')) <= 0
-            || !String(item?.unit ?? '').trim(),
-    );
-
-    if (invalidItem) {
-        return 'Setiap item wajib memiliki nama, kuantitas lebih dari 0, dan satuan.';
+    const items = values.items ?? [];
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!String(item?.name ?? '').trim()) {
+            return `Nama barang ke-${i + 1} dari rincian barang harus diisi.`;
+        }
+        if (Number.parseFloat(String(item?.quantity ?? '0').replace(',', '.')) <= 0) {
+            return `Kuantitas barang untuk '${item.name}' harus lebih besar dari 0.`;
+        }
+        if (!String(item?.unit ?? '').trim()) {
+            return `Satuan barang untuk '${item.name}' harus diisi.`;
+        }
     }
 
     if (config?.pageId === 'sales-invoice') {
@@ -150,7 +153,7 @@ export function validateSalesDocumentValues(values, config) {
 
         const hasTaxedDeposit = (values.advancePayments ?? []).some((adv) => adv.tax_id || adv.taxId);
         if (hasTaxedDeposit && !values.taxEnabled) {
-            return 'Uang Muka yang digunakan memiliki Pajak (PPN). Faktur Penjualan ini juga wajib mengenakan Pajak (PPN) agar dapat menggunakan uang muka tersebut.';
+            return 'Uang Muka yang digunakan memiliki Pajak (PPN). Faktur Penjualan ini juga wajib menggunakan PPN.';
         }
     }
 

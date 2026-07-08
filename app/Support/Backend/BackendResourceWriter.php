@@ -175,6 +175,15 @@ class BackendResourceWriter
                     $payload['tax_total'] = $taxTotal;
                     $payload['total_amount'] = $totalAmount;
                 }
+
+                if (in_array($blueprint->key, ['sales-invoices', 'purchase-invoices'], true)) {
+                    $totalVal = (float) ($payload['total_amount'] ?? 0.0);
+                    $paidVal = (float) ($record->paid_amount ?? 0.0);
+                    $outstandingVal = max(0.0, $totalVal - $paidVal);
+                    $payload['paid_amount'] = $paidVal;
+                    $payload['outstanding_amount'] = $outstandingVal;
+                    $payload['status'] = $outstandingVal <= 0.01 ? 'Lunas' : 'Belum Lunas';
+                }
             }
 
             // Validasi logika bisnis
@@ -218,7 +227,7 @@ class BackendResourceWriter
                         $deposit = DB::table('operation_documents')->where('id', $depositId)->first();
                         if ($deposit && $deposit->tax_id && !$invoiceTaxId) {
                             throw \Illuminate\Validation\ValidationException::withMessages([
-                                'tax_id' => ["Uang Muka [{$deposit->document_number}] menggunakan Pajak (PPN). Faktur Penjualan ini juga wajib mengenakan Pajak (PPN) agar dapat menggunakan uang muka tersebut."]
+                                'tax_id' => ["Uang Muka [{$deposit->document_number}] menggunakan PPN. Faktur Penjualan ini juga wajib menggunakan PPN."]
                             ]);
                         }
                     }
@@ -424,7 +433,8 @@ class BackendResourceWriter
             $blueprint->sync($record, $payload);
 
             if ($blueprint->key === 'sales-invoices') {
-                $oldMetadata = json_decode($record->getOriginal('metadata') ?? '{}', true);
+                $rawMetadata = $record->getOriginal('metadata');
+                $oldMetadata = is_string($rawMetadata) ? json_decode($rawMetadata, true) : ($rawMetadata ?? []);
                 $oldDepositIds = [];
                 if (isset($oldMetadata['advance_payments'])) {
                     foreach ($oldMetadata['advance_payments'] as $adv) {

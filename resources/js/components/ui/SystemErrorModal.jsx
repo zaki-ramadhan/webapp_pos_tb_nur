@@ -133,7 +133,7 @@ export default function SystemErrorModal({
                         <p className="text-sm sm:text-[15px] font-normal leading-5 text-brand-dark">{finalDescription}</p>
 
                         {hasMessages && (
-                            <div className="space-y-0.5">
+                            <div className="space-y-1 mt-2.5">
                                 {finalMessages.map((item, index) => (
                                     <p key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-5 text-[#991b1b]">
                                         {item}
