@@ -234,6 +234,8 @@ export default function SalesDocumentFormView({
 
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record) : record;
+                    const nextValues = buildSalesDocumentFormState(parsed);
+                    setValues(nextValues);
                     setLocalRecord(parsed);
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(record.id)] = parsed;
