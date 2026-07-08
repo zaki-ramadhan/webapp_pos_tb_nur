@@ -5,12 +5,16 @@ import {
     listBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 
-export function buildAccountLookupLabel(record) {
+export function buildAccountLookupLabel(record, resource = null) {
     if (record?.document_number) {
         return record.document_number;
     }
     const code = String(record?.code ?? record?.employee_code ?? '').trim();
     const name = String(record?.name ?? record?.full_name ?? '').trim();
+
+    if (resource === 'units') {
+        return name || code;
+    }
 
     if (code && name) {
         return `[${code}] ${name}`;

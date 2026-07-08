@@ -55,7 +55,7 @@ export default function AccountLookupSuggestions({
                     <div className="px-4 py-5 text-center text-sm text-red-850">{error}</div>
                 ) : rows.length ? (
                     rows.map((record) => {
-                        const label = buildAccountLookupLabel(record);
+                        const label = buildAccountLookupLabel(record, resource);
                         const selected = selectedLabelSet.has(label);
 
                         const isDoc = Boolean(record.document_number);
@@ -91,14 +91,16 @@ export default function AccountLookupSuggestions({
                             >
                                 <span className="min-w-0 flex-1">
                                     <span className="block truncate text-sm font-normal text-black">{title}</span>
-                                    <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
-                                        <span className="truncate text-black">
-                                            {subtitleLeft}
+                                    {resource !== 'units' ? (
+                                        <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
+                                            <span className="truncate text-black">
+                                                {subtitleLeft}
+                                            </span>
+                                            <span className="shrink-0 text-black italic">
+                                                {subtitleRight}
+                                            </span>
                                         </span>
-                                        <span className="shrink-0 text-black italic">
-                                            {subtitleRight}
-                                        </span>
-                                    </span>
+                                    ) : null}
                                 </span>
                             </button>
                         );
