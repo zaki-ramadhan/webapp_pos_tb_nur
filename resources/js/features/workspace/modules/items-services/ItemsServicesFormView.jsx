@@ -19,7 +19,9 @@ import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValu
 import {
     createBackendResource,
     deleteBackendResource,
+    extractBackendRows,
     getBackendErrorMessage,
+    listBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
@@ -28,6 +30,7 @@ import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 import { buildGeneratedDocNumber } from '@/features/workspace/shared/documentNumberUtils';
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export default function ItemsServicesFormView({
     pageId,
@@ -68,6 +71,39 @@ export default function ItemsServicesFormView({
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId]);
+
+    // Fetch saved stock locations from DB and populate openingStockRows
+    useEffect(() => {
+        if (!detailRow?.id) return;
+        let active = true;
+
+        listBackendResource('item-locations', { product_id: detailRow.id, per_page: 100 })
+            .then((response) => {
+                if (!active) return;
+                const rows = extractBackendRows(response);
+                const stockRows = rows
+                    .filter((r) => parseAmountInput(r.stock_on_hand) !== 0)
+                    .map((r) => ({
+                        id: `db-stock-${r.id ?? r.warehouse_id}`,
+                        date: '-',
+                        warehouse: r.warehouse_name ?? r.warehouse?.name ?? '-',
+                        quantity: parseAmountInput(r.stock_on_hand),
+                        unit: r.unit_name ?? r.unit?.name ?? '-',
+                        unitCost: parseAmountInput(r.average_cost ?? r.unit_cost),
+                        serials: [],
+                        __fromDb: true,
+                    }));
+                setValues((prev) => {
+                    // Don't override if user has already added rows
+                    const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
+                    if (hasUserRows) return prev;
+                    return { ...prev, openingStockRows: stockRows };
+                });
+            })
+            .catch(() => {/* silent — tidak hapus data lokal */});
+
+        return () => { active = false; };
+    }, [detailRow?.id]);
 
     useFormValuesSync({
         initialValues,
@@ -136,9 +172,9 @@ export default function ItemsServicesFormView({
                     base_unit_id: values.primaryUnit?.[0]?.id ?? values.baseUnitId ?? null,
                     purchase_unit_id: values.purchaseUnit?.[0]?.id ?? values.purchaseUnitId ?? null,
                     sales_unit_id: values.salesUnit?.[0]?.id ?? values.salesUnitId ?? null,
-                    minimum_stock: values.minimumStock ? parseFloat(values.minimumStock) : null,
-                    default_purchase_price: values.purchasePrice ? parseFloat(values.purchasePrice) : null,
-                    default_sale_price: values.sellPriceLevel1 ? parseFloat(values.sellPriceLevel1) : null,
+                    minimum_stock: values.minimumStock ? parseAmountInput(values.minimumStock) : null,
+                    default_purchase_price: values.purchasePrice ? parseAmountInput(values.purchasePrice) : null,
+                    default_sale_price: values.sellPriceLevel1 ? parseAmountInput(values.sellPriceLevel1) : null,
                     notes: values.notes?.trim() || null,
                     is_active: values.isActive !== false,
                     attachment_ids: (values.attachments ?? []).map((att) => att.id),
@@ -154,7 +190,7 @@ export default function ItemsServicesFormView({
                         .map((conv) => ({
                             id: String(conv.id).startsWith('conversion-') ? undefined : conv.id,
                             unit_id: conv.unit?.[0]?.id ?? conv.unitId ?? null,
-                            quantity: conv.quantity ? parseFloat(conv.quantity) : 0,
+                            quantity: conv.quantity ? parseAmountInput(conv.quantity) : 0,
                         }))
                         .filter((conv) => conv.unit_id && conv.quantity > 0),
                 };
@@ -248,10 +284,10 @@ export default function ItemsServicesFormView({
                 ) : activeTabId === 'stock' ? (
                     (() => {
                         const openingStockRows = values.openingStockRows || [];
-                        const totalQty = openingStockRows.reduce((sum, r) => sum + (parseFloat(String(r.quantity).replace(/[^0-9.-]/g, '')) || 0), 0);
+                        const totalQty = openingStockRows.reduce((sum, r) => sum + (parseAmountInput(r.quantity) || 0), 0);
                         const totalCost = openingStockRows.reduce((sum, r) => {
-                            const qty = parseFloat(String(r.quantity).replace(/[^0-9.-]/g, '')) || 0;
-                            const cost = parseFloat(String(r.unitCost).replace(/[^0-9.-]/g, '')) || 0;
+                            const qty = parseAmountInput(r.quantity) || 0;
+                            const cost = parseAmountInput(r.unitCost) || 0;
                             return sum + (qty * cost);
                         }, 0);
                         const avgCost = totalQty > 0 ? (totalCost / totalQty) : 0;

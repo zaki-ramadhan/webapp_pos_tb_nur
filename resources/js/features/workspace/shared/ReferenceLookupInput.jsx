@@ -255,7 +255,7 @@ export default function ReferenceLookupInput({
                             ))}
                         </div>
                     ) : (
-                        <LookupEmptyState title={emptyTitle} description={emptyDescription} />
+                        <LookupEmptyState title={emptyTitle} />
                     )}
                 </LookupDropdownSurface>
             ) : null}

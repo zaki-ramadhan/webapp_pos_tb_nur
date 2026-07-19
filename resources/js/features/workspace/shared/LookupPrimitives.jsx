@@ -19,7 +19,7 @@ export function LookupDropdownSurface({ className = '', children, maxHeightLimit
 
 export function LookupEmptyState({
     title = 'Data tidak ditemukan',
-    description = 'Coba kata kunci lain yang lebih spesifik.',
+    description = null,
     className = '',
 }) {
     return (
@@ -28,7 +28,7 @@ export function LookupEmptyState({
                 <InfoIcon className="h-5 w-5 text-current" />
             </div>
             <div className="mt-1.5 text-sm font-normal text-blue-550">{title}</div>
-            <div className="mt-1 text-xs text-text-light">{description}</div>
+            {description ? <div className="mt-1 text-xs text-text-light">{description}</div> : null}
         </div>
     );
 }

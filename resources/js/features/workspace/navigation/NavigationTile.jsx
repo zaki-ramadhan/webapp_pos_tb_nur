@@ -68,7 +68,7 @@ export default function NavigationTile({ item, onSelect, dense = false }) {
             }`.trim()}
             aria-disabled={!isSelectable}
         >
-            <NavigationIcon type={item.icon} className={`${iconSizeClassName} ${iconClassName}`.trim()} strokeWidth={1.65} />
+            <NavigationIcon type={item.icon} className={`${iconSizeClassName} ${iconClassName}`.trim()} strokeWidth={1.35} />
             <span className={`${labelSizeClassName} font-normal leading-[1.2] ${labelClassName}`.trim()}>
                 {item.label}
             </span>

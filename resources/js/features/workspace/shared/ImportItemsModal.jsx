@@ -147,7 +147,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             className="bg-modal-overlay-dark z-[9999]"
             panelClassName="max-w-[820px] w-full overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
         >
-            <div className="bg-blue-900 px-5 py-2.5 text-white">
+            <div className="px-5 py-2 text-white" style={{ backgroundColor: '#0A2A55' }}>
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
                         <TableActionIcon className="h-4 w-4 text-white" />
@@ -271,7 +271,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-8 items-center justify-center rounded-[4px] border border-slate-300 bg-white px-4 text-xs font-medium text-slate-700 hover:bg-slate-50 transition"
+                        className="inline-flex h-9 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-4 text-sm font-medium text-brand-blue hover:bg-brand-blue/5 transition cursor-pointer"
                     >
                         Batal
                     </button>
@@ -280,7 +280,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                             type="button"
                             onClick={handleConfirmImport}
                             disabled={validCount === 0}
-                            className={`inline-flex h-8 items-center justify-center rounded-[4px] px-4 text-xs font-normal text-white transition ${
+                            className={`inline-flex h-9 items-center justify-center rounded-[4px] px-4 text-sm font-normal text-white transition ${
                                 validCount > 0 ? 'bg-import-action-blue hover:bg-blue-900 cursor-pointer' : 'bg-slate-300 cursor-not-allowed'
                             }`}
                         >

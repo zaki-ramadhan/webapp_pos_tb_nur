@@ -133,12 +133,20 @@ export default function SystemErrorModal({
                         <p className="text-sm sm:text-[15px] font-normal leading-5 text-brand-dark">{finalDescription}</p>
 
                         {hasMessages && (
-                            <div className="space-y-1 mt-2.5">
-                                {finalMessages.map((item, index) => (
-                                    <p key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-5 text-[#991b1b]">
-                                        {item}
+                            <div className="mt-2.5">
+                                {finalMessages.length === 1 ? (
+                                    <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#991b1b]">
+                                        {finalMessages[0]}
                                     </p>
-                                ))}
+                                ) : (
+                                    <ul className="list-disc pl-5 space-y-1">
+                                        {finalMessages.map((item, index) => (
+                                            <li key={`${item}-${index}`} className="text-sm sm:text-[15px] font-normal leading-6 text-[#991b1b]">
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         )}
                     </div>

@@ -12,14 +12,15 @@ function unformatAmount(val) {
     return isNaN(parsed) ? str : parsed;
 }
 
-function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false) {
+function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false, options = {}) {
     if (typeof val === 'string' && val.startsWith(' ')) {
         val = val.trimStart();
     }
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();
 
-    const isCurrency = searchStr.includes('price') ||
+    const isCurrency = options.isCurrency ?? (
+                       searchStr.includes('price') ||
                        searchStr.includes('amount') ||
                        searchStr.includes('limit') ||
                        searchStr.includes('kurs') ||
@@ -37,10 +38,18 @@ function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix =
                        searchStr.includes('lebar') ||
                        searchStr.includes('tinggi') ||
                        searchStr.includes('berat') ||
-                       prefixStr === 'rp';
+                       searchStr.includes('qty') ||
+                       searchStr.includes('quantity') ||
+                       searchStr.includes('kuantitas') ||
+                       prefixStr === 'rp'
+    );
 
     if (isCurrency) {
-        return formatAmountInput(val, { allowDecimal: true, isInput: true });
+        return formatAmountInput(val, {
+            allowDecimal: options.allowDecimal ?? true,
+            allowNegative: options.allowNegative ?? false,
+            isInput: true
+        });
     }
 
     return val;
@@ -72,6 +81,9 @@ function isClearOrCloseElement(element) {
 export default function TextInput({
     id,
     type = 'text',
+    isCurrency: isCurrencyProp,
+    allowDecimal = true,
+    allowNegative = false,
     placeholder = '',
     prefix = null,
     trailing = null,
@@ -114,7 +126,8 @@ export default function TextInput({
                     searchStr.includes('kontak') ||
                     searchStr.includes('contact');
 
-    const isCurrency = searchStr.includes('price') ||
+    const isCurrency = isCurrencyProp ?? (
+                       searchStr.includes('price') ||
                        searchStr.includes('amount') ||
                        searchStr.includes('limit') ||
                        searchStr.includes('kurs') ||
@@ -124,7 +137,11 @@ export default function TextInput({
                        searchStr.includes('piutang') ||
                        searchStr.includes('utang') ||
                        searchStr.includes('nilai') ||
-                       prefixStr === 'rp';
+                       searchStr.includes('qty') ||
+                       searchStr.includes('quantity') ||
+                       searchStr.includes('kuantitas') ||
+                       prefixStr === 'rp'
+    );
 
     const isCodeOrNumber = searchStr.includes('code') ||
                            searchStr.includes('kode') ||
@@ -145,7 +162,7 @@ export default function TextInput({
     const [localValue, setLocalValue] = useState(() => {
         const val = value ?? defaultValue ?? '';
         if (isCurrency && val !== '') {
-            return formatAmountInput(val, { allowDecimal: true });
+            return formatAmountInput(val, { allowDecimal, allowNegative });
         }
         if (type === 'number') {
             return val || '0';
@@ -167,12 +184,12 @@ export default function TextInput({
 
                 let nextVal = value ?? '';
                 if (isCurrency && nextVal !== '') {
-                    nextVal = formatAmountInput(nextVal, { allowDecimal: true });
+                    nextVal = formatAmountInput(nextVal, { allowDecimal, allowNegative });
                 }
                 setLocalValue(nextVal);
             }
         }
-    }, [value, isCurrency, localValue, isEmpty]);
+    }, [value, isCurrency, localValue, isEmpty, allowDecimal, allowNegative]);
 
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
@@ -218,7 +235,7 @@ export default function TextInput({
         }
         const name = props.name ?? '';
         const prefixVal = typeof prefix === 'string' ? prefix : '';
-        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly);
+        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly, { isCurrency, allowDecimal, allowNegative });
 
         setLocalValue(sanitizedValue);
         clearError(contextKey);

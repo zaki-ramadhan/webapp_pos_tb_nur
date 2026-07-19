@@ -10,29 +10,67 @@ import {
     TransactionDateInput,
     TransactionFieldLabel,
 } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
-import { TableActionIcon } from '@/features/workspace/shared/Icons';
+import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
+import { CalcIcon } from '@/features/workspace/shared/Icons';
+import { parseAmountInput, formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAvailability';
 
 function cloneLookupValues(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
 }
 
-function buildInitialValues(item = {}) {
+function buildInitialValues(item, product, fallbackDate) {
+    if (item) {
+        return {
+            id: item.id ?? null,
+            __lineId: item.__lineId ?? null,
+            __productId: item.__productId ?? item.product_id ?? null,
+            __unitId: item.__unitId ?? item.unit_id ?? null,
+            __departmentId: item.__departmentId ?? item.department_id ?? null,
+            code: item.code ?? '',
+            requestDate: item.requestDate ?? fallbackDate ?? '',
+            name: item.name ?? '',
+            quantity: formatAmountInput(item.quantity ?? '1', { allowDecimal: false, allowNegative: false }),
+            unit: item.unit ?? 'PCS',
+            department: cloneLookupValues(item.department),
+            notes: item.notes ?? '',
+        };
+    }
+    if (product) {
+        return {
+            id: null,
+            __lineId: null,
+            __productId: product.id ?? null,
+            __unitId: product.base_unit_id ?? null,
+            __departmentId: null,
+            code: product.code ?? '',
+            requestDate: fallbackDate ?? '',
+            name: product.name ?? '',
+            quantity: '1',
+            unit: product.base_unit?.name ?? 'PCS',
+            department: [],
+            notes: '',
+        };
+    }
     return {
-        code: item.code ?? '',
-        requestDate: item.requestDate ?? '',
-        name: item.name ?? '',
-        quantity: item.quantity ?? '',
-        unit: cloneLookupValues(item.unit),
-        department: cloneLookupValues(item.department),
-        notes: item.notes ?? '',
+        id: null,
+        __lineId: null,
+        __productId: null,
+        __unitId: null,
+        __departmentId: null,
+        code: '',
+        requestDate: fallbackDate ?? '',
+        name: '',
+        quantity: '1',
+        unit: 'PCS',
+        department: [],
+        notes: '',
     };
 }
 
 function ModalFieldRow({ label, required = false, children }) {
     return (
-        <div className="grid gap-3 sm:grid-cols-[168px_minmax(0,1fr)] sm:items-start sm:gap-x-4">
+        <div className="grid gap-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-start sm:gap-x-3">
             <TransactionFieldLabel label={label} required={required} className="pt-2 text-xs font-normal text-slate-700" />
             <div>{children}</div>
         </div>
@@ -43,71 +81,123 @@ function ItemDetailsTab({ values, setValues, errors = {} }) {
     const hideDepartment = isWorkspacePageInactive('department');
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-2">
             <ModalFieldRow label="Kode #">
-                <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-document-code">{values.code}</div>
+                <div className="flex h-[40px] items-center text-xs sm:text-sm font-medium text-brand-blue">
+                    {values.code || '-'}
+                </div>
             </ModalFieldRow>
 
-            <ModalFieldRow label="Tgl Diminta">
-                <TransactionDateInput value={values.requestDate} className="max-w-[170px]" />
+            <ModalFieldRow label="Tgl Diminta" required>
+                <div className="max-w-[170px] w-full">
+                    <TransactionDateInput
+                        value={values.requestDate}
+                        onChange={(nextValue) =>
+                            setValues((current) => ({
+                                ...current,
+                                requestDate: nextValue,
+                            }))
+                        }
+                    />
+                </div>
             </ModalFieldRow>
 
             <ModalFieldRow label="Nama Barang" required>
-                <TextInput
-                    value={values.name}
-                    readOnly
+                <AccountLookupField
+                    resource="products"
+                    values={values.name ? (values.code ? [`[${values.code}] ${values.name}`] : [values.name]) : []}
+                    placeholder="Pilih Barang..."
+                    searchLabel="Cari barang"
+                    onSelectAccount={(record, label) => {
+                        if (record) {
+                            setValues((current) => ({
+                                ...current,
+                                __productId: record.id,
+                                name: record.name ?? '',
+                                code: record.code ?? '',
+                                unit: record.base_unit?.name ?? 'PCS',
+                                __unitId: record.base_unit_id ?? null,
+                            }));
+                        }
+                    }}
+                    onRemove={() => {
+                        setValues((current) => ({
+                            ...current,
+                            __productId: null,
+                            name: '',
+                            code: '',
+                        }));
+                    }}
                     error={errors.name}
-                    trailing={<span className="text-xl font-semibold text-brand-dark">×</span>}
-                    className="h-[36px] rounded-[4px] border-ui-border"
-                    inputClassName="text-xs text-brand-dark"
-                    trailingClassName="px-3"
+                    heightClassName="h-[40px]"
                 />
             </ModalFieldRow>
 
             <ModalFieldRow label="Kuantitas" required>
-                <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_124px]">
+                <div className="grid gap-3 sm:grid-cols-2">
                     <TextInput
+                        name="quantity"
                         value={values.quantity}
-                        onChange={(event) =>
+                        allowDecimal={false}
+                        allowNegative={false}
+                        onChange={(event) => {
                             setValues((current) => ({
                                 ...current,
                                 quantity: event.target.value,
-                            }))
-                        }
-                        trailing={<TableActionIcon className="h-4 w-4 text-text-darkest" />}
+                            }));
+                        }}
+                        trailing={<CalcIcon className="h-4 w-4 text-text-darkest" />}
                         error={errors.quantity}
-                        className="h-[36px] rounded-[4px] border-ui-border"
+                        className="h-[40px] rounded-[4px] border-ui-border"
                         inputClassName="text-right text-xs text-brand-dark"
                         trailingClassName="px-3"
                     />
-                    <ChipLookupField
-                        values={values.unit}
-                        placeholder=""
+                    <AccountLookupField
+                        resource="units"
+                        values={values.unit ? [values.unit] : []}
+                        placeholder="Satuan..."
                         searchLabel="Cari satuan"
-                        onRemove={(unitValue) =>
+                        onSelectAccount={(record, label) => {
                             setValues((current) => ({
                                 ...current,
-                                unit: current.unit.filter((item) => item !== unitValue),
-                            }))
-                        }
-                        heightClassName="h-[36px]"
+                                unit: label,
+                                __unitId: record?.id ?? null,
+                            }));
+                        }}
+                        onRemove={() => {
+                            setValues((current) => ({
+                                ...current,
+                                unit: '',
+                                __unitId: null,
+                            }));
+                        }}
+                        heightClassName="h-[40px]"
                     />
                 </div>
             </ModalFieldRow>
 
             {!hideDepartment ? (
                 <ModalFieldRow label="Departemen">
-                    <ChipLookupField
+                    <AccountLookupField
+                        resource="departments"
                         values={values.department}
                         placeholder="Cari/Pilih..."
                         searchLabel="Cari departemen"
-                        onRemove={(departmentValue) =>
+                        onSelectAccount={(record, label) => {
                             setValues((current) => ({
                                 ...current,
-                                department: current.department.filter((item) => item !== departmentValue),
-                            }))
-                        }
-                        heightClassName="h-[36px]"
+                                department: [label],
+                                __departmentId: record?.id ?? null,
+                            }));
+                        }}
+                        onRemove={() => {
+                            setValues((current) => ({
+                                ...current,
+                                department: [],
+                                __departmentId: null,
+                            }));
+                        }}
+                        heightClassName="h-[40px]"
                     />
                 </ModalFieldRow>
             ) : null}
@@ -117,7 +207,7 @@ function ItemDetailsTab({ values, setValues, errors = {} }) {
 
 function ItemNotesTab({ values, setValues }) {
     return (
-        <div className="space-y-3">
+        <div className="space-y-2">
             <ModalFieldRow label="Keterangan">
                 <TextareaField
                     value={values.notes}
@@ -136,46 +226,61 @@ function ItemNotesTab({ values, setValues }) {
     );
 }
 
-export default function ItemRequestItemModal({ open, onClose, modal, item }) {
-    const tabs = modal?.tabs ?? [];
-    const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? 'details');
-    const [values, setValues] = useState(() => buildInitialValues(item));
+export default function ItemRequestItemModal({ open, onClose, onConfirm, onDelete, product, item, fallbackDate }) {
+    const tabs = [
+        { id: 'details', label: 'Rincian Barang' },
+        { id: 'info', label: 'Info lainnya' },
+    ];
+    const [activeTabId, setActiveTabId] = useState('details');
+    const [values, setValues] = useState(() => buildInitialValues(item, product, fallbackDate));
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        setActiveTabId(tabs[0]?.id ?? 'details');
-        setValues(buildInitialValues(item));
-        setErrors({});
-    }, [item, tabs]);
+        if (open) {
+            setActiveTabId('details');
+            setValues(buildInitialValues(item, product, fallbackDate));
+            setErrors({});
+        }
+    }, [open, item, product, fallbackDate]);
 
     const handleValuesChange = useCallback((updater) => {
         setValues(updater);
         setErrors({});
     }, []);
 
-    if (!modal || !item) {
-        return null;
-    }
-
-    const activeTabIdSafe = tabs.some((tab) => tab.id === activeTabId) ? activeTabId : tabs[0]?.id ?? 'details';
+    const activeTabIdSafe = tabs.some((tab) => tab.id === activeTabId) ? activeTabId : 'details';
 
     function handleSubmit() {
         const newErrors = {};
         if (!String(values.name ?? '').trim()) {
             newErrors.name = 'Nama barang harus diisi.';
         }
-        const qty = parseFloat(String(values.quantity).replace(/\./g, '').replace(/,/g, '.'));
+        const qty = parseAmountInput(values.quantity);
         if (!qty || qty <= 0) {
             newErrors.quantity = 'Kuantitas harus lebih besar dari 0.';
         }
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            setActiveTabId(tabs[0]?.id ?? 'details');
+            setActiveTabId('details');
             showErrorToast({ message: Object.values(newErrors)[0] });
             return;
         }
 
+        onConfirm?.({
+            id: values.id ?? `draft-item-${Date.now()}`,
+            __lineId: values.__lineId ?? null,
+            __productId: values.__productId ?? null,
+            __unitId: values.__unitId ?? null,
+            __departmentId: values.__departmentId ?? null,
+            name: values.name,
+            code: values.code,
+            quantity: String(qty),
+            unit: values.unit,
+            requestDate: values.requestDate,
+            department: values.department,
+            notes: values.notes,
+        });
         onClose();
     }
 
@@ -183,23 +288,23 @@ export default function ItemRequestItemModal({ open, onClose, modal, item }) {
         <DocumentModalLayout
             open={open}
             onClose={onClose}
-            title={modal.title}
+            title="Rincian Barang"
             tabs={tabs}
             activeTabId={activeTabIdSafe}
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
-            panelClassName="max-w-[620px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
-            bodyClassName="min-h-[340px] py-4"
+            panelClassName="max-w-[540px] w-full overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
+            bodyClassName="pt-1.5 pb-28"
             footer={
                 <DocumentModalFooter
-                    deleteLabel={modal.deleteLabel}
-                    submitLabel={modal.submitLabel}
-                    onDelete={onClose}
+                    deleteLabel="Hapus"
+                    submitLabel="Lanjut"
+                    onDelete={item ? onDelete : null}
                     onSubmit={handleSubmit}
                 />
             }
         >
-            {activeTabIdSafe === 'notes' ? (
+            {activeTabIdSafe === 'info' ? (
                 <ItemNotesTab values={values} setValues={handleValuesChange} />
             ) : (
                 <ItemDetailsTab values={values} setValues={handleValuesChange} errors={errors} />

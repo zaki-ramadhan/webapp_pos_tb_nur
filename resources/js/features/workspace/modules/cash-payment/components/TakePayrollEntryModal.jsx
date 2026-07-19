@@ -167,7 +167,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
                         variant="secondary"
                         size="md"
                         onClick={onClose}
-                        className="rounded-[4px] font-normal"
+                        className="rounded-[4px] font-normal border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
                     >
                         Batal
                     </Button>

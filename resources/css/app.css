@@ -22,12 +22,13 @@
     --color-input-focus-ring: rgba(90, 132, 229, 0.16);
     --color-brand-primary: #f2356d;
     --color-brand-primary-hover: #e72d65;
-    --color-brand-blue: #2353a0;
-    --color-brand-blue-hover: #1f4f96;
+    --color-brand-blue: #16499A;
+    --color-brand-blue-hover: #123c80;
     --color-brand-blue-dark: #1a63b3;
     --color-brand-blue-light: #e8f2ff;
     --color-brand-blue-border: #7aa2d5;
     --color-brand-blue-border-light: #8ec1ef;
+    --color-blue-900: #0A2A55;
     --color-brand-dark: #1f2436;
     --color-danger: #db2347;
     --color-danger-hover: #c81f40;

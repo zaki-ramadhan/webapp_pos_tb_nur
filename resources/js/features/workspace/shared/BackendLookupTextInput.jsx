@@ -214,7 +214,6 @@ export default function BackendLookupTextInput({
                         ) : (
                             <LookupEmptyState
                                 title={`Tidak ada data yang cocok.`}
-                                description="Coba kata kunci lain."
                             />
                         )}
                     </div>

@@ -79,8 +79,11 @@ export function parseAmountInput(value, { allowDecimal = true, allowNegative = f
     if (typeof value === 'string') {
         const trimmed = value.trim();
         if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
-            const num = Number(trimmed);
-            return Number.isFinite(num) ? num : emptyValue;
+            const hasIndonesianThousandSep = /^-?\d{1,3}\.\d{3}$/.test(trimmed);
+            if (!hasIndonesianThousandSep) {
+                const num = Number(trimmed);
+                return Number.isFinite(num) ? num : emptyValue;
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { showErrorToast } from '@/components/feedback/toast';
+import { listBackendResource, extractBackendRows } from '@/features/workspace/backend/workspaceBackendApi';
 
 import DocumentModalLayout, { DocumentModalFooter } from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import { DocumentModalCurrencyField } from '@/features/workspace/modules/shared/document-modal/DocumentModalFields';
@@ -111,8 +112,8 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
             <TransactionFieldLabel label="Kode #" />
             <div className="flex items-center justify-between h-[34px]">
                 <span className="text-xs sm:text-sm font-medium text-document-code">{code ?? ''}</span>
-                <span className="text-xs sm:text-sm text-text-darkest">
-                    Bisa dijual : <span className="text-document-code font-medium">{form.canSell ?? 0}</span>
+                 <span className="text-xs sm:text-sm text-text-darkest">
+                    Bisa dijual : <span className={`font-medium ${parseFloat(form.canSell ?? 0) !== 0 ? 'text-green-700 font-semibold' : 'text-document-code'}`}>{form.canSell ?? 0}</span>
                 </span>
             </div>
 
@@ -214,8 +215,8 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
                         heightClassName={FIELD_H}
                     />
                 </div>
-                <span className="text-xs sm:text-sm text-text-darkest shrink-0">
-                    Stok : <span className="text-document-code font-medium">{form.stock ?? 0}</span>
+                 <span className="text-xs sm:text-sm text-text-darkest shrink-0">
+                    Stok : <span className={`font-medium ${parseFloat(form.stock ?? 0) !== 0 ? 'text-green-700 font-semibold' : 'text-document-code'}`}>{form.stock ?? 0}</span>
                 </span>
             </div>
 
@@ -255,6 +256,25 @@ function ItemInfoEditTab({ form, onChange }) {
 
 // ─── Modal Entry ─────────────────────────────────────────────────────────────
 
+function resolvePriceFromProduct(product) {
+    const prices = product.prices ?? [];
+    if (prices.length > 0) {
+        const salesPrice = prices.find(
+            (p) => p.price_type?.toLowerCase().includes('jual') || p.price_type?.toLowerCase().includes('sales')
+        ) ?? prices[0];
+        return {
+            amount: Number(salesPrice.price ?? 0),
+            unitName: salesPrice.unit?.name ?? product.sales_unit?.name ?? product.base_unit?.name ?? 'PCS',
+            unitId: salesPrice.unit_id ?? product.sales_unit_id ?? product.base_unit_id ?? null,
+        };
+    }
+    return {
+        amount: Number(product.default_sale_price ?? 0),
+        unitName: product.sales_unit?.name ?? product.base_unit?.name ?? 'PCS',
+        unitId: product.sales_unit_id ?? product.base_unit_id ?? null,
+    };
+}
+
 function buildInitialForm(product, existingItem) {
     if (existingItem) {
         const qtyNum = parseNumericInput(existingItem.quantity);
@@ -283,14 +303,14 @@ function buildInitialForm(product, existingItem) {
     }
 
     if (product) {
-        const unitPriceAmount = Number(product.default_sale_price ?? 0);
+        const { amount: unitPriceAmount, unitName, unitId } = resolvePriceFromProduct(product);
         return {
             name: product.name ?? '',
             code: product.code ?? '',
             canSell: product.can_be_sold ?? 0,
             quantity: '1',
-            unit: product.sales_unit?.name ?? product.base_unit?.name ?? 'PCS',
-            __unitId: product.sales_unit_id ?? product.base_unit_id ?? null,
+            unit: unitName,
+            __unitId: unitId,
             __productId: product.id ?? null,
             price: formatCurrencyValue(unitPriceAmount),
             discountPercent: '0',
@@ -346,6 +366,62 @@ export default function SalesDocumentItemEditModal({
             setErrors({});
         }
     }, [open, product, item]);
+
+    useEffect(() => {
+        const productId = form.__productId;
+        const warehouseId = form.__warehouseId;
+
+        if (!productId) {
+            setForm((prev) => ({ ...prev, canSell: 0, stock: 0 }));
+            return;
+        }
+
+        let active = true;
+
+        async function fetchStock() {
+            try {
+                const queryParams = {
+                    product_id: productId,
+                };
+                if (warehouseId) {
+                    queryParams.warehouse_id = warehouseId;
+                }
+
+                const response = await listBackendResource('item-locations', queryParams);
+                if (!active) return;
+
+                const rows = extractBackendRows(response);
+
+                if (warehouseId) {
+                    const matched = rows.find(r => Number(r.warehouse_id) === Number(warehouseId));
+                    const saleableStock = matched ? parseFloat(matched.saleable_stock || 0) : 0;
+                    setForm((prev) => ({
+                        ...prev,
+                        canSell: saleableStock,
+                        stock: saleableStock,
+                    }));
+                } else {
+                    const totalSaleable = rows.reduce((sum, r) => sum + parseFloat(r.saleable_stock || 0), 0);
+                    setForm((prev) => ({
+                        ...prev,
+                        canSell: totalSaleable,
+                        stock: 0,
+                    }));
+                }
+            } catch (err) {
+                console.error('Error fetching stock:', err);
+                if (active) {
+                    setForm((prev) => ({ ...prev, canSell: 0, stock: 0 }));
+                }
+            }
+        }
+
+        fetchStock();
+
+        return () => {
+            active = false;
+        };
+    }, [form.__productId, form.__warehouseId]);
 
     const handleChange = useCallback((patch) => {
         setForm((prev) => ({ ...prev, ...patch }));

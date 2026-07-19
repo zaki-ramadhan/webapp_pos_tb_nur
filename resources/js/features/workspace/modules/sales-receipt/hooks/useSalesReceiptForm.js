@@ -100,12 +100,54 @@ export default function useSalesReceiptForm({
         });
     }
 
+    async function handleApplySalesInvoice(pendingId) {
+        await executeImportPendingAction({
+            loadingMessage: 'Sedang mengambil rincian faktur penjualan...',
+            successMessage: 'Berhasil memindahkan data rincian faktur penjualan.',
+            errorMessage: 'Gagal mengambil rincian faktur penjualan.',
+            action: async () => {
+                const fullRecord = await getBackendResource('sales-invoices', pendingId);
+                if (!fullRecord) throw new Error('Record not found');
+
+                const outstanding = parseFloat(fullRecord.outstanding_amount ?? fullRecord.total_amount ?? 0);
+
+                setValues((current) => {
+                    const updatedInvoices = [
+                        ...(current.invoices ?? []),
+                        buildSalesReceiptInvoiceFromRecord(fullRecord),
+                    ];
+
+                    return applySalesReceiptInvoices(
+                        {
+                            ...current,
+                            __customerId: fullRecord.customer_id ?? null,
+                            customer: fullRecord.customer ? [buildLookupLabel(fullRecord.customer)] : [],
+                            paymentAmount: String(outstanding),
+                            paymentAmountDisplay: String(outstanding),
+                            paymentAmountForSummary: String(outstanding),
+                            invoices: updatedInvoices,
+                        },
+                        updatedInvoices
+                    );
+                });
+            },
+        });
+    }
+
     useEffect(() => {
-        if (!isDetail && window.__pendingImportSalesDeposit) {
-            const pending = window.__pendingImportSalesDeposit;
-            window.__pendingImportSalesDeposit = null;
-            if (pending && pending.id) {
-                handleApplySalesDeposit(pending.id);
+        if (!isDetail) {
+            if (window.__pendingImportSalesDeposit) {
+                const pending = window.__pendingImportSalesDeposit;
+                window.__pendingImportSalesDeposit = null;
+                if (pending && pending.id) {
+                    handleApplySalesDeposit(pending.id);
+                }
+            } else if (window.__pendingImportSalesInvoice) {
+                const pending = window.__pendingImportSalesInvoice;
+                window.__pendingImportSalesInvoice = null;
+                if (pending && pending.id) {
+                    handleApplySalesInvoice(pending.id);
+                }
             }
         }
     }, [isDetail, activeLevel2Tab]);

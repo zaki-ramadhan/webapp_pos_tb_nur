@@ -27,11 +27,11 @@ const itemRequestListColumns = [
 
 const itemRequestDetailColumns = [
     { id: 'spacer', label: '', kind: 'spacer', widthClassName: 'w-[38px]', align: 'center' },
-    { id: 'name', label: 'Nama Barang', widthClassName: 'w-[40%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[170px]', align: 'left' },
-    { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[120px]', align: 'right' },
-    { id: 'unit', label: 'Satuan', widthClassName: 'w-[110px]', align: 'left' },
-    { id: 'requestDate', label: 'Tgl Diminta', widthClassName: 'w-[150px]', align: 'left' },
+    { id: 'code', label: 'Kode #', widthClassName: 'w-[120px]', align: 'left' },
+    { id: 'name', label: 'Nama Barang', widthClassName: 'w-full', align: 'left' },
+    { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[100px]', align: 'right' },
+    { id: 'unit', label: 'Satuan', widthClassName: 'w-[100px]', align: 'left' },
+    { id: 'requestDate', label: 'Tgl Diterima', widthClassName: 'w-[120px]', align: 'left' },
 ];
 
 const itemRequestCreateDockActions = [

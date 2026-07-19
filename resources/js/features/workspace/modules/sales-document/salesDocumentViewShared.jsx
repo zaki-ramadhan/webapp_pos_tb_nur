@@ -19,7 +19,7 @@ import { applyComputedTotals } from './salesDocumentFormShared';
 import SalesDocumentCopyModal from './SalesDocumentCopyModal';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
-export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail }) {
+export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail, handlers, pageId }) {
     const secondaryActionLabel = values.secondaryHeaderActionLabel ?? config.secondaryActionLabel;
     const showSecondaryHeaderAction = Boolean(secondaryActionLabel) && (values.showSecondaryHeaderAction ?? config.showSecondaryHeaderAction ?? false);
     const showProcessButton = isDetail ? values.showProcessButton : (values.showProcessButtonOnCreate ?? config.showProcessButtonOnCreate ?? false);
@@ -82,6 +82,14 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
             });
             return;
         }
+
+        if (actionName === 'Pembayaran') {
+            if (handlers?.onProcessPembayaran) {
+                handlers.onProcessPembayaran(values);
+                return;
+            }
+        }
+
         showSuccessToast({
             title: 'Berhasil',
             message: `Memproses ${actionName} untuk dokumen ini.`,

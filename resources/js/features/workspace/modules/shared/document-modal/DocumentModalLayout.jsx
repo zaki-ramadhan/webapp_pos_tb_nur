@@ -18,17 +18,21 @@ function DocumentModalTabButton({ active, label, onClick }) {
 export function DocumentModalFooter({ deleteLabel = 'Hapus', submitLabel = 'Lanjut', onDelete, onSubmit }) {
     return (
         <div className="flex items-center justify-between border-t border-ui-border-medium pt-3">
-            <button
-                type="button"
-                onClick={onDelete}
-                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-slate-300 bg-white px-5 text-sm font-normal text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition cursor-pointer"
-            >
-                {deleteLabel}
-            </button>
+            {onDelete ? (
+                <button
+                    type="button"
+                    onClick={onDelete}
+                    className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-5 text-sm sm:text-base font-normal text-brand-blue hover:bg-brand-blue/5 active:scale-[0.98] transition cursor-pointer"
+                >
+                    {deleteLabel}
+                </button>
+            ) : (
+                <div />
+            )}
             <button
                 type="button"
                 onClick={onSubmit}
-                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-5 text-sm font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary"
+                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-5 text-sm sm:text-base font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary"
             >
                 {submitLabel}
             </button>
@@ -56,7 +60,7 @@ export default function DocumentModalLayout({
             className="bg-modal-overlay-dark"
             panelClassName={panelClassName}
         >
-            <div className="bg-blue-900 px-4 py-2.5 text-white">
+            <div className="px-4 py-2 text-white" style={{ backgroundColor: '#0A2A55' }}>
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
                         <PencilIcon className="h-4 w-4 text-white" />

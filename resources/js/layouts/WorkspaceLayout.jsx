@@ -21,7 +21,7 @@ export default function WorkspaceLayout({ children, title = 'Workspace' }) {
             <Head title={title || appName} />
 
             <div className="workspace-screen relative h-screen w-screen overflow-hidden bg-layout-bg text-layout-text">
-                <GlobalBackgroundArt />
+                <GlobalBackgroundArt mode="workspace" />
                 <div className="absolute inset-0 bg-bg-gradient-linear" />
 
                 <div className="relative z-10 h-full w-full overflow-hidden">{children}</div>

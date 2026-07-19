@@ -27,9 +27,9 @@ import {
     buildGeneratedItemRequestNumber,
     buildItemRequestPayload,
     buildLookupLabel,
-    promptItemRequestItem,
     validateItemRequestValues,
 } from './itemRequestShared';
+import ItemRequestItemModal from './ItemRequestItemModal';
 
 
 export default function ItemRequestFormView({
@@ -102,28 +102,40 @@ export default function ItemRequestFormView({
         requestDelete();
     }
 
-    async function applyItemUpdate(record, currentItem = null) {
-        try {
-            const nextItem = await promptItemRequestItem(record, currentItem, values.requestDate);
+    const [itemModalOpen, setItemModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
+    const [editingProduct, setEditingProduct] = useState(null);
 
-            if (!nextItem) {
-                return;
-            }
+    function applyItemUpdate(product, currentItem = null) {
+        setEditingProduct(product);
+        setEditingItem(currentItem);
+        setItemModalOpen(true);
+    }
 
-            setValues((current) =>
-                applyItemRequestItems(
-                    current,
-                    currentItem
-                        ? (current.items ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
-                        : [...(current.items ?? []), nextItem],
-                ),
-            );
-            showSuccessToast({
-                message: currentItem ? 'Rincian permintaan diperbarui.' : 'Rincian permintaan ditambahkan.',
+    function handleItemModalConfirm(nextItem) {
+        setValues((current) => {
+            const existingItems = current.items ?? [];
+            const updatedItems = editingItem
+                ? existingItems.map((item) => (item.id === editingItem.id ? nextItem : item))
+                : [...existingItems, nextItem];
+            return applyItemRequestItems(current, updatedItems);
+        });
+        showSuccessToast({
+            message: editingItem ? 'Rincian permintaan diperbarui.' : 'Rincian permintaan ditambahkan.',
+        });
+        setItemModalOpen(false);
+    }
+
+    function handleItemModalDelete() {
+        if (editingItem) {
+            setValues((current) => {
+                const existingItems = current.items ?? [];
+                const updatedItems = existingItems.filter((item) => item.id !== editingItem.id);
+                return applyItemRequestItems(current, updatedItems);
             });
-        } catch (error) {
-            showErrorToast({ message: error?.message ?? 'Rincian permintaan tidak valid.' });
+            showSuccessToast({ message: 'Rincian permintaan dihapus.' });
         }
+        setItemModalOpen(false);
     }
 
     async function onSave() {
@@ -264,6 +276,16 @@ export default function ItemRequestFormView({
                 onClose={() => setImportModalOpen(false)}
                 onImport={handlers.onImportItems}
                 mode="purchasing"
+            />
+
+            <ItemRequestItemModal
+                open={itemModalOpen}
+                onClose={() => setItemModalOpen(false)}
+                onConfirm={handleItemModalConfirm}
+                onDelete={handleItemModalDelete}
+                product={editingProduct}
+                item={editingItem}
+                fallbackDate={values.requestDate}
             />
         </>
     );

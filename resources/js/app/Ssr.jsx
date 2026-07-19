@@ -5,13 +5,13 @@ import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { renderToString } from 'react-dom/server';
 
-const applicationName = 'TB Nur POS';
+const applicationName = 'Toko Bangunan & Material TB Nur';
 
 createServer((page) =>
     createInertiaApp({
         page,
         render: renderToString,
-        title: () => 'TB Nur POS',
+        title: () => 'Toko Bangunan & Material TB Nur',
         resolve: (name) =>
             resolvePageComponent(`../pages/${name}.jsx`, import.meta.glob('../pages/**/*.jsx')),
         setup: ({ App, props }) => <App {...props} />,

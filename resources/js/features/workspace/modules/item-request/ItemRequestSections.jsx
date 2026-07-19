@@ -134,29 +134,20 @@ export function ItemRequestDetailsSection({ config, values, setValues, isDetail,
 
     const customSearchInput = (
         <div className="flex gap-2 w-full items-center">
-            {!isDetail && (
-                <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
-                    <AccountLookupTextInput
-                        id="itemRequestItemSearch"
-                        resource="products"
-                        value={values.itemSearch}
-                        placeholder={config.detailSearchPlaceholder}
-                        searchLabel="Cari barang atau jasa"
-                        onSelectAccount={(record, label) => {
-                            if (record) {
-                                handlers.onSelectItemSuggestion?.(record, label);
-                            }
-                        }}
-                    />
-                </div>
-            )}
-            {isDetail && (
-                <TransactionToolbarSplitButton
-                    label="Opsi rincian barang"
-                    icon={<TableActionIcon className="h-4.5 w-4.5" />}
-                    items={config.itemTable.copyItems ?? []}
+            <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
+                <AccountLookupTextInput
+                    id="itemRequestItemSearch"
+                    resource="products"
+                    value={values.itemSearch}
+                    placeholder={config.detailSearchPlaceholder}
+                    searchLabel="Cari barang atau jasa"
+                    onSelectAccount={(record, label) => {
+                        if (record) {
+                            handlers.onSelectItemSuggestion?.(record, label);
+                        }
+                    }}
                 />
-            )}
+            </div>
         </div>
     );
 

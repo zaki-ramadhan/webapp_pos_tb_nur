@@ -93,6 +93,7 @@ export default function ExpenseEntryLineItemModal({
                                 variant="secondary"
                                 size="md"
                                 onClick={handleLineModalDelete}
+                                className="border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
                             >
                                 Hapus
                             </Button>

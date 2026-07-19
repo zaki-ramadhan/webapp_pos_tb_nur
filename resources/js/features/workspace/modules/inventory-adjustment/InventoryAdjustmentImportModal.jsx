@@ -215,7 +215,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                         <button
                             type="button"
                             onClick={() => setStep('upload')}
-                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-xs font-medium text-brand-blue-accent"
+                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-4 text-xs font-medium text-brand-blue hover:bg-brand-blue/5 transition cursor-pointer"
                         >
                             Kembali
                         </button>
@@ -223,7 +223,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                         <button
                             type="button"
                             onClick={onClose}
-                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-gray-300 bg-white px-4 text-xs font-medium text-gray-700"
+                            className="inline-flex h-8 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-4 text-xs font-medium text-brand-blue hover:bg-brand-blue/5 transition cursor-pointer"
                         >
                             Batal
                         </button>

@@ -137,7 +137,6 @@ export function SuggestionTextInput({
                         ) : (
                             <LookupEmptyState
                                 title={emptyLabel}
-                                description="Coba kata kunci lain yang lebih spesifik."
                             />
                         )}
                     </div>

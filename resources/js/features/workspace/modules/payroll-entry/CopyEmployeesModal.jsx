@@ -126,7 +126,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
             footerClassName="border-t border-ui-border-medium bg-white px-2.5 py-2 sm:px-3.5"
             footer={
                 <div className="flex justify-between items-center w-full">
-                    <Button variant="secondary" size="md" onClick={onClose}>
+                    <Button variant="secondary" size="md" onClick={onClose} className="border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none">
                         Batal
                     </Button>
                     <Button

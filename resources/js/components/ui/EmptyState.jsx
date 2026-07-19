@@ -1,6 +1,6 @@
 import {
     BellOff,
-    FileSearch,
+    FileXCorner,
     FolderOpen,
     Inbox,
     PackageSearch,
@@ -13,7 +13,7 @@ const emptyStateIconMap = {
     reports: FolderOpen,
     search: SearchX,
     notification: BellOff,
-    document: FileSearch,
+    document: FileXCorner,
     inventory: PackageSearch,
 };
 
@@ -82,7 +82,7 @@ export default function EmptyState({
         icon && typeof icon !== 'string' ? (
             icon
         ) : (
-            <ResolvedIcon className={size === 'sm' ? 'h-12 w-12' : size === 'lg' ? 'h-16 w-16' : 'h-14 w-14'} strokeWidth={1.7} />
+            <ResolvedIcon className={size === 'sm' ? 'h-12 w-12' : size === 'lg' ? 'h-16 w-16' : 'h-14 w-14'} strokeWidth={1.25} />
         );
 
     return (

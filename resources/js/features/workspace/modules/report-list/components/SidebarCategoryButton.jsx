@@ -35,7 +35,7 @@ export default function SidebarCategoryButton({ category, active, onSelect }) {
                 {category.icon === 'save' ? (
                     <SaveIcon className="h-[18px] w-[18px]" />
                 ) : (
-                    <NavigationIcon type={category.icon} className="h-[18px] w-[18px]" strokeWidth={1.8} />
+                    <NavigationIcon type={category.icon} className="h-[18px] w-[18px]" strokeWidth={1.45} />
                 )}
             </span>
 

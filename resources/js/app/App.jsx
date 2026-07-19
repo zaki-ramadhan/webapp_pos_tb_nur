@@ -9,10 +9,10 @@ import { Toaster } from 'sonner';
 import FlashToastBridge from '@/components/feedback/FlashToastBridge';
 import AppErrorBoundary from '@/components/error/AppErrorBoundary';
 
-const applicationName = typeof document !== 'undefined' ? document.title || 'TB Nur POS' : 'TB Nur POS';
+const applicationName = typeof document !== 'undefined' ? document.title || 'Toko Bangunan & Material TB Nur' : 'Toko Bangunan & Material TB Nur';
 
 createInertiaApp({
-    title: () => 'TB Nur POS',
+    title: () => 'Toko Bangunan & Material TB Nur',
     resolve: (name) =>
         resolvePageComponent(`../pages/${name}.jsx`, import.meta.glob('../pages/**/*.jsx')),
     progress: {

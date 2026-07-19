@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react';
+import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import {
     DataTable,
     DataTableBody,
@@ -33,6 +34,9 @@ export function TransactionDataTable({
     getRowClassName = null,
     showNumbering = true,
     cellClassName = '',
+    sortKey = null,
+    sortDir = null,
+    onSort = null,
 }) {
     const cleanedColumns = useMemo(() => {
         return (columns ?? []).map(col => ({
@@ -99,7 +103,30 @@ export function TransactionDataTable({
                                               ...column,
                                               align: column.align === 'right' ? 'left' : column.align,
                                           })
-                                        : column.label}
+                                        : onSort && column.sortable !== false && column.label ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => onSort(column.id)}
+                                                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${
+                                                    column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start'
+                                                }`}
+                                            >
+                                                <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
+                                                {sortKey === column.id ? (
+                                                    sortDir === 'asc' ? (
+                                                        <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
+                                                    ) : (
+                                                        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
+                                                    )
+                                                ) : (
+                                                    <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white opacity-40" />
+                                                )}
+                                            </button>
+                                        ) : (
+                                            <span className="block truncate text-left">
+                                                {column.label}
+                                            </span>
+                                        )}
                                 </DataTableHead>
                             );
                         })}

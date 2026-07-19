@@ -38,7 +38,7 @@ export default function ConfirmationModal({
                             size="md"
                             onClick={onClose}
                             disabled={cancelDisabled || confirmLoading}
-                            className="min-w-[60px] rounded-[4px] border-brand-blue-border-light text-brand-blue-dark shadow-none"
+                            className="min-w-[60px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
                         >
                             {cancelLabel}
                         </Button>

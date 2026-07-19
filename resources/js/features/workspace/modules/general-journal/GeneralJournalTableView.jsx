@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import Pagination from '@/components/ui/Pagination';
 import useTableSort from '@/features/workspace/shared/useTableSort';
 
@@ -127,32 +126,9 @@ export default function GeneralJournalTableView({
                             })
                         }
                         getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
-                        renderHeaderCell={(column) => {
-                            const sortable = column.sortable !== false;
-                            const direction = sortKey === column.id ? sortDir : null;
-                            const justifyClass = column.align === 'right' ? 'justify-end' : column.align === 'center' ? 'justify-center' : 'justify-start';
-
-                            if (!sortable) {
-                                return <span className="block truncate">{column.label}</span>;
-                            }
-
-                            return (
-                                <button
-                                    type="button"
-                                    onClick={() => handleSort(column.id)}
-                                    className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
-                                >
-                                    <span className="block whitespace-nowrap truncate min-w-0 flex-1 text-left">{column.label}</span>
-                                    {direction === 'asc' ? (
-                                        <ChevronUp className="h-3.5 w-3.5 shrink-0 text-white" />
-                                    ) : direction === 'desc' ? (
-                                        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white" />
-                                    ) : (
-                                        <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-white opacity-40" />
-                                    )}
-                                </button>
-                            );
-                        }}
+                        sortKey={sortKey}
+                        sortDir={sortDir}
+                        onSort={handleSort}
                         renderCell={({ row, column }) => (
                             <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
                         )}

@@ -105,6 +105,23 @@ export default function SalesDocumentFormView({
         setActiveSectionId(resolveInitialSectionId(config, isDetail));
     }, [activeRecordId]);
 
+    const resolvedSectionTabs = useMemo(() => {
+        let tabs = config.sectionTabs ?? [];
+        if (pageId === 'sales-invoice') {
+            const hasValidCustomer = Boolean(values.__partnerId);
+            if (!hasValidCustomer) {
+                tabs = tabs.filter(tab => tab.id !== 'advance-payments');
+            }
+        }
+        return tabs;
+    }, [config.sectionTabs, pageId, values.__partnerId]);
+
+    useEffect(() => {
+        if (pageId === 'sales-invoice' && !values.__partnerId && activeSectionId === 'advance-payments') {
+            setActiveSectionId('details');
+        }
+    }, [pageId, values.__partnerId, activeSectionId]);
+
     const lastInitialSnapshotRef = useRef(initialSnapshot);
 
     useEffect(() => {
@@ -357,6 +374,18 @@ export default function SalesDocumentFormView({
                 setEditingCostItem(costItem);
                 setEditCostOpen(true);
             },
+            onProcessPembayaran: (formValues) => {
+                if (!formValues.__backendRecordId) return;
+                window.__pendingImportSalesInvoice = { id: formValues.__backendRecordId };
+                window.dispatchEvent(
+                    new CustomEvent('workspace:open-page', {
+                        detail: {
+                            pageId: 'sales-receipt',
+                            targetTabId: 'sales-receipt-create',
+                        },
+                    })
+                );
+            },
         }),
         [updateItems, setStatus],
     );
@@ -402,7 +431,7 @@ export default function SalesDocumentFormView({
                         handlers={handlers}
                     />
                 }
-                sectionTabs={config.sectionTabs}
+                sectionTabs={resolvedSectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
                 footer={config.showFooter !== false ? <SalesDocumentFooter values={values} setValues={setValues} /> : null}

@@ -1,24 +1,14 @@
 import { useMemo, useState } from 'react';
 import Pagination from '@/components/ui/Pagination';
-import {
-    DataTable,
-    DataTableBody,
-    DataTableCell,
-    DataTableHeader,
-    DataTableHead,
-    DataTableRow,
-} from '@/components/ui/DataTable';
 import SelectField from '@/components/ui/SelectField';
-import SortableTableHeaderCell from '@/features/workspace/shared/SortableTableHeaderCell';
 import TableToolbar from '@/features/workspace/shared/TableToolbar';
 import useTableSort from '@/features/workspace/shared/useTableSort';
-import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
-import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
 import {
     RefreshIcon,
     PlusIcon,
     SearchIcon,
 } from '@/features/workspace/shared/Icons';
+import { TransactionDataTable } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 
 function SalesReceiptFilterBar({ config, filters, setFilters }) {
     return (
@@ -40,7 +30,6 @@ function SalesReceiptFilterBar({ config, filters, setFilters }) {
                     ))}
                 </SelectField>
             ))}
-
         </div>
     );
 }
@@ -49,9 +38,9 @@ export default function SalesReceiptTableView({
     config,
     onCreate,
     onOpenDetail,
+    onRefresh = null,
     loading = false,
     error = '',
-    onRefresh = null,
 }) {
     const [keyword, setKeyword] = useState('');
     const [filters, setFilters] = useState(() =>
@@ -68,7 +57,11 @@ export default function SalesReceiptTableView({
             const matchesFilters = config.table.filters.every((filter) => {
                 const selectedValue = filters[filter.id];
 
-                return !selectedValue || selectedValue === 'all' ? true : row[filter.rowKey] === selectedValue;
+                if (!selectedValue || selectedValue === 'all') {
+                    return true;
+                }
+
+                return row[filter.rowKey] === selectedValue;
             });
 
             if (!matchesFilters) {
@@ -89,7 +82,6 @@ export default function SalesReceiptTableView({
     }, [config.table.filters, config.table.rows, filters, keyword]);
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
-    const { handleResizeStart, getCellStyle } = useColumnResize('sales-receipts');
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -121,66 +113,23 @@ export default function SalesReceiptTableView({
             />
 
             <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className="min-w-[1520px]" wrapperClassName="border-table-wrapper-border">
-                    <DataTableHeader className="bg-table-header-bg">
-                        <tr>
-                            {filteredRows.length > 0 && (
-                                <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-medium text-white">
-                                    No.
-                                </DataTableHead>
-                            )}
-                            {config.table.columns.map((column) => (
-                                <SortableTableHeaderCell
-                                    key={column.id}
-                                    label={column.label}
-                                    align={column.align}
-                                    widthClassName={column.widthClassName}
-                                    sortable={column.sortable !== false}
-                                    sortDirection={sortKey === column.id ? sortDir : null}
-                                    onSort={() => handleSort(column.id)}
-                                    style={getCellStyle(column.id, { position: 'relative' })}
-                                    onResizeStart={(e) => handleResizeStart(e, column.id)}
-                                />
-                            ))}
-                        </tr>
-                    </DataTableHeader>
-
-                    <DataTableBody>
-                        {sortedRows.length ? (
-                            sortedRows.map((row, index) => (
-                                <DataTableRow
-                                    key={row.id}
-                                    className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
-                                        index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
-                                    }`.trim()}
-                                    onClick={() => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
-                                >
-                                                                        {filteredRows.length > 0 ? (
-                                        <DataTableCell className="px-3 text-center text-base text-table-row-number">
-                                        {index + 1}
-                                    </DataTableCell>
-                                    ) : null}
-{config.table.columns.map((column) => (
-                                        <DataTableCell
-                                            key={column.id}
-                                            className={`${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} px-2.5 text-base text-text-workspace-dark`.trim()}
-                                            style={getCellStyle(column.id)}
-                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
-                                        >
-                                            <span className="block truncate">{formatTableTextValue(row[column.id], column)}</span>
-                                        </DataTableCell>
-                                    ))}
-                                </DataTableRow>
-                            ))
-                        ) : (
-                            <DataTableRow className="border-ui-border-row bg-white">
-                                <DataTableCell colSpan={config.table.columns.length + (filteredRows.length > 0 ? 1 : 0)} className="px-2.5 py-6 text-center text-base text-text-placeholder">
-                                    {loading ? 'Memuat data...' : (error || 'Belum ada data')}
-                                </DataTableCell>
-                            </DataTableRow>
-                        )}
-                    </DataTableBody>
-                </DataTable>
+                <TransactionDataTable
+                    columns={config.table.columns}
+                    rows={sortedRows}
+                    emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
+                    minWidthClassName="min-w-[1520px]"
+                    onRowClick={(row) =>
+                        onOpenDetail?.({
+                            recordId: row.id,
+                            label: row.number,
+                            tabLabel: row.number,
+                        })
+                    }
+                    getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
+                    sortKey={sortKey}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                />
             </div>
 
             {config.table.pagination ? (

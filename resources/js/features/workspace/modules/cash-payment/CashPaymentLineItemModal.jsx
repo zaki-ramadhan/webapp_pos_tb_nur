@@ -174,6 +174,7 @@ export default function CashPaymentLineItemModal({
                             onClick={() => {
                                 onSave({ action: 'delete' });
                             }}
+                            className="border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none"
                         >
                             Hapus
                         </Button>

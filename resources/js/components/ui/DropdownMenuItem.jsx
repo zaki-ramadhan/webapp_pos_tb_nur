@@ -13,7 +13,7 @@ export default function DropdownMenuItem({
             type="button"
             disabled={disabled}
             aria-disabled={disabled}
-            className={`inline-flex w-full items-center gap-2.5 rounded-none px-2.5 py-2.5 text-left text-sm leading-5 text-abc-label-dark transition-colors duration-100 ${
+            className={`inline-flex w-full items-center gap-2.5 rounded-none px-2.5 py-2.5 text-left text-sm leading-5 text-abc-label-dark font-normal transition-colors duration-100 ${
                 disabled ? 'cursor-default opacity-65 pointer-events-none' : 'hover:bg-brand-blue-lightest'
             } ${className}`.trim()}
             {...props}

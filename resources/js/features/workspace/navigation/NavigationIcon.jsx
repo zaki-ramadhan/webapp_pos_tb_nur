@@ -111,7 +111,7 @@ const iconMap = {
     link: Link2,
 };
 
-export default function NavigationIcon({ type, className = 'h-6 w-6', strokeWidth = 1.9 }) {
+export default function NavigationIcon({ type, className = 'h-6 w-6', strokeWidth = 1.45 }) {
     const Icon = iconMap[type] ?? FormInput;
 
     return <Icon aria-hidden="true" className={className} strokeWidth={strokeWidth} absoluteStrokeWidth />;

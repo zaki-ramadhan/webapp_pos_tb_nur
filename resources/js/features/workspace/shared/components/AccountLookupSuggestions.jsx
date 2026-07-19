@@ -108,9 +108,6 @@ export default function AccountLookupSuggestions({
                 ) : (
                     <LookupEmptyState
                         title={emptyMessage}
-                        description={!query.trim()
-                            ? `Mulai ketik untuk mencari ${entityName}.`
-                            : 'Coba kata kunci lain yang lebih spesifik.'}
                     />
                 )}
             </div>

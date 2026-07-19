@@ -200,7 +200,7 @@ export default function SalesDocumentFormHeader({
                 <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                     <div />
                     <div className="flex justify-end relative justify-self-end">
-                        <SalesDocumentHeaderButtons config={config} values={values} setValues={setValues} isDetail={isDetail} />
+                        <SalesDocumentHeaderButtons config={config} values={values} setValues={setValues} isDetail={isDetail} handlers={handlers} pageId={pageId} />
                     </div>
                 </div>
             </div>
