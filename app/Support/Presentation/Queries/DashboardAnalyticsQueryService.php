@@ -15,9 +15,10 @@ class DashboardAnalyticsQueryService
      * @param bool $loadData
      * @return array
      */
-    public static function getAnalytics(bool $loadData): array
+    public static function getAnalytics(bool $loadData, ?int $year = null): array
     {
-        $upcomingNote = '15 ' . date('M Y') . ' — Batas Akhir Pelaporan SPT PPh 21';
+        $nowMonths = [1=>'Jan',2=>'Feb',3=>'Mar',4=>'Apr',5=>'Mei',6=>'Jun',7=>'Jul',8=>'Ags',9=>'Sep',10=>'Okt',11=>'Nov',12=>'Des'];
+        $upcomingNote = '15 ' . ($nowMonths[(int) date('n')] ?? date('M')) . ' ' . date('Y') . ' — Batas Akhir Pelaporan SPT PPh 21';
         $overdueNote = 'Belum ada kegiatan yang terlewat.';
 
         $approvalTypesMapping = [
@@ -77,21 +78,33 @@ class DashboardAnalyticsQueryService
             $user = auth()->user() ?? request()->user();
             $userActivities = \App\Support\Presentation\Queries\DashboardActivityQueryService::getRecentActivities($user);
 
-            $latestSalesInvoiceDate = DB::table('operation_documents')
+            $latestSalesInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
-                ->max('entry_date') ?? date('Y-m-d');
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
+
+            if ($year !== null) {
+                $latestSalesInvoiceQuery->whereYear('entry_date', $year);
+            }
+
+            $latestSalesInvoiceDate = $latestSalesInvoiceQuery->max('entry_date') ?? ($year !== null ? $year . '-12-31' : date('Y-m-d'));
+            $resolvedYear = $year ?? (int) date('Y', strtotime($latestSalesInvoiceDate));
 
             $salesTrendLabels = [];
             $salesTrendData = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
-                $dayName = date('D', strtotime($date));
-                $dayNameIndo = [
-                    'Sun' => 'Min', 'Mon' => 'Sen', 'Tue' => 'Sel', 'Wed' => 'Rab',
-                    'Thu' => 'Kam', 'Fri' => 'Jum', 'Sat' => 'Sab'
-                ][$dayName] ?? $dayName;
-                $salesTrendLabels[] = $dayNameIndo;
+                if ($i === 0) {
+                    $dayLabel = 'Hari ini';
+                } elseif ($i === 1) {
+                    $dayLabel = 'Kemarin';
+                } else {
+                    $dayName = date('D', strtotime($date));
+                    $dayLabel = [
+                        'Sun' => 'Min', 'Mon' => 'Sen', 'Tue' => 'Sel', 'Wed' => 'Rab',
+                        'Thu' => 'Kam', 'Fri' => 'Jum', 'Sat' => 'Sab'
+                    ][$dayName] ?? $dayName;
+                }
+                $salesTrendLabels[] = $dayLabel;
                 $totalSales = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
                     ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
@@ -103,6 +116,7 @@ class DashboardAnalyticsQueryService
             $totalSalesVal = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereYear('entry_date', $resolvedYear)
                 ->sum('total_amount');
 
             $totalHppVal = DB::table('operation_document_lines')
@@ -110,6 +124,7 @@ class DashboardAnalyticsQueryService
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereYear('operation_documents.entry_date', $resolvedYear)
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
 
             $totalExpensesVal = DB::table('operation_documents')
@@ -122,6 +137,7 @@ class DashboardAnalyticsQueryService
                             ->whereIn('status', ['Sedang diproses', 'Terbayar']);
                     });
                 })
+                ->whereYear('entry_date', $resolvedYear)
                 ->sum('total_amount');
  
             $netProfitVal = $totalSalesVal - $totalHppVal - $totalExpensesVal;
@@ -137,7 +153,13 @@ class DashboardAnalyticsQueryService
             $cashOutSeries = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
-                $formattedDate = date('j M', strtotime($date));
+                if ($i === 0) {
+                    $formattedDate = 'Hari ini';
+                } elseif ($i === 1) {
+                    $formattedDate = 'Kemarin';
+                } else {
+                    $formattedDate = self::dateId($date, false);
+                }
                 $cashFlowLabels[] = $formattedDate;
                 $inflow = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
@@ -163,10 +185,12 @@ class DashboardAnalyticsQueryService
             $totalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
                 ->where('status', 'Posted')
+                ->whereYear('entry_date', $resolvedYear)
                 ->sum('total_amount');
             $totalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
                 ->whereIn('status', ['Sedang diproses', 'Terbayar'])
+                ->whereYear('entry_date', $resolvedYear)
                 ->sum('total_amount');
             $totalExpense = $totalGaji + $totalOperasional;
             $pctGaji = $totalExpense > 0 ? round(($totalGaji / $totalExpense) * 100) : 0;
@@ -174,7 +198,8 @@ class DashboardAnalyticsQueryService
 
             $salesInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereYear('entry_date', $resolvedYear);
             $fakturLunasSales = (float) (clone $salesInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasSales = (float) (clone $salesInvoiceQuery)->sum('outstanding_amount');
             $belumJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
@@ -183,7 +208,8 @@ class DashboardAnalyticsQueryService
 
             $purchaseInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'purchase_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereYear('entry_date', $resolvedYear);
             $fakturLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('outstanding_amount');
             $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
@@ -204,25 +230,16 @@ class DashboardAnalyticsQueryService
                         ->where('document_type', 'sales_invoice')
                         ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                         ->where('responsible_user_id', $spUser->id)
+                        ->whereYear('entry_date', $resolvedYear)
                         ->sum('total_amount');
                 }
                 $salesTeamRows[] = [
                     'name' => $sp->full_name,
                     'role' => $sp->position ?? 'Salesperson',
-                    'totalValue' => $totalVal > 0 ? $formatCurrencyShort($totalVal) : 'Rp -',
+                    'totalValue' => $totalVal > 0 ? $formatCurrencyShort($totalVal) : 'Rp 0',
                     'targetPercent' => '0%',
-                    'targetValue' => '-',
-                ];
-            }
-            if (empty($salesTeamRows)) {
-                $salesTeamRows = [
-                    [
-                        'name' => 'Belum ada data',
-                        'role' => 'Sales Toko',
-                        'totalValue' => 'Rp -',
-                        'targetPercent' => '0%',
-                        'targetValue' => '-',
-                    ]
+                    'targetValue' => 'Rp 0',
+                    'avatarUrl' => ($spUser && trim((string)$spUser->google_avatar) !== '') ? $spUser->google_avatar : null,
                 ];
             }
 
@@ -232,6 +249,7 @@ class DashboardAnalyticsQueryService
                 ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->where('operation_documents.status', 'Posted')
+                ->whereYear('operation_documents.entry_date', $resolvedYear)
                 ->select(
                     'products.id as product_id',
                     'products.name',
@@ -262,22 +280,12 @@ class DashboardAnalyticsQueryService
                     'imageUrl' => $imageUrl,
                 ];
             }
-            if (empty($topProductsItems)) {
-                $topProductsItems = [
-                    [
-                        'name' => 'Belum ada data',
-                        'units' => '0 pcs',
-                        'share' => '0%',
-                        'revenue' => 'Rp -',
-                    ]
-                ];
-            }
 
             $cashAvailabilityLabels = [];
             $cashAvailabilitySeries = [];
-            for ($i = 7; $i >= 0; $i--) {
-                $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - " . ($i * 4) . " days"));
-                $formattedDate = date('j M', strtotime($date));
+            for ($i = 6; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - " . $i . " days"));
+                $formattedDate = self::dateId($date, false);
                 $cashAvailabilityLabels[] = $formattedDate;
                 $inUpToDate = DB::table('operation_documents')
                     ->where('document_type', 'sales_invoice')
@@ -296,7 +304,7 @@ class DashboardAnalyticsQueryService
                         });
                     })
                     ->sum('total_amount');
-                $cashAvailabilitySeries[] = 28000000000 + ($inUpToDate - $outUpToDate);
+                $cashAvailabilitySeries[] = 45000000 + ($inUpToDate - $outUpToDate);
             }
 
             $totalSalesOrders = DB::table('operation_documents')
@@ -346,9 +354,9 @@ class DashboardAnalyticsQueryService
 
             $overdueCount = $overdueSalesInvoicesCount + $overduePurchaseInvoicesCount;
             if ($overdueCount > 0) {
-                $overdueNote = "Terdapat {$overdueCount} Faktur (Penjualan/Pembelian) yang telah melewati jatuh tempo pembayaran.";
+                $overdueNote = "{$overdueCount} Faktur melewati batas jatuh tempo pembayaran.";
             } else {
-                $overdueNote = "Semua faktur aman. Belum ada kegiatan pembayaran yang terlewat.";
+                $overdueNote = "Belum ada kegiatan pembayaran yang terlewat.";
             }
         } else {
             $latestSalesInvoiceDate = date('Y-m-d');
@@ -387,6 +395,7 @@ class DashboardAnalyticsQueryService
                     'totalValue' => 'Rp -',
                     'targetPercent' => '0%',
                     'targetValue' => '-',
+                    'avatarUrl' => null,
                 ]
             ];
             $topProductsItems = [
@@ -409,6 +418,7 @@ class DashboardAnalyticsQueryService
             'upcomingNote' => $upcomingNote,
             'overdueNote' => $overdueNote,
             'transactionTypeOptions' => $transactionTypeOptions,
+            'latestSalesInvoiceDate' => $latestSalesInvoiceDate ?? date('Y-m-d'),
             'salesTrendLabels' => $salesTrendLabels,
             'salesTrendData' => $salesTrendData,
             'totalSalesVal' => $totalSalesVal,
@@ -445,5 +455,19 @@ class DashboardAnalyticsQueryService
             'pendingSalesOrders' => $pendingSalesOrders,
             'overdueSalesOrders' => $overdueSalesOrders,
         ];
+    }
+
+    private static function dateId(string $dateStr, bool $withYear = true): string
+    {
+        static $months = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr',
+            5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Ags',
+            9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
+        $ts = strtotime($dateStr);
+        $day = (int) date('j', $ts);
+        $month = $months[(int) date('n', $ts)] ?? date('M', $ts);
+        $year = date('Y', $ts);
+        return $withYear ? "{$day} {$month} {$year}" : "{$day} {$month}";
     }
 }

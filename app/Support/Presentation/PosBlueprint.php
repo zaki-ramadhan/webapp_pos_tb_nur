@@ -91,7 +91,7 @@ final class PosBlueprint
         ];
     }
 
-    public static function forDashboard(?string $sample = null, ?array $abc = null, ?array $apriori = null, bool $loadData = true): array
+    public static function forDashboard(?string $sample = null, ?array $abc = null, ?array $apriori = null, bool $loadData = true, ?int $year = null): array
     {
         $selectedSample = self::resolveSample(self::dashboardSamples(), $sample ?? 'retail');
 
@@ -107,7 +107,7 @@ final class PosBlueprint
                     'avatarUrl' => null,
                 ],
                 'sample' => $selectedSample,
-                'sampleDashboard' => self::sampleDashboard($abc, $apriori, $loadData),
+                'sampleDashboard' => self::sampleDashboard($abc, $apriori, $loadData, $year),
                 'preferences' => self::loadPreferences(),
             ],
         ];
@@ -180,9 +180,9 @@ final class PosBlueprint
         ];
     }
 
-    private static function sampleDashboard(?array $abc = null, ?array $apriori = null, bool $loadData = true): array
+    private static function sampleDashboard(?array $abc = null, ?array $apriori = null, bool $loadData = true, ?int $year = null): array
     {
-        return \App\Support\Presentation\DashboardBlueprintProvider::get($abc, $apriori, $loadData);
+        return \App\Support\Presentation\DashboardBlueprintProvider::get($abc, $apriori, $loadData, $year);
     }
 
     public static function buildSalesTransactionPage(string $subtabId, string $configKey): array

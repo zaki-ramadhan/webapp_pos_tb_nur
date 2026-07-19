@@ -148,7 +148,7 @@ class CatalogBackendResources
                 searchColumns: ['code', 'barcode', 'name', 'product_type'],
                 modelClass: Product::class,
                 with: [
-                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices', 'attachments',
+                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices', 'prices.unit', 'attachments',
                     'inventoryAccount', 'salesAccount', 'salesReturnAccount', 'salesDiscountAccount', 'deliveredGoodsAccount',
                     'cogsAccount', 'purchaseReturnAccount', 'uninvoicedPurchaseAccount'
                 ],

@@ -37,6 +37,22 @@ class Product extends DomainModel
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::saving(function ($product) {
+            if (is_null($product->minimum_stock)) {
+                $product->minimum_stock = 0;
+            }
+            if (is_null($product->default_purchase_price)) {
+                $product->default_purchase_price = 0;
+            }
+            if (is_null($product->default_sale_price)) {
+                $product->default_sale_price = 0;
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [

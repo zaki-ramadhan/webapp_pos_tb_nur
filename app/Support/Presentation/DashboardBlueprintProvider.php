@@ -11,7 +11,7 @@ use Throwable;
 
 class DashboardBlueprintProvider
 {
-    public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true): array
+    public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true, ?int $year = null): array
     {
         $attachmentsNotice = [
             'parts' => [
@@ -21,7 +21,7 @@ class DashboardBlueprintProvider
             ],
         ];
 
-        $analytics = \App\Support\Presentation\Queries\DashboardAnalyticsQueryService::getAnalytics($loadData);
+        $analytics = \App\Support\Presentation\Queries\DashboardAnalyticsQueryService::getAnalytics($loadData, $year);
         extract($analytics);
 
         $navigationModules = PosBlueprint::navigationModules();
@@ -110,7 +110,12 @@ class DashboardBlueprintProvider
                             'description' => 'Grafik garis tren transaksi penjualan toko seminggu terakhir.',
                             'icon' => 'cash-flow',
                         ],
-
+                        [
+                            'id' => 'profit-loss',
+                            'title' => 'Laba/Rugi Tahun Ini',
+                            'description' => 'Analisa breakdown laba bersih, HPP, dan pengeluaran operasional.',
+                            'icon' => 'asset',
+                        ],
                         [
                             'id' => 'cash-flow',
                             'title' => 'Arus Kas',
@@ -270,13 +275,6 @@ class DashboardBlueprintProvider
                     'heightClass' => 'min-h-[310px]',
                 ],
                 [
-                    'id' => 'upcoming-activity',
-                    'title' => 'Kegiatan Mendatang',
-                    'type' => 'note',
-                    'noteDescription' => $upcomingNote,
-                    'heightClass' => 'min-h-[310px]',
-                ],
-                [
                     'id' => 'sales-trend',
                     'title' => 'Tren Penjualan',
                     'type' => 'line',
@@ -290,7 +288,37 @@ class DashboardBlueprintProvider
                     'valueFormat' => 'currency',
                     'heightClass' => 'min-h-[310px]',
                 ],
-
+                [
+                    'id' => 'profit-loss',
+                    'title' => 'Laba/Rugi Tahun Ini',
+                    'type' => 'ring-breakdown',
+                    'percentage' => $profitPercentage,
+                    'totalLabel' => $netProfitVal < 0 ? 'Rugi' : 'Laba',
+                    'totalValue' => 'Rp ' . number_format(abs($netProfitVal), 0, ',', '.'),
+                    'period' => '1 Jan - ' . self::dateId($latestSalesInvoiceDate),
+                    'compare' => 'Dibanding 1 Jan - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
+                    'legend' => [
+                        [
+                            'label' => 'Total Pendapatan Penjualan',
+                            'value' => 'Rp ' . number_format($totalSalesVal, 0, ',', '.'),
+                            'percent' => $pctRev . '%',
+                            'color' => '#4ade80',
+                        ],
+                        [
+                            'label' => 'Total HPP',
+                            'value' => 'Rp ' . number_format($totalHppVal, 0, ',', '.'),
+                            'percent' => $pctHpp . '%',
+                            'color' => '#fb923c',
+                        ],
+                        [
+                            'label' => 'Total Pengeluaran Beban',
+                            'value' => 'Rp ' . number_format($totalExpensesVal, 0, ',', '.'),
+                            'percent' => $pctExp . '%',
+                            'color' => '#f87171',
+                        ],
+                    ],
+                    'heightClass' => 'min-h-[310px]',
+                ],
                 [
                     'id' => 'cash-flow',
                     'title' => 'Arus Kas',
@@ -317,6 +345,8 @@ class DashboardBlueprintProvider
                     'type' => 'expense',
                     'totalValue' => 'Rp ' . number_format($totalExpense, 0, ',', '.'),
                     'percentage' => ($totalExpense > 0 ? $pctGaji : 0) . '%',
+                    'period' => '1 Jan - ' . self::dateId($latestSalesInvoiceDate),
+                    'compare' => 'Dibanding 1 Jan - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
                     'legend' => [
                         [
                             'label' => 'Gaji Karyawan',
@@ -337,57 +367,59 @@ class DashboardBlueprintProvider
                     'id' => 'sales-summary',
                     'title' => 'Penjualan',
                     'type' => 'summary',
+                    'period' => '1 Jul - ' . self::dateId($latestSalesInvoiceDate),
                     'sections' => [
                         [
                             'title' => 'Status Piutang',
                             'items' => [
                                 ['label' => 'Faktur Lunas', 'value' => 'Rp ' . number_format($fakturLunasSales, 0, ',', '.'), 'color' => '#22c55e'],
-                                ['label' => 'Belum Lunas', 'value' => 'Rp ' . number_format($fakturBelumLunasSales, 0, ',', '.'), 'color' => '#f43f5e'],
+                                ['label' => 'Belum Lunas', 'value' => 'Rp ' . number_format($fakturBelumLunasSales, 0, ',', '.'), 'color' => '#eab308'],
                             ],
                         ],
                         [
                             'title' => 'Jatuh Tempo',
                             'items' => [
                                 ['label' => 'Belum Jatuh Tempo', 'value' => 'Rp ' . number_format($belumJatuhTempoSales, 0, ',', '.'), 'color' => '#f59e0b'],
-                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp ' . number_format($lewatJatuhTempoSales, 0, ',', '.'), 'color' => '#f43f5e'],
+                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp ' . number_format($lewatJatuhTempoSales, 0, ',', '.'), 'color' => '#ef4444'],
                             ],
                         ],
                     ],
                     'headline' => [
-                        'label' => 'Faktur Lunas',
-                        'value' => 'Rp ' . number_format($fakturLunasSales, 0, ',', '.'),
-                        'secondaryLabel' => 'Transaksi Hari Ini',
-                        'secondaryValue' => 'Rp ' . number_format($hariIniSales, 0, ',', '.'),
+                        'label' => 'Pendapatan',
+                        'value' => 'Rp ' . number_format($fakturLunasSales + $fakturBelumLunasSales, 0, ',', '.'),
+                        'secondaryLabel' => 'Belum Lunas',
+                        'secondaryValue' => 'Rp ' . number_format($belumJatuhTempoSales + $lewatJatuhTempoSales, 0, ',', '.'),
                     ],
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'min-h-[210px]',
                 ],
                 [
                     'id' => 'purchase-summary',
                     'title' => 'Pembelian',
                     'type' => 'summary',
+                    'period' => '1 Jul - ' . self::dateId($latestSalesInvoiceDate),
                     'sections' => [
                         [
                             'title' => 'Status Hutang',
                             'items' => [
                                 ['label' => 'Faktur Lunas', 'value' => 'Rp ' . number_format($fakturLunasPurchase, 0, ',', '.'), 'color' => '#22c55e'],
-                                ['label' => 'Belum Lunas', 'value' => 'Rp ' . number_format($fakturBelumLunasPurchase, 0, ',', '.'), 'color' => '#f43f5e'],
+                                ['label' => 'Belum Lunas', 'value' => 'Rp ' . number_format($fakturBelumLunasPurchase, 0, ',', '.'), 'color' => '#eab308'],
                             ],
                         ],
                         [
                             'title' => 'Jatuh Tempo',
                             'items' => [
                                 ['label' => 'Belum Jatuh Tempo', 'value' => 'Rp ' . number_format($belumJatuhTempoPurchase, 0, ',', '.'), 'color' => '#f59e0b'],
-                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp ' . number_format($lewatJatuhTempoPurchase, 0, ',', '.'), 'color' => '#f43f5e'],
+                                ['label' => 'Lewat Jatuh Tempo', 'value' => 'Rp ' . number_format($lewatJatuhTempoPurchase, 0, ',', '.'), 'color' => '#ef4444'],
                             ],
                         ],
                     ],
                     'headline' => [
-                        'label' => 'Faktur Lunas',
-                        'value' => 'Rp ' . number_format($fakturLunasPurchase, 0, ',', '.'),
-                        'secondaryLabel' => 'Transaksi Hari Ini',
-                        'secondaryValue' => 'Rp ' . number_format($hariIniPurchase, 0, ',', '.'),
+                        'label' => 'Pembelian',
+                        'value' => 'Rp ' . number_format($fakturLunasPurchase + $fakturBelumLunasPurchase, 0, ',', '.'),
+                        'secondaryLabel' => 'Belum Lunas',
+                        'secondaryValue' => 'Rp ' . number_format($belumJatuhTempoPurchase + $lewatJatuhTempoPurchase, 0, ',', '.'),
                     ],
-                    'heightClass' => 'min-h-[310px]',
+                    'heightClass' => 'min-h-[210px]',
                 ],
                 [
                     'id' => 'sales-team-performance',
@@ -402,13 +434,6 @@ class DashboardBlueprintProvider
                     'type' => 'top-products',
                     'items' => $topProductsItems,
                     'heightClass' => 'h-[310px]',
-                ],
-                [
-                    'id' => 'overdue-activity',
-                    'title' => 'Kegiatan Terlewat',
-                    'type' => 'note',
-                    'noteDescription' => $overdueNote,
-                    'heightClass' => 'min-h-[310px]',
                 ],
                 [
                     'id' => 'cash-availability',
@@ -432,16 +457,16 @@ class DashboardBlueprintProvider
                     'type' => 'order-status',
                     'primaryLabel' => 'Menunggu diproses',
                     'primaryValue' => (string) $pendingSalesOrders,
-                    'statusTitle' => 'Status Pesanan Aktif',
+                    'statusTitle' => 'Pengiriman Hari Ini dan Terlewat',
                     'segments' => [
                         [
-                            'label' => 'Aktif',
+                            'label' => 'Hari Ini',
                             'value' => $totalSalesOrders . ' Pesanan',
                             'numericValue' => $totalSalesOrders,
                             'color' => '#ffd15d',
                         ],
                         [
-                            'label' => 'Terlewat / Pending',
+                            'label' => 'Terlewat',
                             'value' => $pendingSalesOrders . ' Pesanan',
                             'numericValue' => $pendingSalesOrders,
                             'color' => '#ff4a17',
@@ -532,5 +557,19 @@ class DashboardBlueprintProvider
         }
 
         return $data;
+    }
+
+    private static function dateId(string $dateStr, bool $withYear = true): string
+    {
+        $months = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr',
+            5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Ags',
+            9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
+        $ts = strtotime($dateStr);
+        $day = (int) date('j', $ts);
+        $month = $months[(int) date('n', $ts)] ?? date('M', $ts);
+        $year = date('Y', $ts);
+        return $withYear ? "{$day} {$month} {$year}" : "{$day} {$month}";
     }
 }

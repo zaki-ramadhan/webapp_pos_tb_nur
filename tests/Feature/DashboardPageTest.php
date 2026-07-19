@@ -24,7 +24,7 @@ class DashboardPageTest extends TestCase
                 ->component('DashboardPage')
                 ->where('dashboard.user.name', 'Zaki Ramadhan')
                 ->where('dashboard.sample.id', 'retail')
-                ->has('dashboard.sampleDashboard.widgets', 13));
+                ->has('dashboard.sampleDashboard.widgets', 12));
     }
 
     public function test_the_dashboard_page_uses_authenticated_user_identity_for_the_header(): void
