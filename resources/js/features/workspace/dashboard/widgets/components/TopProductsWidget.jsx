@@ -41,7 +41,12 @@ function TopProductRow({ item, index }) {
 
 export function TopProductsWidget({ widget }) {
     if (!(widget.items ?? []).length) {
-        return <DashboardWidgetEmptyState description="Data produk terlaris akan muncul setelah tersedia." />;
+        return (
+            <DashboardWidgetEmptyState
+                title="Belum ada data"
+                description="Belum ada peringkat barang terlaris."
+            />
+        );
     }
 
     return (

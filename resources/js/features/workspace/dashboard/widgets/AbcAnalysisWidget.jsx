@@ -106,17 +106,21 @@ export default function AbcAnalysisWidget({ widget, expanded = false, onToggle }
                         </div>
                     </div>
 
-                    <WidgetSection title="Apa yang perlu dilakukan" caption="Tindakan cepat yang paling relevan dari hasil analisis saat ini.">
-                        <ActionList items={actionItems} />
-                    </WidgetSection>
+                    {widget.topItems && widget.topItems.length > 0 && (
+                        <>
+                            <WidgetSection title="Apa yang perlu dilakukan" caption="Tindakan cepat yang paling relevan dari hasil analisis saat ini.">
+                                <ActionList items={actionItems} />
+                            </WidgetSection>
 
-                    <WidgetSection title="Barang prioritas" caption="Barang kategori A yang paling layak dijaga ketersediaannya.">
-                        <div className="space-y-3">
-                            {(widget.topItems ?? []).map((item) => (
-                                <AbcTopItemRow key={item.code} item={item} />
-                            ))}
-                        </div>
-                    </WidgetSection>
+                            <WidgetSection title="Barang prioritas" caption="Barang kategori A yang paling layak dijaga ketersediaannya.">
+                                <div className="space-y-3">
+                                    {(widget.topItems ?? []).map((item) => (
+                                        <AbcTopItemRow key={item.code} item={item} />
+                                    ))}
+                                </div>
+                            </WidgetSection>
+                        </>
+                    )}
                 </>
             }
             insight={widget.insight}

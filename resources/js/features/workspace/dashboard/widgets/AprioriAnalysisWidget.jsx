@@ -90,17 +90,21 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                         </div>
                     </div>
 
-                    <WidgetSection title="Rekomendasi cepat" caption="Tindakan promosi atau penataan rak yang bisa langsung dicoba.">
-                        <ActionList items={actionItems} />
-                    </WidgetSection>
+                    {widget.rules && widget.rules.length > 0 && (
+                        <>
+                            <WidgetSection title="Rekomendasi cepat" caption="Tindakan promosi atau penataan rak yang bisa langsung dicoba.">
+                                <ActionList items={actionItems} />
+                            </WidgetSection>
 
-                    <WidgetSection title="Rule teratas" caption="Ringkasan rule yang paling mudah dipahami untuk operasional harian.">
-                        <div className="space-y-3">
-                            {(widget.rules ?? []).map((rule) => (
-                                <RuleSummaryRow key={rule.id} rule={rule} />
-                            ))}
-                        </div>
-                    </WidgetSection>
+                            <WidgetSection title="Rule teratas" caption="Ringkasan rule yang paling mudah dipahami untuk operasional harian.">
+                                <div className="space-y-3">
+                                    {(widget.rules ?? []).map((rule) => (
+                                        <RuleSummaryRow key={rule.id} rule={rule} />
+                                    ))}
+                                </div>
+                            </WidgetSection>
+                        </>
+                    )}
                 </>
             }
             insight={widget.insight}

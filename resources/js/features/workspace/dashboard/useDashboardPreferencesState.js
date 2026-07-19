@@ -226,35 +226,53 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
         }
 
         setDashboardPreferences((currentValue) => {
-            const newWidget = createWidgetFromLibraryItem(widgetLibraryItem, widgetTemplateMap);
-            const computed = widgets?.find(
-                (w) => w.type === newWidget.type || w.id === newWidget.id || w.id === newWidget.sourceWidgetId
-            );
-            const syncedWidget = computed
-                ? {
-                      ...newWidget,
-                      ...computed,
-                      id: newWidget.id,
-                      title: newWidget.title,
-                      gridClass: newWidget.gridClass,
-                      heightClass: newWidget.heightClass,
-                      sourceWidgetId: newWidget.sourceWidgetId || newWidget.id,
-                  }
-                : newWidget;
+            const currentWidgets = currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? [];
+            const itemsToAdd = [];
 
-            const customTitle = currentValue.customTitlesByDashboard?.[currentValue.selectedDashboardId]?.[widgetLibraryItem.id];
-            if (customTitle) {
-                syncedWidget.title = customTitle;
+            if (widgetLibraryItem.id === 'sales-summary' || widgetLibraryItem.id === 'purchase-summary') {
+                const salesItem = dashboard.toolbar.widgetLibraryModal.items?.find((item) => item.id === 'sales-summary');
+                const purchaseItem = dashboard.toolbar.widgetLibraryModal.items?.find((item) => item.id === 'purchase-summary');
+                if (salesItem) itemsToAdd.push(salesItem);
+                if (purchaseItem) itemsToAdd.push(purchaseItem);
+            } else {
+                itemsToAdd.push(widgetLibraryItem);
             }
+
+            const nextWidgets = [...currentWidgets];
+
+            itemsToAdd.forEach((item) => {
+                const exists = nextWidgets.some((w) => w.id === item.id || w.sourceWidgetId === item.id);
+                if (exists) return;
+
+                const newWidget = createWidgetFromLibraryItem(item, widgetTemplateMap);
+                const computed = widgets?.find(
+                    (w) => w.type === newWidget.type || w.id === newWidget.id || w.id === newWidget.sourceWidgetId
+                );
+                const syncedWidget = computed
+                    ? {
+                          ...newWidget,
+                          ...computed,
+                          id: newWidget.id,
+                          title: newWidget.title,
+                          gridClass: newWidget.gridClass,
+                          heightClass: newWidget.heightClass,
+                          sourceWidgetId: newWidget.sourceWidgetId || newWidget.id,
+                      }
+                    : newWidget;
+
+                const customTitle = currentValue.customTitlesByDashboard?.[currentValue.selectedDashboardId]?.[item.id];
+                if (customTitle) {
+                    syncedWidget.title = customTitle;
+                }
+
+                nextWidgets.push(syncedWidget);
+            });
 
             return {
                 ...currentValue,
                 widgetsByDashboard: {
                     ...currentValue.widgetsByDashboard,
-                    [currentValue.selectedDashboardId]: [
-                        ...(currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? []),
-                        syncedWidget,
-                    ],
+                    [currentValue.selectedDashboardId]: nextWidgets,
                 },
             };
         });
@@ -273,13 +291,28 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
             if (currentWidgets.length <= 1) {
                 return currentValue;
             }
+
+            const idsToRemove = new Set();
+            if (id === 'sales-summary' || id === 'purchase-summary') {
+                idsToRemove.add('sales-summary');
+                idsToRemove.add('purchase-summary');
+            } else {
+                idsToRemove.add(id);
+            }
+
+            const nextWidgets = currentWidgets.filter(
+                (widget) => !idsToRemove.has(widget.id)
+            );
+
+            if (nextWidgets.length === 0) {
+                return currentValue;
+            }
+
             return {
                 ...currentValue,
                 widgetsByDashboard: {
                     ...currentValue.widgetsByDashboard,
-                    [currentValue.selectedDashboardId]: currentWidgets.filter(
-                        (widget) => widget.id !== id
-                    ),
+                    [currentValue.selectedDashboardId]: nextWidgets,
                 },
             };
         });

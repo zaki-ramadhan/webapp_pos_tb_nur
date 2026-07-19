@@ -33,11 +33,7 @@ function WidgetSkeleton({ widget }) {
         return (
             <div className="flex flex-1 flex-col gap-4 animate-pulse">
                 <div className="h-6 w-1/4 rounded bg-slate-300" />
-                <div className="flex-1 rounded-[6px] bg-slate-200 min-h-[180px] flex items-center justify-center">
-                    <svg className="h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                </div>
+                <div className="flex-1 rounded-[6px] bg-slate-200 min-h-[180px]" />
             </div>
         );
     }
@@ -140,34 +136,15 @@ export default function DashboardWidgetBody({
     }
 
     if (widget.type === 'ring-breakdown') {
-        return (
-            <RingBreakdownMetric
-                percentage={widget.percentage}
-                compare={widget.compare}
-                legend={widget.legend}
-                totalLabel={widget.totalLabel}
-                totalValue={widget.totalValue}
-                trend={widget.trend}
-                growth={widget.growth}
-            />
-        );
+        return <RingBreakdownMetric widget={widget} />;
     }
 
     if (widget.type === 'expense') {
-        return (
-            <ExpenseBreakdownMetric
-                percentage={widget.percentage}
-                compare={widget.compare}
-                legend={widget.legend}
-                totalValue={widget.totalValue}
-                trend={widget.trend}
-                growth={widget.growth}
-            />
-        );
+        return <ExpenseBreakdownMetric widget={widget} />;
     }
 
     if (widget.type === 'summary') {
-        return <SummaryMetric sections={widget.sections ?? []} headline={widget.headline ?? {}} />;
+        return <SummaryMetric widget={widget} />;
     }
 
     if (widget.type === 'sales-team') {

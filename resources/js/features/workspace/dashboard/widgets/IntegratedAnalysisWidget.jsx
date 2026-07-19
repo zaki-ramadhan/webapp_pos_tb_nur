@@ -149,7 +149,13 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                     expanded={chartExpanded}
                     onToggle={() => setChartExpanded(!chartExpanded)}
                 >
-                    <IntegratedMatrixChart rules={widget.rules ?? []} />
+                    {widget.rules && widget.rules.length > 0 ? (
+                        <IntegratedMatrixChart rules={widget.rules ?? []} />
+                    ) : (
+                        <p className="text-sm text-slate-500 py-6 text-center bg-white border border-slate-100 rounded-md">
+                            Belum ada data pola hubungan belanja yang terbentuk pada periode ini.
+                        </p>
+                    )}
                 </WidgetSection>
 
                 <WidgetSection
@@ -192,92 +198,98 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                         </div>
                     </div>
 
-                    <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
-                        {(widget.rules ?? []).map((rule, idx) => {
-                            const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc);
-                            return (
-                                <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-badge-group-a-glow transition-all duration-150">
-                                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    {widget.rules && widget.rules.length > 0 ? (
+                        <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+                            {(widget.rules ?? []).map((rule, idx) => {
+                                const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc);
+                                return (
+                                    <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-badge-group-a-glow transition-all duration-150">
+                                        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 
-                                        <div className="flex flex-wrap items-center gap-2 min-w-0 flex-[2]">
-                                            <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-1.5 py-1">
-                                                <img
-                                                    src={getProductImageUrl(rule.antecedent)}
-                                                    alt=""
-                                                    className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
-                                                />
-                                                <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.antecedent}>
-                                                    {rule.antecedent}
-                                                </span>
-                                                {rule.antecedentAbc && (
-                                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.antecedentColor }} title={rule.antecedentAbc === 'A' ? 'Omzet Utama' : rule.antecedentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
-                                                        Kat. {rule.antecedentAbc}
+                                            <div className="flex flex-wrap items-center gap-2 min-w-0 flex-[2]">
+                                                <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-1.5 py-1">
+                                                    <img
+                                                        src={getProductImageUrl(rule.antecedent)}
+                                                        alt=""
+                                                        className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
+                                                    />
+                                                    <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.antecedent}>
+                                                        {rule.antecedent}
                                                     </span>
-                                                )}
+                                                    {rule.antecedentAbc && (
+                                                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.antecedentColor }} title={rule.antecedentAbc === 'A' ? 'Omzet Utama' : rule.antecedentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
+                                                            Kat. {rule.antecedentAbc}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <span className="text-blue-500 font-extrabold text-base px-1">+</span>
+
+                                                <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-1.5 py-1">
+                                                    <img
+                                                        src={getProductImageUrl(rule.consequent)}
+                                                        alt=""
+                                                        className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
+                                                    />
+                                                    <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.consequent}>
+                                                        {rule.consequent}
+                                                    </span>
+                                                    {rule.consequentAbc && (
+                                                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.consequentColor }} title={rule.consequentAbc === 'A' ? 'Omzet Utama' : rule.consequentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
+                                                            Kat. {rule.consequentAbc}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
 
-                                            <span className="text-blue-500 font-extrabold text-base px-1">+</span>
-
-                                            <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-1.5 py-1">
-                                                <img
-                                                    src={getProductImageUrl(rule.consequent)}
-                                                    alt=""
-                                                    className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
-                                                />
-                                                <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.consequent}>
-                                                    {rule.consequent}
+                                            <div className="flex flex-wrap items-center gap-2 shrink-0">
+                                                <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium border shrink-0 ${tactic.bg}`}>
+                                                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tactic.badgeBg }}></span>
+                                                    {tactic.title}
                                                 </span>
-                                                {rule.consequentAbc && (
-                                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: rule.consequentColor }} title={rule.consequentAbc === 'A' ? 'Omzet Utama' : rule.consequentAbc === 'B' ? 'Omzet Stabil' : 'Omzet Tambahan'}>
-                                                        Kat. {rule.consequentAbc}
-                                                    </span>
-                                                )}
+
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50/50 border border-blue-100 px-2 py-1 text-sm font-medium text-blue-570 shrink-0">
+                                                    Peluang: {rule.confidence}
+                                                </span>
+
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-100 px-2 py-1 text-sm font-normal text-slate-500 shrink-0" title="Hubungan Pola (Lift Ratio)">
+                                                    Kekuatan: {rule.lift}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-wrap items-center gap-2 shrink-0">
-                                            <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-semibold border shrink-0 ${tactic.bg}`}>
-                                                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tactic.badgeBg }}></span>
-                                                {tactic.title}
-                                            </span>
-
-                                            <span className="inline-flex items-center gap-1 rounded-md bg-blue-50/50 border border-blue-100 px-2 py-1 text-sm font-semibold text-blue-570 shrink-0">
-                                                Peluang: {rule.confidence}
-                                            </span>
-
-                                            <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-100 px-2 py-1 text-sm font-normal text-slate-500 shrink-0" title="Hubungan Pola (Lift Ratio)">
-                                                Kekuatan: {rule.lift}
-                                            </span>
+                                        <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-600 bg-emerald-50/10 rounded-md p-2.5 border border-emerald-100/30">
+                                            <div className="flex items-start gap-2">
+                                                <PinIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                                <div className="min-w-0 flex-1">
+                                                    <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
+                                                    <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-2 border-t border-emerald-100/30 pt-2">
+                                                <ChatIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                                <div className="min-w-0 flex-1">
+                                                    <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
+                                                    <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-600 bg-emerald-50/10 rounded-md p-2.5 border border-emerald-100/30">
-                                        <div className="flex items-start gap-2">
-                                            <PinIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
-                                            <div className="min-w-0 flex-1">
-                                                <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
-                                                <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-2 border-t border-emerald-100/30 pt-2">
-                                            <ChatIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
-                                            <div className="min-w-0 flex-1">
-                                                <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
-                                                <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-slate-500 py-6 text-center bg-white border border-slate-100 rounded-md">
+                            Belum ada rekomendasi taktis penjualan pada periode ini.
+                        </p>
+                    )}
                 </WidgetSection>
 
                 {widget.insight && (
                     <div className="rounded-[8px] border border-blue-200 bg-blue-50/40 p-3 text-sm text-blue-800 leading-6 flex items-start gap-2.5">
                         <MegaphoneIcon className="h-5 w-5 text-input-brand shrink-0 mt-0.5" />
                         <div>
-                            <strong>Rangkuman Insight Terintegrasi:</strong> {widget.insight}
+                            <span className="font-medium text-blue-950">Rangkuman Insight Terintegrasi:</span> {widget.insight}
                         </div>
                     </div>
                 )}

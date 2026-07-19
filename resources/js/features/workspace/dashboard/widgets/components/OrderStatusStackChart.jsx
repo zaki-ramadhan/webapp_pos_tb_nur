@@ -25,29 +25,22 @@ export default function OrderStatusStackChart({ segments = [] }) {
     }));
     const totalValue = normalizedSegments.reduce((sum, segment) => sum + Math.max(segment.value, 0), 0);
     const hasData = hasNonZeroValue(normalizedSegments.map((segment) => segment.value));
-    const chartSegments = hasData
-        ? normalizedSegments
-        : [
-              {
-                  id: 'empty-order-status',
-                  label: 'Belum ada data',
-                  value: 1,
-                  valueText: 'Belum ada data',
-                  color: 'var(--color-chart-grid-light)',
-              },
-          ];
+    const chartSegments = normalizedSegments;
     const data = {
         labels: ['Status'],
-        datasets: chartSegments.map((segment) => ({
-            label: segment.label,
-            data: [Math.max(segment.value, 0)],
-            backgroundColor: segment.color,
-            borderColor: segment.color,
-            borderWidth: 1,
-            borderRadius: 0,
-            borderSkipped: false,
-            barThickness: 36,
-        })),
+        datasets: chartSegments.map((segment) => {
+            const visualValue = hasData ? Math.max(segment.value, 0) : 1;
+            return {
+                label: segment.label,
+                data: [visualValue],
+                backgroundColor: segment.color,
+                borderColor: segment.color,
+                borderWidth: 1,
+                borderRadius: 0,
+                borderSkipped: false,
+                barThickness: 36,
+            };
+        }),
     };
     const options = {
         indexAxis: 'y',
@@ -105,23 +98,23 @@ export default function OrderStatusStackChart({ segments = [] }) {
             <div className="h-[72px] overflow-hidden rounded-[6px]">
                 <Bar data={resolveChartObject(data)} options={resolveChartObject(options)} />
             </div>
-            {hasData ? (
-                <div className="pointer-events-none absolute inset-x-0 top-0 flex h-[72px] items-center px-3">
-                    {normalizedSegments.map((segment) => {
-                        const widthPercent = totalValue > 0 ? (Math.max(segment.value, 0) / totalValue) * 100 : 0;
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex h-[72px] items-center px-3">
+                {normalizedSegments.map((segment) => {
+                    const segmentVisualValue = hasData ? Math.max(segment.value, 0) : 1;
+                    const visualTotal = hasData ? totalValue : normalizedSegments.length;
+                    const widthPercent = visualTotal > 0 ? (segmentVisualValue / visualTotal) * 100 : 0;
 
-                        return (
-                            <div
-                                key={segment.id}
-                                className="flex h-full items-center justify-center px-2 text-center text-sm font-normal text-white"
-                                style={{ width: `${widthPercent}%` }}
-                            >
-                                <span className="truncate">{segment.valueText}</span>
-                            </div>
-                        );
-                    })}
-                </div>
-            ) : null}
+                    return (
+                        <div
+                            key={segment.id}
+                            className="flex h-full items-center justify-center px-2 text-center text-sm font-medium text-white"
+                            style={{ width: `${widthPercent}%` }}
+                        >
+                            <span className="truncate">{segment.valueText}</span>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

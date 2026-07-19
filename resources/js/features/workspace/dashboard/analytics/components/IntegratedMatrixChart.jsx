@@ -12,6 +12,9 @@ const analyticsBarPaletteOptions = {
 };
 
 export default function IntegratedMatrixChart({ rules }) {
+    if (!rules || rules.length === 0) {
+        return null;
+    }
     const { chartRef, handleChartClick, handleChartHover } = usePersistentTooltip();
     const chartData = rules.map((rule) => {
         const ant = rule.antecedentAbc ?? 'C';
@@ -141,28 +144,28 @@ export default function IntegratedMatrixChart({ rules }) {
 
             <div className="grid gap-3 border border-slate-100 bg-white rounded-lg p-3 shadow-widget-medium grid-cols-2 lg:grid-cols-4">
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a border border-black/45" />
                     <div>
                         <p className="text-sm font-bold text-brand-darker leading-4">A → C Jual Silang (Fokus 100%)</p>
                         <p className="text-sm text-slate-500 mt-1">Barang aksesoris (C) dipicu produk inti (A).</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/75" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/75 border border-black/45" />
                     <div>
                         <p className="text-sm font-bold text-brand-darker leading-4">A → A Paket Bundling (65%)</p>
                         <p className="text-sm text-slate-500 mt-1">Bundling diskon produk inti omzet terbesar.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/50" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/50 border border-black/45" />
                     <div>
                         <p className="text-sm font-bold text-brand-darker leading-4">B → B Paket Pelengkap (40%)</p>
                         <p className="text-sm text-slate-500 mt-1">Produk pendukung rutin yang stabil.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/25" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/25 border border-black/45" />
                     <div>
                         <p className="text-sm font-bold text-brand-darker leading-4">Display Rak Rakit (18%)</p>
                         <p className="text-sm text-slate-500 mt-1">Penataan letak rak berdampingan.</p>

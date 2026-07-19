@@ -9,9 +9,9 @@ export function WidgetSection({ title, caption = null, collapsible = false, expa
             >
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 border-l-[3px] border-blue-light-50 pl-3 pr-2">
-                        <h4 className="text-base font-semibold leading-tight text-brand-darker md:text-base">{title}</h4>
+                        <h4 className="text-sm font-medium leading-tight text-brand-darker">{title}</h4>
                         {caption ? (
-                            <p className="mt-1.5 break-words text-sm leading-5 text-text-light">{caption}</p>
+                            <p className="mt-1 break-words text-sm leading-normal text-text-light">{caption}</p>
                         ) : null}
                     </div>
                     {collapsible && (

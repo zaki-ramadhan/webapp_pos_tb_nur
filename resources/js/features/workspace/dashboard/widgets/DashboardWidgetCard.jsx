@@ -103,16 +103,28 @@ export default function DashboardWidgetCard({
     const widgetKey = widget.sourceWidgetId ?? widget.id;
     const sourcePage = WIDGET_SOURCE_PAGES[widgetKey] ?? WIDGET_SOURCE_PAGES[widget.type];
 
-    const resolvedHeightClass = (widget.type === 'line' || widget.type === 'cash-availability') && widget.heightClass === 'min-h-[310px]'
+    const isEmptyData =
+        (widget.type === 'abc-analysis' && (!widget.topItems || widget.topItems.length === 0)) ||
+        (widget.type === 'apriori-analysis' && (!widget.rules || widget.rules.length === 0)) ||
+        (widget.id === 'integrated-analysis' && (!widget.rules || widget.rules.length === 0));
+
+    const baseHeightClass = isEmptyData ? 'min-h-0 h-auto' : widget.heightClass;
+
+    const resolvedHeightClass = (widget.type === 'line' || widget.type === 'cash-availability') && baseHeightClass === 'min-h-[310px]'
         ? 'min-h-[260px]'
-        : widget.heightClass;
+        : widget.type === 'summary'
+            ? 'min-h-[210px]'
+            : baseHeightClass;
+
+    const isAbcApriori = widget.id === 'integrated-analysis' || widget.type === 'abc-apriori';
+    const headerPaddingClass = isAbcApriori ? 'py-3' : 'py-2';
 
     return (
         <>
-            <Panel className={`flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 ${resolvedHeightClass}`.trim()}>
-                <div className="flex flex-wrap items-start justify-between gap-2 border-b border-table-row-border px-3 py-3 sm:flex-nowrap sm:items-center sm:px-4">
+            <Panel className={`relative z-10 hover:z-30 transition-all duration-150 flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 ${resolvedHeightClass}`.trim()}>
+                <div className={`flex flex-wrap items-start justify-between gap-2 border-b border-table-row-border px-3 ${headerPaddingClass} sm:flex-nowrap sm:items-center sm:px-4`}>
                     <div className="min-w-0 flex-1">
-                        <h3 className="break-words text-sm font-medium text-tab-active-text">{widget.title}</h3>
+                        <h3 className="break-words text-sm lg:text-base font-medium text-tab-active-text">{widget.title}</h3>
                         {widget.subtitle ? (
                             <p className="mt-1 break-words text-sm text-text-light">{widget.subtitle}</p>
                         ) : null}

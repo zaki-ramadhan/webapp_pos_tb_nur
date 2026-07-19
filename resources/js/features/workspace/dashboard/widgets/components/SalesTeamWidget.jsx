@@ -1,4 +1,5 @@
 import DashboardWidgetEmptyState from '@/features/workspace/dashboard/widgets/DashboardWidgetEmptyState';
+import UserAvatar from '@/features/workspace/shared/UserAvatar';
 
 function WidgetPeriod({ value, align = 'right' }) {
     if (!value) {
@@ -13,22 +14,17 @@ function WidgetPeriod({ value, align = 'right' }) {
 }
 
 function SalesTeamRow({ row }) {
-    const initials = row.name
-        .split(' ')
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part[0])
-        .join('')
-        .toUpperCase();
-
     return (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-table-row-border py-3 first:border-t-0 first:pt-0 last:pb-0 lg:grid-cols-[auto_minmax(0,1fr)_120px_56px] lg:items-center">
-            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg-workspace-light text-sm font-semibold text-text-muted">
-                {initials}
-            </span>
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-table-row-border py-2 first:border-t-0 first:pt-0 last:pb-0 lg:grid-cols-[auto_minmax(0,1fr)_120px_56px] lg:items-center">
+            <UserAvatar
+                name={row.name}
+                imageUrl={row.avatarUrl}
+                showStatusIndicator={false}
+                className="h-8 w-8 text-[11px] shrink-0 font-semibold text-text-muted bg-bg-workspace-light"
+            />
             <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-brand-darker">{row.name}</p>
-                <p className="mt-1 text-sm text-text-light">{row.role}</p>
+                <p className="mt-0.5 text-xs text-slate-900">{row.role}</p>
             </div>
             <div className="col-start-2 flex items-center gap-2 lg:col-start-auto lg:justify-end">
                 <span className="text-sm text-text-muted">{row.totalValue}</span>
@@ -45,7 +41,12 @@ function SalesTeamRow({ row }) {
 
 export function SalesTeamWidget({ widget }) {
     if (!(widget.rows ?? []).length) {
-        return <DashboardWidgetEmptyState description="Data penjual akan muncul setelah tersedia." />;
+        return (
+            <DashboardWidgetEmptyState
+                title="Belum ada data"
+                description="Daftar penjual belum terdaftar."
+            />
+        );
     }
 
     return (

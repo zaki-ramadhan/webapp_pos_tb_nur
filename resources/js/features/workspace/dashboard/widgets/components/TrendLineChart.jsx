@@ -24,14 +24,18 @@ export default function TrendLineChart({
     accent = 'var(--color-blue-280)',
     valueFormat = 'number',
     heightClassName = 'h-[228px]',
+    yDivisions = 5,
 }) {
     const normalizedSeries = normalizeTrendSeries(series, accent);
     const allValues = normalizedSeries.flatMap((s) => s.data || []);
     const maxVal = allValues.length > 0 ? Math.max(...allValues) : 0;
+    const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
+
+    const valRange = maxVal - (minVal < 0 ? minVal : 0);
 
     const getStepSize = (val) => {
         if (val <= 0) return undefined;
-        const rawStep = val / 6;
+        const rawStep = val / yDivisions;
         const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
         const ratio = rawStep / magnitude;
         let niceStep;
@@ -43,8 +47,22 @@ export default function TrendLineChart({
         return niceStep * magnitude;
     };
 
-    const stepSize = getStepSize(maxVal);
-    const yMax = stepSize ? 6 * stepSize : undefined;
+    let stepSize = getStepSize(valRange);
+    let yMin = 0;
+    let yMax = undefined;
+
+    if (stepSize === undefined || valRange === 0) {
+        stepSize = valueFormat === 'currency' ? 25000 : 1;
+        yMin = 0;
+        yMax = yDivisions * stepSize;
+    } else {
+        yMin = minVal < 0
+            ? Math.floor(minVal / stepSize) * stepSize
+            : 0;
+        yMax = minVal < 0
+            ? Math.ceil(maxVal / stepSize) * stepSize
+            : yDivisions * stepSize;
+    }
 
     const datasets =
         normalizedSeries.length > 0
@@ -116,15 +134,18 @@ export default function TrendLineChart({
                     display: false,
                 },
                 ticks: {
-                    color: 'var(--color-chart-ticks)',
+                    color: 'var(--color-text-dark)',
                     font: {
-                        size: 14,
+                        size: 12,
                     },
+                    maxRotation: 45,
+                    minRotation: 45,
                 },
             },
             y: {
-                min: 0,
+                min: yMin,
                 ...(yMax !== undefined ? { max: yMax } : {}),
+                ...(stepSize !== undefined ? { stepSize } : {}),
                 grid: {
                     color: 'var(--color-chart-grid-light)',
                 },
@@ -132,11 +153,12 @@ export default function TrendLineChart({
                     display: false,
                 },
                 ticks: {
-                    ...(stepSize !== undefined ? { stepSize } : {}),
-                    color: 'var(--color-chart-ticks)',
+                    color: 'var(--color-text-dark)',
                     font: {
-                        size: 14,
+                        size: 12,
                     },
+                    autoSkip: false,
+                    maxTicksLimit: 7,
                     callback(value) {
                         return formatChartValue(value, valueFormat);
                     },

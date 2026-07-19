@@ -24,7 +24,7 @@ export function CashAvailabilityWidget({ widget }) {
                 <div className="min-w-0">
                     <MetricCaption>{widget.balanceLabel}</MetricCaption>
                     <div className="mt-2 flex items-baseline gap-2 flex-wrap">
-                        <p className="text-lg font-semibold leading-none text-brand-darker sm:text-xl md:text-2xl xl:text-2xl">
+                        <p className="text-base font-semibold leading-none text-brand-darker sm:text-lg md:text-xl xl:text-xl">
                             {widget.balanceValue}
                         </p>
                         <TrendIndicator trend={widget.trend} growth={widget.growth} />

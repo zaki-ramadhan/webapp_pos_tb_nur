@@ -1,9 +1,7 @@
-import EmptyState from '@/components/ui/EmptyState';
 import { Bar } from 'react-chartjs-2';
 import DashboardChartShell from '@/features/workspace/dashboard/widgets/DashboardChartShell';
 import {
     formatChartValue,
-    hasNonZeroValue,
     normalizeSummarySections,
     resolveChartObject,
 } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
@@ -51,25 +49,9 @@ export default function SummarySectionChart({ sections = [], valueFormat = 'curr
         barThickness: 18,
     }));
 
-    const hasData = datasets.some((dataset) => hasNonZeroValue(dataset.data));
 
-    if (!hasData) {
-        return (
-            <DashboardChartShell heightClassName="h-[124px]">
-                <EmptyState
-                    fill
-                    tone="subtle"
-                    size="sm"
-                    iconName="document"
-                    title="Belum ada data"
-                    description="Belum ada data untuk divisualisasikan."
-                    className="rounded-[8px] bg-transparent px-2 py-2"
-                    titleClassName="text-sm font-medium text-text-muted"
-                    descriptionClassName="mt-1 text-sm leading-4 text-text-light"
-                />
-            </DashboardChartShell>
-        );
-    }
+
+    const hasData = datasets.some((dataset) => dataset.data.some(val => val > 0));
 
     const data = {
         labels,
@@ -104,6 +86,8 @@ export default function SummarySectionChart({ sections = [], valueFormat = 'curr
         scales: {
             x: {
                 stacked: true,
+                min: !hasData ? 0 : undefined,
+                max: !hasData ? (valueFormat === 'currency' ? 100000 : 1) : undefined,
                 grid: {
                     color: 'var(--color-table-row-border)',
                 },
@@ -117,6 +101,7 @@ export default function SummarySectionChart({ sections = [], valueFormat = 'curr
                     },
                     maxRotation: 0,
                     minRotation: 0,
+                    ...(!hasData ? { maxTicksLimit: 2 } : {}),
                     callback(value) {
                         return formatChartValue(value, valueFormat);
                     },

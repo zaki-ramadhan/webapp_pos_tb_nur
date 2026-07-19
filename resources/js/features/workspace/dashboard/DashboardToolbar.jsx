@@ -7,9 +7,9 @@ export default function DashboardToolbar({ dashboard }) {
                 <button
                     type="button"
                     onClick={dashboard.toolbar.onOpenWidgetLibrary}
-                    className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-[4px] border border-brand-blue-border bg-info-border px-4 text-sm font-medium text-brand-blue-dark sm:w-auto sm:min-w-[180px] sm:text-sm md:min-w-[205px] md:gap-3 md:px-5 md:text-base"
+                    className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-[4px] border border-brand-blue bg-brand-blue-light px-3 text-xs font-semibold text-brand-blue hover:bg-brand-blue-border-light/20 sm:w-auto sm:px-4 sm:text-sm"
                 >
-                    <PlusIcon />
+                    <PlusIcon className="h-4 w-4 shrink-0" />
                     {dashboard.toolbar.widgetLabel}
                 </button>
             </div>
