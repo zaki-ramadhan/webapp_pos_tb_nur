@@ -326,6 +326,27 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
         });
     }
 
+    function handleReorderWidgets(sourceIndex, targetIndex) {
+        setDashboardPreferences((currentValue) => {
+            const dashboardId = currentValue.selectedDashboardId;
+            const nextWidgetsByDashboard = { ...currentValue.widgetsByDashboard };
+            const list = [...(nextWidgetsByDashboard[dashboardId] ?? [])];
+
+            if (sourceIndex < 0 || sourceIndex >= list.length || targetIndex < 0 || targetIndex >= list.length) {
+                return currentValue;
+            }
+
+            const [removed] = list.splice(sourceIndex, 1);
+            list.splice(targetIndex, 0, removed);
+            nextWidgetsByDashboard[dashboardId] = list;
+
+            return {
+                ...currentValue,
+                widgetsByDashboard: nextWidgetsByDashboard,
+            };
+        });
+    }
+
     return {
         isWidgetLibraryLoading,
         isWidgetLibraryOpen,
@@ -348,6 +369,7 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
         handleAddWidget,
         handleRemoveWidget,
         handleRefreshWidget,
+        handleReorderWidgets,
         filteredLibraryItems,
     };
 }

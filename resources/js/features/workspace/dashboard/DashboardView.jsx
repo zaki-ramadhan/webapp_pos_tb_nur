@@ -87,6 +87,7 @@ const DashboardView = forwardRef(function DashboardView(
         handleAddWidget,
         handleRemoveWidget,
         handleRefreshWidget,
+        handleReorderWidgets,
         filteredLibraryItems,
     } = useDashboardPreferencesState({
         dashboard,
@@ -160,6 +161,7 @@ const DashboardView = forwardRef(function DashboardView(
                         handleRefreshWidget={handleRefreshWidget}
                         handleRenameWidget={handleRenameWidget}
                         handleRemoveWidget={handleRemoveWidget}
+                        handleReorderWidgets={handleReorderWidgets}
                         renderedPages={renderedPages}
                         activePageId={activePageId}
                         detailTabOpeners={detailTabOpeners}

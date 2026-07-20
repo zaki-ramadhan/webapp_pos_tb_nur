@@ -18,6 +18,7 @@ export default function DashboardActivePageContent({
     handleRefreshWidget,
     handleRenameWidget,
     handleRemoveWidget,
+    handleReorderWidgets,
     renderedPages = [],
     activePageId,
     detailTabOpeners,
@@ -57,6 +58,7 @@ export default function DashboardActivePageContent({
                         onRefreshWidget={handleRefreshWidget}
                         onRenameWidget={handleRenameWidget}
                         onRemoveWidget={handleRemoveWidget}
+                        onReorderWidgets={handleReorderWidgets}
                         isLoading={isLoading}
                     />
                 </div>

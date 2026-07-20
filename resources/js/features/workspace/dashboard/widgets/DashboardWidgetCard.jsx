@@ -32,6 +32,7 @@ export default function DashboardWidgetCard({
     refreshError = null,
     showRefresh = false,
     canRemove = true,
+    dragHandleProps = {},
 }) {
     const [actionsOpen, setActionsOpen] = useState(false);
     const actionsButtonRef = useRef(null);
@@ -123,12 +124,23 @@ export default function DashboardWidgetCard({
         <>
             <Panel className={`relative z-10 hover:z-30 transition-all duration-150 flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-[8px] border border-chart-border bg-white/98 ${resolvedHeightClass}`.trim()}>
                 <div className={`flex flex-wrap items-start justify-between gap-2 border-b border-table-row-border px-3 ${headerPaddingClass} sm:flex-nowrap sm:items-center sm:px-4`}>
-                    <div className="min-w-0 flex-1">
-                        <h3 className="break-words text-sm lg:text-base font-medium text-tab-active-text">{widget.title}</h3>
-                        {widget.subtitle ? (
-                            <p className="mt-1 break-words text-sm text-text-light">{widget.subtitle}</p>
-                        ) : null}
-                        {refreshError ? <p className="mt-1 text-sm text-orange-880">{refreshError}</p> : null}
+                    <div className="min-w-0 flex-1 flex items-center">
+                        <div
+                            {...dragHandleProps}
+                            className="mr-2 flex shrink-0 cursor-grab items-center text-tab-active-text opacity-45 hover:opacity-100 active:cursor-grabbing py-1 px-0.5"
+                            title="Seret untuk mengubah urutan widget"
+                        >
+                            <svg viewBox="0 0 24 24" className="h-5 w-4 fill-current">
+                                <path d="M9 5a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6-16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
+                            </svg>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <h3 className="break-words text-sm lg:text-base font-medium text-tab-active-text">{widget.title}</h3>
+                            {widget.subtitle ? (
+                                <p className="mt-1 break-words text-sm text-text-light">{widget.subtitle}</p>
+                            ) : null}
+                            {refreshError ? <p className="mt-1 text-sm text-orange-880">{refreshError}</p> : null}
+                        </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-1 self-end sm:self-auto">
                         {showRefresh && (
