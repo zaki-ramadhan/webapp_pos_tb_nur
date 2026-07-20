@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, TrendingUp, Layers, Package, Landmark } from 'lucide-react';
+import { Activity, TrendingUp, Layers, Package, Landmark, ListChecks } from 'lucide-react';
 
 import ModalBase from '@/components/ui/ModalBase';
 import TextInput from '@/components/ui/TextInput';
@@ -126,7 +126,7 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                             <EmptyState
                                 title="Tidak ada hasil"
                                 description={modal.emptyLabel}
-                                iconName="search"
+                                icon={<ListChecks className="h-12 w-12 text-slate-400" strokeWidth={1.25} />}
                                 size="sm"
                                 tone="subtle"
                                 className="bg-transparent px-0 py-0"
@@ -137,7 +137,7 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                             <EmptyState
                                 title="Semua Widget Aktif"
                                 description="Semua pilihan widget sudah Anda tambahkan ke dashboard."
-                                iconName="document"
+                                icon={<ListChecks className="h-12 w-12 text-slate-400" strokeWidth={1.25} />}
                                 size="sm"
                                 tone="subtle"
                                 className="bg-transparent px-0 py-0"
