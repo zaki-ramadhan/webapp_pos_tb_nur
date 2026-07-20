@@ -68,11 +68,7 @@ export function buildDefaultLevel2ContentTabs(page) {
 }
 
 export function getDefaultLevel2TabId(page) {
-    if (page?.subtab?.id) {
-        return page.subtab.id;
-    }
-
-    if (page?.detailTabsOnly) {
+    if (page?.subtab?.id || page?.detailTabsOnly) {
         return `${page.id}-view`;
     }
 

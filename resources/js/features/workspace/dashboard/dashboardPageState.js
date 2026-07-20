@@ -78,7 +78,7 @@ export function buildInitialLevel2TabsState(pages) {
 export function buildInitialLevel2ContentTabsState(pages) {
     return Object.values(pages).reduce((items, page) => {
         if (page.subtab) {
-            items[page.id] = buildDefaultLevel2ContentTabs(page);
+            items[page.id] = [];
         }
 
         return items;
