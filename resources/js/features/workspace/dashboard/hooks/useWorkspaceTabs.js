@@ -112,7 +112,14 @@ export default function useWorkspaceTabs({
         const currentActiveTabId = activeLevel2Tabs[activePage.id];
 
         if (tabId === viewTabId && currentActiveTabId === viewTabId) {
-            handleOpenDefaultContentTab(activePage.id);
+            const activePageContentTabs = resolveActivePageContentTabs(activePage, pageLevel2ContentTabs);
+            if (activePageContentTabs.length > 0) {
+                const targetTabId = activePageContentTabs[0].id;
+                setActiveLevel2Tabs((currentTabs) => ({
+                    ...currentTabs,
+                    [activePage.id]: targetTabId,
+                }));
+            }
             return;
         }
 
@@ -120,7 +127,7 @@ export default function useWorkspaceTabs({
             ...currentTabs,
             [activePage.id]: tabId,
         }));
-    }, [activePage.id, activePage.subtab, activePage.detailTabsOnly, activeLevel2Tabs, handleOpenDefaultContentTab]);
+    }, [activePage, activeLevel2Tabs, pageLevel2ContentTabs]);
 
     const closeLevel2TabNow = useCallback((tabId) => {
         clearTabDirty(activePage.id, tabId);
