@@ -21,7 +21,7 @@ export function TrendIndicator({ trend, growth, tone = null, className = '' }) {
 
     return (
         <span
-            className={`inline-flex items-center gap-0.5 rounded border px-1 py-0.5 text-[9px] font-medium leading-none ${textClass} ${bgClass} ${className}`}
+            className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none ${textClass} ${bgClass} ${className}`}
         >
             <span>{arrow}</span>
             <span>{growth}</span>
@@ -34,7 +34,7 @@ function CompareText({ text }) {
         return null;
     }
 
-    return <span className="text-[11px] md:text-xs text-text-light">{text}</span>;
+    return <span className="text-[11px] md:text-xs text-black font-normal">{text}</span>;
 }
 
 function MetricLegendItem({ item }) {
@@ -44,11 +44,11 @@ function MetricLegendItem({ item }) {
         <div className="flex items-center justify-between text-xs sm:text-sm">
             <div className="flex min-w-0 items-center gap-1.5 pr-2">
                 <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-                <span className="truncate text-text-light">{label}</span>
+                <span className="truncate text-black">{label}</span>
             </div>
             <div className="flex shrink-0 items-center gap-1 font-semibold text-tab-active-text">
                 <span>{value}</span>
-                {percent && <span className="text-[10px] sm:text-xs font-normal text-text-light">({percent})</span>}
+                {percent && <span className="text-[10px] sm:text-xs font-normal text-black">({percent})</span>}
             </div>
         </div>
     );

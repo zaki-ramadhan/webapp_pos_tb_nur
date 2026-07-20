@@ -14,7 +14,7 @@ function WidgetPeriod({ value, align = 'right' }) {
 }
 
 function MetricCaption({ children }) {
-    return <p className="text-sm text-text-light">{children}</p>;
+    return <p className="text-sm text-black">{children}</p>;
 }
 
 export function CashAvailabilityWidget({ widget }) {

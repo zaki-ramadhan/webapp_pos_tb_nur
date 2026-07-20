@@ -54,7 +54,7 @@ export function RecentActivityWidget({ widget }) {
                                     </div>
 
                                     {/* Description */}
-                                    <div className="text-[13px] text-slate-500 font-normal leading-relaxed break-words mt-0.5">
+                                    <div className="text-[13px] text-black font-normal leading-relaxed break-words mt-0.5">
                                         {activity.title}
                                     </div>
                                 </div>

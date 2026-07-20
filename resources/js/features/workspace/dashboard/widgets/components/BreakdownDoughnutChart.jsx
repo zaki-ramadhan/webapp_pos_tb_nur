@@ -69,7 +69,7 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%' }
                 <Doughnut data={resolveChartObject(data)} options={resolveChartObject(options)} />
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-150 group-hover:opacity-0">
                     <span className="text-lg font-semibold leading-none text-brand-darker sm:text-xl md:text-2xl lg:text-2xl">{percentage}</span>
-                    <span className="mt-0.5 text-xs text-text-light normal-case tracking-normal">Ringkasan</span>
+                    <span className="mt-0.5 text-xs text-black normal-case tracking-normal">Ringkasan</span>
                 </div>
             </div>
         </div>
