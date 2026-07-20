@@ -3,10 +3,11 @@ import { renderTabLabel } from '@/features/workspace/dashboard/WorkspaceDraftSta
 
 export function SecondaryTab({ tab, active, onSelect, onClose, tabsCount = 1 }) {
     const isViewTab = tab.kind === 'view';
+    const useViewTabStyle = isViewTab && tabsCount > 1;
     const spacingClassName = tab.closable
         ? 'gap-1.5 pl-3 pr-1.5 md:gap-2 md:pl-4 md:pr-2'
         : 'gap-2 px-3.5 md:gap-2.5 md:px-4.5';
-    const className = isViewTab
+    const className = useViewTabStyle
         ? active
             ? 'border-x-[1px] border-t-[3px] border-b-[2px] border-b-tab-active-bg -mb-[2px] border-tab-view-active-border-x border-t-tab-view-active-border-t bg-tab-view-active-bg font-normal text-tab-view-active-text'
             : 'border-l-[1px] border-r-[1px] border-t-[2px] border-b-0 -mb-px border-l-tab-view-inactive-border-l border-r-tab-view-inactive-border-r border-t-tab-view-inactive-border-t bg-tab-view-inactive-bg font-normal text-tab-view-inactive-text'

@@ -97,7 +97,11 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                     inputClassName="text-xs sm:text-sm"
                 />
 
-                <div className="mt-3 h-[400px] overflow-y-auto rounded-[4px] border border-ui-border-medium grid grid-cols-1 sm:grid-cols-2 auto-rows-max gap-1 p-1 [scrollbar-width:thin]">
+                <div className={`mt-3 h-[400px] overflow-y-auto rounded-[4px] border border-ui-border-medium [scrollbar-width:thin] ${
+                    filteredItems.length > 0
+                        ? 'grid grid-cols-1 sm:grid-cols-2 auto-rows-max gap-1 p-1'
+                        : 'flex flex-col items-center justify-center p-1'
+                }`}>
                     {filteredItems.map((item) => (
                         <button
                             key={item.id}
@@ -118,31 +122,29 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                     ))}
 
                     {!filteredItems.length ? (
-                        <div className="flex h-full min-h-[400px] items-center justify-center">
-                            {keyword.trim() ? (
-                                <EmptyState
-                                    title="Tidak ada hasil"
-                                    description={modal.emptyLabel}
-                                    iconName="search"
-                                    size="sm"
-                                    tone="subtle"
-                                    className="bg-transparent px-0 py-0"
-                                    titleClassName="text-base font-medium text-text-muted"
-                                    descriptionClassName="mt-2 text-sm leading-5 text-text-light"
-                                />
-                            ) : (
-                                <EmptyState
-                                    title="Semua Widget Aktif"
-                                    description="Semua pilihan widget sudah Anda tambahkan ke dashboard."
-                                    iconName="document"
-                                    size="sm"
-                                    tone="subtle"
-                                    className="bg-transparent px-0 py-0"
-                                    titleClassName="text-base font-medium text-text-muted"
-                                    descriptionClassName="mt-2 text-sm leading-5 text-text-light"
-                                />
-                            )}
-                        </div>
+                        keyword.trim() ? (
+                            <EmptyState
+                                title="Tidak ada hasil"
+                                description={modal.emptyLabel}
+                                iconName="search"
+                                size="sm"
+                                tone="subtle"
+                                className="bg-transparent px-0 py-0"
+                                titleClassName="text-base font-medium text-text-muted"
+                                descriptionClassName="mt-2 text-sm leading-5 text-text-light"
+                            />
+                        ) : (
+                            <EmptyState
+                                title="Semua Widget Aktif"
+                                description="Semua pilihan widget sudah Anda tambahkan ke dashboard."
+                                iconName="document"
+                                size="sm"
+                                tone="subtle"
+                                className="bg-transparent px-0 py-0"
+                                titleClassName="text-base font-medium text-text-muted"
+                                descriptionClassName="mt-2 text-sm leading-5 text-text-light"
+                            />
+                        )
                     ) : null}
                 </div>
             </div>
