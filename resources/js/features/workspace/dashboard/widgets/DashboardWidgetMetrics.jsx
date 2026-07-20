@@ -8,67 +8,48 @@ import {
     TrendLineChart,
 } from '@/features/workspace/dashboard/widgets/DashboardWidgetCharts';
 
-export function TrendIndicator({ trend, growth, className = '' }) {
+export function TrendIndicator({ trend, growth, tone = null, className = '' }) {
     if (!trend) {
         return null;
     }
 
     const isUp = trend === 'up' || trend === 'rising' || trend === 'positive';
     const arrow = isUp ? '▲' : '▼';
-    const textClass = isUp ? 'text-emerald-600' : 'text-rose-600';
-    const bgClass = isUp ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100';
+    const isSuccess = tone ? tone === 'success' : isUp;
+    const textClass = isSuccess ? 'text-emerald-600' : 'text-rose-600';
+    const bgClass = isSuccess ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100';
 
     return (
-        <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold ${bgClass} ${textClass} ${className}`.trim()}>
+        <span
+            className={`inline-flex items-center gap-0.5 rounded border px-1 py-0.5 text-[9px] font-medium leading-none ${textClass} ${bgClass} ${className}`}
+        >
             <span>{arrow}</span>
-            {growth ? <span>{growth}</span> : null}
+            <span>{growth}</span>
         </span>
     );
 }
 
-const compactHeadlineLabelClassName = 'text-sm text-text-muted';
-const compactHeadlineValueClassName =
-    'text-lg font-semibold leading-none text-brand-darker md:text-xl xl:text-2xl 2xl:text-3xl';
-
 function CompareText({ text }) {
-    if (!text) return null;
-    return (
-        <p className="text-[11px] md:text-xs leading-normal text-brand-darker font-normal">
-            {text}
-        </p>
-    );
+    if (!text) {
+        return null;
+    }
+
+    return <span className="text-[11px] md:text-xs text-text-light">{text}</span>;
 }
 
 function MetricLegendItem({ item }) {
-    const renderFormattedValue = (val) => {
-        if (typeof val === 'string' && val.startsWith('Rp ')) {
-            return (
-                <>
-                    <span className="text-text-muted mr-1">Rp</span>
-                    <span className="font-semibold text-brand-darker">{val.substring(3)}</span>
-                </>
-            );
-        }
-        return <span className="font-semibold text-brand-darker">{val}</span>;
-    };
+    const { label = '', value = '0', percent = '', color = '#000' } = item;
 
     return (
-        <div className="flex items-center gap-2 text-sm text-brand-darker font-medium">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-full md:h-3 md:w-3 border border-black/45" style={{ backgroundColor: item.color }} />
-            <span className="min-w-0 flex-1 break-words leading-5">{item.label}</span>
-            <span className="shrink-0">
-                <span className="flex items-center gap-2 text-right text-brand-darker font-semibold">
-                    {renderFormattedValue(item.value)}
-                    {item.percent ? (
-                        <span className="inline-flex rounded-full bg-table-row-border px-2 py-0.5 text-xs font-semibold text-brand-darker">
-                            {item.percent}
-                        </span>
-                    ) : null}
-                </span>
-                {item.percent ? (
-                    <span className="sr-only">{item.percent}</span>
-                ) : null}
-            </span>
+        <div className="flex items-center justify-between text-xs sm:text-sm">
+            <div className="flex min-w-0 items-center gap-1.5 pr-2">
+                <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+                <span className="truncate text-text-light">{label}</span>
+            </div>
+            <div className="flex shrink-0 items-center gap-1 font-semibold text-tab-active-text">
+                <span>{value}</span>
+                {percent && <span className="text-[10px] sm:text-xs font-normal text-text-light">({percent})</span>}
+            </div>
         </div>
     );
 }
@@ -82,84 +63,19 @@ function MetricLegendList({ items = [] }) {
 }
 
 export function LineTrendMetric({ widget }) {
-    const [localWidget, setLocalWidget] = useState(widget);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedYear, setSelectedYear] = useState(null);
-
-    useEffect(() => {
-        const getYearFromPeriod = (p) => {
-            const match = p ? p.match(/\b(20\d{2})\b/) : null;
-            return match ? parseInt(match[1], 10) : null;
-        };
-        const currentPropYear = getYearFromPeriod(widget.period);
-
-        if (selectedYear === null || widget.id !== localWidget.id || currentPropYear === selectedYear) {
-            setLocalWidget(widget);
-        }
-    }, [widget, selectedYear, localWidget.id]);
-
-    const handlePrevYear = () => {
-        const yearMatch = localWidget.period ? localWidget.period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear - 1);
-    };
-
-    const handleNextYear = () => {
-        const yearMatch = localWidget.period ? localWidget.period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear + 1);
-    };
-
-    const fetchWidgetData = (targetYear) => {
-        setIsLoading(true);
-        const widgetId = localWidget.id;
-        const url = `${window.location.pathname}?widget_id=${widgetId}&year=${targetYear}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data && data.id) {
-                    setLocalWidget(data);
-                    
-                    const getYearFromPeriod = (p) => {
-                        const match = p ? p.match(/\b(20\d{2})\b/) : null;
-                        return match ? parseInt(match[1], 10) : null;
-                    };
-                    const defaultYear = getYearFromPeriod(widget.period);
-                    if (targetYear === defaultYear) {
-                        setSelectedYear(null);
-                    } else {
-                        setSelectedYear(targetYear);
-                    }
-                }
-            })
-            .catch((err) => console.error('Failed to load widget data:', err))
-            .finally(() => setIsLoading(false));
-    };
-
-    if (isLoading) {
-        return (
-            <div className="flex flex-1 flex-col gap-4 animate-pulse h-full">
-                <div className="h-6 w-1/4 rounded bg-slate-300" />
-                <div className="flex-1 rounded-[6px] bg-slate-200 min-h-[180px]" />
-            </div>
-        );
-    }
-
     return (
         <div className="flex flex-1 flex-col h-full min-h-0 justify-between gap-3">
-            {localWidget.period && (
-                <div className="flex justify-end text-xs font-semibold items-center gap-1 select-none">
-                    <span onClick={handlePrevYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">‹</span>
-                    <span className="text-black font-normal">{localWidget.period}</span>
-                    <span onClick={handleNextYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">›</span>
+            {widget.period && (
+                <div className="flex justify-end text-xs font-normal items-center select-none text-black">
+                    {widget.period}
                 </div>
             )}
             <div className="flex-1 min-h-0 flex flex-col">
                 <TrendLineChart
-                    labels={localWidget.labels ?? []}
-                    series={localWidget.series ?? []}
-                    accent={localWidget.accent}
-                    valueFormat={localWidget.valueFormat ?? 'number'}
+                    labels={widget.labels ?? []}
+                    series={widget.series ?? []}
+                    accent={widget.accent}
+                    valueFormat={widget.valueFormat ?? 'number'}
                     heightClassName="flex-1 min-h-[140px]"
                 />
             </div>
@@ -168,22 +84,6 @@ export function LineTrendMetric({ widget }) {
 }
 
 export function RingBreakdownMetric({ widget }) {
-    const [localWidget, setLocalWidget] = useState(widget);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedYear, setSelectedYear] = useState(null);
-
-    useEffect(() => {
-        const getYearFromPeriod = (p) => {
-            const match = p ? p.match(/\b(20\d{2})\b/) : null;
-            return match ? parseInt(match[1], 10) : null;
-        };
-        const currentPropYear = getYearFromPeriod(widget.period);
-
-        if (selectedYear === null || widget.id !== localWidget.id || currentPropYear === selectedYear) {
-            setLocalWidget(widget);
-        }
-    }, [widget, selectedYear, localWidget.id]);
-
     const {
         percentage = '0%',
         compare,
@@ -193,71 +93,18 @@ export function RingBreakdownMetric({ widget }) {
         trend,
         growth,
         period,
-    } = localWidget;
+    } = widget;
 
     const isLoss = totalLabel.toLowerCase().includes('rugi');
-    const valueColorClass = isLoss ? 'text-rose-600' : 'text-brand-darker';
+    const valueColorClass = isLoss ? 'text-rose-600' : 'text-emerald-600';
     const valueClass = `text-lg font-bold leading-none ${valueColorClass} md:text-xl xl:text-2xl 2xl:text-3xl`;
-
-    const handlePrevYear = () => {
-        const yearMatch = period ? period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear - 1);
-    };
-
-    const handleNextYear = () => {
-        const yearMatch = period ? period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear + 1);
-    };
-
-    const fetchWidgetData = (targetYear) => {
-        setIsLoading(true);
-        const widgetId = localWidget.id;
-        const url = `${window.location.pathname}?widget_id=${widgetId}&year=${targetYear}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data && data.id) {
-                    setLocalWidget(data);
-                    
-                    const getYearFromPeriod = (p) => {
-                        const match = p ? p.match(/\b(20\d{2})\b/) : null;
-                        return match ? parseInt(match[1], 10) : null;
-                    };
-                    const defaultYear = getYearFromPeriod(widget.period);
-                    if (targetYear === defaultYear) {
-                        setSelectedYear(null);
-                    } else {
-                        setSelectedYear(targetYear);
-                    }
-                }
-            })
-            .catch((err) => console.error('Failed to load widget data:', err))
-            .finally(() => setIsLoading(false));
-    };
-
-    if (isLoading) {
-        return (
-            <div className="flex flex-1 flex-col sm:flex-row items-center gap-6 animate-pulse h-full">
-                <div className="relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full border-8 border-slate-200 bg-transparent" />
-                <div className="flex-1 w-full space-y-3">
-                    <div className="h-4 w-3/4 rounded bg-slate-300" />
-                    <div className="h-3 w-1/2 rounded bg-slate-200" />
-                    <div className="h-3 w-2/3 rounded bg-slate-200" />
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="flex flex-col h-full min-h-0 justify-between gap-3 flex-1">
             {/* Header: Period */}
             {period && (
-                <div className="flex justify-end text-xs font-semibold items-center gap-1 select-none">
-                    <span onClick={handlePrevYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">‹</span>
-                    <span className="text-black font-normal">{period}</span>
-                    <span onClick={handleNextYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">›</span>
+                <div className="flex justify-end text-xs font-normal items-center select-none text-black">
+                    {period}
                 </div>
             )}
 
@@ -293,22 +140,6 @@ export function RingBreakdownMetric({ widget }) {
 }
 
 export function ExpenseBreakdownMetric({ widget }) {
-    const [localWidget, setLocalWidget] = useState(widget);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedYear, setSelectedYear] = useState(null);
-
-    useEffect(() => {
-        const getYearFromPeriod = (p) => {
-            const match = p ? p.match(/\b(20\d{2})\b/) : null;
-            return match ? parseInt(match[1], 10) : null;
-        };
-        const currentPropYear = getYearFromPeriod(widget.period);
-
-        if (selectedYear === null || widget.id !== localWidget.id || currentPropYear === selectedYear) {
-            setLocalWidget(widget);
-        }
-    }, [widget, selectedYear, localWidget.id]);
-
     const {
         percentage = '0%',
         compare,
@@ -317,67 +148,14 @@ export function ExpenseBreakdownMetric({ widget }) {
         trend,
         growth,
         period,
-    } = localWidget;
-
-    const handlePrevYear = () => {
-        const yearMatch = period ? period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear - 1);
-    };
-
-    const handleNextYear = () => {
-        const yearMatch = period ? period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear + 1);
-    };
-
-    const fetchWidgetData = (targetYear) => {
-        setIsLoading(true);
-        const widgetId = localWidget.id;
-        const url = `${window.location.pathname}?widget_id=${widgetId}&year=${targetYear}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data && data.id) {
-                    setLocalWidget(data);
-                    
-                    const getYearFromPeriod = (p) => {
-                        const match = p ? p.match(/\b(20\d{2})\b/) : null;
-                        return match ? parseInt(match[1], 10) : null;
-                    };
-                    const defaultYear = getYearFromPeriod(widget.period);
-                    if (targetYear === defaultYear) {
-                        setSelectedYear(null);
-                    } else {
-                        setSelectedYear(targetYear);
-                    }
-                }
-            })
-            .catch((err) => console.error('Failed to load widget data:', err))
-            .finally(() => setIsLoading(false));
-    };
-
-    if (isLoading) {
-        return (
-            <div className="flex flex-1 flex-col sm:flex-row items-center gap-6 animate-pulse h-full">
-                <div className="relative flex h-32 w-32 shrink-0 items-center justify-center rounded-full border-8 border-slate-200 bg-transparent" />
-                <div className="flex-1 w-full space-y-3">
-                    <div className="h-4 w-3/4 rounded bg-slate-300" />
-                    <div className="h-3 w-1/2 rounded bg-slate-200" />
-                    <div className="h-3 w-2/3 rounded bg-slate-200" />
-                </div>
-            </div>
-        );
-    }
+    } = widget;
 
     return (
         <div className="flex flex-col h-full min-h-0 justify-between gap-3 flex-1">
             {/* Header: Period */}
             {period && (
-                <div className="flex justify-end text-xs font-semibold items-center gap-1 select-none">
-                    <span onClick={handlePrevYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">‹</span>
-                    <span className="text-black font-normal">{period}</span>
-                    <span onClick={handleNextYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">›</span>
+                <div className="flex justify-end text-xs font-normal items-center select-none text-black">
+                    {period}
                 </div>
             )}
 
@@ -413,65 +191,11 @@ export function ExpenseBreakdownMetric({ widget }) {
 }
 
 export function SummaryMetric({ widget }) {
-    const [localWidget, setLocalWidget] = useState(widget);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedYear, setSelectedYear] = useState(null);
-
-    useEffect(() => {
-        const getYearFromPeriod = (p) => {
-            const match = p ? p.match(/\b(20\d{2})\b/) : null;
-            return match ? parseInt(match[1], 10) : null;
-        };
-        const currentPropYear = getYearFromPeriod(widget.period);
-
-        if (selectedYear === null || widget.id !== localWidget.id || currentPropYear === selectedYear) {
-            setLocalWidget(widget);
-        }
-    }, [widget, selectedYear, localWidget.id]);
-
     const {
         sections = [],
         headline,
         period,
-    } = localWidget;
-
-    const handlePrevYear = () => {
-        const yearMatch = period ? period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear - 1);
-    };
-
-    const handleNextYear = () => {
-        const yearMatch = period ? period.match(/\b(20\d{2})\b/) : null;
-        const currentYear = yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear();
-        fetchWidgetData(currentYear + 1);
-    };
-
-    const fetchWidgetData = (targetYear) => {
-        setIsLoading(true);
-        const widgetId = localWidget.id;
-        const url = `${window.location.pathname}?widget_id=${widgetId}&year=${targetYear}`;
-        fetch(url)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data && data.id) {
-                    setLocalWidget(data);
-                    
-                    const getYearFromPeriod = (p) => {
-                        const match = p ? p.match(/\b(20\d{2})\b/) : null;
-                        return match ? parseInt(match[1], 10) : null;
-                    };
-                    const defaultYear = getYearFromPeriod(widget.period);
-                    if (targetYear === defaultYear) {
-                        setSelectedYear(null);
-                    } else {
-                        setSelectedYear(targetYear);
-                    }
-                }
-            })
-            .catch((err) => console.error('Failed to load widget data:', err))
-            .finally(() => setIsLoading(false));
-    };
+    } = widget;
 
     const resolvedHeadline = {
         label: headline?.label ?? '-',
@@ -571,7 +295,7 @@ export function SummaryMetric({ widget }) {
                         borderWidth: 0,
                         borderRadius: 0,
                         borderSkipped: false,
-                        barThickness: 24,
+                        barThickness: 36,
                     },
                     {
                         label: itemB.label,
@@ -581,7 +305,7 @@ export function SummaryMetric({ widget }) {
                         borderWidth: 0,
                         borderRadius: 0,
                         borderSkipped: false,
-                        barThickness: 24,
+                        barThickness: 36,
                     },
                 ],
             };
@@ -598,7 +322,7 @@ export function SummaryMetric({ widget }) {
                     borderWidth: 0,
                     borderRadius: 0,
                     borderSkipped: false,
-                    barThickness: 24,
+                    barThickness: 36,
                 },
             ],
         };
@@ -607,40 +331,28 @@ export function SummaryMetric({ widget }) {
     const chart1Data = getChartData(val1_1, val1_2, sec1_item1, sec1_item2, total1);
     const chart2Data = getChartData(val2_1, val2_2, sec2_item1, sec2_item2, total2);
 
-    if (isLoading) {
-        return (
-            <div className="flex flex-1 flex-col gap-4 animate-pulse h-full justify-center">
-                <div className="h-6 w-1/4 rounded bg-slate-200" />
-                <div className="h-16 rounded bg-slate-100" />
-                <div className="h-12 rounded bg-slate-100" />
-            </div>
-        );
-    }
-
     return (
         <div className="relative flex h-full flex-col gap-4">
-            <div className="grid grid-cols-2 gap-x-6 sm:gap-x-10 min-h-0 flex-1">
+            <div className="grid grid-cols-2 gap-x-3 sm:gap-x-6 min-h-0 flex-1">
                 {/* Left Column: Pendapatan/Pembelian */}
                 <div className="flex flex-col h-full min-w-0">
                     {/* Header: Date Range */}
                     <div className="flex justify-end h-5 items-center shrink-0">
                         {period && (
-                            <div className="flex items-center gap-1 text-[11px] sm:text-xs select-none">
-                                <span onClick={handlePrevYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">&lt;</span>
-                                <span className="text-black font-normal">{period}</span>
-                                <span onClick={handleNextYear} className="text-blue-600 cursor-pointer font-bold hover:text-blue-800 p-1">&gt;</span>
+                            <div className="text-[11px] sm:text-xs text-black font-normal select-none">
+                                {period}
                             </div>
                         )}
                     </div>
 
                     {/* Headline */}
-                    <div className="flex items-baseline justify-between gap-2 mt-1.5 shrink-0">
+                    <div className="flex items-baseline justify-between gap-2 mt-3 shrink-0">
                         <span className="truncate text-sm sm:text-base font-medium text-tab-active-text">{resolvedHeadline.label}</span>
                         <span className="shrink-0">{renderHeadlineValue(resolvedHeadline.value)}</span>
                     </div>
 
                     {/* Detail Items & Chart */}
-                    <div className="flex flex-col gap-0.5 mt-1.5 min-h-0">
+                    <div className="flex flex-col gap-0.5 mt-4 min-h-0">
                         <div className="flex items-center justify-between text-xs sm:text-sm font-medium shrink-0">
                             <div className="flex flex-col items-start gap-1.5">
                                 <span className="text-text-light font-normal text-[11px] sm:text-xs">{sec1_item1.label}</span>
@@ -651,7 +363,7 @@ export function SummaryMetric({ widget }) {
                                 <span style={{ color: sec1_item2.color }}>{sec1_item2.value}</span>
                             </div>
                         </div>
-                        <div onContextMenu={(e) => e.preventDefault()} className="h-[72px] overflow-hidden shrink-0">
+                        <div onContextMenu={(e) => e.preventDefault()} className="h-[48px] overflow-hidden shrink-0">
                             <Bar data={resolveChartObject(chart1Data)} options={resolveChartObject(chart1Options)} />
                         </div>
                     </div>
@@ -667,13 +379,13 @@ export function SummaryMetric({ widget }) {
                     </div>
 
                     {/* Headline */}
-                    <div className="flex items-baseline justify-between gap-2 mt-1.5 shrink-0">
+                    <div className="flex items-baseline justify-between gap-2 mt-3 shrink-0">
                         <span className="truncate text-sm sm:text-base font-medium text-tab-active-text">{resolvedHeadline.secondaryLabel}</span>
                         <span className="shrink-0">{renderHeadlineValue(resolvedHeadline.secondaryValue)}</span>
                     </div>
 
                     {/* Detail Items & Chart */}
-                    <div className="flex flex-col gap-0.5 mt-1.5 min-h-0">
+                    <div className="flex flex-col gap-0.5 mt-4 min-h-0">
                         <div className="flex items-center justify-between text-xs sm:text-sm font-medium shrink-0">
                             <div className="flex flex-col items-start gap-1.5">
                                 <span className="text-text-light font-normal text-[11px] sm:text-xs">{sec2_item1.label}</span>
@@ -684,13 +396,12 @@ export function SummaryMetric({ widget }) {
                                 <span style={{ color: sec2_item2.color }}>{sec2_item2.value}</span>
                             </div>
                         </div>
-                        <div onContextMenu={(e) => e.preventDefault()} className="h-[72px] overflow-hidden shrink-0">
+                        <div onContextMenu={(e) => e.preventDefault()} className="h-[48px] overflow-hidden shrink-0">
                             <Bar data={resolveChartObject(chart2Data)} options={resolveChartObject(chart2Options)} />
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }

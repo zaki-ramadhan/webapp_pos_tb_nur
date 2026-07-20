@@ -8,7 +8,7 @@ import { CloseIcon } from '@/features/workspace/shared/Icons';
 
 function LibraryIcon({ type }) {
     let iconElement;
-    let containerClass = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border ';
+    let containerClass = 'flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px] border ';
 
     switch (type) {
         case 'activity':
@@ -97,20 +97,20 @@ export default function WidgetLibraryModal({ open, modal, onClose, onSelectItem 
                     inputClassName="text-xs sm:text-sm"
                 />
 
-                <div className="mt-3 h-[400px] overflow-y-auto rounded-[4px] border border-ui-border-medium">
+                <div className="mt-3 h-[400px] overflow-y-auto rounded-[4px] border border-ui-border-medium grid grid-cols-1 sm:grid-cols-2 auto-rows-max gap-1 p-1 [scrollbar-width:thin]">
                     {filteredItems.map((item) => (
                         <button
                             key={item.id}
                             type="button"
                             onClick={() => onSelectItem?.(item)}
-                            className="flex w-full items-start gap-4 border-b border-table-row-border px-5 py-3.5 text-left transition-colors duration-100 hover:bg-ui-bg-hover"
+                            className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors duration-100 hover:bg-ui-bg-hover rounded-[6px] min-w-0"
                         >
                             <LibraryIcon type={item.icon} />
-                            <span className="min-w-0">
-                                <span className="block text-base font-medium leading-6 text-brand-darker">
+                            <span className="min-w-0 flex-1">
+                                <span className="block truncate text-xs sm:text-sm font-medium text-brand-darker">
                                     {item.title}
                                 </span>
-                                <span className="mt-1 block text-sm leading-5 text-text-light">
+                                <span className="mt-1 block truncate text-[13px] text-text-light">
                                     {item.description}
                                 </span>
                             </span>

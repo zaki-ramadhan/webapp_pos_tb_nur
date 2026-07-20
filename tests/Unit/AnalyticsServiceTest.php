@@ -23,6 +23,9 @@ class AnalyticsServiceTest extends TestCase
         DB::shouldReceive('where')
             ->andReturnSelf();
 
+        DB::shouldReceive('whereIn')
+            ->andReturnSelf();
+
         DB::shouldReceive('select')
             ->andReturnSelf();
 

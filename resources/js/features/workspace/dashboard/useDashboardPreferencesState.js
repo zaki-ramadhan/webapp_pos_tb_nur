@@ -227,16 +227,7 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
 
         setDashboardPreferences((currentValue) => {
             const currentWidgets = currentValue.widgetsByDashboard[currentValue.selectedDashboardId] ?? [];
-            const itemsToAdd = [];
-
-            if (widgetLibraryItem.id === 'sales-summary' || widgetLibraryItem.id === 'purchase-summary') {
-                const salesItem = dashboard.toolbar.widgetLibraryModal.items?.find((item) => item.id === 'sales-summary');
-                const purchaseItem = dashboard.toolbar.widgetLibraryModal.items?.find((item) => item.id === 'purchase-summary');
-                if (salesItem) itemsToAdd.push(salesItem);
-                if (purchaseItem) itemsToAdd.push(purchaseItem);
-            } else {
-                itemsToAdd.push(widgetLibraryItem);
-            }
+            const itemsToAdd = [widgetLibraryItem];
 
             const nextWidgets = [...currentWidgets];
 
@@ -292,13 +283,7 @@ export default function useDashboardPreferencesState({ dashboard, widgets, widge
                 return currentValue;
             }
 
-            const idsToRemove = new Set();
-            if (id === 'sales-summary' || id === 'purchase-summary') {
-                idsToRemove.add('sales-summary');
-                idsToRemove.add('purchase-summary');
-            } else {
-                idsToRemove.add(id);
-            }
+            const idsToRemove = new Set([id]);
 
             const nextWidgets = currentWidgets.filter(
                 (widget) => !idsToRemove.has(widget.id)
