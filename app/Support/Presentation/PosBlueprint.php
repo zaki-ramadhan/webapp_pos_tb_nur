@@ -360,9 +360,6 @@ final class PosBlueprint
             //     self::navItem('asset-move', 'Pindah Aset', 'transfer', 'green'),
             //     // self::navItem('asset-location', 'Aset per Lokasi', 'location', 'purple'),
             // ]),
-            self::navModule('report-center', 'Daftar Laporan', 'reports', [
-                self::navItem('report-list', 'Daftar Laporan', 'reports', 'purple'),
-            ]),
         ];
     }
 
@@ -451,7 +448,6 @@ final class PosBlueprint
             'item-location',
             'minimum-stock',
             'delivery-order',
-            'report-list',
             'payroll-entry',
             'items-services',
             'warehouse-master',

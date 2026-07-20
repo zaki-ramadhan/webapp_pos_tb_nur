@@ -1,4 +1,3 @@
-import { buildReportListConfig } from '@/features/workspace/modules/report-list/reportListConfig';
 import { buildSalesReturnConfig } from '@/features/workspace/modules/sales-document/salesReturnConfig';
 
 const TRANSACTION_TOP_ACTIONS = [
@@ -38,13 +37,6 @@ const workspacePageOverrides = {
         salesReturn: {
             ...buildSalesReturnConfig(),
             topActions: TRANSACTION_TOP_ACTIONS,
-        },
-    },
-    'report-list': {
-        showViewIndicator: true,
-        reportList: {
-            ...buildReportListConfig(),
-            topActions: HELP_ONLY_TOP_ACTION,
         },
     },
     suppliers: {

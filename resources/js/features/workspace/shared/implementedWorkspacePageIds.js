@@ -31,7 +31,6 @@ const implementedWorkspacePageIds = new Set([
     'item-location',
     'minimum-stock',
     'delivery-order',
-    'report-list',
     // Modul aktif baru
     'payroll-entry',
     'items-services',

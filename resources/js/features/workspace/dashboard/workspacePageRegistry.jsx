@@ -20,7 +20,6 @@ import PreferencesView from '@/features/workspace/preferences/PreferencesView';
 import PurchaseInvoiceView from '@/features/workspace/modules/sales-document/PurchaseInvoiceView';
 import PurchasePaymentView from '@/features/workspace/modules/purchase-payment/PurchasePaymentView';
 import PurchaseReturnView from '@/features/workspace/modules/sales-document/PurchaseReturnView';
-import ReportListView from '@/features/workspace/modules/report-list/ReportListView';
 import SalaryAllowanceView from '@/features/workspace/modules/salary-allowance/SalaryAllowanceView';
 import SalesCommissionView from '@/features/workspace/modules/sales-commission/SalesCommissionView';
 import SalesCheckinView from '@/features/workspace/modules/sales-checkin/SalesCheckinView';
@@ -40,7 +39,6 @@ export const STATIC_PAGE_RENDERERS = {
     preferences: (page) => <PreferencesView page={page} />,
     'activity-log': (page) => <ActivityLogView page={page} />,
     'sales-checkin': (page) => <SalesCheckinView page={page} />,
-    'report-list': (page) => <ReportListView page={page} />,
     'minimum-stock': (page) => <InventoryInquiryView config={page.minimumStock} pageId="minimum-stock" />,
     'item-location': (page) => <InventoryInquiryView config={page.itemLocation} pageId="item-location" />,
     'salary-allowance': (page) => <SalaryAllowanceView page={page} />,
