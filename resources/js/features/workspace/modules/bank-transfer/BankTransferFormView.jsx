@@ -2,16 +2,9 @@ import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
-import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
-import Button from '@/components/ui/Button';
-import TextInput from '@/components/ui/TextInput';
-import SelectField from '@/components/ui/SelectField';
-import TextareaField from '@/components/ui/TextareaField';
-import { PencilIcon } from '@/features/workspace/shared/Icons';
-import { AccountLookupField } from '@/features/workspace/shared/AccountLookupControls';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
-import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
-import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
+import { showSuccessToast } from '@/components/feedback/toast';
+import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
     createBackendResource,
     deleteBackendResource,
@@ -33,17 +26,14 @@ import {
 import {
     applyBankTransferComputedValues,
     buildBankTransferPayload,
-    buildBankTransferSnapshot,
-    buildDetailRecordFromRow,
+    buildBankTransferRecord,
     buildFormState,
     buildGeneratedBankTransferNumber,
-    buildLookupLabel,
-    promptBankTransferFeeItem,
     validateBankTransferValues,
-    buildBankTransferRecord,
     extractCleanAccountName,
 } from './bankTransferShared';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
+import TransferFeeModal from './components/TransferFeeModal';
 
 export default function BankTransferFormView({
     pageId,
@@ -51,7 +41,6 @@ export default function BankTransferFormView({
     activeLevel2Tab,
     onOpenContent,
     onOpenDetail,
-    onCloseDetail,
     onRefresh,
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
@@ -74,14 +63,8 @@ export default function BankTransferFormView({
     });
 
     const [feeModalOpen, setFeeModalOpen] = useState(false);
-    const [feeModalRecord, setFeeModalRecord] = useState(null);
     const [feeModalCurrentItem, setFeeModalCurrentItem] = useState(null);
     const [feeAccount, setFeeAccount] = useState(null);
-    const [feeCustomName, setFeeCustomName] = useState('');
-    const [feeAmount, setFeeAmount] = useState('0');
-    const [feeChargedTo, setFeeChargedTo] = useState('Bank Pengirim');
-    const [feeNotes, setFeeNotes] = useState('');
-    const [activeTab, setActiveTab] = useState('detail');
 
     const valuesRef = useRef(values);
     valuesRef.current = values;
@@ -95,7 +78,6 @@ export default function BankTransferFormView({
 
     const {
         status,
-        setStatus,
         saving,
         deleteConfirmationOpen,
         setDeleteConfirmationOpen,
@@ -112,7 +94,29 @@ export default function BankTransferFormView({
                 typeof nextValues === 'function' ? nextValues(currentValues) : nextValues,
             ),
         );
-    }, []);
+    }, [setValues]);
+
+    const handleSaveFee = useCallback((nextItem) => {
+        updateValues((current) => ({
+            ...current,
+            feeLookup: '',
+            feeRows: feeModalCurrentItem
+                ? (current.feeRows ?? []).map((row) => (row.id === feeModalCurrentItem.id ? nextItem : row))
+                : [...(current.feeRows ?? []), nextItem],
+        }));
+        setFeeModalOpen(false);
+        setFeeModalCurrentItem(null);
+    }, [feeModalCurrentItem, updateValues]);
+
+    const handleDeleteFee = useCallback((itemId) => {
+        updateValues((current) => ({
+            ...current,
+            feeLookup: '',
+            feeRows: (current.feeRows ?? []).filter((row) => row.id !== itemId),
+        }));
+        setFeeModalOpen(false);
+        setFeeModalCurrentItem(null);
+    }, [updateValues]);
 
     const onSave = useCallback(async () => {
         await handleSave({
@@ -164,7 +168,7 @@ export default function BankTransferFormView({
                 }
             },
         });
-    }, [values, isDetail, handleSave, config, pageId, activeLevel2Tab, onRefresh, onCloseDetail, onOpenDetail]);
+    }, [values, isDetail, handleSave, config, pageId, activeLevel2Tab, onRefresh, onOpenDetail, setLocalRecord]);
 
     function onRequestDelete() {
         if (!values.__backendRecordId) {
@@ -217,45 +221,6 @@ export default function BankTransferFormView({
         dirty: isDirty,
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
-
-    const applyFeeUpdate = useCallback(async (record, currentItem = null) => {
-        try {
-            const nextItem = await promptBankTransferFeeItem(record, currentItem);
-
-            if (!nextItem) {
-                return;
-            }
-
-            if (nextItem.action === 'delete') {
-                if (currentItem) {
-                    updateValues((current) => ({
-                        ...current,
-                        feeLookup: '',
-                        feeRows: (current.feeRows ?? []).filter((item) => item.id !== currentItem.id),
-                    }));
-                    showSuccessToast({
-                        message: 'Biaya transfer dihapus.',
-                    });
-                }
-                return;
-            }
-
-            updateValues((current) => ({
-                ...current,
-                feeLookup: '',
-                feeRows: currentItem
-                    ? (current.feeRows ?? []).map((item) => (item.id === currentItem.id ? nextItem : item))
-                    : [...(current.feeRows ?? []), nextItem],
-            }));
-            showSuccessToast({
-                message: currentItem ? 'Biaya transfer diperbarui.' : 'Biaya transfer ditambahkan.',
-            });
-        } catch (error) {
-            showErrorToast({
-                message: error?.message ?? 'Biaya transfer tidak valid.',
-            });
-        }
-    }, [updateValues]);
 
     const handlers = useMemo(
         () => ({
@@ -365,30 +330,18 @@ export default function BankTransferFormView({
                         return;
                     }
                     
-                    setFeeModalRecord(record);
                     setFeeModalCurrentItem(null);
                     setFeeAccount(record);
-                    setFeeCustomName(record.name ?? '');
-                    setFeeAmount('0');
-                    setFeeChargedTo('Bank Pengirim');
-                    setFeeNotes('');
-                    setActiveTab('detail');
                     setFeeModalOpen(true);
                 }
             },
             onEditFeeItem: (item) => {
-                setFeeModalRecord(null);
                 setFeeModalCurrentItem(item);
                 setFeeAccount({
                     id: item.__accountId,
                     code: item.accountCode,
                     name: item.accountName,
                 });
-                setFeeCustomName(item.accountName ?? '');
-                setFeeAmount(item.amount ? String(parseNumericInput(item.amount)) : '0');
-                setFeeChargedTo(item.chargedTo ?? 'Bank Pengirim');
-                setFeeNotes(item.notes ?? '');
-                setActiveTab('detail');
                 setFeeModalOpen(true);
             },
         }),
@@ -398,8 +351,8 @@ export default function BankTransferFormView({
     return (
         <>
             <TransactionFormLayout
-            isLoading={isLoading}
-            validationMessage={validationMessage}
+                isLoading={isLoading}
+                validationMessage={validationMessage}
                 header={<BankTransferHeader config={config} values={values} setValues={updateValues} activeRecordId={activeRecordId} />}
                 sectionTabs={config.sectionTabs}
                 activeSectionId={activeSectionId}
@@ -433,185 +386,17 @@ export default function BankTransferFormView({
                 confirmVariant="primary"
                 confirmLoading={saving}
             />
-            <WorkspaceDialog
+            <TransferFeeModal
                 open={feeModalOpen}
                 onClose={() => {
                     setFeeModalOpen(false);
-                    setFeeModalRecord(null);
                     setFeeModalCurrentItem(null);
                 }}
-                title="Biaya Transfer"
-                headerIcon={PencilIcon}
-                maxWidthClassName="max-w-[500px]"
-                contentClassName="bg-white px-5 py-0 sm:px-6 min-h-[220px] flex flex-col pt-0 pb-4"
-                footer={
-                    <div className="flex justify-between items-center w-full">
-                        {feeModalCurrentItem ? (
-                            <Button
-                                variant="secondary"
-                                size="md"
-                                onClick={() => {
-                                    setFeeModalOpen(false);
-                                    updateValues((current) => ({
-                                        ...current,
-                                        feeLookup: '',
-                                        feeRows: (current.feeRows ?? []).filter((row) => row.id !== feeModalCurrentItem.id),
-                                    }));
-                                    showSuccessToast({ message: 'Biaya transfer dihapus.' });
-                                }}
-                                className="border-red-150 hover:bg-danger-border text-error-border font-medium"
-                            >
-                                Hapus
-                            </Button>
-                        ) : (
-                            <div />
-                        )}
-                        <Button
-                            variant="primary"
-                            size="md"
-                            onClick={() => {
-                                if (activeTab === 'detail') {
-                                    if (!feeCustomName.trim()) {
-                                        showErrorToast({ message: 'Nama Akun wajib diisi.' });
-                                        return;
-                                    }
-                                    setActiveTab('notes');
-                                } else {
-                                    const amountNum = parseNumericInput(feeAmount);
-                                    if (!feeCustomName.trim()) {
-                                        showErrorToast({ message: 'Nama Akun wajib diisi.' });
-                                        return;
-                                    }
-                                    if (amountNum <= 0) {
-                                        showErrorToast({ message: 'Nilai biaya transfer harus lebih dari 0.' });
-                                        return;
-                                    }
-                                    
-                                    const nextItem = {
-                                        id: feeModalCurrentItem?.id ?? `draft-fee-${Date.now()}`,
-                                        __lineId: feeModalCurrentItem?.__lineId ?? null,
-                                        __accountId: feeAccount?.id ?? feeModalCurrentItem?.__accountId ?? null,
-                                        accountCode: feeAccount?.code ?? feeModalCurrentItem?.accountCode ?? '',
-                                        accountName: feeCustomName.trim(),
-                                        amount: formatCurrencyValue(amountNum),
-                                        chargedTo: feeChargedTo,
-                                        notes: feeNotes.trim(),
-                                    };
-                                    
-                                    updateValues((current) => ({
-                                        ...current,
-                                        feeLookup: '',
-                                        feeRows: feeModalCurrentItem
-                                            ? (current.feeRows ?? []).map((row) => (row.id === feeModalCurrentItem.id ? nextItem : row))
-                                            : [...(current.feeRows ?? []), nextItem],
-                                    }));
-                                    
-                                    showSuccessToast({
-                                        message: feeModalCurrentItem ? 'Biaya transfer diperbarui.' : 'Biaya transfer ditambahkan.',
-                                    });
-                                    
-                                    setFeeModalOpen(false);
-                                    setFeeModalRecord(null);
-                                    setFeeModalCurrentItem(null);
-                                }
-                            }}
-                            className="bg-brand-blue-dark hover:bg-brand-blue-darker font-medium shadow-btn-blue-hover"
-                        >
-                            {activeTab === 'detail' ? 'Lanjut' : 'Simpan'}
-                        </Button>
-                    </div>
-                }
-            >
-                {/* Tabs */}
-                <div className="flex border-b border-table-row-border -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 mt-0">
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('detail')}
-                        className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
-                            activeTab === 'detail'
-                                ? 'border-pink-accent text-pink-accent'
-                                : 'border-transparent text-slate-500 hover:text-slate-700'
-                        }`}
-                    >
-                        Biaya Transfer
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('notes')}
-                        className={`px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 cursor-pointer ${
-                            activeTab === 'notes'
-                                ? 'border-pink-accent text-pink-accent'
-                                : 'border-transparent text-slate-500 hover:text-slate-700'
-                        }`}
-                    >
-                        Info lainnya
-                    </button>
-                </div>
-
-                {/* Tab Contents */}
-                <div className="min-h-[200px] flex flex-col justify-start">
-                    {activeTab === 'detail' && (
-                        <div className="space-y-2.5">
-                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
-                                <label className="text-xs sm:text-sm font-medium text-slate-700">Nama Akun</label>
-                                <TextInput
-                                    type="text"
-                                    value={feeCustomName}
-                                    onChange={(e) => setFeeCustomName(e.target.value)}
-                                    placeholder="Nama Akun..."
-                                    className="h-[34px] rounded-[4px] border-ui-border"
-                                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
-                                <label className="text-xs sm:text-sm font-medium text-slate-700">
-                                    Nilai <span className="text-red-500">*</span>
-                                </label>
-                                <div className="max-w-[276px]">
-                                    <TextInput
-                                        type="text"
-                                        value={feeAmount}
-                                        onChange={(e) => setFeeAmount(e.target.value)}
-                                        prefix="Rp"
-                                        maxLength={11}
-                                        className="h-[34px] rounded-[4px] border-ui-border"
-                                        prefixClassName="min-w-[42px] justify-center border-r-ui-border-medium bg-ui-bg-hover px-2 text-xs sm:text-sm text-text-light"
-                                        inputClassName="text-right text-xs sm:text-sm text-brand-dark"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-[130px_1fr] items-center gap-4">
-                                <label className="text-xs sm:text-sm font-medium text-slate-700">Dibebankan ke</label>
-                                <SelectField
-                                    value={feeChargedTo}
-                                    onChange={(e) => setFeeChargedTo(e.target.value)}
-                                    className="h-[34px] rounded-[4px] border-ui-border text-xs sm:text-sm text-brand-dark"
-                                >
-                                    <option value="Bank Pengirim">Bank Pengirim</option>
-                                    <option value="Bank Tujuan">Bank Tujuan</option>
-                                </SelectField>
-                            </div>
-                        </div>
-                    )}
-
-                    {activeTab === 'notes' && (
-                        <div className="space-y-2.5">
-                            <div className="grid grid-cols-[130px_1fr] items-start gap-4">
-                                <label className="text-xs sm:text-sm font-medium text-slate-700">Catatan</label>
-                                <TextareaField
-                                    value={feeNotes}
-                                    onChange={(e) => setFeeNotes(e.target.value)}
-                                    rows={4}
-                                    className="rounded-[4px] border-ui-border"
-                                    textareaClassName="min-h-[70px] px-4 py-3 text-xs sm:text-sm text-brand-dark"
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </WorkspaceDialog>
+                onSave={handleSaveFee}
+                onDelete={handleDeleteFee}
+                currentItem={feeModalCurrentItem}
+                feeAccount={feeAccount}
+            />
         </>
     );
 }
