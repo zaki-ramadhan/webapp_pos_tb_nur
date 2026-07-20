@@ -1,7 +1,7 @@
 import { CloseIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import { renderTabLabel } from '@/features/workspace/dashboard/WorkspaceDraftState';
 
-export function SecondaryTab({ tab, active, onSelect, onClose }) {
+export function SecondaryTab({ tab, active, onSelect, onClose, tabsCount = 1 }) {
     const isViewTab = tab.kind === 'view';
     const spacingClassName = tab.closable
         ? 'gap-1.5 pl-3 pr-1.5 md:gap-2 md:pl-4 md:pr-2'
@@ -17,18 +17,25 @@ export function SecondaryTab({ tab, active, onSelect, onClose }) {
         ? 'text-abc-label-dark hover:text-red-600 transition-colors'
         : 'text-slate-400 hover:text-slate-700 transition-colors';
 
+    const canClick = tabsCount > 1;
+    const cursorClass = canClick ? 'cursor-pointer' : 'cursor-default';
+
     return (
         <div
             role="button"
-            tabIndex={0}
-            onClick={() => onSelect(tab.id)}
+            tabIndex={canClick ? 0 : -1}
+            onClick={() => {
+                if (canClick) {
+                    onSelect(tab.id);
+                }
+            }}
             onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
+                if (canClick && (event.key === 'Enter' || event.key === ' ')) {
                     event.preventDefault();
                     onSelect(tab.id);
                 }
             }}
-            className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap cursor-pointer select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${className}`.trim()}
+            className={`relative inline-flex h-7.5 shrink-0 items-center rounded-t-[5px] text-xs leading-normal whitespace-nowrap select-none transition sm:h-8 sm:text-sm md:h-8.75 md:text-base max-w-[150px] sm:max-w-[190px] md:max-w-[230px] ${spacingClassName} ${cursorClass} ${className}`.trim()}
             aria-label={tab.ariaLabel ?? tab.label}
         >
             <span className="inline-flex h-full items-center min-w-0 max-w-[100px] sm:max-w-[130px] md:max-w-[160px]">
@@ -74,6 +81,7 @@ export default function SecondaryTabs({
                     active={activeTabId === tab.id}
                     onSelect={onSelectTab}
                     onClose={onCloseTab}
+                    tabsCount={tabs.length}
                 />
             ))}
         </div>
