@@ -70,7 +70,7 @@ export default function DocumentModalLayout({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white hover:text-red-600 active:text-red-800 transition cursor-pointer"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-[4px] text-white hover:text-red-800 active:text-red-950 transition-colors cursor-pointer"
                         aria-label={closeAriaLabel}
                     >
                         <CloseIcon className="h-4 w-4" />

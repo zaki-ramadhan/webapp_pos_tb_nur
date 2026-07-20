@@ -85,7 +85,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                     type="button"
                     onClick={onClose}
                     aria-label={modal.closeLabel || 'Tutup'}
-                    className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-slate-600 shadow-card-subtle transition-colors cursor-pointer"
+                    className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded border border-slate-200 bg-white text-slate-400 hover:text-red-800 hover:border-red-200 active:text-red-950 shadow-card-subtle transition-colors cursor-pointer"
                 >
                     <span className="text-sm font-semibold leading-none">&times;</span>
                 </button>

@@ -114,7 +114,7 @@ export default function SystemErrorModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition hover:text-red-600 active:text-red-800 cursor-pointer"
+                            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition-colors hover:text-red-800 active:text-red-950 cursor-pointer"
                             aria-label={closeLabel}
                         >
                             <CloseIcon className="h-4 w-4" />
