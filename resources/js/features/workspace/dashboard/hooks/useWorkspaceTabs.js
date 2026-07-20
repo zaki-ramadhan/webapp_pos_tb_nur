@@ -140,19 +140,14 @@ export default function useWorkspaceTabs({
         }
 
         if (!remainingTabs.length) {
-            if (activePage.detailTabsOnly) {
-                setPageLevel2ContentTabs((currentTabs) => ({
-                    ...currentTabs,
-                    [activePage.id]: [],
-                }));
-                setActiveLevel2Tabs((currentTabs) => ({
-                    ...currentTabs,
-                    [activePage.id]: initialLevel2Tabs[activePage.id],
-                }));
-                return;
-            }
-
-            closePageNow(activePage.id);
+            setPageLevel2ContentTabs((currentTabs) => ({
+                ...currentTabs,
+                [activePage.id]: [],
+            }));
+            setActiveLevel2Tabs((currentTabs) => ({
+                ...currentTabs,
+                [activePage.id]: `${activePage.id}-view`,
+            }));
             return;
         }
 
