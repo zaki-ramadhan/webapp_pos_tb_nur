@@ -15,7 +15,7 @@ class DashboardAnalyticsQueryService
      * @param bool $loadData
      * @return array
      */
-    public static function getAnalytics(bool $loadData, ?int $year = null): array
+    public static function getAnalytics(bool $loadData): array
     {
         $nowMonths = [1=>'Jan',2=>'Feb',3=>'Mar',4=>'Apr',5=>'Mei',6=>'Jun',7=>'Jul',8=>'Ags',9=>'Sep',10=>'Okt',11=>'Nov',12=>'Des'];
         $upcomingNote = '15 ' . ($nowMonths[(int) date('n')] ?? date('M')) . ' ' . date('Y') . ' — Batas Akhir Pelaporan SPT PPh 21';
@@ -78,16 +78,8 @@ class DashboardAnalyticsQueryService
             $user = auth()->user() ?? request()->user();
             $userActivities = \App\Support\Presentation\Queries\DashboardActivityQueryService::getRecentActivities($user);
 
-            $latestSalesInvoiceQuery = DB::table('operation_documents')
-                ->where('document_type', 'sales_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
-
-            if ($year !== null) {
-                $latestSalesInvoiceQuery->whereYear('entry_date', $year);
-            }
-
-            $latestSalesInvoiceDate = $latestSalesInvoiceQuery->max('entry_date') ?? ($year !== null ? $year . '-12-31' : date('Y-m-d'));
-            $resolvedYear = $year ?? (int) date('Y', strtotime($latestSalesInvoiceDate));
+            $latestSalesInvoiceDate = date('Y-m-d');
+            $resolvedYear = (int) date('Y');
 
             $salesTrendLabels = [];
             $salesTrendData = [];
@@ -147,6 +139,61 @@ class DashboardAnalyticsQueryService
             $pctRev = $legendSum > 0 ? round(($totalSalesVal / $legendSum) * 100) : 0;
             $pctHpp = $legendSum > 0 ? round(($totalHppVal / $legendSum) * 100) : 0;
             $pctExp = $legendSum > 0 ? round(($totalExpensesVal / $legendSum) * 100) : 0;
+
+            $prevYear = $resolvedYear - 1;
+            $prevSalesVal = DB::table('operation_documents')
+                ->where('document_type', 'sales_invoice')
+                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereYear('entry_date', $prevYear)
+                ->sum('total_amount');
+            $prevHppVal = DB::table('operation_document_lines')
+                ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+                ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
+                ->where('operation_documents.document_type', 'sales_invoice')
+                ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+                ->whereYear('operation_documents.entry_date', $prevYear)
+                ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
+            $prevExpensesVal = DB::table('operation_documents')
+                ->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('document_type', 'payroll_entry')
+                            ->where('status', 'Posted');
+                    })->orWhere(function ($sub) {
+                        $sub->where('document_type', 'expense_entry')
+                            ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                    });
+                })
+                ->whereYear('entry_date', $prevYear)
+                ->sum('total_amount');
+
+            $calcGrowth = function ($curr, $prev) {
+                if ($prev == 0) {
+                    return $curr > 0 ? '+100%' : '0%';
+                }
+                $diff = $curr - $prev;
+                $pct = round(($diff / $prev) * 100, 1);
+                $pctStr = (string) $pct;
+                if (str_contains($pctStr, '.')) {
+                    $pctStr = rtrim(rtrim($pctStr, '0'), '.');
+                }
+                return ($pct >= 0 ? '+' : '') . $pctStr . '%';
+            };
+
+            $prevNetProfitVal = $prevSalesVal - $prevHppVal - $prevExpensesVal;
+            $profitTrend = $netProfitVal >= $prevNetProfitVal ? 'up' : 'down';
+            $profitGrowth = $calcGrowth($netProfitVal, $prevNetProfitVal);
+
+            $salesTrend = $totalSalesVal >= $prevSalesVal ? 'up' : 'down';
+            $salesGrowth = $calcGrowth($totalSalesVal, $prevSalesVal);
+            $salesTone = $totalSalesVal >= $prevSalesVal ? 'success' : 'danger';
+
+            $hppTrend = $totalHppVal >= $prevHppVal ? 'up' : 'down';
+            $hppGrowth = $calcGrowth($totalHppVal, $prevHppVal);
+            $hppTone = $totalHppVal >= $prevHppVal ? 'danger' : 'success';
+
+            $expensesTrend = $totalExpensesVal >= $prevExpensesVal ? 'up' : 'down';
+            $expensesGrowth = $calcGrowth($totalExpensesVal, $prevExpensesVal);
+            $expensesTone = $totalExpensesVal >= $prevExpensesVal ? 'danger' : 'success';
  
             $cashFlowLabels = [];
             $cashInSeries = [];
@@ -179,7 +226,7 @@ class DashboardAnalyticsQueryService
                     })
                     ->sum('total_amount');
                 $cashInSeries[] = (float) $inflow;
-                $cashOutSeries[] = (float) $outflow;
+                $cashOutSeries[] = - (float) $outflow;
             }
  
             $totalGaji = DB::table('operation_documents')
@@ -195,6 +242,30 @@ class DashboardAnalyticsQueryService
             $totalExpense = $totalGaji + $totalOperasional;
             $pctGaji = $totalExpense > 0 ? round(($totalGaji / $totalExpense) * 100) : 0;
             $pctOpr = $totalExpense > 0 ? round(($totalOperasional / $totalExpense) * 100) : 0;
+
+            $prevTotalGaji = DB::table('operation_documents')
+                ->where('document_type', 'payroll_entry')
+                ->where('status', 'Posted')
+                ->whereYear('entry_date', $prevYear)
+                ->sum('total_amount');
+            $prevTotalOperasional = DB::table('operation_documents')
+                ->where('document_type', 'expense_entry')
+                ->whereIn('status', ['Sedang diproses', 'Terbayar'])
+                ->whereYear('entry_date', $prevYear)
+                ->sum('total_amount');
+
+            $prevTotalExpense = $prevTotalGaji + $prevTotalOperasional;
+            $expenseTrend = $totalExpense >= $prevTotalExpense ? 'up' : 'down';
+            $expenseGrowth = $calcGrowth($totalExpense, $prevTotalExpense);
+            $expenseTone = $totalExpense >= $prevTotalExpense ? 'danger' : 'success';
+
+            $gajiTrend = $totalGaji >= $prevTotalGaji ? 'up' : 'down';
+            $gajiGrowth = $calcGrowth($totalGaji, $prevTotalGaji);
+            $gajiTone = $totalGaji >= $prevTotalGaji ? 'danger' : 'success';
+
+            $operasionalTrend = $totalOperasional >= $prevTotalOperasional ? 'up' : 'down';
+            $operasionalGrowth = $calcGrowth($totalOperasional, $prevTotalOperasional);
+            $operasionalTone = $totalOperasional >= $prevTotalOperasional ? 'danger' : 'success';
 
             $salesInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
@@ -233,12 +304,19 @@ class DashboardAnalyticsQueryService
                         ->whereYear('entry_date', $resolvedYear)
                         ->sum('total_amount');
                 }
+                $targetVal = 50000000;
+                $pct = $totalVal > 0 ? round(($totalVal / $targetVal) * 100, 1) : 0;
+                $pctStr = (string) $pct;
+                if (str_contains($pctStr, '.')) {
+                    $pctStr = rtrim(rtrim($pctStr, '0'), '.');
+                }
+                $targetPercent = $pctStr . '%';
                 $salesTeamRows[] = [
                     'name' => $sp->full_name,
                     'role' => $sp->position ?? 'Salesperson',
                     'totalValue' => $totalVal > 0 ? $formatCurrencyShort($totalVal) : 'Rp 0',
-                    'targetPercent' => '0%',
-                    'targetValue' => 'Rp 0',
+                    'targetPercent' => $targetPercent,
+                    'targetValue' => $formatCurrencyShort($targetVal),
                     'avatarUrl' => ($spUser && trim((string)$spUser->google_avatar) !== '') ? $spUser->google_avatar : null,
                 ];
             }
@@ -411,6 +489,27 @@ class DashboardAnalyticsQueryService
             $totalSalesOrders = 0;
             $pendingSalesOrders = 0;
             $overdueSalesOrders = 0;
+
+            $profitTrend = null;
+            $profitGrowth = null;
+            $salesTrend = null;
+            $salesGrowth = null;
+            $salesTone = null;
+            $hppTrend = null;
+            $hppGrowth = null;
+            $hppTone = null;
+            $expensesTrend = null;
+            $expensesGrowth = null;
+            $expensesTone = null;
+            $expenseTrend = null;
+            $expenseGrowth = null;
+            $expenseTone = null;
+            $gajiTrend = null;
+            $gajiGrowth = null;
+            $gajiTone = null;
+            $operasionalTrend = null;
+            $operasionalGrowth = null;
+            $operasionalTone = null;
         }
 
         return [
@@ -429,6 +528,17 @@ class DashboardAnalyticsQueryService
             'pctRev' => $pctRev,
             'pctHpp' => $pctHpp,
             'pctExp' => $pctExp,
+            'profitTrend' => $profitTrend,
+            'profitGrowth' => $profitGrowth,
+            'salesTrend' => $salesTrend,
+            'salesGrowth' => $salesGrowth,
+            'salesTone' => $salesTone,
+            'hppTrend' => $hppTrend,
+            'hppGrowth' => $hppGrowth,
+            'hppTone' => $hppTone,
+            'expensesTrend' => $expensesTrend,
+            'expensesGrowth' => $expensesGrowth,
+            'expensesTone' => $expensesTone,
             'cashFlowLabels' => $cashFlowLabels,
             'cashInSeries' => $cashInSeries,
             'cashOutSeries' => $cashOutSeries,
@@ -437,6 +547,15 @@ class DashboardAnalyticsQueryService
             'totalExpense' => $totalExpense,
             'pctGaji' => $pctGaji,
             'pctOpr' => $pctOpr,
+            'expenseTrend' => $expenseTrend,
+            'expenseGrowth' => $expenseGrowth,
+            'expenseTone' => $expenseTone,
+            'gajiTrend' => $gajiTrend,
+            'gajiGrowth' => $gajiGrowth,
+            'gajiTone' => $gajiTone,
+            'operasionalTrend' => $operasionalTrend,
+            'operasionalGrowth' => $operasionalGrowth,
+            'operasionalTone' => $operasionalTone,
             'fakturLunasSales' => $fakturLunasSales,
             'fakturBelumLunasSales' => $fakturBelumLunasSales,
             'belumJatuhTempoSales' => $belumJatuhTempoSales,

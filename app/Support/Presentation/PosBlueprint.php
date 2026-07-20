@@ -91,7 +91,7 @@ final class PosBlueprint
         ];
     }
 
-    public static function forDashboard(?string $sample = null, ?array $abc = null, ?array $apriori = null, bool $loadData = true, ?int $year = null): array
+    public static function forDashboard(?string $sample = null, ?array $abc = null, ?array $apriori = null, bool $loadData = true): array
     {
         $selectedSample = self::resolveSample(self::dashboardSamples(), $sample ?? 'retail');
 
@@ -107,7 +107,7 @@ final class PosBlueprint
                     'avatarUrl' => null,
                 ],
                 'sample' => $selectedSample,
-                'sampleDashboard' => self::sampleDashboard($abc, $apriori, $loadData, $year),
+                'sampleDashboard' => self::sampleDashboard($abc, $apriori, $loadData),
                 'preferences' => self::loadPreferences(),
             ],
         ];
@@ -180,9 +180,9 @@ final class PosBlueprint
         ];
     }
 
-    private static function sampleDashboard(?array $abc = null, ?array $apriori = null, bool $loadData = true, ?int $year = null): array
+    private static function sampleDashboard(?array $abc = null, ?array $apriori = null, bool $loadData = true): array
     {
-        return \App\Support\Presentation\DashboardBlueprintProvider::get($abc, $apriori, $loadData, $year);
+        return \App\Support\Presentation\DashboardBlueprintProvider::get($abc, $apriori, $loadData);
     }
 
     public static function buildSalesTransactionPage(string $subtabId, string $configKey): array
@@ -514,15 +514,25 @@ final class PosBlueprint
         }
     }
 
+    private static function cleanTrailingZeroes(string $formatted): string
+    {
+        if (str_contains($formatted, ',')) {
+            return rtrim(rtrim($formatted, '0'), ',');
+        }
+        return $formatted;
+    }
+
     public static function formatCurrencyShort(float|int $value): string
     {
         $abs = abs($value);
         $sign = $value < 0 ? '-' : '';
         if ($abs >= 1000000000) {
-            return $sign . 'Rp ' . number_format($abs / 1000000000, 2, ',', '.') . ' M';
+            $formatted = number_format($abs / 1000000000, 2, ',', '.');
+            return $sign . 'Rp ' . self::cleanTrailingZeroes($formatted) . ' M';
         }
         if ($abs >= 1000000) {
-            return $sign . 'Rp ' . number_format($abs / 1000000, 1, ',', '.') . ' jt';
+            $formatted = number_format($abs / 1000000, 1, ',', '.');
+            return $sign . 'Rp ' . self::cleanTrailingZeroes($formatted) . ' jt';
         }
         if ($abs >= 1000) {
             return $sign . 'Rp ' . number_format($abs / 1000, 0, ',', '.') . ' rb';

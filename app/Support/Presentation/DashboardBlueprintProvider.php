@@ -11,7 +11,7 @@ use Throwable;
 
 class DashboardBlueprintProvider
 {
-    public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true, ?int $year = null): array
+    public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true): array
     {
         $attachmentsNotice = [
             'parts' => [
@@ -21,7 +21,7 @@ class DashboardBlueprintProvider
             ],
         ];
 
-        $analytics = \App\Support\Presentation\Queries\DashboardAnalyticsQueryService::getAnalytics($loadData, $year);
+        $analytics = \App\Support\Presentation\Queries\DashboardAnalyticsQueryService::getAnalytics($loadData);
         extract($analytics);
 
         $navigationModules = PosBlueprint::navigationModules();
@@ -297,24 +297,35 @@ class DashboardBlueprintProvider
                     'totalValue' => 'Rp ' . number_format(abs($netProfitVal), 0, ',', '.'),
                     'period' => '1 Jan - ' . self::dateId($latestSalesInvoiceDate),
                     'compare' => 'Dibanding 1 Jan - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
+                    'trend' => $profitTrend,
+                    'growth' => $profitGrowth,
                     'legend' => [
                         [
                             'label' => 'Total Pendapatan Penjualan',
                             'value' => 'Rp ' . number_format($totalSalesVal, 0, ',', '.'),
                             'percent' => $pctRev . '%',
                             'color' => '#4ade80',
+                            'trend' => $salesTrend,
+                            'growth' => $salesGrowth,
+                            'tone' => $salesTone,
                         ],
                         [
                             'label' => 'Total HPP',
                             'value' => 'Rp ' . number_format($totalHppVal, 0, ',', '.'),
                             'percent' => $pctHpp . '%',
                             'color' => '#fb923c',
+                            'trend' => $hppTrend,
+                            'growth' => $hppGrowth,
+                            'tone' => $hppTone,
                         ],
                         [
                             'label' => 'Total Pengeluaran Beban',
                             'value' => 'Rp ' . number_format($totalExpensesVal, 0, ',', '.'),
                             'percent' => $pctExp . '%',
                             'color' => '#f87171',
+                            'trend' => $expensesTrend,
+                            'growth' => $expensesGrowth,
+                            'tone' => $expensesTone,
                         ],
                     ],
                     'heightClass' => 'min-h-[310px]',
@@ -347,18 +358,26 @@ class DashboardBlueprintProvider
                     'percentage' => ($totalExpense > 0 ? $pctGaji : 0) . '%',
                     'period' => '1 Jan - ' . self::dateId($latestSalesInvoiceDate),
                     'compare' => 'Dibanding 1 Jan - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
+                    'trend' => $expenseTrend,
+                    'growth' => $expenseGrowth,
                     'legend' => [
                         [
                             'label' => 'Gaji Karyawan',
                             'value' => 'Rp ' . number_format($totalGaji, 0, ',', '.'),
                             'percent' => $pctGaji . '%',
                             'color' => '#818cf8',
+                            'trend' => $gajiTrend,
+                            'growth' => $gajiGrowth,
+                            'tone' => $gajiTone,
                         ],
                         [
                             'label' => 'Beban Operasional',
                             'value' => 'Rp ' . number_format($totalOperasional, 0, ',', '.'),
                             'percent' => $pctOpr . '%',
                             'color' => '#fb7185',
+                            'trend' => $operasionalTrend,
+                            'growth' => $operasionalGrowth,
+                            'tone' => $operasionalTone,
                         ],
                     ],
                     'heightClass' => 'min-h-[310px]',
