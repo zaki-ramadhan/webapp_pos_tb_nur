@@ -95,7 +95,6 @@ export default function WarehouseView({
                     const baseCols = baseConfig.table?.columns ?? [];
                     const extraCols = [
                         { id: 'responsiblePerson', label: 'Penanggung Jawab', widthClassName: 'w-[160px]', align: 'left', defaultHidden: true },
-                        { id: 'isDamagedWarehouseText', label: 'Gudang Barang Rusak', widthClassName: 'w-[180px]', align: 'center', defaultHidden: true },
                         { id: 'fullAddress', label: 'Alamat Lengkap', widthClassName: 'w-[260px]', align: 'left', defaultHidden: true },
                         { id: 'allUsersText', label: 'Hak Akses Pengguna', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
                         { id: 'description', label: 'Keterangan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },

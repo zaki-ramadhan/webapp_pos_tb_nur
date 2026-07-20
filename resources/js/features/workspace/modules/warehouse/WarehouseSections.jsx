@@ -118,18 +118,7 @@ export function WarehouseGeneralTab({ config, values, onChange, isDetail }) {
                 </div>
             </WarehouseFieldRow>
 
-            <WarehouseFieldRow label="Gudang Barang Rusak">
-                <CheckboxField
-                    id="warehouse-damaged"
-                    label={config.labels.damagedWarehouse}
-                    checked={values.isDamagedWarehouse}
-                    onChange={(event) => onChange('isDamagedWarehouse', event.target.checked)}
-                    align="center"
-                    labelClassName="text-base"
-                    inputClassName="mt-0 h-[18px] w-[18px]"
-                    containerClassName="w-auto"
-                />
-            </WarehouseFieldRow>
+
 
             {isDetail ? (
                 <WarehouseFieldRow label="Non Aktif">
