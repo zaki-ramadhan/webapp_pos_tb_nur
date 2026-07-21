@@ -132,28 +132,28 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
                     title={importConfig.label ?? 'Impor Data'}
                     maxWidthClassName="max-w-[500px]"
                     contentClassName="bg-white p-5 flex flex-col gap-4"
-                    footerClassName="border-t border-ui-border-medium bg-slate-50 px-5 py-3.5 flex items-center justify-end gap-2"
+                    footerClassName="border-t border-ui-border-medium bg-slate-50 px-5 py-3 flex items-center justify-between w-full"
                     footer={
-                        <>
+                        <div className="flex items-center justify-between w-full">
                             <Button
                                 variant="secondary"
-                                size="sm"
+                                size="md"
                                 onClick={() => setShowModal(false)}
-                                className="font-medium text-xs rounded-[4px]"
+                                className="min-w-[80px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none font-medium text-sm"
                             >
                                 Batal
                             </Button>
                             <Button
                                 variant="brand-blue"
-                                size="sm"
+                                size="md"
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={loading}
-                                className="font-medium text-xs rounded-[4px]"
+                                className="min-w-[120px] rounded-[4px] shadow-none font-medium text-sm"
                             >
-                                <UploadIcon className="h-3.5 w-3.5 mr-1" />
+                                <UploadIcon className="h-4 w-4 mr-1.5 shrink-0" />
                                 Pilih & Unggah File
                             </Button>
-                        </>
+                        </div>
                     }
                 >
                     <div className="flex flex-col gap-4.5">
@@ -162,18 +162,18 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
                                 <div className="flex items-start gap-2.5">
                                     <AlertTriangleIcon className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                                     <div className="flex flex-col gap-1">
-                                        <span className="font-semibold text-sm text-amber-900">Urutan Pengisian Data (Penting)</span>
-                                        <p className="text-sm leading-relaxed text-amber-800">
+                                        <span className="font-semibold text-[13px] text-amber-900">Urutan Pengisian Data (Penting)</span>
+                                        <p className="text-[13px] leading-relaxed text-amber-800">
                                             {guide.description}
                                         </p>
                                     </div>
                                 </div>
                                 
                                 <div className="flex flex-col gap-1.5 pl-7.5 border-t border-amber-200/60 pt-2.5">
-                                    <span className="text-xs font-semibold uppercase tracking-wider text-amber-700">Harus Diisi Terlebih Dahulu:</span>
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">Harus Diisi Terlebih Dahulu:</span>
                                     <div className="flex flex-col gap-1">
                                         {guide.dependencies.map((dep, idx) => (
-                                            <div key={idx} className="flex items-center gap-2 text-sm text-amber-800 font-medium">
+                                            <div key={idx} className="flex items-center gap-2 text-[13px] text-amber-800 font-medium">
                                                 <span className="flex h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" />
                                                 {dep.label}
                                             </div>
@@ -182,38 +182,45 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-sm text-brand-dark leading-relaxed">
+                            <div className="text-[13px] text-brand-dark leading-relaxed">
                                 Silakan gunakan fitur ini untuk mengunggah daftar data secara masal melalui file Excel atau CSV.
                             </div>
                         )}
 
-                        <div className="flex flex-col gap-2.5">
-                            <span className="text-sm font-semibold text-brand-dark">Langkah Impor:</span>
-                            <div className="flex flex-col gap-3 text-sm text-brand-dark">
-                                <div className="flex items-center gap-3">
-                                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 font-semibold text-brand-dark text-xs">1</span>
-                                    <div className="flex-1">
-                                        Unduh file template kolom tabel yang sesuai.
+                        <div className="flex flex-col gap-3">
+                            <span className="text-[13px] font-semibold text-brand-dark">Langkah Impor:</span>
+                            <div className="flex flex-col gap-5 relative pl-4">
+                                {/* Vertical Tree Line */}
+                                <div className="absolute left-[26px] top-[10px] bottom-[10px] w-0.5 bg-slate-200" />
+
+                                {/* Step 1 */}
+                                <div className="flex items-start gap-4 relative">
+                                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-blue text-[11px] font-bold text-white z-10 shadow-sm">1</span>
+                                    <div className="flex-1 pt-0.5 text-[13px] text-brand-dark leading-relaxed">
+                                        Silakan{' '}
+                                        <button
+                                            type="button"
+                                            onClick={handleDownloadTemplate}
+                                            className="font-semibold text-brand-blue hover:text-brand-blue-darker underline cursor-pointer transition"
+                                        >
+                                            unduh template di sini
+                                        </button>{' '}
+                                        untuk format kolom tabel yang sesuai.
                                     </div>
-                                    <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        onClick={handleDownloadTemplate}
-                                        className="font-medium text-xs rounded-[4px] py-1 h-auto"
-                                    >
-                                        <DownloadIcon className="h-3.5 w-3.5 mr-1" />
-                                        Unduh Template
-                                    </Button>
                                 </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 font-semibold text-brand-dark text-xs mt-0.5">2</span>
-                                    <div className="flex-1">
+
+                                {/* Step 2 */}
+                                <div className="flex items-start gap-4 relative">
+                                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-blue text-[11px] font-bold text-white z-10 shadow-sm">2</span>
+                                    <div className="flex-1 pt-0.5 text-[13px] text-brand-dark leading-relaxed">
                                         Salin data Accurate Anda ke kolom Excel template yang sudah diunduh, lalu simpan file.
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 font-semibold text-brand-dark text-xs mt-0.5">3</span>
-                                    <div className="flex-1">
+
+                                {/* Step 3 */}
+                                <div className="flex items-start gap-4 relative">
+                                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-blue text-[11px] font-bold text-white z-10 shadow-sm">3</span>
+                                    <div className="flex-1 pt-0.5 text-[13px] text-brand-dark leading-relaxed">
                                         Unggah file template yang sudah terisi di bawah ini untuk memproses impor data.
                                     </div>
                                 </div>
