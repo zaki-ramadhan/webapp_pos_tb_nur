@@ -108,7 +108,7 @@ export function buildOperationDocumentTableRows(pageId, records) {
             dateFilter: formatIsoDate(record.entry_date),
             partnerFilter: partnerName,
             statusFilter: mapDocumentStatus(record.status ?? 'Draft'),
-            printedStatus: record.metadata?.printed_status ?? 'all',
+            printedStatus: record.metadata?.printed_status === 'Printed' ? 'printed' : 'unprinted',
             returnType: record.metadata?.return_source ?? 'Faktur',
             pageId,
         };

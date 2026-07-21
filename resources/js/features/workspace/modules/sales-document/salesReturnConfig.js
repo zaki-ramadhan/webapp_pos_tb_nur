@@ -132,7 +132,7 @@ const defaultSalesReturnConfig = {
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '31/01/2017', label: 'Tanggal: 31/01/2017' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pelanggan: Semua' }, { value: 'PT Galaxy Phone', label: 'Pelanggan: PT Galaxy Phone' }, { value: 'PT CIRCLE PHONE', label: 'Pelanggan: PT CIRCLE PHONE' }] },
             { id: 'returnType', rowKey: 'returnType', options: [{ value: 'all', label: 'Tipe Pengembalian: Semua' }, { value: 'Faktur', label: 'Tipe Pengembalian: Faktur' }] },
-            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }] },
+            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }, { value: 'printed', label: 'Sudah dicetak: Ya' }, { value: 'unprinted', label: 'Sudah dicetak: Tidak' }] },
         ],
         downloadItems: [],
         printItems: [{ id: 'print-list', label: 'Cetak daftar retur penjualan' }],

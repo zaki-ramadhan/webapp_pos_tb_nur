@@ -173,7 +173,7 @@ export const defaultPurchaseInvoiceConfig = {
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '18/01/2017', label: 'Tanggal: 18/01/2017' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pemasok: Semua' }, { value: 'Applus', label: 'Pemasok: Applus' }, { value: 'CV Ganda Putra', label: 'Pemasok: CV Ganda Putra' }] },
             { id: 'status', rowKey: 'status', options: [{ value: 'all', label: 'Status: Semua' }, { value: 'Belum Lunas', label: 'Status: Belum Lunas' }, { value: 'Lunas', label: 'Status: Lunas' }] },
-            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }, { value: 'all', label: 'Sudah dicetak: Semua' }] },
+            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }, { value: 'printed', label: 'Sudah dicetak: Ya' }, { value: 'unprinted', label: 'Sudah dicetak: Tidak' }] },
         ],
         downloadItems: [{ id: 'download-excel', label: 'Unduh Excel' }],
         printItems: [{ id: 'print-list', label: 'Cetak daftar faktur pembelian' }],

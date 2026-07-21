@@ -129,7 +129,7 @@ const defaultPurchaseReturnConfig = {
         filters: [
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '30/01/2017', label: 'Tanggal: 30/01/2017' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pemasok: Semua' }, { value: 'SAMSANG', label: 'Pemasok: SAMSANG' }, { value: 'Applus', label: 'Pemasok: Applus' }] },
-            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }, { value: 'all', label: 'Sudah dicetak: Semua' }] },
+            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }, { value: 'printed', label: 'Sudah dicetak: Ya' }, { value: 'unprinted', label: 'Sudah dicetak: Tidak' }] },
         ],
         downloadItems: [],
         printItems: [{ id: 'print-list', label: 'Cetak daftar retur pembelian' }],
