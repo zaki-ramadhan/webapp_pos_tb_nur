@@ -293,6 +293,8 @@ export default function TableToolbar({
                         <ToolbarImportButton
                             importConfig={resolvedImportButton}
                             sizeStyle={sizeStyle}
+                            resource={resolvedResourceName}
+                            columns={resolvedColumns}
                         />
                     ) : null}
 
