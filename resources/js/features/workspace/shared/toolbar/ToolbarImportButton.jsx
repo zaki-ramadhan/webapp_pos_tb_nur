@@ -168,14 +168,14 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
                                     </div>
                                 </div>
                             ) : (
-                                <div className="text-xs text-text-light leading-relaxed">
+                                <div className="text-xs text-brand-dark leading-relaxed">
                                     Silakan gunakan fitur ini untuk mengunggah daftar data secara masal melalui file Excel atau CSV.
                                 </div>
                             )}
 
                             <div className="flex flex-col gap-2">
                                 <span className="text-xs font-semibold text-brand-dark">Langkah Impor:</span>
-                                <div className="flex flex-col gap-2.5 text-xs text-text-light">
+                                <div className="flex flex-col gap-2.5 text-xs text-brand-dark">
                                     <div className="flex items-center gap-3">
                                         <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 font-semibold text-brand-dark">1</span>
                                         <div className="flex-1">
