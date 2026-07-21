@@ -191,7 +191,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                         colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0) + 1}
                                         className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                     >
-                                        {config.table.emptyLabel ?? 'Belum ada data'}
+                                        {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                     </DataTableCell>
                                 </DataTableRow>
                             )}
@@ -199,7 +199,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                     </DataTable>
                 </div>
 
-                {!filteredRows.length ? (
+                {!filteredRows.length && !config.table.loading ? (
                     <EmptyState
                         fill
                         tone="subtle"

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ToolbarIconButton from './ToolbarIconButton';
-import { LoadingIcon, UploadIcon } from '@/features/workspace/shared/Icons';
+import { LoadingIcon, DownloadIcon } from '@/features/workspace/shared/Icons';
 import { importFromFile } from '../exportUtils';
 
 export default function ToolbarImportButton({ importConfig, sizeStyle }) {
@@ -40,7 +40,7 @@ export default function ToolbarImportButton({ importConfig, sizeStyle }) {
             >
                 {loading
                     ? <LoadingIcon className="h-4 w-4 animate-spin" />
-                    : <UploadIcon className="h-4 w-4" />
+                    : <DownloadIcon className="h-4 w-4" />
                 }
             </ToolbarIconButton>
         </>

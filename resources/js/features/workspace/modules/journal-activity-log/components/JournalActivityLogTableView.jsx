@@ -223,7 +223,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-text-workspace-dark">
-                                    {config.table.emptyLabel ?? 'Belum ada data'}
+                                    {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

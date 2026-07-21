@@ -123,7 +123,7 @@ export default function TransactionApprovalTableView({ table, onCreate, onRefres
                         ) : (
                             <DataTableRow className="border-ui-border-row bg-white">
                                 <DataTableCell colSpan={table.columns.length + 1} className="px-3 py-8 text-center text-base text-text-workspace-dark">
-                                    {table.emptyLabel}
+                                    {table.loading ? 'Memuat data...' : table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

@@ -303,7 +303,10 @@ export default function TableListView({
                         ) : (
                             <DataTableRow className="bg-white">
                                 <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-black">
-                                    {keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data')}
+                                    {table.loading 
+                                        ? 'Memuat data...' 
+                                        : (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data'))
+                                    }
                                 </DataTableCell>
                             </DataTableRow>
                         )}

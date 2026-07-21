@@ -186,7 +186,7 @@ export default function SupplierPriceTableView({ config, onCreate, onOpenDetail 
                                     colSpan={visibleColumns.length + 1}
                                     className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                 >
-                                    {config.table.emptyLabel}
+                                    {config.table.loading ? 'Memuat data...' : config.table.emptyLabel}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

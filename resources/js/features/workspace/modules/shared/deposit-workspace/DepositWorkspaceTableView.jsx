@@ -218,7 +218,7 @@ export default function DepositTableView({
                         ) : (
                             <DataTableRow className="border-ui-border-row bg-white">
                                 <DataTableCell colSpan={config.table.columns.length + 1} className="px-2.5 py-6 text-center text-base text-text-placeholder">
-                                    {config.table.emptyLabel ?? 'Belum ada data'}
+                                    {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}
