@@ -165,14 +165,14 @@ export default function ErrorExperience({
 
             {/* Ghost status code — top-left */}
             <div className="pointer-events-none absolute left-0 top-0 select-none opacity-[0.04] leading-none z-0" aria-hidden="true">
-                <span className="text-[30vw] sm:text-[28vw] font-serif font-black text-slate-400 tracking-[-0.06em] translate-x-[-15%] translate-y-[-40%] inline-block blur-[3px]">
+                <span className="text-[30vw] sm:text-[28vw] font-serif font-semibold text-slate-400 tracking-[-0.06em] translate-x-[-15%] translate-y-[-40%] inline-block blur-[3px]">
                     {code}
                 </span>
             </div>
 
             {/* Ghost status code — bottom-right */}
             <div className="pointer-events-none absolute right-0 bottom-0 select-none opacity-[0.04] leading-none z-0" aria-hidden="true">
-                <span className="text-[30vw] sm:text-[28vw] font-serif font-black text-slate-400 tracking-[-0.06em] translate-x-[15%] translate-y-[40%] inline-block blur-[3px]">
+                <span className="text-[30vw] sm:text-[28vw] font-serif font-semibold text-slate-400 tracking-[-0.06em] translate-x-[15%] translate-y-[40%] inline-block blur-[3px]">
                     {code}
                 </span>
             </div>
@@ -180,12 +180,12 @@ export default function ErrorExperience({
             <section className="relative z-10 w-full max-w-sm sm:max-w-md rounded-lg border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
                 <div className="flex flex-col items-center text-center">
                     <div className="relative mt-1 mb-4 sm:mb-5 flex items-center justify-center">
-                        <span className="text-7xl sm:text-8xl font-serif font-extrabold tracking-normal text-slate-900 select-none">
+                        <span className="text-7xl sm:text-8xl font-serif font-semibold tracking-normal text-slate-900 select-none">
                             {code}
                         </span>
                     </div>
 
-                    <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+                    <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-slate-900">
                         {state.title}
                     </h1>
 

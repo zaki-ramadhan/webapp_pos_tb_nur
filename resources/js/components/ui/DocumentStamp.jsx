@@ -44,7 +44,7 @@ export default function DocumentStamp({ label, tone = 'blue', className = '' }) 
                 <div className={`absolute h-[96px] w-[96px] rounded-full border-[2px] ${toneClassName}`.trim()} />
             </div>
             <div
-                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-sm font-bold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
+                className={`absolute whitespace-pre-line rounded-[3px] border-[3px] bg-white px-3 py-1 text-center text-sm font-semibold leading-[1.05] tracking-[0.12em] ${toneClassName}`.trim()}
             >
                 {label}
             </div>

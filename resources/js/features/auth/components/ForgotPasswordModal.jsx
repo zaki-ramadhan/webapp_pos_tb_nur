@@ -132,7 +132,7 @@ export default function ForgotPasswordModal({ open, onClose, modal }) {
                         </div>
 
                         <p className="text-sm leading-6 text-blue-550">
-                            Link verifikasi telah dikirim ke email <strong className="text-slate-800 font-bold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam. Apabila Anda masih belum menerima email verifikasi, silakan hubungi tim support kami di <a href="mailto:support@cpssoft.com" className="text-blue-500 hover:underline">support@cpssoft.com</a>
+                            Link verifikasi telah dikirim ke email <strong className="text-slate-800 font-semibold break-all">{submittedEmail}</strong>. Silakan periksa kotak masuk email Anda. Jika link verifikasi tidak ditemukan, mohon periksa folder spam. Apabila Anda masih belum menerima email verifikasi, silakan hubungi tim support kami di <a href="mailto:support@cpssoft.com" className="text-blue-500 hover:underline">support@cpssoft.com</a>
                         </p>
 
                         <div className="flex justify-center pt-2">

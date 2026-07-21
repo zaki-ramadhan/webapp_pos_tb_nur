@@ -263,7 +263,7 @@ export default function DashboardSidebar({
                                     showStatusIndicator={false}
                                 />
                                 <div className="min-w-0">
-                                    <p className="truncate text-sm font-bold text-brand-darker">{user.name}</p>
+                                    <p className="truncate text-sm font-semibold text-brand-darker">{user.name}</p>
                                     <p className="truncate text-xs font-medium text-text-light">{user.role || 'Pengguna'}</p>
                                 </div>
                             </div>

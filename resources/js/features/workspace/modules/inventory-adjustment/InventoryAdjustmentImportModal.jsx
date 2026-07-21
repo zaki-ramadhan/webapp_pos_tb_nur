@@ -383,7 +383,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
 
                     {/* Preview Table */}
                     <div className="space-y-2">
-                        <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider">Pratinjau Data (3 baris pertama)</h4>
+                        <h4 className="text-xs font-semibold text-gray-800 uppercase tracking-wider">Pratinjau Data (3 baris pertama)</h4>
                         <div className="border border-ui-border-light rounded-lg overflow-hidden overflow-x-auto">
                             <table className="min-w-full text-xs text-left text-gray-500">
                                 <thead className="bg-table-header-bg text-white text-[11px] font-semibold uppercase">

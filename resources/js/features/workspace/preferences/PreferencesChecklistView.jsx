@@ -52,7 +52,7 @@ function ChecklistNotice({ notice }) {
             <div className="min-w-0 text-xs sm:text-sm leading-6">
                 {(notice.parts ?? []).map((part, index) =>
                     part.emphasis ? (
-                        <strong key={`${part.text}-${index}`} className="font-bold tracking-[0.01em]">
+                        <strong key={`${part.text}-${index}`} className="font-semibold tracking-[0.01em]">
                             {part.text}
                         </strong>
                     ) : (

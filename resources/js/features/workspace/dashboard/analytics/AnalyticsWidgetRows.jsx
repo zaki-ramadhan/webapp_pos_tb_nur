@@ -42,7 +42,7 @@ export function RuleSummaryRow({ rule }) {
                     <span className="inline-flex items-center gap-1.5 rounded-[4px] bg-slate-50 border border-slate-100 px-2 py-1">
                         <span className="font-semibold text-slate-800">{rule.antecedent}</span>
                         {rule.antecedentAbc && (
-                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-extrabold uppercase tracking-wider" style={{ backgroundColor: `${rule.antecedentColor}18`, color: rule.antecedentColor }}>
+                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.antecedentColor}18`, color: rule.antecedentColor }}>
                                 Kat {rule.antecedentAbc}
                             </span>
                         )}
@@ -51,7 +51,7 @@ export function RuleSummaryRow({ rule }) {
                     <span className="inline-flex items-center gap-1.5 rounded-[4px] bg-slate-50 border border-slate-100 px-2 py-1">
                         <span className="font-semibold text-slate-800">{rule.consequent}</span>
                         {rule.consequentAbc && (
-                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-extrabold uppercase tracking-wider" style={{ backgroundColor: `${rule.consequentColor}18`, color: rule.consequentColor }}>
+                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.consequentColor}18`, color: rule.consequentColor }}>
                                 Kat {rule.consequentAbc}
                             </span>
                         )}

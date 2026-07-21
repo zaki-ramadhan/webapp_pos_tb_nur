@@ -97,7 +97,7 @@ export function RingBreakdownMetric({ widget }) {
 
     const isLoss = totalLabel.toLowerCase().includes('rugi');
     const valueColorClass = isLoss ? 'text-rose-600' : 'text-emerald-600';
-    const valueClass = `text-lg font-bold leading-none ${valueColorClass} md:text-xl xl:text-2xl 2xl:text-3xl`;
+    const valueClass = `text-lg font-semibold leading-none ${valueColorClass} md:text-xl xl:text-2xl 2xl:text-3xl`;
 
     return (
         <div className="flex flex-col h-full min-h-0 justify-between gap-3 flex-1">
@@ -181,7 +181,7 @@ export function ExpenseBreakdownMetric({ widget }) {
                 <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-brand-darker">Beban</span>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-bold leading-none text-brand-darker md:text-xl xl:text-2xl 2xl:text-3xl">{totalValue}</span>
+                        <span className="text-lg font-semibold leading-none text-brand-darker md:text-xl xl:text-2xl 2xl:text-3xl">{totalValue}</span>
                         <TrendIndicator trend={trend} growth={growth} />
                     </div>
                 </div>

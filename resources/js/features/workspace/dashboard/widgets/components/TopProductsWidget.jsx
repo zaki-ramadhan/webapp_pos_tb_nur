@@ -22,7 +22,7 @@ function TopProductRow({ item, index }) {
                     alt={item.name}
                     className="h-9 w-9 rounded-[4px] border border-ui-border-light object-cover"
                 />
-                <span className="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-blue-hover text-[9px] font-bold text-white shadow-sm">
+                <span className="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-blue-hover text-[9px] font-semibold text-white shadow-sm">
                     {index + 1}
                 </span>
             </div>

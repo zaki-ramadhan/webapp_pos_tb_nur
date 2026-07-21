@@ -20,7 +20,7 @@ function JurnalCard({ row }) {
             <div className="p-3 flex-1 flex flex-col gap-1">
                 <div className="flex justify-between items-start text-xs text-slate-500">
                     <span>{row.date}</span>
-                    <span className="font-bold text-slate-800 text-sm">
+                    <span className="font-semibold text-slate-800 text-sm">
                         {isDebit ? '(Dr)' : '(Cr)'} {formattedAmount}
                     </span>
                 </div>
@@ -183,7 +183,7 @@ export default function BankReconciliationWorkspace({
                         {/* Left Header: JURNAL SISTEM */}
                         <div className="flex flex-col border-r border-slate-200">
                             <div className="border-t-[3px] border-[#0c6b96] bg-white px-4 py-3 flex items-center justify-between">
-                                <div className="flex items-center gap-2 font-bold text-slate-800 text-sm">
+                                <div className="flex items-center gap-2 font-semibold text-slate-800 text-sm">
                                     <svg className="h-4 w-4 text-[#0c6b96]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
@@ -192,7 +192,7 @@ export default function BankReconciliationWorkspace({
                             </div>
                             <div className="bg-[#f2f5f7] border-y border-slate-200 px-4 py-2 flex items-center justify-between text-xs min-h-[34px]">
                                 <span className="font-semibold text-slate-700">
-                                    Saldo &nbsp;<span className="text-slate-900 font-bold">Rp {lastKnownBalance}</span>
+                                    Saldo &nbsp;<span className="text-slate-900 font-semibold">Rp {lastKnownBalance}</span>
                                 </span>
                                 {unreconciledCount > 0 && (
                                     <span className="text-rose-600 font-medium flex items-center gap-1">
@@ -208,7 +208,7 @@ export default function BankReconciliationWorkspace({
                         {/* Right Header: REKENING BANK */}
                         <div className="flex flex-col">
                             <div className="border-t-[3px] border-[#0c6b96] bg-white px-4 py-3 flex items-center justify-between">
-                                <div className="flex items-center gap-2 font-bold text-slate-800 text-sm">
+                                <div className="flex items-center gap-2 font-semibold text-slate-800 text-sm">
                                     <svg className="h-4 w-4 text-[#0c6b96]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                     </svg>
@@ -241,7 +241,7 @@ export default function BankReconciliationWorkspace({
                                             {/* Right Column: Reconcile Action Button / Status */}
                                             {isReconciled ? (
                                                 <div className="flex flex-col items-center justify-center p-3 h-full">
-                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
+                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
                                                         <svg viewBox="0 0 24 24" fill="currentColor" className="h-4.5 w-4.5">
                                                             <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.74-5.25z" clipRule="evenodd" />
                                                         </svg>
@@ -265,7 +265,7 @@ export default function BankReconciliationWorkspace({
                                                             setSelectedRow(row);
                                                             setConfirmOpen(true);
                                                         }}
-                                                        className="inline-flex items-center justify-center gap-1.5 rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-light px-4 py-2 text-xs font-bold transition shadow-sm active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                                                        className="inline-flex items-center justify-center gap-1.5 rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-light px-4 py-2 text-xs font-semibold transition shadow-sm active:scale-[0.98] disabled:opacity-50 cursor-pointer"
                                                     >
                                                         <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

@@ -135,7 +135,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                 {summaryItems.map((item, idx) => (
                     <div key={idx} title="" className="rounded-[6px] border border-ui-border-light bg-white p-2.5 shadow-widget-medium">
                         <p title="" className="text-sm font-semibold text-text-muted">{item.label}</p>
-                        <p title="" className="mt-1 text-base sm:text-lg lg:text-xl font-bold text-text-contrast truncate">{item.value}</p>
+                        <p title="" className="mt-1 text-base sm:text-lg lg:text-xl font-semibold text-text-contrast truncate">{item.value}</p>
                         <p title="" className="mt-0.5 text-sm text-text-muted">{item.helper}</p>
                     </div>
                 ))}
@@ -173,7 +173,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-badge-group-a)' }}>
                                         Kat. A
                                     </span>
-                                    <span className="text-xs font-bold text-brand-darker">(Utama)</span>
+                                    <span className="text-xs font-semibold text-brand-darker">(Utama)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
                             </div>
@@ -182,7 +182,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-green-410)' }}>
                                         Kat. B
                                     </span>
-                                    <span className="text-xs font-bold text-brand-darker">(Stabil)</span>
+                                    <span className="text-xs font-semibold text-brand-darker">(Stabil)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
                             </div>
@@ -191,7 +191,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-warning)' }}>
                                         Kat. C
                                     </span>
-                                    <span className="text-xs font-bold text-brand-darker">(Tambahan)</span>
+                                    <span className="text-xs font-semibold text-brand-darker">(Tambahan)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">5% omzet</span> toko. Produk pelengkap/aksesoris penunjang.</p>
                             </div>
@@ -223,7 +223,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                                                     )}
                                                 </div>
 
-                                                <span className="text-blue-500 font-extrabold text-base px-1">+</span>
+                                                <span className="text-blue-500 font-semibold text-base px-1">+</span>
 
                                                 <div className="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-100 px-1.5 py-1">
                                                     <img
@@ -262,14 +262,14 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                                             <div className="flex items-start gap-2">
                                                 <PinIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
-                                                    <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
+                                                    <span className="font-semibold text-emerald-950">Penataan di Rak:</span>{" "}
                                                     <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-2 border-t border-emerald-100/30 pt-2">
                                                 <ChatIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
-                                                    <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
+                                                    <span className="font-semibold text-emerald-950">Tawaran di Kasir:</span>{" "}
                                                     <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
                                                 </div>
                                             </div>

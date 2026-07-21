@@ -65,7 +65,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-badge-group-a)' }}>
                                         Kat. A
                                     </span>
-                                    <span className="text-xs font-bold text-brand-darker">(Utama)</span>
+                                    <span className="text-xs font-semibold text-brand-darker">(Utama)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
                             </div>
@@ -74,7 +74,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-green-410)' }}>
                                         Kat. B
                                     </span>
-                                    <span className="text-xs font-bold text-brand-darker">(Stabil)</span>
+                                    <span className="text-xs font-semibold text-brand-darker">(Stabil)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
                             </div>
@@ -83,7 +83,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                                     <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-warning)' }}>
                                         Kat. C
                                     </span>
-                                    <span className="text-xs font-bold text-brand-darker">(Tambahan)</span>
+                                    <span className="text-xs font-semibold text-brand-darker">(Tambahan)</span>
                                 </div>
                                 <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">5% omzet</span> toko. Produk pelengkap/aksesoris penunjang.</p>
                             </div>
