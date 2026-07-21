@@ -97,7 +97,7 @@ class PriceAdjustmentPage
                 'draft' => [
                     'salesCategory' => [],
                     'adjustmentType' => 'Harga',
-                    'effectiveDate' => '28/04/2026',
+                    'effectiveDate' => date('d/m/Y'),
                     'autoNumber' => true,
                     'numberingType' => 'Penyesuaian Harga Jual',
                     'branches' => ['[Semua Cabang]'],

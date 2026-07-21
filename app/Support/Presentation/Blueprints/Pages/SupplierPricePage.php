@@ -50,7 +50,7 @@ class SupplierPricePage
                 ],
                 'draft' => [
                     'supplier' => [],
-                    'effectiveDate' => '28/04/2026',
+                    'effectiveDate' => date('d/m/Y'),
                     'autoEndDate' => false,
                     'autoNumber' => true,
                     'numberingType' => 'Harga Pemasok',

@@ -564,10 +564,25 @@
 
     .react-calendar__navigation button {
         min-width: 2.25rem;
+        height: 2.5rem;
         border-radius: 0.4rem;
         color: #1f2436;
         font-size: 0.95rem;
         font-weight: 600;
+    }
+
+    /* Perbesar tombol panah navigasi bulan agar mudah diklik */
+    .react-calendar__navigation__prev-button,
+    .react-calendar__navigation__next-button {
+        font-size: 1.55rem !important;
+        min-width: 2.5rem !important;
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     .react-calendar__navigation button:enabled:hover,
@@ -575,11 +590,18 @@
         background: #edf2fa !important;
     }
 
+    /* Tambahkan garis pembatas antara hari dan tanggal */
+    .react-calendar__month-view__weekdays {
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
     .react-calendar__month-view__weekdays__weekday {
         font-size: 0.82rem;
-        text-transform: uppercase;
+        text-transform: capitalize;
         color: #5d687c;
-        font-weight: 700;
+        font-weight: 600;
     }
 
     .react-calendar__month-view__days__day,
@@ -590,7 +612,7 @@
     .react-calendar__tile {
         color: #1f2436;
         font-size: 1rem;
-        font-weight: 800;
+        font-weight: 600;
     }
 
     .react-calendar__tile:enabled:hover,

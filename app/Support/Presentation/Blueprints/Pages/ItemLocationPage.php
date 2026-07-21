@@ -37,7 +37,7 @@ class ItemLocationPage
                     [
                         'id' => 'asOfDate',
                         'type' => 'date',
-                        'value' => '28/04/2026',
+                        'value' => date('d/m/Y'),
                         'className' => 'w-[260px]',
                     ],
                     [
