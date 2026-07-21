@@ -49,7 +49,7 @@ export default function PasswordField({
                 placeholder={placeholder}
                 error={error}
                 containerClassName="w-full"
-                style={{ maxWidth: 'none' }}
+                className="max-w-none"
                 trailing={
                     <button
                         type="button"

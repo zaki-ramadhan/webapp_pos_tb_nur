@@ -50,27 +50,27 @@ export default function SortableTableHeaderCell({
     if (!sortable || !onSort) {
         return (
             <DataTableHead
-                className={`${widthClassName} ${pxClass} py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
+                className={`${widthClassName} ${pxClass} py-1.5 text-base font-light leading-4 text-white ${alignClass} ${className}`.trim()}
                 style={resolvedStyle}
                 onResizeStart={onResizeStart}
             >
-                <span className={textClass}>{label}</span>
+                <span className={`${textClass} font-light`}>{label}</span>
             </DataTableHead>
         );
     }
 
     return (
         <DataTableHead
-            className={`${widthClassName} ${pxClass} py-1.5 text-base font-normal leading-4 text-white ${alignClass} ${className}`.trim()}
+            className={`${widthClassName} ${pxClass} py-1.5 text-base font-light leading-4 text-white ${alignClass} ${className}`.trim()}
             style={resolvedStyle}
             onResizeStart={onResizeStart}
         >
             <button
                 type="button"
                 onClick={onSort}
-                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 ${justifyClass}`}
+                className={`inline-flex w-full items-center gap-1 transition-opacity hover:opacity-80 min-w-0 font-light ${justifyClass}`}
             >
-                <span className={textClass}>{label}</span>
+                <span className={`${textClass} font-light`}>{label}</span>
                 <SortIcon direction={sortDirection} />
             </button>
         </DataTableHead>

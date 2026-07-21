@@ -147,7 +147,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             className="bg-modal-overlay-dark z-[9999]"
             panelClassName="max-w-[820px] w-full overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
         >
-            <div className="px-5 py-2 text-white" style={{ backgroundColor: '#0A2A55' }}>
+            <div className="bg-[#0A2A55] px-5 py-2 text-white">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5">
                         <TableActionIcon className="h-4 w-4 text-white" />

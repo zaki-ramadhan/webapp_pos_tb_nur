@@ -21,9 +21,8 @@ function NameField({ salutation, onSalutationChange, prefixClassName, label, val
     return (
         <FormField label={label} required={required}>
             <TextInput
-                className="!overflow-visible"
+                className="!overflow-visible max-w-none"
                 containerClassName="w-full"
-                style={{ maxWidth: 'none' }}
                 prefix={
                     <div className="relative flex h-full w-full items-stretch">
                         <button

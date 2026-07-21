@@ -10,8 +10,7 @@ export default function DocumentStamp({ label, tone = 'blue', className = '' }) 
             <img
                 src="/assets/images/belum_lunas_stamp.svg"
                 alt="Belum Lunas"
-                className={`pointer-events-none absolute select-none ${className}`.trim()}
-                style={{ width: '136px', height: '136px' }}
+                className={`pointer-events-none absolute select-none w-[136px] h-[136px] ${className}`.trim()}
             />
         );
     }
@@ -21,8 +20,7 @@ export default function DocumentStamp({ label, tone = 'blue', className = '' }) 
             <img
                 src="/assets/images/lunas.svg"
                 alt="Lunas"
-                className={`pointer-events-none absolute select-none ${className}`.trim()}
-                style={{ width: '136px', height: '136px' }}
+                className={`pointer-events-none absolute select-none w-[136px] h-[136px] ${className}`.trim()}
             />
         );
     }

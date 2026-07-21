@@ -137,12 +137,12 @@ export default function TransferBatchWorkspaceView({ config }) {
                     >
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-light text-white">
                                     No.
                                 </DataTableHead>
                                 {config.table.columns.map((column) => (
                                     column.kind === 'checkbox' ? (
-                                        <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-2.5 text-base font-normal text-white text-center`.trim()}>
+                                        <DataTableHead key={column.id} className={`${column.widthClassName ?? ''} px-2.5 text-base font-light text-white text-center`.trim()}>
                                             <span className="inline-flex h-[22px] w-[22px] rounded-[4px] border border-ui-border-medium bg-white" />
                                         </DataTableHead>
                                     ) : (

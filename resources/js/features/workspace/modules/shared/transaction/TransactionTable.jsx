@@ -80,7 +80,7 @@ export function TransactionDataTable({
                 <DataTableHeader className="bg-table-header-bg">
                     <tr>
                         {activeShowNumbering && (
-                            <DataTableHead className="w-[50px] px-3 text-center text-base font-normal text-white">
+                            <DataTableHead className="w-[50px] px-3 text-center text-base font-light text-white">
                                 No.
                             </DataTableHead>
                         )}

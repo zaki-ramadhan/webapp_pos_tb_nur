@@ -73,7 +73,7 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
 
     return (
         <th
-            className={`border-r border-table-cell-border px-3 py-2 ${alignClass} text-xs font-normal leading-5 last:border-r-0 sm:px-4 sm:text-sm whitespace-nowrap truncate relative select-none ${cleanedClassName}`.trim()}
+            className={`border-r border-table-cell-border px-3 py-2 ${alignClass} text-xs font-light leading-5 last:border-r-0 sm:px-4 sm:text-sm whitespace-nowrap truncate relative select-none ${cleanedClassName}`.trim()}
             style={{ ...style, position: 'relative' }}
             {...props}
         >

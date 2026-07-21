@@ -441,7 +441,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                 </DataTableHead>
                             ) : null}
                             {sortedRows.length > 0 ? (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-normal text-white">
+                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-light text-white">
                                     No.
                                 </DataTableHead>
                             ) : null}

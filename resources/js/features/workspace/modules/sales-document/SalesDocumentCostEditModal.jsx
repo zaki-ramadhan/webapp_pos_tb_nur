@@ -167,8 +167,7 @@ function CostDeferralTab({ form, onChange, errors = {} }) {
                             clearable={false}
                             error={errors.recognitionMonths}
                             containerClassName="!w-20 !max-w-none"
-                            style={{ width: '80px' }}
-                            className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
+                            className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER} w-20`}
                             inputClassName={FIELD_INPUT_RIGHT_CLS}
                         />
                         <span className="text-xs sm:text-sm text-brand-dark">Bulan</span>

@@ -19,7 +19,7 @@ export default function AuthInput({
                 trailing={trailing}
                 error={error}
                 containerClassName="w-full"
-                style={{ maxWidth: 'none' }}
+                className="max-w-none"
                 {...props}
             />
         </FormField>
