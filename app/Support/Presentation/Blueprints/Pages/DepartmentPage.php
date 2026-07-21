@@ -46,6 +46,34 @@ class DepartmentPage
                                 'label' => 'Daftar Pengguna',
                                 'align' => 'center',
                             ],
+                            [
+                                'id' => 'code',
+                                'label' => 'Kode Departemen',
+                                'align' => 'left',
+                                'widthClassName' => 'w-[150px]',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'notes',
+                                'label' => 'Catatan',
+                                'align' => 'left',
+                                'widthClassName' => 'w-[200px]',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'parentDepartmentName',
+                                'label' => 'Induk Departemen',
+                                'align' => 'left',
+                                'widthClassName' => 'w-[180px]',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'isActiveText',
+                                'label' => 'Status Aktif',
+                                'align' => 'center',
+                                'widthClassName' => 'w-[110px]',
+                                'defaultHidden' => true,
+                            ],
                         ],
                         'rows' => [
                             [

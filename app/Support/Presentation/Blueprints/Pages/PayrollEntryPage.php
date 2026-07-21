@@ -219,6 +219,9 @@ class PayrollEntryPage
                                 ['id' => 'status', 'label' => 'Status', 'widthClassName' => 'w-[150px]'],
                                 ['id' => 'period', 'label' => 'Periode', 'widthClassName' => 'w-[140px]'],
                                 ['id' => 'description', 'label' => 'Keterangan'],
+                                ['id' => 'branch', 'label' => 'Cabang', 'widthClassName' => 'w-[150px]', 'defaultHidden' => true],
+                                ['id' => 'paymentAccount', 'label' => 'Akun Pembayaran', 'widthClassName' => 'w-[180px]', 'defaultHidden' => true],
+                                ['id' => 'employeeCount', 'label' => 'Jumlah Karyawan', 'widthClassName' => 'w-[140px]', 'align' => 'right', 'defaultHidden' => true],
                             ],
                             'rows' => [
                                 ['id' => 'payroll-2017-02', 'number' => 'EPY.2016.11.00002', 'date' => '10/02/2017', 'dueDate' => '10/02/2017', 'total' => '40,213,124', 'paymentType' => 'Bulanan', 'status' => 'Terbayar', 'statusValue' => 'paid', 'period' => 'November 2016', 'description' => '', 'dateFilter' => '2017', 'monthValue' => 'november', 'yearValue' => '2017'],

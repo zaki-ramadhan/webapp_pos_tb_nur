@@ -81,14 +81,35 @@ class ItemCategoryPage
                         [
                             'id' => 'name',
                             'label' => 'Nama',
-                            'align' => 'center',
-                            'widthClassName' => 'w-[82%]',
+                            'align' => 'left',
+                            'widthClassName' => 'w-[50%]',
                         ],
                         [
                             'id' => 'defaultLabel',
                             'label' => 'Kategori Default',
                             'align' => 'center',
                             'widthClassName' => 'w-[18%]',
+                        ],
+                        [
+                            'id' => 'code',
+                            'label' => 'Kode Kategori',
+                            'align' => 'left',
+                            'widthClassName' => 'w-[150px]',
+                            'defaultHidden' => true,
+                        ],
+                        [
+                            'id' => 'notes',
+                            'label' => 'Deskripsi',
+                            'align' => 'left',
+                            'widthClassName' => 'w-[200px]',
+                            'defaultHidden' => true,
+                        ],
+                        [
+                            'id' => 'isActiveText',
+                            'label' => 'Status Aktif',
+                            'align' => 'center',
+                            'widthClassName' => 'w-[110px]',
+                            'defaultHidden' => true,
                         ],
                     ],
                     'rows' => [

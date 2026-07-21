@@ -115,6 +115,27 @@ class WarehouseMasterPage
                             'label' => 'Alamat',
                             'align' => 'left',
                         ],
+                        [
+                            'id' => 'code',
+                            'label' => 'Kode Gudang',
+                            'align' => 'left',
+                            'widthClassName' => 'w-[150px]',
+                            'defaultHidden' => true,
+                        ],
+                        [
+                            'id' => 'pic',
+                            'label' => 'Penanggung Jawab',
+                            'align' => 'left',
+                            'widthClassName' => 'w-[180px]',
+                            'defaultHidden' => true,
+                        ],
+                        [
+                            'id' => 'isActiveText',
+                            'label' => 'Status Aktif',
+                            'align' => 'center',
+                            'widthClassName' => 'w-[110px]',
+                            'defaultHidden' => true,
+                        ],
                     ],
                     'rows' => [
                         [

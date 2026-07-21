@@ -174,6 +174,10 @@ class CashPaymentPage
                         ['id' => 'checkNumber', 'label' => 'No Cek #', 'widthClassName' => 'w-[150px]'],
                         ['id' => 'description', 'label' => 'Keterangan'],
                         ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[160px]', 'align' => 'right'],
+                        ['id' => 'branch', 'label' => 'Cabang', 'widthClassName' => 'w-[150px]', 'defaultHidden' => true],
+                        ['id' => 'payee', 'label' => 'Penerima', 'widthClassName' => 'w-[180px]', 'defaultHidden' => true],
+                        ['id' => 'reconcileStatus', 'label' => 'Status Rekonsiliasi', 'widthClassName' => 'w-[150px]', 'defaultHidden' => true],
+                        ['id' => 'printStatus', 'label' => 'Status Cetak', 'widthClassName' => 'w-[150px]', 'defaultHidden' => true],
                     ],
                     'rows' => [
                         ['id' => '111.201-02.2017.02.00001', 'number' => '111.201-02.2017.02.00001', 'date' => '10/02/2017', 'cashBank' => 'Kas Besar Kantor Surab...', 'cashBankFull' => 'Kas Besar Kantor Surabaya', 'checkNumber' => '', 'description' => 'Pembayaran Hutang Pajak PPh Ps 21', 'amount' => '1,447,298', 'dateFilter' => '2017', 'bankFilter' => 'cash-sby', 'branch' => 'CABANG KEDUA', 'accountCode' => '215.000-02', 'accountName' => 'Hutang Pajak PPh Ps 21', 'voided' => true, 'reconcileStatus' => 'Belum', 'printStatus' => 'Belum cetak/email'],

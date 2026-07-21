@@ -30,9 +30,20 @@ export default function useBackendIndexResource({
 }) {
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(initialPerPage);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(() => {
+        if (!enabled || !resource) return false;
+        const initialFilters = {
+            ...sanitizeFilters(filters),
+            page: 1,
+            per_page: initialPerPage,
+        };
+        const key = getCacheKey(resource, initialFilters);
+        const cached = globalCache.get(key);
+        return !cached;
+    });
     const [error, setError] = useState('');
     const [reloadVersion, setReloadVersion] = useState(0);
+    const [revalidateVersion, setRevalidateVersion] = useState(0);
     const serializedFilters = JSON.stringify(filters ?? {});
 
     // Reset ke halaman 1 jika filter berubah
@@ -96,13 +107,18 @@ export default function useBackendIndexResource({
             }
         }
 
-        // Tampilkan data cache segera (SWR) jika ada, tetapi tetap jalankan revalidasi di background
+        // Tampilkan data cache segera (SWR) jika ada
         if (cachedEntry) {
             setPayload(cachedEntry.payload);
         }
 
+        // Jika cache masih segar dan bukan force-refresh, lewati revalidasi backend
+        if (isFresh && !isForceRefresh) {
+            return undefined;
+        }
+
         async function run() {
-            // Tampilkan loading spinner
+            // Tampilkan loading spinner jika tidak ada cache, atau jika force refresh
             if (!cachedEntry || isForceRefresh) {
                 setLoading(true);
             }
@@ -147,7 +163,7 @@ export default function useBackendIndexResource({
         return () => {
             active = false;
         };
-    }, [enabled, requestFilters, resource]);
+    }, [enabled, requestFilters, resource, revalidateVersion]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -155,13 +171,8 @@ export default function useBackendIndexResource({
         function handlePageActivated(e) {
             const { activePageId } = e.detail || {};
             if (activePageId && isResourceMatchingPageId(resource, activePageId)) {
-                // Hapus cache lokal agar selalu mengambil data segar dari backend
-                for (const key of globalCache.keys()) {
-                    if (key.startsWith(`${resource}::`)) {
-                        globalCache.delete(key);
-                    }
-                }
-                setReloadVersion((currentValue) => currentValue + 1);
+                // Trigger reaktivasi/revalidasi di background tanpa menghapus cache
+                setRevalidateVersion((currentValue) => currentValue + 1);
             }
         }
 

@@ -11,7 +11,7 @@ import {
 } from '@/features/workspace/shared/Icons';
 
 import { printTable } from './exportUtils';
-import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from './columnVisibility';
+import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 import { showWarningToast, showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 
 // Modular Toolbar Imports

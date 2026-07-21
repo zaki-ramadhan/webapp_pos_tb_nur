@@ -227,6 +227,9 @@ class GeneralJournalPage
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
                         ['id' => 'description', 'label' => 'Keterangan', 'widthClassName' => 'w-[30%]', 'align' => 'left'],
                         ['id' => 'total', 'label' => 'Total', 'widthClassName' => 'w-[18%]', 'align' => 'right'],
+                        ['id' => 'branch', 'label' => 'Cabang', 'widthClassName' => 'w-[150px]', 'align' => 'left', 'defaultHidden' => true],
+                        ['id' => 'transactionType', 'label' => 'Tipe Transaksi', 'widthClassName' => 'w-[180px]', 'align' => 'left', 'defaultHidden' => true],
+                        ['id' => 'posted', 'label' => 'Status Posting', 'widthClassName' => 'w-[120px]', 'align' => 'center', 'defaultHidden' => true],
                     ],
                     'rows' => [
                         ['id' => 'JV.2017.02.00015', 'documentNumber' => 'JV.2017.02.00015', 'transactionNumber' => '111.102-01.2017.02.00002', 'date' => '24/02/2017', 'description' => 'Pembayaran No. Faktur SI.2016.10.00004, SI.2017.02.00005', 'total' => '33,600,000', 'totalCurrency' => 'Rp 33,600,000', 'dateFilter' => '2017', 'transactionTypeValue' => 'sales-receipt', 'transactionTypeLabel' => 'Penerimaan Penjualan', 'branches' => ['TOKO UTAMA']],

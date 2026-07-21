@@ -85,7 +85,7 @@ class EmployeesPage
                                 'label' => 'Email',
                                 'widthClassName' => 'w-[310px]',
                             ],
-                            [
+                             [
                                 'id' => 'mobilePhone',
                                 'label' => 'Handphone',
                                 'widthClassName' => 'w-[210px]',
@@ -99,17 +99,44 @@ class EmployeesPage
                                 'id' => 'taxStatus',
                                 'label' => 'Status PTKP',
                                 'widthClassName' => 'w-[130px]',
+                                'defaultHidden' => true,
                             ],
                             [
                                 'id' => 'employmentStatus',
                                 'label' => 'Status Pekerja',
                                 'widthClassName' => 'w-[220px]',
+                                'defaultHidden' => true,
                             ],
                             [
                                 'id' => 'payable',
                                 'label' => 'Utang',
                                 'widthClassName' => 'w-[120px]',
                                 'align' => 'right',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'bankAccount',
+                                'label' => 'Rekening Gaji',
+                                'widthClassName' => 'w-[180px]',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'branch',
+                                'label' => 'Cabang',
+                                'widthClassName' => 'w-[150px]',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'hireDate',
+                                'label' => 'Tanggal Masuk',
+                                'widthClassName' => 'w-[150px]',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'isSeller',
+                                'label' => 'Penjual',
+                                'widthClassName' => 'w-[110px]',
+                                'defaultHidden' => true,
                             ],
                         ],
                         'rows' => EmployeesTable::rows(),

@@ -41,7 +41,25 @@ class ItemUnitPage
                     [
                         'id' => 'name',
                         'label' => 'Nama',
-                        'align' => 'center',
+                        'align' => 'left',
+                    ],
+                    [
+                        'id' => 'code',
+                        'label' => 'Kode Satuan',
+                        'align' => 'left',
+                        'defaultHidden' => true,
+                    ],
+                    [
+                        'id' => 'defaultConversion',
+                        'label' => 'Nilai Konversi Default',
+                        'align' => 'right',
+                        'defaultHidden' => true,
+                    ],
+                    [
+                        'id' => 'notes',
+                        'label' => 'Catatan',
+                        'align' => 'left',
+                        'defaultHidden' => true,
                     ],
                 ],
                 'rows' => [

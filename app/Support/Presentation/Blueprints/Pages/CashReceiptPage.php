@@ -165,6 +165,10 @@ class CashReceiptPage
                         ['id' => 'checkNumber', 'label' => 'No Cek #', 'widthClassName' => 'w-[150px]'],
                         ['id' => 'description', 'label' => 'Keterangan'],
                         ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[160px]', 'align' => 'right'],
+                        ['id' => 'branch', 'label' => 'Cabang', 'widthClassName' => 'w-[150px]', 'defaultHidden' => true],
+                        ['id' => 'payer', 'label' => 'Penyetor', 'widthClassName' => 'w-[180px]', 'defaultHidden' => true],
+                        ['id' => 'reconcileStatus', 'label' => 'Status Rekonsiliasi', 'widthClassName' => 'w-[150px]', 'defaultHidden' => true],
+                        ['id' => 'printStatus', 'label' => 'Status Cetak', 'widthClassName' => 'w-[150px]', 'defaultHidden' => true],
                     ],
                     'rows' => [
                         ['id' => '111.202-04.2016.12.00001', 'number' => '111.202-04.2016.12.00001', 'date' => '31/12/2016', 'cashBank' => 'Bank Mandiri IDR Surab...', 'cashBankFull' => 'Bank Mandiri IDR Surabaya (276-129-4178)', 'checkNumber' => '', 'description' => '', 'amount' => '4,346,346', 'dateFilter' => '2016', 'bankFilter' => 'bank-mandiri', 'branch' => 'TOKO UTAMA', 'accountCode' => '811.000-01', 'accountName' => 'Pendapatan Bunga Bank', 'reconcileStatus' => 'Ya', 'reconcileDate' => '(11/02/2017)', 'printStatus' => 'Belum cetak/email'],

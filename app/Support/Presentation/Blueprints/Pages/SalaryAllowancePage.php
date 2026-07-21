@@ -92,9 +92,38 @@ class SalaryAllowancePage
                                 ],
                             ],
                             'columns' => [
-                                'Nama',
-                                'Tipe Gaji atau Tunjangan',
-                                'Status',
+                                [
+                                    'id' => 'name',
+                                    'label' => 'Nama',
+                                ],
+                                [
+                                    'id' => 'type',
+                                    'label' => 'Tipe Gaji atau Tunjangan',
+                                ],
+                                [
+                                    'id' => 'status',
+                                    'label' => 'Status',
+                                ],
+                                [
+                                    'id' => 'code',
+                                    'label' => 'Kode Tunjangan',
+                                    'defaultHidden' => true,
+                                ],
+                                [
+                                    'id' => 'payDeduct',
+                                    'label' => 'Metode Bayar/Potong',
+                                    'defaultHidden' => true,
+                                ],
+                                [
+                                    'id' => 'expenseAccount',
+                                    'label' => 'Akun Beban',
+                                    'defaultHidden' => true,
+                                ],
+                                [
+                                    'id' => 'notes',
+                                    'label' => 'Catatan',
+                                    'defaultHidden' => true,
+                                ],
                             ],
                         ],
                         'rows' => [

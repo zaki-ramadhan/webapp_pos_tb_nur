@@ -338,6 +338,9 @@ class ExpenseEntryPage
                         ['id' => 'paid', 'label' => 'Dibayar', 'widthClassName' => 'w-[10%]', 'align' => 'right'],
                         ['id' => 'status', 'label' => 'Status', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
                         ['id' => 'note', 'label' => 'Keterangan', 'align' => 'left'],
+                        ['id' => 'branch', 'label' => 'Cabang', 'widthClassName' => 'w-[150px]', 'align' => 'left', 'defaultHidden' => true],
+                        ['id' => 'paymentAccount', 'label' => 'Akun Kas/Bank', 'widthClassName' => 'w-[180px]', 'align' => 'left', 'defaultHidden' => true],
+                        ['id' => 'vendor', 'label' => 'Penerima Beban', 'widthClassName' => 'w-[160px]', 'align' => 'left', 'defaultHidden' => true],
                     ],
                     'rows' => [
                         [

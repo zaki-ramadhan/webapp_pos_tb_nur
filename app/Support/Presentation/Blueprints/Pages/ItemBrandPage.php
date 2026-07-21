@@ -37,6 +37,18 @@ class ItemBrandPage
                         'label' => 'Nama',
                         'align' => 'left',
                     ],
+                    [
+                        'id' => 'code',
+                        'label' => 'Kode Merek',
+                        'align' => 'left',
+                        'defaultHidden' => true,
+                    ],
+                    [
+                        'id' => 'description',
+                        'label' => 'Deskripsi',
+                        'align' => 'left',
+                        'defaultHidden' => true,
+                    ],
                 ],
                 'rows' => [],
             ],

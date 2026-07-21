@@ -54,11 +54,36 @@ class UsersPage
                         'searchPlaceholder' => 'Cari...',
                         'pageValue' => '1',
                         'columns' => [
-                            'Nama',
-                            'No Handphone',
-                            'Email',
-                            'Status',
-                            'Jenis Akses',
+                            [
+                                'id' => 'name',
+                                'label' => 'Nama',
+                            ],
+                            [
+                                'id' => 'phone',
+                                'label' => 'No Handphone',
+                            ],
+                            [
+                                'id' => 'email',
+                                'label' => 'Email',
+                            ],
+                            [
+                                'id' => 'status',
+                                'label' => 'Status',
+                            ],
+                            [
+                                'id' => 'accessType',
+                                'label' => 'Jenis Akses',
+                            ],
+                            [
+                                'id' => 'createdAt',
+                                'label' => 'Tanggal Registrasi',
+                                'defaultHidden' => true,
+                            ],
+                            [
+                                'id' => 'googleAuthStatus',
+                                'label' => 'Status Google Auth',
+                                'defaultHidden' => true,
+                            ],
                         ],
                         'rows' => [
                             [
