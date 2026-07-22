@@ -124,7 +124,7 @@ class CashReceiptPage
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Penerimaan',
-                    'refreshLabel' => 'Sinkron penerimaan',
+                    'refreshLabel' => 'Muat ulang',
                     'downloadLabel' => 'Unduh data penerimaan',
                     'printLabel' => 'Cetak penerimaan',
                     'settingsLabel' => 'Pengaturan tabel penerimaan',

@@ -56,7 +56,7 @@ export default function PurchasePaymentView({ page, mode, activeLevel2Tab, level
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                    refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
+                    refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
                 },
             };

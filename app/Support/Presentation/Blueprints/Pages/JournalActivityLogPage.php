@@ -26,7 +26,7 @@ class JournalActivityLogPage
                 ],
                 'displayOptions' => ['Semua Perubahan', 'Perubahan Aktif', 'Perubahan Sebelumnya'],
                 'table' => [
-                    'refreshLabel' => 'Muat ulang log aktivitas',
+                    'refreshLabel' => 'Muat ulang',
                     'settingsLabel' => 'Pengaturan log aktivitas',
                     'searchPlaceholder' => 'Cari...',
                     'pageValue' => '632',

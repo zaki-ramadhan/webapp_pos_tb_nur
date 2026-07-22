@@ -134,7 +134,7 @@ class BankTransferPage
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Transfer Bank',
-                    'refreshLabel' => 'Sinkron transfer bank',
+                    'refreshLabel' => 'Muat ulang',
                     'downloadLabel' => 'Unduh data transfer bank',
                     'printLabel' => 'Cetak transfer bank',
                     'settingsLabel' => 'Pengaturan tabel transfer bank',

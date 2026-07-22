@@ -55,7 +55,7 @@ export default function ItemRequestView({ page, mode, activeLevel2Tab, level2Tab
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
+                refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
             },
         };

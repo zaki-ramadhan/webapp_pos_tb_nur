@@ -75,7 +75,7 @@ export default function ItemsServicesView({
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                refreshLabel: loading ? 'Memuat...' : (baseConfig.table.refreshLabel || 'Muat ulang'),
+                refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
             },
         };

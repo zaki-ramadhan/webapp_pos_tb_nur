@@ -120,7 +120,7 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
                 })(),
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
-                refreshLabel: loading ? 'Memuat...' : baseConfig.table?.refreshLabel,
+                refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

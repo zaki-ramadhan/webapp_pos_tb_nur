@@ -2,6 +2,7 @@ import TextInput from '@/components/ui/TextInput';
 import NavigationIcon from '@/features/workspace/navigation/NavigationIcon';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import {
     ColumnsIcon,
     DownloadIcon,
@@ -31,7 +32,19 @@ function resolveActionIcon(action) {
     }
 }
 
-export function InquiryActionButton({ action, onClick }) {
+export function InquiryActionButton({ action, onClick, loading = false }) {
+    const isReloadAction = action.id === 'reload' || action.id === 'refresh';
+
+    if (isReloadAction) {
+        return (
+            <RefreshButton
+                label="Muat ulang"
+                onClick={onClick}
+                loading={loading || action.loading}
+            />
+        );
+    }
+
     const toneClassName =
         action.tone === 'warning'
             ? 'border-transparent bg-warning text-white hover:bg-warning'

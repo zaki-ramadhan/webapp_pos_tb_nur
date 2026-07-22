@@ -124,7 +124,7 @@ export default function ItemRequestTableView({
                     onClick: onCreate,
                 }}
                 refreshButton={{
-                    label: config.table.refreshLabel || (loading ? 'Memuat...' : 'Perbarui'),
+                    label: config.table?.refreshLabel || 'Muat ulang',
                     icon: <RefreshIcon className="h-4.5 w-4.5" />,
                     onClick: onRefresh,
                     loading,

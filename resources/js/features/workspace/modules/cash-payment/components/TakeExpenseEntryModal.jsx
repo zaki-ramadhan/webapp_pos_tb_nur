@@ -65,7 +65,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
     // Filter records client-side by date range
     const filteredRecords = useMemo(() => {
         return records.filter((record) => {
-            const due = record.due_date; // YYYY-MM-DD
+            const due = record.due_date;
             if (startDate && due && due < startDate) return false;
             if (endDate && due && due > endDate) return false;
             return true;

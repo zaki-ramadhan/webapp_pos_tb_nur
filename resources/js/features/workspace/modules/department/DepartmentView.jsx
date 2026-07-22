@@ -90,7 +90,7 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, level2Tabs
                     return [...baseCols, ...filteredExtra];
                 })(),
                 pageValue: departmentResource.total.toLocaleString('id-ID'),
-                refreshLabel: departmentResource.loading ? 'Memuat data...' : page.table?.refreshLabel,
+                refreshLabel: page.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: departmentResource.error || page.table?.emptyLabel || 'Tidak ada data',
             },
         };

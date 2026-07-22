@@ -38,7 +38,7 @@ export default function SupplierPriceView({
                 ...config.table,
                 ...supplierPriceResource.tableProps,
                 pageValue: supplierPriceResource.total.toLocaleString('id-ID'),
-                refreshLabel: supplierPriceResource.loading ? 'Memuat data...' : config.table?.refreshLabel,
+                refreshLabel: config.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: supplierPriceResource.error || config.table?.emptyLabel || 'Tidak ada data',
             },
         };

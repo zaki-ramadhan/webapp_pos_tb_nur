@@ -62,7 +62,7 @@ export default function BankTransferView({
                 filters: buildBankTransferFilters(page.bankTransfer.table?.filters ?? [], mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
-                refreshLabel: loading ? 'Memuat data...' : page.bankTransfer.table?.refreshLabel,
+                refreshLabel: page.bankTransfer?.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: error || page.bankTransfer.table?.emptyLabel || 'Belum ada data',
                 onRefresh: reload,
                 pagination: {

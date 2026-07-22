@@ -63,7 +63,7 @@ export default function CashReceiptTableView({
                 {...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField)}
                 refreshButton={{
                     ...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField).refreshButton,
-                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
+                    label: config.table?.refreshLabel || 'Muat ulang',
                     onClick: onRefresh,
                     loading,
                 }}

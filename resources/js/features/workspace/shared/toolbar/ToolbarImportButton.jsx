@@ -135,24 +135,22 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
                     footerClassName="border-t border-ui-border-medium bg-slate-50 px-5 py-3 flex items-center justify-between w-full"
                     footer={
                         <div className="flex items-center justify-between w-full">
-                            <Button
-                                variant="secondary"
-                                size="md"
+                            <button
+                                type="button"
                                 onClick={() => setShowModal(false)}
-                                className="min-w-[80px] rounded-[4px] border-brand-blue text-brand-blue hover:bg-brand-blue/5 shadow-none font-medium text-sm"
+                                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-white px-5 text-sm font-normal text-brand-blue hover:bg-brand-blue/5 active:scale-[0.98] transition cursor-pointer"
                             >
                                 Batal
-                            </Button>
-                            <Button
-                                variant="brand-blue"
-                                size="md"
+                            </button>
+                            <button
+                                type="button"
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={loading}
-                                className="min-w-[120px] rounded-[4px] shadow-none font-medium text-sm"
+                                className="inline-flex h-10 items-center justify-center rounded-[4px] border border-brand-blue bg-brand-blue px-5 text-sm font-normal text-white hover:bg-brand-blue-hover active:scale-[0.98] transition cursor-pointer shadow-button-primary disabled:opacity-55 disabled:pointer-events-none"
                             >
                                 <UploadIcon className="h-4 w-4 mr-1.5 shrink-0" />
                                 Pilih & Unggah File
-                            </Button>
+                            </button>
                         </div>
                     }
                 >
@@ -213,7 +211,7 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
                                 <div className="flex items-start gap-4 relative">
                                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-blue text-[11px] font-bold text-white z-10 shadow-sm">2</span>
                                     <div className="flex-1 pt-0.5 text-[13px] text-brand-dark leading-relaxed">
-                                        Salin data Accurate Anda ke kolom Excel template yang sudah diunduh, lalu simpan file.
+                                        Salin data Anda ke kolom Excel template yang sudah diunduh, lalu simpan file.
                                     </div>
                                 </div>
 

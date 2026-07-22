@@ -34,7 +34,7 @@ export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDe
                 rows: mappedRows,
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
-                refreshLabel: loading ? 'Memuat data...' : page.journalActivityLog.table?.refreshLabel,
+                refreshLabel: page.journalActivityLog?.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
                 pagination: {

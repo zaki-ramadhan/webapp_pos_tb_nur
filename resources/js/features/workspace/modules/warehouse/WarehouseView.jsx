@@ -105,7 +105,7 @@ export default function WarehouseView({
                 })(),
                 rows: rows.map(mapWarehouseTableRow),
                 pageValue: total.toLocaleString('id-ID'),
-                refreshLabel: loading ? 'Memuat...' : baseConfig.table.refreshLabel,
+                refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

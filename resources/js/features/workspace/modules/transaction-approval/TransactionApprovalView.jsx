@@ -24,7 +24,7 @@ export default function TransactionApprovalView({ page, mode, activeLevel2Tab, o
         rows: rows.map(mapApprovalRuleRow),
         pageValue: total.toLocaleString('id-ID'),
         loading,
-        refreshLabel: loading ? 'Memuat...' : page.table.refreshLabel,
+        refreshLabel: page.table?.refreshLabel || 'Muat ulang',
         onRefresh: reload,
         pagination: { page: currentPage, perPage, total, lastPage, from, to, onPageChange: setPage, onPerPageChange: setPerPage },
     }), [loading, page.table, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);

@@ -318,7 +318,7 @@ final class PosBlueprint
                 self::navItem('price-adjustment', 'Penyesuaian Harga atau Diskon', 'category', 'amber'),
                 self::navItem('sales-commission', 'Komisi Penjual', 'employee', 'amber'),
                 // self::navItem('sales-target', 'Target Penjualan', 'budget', 'amber'),
-                self::navItem('sales-checkin', 'Check-in', 'checkin', 'purple'),
+                // self::navItem('sales-checkin', 'Check-in', 'checkin', 'purple'),
             ]),
             self::navModule('purchases', 'Pembelian', 'purchase', [
                 // self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),

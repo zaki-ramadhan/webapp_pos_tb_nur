@@ -34,7 +34,7 @@ export default function SalesCheckinView({ page }) {
             filters: buildSalesCheckinFilters(mappedRows),
             pageValue: total.toLocaleString('id-ID'),
             loading,
-            refreshLabel: loading ? 'Memuat data...' : page.table?.refreshLabel,
+            refreshLabel: page.table?.refreshLabel || 'Muat ulang',
             emptyLabel: error || 'Belum ada data',
             onRefresh: reload,
             importButton: false,

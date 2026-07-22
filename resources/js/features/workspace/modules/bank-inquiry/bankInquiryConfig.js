@@ -49,7 +49,7 @@ export const bankInquiryPageConfigs = {
     'account-history': {
         controls: DEFAULT_CONTROLS,
         actions: [
-            createAction('reload', 'link', 'Muat ulang histori akun'),
+            createAction('reload', 'link', 'Muat ulang'),
             createAction('open-reference', 'external-link', 'Buka referensi histori akun'),
             createAction('switch-account', 'transfer', 'Pindah akun perkiraan'),
             createAction('help', 'idea', 'Bantuan histori akun', 'warning'),
@@ -77,7 +77,7 @@ export const bankInquiryPageConfigs = {
     'bank-statement': {
         controls: DEFAULT_CONTROLS,
         actions: [
-            createAction('reload', 'link', 'Muat ulang rekening koran'),
+            createAction('reload', 'link', 'Muat ulang'),
             createAction('help', 'idea', 'Bantuan rekening koran', 'warning'),
         ],
         table: {
@@ -101,7 +101,7 @@ export const bankInquiryPageConfigs = {
     'bank-history': {
         controls: DEFAULT_CONTROLS,
         actions: [
-            createAction('reload', 'link', 'Muat ulang histori bank'),
+            createAction('reload', 'link', 'Muat ulang'),
             createAction('export-excel', 'download', 'Ekspor Excel'),
             createAction('switch-view', 'columns', 'Ubah Tampilan'),
         ],
@@ -129,7 +129,7 @@ export const bankInquiryPageConfigs = {
     'bank-reconciliation': {
         controls: DEFAULT_CONTROLS,
         actions: [
-            createAction('reload', 'link', 'Muat ulang rekonsiliasi bank'),
+            createAction('reload', 'link', 'Muat ulang'),
             createAction('switch-account', 'transfer', 'Pindah akun bank'),
             createAction('help', 'idea', 'Bantuan rekonsiliasi bank', 'warning'),
         ],

@@ -54,7 +54,7 @@ export default function SalesDocumentView({
                 filters: buildOperationDocumentFilters(config.table.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
-                refreshLabel: loading ? 'Memuat data...' : config.table.refreshLabel,
+                refreshLabel: config.table?.refreshLabel || 'Muat ulang',
                 emptyLabel: error || 'Belum ada data',
                 onRefresh: reload,
                 pagination: {

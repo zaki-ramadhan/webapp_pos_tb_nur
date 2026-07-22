@@ -131,7 +131,7 @@ export default function InventoryAdjustmentView({
                     filters: dynamicFilters,
                     pageValue: total.toLocaleString('id-ID'),
                     loading,
-                    refreshLabel: loading ? 'Memuat data...' : (baseConfig.table.refreshLabel || 'Muat ulang'),
+                    refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                     createLabel: baseConfig.table.createLabel || 'Tambah Penyesuaian',
                     emptyLabel: error || 'Belum ada data',
                     onRefresh: reload,

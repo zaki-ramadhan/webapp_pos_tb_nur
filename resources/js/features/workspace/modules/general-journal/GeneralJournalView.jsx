@@ -53,7 +53,7 @@ export default function GeneralJournalView({ page, mode, activeLevel2Tab, level2
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                    refreshLabel: loading ? 'Memuat data...' : page.generalJournal.table?.refreshLabel,
+                    refreshLabel: page.generalJournal?.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
                 },
             };

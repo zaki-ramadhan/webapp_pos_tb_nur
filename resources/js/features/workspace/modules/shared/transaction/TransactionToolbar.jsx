@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 
 import DropdownMenu from '@/components/ui/DropdownMenu';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
@@ -7,34 +7,57 @@ import Tooltip from '@/components/ui/Tooltip';
 import { exportToExcelXML } from '@/features/workspace/shared/exportUtils';
 import { tableRegistry, useColumnVisibility, getTableSchemaKey, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 
-export function TransactionToolbarIconButton({ label, children, className = '', disabled, onClick, ...props }) {
+export function TransactionToolbarIconButton({ label, children, className = '', disabled, onClick, loading = false, ...props }) {
+    const [isLocalRefreshing, setIsLocalRefreshing] = useState(false);
     const [activeTableState, setActiveTableState] = useState(() => tableRegistry.activeTable);
 
     useEffect(() => {
         return tableRegistry.subscribe((state) => setActiveTableState(state));
     }, []);
 
+    const isReload = /muat ulang|refresh|reload/i.test(label || '');
+    const isSpinning = isReload && (loading || isLocalRefreshing);
+
+    async function handleClick(event) {
+        if (isReload) {
+            setIsLocalRefreshing(true);
+        }
+        try {
+            await onClick?.(event);
+        } finally {
+            if (isReload) {
+                setTimeout(() => setIsLocalRefreshing(false), 600);
+            }
+        }
+    }
+
     const isExportOrPrint = /cetak|unduh|ekspor|download/i.test(label || '');
     const isTableEmpty = activeTableState?.rows?.length === 0;
-    const resolvedDisabled = disabled !== undefined ? disabled : (isExportOrPrint && isTableEmpty);
+    const resolvedDisabled = (disabled !== undefined ? disabled : (isExportOrPrint && isTableEmpty)) || isSpinning;
 
     const tooltipLabel = resolvedDisabled && isExportOrPrint
         ? (/cetak/i.test(label || '') ? 'Tidak ada data untuk dicetak' : 'Tidak ada data untuk diekspor')
-        : label;
+        : (isReload ? 'Muat ulang' : label);
+
+    const renderedChildren = isSpinning && React.isValidElement(children)
+        ? React.cloneElement(children, {
+            className: `${children.props?.className || ''} animate-spin`.trim(),
+          })
+        : children;
 
     return (
         <Tooltip content={tooltipLabel} portal>
             <button
                 type="button"
                 disabled={resolvedDisabled}
-                aria-label={label}
-                onClick={onClick}
+                aria-label={tooltipLabel}
+                onClick={handleClick}
                 className={`inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${
                     resolvedDisabled ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'
                 } ${className}`.trim()}
                 {...props}
             >
-                {children}
+                {renderedChildren}
             </button>
         </Tooltip>
     );

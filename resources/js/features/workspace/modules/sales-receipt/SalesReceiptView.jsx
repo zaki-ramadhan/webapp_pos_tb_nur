@@ -55,7 +55,7 @@ export default function SalesReceiptView({ page, mode, activeLevel2Tab, level2Ta
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                refreshLabel: loading ? 'Memuat data...' : baseConfig.table?.refreshLabel,
+                refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
             },
         };

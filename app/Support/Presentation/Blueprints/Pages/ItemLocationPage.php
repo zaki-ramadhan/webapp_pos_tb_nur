@@ -44,7 +44,7 @@ class ItemLocationPage
                         'id' => 'refresh',
                         'type' => 'icon-button',
                         'icon' => 'refresh',
-                        'label' => 'Muat ulang barang per gudang',
+                        'label' => 'Muat ulang',
                     ],
                     [
                         'id' => 'export-excel',

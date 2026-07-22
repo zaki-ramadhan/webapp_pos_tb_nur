@@ -130,7 +130,7 @@ class CashPaymentPage
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Pembayaran',
-                    'refreshLabel' => 'Sinkron pembayaran',
+                    'refreshLabel' => 'Muat ulang',
                     'downloadLabel' => 'Unduh data pembayaran',
                     'printLabel' => 'Cetak pembayaran',
                     'settingsLabel' => 'Pengaturan tabel pembayaran',

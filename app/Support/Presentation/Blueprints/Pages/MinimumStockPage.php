@@ -27,7 +27,7 @@ class MinimumStockPage
                         'id' => 'refresh',
                         'type' => 'icon-button',
                         'icon' => 'refresh',
-                        'label' => 'Muat ulang barang stok minimum',
+                        'label' => 'Muat ulang',
                     ],
                     [
                         'id' => 'order',

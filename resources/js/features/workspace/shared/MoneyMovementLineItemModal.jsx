@@ -32,24 +32,21 @@ export default function MoneyMovementLineItemModal({
     record = null,
     currentItem = null,
     onSave,
-    type = 'payment', // 'payment' or 'receipt'
+    type = 'payment',
 }) {
     const isPayment = type === 'payment';
     const [activeTab, setActiveTab] = useState('detail');
 
-    // Tab 1 state
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [amount, setAmount] = useState('0');
 
-    // Tab 2 state
     const [notes, setNotes] = useState('');
 
-    // Tab 3 state
     const [deferred, setDeferred] = useState(false);
     const [deferredAccount, setDeferredAccount] = useState(null);
     const [deferredDuration, setDeferredDuration] = useState('0');
-    const [deferredStartType, setDeferredStartType] = useState('period'); // 'period' or 'manual'
-    const [deferredStartMonth, setDeferredStartMonth] = useState(6); // Juni
+    const [deferredStartType, setDeferredStartType] = useState('period');
+    const [deferredStartMonth, setDeferredStartMonth] = useState(6);
     const [deferredStartYear, setDeferredStartYear] = useState(2026);
 
     // Sync state when modal opens or inputs change

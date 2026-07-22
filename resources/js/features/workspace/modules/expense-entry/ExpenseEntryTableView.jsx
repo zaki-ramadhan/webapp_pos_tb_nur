@@ -91,7 +91,7 @@ export default function ExpenseEntryTableView({
                         icon: <PlusIcon className="h-6 w-6" />,
                     }}
                     refreshButton={{
-                        label: loading ? 'Memuat data...' : config.table.refreshLabel,
+                        label: config.table?.refreshLabel || 'Muat ulang',
                         icon: <RefreshIcon className="h-5 w-5" />,
                         onClick: onRefresh,
                         loading,

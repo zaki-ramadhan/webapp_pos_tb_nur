@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-
+import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import { TransactionToolbarIconButton, TransactionExportExcelButton, TransactionSwitchViewButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
@@ -131,12 +131,11 @@ export default function InquiryWorkspaceView({
                     ) : null}
 
                     {reloadAction ? (
-                        <TransactionToolbarIconButton
-                            label={reloadAction.label}
+                        <RefreshButton
+                            label="Muat ulang"
                             onClick={onRefresh}
-                        >
-                            <RefreshIcon className="h-4 w-4" />
-                        </TransactionToolbarIconButton>
+                            loading={loading}
+                        />
                     ) : null}
 
                     {exportAction ? (

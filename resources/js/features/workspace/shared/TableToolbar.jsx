@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import TextInput from '@/components/ui/TextInput';
 import Tooltip from '@/components/ui/Tooltip';
+import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import {
     PlusIcon,
     PrintIcon,
@@ -13,6 +14,7 @@ import {
 import { printTable } from './exportUtils';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel } from '@/features/workspace/shared/columnVisibility';
 import { showWarningToast, showSuccessToast, showErrorToast } from '@/components/feedback/toast';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 // Modular Toolbar Imports
 import ToolbarIconButton from './toolbar/ToolbarIconButton';
@@ -196,6 +198,7 @@ export default function TableToolbar({
                     }
                 } catch (err) {
                     let msg = 'Gagal mengimpor data.';
+                    let errorList = [];
                     if (err.response) {
                         const status = err.response.status;
                         const backendMsg = err.response.data?.message;
@@ -209,12 +212,15 @@ export default function TableToolbar({
                         } else if (status === 422) {
                             const errors = err.response.data?.errors;
                             if (errors && typeof errors === 'object') {
-                                const firstKey = Object.keys(errors)[0];
-                                const errorMessages = errors[firstKey];
-                                msg = Array.isArray(errorMessages) ? errorMessages[0] : String(errorMessages);
-                            } else {
-                                msg = backendMsg || 'Terdapat format nilai kolom yang tidak sesuai atau data wajib yang kosong.';
+                                Object.values(errors).forEach(errMsgs => {
+                                    if (Array.isArray(errMsgs)) {
+                                        errorList.push(...errMsgs);
+                                    } else if (typeof errMsgs === 'string') {
+                                        errorList.push(errMsgs);
+                                    }
+                                });
                             }
+                            msg = backendMsg || 'Terdapat format nilai kolom yang tidak sesuai atau data wajib yang kosong.';
                         } else if (status === 500) {
                             msg = 'Format data pada file tidak sesuai (misal: kolom angka diisi teks, atau data referensi tidak terdaftar). Silakan periksa kembali isi file Anda.';
                         } else if (backendMsg) {
@@ -224,10 +230,25 @@ export default function TableToolbar({
                         msg = err.message || 'Gagal menghubungkan ke server. Pastikan koneksi internet Anda aktif.';
                     }
 
-                    showErrorToast({
-                        title: 'Impor Gagal',
-                        message: msg,
-                    });
+                    if (errorList.length > 1) {
+                        showSystemErrorModal({
+                            title: 'Impor Gagal',
+                            description: 'Terdapat beberapa kesalahan format data pada file Anda:',
+                            messages: errorList,
+                        });
+                    } else if (errorList.length === 1) {
+                        showSystemErrorModal({
+                            title: 'Impor Gagal',
+                            description: 'Terdapat kesalahan format data pada file Anda:',
+                            message: errorList[0],
+                        });
+                    } else {
+                        showSystemErrorModal({
+                            title: 'Impor Gagal',
+                            description: 'Terjadi kesalahan saat memproses data:',
+                            message: msg,
+                        });
+                    }
                 }
             }
         } : null));
@@ -275,14 +296,12 @@ export default function TableToolbar({
                     ) : null}
 
                     {refreshButton ? (
-                        <ToolbarIconButton
-                            label={refreshButton.label ?? 'Perbarui'}
+                        <RefreshButton
+                            label={refreshButton.label ?? 'Muat ulang'}
                             onClick={refreshButton.onClick}
-                            disabled={searchLoading}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition hover:bg-brand-blue-light ${sizeStyle.utilityButton} ${searchLoading ? 'pointer-events-none opacity-70' : ''}`.trim()}
-                        >
-                            <RefreshIcon className={`h-4 w-4 ${searchLoading ? 'animate-spin' : ''}`.trim()} />
-                        </ToolbarIconButton>
+                            loading={searchLoading}
+                            className={sizeStyle.utilityButton}
+                        />
                     ) : null}
 
                     {leftControls}

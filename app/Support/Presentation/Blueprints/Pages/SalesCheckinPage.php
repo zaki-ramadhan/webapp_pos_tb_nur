@@ -6,6 +6,10 @@ class SalesCheckinPage
 {
     public static function get(array $navigationPages): array
     {
+        if (!isset($navigationPages['sales-checkin'])) {
+            return [];
+        }
+
         return array_replace($navigationPages['sales-checkin'], [
             'table' => [
                 'refreshLabel' => 'Muat ulang',

@@ -15,7 +15,7 @@ export default function UsersManagementView({ page, mode, activeLevel2Tab, level
         rows: usersResource.rows.map(mapUserRow),
         pageValue: usersResource.total.toLocaleString('id-ID'),
         loading: usersResource.loading,
-        refreshLabel: usersResource.loading ? 'Memuat...' : page.table.refreshLabel,
+        refreshLabel: page.table?.refreshLabel || 'Muat ulang',
         onRefresh: usersResource.reload,
         pagination: {
             page: usersResource.page,

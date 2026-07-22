@@ -54,7 +54,7 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
                     onPerPageChange: setPerPage,
                 },
                 emptyLabel: error || page.expenseEntry.table?.emptyLabel,
-                refreshLabel: loading ? 'Memuat data...' : page.expenseEntry.table?.refreshLabel,
+                refreshLabel: page.expenseEntry?.table?.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
             },
         };

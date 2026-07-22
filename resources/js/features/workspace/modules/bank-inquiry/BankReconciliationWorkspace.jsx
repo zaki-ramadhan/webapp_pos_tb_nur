@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import { TransactionDateInput, TransactionToolbarIconButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { RefreshIcon } from '@/features/workspace/shared/Icons';
@@ -155,13 +156,11 @@ export default function BankReconciliationWorkspace({
                     </div>
 
                     {onRefresh ? (
-                        <TransactionToolbarIconButton
-                            label="Muat ulang rekonsiliasi bank"
+                        <RefreshButton
+                            label="Muat ulang"
                             onClick={onRefresh}
-                            className="!h-[40px]"
-                        >
-                            <RefreshIcon className="h-4 w-4" />
-                        </TransactionToolbarIconButton>
+                            loading={loading}
+                        />
                     ) : null}
                 </div>
             </div>

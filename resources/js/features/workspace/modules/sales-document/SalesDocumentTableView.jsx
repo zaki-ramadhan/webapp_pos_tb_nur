@@ -58,7 +58,7 @@ export default function SalesDocumentTableView({
                 {...salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters)}
                 refreshButton={{
                     ...salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters).refreshButton,
-                    label: loading ? 'Memuat data...' : config.table.refreshLabel,
+                    label: config.table?.refreshLabel || 'Muat ulang',
                     onClick: onRefresh,
                     loading,
                 }}

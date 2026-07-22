@@ -29,7 +29,7 @@ function fuzzyMatch(targetKey, headers) {
 }
 
 export default function InventoryAdjustmentImportModal({ open, onClose, onImport }) {
-    const [step, setStep] = useState('upload'); // 'upload' | 'match'
+    const [step, setStep] = useState('upload');
     const [fileName, setFileName] = useState('');
     const [headers, setHeaders] = useState([]);
     const [rawRows, setRawRows] = useState([]);
