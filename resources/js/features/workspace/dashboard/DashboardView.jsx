@@ -9,7 +9,7 @@ import DashboardPageTabs from '@/features/workspace/dashboard/DashboardPageTabs'
 import DashboardViewModals from '@/features/workspace/dashboard/DashboardViewModals';
 import useDashboardPreferencesState from '@/features/workspace/dashboard/useDashboardPreferencesState';
 
-import { resolveLevel2State } from '@/features/workspace/dashboard/dashboardPageState';
+import { resolveLevel2State, resolveActivePageContentTabs } from '@/features/workspace/dashboard/dashboardPageState';
 import useWorkspacePageState from './hooks/useWorkspacePageState';
 
 const DashboardView = forwardRef(function DashboardView(
@@ -99,7 +99,7 @@ const DashboardView = forwardRef(function DashboardView(
 
     const renderedPages = useMemo(() => {
         return openPages.map((page) => {
-            const pageContentTabs = pageLevel2ContentTabs[page.id] ?? [];
+            const pageContentTabs = resolveActivePageContentTabs(page, pageLevel2ContentTabs);
             const {
                 level2Tabs: pageLevel2Tabs,
                 activeLevel2Tab,
