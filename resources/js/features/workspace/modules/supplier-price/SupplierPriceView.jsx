@@ -18,11 +18,15 @@ function mapSupplierPriceRow(record) {
 export default function SupplierPriceView({ 
     page, 
     mode, 
-    activeLevel2Tab, level2Tabs = [], 
+    activeLevel2Tab, 
+    level2Tabs = [], 
     onOpenContent, 
     onOpenDetail, 
-    onCloseDetail}) {
+    onCloseDetail
+}) {
     const config = page.supplierPrice;
+
+    const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 
     const supplierPriceResource = useWorkspaceResource({
         resource: 'supplier-prices',
@@ -43,8 +47,6 @@ export default function SupplierPriceView({
             },
         };
     }, [config, supplierPriceResource.error, supplierPriceResource.loading, supplierPriceResource.tableProps, supplierPriceResource.total]);
-
-        const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 
     useEffect(() => {
         if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {

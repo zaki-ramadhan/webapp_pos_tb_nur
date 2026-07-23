@@ -44,13 +44,10 @@ export default function useBackendIndexResource({
     const [error, setError] = useState('');
     const [reloadVersion, setReloadVersion] = useState(0);
     const [revalidateVersion, setRevalidateVersion] = useState(0);
+    const [payload, setPayload] = useState(null);
+    const [prevCacheKey, setPrevCacheKey] = useState('');
+
     const serializedFilters = JSON.stringify(filters ?? {});
-
-    // Reset ke halaman 1 jika filter berubah
-    useEffect(() => {
-        setPage(1);
-    }, [serializedFilters]);
-
     const normalizedFilters = useMemo(() => sanitizeFilters(filters), [serializedFilters]);
     const requestFilters = useMemo(() => {
         const base = {
@@ -71,19 +68,17 @@ export default function useBackendIndexResource({
 
     const cacheKey = useMemo(() => getCacheKey(resource, requestFilters), [resource, requestFilters]);
 
-    // Ambil cache awal jika ada
-    const [payload, setPayload] = useState(() => {
-        const cached = globalCache.get(cacheKey);
-        return cached ? cached.payload : null;
-    });
-
-    // Sinkronisasi state cacheKey
-    const [prevCacheKey, setPrevCacheKey] = useState(cacheKey);
+    // Sinkronisasi state cacheKey jika berubah
     if (cacheKey !== prevCacheKey) {
         setPrevCacheKey(cacheKey);
         const cached = globalCache.get(cacheKey);
         setPayload(cached ? cached.payload : null);
     }
+
+    // Reset ke halaman 1 jika filter berubah
+    useEffect(() => {
+        setPage(1);
+    }, [serializedFilters]);
 
     useEffect(() => {
         if (!enabled || !resource) {
@@ -179,6 +174,34 @@ export default function useBackendIndexResource({
         window.addEventListener('workspace:page-activated', handlePageActivated);
         return () => window.removeEventListener('workspace:page-activated', handlePageActivated);
     }, [resource]);
+
+    // Real-time live update sync
+    useEffect(() => {
+        if (!enabled || !resource || typeof window === 'undefined') return;
+
+        let lastSeenTimestamp = 0;
+        const intervalId = setInterval(async () => {
+            try {
+                const res = await fetch('/api/backend/live-updates', {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const change = data?.change;
+                    if (change && change.timestamp && change.timestamp > lastSeenTimestamp) {
+                        if (lastSeenTimestamp > 0) {
+                            setRevalidateVersion((v) => v + 1);
+                        }
+                        lastSeenTimestamp = change.timestamp;
+                    }
+                }
+            } catch {
+                // Abaikan kesalahan koneksi sementara
+            }
+        }, 3000);
+
+        return () => clearInterval(intervalId);
+    }, [enabled, resource]);
 
     const rows = useMemo(() => extractBackendRows(payload), [payload]);
     const total = useMemo(() => extractBackendTotal(payload), [payload]);

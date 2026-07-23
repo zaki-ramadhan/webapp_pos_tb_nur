@@ -23,7 +23,10 @@ class BackendResourceWriter
         /** @var Model $record */
         $record = new $modelClass();
 
-        return $this->persist($blueprint, $record, $payload);
+        $saved = $this->persist($blueprint, $record, $payload);
+        $this->notifyResourceChanged($blueprint->key, 'created', $saved->id ?? null);
+
+        return $saved;
     }
 
     /**
@@ -31,7 +34,10 @@ class BackendResourceWriter
      */
     public function update(BackendResourceBlueprint $blueprint, Model $record, array $payload): Model
     {
-        return $this->persist($blueprint, $record, $payload);
+        $saved = $this->persist($blueprint, $record, $payload);
+        $this->notifyResourceChanged($blueprint->key, 'updated', $saved->id ?? null);
+
+        return $saved;
     }
 
     public function delete(BackendResourceBlueprint $blueprint, Model $record): void
@@ -111,6 +117,8 @@ class BackendResourceWriter
 
             // Reconcile payment status on delete
             $this->reconcilePayments($blueprint, $record, $oldDocs);
+
+            $this->notifyResourceChanged($blueprint->key, 'deleted', $record->id ?? null);
         });
     }
 
@@ -1155,6 +1163,23 @@ class BackendResourceWriter
                 'paid_amount' => $totalAllocated,
                 'outstanding_amount' => $outstanding,
             ]);
+        }
+    }
+
+    protected function notifyResourceChanged(string $resourceKey, string $action, mixed $recordId): void
+    {
+        try {
+            $timestamp = (int) (microtime(true) * 1000);
+            \Illuminate\Support\Facades\Cache::put('last_resource_change', [
+                'resource' => $resourceKey,
+                'action' => $action,
+                'record_id' => $recordId,
+                'timestamp' => $timestamp,
+            ], 60);
+
+            event(new \App\Events\ResourceUpdatedEvent($resourceKey, $action, $recordId));
+        } catch (\Throwable $e) {
+            // Silently swallow broadcast errors
         }
     }
 }

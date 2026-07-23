@@ -51,6 +51,7 @@ Route::prefix('backend')->middleware(['web', 'auth', 'throttle:api'])->group(fun
             ]);
         }
     });
+    Route::get('/live-updates', [BackendResourceController::class, 'liveUpdates']);
     Route::get('/resources', [BackendResourceController::class, 'resources']);
     Route::get('/employees/{employee}/last-payroll-line', function ($employeeId) {
         $line = \App\Domain\Support\Models\OperationDocumentLine::query()
