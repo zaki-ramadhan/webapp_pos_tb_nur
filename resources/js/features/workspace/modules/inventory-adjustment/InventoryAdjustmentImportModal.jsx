@@ -4,29 +4,7 @@ import SelectField from '@/components/ui/SelectField';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { parseNumericInput, formatCurrencyValue } from './inventoryAdjustmentShared';
-
-// Fuzzy match helper
-function fuzzyMatch(targetKey, headers) {
-    const rules = {
-        name: ['nama', 'barang', 'name', 'item', 'produk', 'product'],
-        code: ['kode', 'code', 'sku', 'barcode', 'id'],
-        adjustmentType: ['tipe', 'type', 'jenis', 'action', 'kategori'],
-        quantity: ['kuantitas', 'qty', 'quantity', 'jumlah', 'stok', 'stock', 'vol'],
-        unit: ['satuan', 'unit', 'uom', 'pcs'],
-        unitCost: ['harga', 'price', 'biaya', 'cost', 'modal', 'unitcost'],
-    };
-
-    const words = rules[targetKey] || [];
-    for (const header of headers) {
-        const hLower = String(header).toLowerCase().replace(/[^a-z0-9]/g, '');
-        for (const word of words) {
-            if (hLower.includes(word)) {
-                return header;
-            }
-        }
-    }
-    return '';
-}
+import { autoDetectMappings } from './inventoryAdjustmentImportUtils';
 
 export default function InventoryAdjustmentImportModal({ open, onClose, onImport }) {
     const [step, setStep] = useState('upload');
@@ -104,14 +82,7 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             setRawRows(parsedRows);
 
             // Auto-mapping berdasarkan fuzzy matching
-            setMappings({
-                name: fuzzyMatch('name', parsedHeaders),
-                code: fuzzyMatch('code', parsedHeaders),
-                adjustmentType: fuzzyMatch('adjustmentType', parsedHeaders),
-                quantity: fuzzyMatch('quantity', parsedHeaders),
-                unit: fuzzyMatch('unit', parsedHeaders),
-                unitCost: fuzzyMatch('unitCost', parsedHeaders),
-            });
+            setMappings(autoDetectMappings(parsedHeaders));
 
             setStep('match');
         } catch (err) {

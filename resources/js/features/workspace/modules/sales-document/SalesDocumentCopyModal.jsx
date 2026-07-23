@@ -17,6 +17,15 @@ import { listBackendResource, getBackendResource } from '@/features/workspace/ba
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { SearchX } from 'lucide-react';
+import {
+    SALES_DOCUMENT_COPY_CONFIG_MAP,
+    getItemKey,
+    getCostKey,
+    getAdvanceKey,
+    extractDocumentItems,
+    extractDocumentCosts,
+    extractDocumentAdvances,
+} from './salesDocumentCopyUtils';
 
 export default function SalesDocumentCopyModal({
     open,
@@ -26,40 +35,7 @@ export default function SalesDocumentCopyModal({
     partnerField = 'customer_id',
     onApply,
 }) {
-    const configMap = useMemo(() => ({
-        'Penawaran': {
-            resource: 'sales-quotes',
-            title: 'Penawaran Penjualan',
-            placeholder: 'Cari/Pilih Penawaran...',
-            tabs: ['Rincian Barang', 'Biaya Lainnya'],
-        },
-        'Pesanan': {
-            resource: 'sales-orders',
-            title: 'Pesanan Penjualan',
-            placeholder: 'Cari/Pilih Pesanan...',
-            tabs: ['Rincian Barang', 'Biaya Lainnya', 'Uang Muka'],
-        },
-        'Pengiriman': {
-            resource: 'sales-deliveries',
-            title: 'Pengiriman Penjualan',
-            placeholder: 'Cari/Pilih Pengiriman...',
-            tabs: ['Rincian Barang', 'Biaya Lainnya', 'Uang Muka'],
-        },
-        'Pembelian': {
-            resource: 'purchase-orders',
-            title: 'Pesanan Pembelian',
-            placeholder: 'Cari/Pilih Pesanan Pembelian...',
-            tabs: ['Rincian Barang'],
-        },
-        'Permintaan': {
-            resource: 'item-requests',
-            title: 'Permintaan Barang',
-            placeholder: 'Cari/Pilih Permintaan Barang...',
-            tabs: ['Rincian Barang'],
-        },
-    }), []);
-
-    const config = configMap[option] || configMap['Pesanan'];
+    const config = SALES_DOCUMENT_COPY_CONFIG_MAP[option] || SALES_DOCUMENT_COPY_CONFIG_MAP['Pesanan'];
 
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
@@ -166,31 +142,9 @@ export default function SalesDocumentCopyModal({
     }, []);
 
     // Get table items/costs/advances
-    const items = useMemo(() => {
-        if (docDetails) {
-            return docDetails.lines ?? [];
-        }
-        return allDocs.flatMap(d => (d.lines ?? []).map(l => ({ ...l, __docNumber: d.document_number, __docId: d.id })));
-    }, [docDetails, allDocs]);
-
-    const additionalCosts = useMemo(() => {
-        if (docDetails) {
-            return docDetails.metadata?.additional_costs ?? [];
-        }
-        return allDocs.flatMap(d => (d.metadata?.additional_costs ?? []).map((c, i) => ({ ...c, id: c.id ?? i, __docNumber: d.document_number, __docId: d.id })));
-    }, [docDetails, allDocs]);
-
-    const advancePayments = useMemo(() => {
-        if (docDetails) {
-            return docDetails.metadata?.advance_payments ?? [];
-        }
-        return allDocs.flatMap(d => (d.metadata?.advance_payments ?? []).map((a, i) => ({ ...a, id: a.id ?? i, __docNumber: d.document_number, __docId: d.id })));
-    }, [docDetails, allDocs]);
-
-    // Unique keys builders to prevent clashes
-    const getItemKey = (item, index) => String(item.id ?? `${item.__docId ?? 'doc'}_${index}`);
-    const getCostKey = (c, index) => String(c.id ?? `${c.__docId ?? 'doc'}_${index}`);
-    const getAdvanceKey = (a, index) => String(a.id ?? `${a.__docId ?? 'doc'}_${index}`);
+    const items = useMemo(() => extractDocumentItems(docDetails, allDocs), [docDetails, allDocs]);
+    const additionalCosts = useMemo(() => extractDocumentCosts(docDetails, allDocs), [docDetails, allDocs]);
+    const advancePayments = useMemo(() => extractDocumentAdvances(docDetails, allDocs), [docDetails, allDocs]);
 
     // Auto-select all items on loading/changing
     useEffect(() => {
