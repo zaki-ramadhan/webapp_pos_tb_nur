@@ -274,6 +274,7 @@ class InventoryInquiryQueryService
         return InventoryDocument::query()
             ->with('lines')
             ->where('document_type', 'item_request')
+            ->where('is_closed', false)
             ->get()
             ->flatMap(function (InventoryDocument $document) use ($warehouseFilter) {
                 if ($warehouseFilter !== null && (int) $document->warehouse_id !== $warehouseFilter) {

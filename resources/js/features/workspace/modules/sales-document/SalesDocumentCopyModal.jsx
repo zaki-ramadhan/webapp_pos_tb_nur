@@ -337,8 +337,8 @@ export default function SalesDocumentCopyModal({
                     id: `copied-item-${Date.now()}-${index}-${Math.random()}`,
                     __lineId: null,
                     __productId: line.product_id ?? line.product?.id ?? null,
-                    name: line.description ?? line.product?.name ?? '',
-                    code: line.reference_code ?? line.product?.code ?? '',
+                    name: line.name ?? line.product_name ?? line.item_name ?? line.description ?? line.product?.name ?? '',
+                    code: line.code ?? line.product_code ?? line.reference_code ?? line.product?.code ?? '',
                     quantity: String(qty),
                     unit: typeof line.unit === 'object' ? (line.unit?.name ?? 'PCS') : (line.unit ?? 'PCS'),
                     price: unitPrice.toLocaleString('id-ID'),
@@ -373,6 +373,8 @@ export default function SalesDocumentCopyModal({
             items: finalItems,
             additionalCosts: finalCosts,
             advancePayments: finalAdvances,
+            sourceDocId: selectedDoc?.id ?? null,
+            sourceDocType: config.resource ?? null,
         });
 
         onClose();
@@ -531,12 +533,12 @@ export default function SalesDocumentCopyModal({
                                                             />
                                                         </DataTableCell>
                                                         <DataTableCell className="font-medium text-slate-700 truncate max-w-[140px]">
-                                                            {item.code ?? item.reference_code ?? '-'}
+                                                            {item.code ?? item.product_code ?? item.reference_code ?? item.product?.code ?? '-'}
                                                         </DataTableCell>
                                                         <DataTableCell className="text-slate-600 truncate">
-                                                            {item.name ?? item.description ?? '-'}
+                                                            {item.name ?? item.product_name ?? item.item_name ?? item.description ?? item.product?.name ?? '-'}
                                                         </DataTableCell>
-                                                        <DataTableCell className="text-slate-600 text-right font-mono">
+                                                        <DataTableCell className="text-slate-600 text-right">
                                                             {item.quantity}
                                                         </DataTableCell>
                                                         <DataTableCell className="text-slate-600 text-center">
@@ -606,7 +608,7 @@ export default function SalesDocumentCopyModal({
                                                     <DataTableCell className="text-slate-600 truncate">
                                                         {cost.name ?? '-'}
                                                     </DataTableCell>
-                                                    <DataTableCell className="text-slate-600 text-right font-mono">
+                                                    <DataTableCell className="text-slate-600 text-right">
                                                         Rp {Number(cost.amount ?? 0).toLocaleString('id-ID')}
                                                     </DataTableCell>
                                                 </DataTableRow>
@@ -672,7 +674,7 @@ export default function SalesDocumentCopyModal({
                                                     <DataTableCell className="text-slate-600">
                                                         {formatIsoDate(adv.date ?? adv.entry_date)}
                                                     </DataTableCell>
-                                                    <DataTableCell className="text-slate-600 text-right font-mono">
+                                                    <DataTableCell className="text-slate-600 text-right">
                                                         Rp {Number(adv.amount ?? adv.total_amount ?? 0).toLocaleString('id-ID')}
                                                     </DataTableCell>
                                                 </DataTableRow>

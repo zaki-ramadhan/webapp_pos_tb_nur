@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType } from '@/features/workspace/shared/hooks/useAccountLookupController';
+import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 
 export default function AccountLookupSuggestions({
     open,
@@ -61,16 +62,14 @@ export default function AccountLookupSuggestions({
                         const isDoc = Boolean(record.document_number);
                         const title = isDoc ? record.document_number : (record.name ?? record.full_name ?? record.label ?? '-');
                         
-                        const rawDate = record.entry_date || record.document_date || record.date;
+                        const rawDate = record.entry_date || record.document_date || record.date || record.created_at || record.transaction_date;
                         let dateStr = '';
                         if (rawDate) {
-                            dateStr = String(rawDate).split('T')[0];
+                            dateStr = formatIsoDate(rawDate);
                         }
                         
-                        const counterpart = resource === 'sales-deposits' ? '' : (record.customer?.name || record.supplier?.name || '');
-                        
                         const subtitleLeft = isDoc
-                            ? [dateStr, counterpart].filter(Boolean).join(' • ')
+                            ? dateStr
                             : (record.code ?? record.employee_code ?? '-');
 
                         const subtitleRight = isDoc

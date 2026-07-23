@@ -44,7 +44,7 @@ function PrimaryTab({ tab, active, onSelect, onClose }) {
     );
 }
 
-function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage }) {
+function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage, onCloseAllPages }) {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
 
@@ -55,6 +55,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage }) {
 
     return (
         <div className="relative shrink-0 self-start">
+
             <button
                 ref={buttonRef}
                 type="button"
@@ -63,7 +64,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage }) {
                 aria-label={`Buka daftar ${tabs.length} tab halaman`}
                 aria-expanded={open}
             >
-                <span className="font-medium">{tabs.length}</span>
+                <span className="font-normal">{tabs.length}</span>
                 <ChevronDownIcon className={`h-4 w-4 transition ${open ? 'rotate-180' : ''}`.trim()} />
             </button>
 
@@ -89,7 +90,7 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage }) {
                                     type="button"
                                     onClick={() => handleSelect(tab.id)}
                                     className={`flex-1 truncate px-3 py-2 text-left text-sm leading-5 ${
-                                        active ? 'font-semibold text-brand-blue-darker' : 'text-abc-label-dark'
+                                        active ? 'font-normal text-brand-blue-darker' : 'text-abc-label-dark font-normal'
                                     }`.trim()}
                                 >
                                     {renderTabLabel(tab.label, active, false)}
@@ -111,6 +112,21 @@ function PageTabOverflowMenu({ tabs, activePage, onSelectPage, onClosePage }) {
                         );
                     })}
                 </div>
+                {tabs.length > 1 && onCloseAllPages ? (
+                    <div className="border-t border-slate-200 bg-slate-50 p-1">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setOpen(false);
+                                onCloseAllPages();
+                            }}
+                            className="flex w-full items-center justify-center gap-1.5 rounded-[4px] px-3 py-2 text-xs sm:text-sm text-slate-700 hover:text-red-600 hover:bg-slate-100 font-normal transition cursor-pointer"
+                        >
+                            <CloseIcon className="h-3.5 w-3.5" strokeWidth={2.2} />
+                            <span>Tutup Semua Halaman</span>
+                        </button>
+                    </div>
+                ) : null}
             </DropdownMenu>
         </div>
     );
@@ -142,6 +158,7 @@ export default function DashboardPageTabs({
     activePage,
     onSelectPage,
     onClosePage,
+    onCloseAllPages,
     level2Tabs = [],
     level2Actions = [],
     activeLevel2TabId = null,
@@ -166,7 +183,7 @@ export default function DashboardPageTabs({
                         </div>
                     </div>
 
-                    <PageTabOverflowMenu tabs={tabs} activePage={activePage} onSelectPage={onSelectPage} onClosePage={onClosePage} />
+                    <PageTabOverflowMenu tabs={tabs} activePage={activePage} onSelectPage={onSelectPage} onClosePage={onClosePage} onCloseAllPages={onCloseAllPages} />
                 </div>
             </div>
 

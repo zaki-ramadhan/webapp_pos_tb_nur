@@ -230,6 +230,17 @@ export default function SalesDocumentFormView({
                         ? await updateBackendResource(backendConfig.resource, values.__backendRecordId, payload)
                         : await createBackendResource(backendConfig.resource, payload);
 
+                if (values.sourceDocId && values.sourceDocType === 'item-requests') {
+                    try {
+                        await updateBackendResource('item-requests', values.sourceDocId, {
+                            is_closed: true,
+                            status: 'Ditutup',
+                        });
+                    } catch {
+                        // Abaikan jika sudah tertutup
+                    }
+                }
+
                 return {
                     record: response?.data ?? null,
                     resolvedDocumentNumber,

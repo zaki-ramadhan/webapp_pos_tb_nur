@@ -143,7 +143,7 @@ const defaultSalesReturnConfig = {
     itemSectionTitle: 'Rincian Barang',
     itemSectionLeadingAction: { label: 'Ambil' },
     itemSectionLeadingActionDetailOnly: true,
-    showItemTitleSearchButton: true,
+    showItemTitleSearchButton: false,
     hideItemSearchField: true,
     itemTable: {
         columns: salesReturnItemColumns,

@@ -22,7 +22,7 @@ export default function SalesDocumentFormHeader({
     return (
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-y-4 gap-x-8">
             {/* Left Column */}
-            <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
+            <div className={`flex flex-col gap-y-2 w-full ${config.headerSelectLookupField ? 'md:max-w-[960px] lg:max-w-[1120px] xl:max-w-[1280px] 2xl:max-w-full' : 'md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]'}`}>
                 <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.customer} required />
                     <div className="max-w-[320px] w-full">
@@ -79,7 +79,7 @@ export default function SalesDocumentFormHeader({
                     return (
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                             <TransactionFieldLabel label={config.headerSelectLookupField.label} required={config.headerSelectLookupField.required} />
-                            <div className="max-w-[320px] w-full flex items-center gap-x-2">
+                            <div className="w-full max-w-full flex items-center gap-x-2">
                                 <div className="w-[110px] shrink-0">
                                     <SelectField
                                         value={selectedSource}

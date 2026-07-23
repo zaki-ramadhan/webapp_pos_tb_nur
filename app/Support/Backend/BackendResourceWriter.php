@@ -243,6 +243,8 @@ class BackendResourceWriter
                             $productId = $line['product_id'] ?? null;
                             $qtyRequested = (float) ($line['quantity'] ?? 0);
                             if ($productId && $qtyRequested > 0) {
+                                DB::table('products')->where('id', $productId)->lockForUpdate()->first();
+
                                 $stockMap = app(\App\Support\Backend\Queries\InventoryInquiryQueryService::class)->paginateItemLocations([
                                     'product_id' => $productId,
                                     'warehouse_id' => $warehouseId,
@@ -877,10 +879,14 @@ class BackendResourceWriter
         $year = $date->format('Y');
         $month = $date->format('m');
         
-        // Cari nomor terakhir di bulan dan tahun yang sama: e.g. PREFIX.YYYY.MM.%
-        $latest = DB::table('operation_documents')
+        $isInventory = in_array($resourceKey, ['item-requests', 'inventory-adjustments', 'stock-transfers', 'stock-opname-results', 'work-orders', 'material-additions', 'work-completions'], true);
+        $targetTable = $isInventory ? 'inventory_documents' : 'operation_documents';
+
+        // Cari nomor terakhir di bulan dan tahun yang sama dengan lockForUpdate untuk mencegah bentrokan concurrency
+        $latest = DB::table($targetTable)
             ->where('document_type', $this->getDocumentTypeFromResource($resourceKey))
             ->where('document_number', 'like', "{$prefix}.{$year}.{$month}.%")
+            ->lockForUpdate()
             ->orderBy('id', 'desc')
             ->get()
             ->first(function ($doc) {

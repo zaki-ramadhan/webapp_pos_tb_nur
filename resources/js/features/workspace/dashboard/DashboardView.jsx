@@ -45,6 +45,7 @@ const DashboardView = forwardRef(function DashboardView(
         tabItems,
         decoratedLevel2Tabs,
         requestClosePage,
+        closeAllPagesExceptDashboard,
         handleOpenDefaultContentTab,
         detailTabOpeners,
         createDetailTabOpener,
@@ -140,6 +141,7 @@ const DashboardView = forwardRef(function DashboardView(
                         activePage={activePage}
                         onSelectPage={setActivePageId}
                         onClosePage={requestClosePage}
+                        onCloseAllPages={closeAllPagesExceptDashboard}
                         level2Tabs={decoratedLevel2Tabs}
                         activeLevel2TabId={activeLevel2TabId}
                         onSelectLevel2Tab={handleSelectLevel2Tab}

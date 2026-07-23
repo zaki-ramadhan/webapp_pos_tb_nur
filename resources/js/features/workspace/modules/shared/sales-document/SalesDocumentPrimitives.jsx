@@ -154,13 +154,13 @@ export function SearchableTableSection({
                     {onTitleClick ? (
                         <button
                             type="button"
-                            className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl inline-flex items-center gap-1 whitespace-nowrap"
+                            className="text-left text-base sm:text-lg md:text-xl font-normal text-brand-dark sm:text-right inline-flex items-center gap-1 whitespace-nowrap"
                             onClick={onTitleClick}
                         >
                             {titleContent}
                         </button>
                     ) : (
-                        <div className="text-left text-xl font-normal text-brand-dark sm:text-right sm:text-2xl inline-flex items-center gap-1 whitespace-nowrap">{titleContent}</div>
+                        <div className="text-left text-base sm:text-lg md:text-xl font-normal text-brand-dark sm:text-right inline-flex items-center gap-1 whitespace-nowrap">{titleContent}</div>
                     )}
                 </div>
             </div>

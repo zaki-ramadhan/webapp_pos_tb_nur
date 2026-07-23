@@ -105,6 +105,8 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
             
             return applyComputedTotals({
                 ...current,
+                sourceDocId: copied.sourceDocId ?? current.sourceDocId ?? null,
+                sourceDocType: copied.sourceDocType ?? current.sourceDocType ?? null,
                 additionalCosts: nextCosts,
                 advancePayments: nextAdvances,
             }, nextItems);

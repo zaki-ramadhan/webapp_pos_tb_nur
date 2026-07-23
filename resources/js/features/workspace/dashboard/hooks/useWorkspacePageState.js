@@ -95,6 +95,23 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         setActivePageId((currentPageId) => (currentPageId === pageId ? dashboardPage.id : currentPageId));
     }
 
+    function closeAllPagesExceptDashboard() {
+        setOpenPages((currentPages) => {
+            currentPages.forEach((page) => {
+                if (page.id !== dashboardPage.id) {
+                    clearPageDirty(page.id);
+                    if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
+                        window.__clearBackendCache(page.id);
+                    }
+                }
+            });
+            return [dashboardPage];
+        });
+        setPageLevel2ContentTabs({});
+        setActiveLevel2Tabs({});
+        setActivePageId(dashboardPage.id);
+    }
+
     const {
         activeLevel2Tabs,
         setActiveLevel2Tabs,
@@ -339,6 +356,7 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         tabItems,
         decoratedLevel2Tabs,
         requestClosePage,
+        closeAllPagesExceptDashboard,
         handleOpenDefaultContentTab,
         detailTabOpeners,
         createDetailTabOpener,
