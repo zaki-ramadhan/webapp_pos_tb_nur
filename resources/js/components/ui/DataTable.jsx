@@ -80,13 +80,12 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
             <div className="w-full truncate block min-w-0">{children}</div>
             {onResizeStart && (
                 <div
-                    className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/40 active:bg-brand-blue/70 transition-colors z-20"
+                    className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/40 active:bg-brand-blue/70 transition-colors z-20 touch-none"
                     onMouseDown={onResizeStart}
                     onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
                     }}
-                    style={{ touchAction: 'none' }}
                 />
             )}
         </th>
@@ -112,13 +111,12 @@ export function DataTableCell({ className = '', children, onResizeStart = null, 
             <div className="w-full truncate block min-w-0">{children}</div>
             {onResizeStart && (
                 <div
-                    className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/20 active:bg-brand-blue/40 transition-colors z-10"
+                    className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/20 active:bg-brand-blue/40 transition-colors z-10 touch-none"
                     onMouseDown={onResizeStart}
                     onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
                     }}
-                    style={{ touchAction: 'none' }}
                 />
             )}
         </td>

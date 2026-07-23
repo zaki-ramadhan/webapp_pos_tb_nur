@@ -1,5 +1,5 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { parseAmountInput, formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 const DOCUMENT_PREFIXES = {
     'sales-quote': 'SQ',
@@ -179,7 +179,7 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         currency: record.currency?.code ?? '',
         itemSearch: '',
         items: lines,
-        itemCountLabel: lines.length ? `${lines.length} ${config.itemSectionTitle} (${formattedQty})` : config.itemSectionTitle,
+        itemCountLabel: lines.length ? `${formatAmountInput(lines.length)} ${config.itemSectionTitle} (${formattedQty})` : config.itemSectionTitle,
         paymentTerms: record.payment_term?.name ? [record.payment_term.name] : [],
         purchaseOrderNumber: record.reference_number ?? '',
         address:

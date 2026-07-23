@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
@@ -43,6 +43,15 @@ export function useFormDraftState({
         return !areComparableValuesEqual(dbState, values);
     }, [dbState, values, isEqual]);
 
+    const resetForm = useCallback((customState = null) => {
+        const freshState = customState ?? buildFormState(sourceRecord, config);
+        setDbState(freshState);
+        setValues(freshState);
+        if (onSync) {
+            onSync(freshState);
+        }
+    }, [buildFormState, sourceRecord, config, onSync]);
+
     useWorkspaceDirtyRegistration({
         pageId,
         tabId: activeTabId,
@@ -50,7 +59,7 @@ export function useFormDraftState({
         enabled: Boolean(pageId && activeTabId),
     });
 
-    return [values, setValues, isDirty];
+    return [values, setValues, isDirty, resetForm];
 }
 
 

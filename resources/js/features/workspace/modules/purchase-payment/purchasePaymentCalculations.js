@@ -1,4 +1,5 @@
 import { formatCurrencyValue, parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export function formatCurrencyLabel(value) {
     return `Rp ${formatCurrencyValue(value)}`;
@@ -15,7 +16,7 @@ export function applyPurchasePaymentInvoices(values, invoices) {
     return {
         ...values,
         invoices,
-        invoiceTitle: invoices.length ? `Faktur (${invoices.length})` : 'Faktur',
+        invoiceTitle: invoices.length ? `Faktur (${formatAmountInput(invoices.length)})` : 'Faktur',
         paymentAmount: formatCurrencyValue(totalAmount),
         paymentAmountPrefix: totalAmount > 0 ? 'Rp' : '',
         paymentAmountDisplay: formatCurrencyValue(totalAmount),

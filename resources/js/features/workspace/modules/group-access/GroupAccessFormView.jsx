@@ -124,6 +124,8 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                         label: record.name ?? generalValues.groupName,
                         tabLabel: record.name ?? generalValues.groupName,
                     });
+                    setGeneralValues(buildGeneralState(form.general));
+                    setPermissionCategories(buildInitialPermissionCategories(form.permissions, form.permissionPreset));
                 } else if (isDetail && record?.name && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {

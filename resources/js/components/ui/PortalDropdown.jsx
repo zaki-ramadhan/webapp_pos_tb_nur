@@ -142,7 +142,7 @@ export default function PortalDropdown({
 
     return (
         <>
-            {!externalAnchorRef && <div ref={markerRef} style={{ display: 'none' }} />}
+            {!externalAnchorRef && <div ref={markerRef} className="hidden" />}
             {showDropdown && createPortal(
                 <Panel
                     ref={panelRef}

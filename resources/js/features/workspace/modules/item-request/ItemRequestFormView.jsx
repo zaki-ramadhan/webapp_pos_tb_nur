@@ -52,7 +52,7 @@ export default function ItemRequestFormView({
                 : config.draft,
         [activeRecordId, buildRecord, config],
     );
-    const [values, setValues, isDirty] = useFormDraftState({
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
         sourceRecord,
         buildFormState: buildFormValues,
         config,
@@ -180,6 +180,7 @@ export default function ItemRequestFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    resetForm();
                 }
             },
         });

@@ -83,7 +83,7 @@ export default function SalesDepositFormView({
         buildRecord,
         config,
     });
-    const [values, setValues, isDirty] = useFormDraftState({
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
         sourceRecord,
         buildFormState: buildSalesDepositFormState,
         config,
@@ -234,6 +234,7 @@ export default function SalesDepositFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    resetForm();
                 }
             },
         });

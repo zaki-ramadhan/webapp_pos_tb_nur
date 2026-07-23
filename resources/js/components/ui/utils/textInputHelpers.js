@@ -10,8 +10,11 @@ export function unformatAmount(val) {
 }
 
 export function sanitizeInput(val, type, id = '', name = '', placeholder = '', prefix = '', lettersOnly = false, options = {}) {
-    if (typeof val === 'string' && val.startsWith(' ')) {
-        val = val.trimStart();
+    if (typeof val === 'string') {
+        if (val.startsWith(' ')) {
+            val = val.trimStart();
+        }
+        val = val.replace(/[ \t]{2,}/g, ' ');
     }
     const prefixStr = typeof prefix === 'string' ? prefix.toLowerCase() : '';
     const searchStr = `${id} ${name} ${placeholder} ${prefixStr}`.toLowerCase();

@@ -251,11 +251,14 @@ export default function SalesDocumentFormView({
 
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record) : record;
-                    const nextValues = buildSalesDocumentFormState(parsed);
-                    setValues(nextValues);
-                    setLocalRecord(parsed);
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(record.id)] = parsed;
+
+                    if (isDetail) {
+                        const nextValues = buildSalesDocumentFormState(parsed);
+                        setValues(nextValues);
+                        setLocalRecord(parsed);
+                    }
                 }
 
                 if (!isDetail && record?.id && onOpenDetail) {
@@ -264,6 +267,8 @@ export default function SalesDocumentFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    const emptyDraftValues = buildSalesDocumentFormState(config.draft ?? {});
+                    setValues(emptyDraftValues);
                 }
             },
         });

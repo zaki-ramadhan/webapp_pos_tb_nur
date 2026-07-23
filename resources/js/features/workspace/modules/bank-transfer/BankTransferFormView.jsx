@@ -54,7 +54,7 @@ export default function BankTransferFormView({
         buildRecord,
         config,
     });
-    const [values, setValues, isDirty] = useFormDraftState({
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
         sourceRecord,
         buildFormState,
         config,
@@ -165,10 +165,11 @@ export default function BankTransferFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    resetForm();
                 }
             },
         });
-    }, [values, isDetail, handleSave, config, pageId, activeLevel2Tab, onRefresh, onOpenDetail, setLocalRecord]);
+    }, [values, isDetail, handleSave, config, pageId, activeLevel2Tab, onRefresh, onOpenDetail, setLocalRecord, resetForm]);
 
     function onRequestDelete() {
         if (!values.__backendRecordId) {

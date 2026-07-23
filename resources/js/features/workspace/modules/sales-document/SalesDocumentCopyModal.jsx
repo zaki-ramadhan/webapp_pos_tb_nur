@@ -51,6 +51,12 @@ export default function SalesDocumentCopyModal({
             placeholder: 'Cari/Pilih Pesanan Pembelian...',
             tabs: ['Rincian Barang'],
         },
+        'Permintaan': {
+            resource: 'item-requests',
+            title: 'Permintaan Barang',
+            placeholder: 'Cari/Pilih Permintaan Barang...',
+            tabs: ['Rincian Barang'],
+        },
     }), []);
 
     const config = configMap[option] || configMap['Pesanan'];
@@ -334,7 +340,7 @@ export default function SalesDocumentCopyModal({
                     name: line.description ?? line.product?.name ?? '',
                     code: line.reference_code ?? line.product?.code ?? '',
                     quantity: String(qty),
-                    unit: line.unit?.name ?? 'PCS',
+                    unit: typeof line.unit === 'object' ? (line.unit?.name ?? 'PCS') : (line.unit ?? 'PCS'),
                     price: unitPrice.toLocaleString('id-ID'),
                     discount: '0',
                     discountValue: String(disc),
@@ -534,7 +540,7 @@ export default function SalesDocumentCopyModal({
                                                             {item.quantity}
                                                         </DataTableCell>
                                                         <DataTableCell className="text-slate-600 text-center">
-                                                            {item.unit ?? item.unit?.name ?? '-'}
+                                                            {typeof item.unit === 'object' ? (item.unit?.name ?? '-') : (item.unit ?? '-')}
                                                         </DataTableCell>
                                                     </DataTableRow>
                                                 );

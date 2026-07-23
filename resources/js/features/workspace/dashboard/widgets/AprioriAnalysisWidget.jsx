@@ -62,7 +62,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                         <div className="grid gap-2 sm:grid-cols-3">
                             <div className="rounded-md border border-tab-active-border-x bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-badge-group-a)' }}>
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-badge-group-a">
                                         Kat. A
                                     </span>
                                     <span className="text-xs font-semibold text-brand-darker">(Utama)</span>
@@ -71,7 +71,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                             </div>
                             <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-green-410)' }}>
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-green-410">
                                         Kat. B
                                     </span>
                                     <span className="text-xs font-semibold text-brand-darker">(Stabil)</span>
@@ -80,7 +80,7 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                             </div>
                             <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-widget-small">
                                 <div className="flex items-center gap-2 mb-1.5">
-                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0" style={{ backgroundColor: 'var(--color-warning)' }}>
+                                    <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-warning">
                                         Kat. C
                                     </span>
                                     <span className="text-xs font-semibold text-brand-darker">(Tambahan)</span>

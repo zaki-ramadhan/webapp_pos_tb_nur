@@ -1,3 +1,5 @@
+import { formatDisplayValue } from '@/features/workspace/shared/amountFormatting';
+
 export default function formatTableTextValue(value, column = null) {
     const isEmpty = value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
     
@@ -44,25 +46,30 @@ export default function formatTableTextValue(value, column = null) {
                               colId.includes('debit') ||
                               colId.includes('credit') ||
                               colId.includes('mutation') ||
+                              colId.includes('cost') ||
+                              colId.includes('subtotal') ||
+                              colId.includes('count') ||
+                              colId.includes('stock') ||
+                              colId.includes('stok') ||
+                              colId.includes('kuantitas') ||
                               colLabel.includes('harga') ||
                               colLabel.includes('jumlah') ||
                               colLabel.includes('nominal') ||
                               colLabel.includes('persen') ||
                               colLabel.includes('nilai') ||
-                              colLabel.includes('tarif');
+                              colLabel.includes('tarif') ||
+                              colLabel.includes('biaya') ||
+                              colLabel.includes('banyak') ||
+                              colLabel.includes('stok') ||
+                              colLabel.includes('subtotal') ||
+                              colLabel.includes('kuantitas') ||
+                              colLabel.includes('rata');
                               
             if (isNumeric) {
-                let strVal = String(value).trim();
-                if (/^-?\d+(\.\d+)?$/.test(strVal)) {
-                    const num = parseFloat(strVal);
-                    return new Intl.NumberFormat('id-ID', { 
-                        minimumFractionDigits: 0, 
-                        maximumFractionDigits: 2 
-                    }).format(num);
-                }
+                return formatDisplayValue(value);
             }
         }
-        return value;
+        return formatDisplayValue(value);
     }
 
     if (column) {

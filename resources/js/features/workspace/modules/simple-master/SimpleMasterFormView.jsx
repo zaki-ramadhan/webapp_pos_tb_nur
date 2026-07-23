@@ -204,6 +204,7 @@ export default function SimpleMasterFormView({
                     label: row[backendConfig.labelField] ?? row.name ?? row.id,
                     tabLabel: row.tabLabel ?? row[backendConfig.labelField] ?? row.name ?? row.id,
                 });
+                setValues(buildSimpleMasterFormValues(form, null));
             }
         } catch (error) {
             const errorMessage = getBackendErrorMessage(error);

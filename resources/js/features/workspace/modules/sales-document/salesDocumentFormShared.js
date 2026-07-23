@@ -1,6 +1,7 @@
 import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export function formatCurrencyValue(value) {
     const numericValue = Number(value ?? 0);
@@ -54,11 +55,12 @@ export function applyComputedTotals(currentValues, nextItems) {
 
     const totalQty = nextItems.reduce((sum, item) => sum + parseNumericInput(item.quantity), 0);
     const formattedQty = Number(totalQty.toFixed(2)).toLocaleString('id-ID', { maximumFractionDigits: 2 });
+    const formattedCount = formatAmountInput(nextItems.length);
 
     return {
         ...currentValues,
         items: nextItems,
-        itemCountLabel: nextItems.length ? `${nextItems.length} ${currentValues.pageId ? 'Barang' : 'Rincian Barang'} (${formattedQty})` : 'Rincian Barang',
+        itemCountLabel: nextItems.length ? `${formattedCount} ${currentValues.pageId ? 'Barang' : 'Rincian Barang'} (${formattedQty})` : 'Rincian Barang',
         subtotal: formatCurrencyLabel(subtotalAmount),
         discountValue: formatCurrencyValue(discountAmount),
         taxLabel: currentValues.taxEnabled ? currentValues.taxLabel || 'Pajak' : '',

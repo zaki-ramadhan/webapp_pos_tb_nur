@@ -230,6 +230,7 @@ export default function EmployeeFormView({
                         label: record.full_name ?? values.fullName.trim(),
                         tabLabel: record.full_name ?? values.fullName.trim(),
                     });
+                    setValues(buildEmployeeFormValues(form, null));
                 }
             },
         });

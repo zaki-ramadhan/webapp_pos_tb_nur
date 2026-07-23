@@ -1,5 +1,5 @@
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { parseAmountInput, formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export const INVENTORY_ADJUSTMENT_BACKEND_CONFIG = {
     'inventory-adjustment': {
@@ -76,7 +76,7 @@ export function buildInventoryAdjustmentRecord(record, config) {
         itemSearch: '',
         detailMode: config.detailModeOptions?.[0] ?? 'Rincian',
         items,
-        itemCountLabel: items.length ? `${items.length} Barang` : config.itemSectionTitle,
+        itemCountLabel: items.length ? `${formatAmountInput(items.length)} Barang` : config.itemSectionTitle,
         adjustmentAccount: accountLabel ? [accountLabel] : [],
         notes: record.notes ?? '',
         branches: branchLabel ? [branchLabel] : [],

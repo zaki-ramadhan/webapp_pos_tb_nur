@@ -2,6 +2,7 @@ import {
     defaultPurchasePaymentConfig,
     purchasePaymentDetailDockActions,
 } from './purchasePaymentConfigData';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 function mergePurchasePaymentConfig(baseConfig, pageConfig = {}) {
     return {
@@ -64,7 +65,7 @@ export function buildPurchasePaymentRecord(row = {}, config) {
         documentNumber: row.number ?? '',
         currency: row.currency ?? 'IDR',
         invoices,
-        invoiceTitle: invoices.length ? `Faktur (${invoices.length})` : 'Faktur',
+        invoiceTitle: invoices.length ? `Faktur (${formatAmountInput(invoices.length)})` : 'Faktur',
         paymentMethod: row.method ?? 'Tunai',
         dueDatePph: row.checkDate ?? row.date ?? '',
         notes: row.notes ?? '',

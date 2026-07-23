@@ -130,7 +130,7 @@ export default function SupplierPriceFormView({
                     );
                 }
 
-                if (record) {
+                if (isDetail && record) {
                     const parsed = buildRecord(record, config);
                     setValues(parsed);
                     setLocalRecord(record);
@@ -142,6 +142,7 @@ export default function SupplierPriceFormView({
                         label: `SP-${String(record.id).padStart(5, '0')}`,
                         tabLabel: `SP-${String(record.id).padStart(5, '0')}`,
                     });
+                    setValues(buildFormValues(config, null));
                 }
             },
         });

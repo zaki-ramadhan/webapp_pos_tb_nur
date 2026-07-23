@@ -131,6 +131,7 @@ export default function SalesCommissionFormView({
                         label: record.metadata?.name ?? record.document_number ?? values.name.trim(),
                         tabLabel: record.metadata?.name ?? record.document_number ?? values.name.trim(),
                     });
+                    setValues(buildFormValues(config, null));
                 }
             },
         });

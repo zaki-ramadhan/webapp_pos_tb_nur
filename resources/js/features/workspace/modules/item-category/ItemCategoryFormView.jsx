@@ -154,6 +154,7 @@ export default function ItemCategoryFormView({
                         label: record.name ?? values.name.trim(),
                         tabLabel: record.name ?? values.name.trim(),
                     });
+                    setValues(buildFormValues(config, null));
                 }
             },
         });

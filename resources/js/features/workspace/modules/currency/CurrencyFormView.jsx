@@ -147,6 +147,7 @@ export default function CurrencyFormView({
                         label: row.countryName,
                         tabLabel: row.tabLabel,
                     });
+                    setValues(buildCurrencyValuesFromRecord(null, config));
                 }
             },
         });

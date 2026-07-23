@@ -62,7 +62,7 @@ export default function CashPaymentFormView({
         config,
     });
 
-    const [values, setValues, isDirty] = useFormDraftState({
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
         sourceRecord,
         buildFormState,
         config,
@@ -187,6 +187,7 @@ export default function CashPaymentFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    resetForm();
                 }
             },
         });

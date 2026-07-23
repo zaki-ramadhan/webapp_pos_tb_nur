@@ -749,3 +749,18 @@ textarea[aria-invalid="true"]::placeholder {
     color: var(--color-danger) !important;
     opacity: 0.8 !important;
 }
+
+/* Enforce cursor-pointer for all checkboxes and their labels globally */
+input[type="checkbox"]:not(:disabled),
+input[type="checkbox"]:not(:disabled) + label,
+label:has(input[type="checkbox"]:not(:disabled)),
+label[for]:has(~ input[type="checkbox"]:not(:disabled)) {
+    cursor: pointer !important;
+}
+
+input[type="checkbox"]:disabled,
+input[type="checkbox"]:disabled + label,
+label:has(input[type="checkbox"]:disabled) {
+    cursor: not-allowed !important;
+}
+

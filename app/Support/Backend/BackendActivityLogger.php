@@ -67,7 +67,7 @@ class BackendActivityLogger
             'actor_name' => $user?->name,
             'actor_email' => $user?->email,
             'ip_address' => request()->ip(),
-            'occurred_at' => now(),
+            'occurred_at' => Carbon::now('Asia/Jakarta'),
             'before_payload' => $before,
             'after_payload' => $after,
             'metadata' => $metadata,

@@ -53,7 +53,7 @@ export default function PurchasePaymentFormView({
     const isDetail = Boolean(activeRecordId);
     const sectionTabs = isDetail ? config.detailSectionTabs : config.sectionTabs;
     const [activeSectionId, setActiveSectionId] = useState(sectionTabs?.[0]?.id ?? 'details');
-    const [values, setValues, isDirty] = useFormDraftState({
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
         sourceRecord,
         buildFormState,
         config,
@@ -145,6 +145,7 @@ export default function PurchasePaymentFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    resetForm();
                 }
             },
         });

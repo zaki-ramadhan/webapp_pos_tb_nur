@@ -165,6 +165,7 @@ export default function DepartmentFormView({
                         label: record.name ?? values.name.trim(),
                         tabLabel: record.name ?? values.name.trim(),
                     });
+                    setValues(buildDefaultValues(form, null));
                 }
             },
         });

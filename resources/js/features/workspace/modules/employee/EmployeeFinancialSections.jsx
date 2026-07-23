@@ -86,7 +86,7 @@ export function EmployeeBankTab({ form, values, onChange }) {
                     renderOption={(option) => (
                         <div className="min-w-0">
                             <div className="truncate text-xs sm:text-sm font-medium text-text-workspace-dark">{option.name}</div>
-                            <div className="mt-0.5 truncate text-xs text-text-placeholder">Kode Transfer: {option.code}</div>
+                            <div className="mt-0.5 truncate text-[13px] font-normal text-black">{option.code}</div>
                         </div>
                     )}
                 />

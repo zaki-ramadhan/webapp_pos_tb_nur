@@ -199,6 +199,7 @@ export default function GeneralJournalFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    setValues(buildFormState(config.draft, config));
                 }
             },
         });

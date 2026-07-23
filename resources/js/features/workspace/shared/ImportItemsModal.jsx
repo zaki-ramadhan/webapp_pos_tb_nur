@@ -4,6 +4,7 @@ import axios from 'axios';
 import ModalBase from '@/components/ui/ModalBase';
 import { CloseIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 // Modular Imports
 import { DEFAULT_COLUMN_MAPPING, autoDetectMapping } from './importMappingConstants';
@@ -79,8 +80,8 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             const rawPrice = columnMapping.price !== -1 ? String(row[columnMapping.price] ?? '').trim() : '';
             const rawNotes = columnMapping.notes !== -1 ? String(row[columnMapping.notes] ?? '').trim() : '';
 
-            const parsedQty = parseFloat(rawQty.replace(/[^\d.-]/g, '')) || 0;
-            const parsedPrice = parseFloat(rawPrice.replace(/[^\d.-]/g, '')) || 0;
+            const parsedQty = parseAmountInput(rawQty, { allowDecimal: true, emptyValue: 0 }) ?? 0;
+            const parsedPrice = parseAmountInput(rawPrice, { allowDecimal: true, emptyValue: 0 }) ?? 0;
 
             const matched = products.find(
                 p => String(p.code).toLowerCase() === rawCode.toLowerCase()

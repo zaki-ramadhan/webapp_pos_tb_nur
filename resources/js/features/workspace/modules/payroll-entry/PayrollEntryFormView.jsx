@@ -350,16 +350,19 @@ export default function PayrollEntryFormView({
 
                 if (record) {
                     const parsed = buildRecord ? buildRecord(record, config) : record;
-                    const nextValues = {
-                        ...buildDefaultValues(config),
-                        ...parsed,
-                    };
-                    const nextEmployeeRows = parsed.employeeRows ?? [];
-                    setValues(nextValues);
-                    setEmployeeRows(nextEmployeeRows);
-                    setLocalRecord(parsed);
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(record.id)] = parsed;
+
+                    if (isDetail) {
+                        const nextValues = {
+                            ...buildDefaultValues(config),
+                            ...parsed,
+                        };
+                        const nextEmployeeRows = parsed.employeeRows ?? [];
+                        setValues(nextValues);
+                        setEmployeeRows(nextEmployeeRows);
+                        setLocalRecord(parsed);
+                    }
                 }
 
                 if (!isDetail && record?.id && onOpenDetail) {
@@ -368,6 +371,8 @@ export default function PayrollEntryFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    setValues(buildDefaultValues(config));
+                    setEmployeeRows([]);
                 }
             },
         });

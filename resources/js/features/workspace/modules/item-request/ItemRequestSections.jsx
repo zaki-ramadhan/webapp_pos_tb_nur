@@ -37,7 +37,7 @@ export function ItemRequestFormHeader({ config, values, setValues, isDetail, han
 
                 <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                     <TransactionFieldLabel label={config.labels.requestType} required htmlFor="requestType" />
-                    <div className="max-w-[320px] w-full">
+                    <div className="max-w-[180px] w-full">
                         <SelectField
                             id="requestType"
                             value={values.requestType}
@@ -193,25 +193,23 @@ export function ItemRequestAdditionalInfoSection({ config, values, setValues, is
                         />
                     </div>
 
-                    {isDetail ? (
-                        <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
-                            <TransactionFieldLabel label={config.labels.closeRequest} />
-                            <CheckboxField
-                                id="closeRequest"
-                                label="Ya (Tidak dapat diproses lagi)"
-                                checked={values.closeRequest}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        closeRequest: event.target.checked,
-                                    }))
-                                }
-                                align="center"
-                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                containerClassName="w-auto inline-flex"
-                            />
-                        </div>
-                    ) : null}
+                    <div className="grid gap-4 lg:grid-cols-[160px_minmax(0,1fr)] lg:items-center">
+                        <TransactionFieldLabel label={config.labels.closeRequest} />
+                        <CheckboxField
+                            id="closeRequest"
+                            label="Ya (Tidak dapat diproses lagi)"
+                            checked={Boolean(values.closeRequest)}
+                            onChange={(event) =>
+                                setValues((current) => ({
+                                    ...current,
+                                    closeRequest: event.target.checked,
+                                }))
+                            }
+                            align="center"
+                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                            containerClassName="w-auto inline-flex"
+                        />
+                    </div>
                 </div>
             </div>
         </div>

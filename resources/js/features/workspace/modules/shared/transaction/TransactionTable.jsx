@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/DataTable';
 import TextInput from '@/components/ui/TextInput';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
+import { formatDisplayValue } from '@/features/workspace/shared/amountFormatting';
 import { SearchIcon } from '@/features/workspace/shared/Icons';
 import { useColumnVisibility, getTableSchemaKey, tableRegistry, cleanHeaderLabel, getColumnMinWidth } from '@/features/workspace/shared/columnVisibility';
 import { useColumnResize } from '@/features/workspace/shared/useColumnResize';
@@ -240,7 +241,7 @@ export function TransactionLineItemsSection({
                         </button>
                     ) : null}
                     <div className={`${TRANSACTION_LINE_TITLE_CLASS_NAME} inline-flex items-center gap-1`}>
-                        {title}
+                        {formatDisplayValue(title)}
                         {titleRequired ? <span className="text-tab-active-border-t"> *</span> : null}
                     </div>
                 </div>

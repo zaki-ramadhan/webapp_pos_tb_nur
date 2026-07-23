@@ -133,6 +133,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                         <DropdownMenuItem onClick={() => handleTakeClick('Pesanan')}>Pesanan</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleTakeClick('Pengiriman')}>Pengiriman</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleTakeClick('Pembelian')}>Pembelian</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleTakeClick('Permintaan')}>Permintaan</DropdownMenuItem>
                     </DropdownMenu>
                 </>
             ) : null}

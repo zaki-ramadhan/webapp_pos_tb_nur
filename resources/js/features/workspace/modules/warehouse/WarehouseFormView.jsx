@@ -155,6 +155,7 @@ export default function WarehouseFormView({
                         label: record.name ?? values.name.trim(),
                         tabLabel: record.name ?? values.name.trim(),
                     });
+                    setValues(buildWarehouseFormValues(form, null));
                 }
             },
         });

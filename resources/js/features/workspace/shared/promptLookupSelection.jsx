@@ -118,7 +118,7 @@ function LookupSelectionModalContainer({ resource, title, labelBuilder, resolve,
                         </button>
                     ))
                 ) : (
-                    <div className="p-4 text-center text-slate-400 text-xs">
+                    <div className="p-4 text-center text-slate-400 text-xs italic">
                         Tidak ada data yang cocok.
                     </div>
                 )}

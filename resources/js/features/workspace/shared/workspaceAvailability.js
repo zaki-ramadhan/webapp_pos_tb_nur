@@ -72,7 +72,7 @@ const featureDefaults = {
     'sales-quote-order': false,
     'sales-return': true,
     'price-adjustment': true,
-    'salesman': false,
+    'salesman': true,
     'sales-target': true,
     'delivery-service': false,
     'payment-terms': false,

@@ -222,6 +222,7 @@ export default function ItemsServicesFormView({
                         label: record.name ?? values.name.trim(),
                         tabLabel: record.name ?? values.name.trim(),
                     });
+                    setValues(buildFormValues(config, null));
                 }
             },
         });

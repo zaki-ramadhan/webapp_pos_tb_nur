@@ -59,7 +59,7 @@ export default function CashReceiptFormView({
         config,
     });
 
-    const [values, setValues, isDirty] = useFormDraftState({
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
         sourceRecord,
         buildFormState: buildCashReceiptFormState,
         config,
@@ -166,6 +166,7 @@ export default function CashReceiptFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    resetForm();
                 }
             },
         });

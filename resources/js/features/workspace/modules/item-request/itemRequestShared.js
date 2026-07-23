@@ -1,4 +1,5 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
@@ -40,9 +41,7 @@ function formatCurrencyValue(value) {
 }
 
 function parseNumericInput(value) {
-    const normalizedValue = Number.parseFloat(String(value ?? '0').replace(/[^\d.-]/g, ''));
-
-    return Number.isFinite(normalizedValue) ? normalizedValue : 0;
+    return parseAmountInput(value, { allowDecimal: true, allowNegative: true, emptyValue: 0 }) ?? 0;
 }
 
 export function buildLookupLabel(record, codeKey = 'code') {
@@ -63,7 +62,7 @@ function buildItemCountLabel(items = []) {
 
     const totalQuantity = items.reduce((sum, item) => sum + parseNumericInput(item.quantity), 0);
 
-    return `${items.length} Barang (${totalQuantity})`;
+    return `${formatAmountInput(items.length)} Barang (${formatAmountInput(totalQuantity)})`;
 }
 
 function buildFilterOptions(labelPrefix, rows, rowKey, labelKey = rowKey) {
@@ -99,6 +98,7 @@ export function buildItemRequestFilters(baseFilters = [], rows = []) {
 export function buildItemRequestRow(record) {
     const totalAmount = (record.lines ?? []).reduce((sum, line) => sum + Number(line.attributes?.estimated_total ?? 0), 0);
     const documentDate = formatIsoDate(record?.document_date);
+    const statusText = record?.is_closed ? 'Ditutup' : (record?.status ?? 'Menunggu diproses');
 
     return {
         id: String(record?.id ?? ''),
@@ -107,11 +107,11 @@ export function buildItemRequestRow(record) {
         date: documentDate,
         requestType: record?.request_type ?? '',
         notes: record?.notes ?? '',
-        status: record?.status ?? 'Draft',
+        status: statusText,
         total: (record.lines ?? []).reduce((sum, line) => sum + Number(line.quantity ?? 0), 0),
         estimatedTotal: formatCurrencyValue(totalAmount),
         dateFilter: documentDate,
-        statusFilter: record?.status ?? 'Draft',
+        statusFilter: statusText,
         printedFilter: record?.metadata?.printed ? 'printed' : 'not-printed',
         typeFilter: record?.request_type ?? '',
     };
@@ -176,7 +176,7 @@ export function buildItemRequestPayload(values) {
         document_number: values.documentNumber?.trim() || buildGeneratedItemRequestNumber(),
         request_type: values.requestType?.trim() || null,
         numbering_type: values.numberingType?.trim() || null,
-        status: values.closeRequest ? 'Selesai' : 'Menunggu diproses',
+        status: values.closeRequest ? 'Ditutup' : 'Menunggu diproses',
         document_date: normalizeDisplayDate(values.requestDate) || new Date().toISOString().slice(0, 10),
         notes: values.notes?.trim() || null,
         is_closed: Boolean(values.closeRequest),

@@ -48,7 +48,7 @@ export default function useSalesReceiptForm({
         config,
     });
 
-    const [values, setValues, isDirty] = useFormDraftState({
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
         sourceRecord,
         buildFormState: buildSalesReceiptFormState,
         config,
@@ -216,6 +216,7 @@ export default function useSalesReceiptForm({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
+                    resetForm();
                 }
             },
         });

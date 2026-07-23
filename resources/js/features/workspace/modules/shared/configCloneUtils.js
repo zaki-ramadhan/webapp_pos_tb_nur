@@ -1,11 +1,11 @@
+import { formatAmountInput, parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+
 export function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
 }
 
 export function toNumericValue(value) {
-    const normalizedValue = Number.parseFloat(String(value ?? '0').replace(/[^\d.-]/g, ''));
-
-    return Number.isFinite(normalizedValue) ? normalizedValue : 0;
+    return parseAmountInput(value, { allowDecimal: true, allowNegative: true, emptyValue: 0 }) ?? 0;
 }
 
 export function buildItemCountLabel(items = [], emptyTitle = 'Rincian Barang') {
@@ -15,5 +15,5 @@ export function buildItemCountLabel(items = [], emptyTitle = 'Rincian Barang') {
 
     const totalQuantity = items.reduce((sum, item) => sum + toNumericValue(item.quantity), 0);
 
-    return `${items.length} Barang (${totalQuantity})`;
+    return `${formatAmountInput(items.length)} Barang (${formatAmountInput(totalQuantity)})`;
 }

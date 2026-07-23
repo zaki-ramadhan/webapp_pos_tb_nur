@@ -111,7 +111,7 @@ class DashboardActivityQueryService
         $userActivities = [];
 
         foreach ($logs as $log) {
-            $occurredAt = $log->occurred_at ? new Carbon($log->occurred_at) : null;
+            $occurredAt = $log->occurred_at ? Carbon::parse($log->occurred_at)->setTimezone('Asia/Jakarta') : null;
             $dayName = 'Senin';
             $dayNum = '01';
             $monthName = 'Jun';

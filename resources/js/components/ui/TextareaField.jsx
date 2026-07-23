@@ -41,6 +41,12 @@ export default function TextareaField({
 
     function handleChange(event) {
         let sanitized = event.target.value;
+        if (typeof sanitized === 'string') {
+            if (sanitized.startsWith(' ')) {
+                sanitized = sanitized.trimStart();
+            }
+            sanitized = sanitized.replace(/[ \t]{2,}/g, ' ');
+        }
         const maxLen = props.maxLength ?? 1000;
         if (sanitized.length > maxLen) {
             sanitized = sanitized.slice(0, maxLen);
@@ -113,6 +119,24 @@ export default function TextareaField({
                     }}
                     onBlur={(e) => {
                         isFocusedRef.current = false;
+                        let val = e.target.value;
+                        if (typeof val === 'string') {
+                            const trimmed = val.trim();
+                            if (trimmed !== val) {
+                                setLocalValue(trimmed);
+                                if (onChange) {
+                                    onChange({
+                                        target: { id: id || '', name: props.name || '', value: trimmed },
+                                        currentTarget: { id: id || '', name: props.name || '', value: trimmed },
+                                        preventDefault: () => { e.preventDefault?.(); },
+                                        stopPropagation: () => { e.stopPropagation?.(); },
+                                        isDefaultPrevented: () => e.isDefaultPrevented?.() ?? false,
+                                        isPropagationStopped: () => e.isPropagationStopped?.() ?? false,
+                                        persist: () => {},
+                                    });
+                                }
+                            }
+                        }
                         props.onBlur?.(e);
                     }}
                     maxLength={props.maxLength ?? 1000}

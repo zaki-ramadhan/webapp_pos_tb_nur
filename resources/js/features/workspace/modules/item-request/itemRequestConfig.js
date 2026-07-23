@@ -167,7 +167,7 @@ function buildRecord(record = {}, draft = defaultItemRequestDraft, fallbackRow =
         branches: cloneList(record.branches ?? draft.branches),
         itemSearch: record.itemSearch ?? draft.itemSearch ?? '',
         items,
-        itemCountLabel: record.itemCountLabel ?? buildItemCountLabel(items),
+        itemCountLabel: buildItemCountLabel(items),
         itemModal: {
             ...(draft.itemModal ?? {}),
             ...(record.itemModal ?? {}),

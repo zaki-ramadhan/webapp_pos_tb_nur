@@ -1,4 +1,4 @@
-import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+import { parseAmountInput, formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { buildAccountLookupLabel } from '@/features/workspace/shared/AccountLookupControls';
 import { areComparableValuesEqual, validateRequiredChecks } from '@/features/workspace/shared/formValidation';
@@ -42,7 +42,7 @@ export function buildTotals(values, items) {
     return {
         ...values,
         items,
-        itemCountLabel: items.length ? `${items.length} Barang` : 'Rincian Barang',
+        itemCountLabel: items.length ? `${formatAmountInput(items.length)} Barang` : 'Rincian Barang',
         totalValue: `Rp ${formatCurrencyValue(totalAmount)}`,
     };
 }

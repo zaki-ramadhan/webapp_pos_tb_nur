@@ -1,3 +1,5 @@
+import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
+
 /**
  * Gabungkan item impor ke array item yang ada.
  */
@@ -11,8 +13,8 @@ export function mergeImportedItems(existingItems, importedItems) {
 
         if (existingIndex !== -1) {
             const existing = merged[existingIndex];
-            const prevQty = parseFloat(String(existing.quantity).replace(/[^\d.-]/g, '')) || 0;
-            const addQty = parseFloat(String(incoming.quantity).replace(/[^\d.-]/g, '')) || 0;
+            const prevQty = parseAmountInput(existing.quantity, { allowDecimal: true, emptyValue: 0 }) ?? 0;
+            const addQty = parseAmountInput(incoming.quantity, { allowDecimal: true, emptyValue: 0 }) ?? 0;
             merged[existingIndex] = {
                 ...existing,
                 quantity: String(prevQty + addQty),

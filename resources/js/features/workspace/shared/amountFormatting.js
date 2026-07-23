@@ -101,3 +101,88 @@ export function parseAmountInput(value, { allowDecimal = true, allowNegative = f
 
     return Number.isFinite(parsedValue) ? parsedValue : emptyValue;
 }
+
+export function formatDisplayValue(val) {
+    if (val === null || val === undefined || val === '') return val;
+    if (typeof val === 'number') {
+        return formatAmountInput(val, { allowDecimal: true, allowNegative: true });
+    }
+    if (typeof val === 'string') {
+        const trimmed = val.trim();
+
+        // Dates (e.g. 23/07/2026 or 2026-07-23)
+        if (/^\d{1,4}[/-]\d{1,2}[/-]\d{1,4}$/.test(trimmed)) return val;
+
+        // Document codes / references (e.g. IR.2026.07.23.001, SP-00001, BSH-404)
+        if (/^[A-Za-z0-9_-]+\.[\d\.]+$|^[A-Za-z0-9_-]+-\d+$/i.test(trimmed) && /[A-Za-z_-]/.test(trimmed)) return val;
+
+        // Currency values (e.g. Rp 1000 or -Rp 1000)
+        if (/^-?Rp\s*\d[\d\.,]*$/i.test(trimmed)) {
+            const isNegative = trimmed.startsWith('-');
+            const rawNum = trimmed.replace(/^-?Rp\s*/i, '');
+            const parsed = parseAmountInput(rawNum, { allowDecimal: true, emptyValue: null });
+            if (parsed !== null) {
+                return `${isNegative ? '-Rp ' : 'Rp '}${formatAmountInput(parsed, { allowDecimal: true })}`;
+            }
+        }
+
+        // Parenthesized count / quantity (e.g. "1 Barang (11111)")
+        if (/\([0-9]+\)/.test(trimmed)) {
+            return trimmed.replace(/\((\d+)\)/g, (match, p1) => {
+                const parsed = parseAmountInput(p1, { allowDecimal: true, emptyValue: null });
+                return parsed !== null ? `(${formatAmountInput(parsed)})` : match;
+            });
+        }
+
+        // Pure numeric strings (e.g. 1000 or 1000.5)
+        if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+            const parsed = parseAmountInput(trimmed, { allowDecimal: true, emptyValue: null });
+            if (parsed !== null) {
+                return formatAmountInput(parsed, { allowDecimal: true, allowNegative: true });
+            }
+        }
+    }
+    return val;
+}
+
+export function formatCurrencyValue(value) {
+    const numericValue = parseAmountInput(value, { emptyValue: 0 }) ?? 0;
+    return formatAmountInput(numericValue, { allowDecimal: true });
+}
+
+export function parseNumericInput(value) {
+    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
+}
+
+export function buildLookupLabel(record, codeKey = 'code') {
+    const code = String(record?.[codeKey] ?? record?.accountCode ?? '').trim();
+    const name = String(record?.name ?? record?.accountName ?? record?.title ?? '').trim();
+
+    if (code && name) {
+        return `[${code}] ${name}`;
+    }
+
+    return name || code;
+}
+
+export function buildFilterOptions(labelPrefix, rows, rowKey, labelKey = rowKey) {
+    const values = [...new Set(rows.map((row) => row[rowKey]).filter(Boolean))];
+
+    return [
+        { value: 'all', label: `${labelPrefix}: Semua` },
+        ...values.map((value) => ({
+            value,
+            label: `${labelPrefix}: ${rows.find((row) => row[rowKey] === value)?.[labelKey] ?? value}`,
+        })),
+    ];
+}
+
+export function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return '';
+    const numBytes = Number(bytes);
+    if (numBytes < 1024) return `${numBytes} B`;
+    if (numBytes < 1024 * 1024) return `${(numBytes / 1024).toFixed(1)} KB`;
+    return `${(numBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+

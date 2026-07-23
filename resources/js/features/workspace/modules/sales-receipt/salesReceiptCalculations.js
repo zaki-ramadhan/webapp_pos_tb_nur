@@ -1,5 +1,6 @@
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import { buildCurrencyValue } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
 
 export function formatCurrencyValue(value) {
     const numericValue = Number(value ?? 0);
@@ -54,5 +55,5 @@ export function buildInvoiceSectionTitle(label, count = 0) {
         return label;
     }
 
-    return `${label} (${count})`;
+    return `${label} (${formatAmountInput(count)})`;
 }

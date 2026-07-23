@@ -301,7 +301,21 @@ export default function useTextInputState({
                           searchStr.includes('tebal') ||
                           searchStr.includes('thickness');
 
-        let finalValue = val;
+        let finalValue = typeof val === 'string' ? val.trim() : val;
+        if (typeof val === 'string' && finalValue !== val && !isCurrency && !isNumeric) {
+            setLocalValue(finalValue);
+            if (onChange) {
+                onChange({
+                    target: { id: id || '', name: props.name || '', value: finalValue },
+                    currentTarget: { id: id || '', name: props.name || '', value: finalValue },
+                    preventDefault: () => { event.preventDefault?.(); },
+                    stopPropagation: () => { event.stopPropagation?.(); },
+                    isDefaultPrevented: () => event.isDefaultPrevented?.() ?? false,
+                    isPropagationStopped: () => event.isPropagationStopped?.() ?? false,
+                    persist: () => {},
+                });
+            }
+        }
         if (isNumeric) {
             const numVal = parseFloat(val);
             if (val === '0' || numVal === 0) {
