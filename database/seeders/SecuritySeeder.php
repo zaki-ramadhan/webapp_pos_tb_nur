@@ -104,8 +104,8 @@ class SecuritySeeder extends Seeder
         // Seed access groups & permissions
         $adminGroupId = DB::table('access_groups')->insertGetId([
             'code' => 'ADMIN',
-            'name' => 'Administrator',
-            'description' => 'Akses penuh ke semua modul sistem',
+            'name' => 'Admin Karyawan',
+            'description' => 'Akses penuh operasional untuk staf administrasi',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),
@@ -146,8 +146,8 @@ class SecuritySeeder extends Seeder
 
         $cashierGroupId = DB::table('access_groups')->insertGetId([
             'code' => 'KASIR',
-            'name' => 'Kasir Utama',
-            'description' => 'Akses untuk modul POS, kasir, dan daftar barang',
+            'name' => 'Kasir',
+            'description' => 'Akses khusus transaksi kasir, penjualan, dan katalog barang',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),

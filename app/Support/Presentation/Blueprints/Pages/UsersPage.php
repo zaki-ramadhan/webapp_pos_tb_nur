@@ -19,7 +19,7 @@ class UsersPage
                     ],
                     'form' => [
                         'sectionLabel' => 'Pengguna',
-                        'title' => 'Tambahkan pengguna untuk mengakses database ini dengan memasukkan no handphone/emailnya',
+                        'title' => 'Tambahkan pengguna untuk mengakses aplikasi toko ini dengan memasukkan no handphone/emailnya',
                         'saveLabel' => 'Simpan',
                         'actions' => [
                             [
@@ -35,13 +35,13 @@ class UsersPage
                         'accessOptions' => [
                             [
                                 'value' => 'operator',
-                                'label' => 'Operator',
-                                'note' => 'Pengguna tipe Operator dapat melihat dan membuka database. Hak menunya ditentukan melalui Akses grup.',
+                                'label' => 'Staf / Karyawan',
+                                'note' => 'Akses menu dan fitur ditentukan melalui Akses Grup.',
                             ],
                             [
                                 'value' => 'administrator',
-                                'label' => 'Administrator',
-                                'note' => 'Administrator dapat mengelola pengaturan dan akses pengguna lain pada database ini.',
+                                'label' => 'Owner / Admin',
+                                'note' => 'Akses penuh ke seluruh data, laporan, dan pengaturan toko.',
                             ],
                         ],
                         'groupLabel' => 'Akses Grup',
