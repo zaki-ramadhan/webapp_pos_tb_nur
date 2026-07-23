@@ -49,6 +49,15 @@ class BackendResourceController extends Controller
         return response()->json($records);
     }
 
+    public function liveUpdates(Request $request): JsonResponse
+    {
+        $lastChange = \Illuminate\Support\Facades\Cache::get('last_resource_change');
+
+        return response()->json([
+            'change' => $lastChange,
+        ]);
+    }
+
     public function store(BackendResourceStoreRequest $request, string $resource): JsonResponse
     {
         $blueprint = $request->blueprint();
@@ -88,7 +97,7 @@ class BackendResourceController extends Controller
 
         $entity = $this->findRecord($blueprint, $record);
         if (! $this->access->canAccessRecord($request->user(), $entity)) {
-            throw new AuthorizationException('You are not allowed to access this record.');
+            throw new AuthorizationException('Anda tidak memiliki hak akses untuk melihat data ini.');
         }
 
         $customRecord = $blueprint->runShow($record);
@@ -117,7 +126,7 @@ class BackendResourceController extends Controller
 
         $entity = $this->findRecord($blueprint, $record);
         if (! $this->access->canAccessRecord($request->user(), $entity)) {
-            throw new AuthorizationException('You are not allowed to access this record.');
+            throw new AuthorizationException('Anda tidak memiliki hak akses untuk melihat data ini.');
         }
 
         $payload = $this->payloadSanitizer->sanitize($request->validated());
@@ -142,7 +151,7 @@ class BackendResourceController extends Controller
 
         $entity = $this->findRecord($blueprint, $record);
         if (! $this->access->canAccessRecord($request->user(), $entity)) {
-            throw new AuthorizationException('You are not allowed to access this record.');
+            throw new AuthorizationException('Anda tidak memiliki hak akses untuk melihat data ini.');
         }
 
         $this->writer->delete($blueprint, $entity);

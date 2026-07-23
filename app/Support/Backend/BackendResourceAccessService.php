@@ -22,7 +22,7 @@ class BackendResourceAccessService
     public function authorize(User $user, BackendResourceBlueprint $blueprint, string $ability): void
     {
         if (! $this->can($user, $blueprint, $ability)) {
-            throw new AuthorizationException('You are not allowed to perform this action.');
+            throw new AuthorizationException('Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.');
         }
     }
 
@@ -86,17 +86,60 @@ class BackendResourceAccessService
     }
 
     /**
+     * Mapping alias antara ID baris matriks UI dan permissionKey resource backend.
+     * @var array<string, list<string>>
+     */
+    protected array $permissionAliases = [
+        'departments' => ['departments', 'department'],
+        'employees' => ['employees'],
+        'salary-allowances' => ['salary-allowances', 'salary-allowance'],
+        'activity-log' => ['activity-log'],
+        'preferences' => ['preferences'],
+        'accounts' => ['accounts', 'account-list'],
+        'customers' => ['customers'],
+        'sales-commissions' => ['sales-commissions', 'sales-commission'],
+        'sales-checkins' => ['sales-checkins', 'sales-checkin'],
+        'supplier-prices' => ['supplier-prices'],
+        'suppliers' => ['suppliers'],
+        'item-requests' => ['item-requests', 'item-request'],
+        'products' => ['products', 'items-services'],
+        'warehouses' => ['warehouses', 'warehouse-master'],
+        'units' => ['units', 'item-unit'],
+        'brands' => ['brands', 'item-brand'],
+        'product-categories' => ['product-categories', 'item-category'],
+        'item-location' => ['item-location'],
+        'minimum-stock' => ['minimum-stock'],
+        'sales-invoices' => ['sales-invoices', 'sales-invoice'],
+        'sales-receipts' => ['sales-receipts', 'sales-receipt'],
+        'sales-returns' => ['sales-returns', 'sales-return'],
+        'purchase-invoices' => ['purchase-invoices', 'purchase-invoice'],
+        'purchase-payments' => ['purchase-payments', 'purchase-payment'],
+        'purchase-returns' => ['purchase-returns', 'purchase-return'],
+        'stock-opname-orders' => ['stock-opname-orders', 'inventory-adjustment', 'stock-opname'],
+        'stock-opname-results' => ['stock-opname-results', 'inventory-adjustment', 'stock-opname'],
+        'stock-transfers' => ['stock-transfers', 'stock-transfer'],
+        'roles' => ['roles'],
+        'access-groups' => ['access-groups', 'group-access'],
+        'users' => ['users'],
+    ];
+
+    /**
      * @return Collection<int, AccessGroupPermission>
      */
     protected function permissionsFor(User $user, string $permissionKey): Collection
     {
         $user->loadMissing('accessGroups.permissions');
 
+        $allowedKeys = array_merge(
+            $this->permissionAliases[$permissionKey] ?? [$permissionKey],
+            ['*']
+        );
+
         return $user->accessGroups
             ->filter(fn ($group) => (bool) $group->is_active && $this->isGroupWithinTimeLimits($group))
             ->flatMap(fn ($group) => $group->permissions)
-            ->filter(function (AccessGroupPermission $permission) use ($permissionKey): bool {
-                return in_array($permission->menu_key, [$permissionKey, '*'], true);
+            ->filter(function (AccessGroupPermission $permission) use ($allowedKeys): bool {
+                return in_array($permission->menu_key, $allowedKeys, true);
             })
             ->values();
     }

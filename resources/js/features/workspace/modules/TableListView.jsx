@@ -305,6 +305,8 @@ export default function TableListView({
                                 <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-black">
                                     {table.loading 
                                         ? 'Memuat data...' 
+                                        : table.error
+                                        ? table.error
                                         : (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data'))
                                     }
                                 </DataTableCell>

@@ -65,6 +65,9 @@ export function extractBackendTotal(payload) {
 }
 
 export function getBackendErrorMessage(error, fallbackMessage = 'Permintaan backend gagal diproses.') {
+    if (error?.response?.status === 403 || error?.response?.data?.message === 'This action is unauthorized.') {
+        return 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.';
+    }
     if (error?.response?.status === 404) {
         return 'Data tidak ditemukan atau sudah dihapus';
     }
