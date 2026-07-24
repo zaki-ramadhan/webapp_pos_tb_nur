@@ -36,34 +36,7 @@ import {
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
 import CheckboxField from '@/components/ui/CheckboxField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-
-function getComparableTransactionFields(state) {
-    if (!state) return null;
-    return {
-        __customerId: state.__customerId,
-        __salesOrderId: state.__salesOrderId,
-        customer: state.customer,
-        entryDate: state.entryDate,
-        autoNumber: state.autoNumber,
-        numberingType: state.numberingType,
-        documentNumber: state.documentNumber,
-        currency: state.currency,
-        depositAmount: state.depositAmount,
-        purchaseOrderNumber: state.purchaseOrderNumber,
-        __taxId: state.__taxId,
-        taxName: state.taxName,
-        taxEnabled: state.taxEnabled,
-        taxIncluded: state.taxIncluded,
-        taxInvoiceDate: state.taxInvoiceDate,
-        taxTransactionType: state.taxTransactionType,
-        taxInvoiceNumber: state.taxInvoiceNumber,
-        taxRate: state.taxRate,
-        paymentTermName: state.paymentTermName,
-        __paymentTermId: state.__paymentTermId,
-        address: state.address,
-        notes: state.notes,
-    };
-}
+import { getComparableTransactionFields, calculateDepositTaxes } from './salesDepositFormUtils';
 
 export default function SalesDepositFormView({
     pageId,
@@ -118,41 +91,21 @@ export default function SalesDepositFormView({
 
     useEffect(() => {
         const baseAmount = parseNumericInput(committedDepositAmount);
-        const taxRate = (values.taxEnabled && values.__taxId) ? (values.taxRate ?? 0) / 100 : 0;
-        
-        let taxTotal = 0;
-        let subtotalAmount = baseAmount;
-        let totalAmount = baseAmount;
-
-        if (taxRate > 0) {
-            if (values.taxIncluded) {
-                taxTotal = Math.round(baseAmount - (baseAmount / (1 + taxRate)));
-                subtotalAmount = baseAmount - taxTotal;
-                totalAmount = baseAmount;
-            } else {
-                taxTotal = Math.round(baseAmount * taxRate);
-                subtotalAmount = baseAmount;
-                totalAmount = baseAmount + taxTotal;
-            }
-        }
+        const totals = calculateDepositTaxes(baseAmount, values.taxEnabled, values.__taxId, values.taxRate, values.taxIncluded);
 
         setValues((current) => {
-            const nextSubtotal = `Rp ${subtotalAmount.toLocaleString('id-ID')}`;
-            const nextTaxTotal = `Rp ${taxTotal.toLocaleString('id-ID')}`;
-            const nextTotal = `Rp ${totalAmount.toLocaleString('id-ID')}`;
-            
             if (
-                current.subtotal === nextSubtotal && 
-                current.taxTotalFormatted === nextTaxTotal &&
-                current.total === nextTotal
+                current.subtotal === totals.subtotal && 
+                current.taxTotalFormatted === totals.taxTotalFormatted &&
+                current.total === totals.total
             ) {
                 return current;
             }
             return {
                 ...current,
-                subtotal: nextSubtotal,
-                taxTotalFormatted: nextTaxTotal,
-                total: nextTotal,
+                subtotal: totals.subtotal,
+                taxTotalFormatted: totals.taxTotalFormatted,
+                total: totals.total,
             };
         });
     }, [committedDepositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);

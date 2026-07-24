@@ -52,19 +52,7 @@ export const PAGE_LEVEL2_ACTION_KEYS = [
 ];
 
 export function buildDefaultLevel2ContentTabs(page) {
-    if (!page?.subtab) {
-        return [];
-    }
-
-    return [
-        {
-            id: page.subtab.id,
-            kind: 'content',
-            label: page.subtab.label,
-            closable: true,
-            tabType: 'create',
-        },
-    ];
+    return [];
 }
 
 export function getDefaultLevel2TabId(page) {
