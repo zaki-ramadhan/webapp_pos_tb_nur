@@ -90,23 +90,21 @@ export default function useTextInputState({
     const isEmpty = value === '' || value === null || value === undefined;
 
     useEffect(() => {
-        if (value !== undefined) {
-            if (!isFocusedRef.current || isEmpty) {
-                const currentVal = isCurrency ? unformatAmount(localValue) : localValue;
-                const incomingVal = isCurrency ? unformatAmount(value) : value;
+        if (value !== undefined && !isFocusedRef.current) {
+            const currentVal = isCurrency ? unformatAmount(localValue) : localValue;
+            const incomingVal = isCurrency ? unformatAmount(value) : value;
 
-                if (String(currentVal) === String(incomingVal)) {
-                    return;
-                }
-
-                let nextVal = value ?? '';
-                if (isCurrency && nextVal !== '') {
-                    nextVal = formatAmountInput(nextVal, { allowDecimal, allowNegative });
-                }
-                setLocalValue(nextVal);
+            if (String(currentVal ?? '') === String(incomingVal ?? '')) {
+                return;
             }
+
+            let nextVal = value ?? '';
+            if (isCurrency && nextVal !== '') {
+                nextVal = formatAmountInput(nextVal, { allowDecimal, allowNegative });
+            }
+            setLocalValue(nextVal);
         }
-    }, [value, isCurrency, localValue, isEmpty, allowDecimal, allowNegative]);
+    }, [value, isCurrency, localValue, allowDecimal, allowNegative]);
 
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
@@ -130,7 +128,7 @@ export default function useTextInputState({
         }
         const name = props.name ?? '';
         const prefixVal = typeof prefix === 'string' ? prefix : '';
-        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly, { isCurrency, allowDecimal, allowNegative });
+        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly, { isCurrency, isPhone, isPostal, allowDecimal, allowNegative });
 
         setLocalValue(sanitizedValue);
         clearError(contextKey);
@@ -183,7 +181,7 @@ export default function useTextInputState({
     function handleWrappedKeyDown(event) {
         const isStrictNumeric = type === 'number' || isCurrency;
 
-        if (isStrictNumeric) {
+        if (isStrictNumeric || isPostal || isPhone) {
             const allowedKeys = [
                 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'Enter', 'Home', 'End'
             ];
@@ -201,42 +199,54 @@ export default function useTextInputState({
                 return;
             }
 
-            if (event.key === '0') {
-                const val = event.target.value;
-                const start = event.target.selectionStart;
-                const end = event.target.selectionEnd;
+            if (isPostal) {
+                if (!/^[0-9]$/.test(event.key)) {
+                    event.preventDefault();
+                    return;
+                }
+            } else if (isPhone) {
+                if (!/^[0-9+\-\s()]$/.test(event.key)) {
+                    event.preventDefault();
+                    return;
+                }
+            } else if (isStrictNumeric) {
+                if (event.key === '0') {
+                    const val = event.target.value;
+                    const start = event.target.selectionStart;
+                    const end = event.target.selectionEnd;
 
-                if (!(start === 0 && end === val.length)) {
-                    const isNegative = val.startsWith('-');
-                    const startOfInt = isNegative ? 1 : 0;
-                    const unsignedVal = isNegative ? val.slice(1) : val;
-                    const parts = unsignedVal.split(/[,.]/);
-                    const integerPart = parts[0];
+                    if (!(start === 0 && end === val.length)) {
+                        const isNegative = val.startsWith('-');
+                        const startOfInt = isNegative ? 1 : 0;
+                        const unsignedVal = isNegative ? val.slice(1) : val;
+                        const parts = unsignedVal.split(/[,.]/);
+                        const integerPart = parts[0];
 
-                    if (start === startOfInt && integerPart.length > 0) {
-                        event.preventDefault();
-                        return;
-                    }
-
-                    if (integerPart === '0') {
-                        const decimalIndex = val.indexOf(',');
-                        const dotIndex = val.indexOf('.');
-                        const separatorIndex = decimalIndex !== -1 ? decimalIndex : dotIndex;
-
-                        if (separatorIndex === -1 || start <= separatorIndex) {
+                        if (start === startOfInt && integerPart.length > 0) {
                             event.preventDefault();
                             return;
                         }
+
+                        if (integerPart === '0') {
+                            const decimalIndex = val.indexOf(',');
+                            const dotIndex = val.indexOf('.');
+                            const separatorIndex = decimalIndex !== -1 ? decimalIndex : dotIndex;
+
+                            if (separatorIndex === -1 || start <= separatorIndex) {
+                                event.preventDefault();
+                                return;
+                            }
+                        }
                     }
                 }
-            }
 
-            const isDigit = /^[0-9]$/.test(event.key);
-            const isSeparator = event.key === '.' || event.key === ',';
+                const isDigit = /^[0-9]$/.test(event.key);
+                const isSeparator = event.key === '.' || event.key === ',';
 
-            if (!isDigit && !isSeparator) {
-                event.preventDefault();
-                return;
+                if (!isDigit && !isSeparator) {
+                    event.preventDefault();
+                    return;
+                }
             }
         }
 

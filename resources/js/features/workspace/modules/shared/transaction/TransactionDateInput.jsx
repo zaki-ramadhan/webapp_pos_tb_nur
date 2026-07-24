@@ -83,6 +83,8 @@ export default function TransactionDateInput({
     id,
     value,
     onChange,
+    minDate,
+    maxDate,
     className = '',
     inputClassName = 'text-sm text-brand-dark',
     trailingClassName = 'w-[42px] shrink-0 justify-center px-0',
@@ -91,6 +93,9 @@ export default function TransactionDateInput({
     disableAutoInit = false,
     ...props
 }) {
+    const parsedMinDate = minDate instanceof Date ? minDate : (minDate ? parseNormalizedDate(minDate) : null);
+    const parsedMaxDate = maxDate instanceof Date ? maxDate : (maxDate ? parseNormalizedDate(maxDate) : null);
+
     const classes = className.split(' ').filter(Boolean);
     const layoutClasses = [];
     const styleClasses = [];
@@ -147,6 +152,24 @@ export default function TransactionDateInput({
     }, [value]);
 
     useEffect(() => {
+        if (parsedMinDate && nativeValue) {
+            const current = parseNormalizedDate(nativeValue);
+            if (current && current < parsedMinDate) {
+                applyDate(parsedMinDate);
+            }
+        }
+    }, [parsedMinDate]);
+
+    useEffect(() => {
+        if (parsedMaxDate && nativeValue) {
+            const current = parseNormalizedDate(nativeValue);
+            if (current && current > parsedMaxDate) {
+                applyDate(parsedMaxDate);
+            }
+        }
+    }, [parsedMaxDate]);
+
+    useEffect(() => {
         const normalizedValue = normalizeDateValue(value);
 
         if (normalizedValue) {
@@ -159,15 +182,24 @@ export default function TransactionDateInput({
         }
 
         autoInitializedRef.current = true;
-        applyDate(buildTodayDate());
-    }, [disabled, onChange, value, disableAutoInit]);
+        const defaultInitDate = parsedMinDate && buildTodayDate() < parsedMinDate ? parsedMinDate : buildTodayDate();
+        applyDate(defaultInitDate);
+    }, [disabled, onChange, value, disableAutoInit, parsedMinDate]);
 
     function applyDate(nextDate) {
         if (!nextDate) {
             return;
         }
 
-        const nextNativeValue = toNativeDateValue(nextDate);
+        let clampedDate = nextDate;
+        if (parsedMinDate && clampedDate < parsedMinDate) {
+            clampedDate = parsedMinDate;
+        }
+        if (parsedMaxDate && clampedDate > parsedMaxDate) {
+            clampedDate = parsedMaxDate;
+        }
+
+        const nextNativeValue = toNativeDateValue(clampedDate);
         const nextDisplayValue = formatDateValue(nextNativeValue);
 
         setDisplayValue(nextDisplayValue);
@@ -227,6 +259,8 @@ export default function TransactionDateInput({
                 <Calendar
                     locale="id-ID"
                     value={calendarValue}
+                    minDate={parsedMinDate ?? undefined}
+                    maxDate={parsedMaxDate ?? undefined}
                     activeStartDate={activeStartDate}
                     next2Label={null}
                     prev2Label={null}

@@ -66,7 +66,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     useEffect(() => {
         setValues(buildFormState(sourceRecord));
         setStatus({ tone: '', message: '' });
-    }, [sourceRecord]);
+    }, [recordId, fetchedRow?.id]);
 
     const { processing, store, update, remove } = useBackendResource({
         resource: resourceName,

@@ -26,8 +26,12 @@ export default function CityAutocompleteInput({
     const rootRef = useRef(null);
     const isSelectingRef = useRef(false);
 
+    const isFocusedRef = useRef(false);
+
     useEffect(() => {
-        setSearchVal(value || '');
+        if (!isFocusedRef.current) {
+            setSearchVal(value || '');
+        }
     }, [value]);
 
     function focusInputFromWrapper(event) {
@@ -149,9 +153,16 @@ export default function CityAutocompleteInput({
                             const cleanedVal = e.target.value.replace(/[^a-zA-Z\s'.-]/g, '');
                             setSearchVal(cleanedVal);
                             setOpen(true);
+                            onChange?.(cleanedVal);
                         }}
-                        onFocus={() => setOpen(true)}
-                        onBlur={handleBlur}
+                        onFocus={() => {
+                            isFocusedRef.current = true;
+                            setOpen(true);
+                        }}
+                        onBlur={(e) => {
+                            isFocusedRef.current = false;
+                            handleBlur(e);
+                        }}
                         placeholder={disabled ? '' : placeholder}
                         disabled={disabled}
                         autoComplete="off"

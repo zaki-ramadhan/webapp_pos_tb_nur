@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import CheckboxField from '@/components/ui/CheckboxField';
 import {
     DataTable,
@@ -10,6 +11,9 @@ import {
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import TextareaField from '@/components/ui/TextareaField';
+import PortalDropdown from '@/components/ui/PortalDropdown';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
+import TakeItemsModal from '@/features/workspace/shared/TakeItemsModal';
 import {
     TransactionDateInput,
     TransactionFieldLabel,
@@ -84,6 +88,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                                 <TransactionDateInput 
                                     value={values.endDate ?? ''} 
                                     onChange={(nextVal) => setValues(curr => ({ ...curr, endDate: nextVal }))}
+                                    minDate={values.effectiveDate}
                                     disableAutoInit={true}
                                     className="w-[160px] shrink-0" 
                                 />
@@ -125,12 +130,16 @@ export function SupplierPriceHeader({ config, values, setValues }) {
 }
 
 export function SupplierPriceDetailsSection({ config, values, setValues, isDetail }) {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [importModalOpen, setImportModalOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
     return (
         <div className="flex min-h-[560px] flex-col">
             <div className="flex flex-col gap-3 pb-1 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-                    {!isDetail && (
-                        <div className="min-w-0 flex-1 sm:max-w-[320px] md:max-w-[380px]">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1 sm:max-w-[420px] md:max-w-[480px]">
+                        <div className="flex-1 min-w-0">
                             <AccountLookupTextInput
                                 id="supplierPriceItemSearch"
                                 resource="products"
@@ -151,7 +160,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues, isDetai
                                             code: record.code || '',
                                             unit: record.unit?.name || 'PCS',
                                             __unitId: record.unit?.id || null,
-                                            newPrice: 0,
+                                            newPrice: parseFloat(record.default_purchase_price) || 0,
                                         };
 
                                         setValues((current) => ({
@@ -163,7 +172,39 @@ export function SupplierPriceDetailsSection({ config, values, setValues, isDetai
                                 }}
                             />
                         </div>
-                    )}
+
+                        <div className="relative shrink-0" ref={dropdownRef}>
+                            <button
+                                type="button"
+                                onClick={() => setDropdownOpen((prev) => !prev)}
+                                className="inline-flex h-[40px] items-center justify-center gap-1.5 rounded-[4px] border border-brand-blue-border bg-white px-3 text-sm font-medium text-brand-blue-accent hover:bg-brand-blue-lightest transition cursor-pointer shrink-0"
+                                title="Ambil opsi barang"
+                            >
+                                <span>Ambil</span>
+                                <ChevronDownIcon className="h-4 w-4 text-current" />
+                            </button>
+
+                            {dropdownOpen && (
+                                <PortalDropdown
+                                    anchorRef={dropdownRef}
+                                    open={dropdownOpen}
+                                    onClose={() => setDropdownOpen(false)}
+                                    align="start"
+                                    className="min-w-[200px] w-max py-1 bg-white border border-ui-border rounded-md shadow-lg"
+                                >
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            setDropdownOpen(false);
+                                            setImportModalOpen(true);
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-xs sm:text-sm text-brand-dark hover:bg-slate-50 cursor-pointer"
+                                    >
+                                        Daftar Barang & Jasa
+                                    </DropdownMenuItem>
+                                </PortalDropdown>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
@@ -269,6 +310,37 @@ export function SupplierPriceDetailsSection({ config, values, setValues, isDetai
                     </DataTable>
                 </div>
             </div>
+
+            <TakeItemsModal
+                open={importModalOpen}
+                onClose={() => setImportModalOpen(false)}
+                mode="purchase"
+                onApply={(selectedProducts) => {
+                    setValues((current) => {
+                        const existingLines = current.itemLines ?? [];
+                        const merged = [...existingLines];
+
+                        selectedProducts.forEach((item) => {
+                            const exists = merged.some((l) => l.__productId === item.id);
+                            if (!exists) {
+                                merged.push({
+                                    id: `take-${Date.now()}-${item.id}`,
+                                    __productId: item.id,
+                                    name: item.name || '',
+                                    code: item.code || '',
+                                    unit: item.unit?.name || item.unit || 'PCS',
+                                    newPrice: parseFloat(item.default_purchase_price) || 0,
+                                });
+                            }
+                        });
+
+                        return {
+                            ...current,
+                            itemLines: merged,
+                        };
+                    });
+                }}
+            />
         </div>
     );
 }

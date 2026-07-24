@@ -149,6 +149,7 @@ export default function BankReconciliationWorkspace({
                                     setEndDate(val);
                                     onFiltersChange?.((prev) => ({ ...prev, end_date: val }));
                                 }}
+                                minDate={startDate}
                                 className="h-[40px] rounded-[4px] border-ui-border w-full"
                                 inputClassName="text-sm text-brand-dark py-1 h-full"
                                 trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
