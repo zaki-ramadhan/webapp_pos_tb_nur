@@ -168,7 +168,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                         checked={isAllSelected}
                                         onChange={toggleSelectAll}
                                         disabled={loading || filteredEmployees.length === 0}
-                                        className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-brand-blue-accent focus:ring-brand-blue-accent"
+                                        className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                     />
                                 </DataTableHead>
                                 <DataTableHead className="text-left font-normal">
@@ -202,7 +202,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                                     type="checkbox"
                                                     checked={checked}
                                                     onChange={() => toggleSelect(emp.id)}
-                                                    className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-brand-blue-accent focus:ring-brand-blue-accent cursor-pointer"
+                                                    className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                                 />
                                             </DataTableCell>
                                             <DataTableCell className="text-left font-normal">

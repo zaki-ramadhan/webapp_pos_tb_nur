@@ -287,7 +287,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                         ref={(el) => { if (el) el.indeterminate = someSelected; }}
                                         onChange={toggleAll}
                                         aria-label="Pilih semua"
-                                        className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border-medium"
+                                        className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border-medium text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                     />
                                 </DataTableHead>
                             ) : null}
@@ -326,7 +326,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                                 checked={selectedIds.has(row.id)}
                                                 onChange={() => toggleRow(row.id)}
                                                 aria-label={`Pilih baris ${index + 1}`}
-                                                className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border"
+                                                className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                             />
                                         </DataTableCell>
                                     ) : null}
