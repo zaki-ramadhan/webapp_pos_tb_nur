@@ -87,7 +87,6 @@ export const customerBusinessPartnerTemplate = createTemplate({
         columns: [
             { id: 'name', label: 'Nama', widthClassName: 'w-[25%]', align: 'left' },
             { id: 'code', label: 'ID Pelanggan', widthClassName: 'w-[140px]', align: 'left' },
-            { id: 'primaryContact', label: 'Kontak Utama', widthClassName: 'w-[130px]', align: 'left', truncate: true },
             { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
             
           // Kolom-kolom baru (default disembunyikan)
