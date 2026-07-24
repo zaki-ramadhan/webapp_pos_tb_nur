@@ -499,4 +499,20 @@ class WorkspaceBackendResourceApiTest extends TestCase
             'paid_amount' => 0.00,
         ]);
     }
+
+    public function test_invalid_email_returns_indonesian_validation_message(): void
+    {
+        $user = \App\Models\User::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/api/backend/suppliers', [
+            'code' => 'SUP-ERR-01',
+            'name' => 'Supplier Error Email',
+            'email' => 'invalid-email-format',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'email' => 'Format Email tidak valid.',
+            ]);
+    }
 }
