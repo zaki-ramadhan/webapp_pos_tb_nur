@@ -1,4 +1,31 @@
 import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { showWarningToast } from '@/components/feedback/toast';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+
+export function requireSupplierSelection(values, partnerLabel = 'Pemasok') {
+    const hasSupplier = Boolean(values.__supplierId || (values.supplier && values.supplier.length > 0 && values.supplier[0]));
+    if (!hasSupplier) {
+        window.dispatchEvent(new CustomEvent('form-validation-error', {
+            detail: {
+                supplierPriceSupplier: `${partnerLabel} wajib dipilih.`,
+                supplier: `${partnerLabel} wajib dipilih.`,
+                __supplierId: `${partnerLabel} wajib dipilih.`,
+            }
+        }));
+        showWarningToast({
+            title: 'Perhatian',
+            message: `${partnerLabel} harus diisi terlebih dahulu.`,
+        });
+        showSystemErrorModal({
+            title: 'Terjadi Permasalahan pada Pemrosesan',
+            description: 'Silakan perbaiki permasalahan berikut ini:',
+            message: `${partnerLabel} harus diisi.`,
+            confirmLabel: 'OK',
+        });
+        return false;
+    }
+    return true;
+}
 
 export function buildFormValues(config) {
     return {

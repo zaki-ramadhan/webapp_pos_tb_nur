@@ -25,6 +25,7 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { SearchIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import { Trash2 } from 'lucide-react';
+import { requireSupplierSelection } from './supplierPriceShared';
 
 export function SupplierPriceHeader({ config, values, setValues }) {
     return (
@@ -147,6 +148,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues, isDetai
                                 placeholder={config.itemSearchPlaceholder}
                                 searchLabel="Cari barang atau jasa"
                                 onSelectAccount={(record, label) => {
+                                    if (!requireSupplierSelection(values)) return;
                                     if (record) {
                                         const exists = (values.itemLines ?? []).some(
                                             (line) => line.__productId === record.id
@@ -176,7 +178,10 @@ export function SupplierPriceDetailsSection({ config, values, setValues, isDetai
                         <div className="relative shrink-0" ref={dropdownRef}>
                             <button
                                 type="button"
-                                onClick={() => setDropdownOpen((prev) => !prev)}
+                                onClick={() => {
+                                    if (!requireSupplierSelection(values)) return;
+                                    setDropdownOpen((prev) => !prev);
+                                }}
                                 className="inline-flex h-[40px] items-center justify-center gap-1.5 rounded-[4px] border border-brand-blue-border bg-white px-3 text-sm font-medium text-brand-blue-accent hover:bg-brand-blue-lightest transition cursor-pointer shrink-0"
                                 title="Ambil opsi barang"
                             >
@@ -195,6 +200,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues, isDetai
                                     <DropdownMenuItem
                                         onClick={() => {
                                             setDropdownOpen(false);
+                                            if (!requireSupplierSelection(values)) return;
                                             setImportModalOpen(true);
                                         }}
                                         className="w-full text-left px-4 py-2 text-xs sm:text-sm text-brand-dark hover:bg-slate-50 cursor-pointer"

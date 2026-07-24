@@ -12,7 +12,7 @@ import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 import { TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { SupplierPriceDetailsSection, SupplierPriceHeader, SupplierPriceInfoSection } from './SupplierPriceSections';
-import { buildFormValues, buildRecord, buildSupplierPricePayload, validateSupplierPrice } from './supplierPriceShared';
+import { buildFormValues, buildRecord, buildSupplierPricePayload, validateSupplierPrice, requireSupplierSelection } from './supplierPriceShared';
 
 export default function SupplierPriceFormView({ 
     config, 
@@ -94,6 +94,7 @@ export default function SupplierPriceFormView({
     );
 
     async function onSave() {
+        if (!requireSupplierSelection(values)) return;
         await handleSave({
             loadingMessage: isDetail ? 'Sedang memperbarui harga pemasok.' : 'Sedang menyimpan harga pemasok.',
             successMessage: isDetail ? 'Harga pemasok berhasil diperbarui.' : 'Harga pemasok berhasil dibuat.',
