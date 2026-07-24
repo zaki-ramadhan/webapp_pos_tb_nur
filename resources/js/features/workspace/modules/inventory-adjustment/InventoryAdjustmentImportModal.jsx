@@ -22,7 +22,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
 
-    // Reset state saat modal dibuka/ditutup
+  // Reset state saat modal dibuka/ditutup
+
     useEffect(() => {
         if (open) {
             setStep('upload');
@@ -41,7 +42,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         }
     }, [open]);
 
-    // Handle drag events
+  // Handle drag events
+
     const [dragActive, setDragActive] = useState(false);
     const handleDrag = (e) => {
         e.preventDefault();
@@ -81,7 +83,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
             setHeaders(parsedHeaders);
             setRawRows(parsedRows);
 
-            // Auto-mapping berdasarkan fuzzy matching
+          // Auto-mapping berdasarkan fuzzy matching
+
             setMappings(autoDetectMappings(parsedHeaders));
 
             setStep('match');
@@ -112,7 +115,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                 const rawUnit = mappings.unit ? String(row[mappings.unit] || '').trim() : 'PCS';
                 const rawUnitCost = mappings.unitCost ? String(row[mappings.unitCost] || '').trim() : '0';
 
-                // Normalisasi tipe penyesuaian
+              // Normalisasi tipe penyesuaian
+
                 let adjustmentType = 'Penambahan';
                 if (/kurang|out|pengurangan|dec|minus|-/i.test(rawType)) {
                     adjustmentType = 'Pengurangan';
@@ -150,7 +154,8 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
         }
     };
 
-    // Preview first 3 rows
+  // Preview first 3 rows
+
     const previewData = rawRows.slice(0, 3).map((row) => {
         const rawName = mappings.name ? row[mappings.name] : '';
         const rawCode = mappings.code ? row[mappings.code] : '';

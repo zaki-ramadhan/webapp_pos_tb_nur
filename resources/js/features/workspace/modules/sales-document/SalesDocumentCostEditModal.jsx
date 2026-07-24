@@ -248,7 +248,8 @@ function buildInitialForm(item) {
             code: item.code ?? '',
             amount: item.amount ?? '0',
             notes: item.notes ?? '',
-            // Deferral
+          // Deferral
+
             isDeferred: Boolean(item.isDeferred),
             deferredAccount: item.deferredAccount ?? [],
             __deferredAccountId: item.__deferredAccountId ?? null,
@@ -267,7 +268,8 @@ function buildInitialForm(item) {
         code: '',
         amount: '0',
         notes: '',
-        // Deferral
+      // Deferral
+
         isDeferred: false,
         deferredAccount: [],
         __deferredAccountId: null,
@@ -351,7 +353,8 @@ export default function SalesDocumentCostEditModal({
             code: form.code,
             amount: formatCurrencyValue(amountValue),
             notes: form.notes,
-            // Deferral fields
+          // Deferral fields
+
             isDeferred: form.isDeferred,
             deferredAccount: form.deferredAccount,
             __deferredAccountId: form.__deferredAccountId,

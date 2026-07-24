@@ -52,7 +52,8 @@ class BackendResourceSecurityValidator
             return;
         }
 
-        // Cegah non-super-admin atur role super_admin
+      // Cegah non-super-admin atur role super_admin
+
         if ($resource === 'users' && isset($payload['role_ids'])) {
             $superAdminRoleId = Role::where('code', 'super_admin')->value('id');
             if ($superAdminRoleId && in_array($superAdminRoleId, $payload['role_ids'])) {
@@ -60,7 +61,8 @@ class BackendResourceSecurityValidator
             }
         }
 
-        // Cegah non-super-admin beri izin ekstra
+      // Cegah non-super-admin beri izin ekstra
+
         if ($resource === 'access-groups' && isset($payload['permissions'])) {
             foreach ($payload['permissions'] as $perm) {
                 $menuKey = $perm['menu_key'] ?? '';

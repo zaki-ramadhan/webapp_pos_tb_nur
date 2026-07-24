@@ -42,7 +42,8 @@ export default function SalesDocumentCopyModal({
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    // All available documents for the partner
+  // All available documents for the partner
+
     const [allDocs, setAllDocs] = useState([]);
     const [loadingAllDocs, setLoadingAllDocs] = useState(false);
 
@@ -60,7 +61,8 @@ export default function SalesDocumentCopyModal({
 
     const suggestionsRef = useRef(null);
 
-    // Initial resets
+  // Initial resets
+
     useEffect(() => {
         if (!open) {
             setQuery('');
@@ -77,7 +79,8 @@ export default function SalesDocumentCopyModal({
         }
     }, [open]);
 
-    // Fetch all documents for the partner immediately on open
+  // Fetch all documents for the partner immediately on open
+
     useEffect(() => {
         if (!open) return;
 
@@ -103,7 +106,8 @@ export default function SalesDocumentCopyModal({
         fetchAllDocs();
     }, [open, config.resource, partnerId, partnerField]);
 
-    // Query suggestions as user types
+  // Query suggestions as user types
+
     useEffect(() => {
         if (!open || !showSuggestions) return;
 
@@ -130,7 +134,8 @@ export default function SalesDocumentCopyModal({
         return () => clearTimeout(delayDebounce);
     }, [query, open, showSuggestions, config.resource, partnerId, partnerField]);
 
-    // Close suggestions on outside click
+  // Close suggestions on outside click
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
@@ -141,12 +146,14 @@ export default function SalesDocumentCopyModal({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Get table items/costs/advances
+  // Get table items/costs/advances
+
     const items = useMemo(() => extractDocumentItems(docDetails, allDocs), [docDetails, allDocs]);
     const additionalCosts = useMemo(() => extractDocumentCosts(docDetails, allDocs), [docDetails, allDocs]);
     const advancePayments = useMemo(() => extractDocumentAdvances(docDetails, allDocs), [docDetails, allDocs]);
 
-    // Auto-select all items on loading/changing
+  // Auto-select all items on loading/changing
+
     useEffect(() => {
         const nextItems = new Set();
         items.forEach((item, index) => {

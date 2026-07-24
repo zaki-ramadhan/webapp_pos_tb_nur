@@ -104,7 +104,8 @@ class AttachmentUploadController extends Controller
             $srcImage = $dstImage;
         }
 
-        // Capture WebP binary data in memory using output buffering
+      // Capture WebP binary data in memory using output buffering
+
         ob_start();
         $success = @imagewebp($srcImage, null, $quality);
         $webpData = ob_get_clean();
@@ -117,7 +118,8 @@ class AttachmentUploadController extends Controller
         $randomName = Str::random(40) . '.webp';
         $relativeFilePath = $targetFolder . '/' . $randomName;
 
-        // Save via Laravel Storage facade
+      // Save via Laravel Storage facade
+
         $writeSuccess = \Illuminate\Support\Facades\Storage::disk('public')->put($relativeFilePath, $webpData);
 
         if (!$writeSuccess) {

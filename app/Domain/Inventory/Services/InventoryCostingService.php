@@ -21,7 +21,8 @@ class InventoryCostingService
         float $unitCost,
         Carbon $entryDate
     ): InventoryBatch {
-        // Hapus batch lama jika ada
+      // Hapus batch lama jika ada
+
         $this->revertStockEntry($sourceType, $sourceLineId);
 
         return InventoryBatch::create([
@@ -64,7 +65,8 @@ class InventoryCostingService
         $consumptions = [];
         $totalCost = 0.0;
 
-        // Ambil batch aktif
+      // Ambil batch aktif
+
         $batches = InventoryBatch::where('product_id', $productId)
             ->where('warehouse_id', $warehouseId)
             ->where('qty_remaining', '>', 0)
@@ -93,7 +95,8 @@ class InventoryCostingService
             $qtyNeeded -= $consumeQty;
         }
 
-        // Fallback jika kurang
+      // Fallback jika kurang
+
         if ($qtyNeeded > 0) {
             $fallbackCost = $this->resolveProductCost($productId);
             $consumptions[] = [

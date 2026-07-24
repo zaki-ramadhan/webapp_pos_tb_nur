@@ -10,9 +10,11 @@ export default function useWorkspaceURLSync({
 }) {
     const isFirstRun = useRef(true);
 
-    // Sync state → URL (replace instead of push)
+  // Sync state → URL (replace instead of push)
+
     useEffect(() => {
-        // Skip first sync to prevent overwriting URL
+      // Skip first sync to prevent overwriting URL
+
         if (isFirstRun.current) {
             isFirstRun.current = false;
             return;
@@ -21,7 +23,8 @@ export default function useWorkspaceURLSync({
         const currentState = window.history.state || {};
         const newPath = getPagePath(activePageId ?? dashboardPageId);
 
-        // Only replace if path changes
+      // Only replace if path changes
+
         if (window.location.pathname !== newPath) {
             const nextState = { ...currentState };
             if (nextState.url !== undefined) {
@@ -37,12 +40,14 @@ export default function useWorkspaceURLSync({
         }
     }, [activePageId, dashboardPageId]);
 
-    // Sync URL → state (popstate back/forward navigation)
+  // Sync URL → state (popstate back/forward navigation)
+
     const restoreStateFromUrl = useCallback(() => {
         const urlPageId = resolvePageIdFromPath(window.location.pathname);
 
         if (urlPageId && pages[urlPageId]) {
-            // Pastikan halaman terbuka dan aktif
+          // Pastikan halaman terbuka dan aktif
+
             openPageById(urlPageId);
             setActivePageId(urlPageId);
         } else {

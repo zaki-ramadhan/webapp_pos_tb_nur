@@ -17,7 +17,8 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
     const [records, setRecords] = useState([]);
     const [selectedIds, setSelectedIds] = useState(new Set());
 
-    // Fetch records on open or search query change
+  // Fetch records on open or search query change
+
     useEffect(() => {
         if (!open) return;
 
@@ -52,7 +53,8 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
         };
     }, [open, searchQuery]);
 
-    // Reset selection and filters when modal closes
+  // Reset selection and filters when modal closes
+
     useEffect(() => {
         if (!open) {
             setSearchQuery('');
@@ -62,7 +64,8 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
         }
     }, [open]);
 
-    // Filter records client-side by date range
+  // Filter records client-side by date range
+
     const filteredRecords = useMemo(() => {
         return records.filter((record) => {
             const due = record.due_date;
@@ -72,7 +75,8 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
         });
     }, [records, startDate, endDate]);
 
-    // Checkbox toggles
+  // Checkbox toggles
+
     function handleSelectAll(e) {
         if (e.target.checked) {
             setSelectedIds(new Set(filteredRecords.map((r) => String(r.id))));

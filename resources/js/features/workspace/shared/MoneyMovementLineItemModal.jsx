@@ -49,14 +49,16 @@ export default function MoneyMovementLineItemModal({
     const [deferredStartMonth, setDeferredStartMonth] = useState(6);
     const [deferredStartYear, setDeferredStartYear] = useState(2026);
 
-    // Sync state when modal opens or inputs change
+  // Sync state when modal opens or inputs change
+
     useEffect(() => {
         if (!open) return;
 
         setActiveTab('detail');
 
         if (currentItem) {
-            // Editing existing
+          // Editing existing
+
             setSelectedAccount({
                 id: currentItem.__accountId,
                 code: currentItem.accountCode,
@@ -79,7 +81,8 @@ export default function MoneyMovementLineItemModal({
             setDeferredStartMonth(currentItem.deferredStartMonth ?? 6);
             setDeferredStartYear(currentItem.deferredStartYear ?? 2026);
         } else if (record) {
-            // Adding new with selected account from lookup
+          // Adding new with selected account from lookup
+
             setSelectedAccount(record);
             setAmount('0');
             setNotes('');
@@ -90,7 +93,8 @@ export default function MoneyMovementLineItemModal({
             setDeferredStartMonth(6);
             setDeferredStartYear(2026);
         } else {
-            // Fresh new
+          // Fresh new
+
             setSelectedAccount(null);
             setAmount('0');
             setNotes('');

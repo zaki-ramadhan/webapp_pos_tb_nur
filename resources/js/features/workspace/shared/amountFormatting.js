@@ -1,13 +1,16 @@
 export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative = false, isInput = false } = {}) {
     let strValue = String(value ?? '').trim();
 
-    // Strip empty decimal suffixes (,00, ,0) so they are not shown to lay users
+  // Strip empty decimal suffixes (,00, ,0) so they are not shown to lay users
+
     if (!isInput) {
         strValue = strValue.replace(/,00?$/, '');
     }
 
-    // Convert database standard decimal string (e.g. 125000.50) to Indonesian standard (125000,50)
-    // Only convert if the dot is a true database decimal dot (not an Indonesian thousand separator)
+  // Convert database standard decimal string (e.g. 125000.50) to Indonesian standard (125000,50)
+
+  // Only convert if the dot is a true database decimal dot (not an Indonesian thousand separator)
+
     if (!isInput && /^-?\d+\.\d+$/.test(strValue)) {
         const parts = strValue.split('.');
         if (parts.length === 2) {
@@ -15,7 +18,8 @@ export function sanitizeAmountInput(value, { allowDecimal = true, allowNegative 
             const cleanInteger = integerPart.replace(/^-/, '');
             if (fractionPart.length < 3 || cleanInteger.length > 3) {
                 strValue = strValue.replace('.', ',');
-                // Strip empty decimal suffixes that were converted from database decimals
+              // Strip empty decimal suffixes that were converted from database decimals
+
                 strValue = strValue.replace(/,00?$/, '');
             }
         }
@@ -110,13 +114,16 @@ export function formatDisplayValue(val) {
     if (typeof val === 'string') {
         const trimmed = val.trim();
 
-        // Dates (e.g. 23/07/2026 or 2026-07-23)
+      // Dates (e.g. 23/07/2026 or 2026-07-23)
+
         if (/^\d{1,4}[/-]\d{1,2}[/-]\d{1,4}$/.test(trimmed)) return val;
 
-        // Document codes / references (e.g. IR.2026.07.23.001, SP-00001, BSH-404)
+      // Document codes / references (e.g. IR.2026.07.23.001, SP-00001, BSH-404)
+
         if (/^[A-Za-z0-9_-]+\.[\d\.]+$|^[A-Za-z0-9_-]+-\d+$/i.test(trimmed) && /[A-Za-z_-]/.test(trimmed)) return val;
 
-        // Currency values (e.g. Rp 1000 or -Rp 1000)
+      // Currency values (e.g. Rp 1000 or -Rp 1000)
+
         if (/^-?Rp\s*\d[\d\.,]*$/i.test(trimmed)) {
             const isNegative = trimmed.startsWith('-');
             const rawNum = trimmed.replace(/^-?Rp\s*/i, '');
@@ -126,7 +133,8 @@ export function formatDisplayValue(val) {
             }
         }
 
-        // Parenthesized count / quantity (e.g. "1 Barang (11111)")
+      // Parenthesized count / quantity (e.g. "1 Barang (11111)")
+
         if (/\([0-9]+\)/.test(trimmed)) {
             return trimmed.replace(/\((\d+)\)/g, (match, p1) => {
                 const parsed = parseAmountInput(p1, { allowDecimal: true, emptyValue: null });
@@ -134,7 +142,8 @@ export function formatDisplayValue(val) {
             });
         }
 
-        // Pure numeric strings (e.g. 1000 or 1000.5)
+      // Pure numeric strings (e.g. 1000 or 1000.5)
+
         if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
             const parsed = parseAmountInput(trimmed, { allowDecimal: true, emptyValue: null });
             if (parsed !== null) {

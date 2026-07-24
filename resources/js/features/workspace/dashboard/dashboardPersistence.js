@@ -67,14 +67,16 @@ export function loadDashboardPreferences(defaultPreferences, userSuffix) {
         let rawValue = window.localStorage.getItem(storageKey);
 
         if (!rawValue && userSuffix) {
-            // Coba migrasi dari key lama jika ada
+          // Coba migrasi dari key lama jika ada
+
             const legacyValue = window.localStorage.getItem(DASHBOARD_PREFERENCES_STORAGE_KEY);
             if (legacyValue) {
                 rawValue = legacyValue;
                 try {
                     window.localStorage.setItem(storageKey, legacyValue);
                 } catch {
-                    // Abaikan kegagalan migrasi setItem
+                  // Abaikan kegagalan migrasi setItem
+
                 }
             }
         }
@@ -132,7 +134,8 @@ export function saveDashboardPreferences(preferences, userSuffix) {
             }),
         );
     } catch {
-        // Abaikan gagal simpan dashboard
+      // Abaikan gagal simpan dashboard
+
     }
 }
 
@@ -148,7 +151,8 @@ export function clearDashboardPreferences(userSuffix) {
 
         window.localStorage.removeItem(storageKey);
     } catch {
-        // Abaikan gagal hapus persistence
+      // Abaikan gagal hapus persistence
+
     }
 }
 

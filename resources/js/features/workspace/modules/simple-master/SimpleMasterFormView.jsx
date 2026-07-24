@@ -63,7 +63,8 @@ export default function SimpleMasterFormView({
                     setFetchedRow(record);
                 }
             } catch (err) {
-                // Ignore
+              // Ignore
+
             }
         }
         fetchDetail();

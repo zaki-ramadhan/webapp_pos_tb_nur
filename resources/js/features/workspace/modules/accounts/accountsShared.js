@@ -139,7 +139,8 @@ export function mapAccountRow(record) {
         level: record.parent_id ? 1 : 0,
         inactiveValue: record.is_active === false ? 'inactive' : 'active',
         
-        // Pemetaan kolom baru
+      // Pemetaan kolom baru
+
         currencyName: record.currency?.name ?? '-',
         openingBalanceDate: record.opening_balance_date ? formatDisplayDate(record.opening_balance_date) : '-',
         isSubAccountText: record.parent ? `${record.parent.code} - ${record.parent.name}` : '-',

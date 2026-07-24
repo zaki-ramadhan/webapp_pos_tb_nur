@@ -106,7 +106,8 @@ export default function SalesDocumentAdvanceEditModal({
             notes: form.notes,
         };
 
-        // Remove temporary flag if present
+      // Remove temporary flag if present
+
         delete nextAdvance.isNew;
 
         onSubmit?.(nextAdvance);

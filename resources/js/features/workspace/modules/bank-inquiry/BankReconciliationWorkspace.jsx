@@ -54,7 +54,8 @@ export default function BankReconciliationWorkspace({
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
     
-    // Confirmation dialog state
+  // Confirmation dialog state
+
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
 

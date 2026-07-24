@@ -77,7 +77,8 @@ export default function RegisterFormPanel({ register }) {
         const cleanedEmail = form.data.email.trim();
         const cleanedPhone = form.data.phone.trim();
 
-        // Perbarui input form
+      // Perbarui input form
+
         form.setData(prev => ({
             ...prev,
             name: cleanedName,

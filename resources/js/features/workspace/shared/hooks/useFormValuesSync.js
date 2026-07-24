@@ -12,7 +12,8 @@ export function useFormValuesSync({
     const lastInitialValuesRef = useRef(initialValues);
     const latestValuesRef = useRef(values);
 
-    // Keep the latest values in a ref on every render
+  // Keep the latest values in a ref on every render
+
     latestValuesRef.current = values;
 
     useEffect(() => {

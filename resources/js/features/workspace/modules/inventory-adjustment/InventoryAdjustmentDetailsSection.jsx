@@ -39,7 +39,8 @@ export default function InventoryAdjustmentDetailsSection({
         const cats = values.salesCategory ?? [];
         if (!cats.length) return '';
         const raw = cats[0] ?? '';
-        // Strip "[CODE] " prefix if present
+      // Strip "[CODE] " prefix if present
+
         return raw.replace(/^\[[^\]]+\]\s*/, '');
     }, [values.salesCategory]);
 

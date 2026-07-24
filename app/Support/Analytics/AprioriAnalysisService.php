@@ -15,7 +15,8 @@ class AprioriAnalysisService
      */
     public function calculate(float $minSupport = 0.05, float $minConfidence = 0.4): array
     {
-        // Ambil invoice penjualan
+      // Ambil invoice penjualan
+
         $transactions = DB::table('operation_documents')
             ->where('document_type', 'sales_invoice')
             ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
@@ -37,7 +38,8 @@ class AprioriAnalysisService
             ];
         }
 
-        // Buat daftar transaksi item
+      // Buat daftar transaksi item
+
         $transactionItems = [];
         $allProducts = [];
 
@@ -66,7 +68,8 @@ class AprioriAnalysisService
             }
         }
 
-        // Hitung itemset 1-frequent
+      // Hitung itemset 1-frequent
+
         $frequent1 = [];
         foreach ($allProducts as $pid => $count) {
             $support = $count / $n;
@@ -75,7 +78,8 @@ class AprioriAnalysisService
             }
         }
 
-        // Hitung itemset 2-frequent
+      // Hitung itemset 2-frequent
+
         $frequent2 = [];
         $f1_keys = array_keys($frequent1);
         $num_f1 = count($f1_keys);
@@ -85,7 +89,8 @@ class AprioriAnalysisService
                 $pid1 = $f1_keys[$i];
                 $pid2 = $f1_keys[$j];
 
-                // Hitung kemunculan
+              // Hitung kemunculan
+
                 $coCount = 0;
                 foreach ($transactionItems as $itemset) {
                     if (in_array($pid1, $itemset) && in_array($pid2, $itemset)) {
@@ -103,11 +108,13 @@ class AprioriAnalysisService
             }
         }
 
-        // Buat aturan asosiasi
+      // Buat aturan asosiasi
+
         $rules = [];
         $ruleId = 1;
 
-        // Peta kategori ABC
+      // Peta kategori ABC
+
         $abcSalesData = DB::table('operation_document_lines')
             ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
             ->where('operation_documents.document_type', 'sales_invoice')
@@ -148,7 +155,8 @@ class AprioriAnalysisService
             ];
         }
 
-        // Ambil nama produk
+      // Ambil nama produk
+
         $productNames = DB::table('products')
             ->pluck('name', 'id')
             ->toArray();
@@ -158,7 +166,8 @@ class AprioriAnalysisService
             $pid2 = $f2['items'][1];
             $supportF2 = $f2['support'];
 
-            // Aturan 1
+          // Aturan 1
+
             $support1 = $frequent1[$pid1];
             $support2 = $frequent1[$pid2];
             
@@ -182,7 +191,8 @@ class AprioriAnalysisService
                 ];
             }
 
-            // Aturan 2
+          // Aturan 2
+
             $confidence2 = $supportF2 / $support2;
             $lift2 = $confidence2 / $support1;
 
@@ -204,12 +214,14 @@ class AprioriAnalysisService
             }
         }
 
-        // Urutkan aturan dari confidence tertinggi
+      // Urutkan aturan dari confidence tertinggi
+
         usort($rules, function ($a, $b) {
             return $b['confidenceValue'] <=> $a['confidenceValue'];
         });
 
-        // Ambil 7 aturan teratas
+      // Ambil 7 aturan teratas
+
         $rules = array_slice($rules, 0, 7);
 
         $metrics = [

@@ -22,6 +22,47 @@ function getCacheKey(resource, filters) {
     return `${resource}::${JSON.stringify(filters)}`;
 }
 
+// Singleton listener untuk live updates agar tidak ada duplikasi request polling
+let liveUpdateSubscribers = new Set();
+let globalLiveUpdateInterval = null;
+let lastGlobalSeenTimestamp = 0;
+
+function subscribeToLiveUpdates(callback) {
+    liveUpdateSubscribers.add(callback);
+
+    if (!globalLiveUpdateInterval && typeof window !== 'undefined') {
+        globalLiveUpdateInterval = setInterval(async () => {
+            if (liveUpdateSubscribers.size === 0) return;
+            try {
+                const res = await fetch('/api/backend/live-updates', {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const change = data?.change;
+                    if (change && change.timestamp && change.timestamp > lastGlobalSeenTimestamp) {
+                        if (lastGlobalSeenTimestamp > 0) {
+                            liveUpdateSubscribers.forEach((cb) => cb(change));
+                        }
+                        lastGlobalSeenTimestamp = change.timestamp;
+                    }
+                }
+            } catch {
+              // Abaikan kesalahan koneksi sementara
+
+            }
+        }, 10000);
+    }
+
+    return () => {
+        liveUpdateSubscribers.delete(callback);
+        if (liveUpdateSubscribers.size === 0 && globalLiveUpdateInterval) {
+            clearInterval(globalLiveUpdateInterval);
+            globalLiveUpdateInterval = null;
+        }
+    };
+}
+
 export default function useBackendIndexResource({
     resource,
     filters = {},
@@ -68,14 +109,16 @@ export default function useBackendIndexResource({
 
     const cacheKey = useMemo(() => getCacheKey(resource, requestFilters), [resource, requestFilters]);
 
-    // Sinkronisasi state cacheKey jika berubah
+  // Sinkronisasi state cacheKey jika berubah
+
     if (cacheKey !== prevCacheKey) {
         setPrevCacheKey(cacheKey);
         const cached = globalCache.get(cacheKey);
         setPayload(cached ? cached.payload : null);
     }
 
-    // Reset ke halaman 1 jika filter berubah
+  // Reset ke halaman 1 jika filter berubah
+
     useEffect(() => {
         setPage(1);
     }, [serializedFilters]);
@@ -93,7 +136,8 @@ export default function useBackendIndexResource({
         const isForceRefresh = requestFilters._refresh !== undefined;
         const isFresh = cachedEntry && (now - cachedEntry.timestamp < CACHE_FRESH_THRESHOLD_MS);
 
-        // Hapus cache jika force refresh
+      // Hapus cache jika force refresh
+
         if (isForceRefresh) {
             for (const key of globalCache.keys()) {
                 if (key.startsWith(`${resource}::`)) {
@@ -102,18 +146,21 @@ export default function useBackendIndexResource({
             }
         }
 
-        // Tampilkan data cache segera (SWR) jika ada
+      // Tampilkan data cache segera (SWR) jika ada
+
         if (cachedEntry) {
             setPayload(cachedEntry.payload);
         }
 
-        // Jika cache masih segar dan bukan force-refresh, lewati revalidasi backend
+      // Jika cache masih segar dan bukan force-refresh, lewati revalidasi backend
+
         if (isFresh && !isForceRefresh) {
             return undefined;
         }
 
         async function run() {
-            // Tampilkan loading spinner jika tidak ada cache, atau jika force refresh
+          // Tampilkan loading spinner jika tidak ada cache, atau jika force refresh
+
             if (!cachedEntry || isForceRefresh) {
                 setLoading(true);
             }
@@ -126,7 +173,8 @@ export default function useBackendIndexResource({
                     return;
                 }
 
-                // Perbarui cache
+              // Perbarui cache
+
                 globalCache.set(currentCacheKey, {
                     payload: nextPayload,
                     timestamp: Date.now(),
@@ -166,7 +214,8 @@ export default function useBackendIndexResource({
         function handlePageActivated(e) {
             const { activePageId } = e.detail || {};
             if (activePageId && isResourceMatchingPageId(resource, activePageId)) {
-                // Trigger reaktivasi/revalidasi di background tanpa menghapus cache
+              // Trigger reaktivasi/revalidasi di background tanpa menghapus cache
+
                 setRevalidateVersion((currentValue) => currentValue + 1);
             }
         }
@@ -175,32 +224,14 @@ export default function useBackendIndexResource({
         return () => window.removeEventListener('workspace:page-activated', handlePageActivated);
     }, [resource]);
 
-    // Real-time live update sync
+  // Real-time live update sync via singleton listener
+
     useEffect(() => {
         if (!enabled || !resource || typeof window === 'undefined') return;
 
-        let lastSeenTimestamp = 0;
-        const intervalId = setInterval(async () => {
-            try {
-                const res = await fetch('/api/backend/live-updates', {
-                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    const change = data?.change;
-                    if (change && change.timestamp && change.timestamp > lastSeenTimestamp) {
-                        if (lastSeenTimestamp > 0) {
-                            setRevalidateVersion((v) => v + 1);
-                        }
-                        lastSeenTimestamp = change.timestamp;
-                    }
-                }
-            } catch {
-                // Abaikan kesalahan koneksi sementara
-            }
-        }, 3000);
-
-        return () => clearInterval(intervalId);
+        return subscribeToLiveUpdates(() => {
+            setRevalidateVersion((v) => v + 1);
+        });
     }, [enabled, resource]);
 
     const rows = useMemo(() => extractBackendRows(payload), [payload]);
@@ -236,8 +267,10 @@ if (typeof window !== 'undefined') {
         for (const key of globalCache.keys()) {
             const resourceName = key.split('::')[0].toLowerCase();
             
-            // Cek kecocokan nama resource
-            // atau jika token cocok
+          // Cek kecocokan nama resource
+
+          // atau jika token cocok
+
             const isMatch = resourceName.includes(normalizedPageId) || 
                             normalizedPageId.includes(resourceName) ||
                             tokens.some(token => {

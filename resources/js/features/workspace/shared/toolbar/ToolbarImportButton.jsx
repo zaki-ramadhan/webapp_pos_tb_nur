@@ -81,7 +81,8 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
             await importConfig.onImport?.(result);
             setShowModal(false);
         } catch {
-            // abaikan error
+          // abaikan error
+
         } finally {
             setLoading(false);
             event.target.value = '';

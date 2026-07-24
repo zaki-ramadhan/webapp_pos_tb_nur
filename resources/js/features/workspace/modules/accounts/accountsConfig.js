@@ -32,7 +32,8 @@ const accountTableColumns = [
     { id: 'type', label: 'Tipe Akun', widthClassName: 'w-[160px]', align: 'left' },
     { id: 'balance', label: 'Saldo', widthClassName: 'w-[140px]', align: 'right' },
     
-    // Opsi kolom tambahan (default disembunyikan)
+  // Opsi kolom tambahan (default disembunyikan)
+
     { id: 'currencyName', label: 'Mata Uang', widthClassName: 'w-[120px]', align: 'left', defaultHidden: true },
     { id: 'openingBalanceDate', label: 'Tgl Saldo Awal', widthClassName: 'w-[140px]', align: 'center', defaultHidden: true },
     { id: 'isSubAccountText', label: 'Sub Akun Dari', widthClassName: 'w-[220px]', align: 'left', defaultHidden: true },

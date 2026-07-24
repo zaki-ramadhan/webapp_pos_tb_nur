@@ -26,7 +26,8 @@ export default function AttachmentUploadField({
             return;
         }
 
-        // Validate format
+      // Validate format
+
         if (accept.startsWith('image/')) {
             const invalidFormat = files.find((file) => !file.type.startsWith('image/'));
             if (invalidFormat) {

@@ -23,14 +23,16 @@ export function useColumnResize(schemaKey) {
         const thOrTd = e.target.closest('th, td');
         if (!thOrTd) return;
 
-        // Resolve the actual column th width from the header row for accuracy
+      // Resolve the actual column th width from the header row for accuracy
+
         const table = thOrTd.closest('table');
         let startWidth = thOrTd.getBoundingClientRect().width;
 
         if (table) {
             const ths = table.querySelectorAll('thead th');
             const tds = thOrTd.closest('tr')?.querySelectorAll('td');
-            // Find the index of the current cell
+          // Find the index of the current cell
+
             const cells = tds ?? Array.from(ths);
             const idx = Array.from(cells).indexOf(thOrTd);
             if (idx >= 0 && ths[idx]) {

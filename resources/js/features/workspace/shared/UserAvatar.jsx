@@ -67,7 +67,8 @@ const UserAvatar = memo(function UserAvatar({
                 localStorage.setItem(`avatar_cache_${imageUrl}`, dataUrl);
                 setCachedUrl(dataUrl);
             } catch (e) {
-                // Ignore canvas security errors for external CDNs (CORS)
+              // Ignore canvas security errors for external CDNs (CORS)
+
             }
         };
 

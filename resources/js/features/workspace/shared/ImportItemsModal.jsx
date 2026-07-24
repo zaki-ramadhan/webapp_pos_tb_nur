@@ -20,7 +20,8 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
     const [columnMapping, setColumnMapping] = useState({ ...DEFAULT_COLUMN_MAPPING });
     const [errorMessage, setErrorMessage] = useState('');
 
-    // Ambil katalog produk
+  // Ambil katalog produk
+
     useEffect(() => {
         if (!open) return;
         setLoadingProducts(true);
@@ -33,7 +34,8 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             .finally(() => setLoadingProducts(false));
     }, [open]);
 
-    // Reset saat tutup
+  // Reset saat tutup
+
     useEffect(() => {
         if (!open) {
             setFile(null);
@@ -44,7 +46,8 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
         }
     }, [open]);
 
-    // Upload file via SheetJS
+  // Upload file via SheetJS
+
     async function handleFileChange(e) {
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
@@ -60,7 +63,8 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
 
             setFile(selectedFile);
             setCsvHeaders(headers);
-            // Konversi baris ke array
+          // Konversi baris ke array
+
             setCsvRows(rows.map(row => headers.map(h => row[h] ?? '')));
             setColumnMapping(autoDetectMapping(headers));
         } catch {
@@ -70,7 +74,8 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
         if (fileInputRef.current) fileInputRef.current.value = '';
     }
 
-    // Sesuaikan item impor
+  // Sesuaikan item impor
+
     const previewItems = useMemo(() => {
         if (csvRows.length === 0 || columnMapping.code === -1 || columnMapping.quantity === -1) return [];
 

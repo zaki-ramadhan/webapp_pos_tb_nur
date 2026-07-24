@@ -20,7 +20,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedType, setSelectedType] = useState('all');
     
-    // Default to "all" to show all records initially
+  // Default to "all" to show all records initially
+
     const [selectedMonth, setSelectedMonth] = useState('all');
     const [selectedYear, setSelectedYear] = useState('all');
     
@@ -28,7 +29,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
     const [records, setRecords] = useState([]);
     const [selectedIds, setSelectedIds] = useState(new Set());
 
-    // Fetch records on open or search query change
+  // Fetch records on open or search query change
+
     useEffect(() => {
         if (!open) return;
 
@@ -63,7 +65,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
         };
     }, [open, searchQuery]);
 
-    // Reset selection and filters when modal closes
+  // Reset selection and filters when modal closes
+
     useEffect(() => {
         if (!open) {
             setSearchQuery('');
@@ -74,7 +77,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
         }
     }, [open]);
 
-    // Parse period month, year and payment type helper
+  // Parse period month, year and payment type helper
+
     const parsedRecords = useMemo(() => {
         return records.map((record) => {
             let month = record.metadata?.period_month ?? '';
@@ -101,7 +105,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
         });
     }, [records]);
 
-    // Filter records client-side by type, month, and year
+  // Filter records client-side by type, month, and year
+
     const filteredRecords = useMemo(() => {
         return parsedRecords.filter((record) => {
             if (selectedType !== 'all' && record.parsedType !== selectedType) return false;
@@ -111,7 +116,8 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
         });
     }, [parsedRecords, selectedType, selectedMonth, selectedYear]);
 
-    // Checkbox toggles
+  // Checkbox toggles
+
     function handleSelectAll(e) {
         if (e.target.checked) {
             setSelectedIds(new Set(filteredRecords.map((r) => String(r.id))));

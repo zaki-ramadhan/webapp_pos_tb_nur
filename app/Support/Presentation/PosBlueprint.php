@@ -265,24 +265,37 @@ final class PosBlueprint
                 self::navItem('preferences', 'Preferensi', 'settings', 'amber'),
                 self::navItem('group-access', 'Akses Grup', 'group', 'amber'),
                 self::navItem('users', 'Pengguna', 'users', 'amber'),
-                // self::navItem('numbering', 'Penomoran', 'numbering', 'amber'),
-                // self::navItem('print-design', 'Desain Cetakan', 'printer', 'amber'),
-                // self::navItem('transaction-approval', 'Penyetuju Transaksi', 'users', 'amber'),
+              // self::navItem('numbering', 'Penomoran', 'numbering', 'amber'),
+
+              // self::navItem('print-design', 'Desain Cetakan', 'printer', 'amber'),
+
+              // self::navItem('transaction-approval', 'Penyetuju Transaksi', 'users', 'amber'),
+
             ]),
             self::navModule('company', 'Toko', 'building', [
-                // self::navItem('currency-master', 'Mata Uang', 'currency', 'blue'),
-                // self::navItem('branch', 'Cabang', 'branch', 'blue'),
+              // self::navItem('currency-master', 'Mata Uang', 'currency', 'blue'),
+
+              // self::navItem('branch', 'Cabang', 'branch', 'blue'),
+
                 self::navItem('department', 'Departemen', 'department', 'blue'),
-                // self::navItem('company-tax', 'Pajak', 'tax', 'blue'),
-                // self::navItem('payment-terms', 'Syarat Pembayaran', 'terms', 'blue'),
-                // self::navItem('shipping-master', 'Pengiriman', 'truck', 'blue'),
-                // self::navItem('fob-master', 'FOB', 'invoice', 'blue'),
+              // self::navItem('company-tax', 'Pajak', 'tax', 'blue'),
+
+              // self::navItem('payment-terms', 'Syarat Pembayaran', 'terms', 'blue'),
+
+              // self::navItem('shipping-master', 'Pengiriman', 'truck', 'blue'),
+
+              // self::navItem('fob-master', 'FOB', 'invoice', 'blue'),
+
                 self::navItem('salary-allowance', 'Gaji atau Tunjangan', 'salary', 'blue'),
                 self::navItem('employees', 'Karyawan', 'employee', 'blue'),
-                // self::navItem('recurring-transactions', 'Transaksi Berulang', 'recurring', 'green'),
-                // self::navItem('period-end', 'Proses Akhir Bulan', 'calendar', 'green'),
-                // self::navItem('contacts', 'Kontak', 'contact', 'purple'),
-                // self::navItem('favorite-transactions', 'Transaksi Favorit', 'favorite', 'purple'),
+              // self::navItem('recurring-transactions', 'Transaksi Berulang', 'recurring', 'green'),
+
+              // self::navItem('period-end', 'Proses Akhir Bulan', 'calendar', 'green'),
+
+              // self::navItem('contacts', 'Kontak', 'contact', 'purple'),
+
+              // self::navItem('favorite-transactions', 'Transaksi Favorit', 'favorite', 'purple'),
+
                 self::navItem('activity-log', 'Log Aktivitas', 'activity', 'purple'),
             ]),
             self::navModule('general-ledger', 'Buku Besar', 'ledger', [
@@ -290,10 +303,14 @@ final class PosBlueprint
                 self::navItem('expense-entry', 'Pencatatan Beban', 'expense', 'green'),
                 self::navItem('payroll-entry', 'Pencatatan Gaji', 'salary', 'green'),
                 self::navItem('general-journal', 'Jurnal Umum', 'journal', 'green'),
-                // self::navItem('budget-monitor', 'Monitor Anggaran', 'budget', 'purple'),
-                // self::navItem('budget-transfer', 'Transfer Anggaran', 'transfer', 'green'),
-                // self::navItem('budget', 'Anggaran', 'budget', 'amber'),
-                // self::navItem('account-history', 'Histori Akun', 'history', 'purple'),
+              // self::navItem('budget-monitor', 'Monitor Anggaran', 'budget', 'purple'),
+
+              // self::navItem('budget-transfer', 'Transfer Anggaran', 'transfer', 'green'),
+
+              // self::navItem('budget', 'Anggaran', 'budget', 'amber'),
+
+              // self::navItem('account-history', 'Histori Akun', 'history', 'purple'),
+
                 self::navItem('journal-activity-log', 'Log Aktivitas', 'activity', 'purple'),
             ]),
             self::navModule('cash-bank', 'Kas & Bank', 'bank', [
@@ -305,61 +322,90 @@ final class PosBlueprint
                 self::navItem('bank-reconciliation', 'Rekonsiliasi Bank', 'invoice', 'purple'),
             ]),
             self::navModule('sales', 'Penjualan', 'sales', [
-                // self::navItem('sales-quote', 'Penawaran Penjualan', 'receipt', 'green'),
-                // self::navItem('sales-order', 'Pesanan Penjualan', 'invoice', 'green'),
-                // self::navItem('sales-delivery', 'Pengiriman Pesanan', 'truck', 'green'),
+              // self::navItem('sales-quote', 'Penawaran Penjualan', 'receipt', 'green'),
+
+              // self::navItem('sales-order', 'Pesanan Penjualan', 'invoice', 'green'),
+
+              // self::navItem('sales-delivery', 'Pengiriman Pesanan', 'truck', 'green'),
+
                 self::navItem('sales-deposit', 'Uang Muka Penjualan', 'payment', 'green'),
                 self::navItem('sales-invoice', 'Faktur Penjualan', 'invoice', 'green'),
                 self::navItem('sales-receipt', 'Penerimaan Penjualan', 'receipt', 'green'),
                 self::navItem('sales-return', 'Retur Penjualan', 'transfer', 'green'),
-                // self::navItem('customer-category', 'Kategori Pelanggan', 'group', 'blue'),
-                // self::navItem('sales-category', 'Kategori Penjualan', 'category', 'blue'),
+              // self::navItem('customer-category', 'Kategori Pelanggan', 'group', 'blue'),
+
+              // self::navItem('sales-category', 'Kategori Penjualan', 'category', 'blue'),
+
                 self::navItem('customers', 'Pelanggan', 'customer', 'blue'),
                 self::navItem('price-adjustment', 'Penyesuaian Harga atau Diskon', 'category', 'amber'),
                 self::navItem('sales-commission', 'Komisi Penjual', 'employee', 'amber'),
-                // self::navItem('sales-target', 'Target Penjualan', 'budget', 'amber'),
-                // self::navItem('sales-checkin', 'Check-in', 'checkin', 'purple'),
+              // self::navItem('sales-target', 'Target Penjualan', 'budget', 'amber'),
+
+              // self::navItem('sales-checkin', 'Check-in', 'checkin', 'purple'),
+
             ]),
             self::navModule('purchases', 'Pembelian', 'purchase', [
-                // self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
-                // self::navItem('goods-receipt', 'Penerimaan Barang', 'receipt', 'green'),
-                // self::navItem('purchase-deposit', 'Uang Muka Pembelian', 'payment', 'green'),
+              // self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
+
+              // self::navItem('goods-receipt', 'Penerimaan Barang', 'receipt', 'green'),
+
+              // self::navItem('purchase-deposit', 'Uang Muka Pembelian', 'payment', 'green'),
+
                 self::navItem('purchase-invoice', 'Faktur Pembelian', 'invoice', 'green'),
                 self::navItem('purchase-payment', 'Pembayaran Pembelian', 'payment', 'green'),
                 self::navItem('purchase-return', 'Retur Pembelian', 'transfer', 'green'),
                 self::navItem('supplier-price', 'Harga Pemasok', 'salary', 'amber'),
-                // self::navItem('supplier-category', 'Kategori Pemasok', 'group', 'blue'),
+              // self::navItem('supplier-category', 'Kategori Pemasok', 'group', 'blue'),
+
                 self::navItem('suppliers', 'Pemasok', 'supplier', 'blue'),
-                // self::navItem('payment-order', 'Perintah Pembayaran', 'payment', 'green'),
-                // self::navItem('supplier-transfer', 'Transfer Pemasok', 'transfer', 'purple'),
+              // self::navItem('payment-order', 'Perintah Pembayaran', 'payment', 'green'),
+
+              // self::navItem('supplier-transfer', 'Transfer Pemasok', 'transfer', 'purple'),
+
             ]),
             self::navModule('inventory', 'Persediaan', 'inventory', [
                 self::navItem('item-request', 'Permintaan Barang', 'invoice', 'green'),
-                // self::navItem('stock-transfer', 'Pemindahan Barang', 'truck', 'green'),
+              // self::navItem('stock-transfer', 'Pemindahan Barang', 'truck', 'green'),
+
                 self::navItem('inventory-adjustment', 'Penyesuaian Persediaan', 'stock', 'green'),
-                // self::navItem('work-order', 'Pekerjaan Pesanan', 'box', 'green'),
-                // self::navItem('material-addition', 'Penambahan Bahan Baku', 'payment', 'green'),
-                // self::navItem('work-completion', 'Penyelesaian Pesanan', 'stock', 'green'),
-                // self::navItem('stock-opname-order', 'Perintah Stok Opname', 'expense', 'green'),
-                // self::navItem('stock-opname-result', 'Hasil Stok Opname', 'stock', 'green'),
+              // self::navItem('work-order', 'Pekerjaan Pesanan', 'box', 'green'),
+
+              // self::navItem('material-addition', 'Penambahan Bahan Baku', 'payment', 'green'),
+
+              // self::navItem('work-completion', 'Penyelesaian Pesanan', 'stock', 'green'),
+
+              // self::navItem('stock-opname-order', 'Perintah Stok Opname', 'expense', 'green'),
+
+              // self::navItem('stock-opname-result', 'Hasil Stok Opname', 'stock', 'green'),
+
                 self::navItem('items-services', 'Barang & Jasa', 'box', 'blue'),
                 self::navItem('warehouse-master', 'Gudang', 'warehouse', 'blue'),
                 self::navItem('item-unit', 'Satuan Barang', 'unit', 'blue'),
                 self::navItem('item-category', 'Kategori Barang', 'category', 'blue'),
                 self::navItem('item-brand', 'Merek Barang', 'box', 'blue'),
-                // self::navItem('order-fulfillment', 'Pemenuhan Pesanan', 'inventory', 'purple'),
+              // self::navItem('order-fulfillment', 'Pemenuhan Pesanan', 'inventory', 'purple'),
+
                 self::navItem('item-location', 'Barang per gudang', 'location', 'purple'),
                 self::navItem('minimum-stock', 'Barang stok minimum', 'box', 'purple'),
             ]),
-            // self::navModule('fixed-assets', 'Aset Tetap', 'asset', [
-            //     self::navItem('fixed-assets', 'Aset Tetap', 'asset', 'blue'),
-            //     self::navItem('asset-category', 'Kategori Aset', 'category', 'blue'),
-            //     self::navItem('asset-tax-category', 'Kategori Aset Tetap Pajak', 'tax', 'blue'),
-            //     self::navItem('asset-change', 'Perubahan Aset Tetap', 'asset', 'green'),
-            //     self::navItem('asset-disposal', 'Disposisi Aset Tetap', 'asset', 'green'),
-            //     self::navItem('asset-move', 'Pindah Aset', 'transfer', 'green'),
-            //     // self::navItem('asset-location', 'Aset per Lokasi', 'location', 'purple'),
-            // ]),
+          // self::navModule('fixed-assets', 'Aset Tetap', 'asset', [
+
+          // self::navItem('fixed-assets', 'Aset Tetap', 'asset', 'blue'),
+
+          // self::navItem('asset-category', 'Kategori Aset', 'category', 'blue'),
+
+          // self::navItem('asset-tax-category', 'Kategori Aset Tetap Pajak', 'tax', 'blue'),
+
+          // self::navItem('asset-change', 'Perubahan Aset Tetap', 'asset', 'green'),
+
+          // self::navItem('asset-disposal', 'Disposisi Aset Tetap', 'asset', 'green'),
+
+          // self::navItem('asset-move', 'Pindah Aset', 'transfer', 'green'),
+
+            // self::navItem('asset-location', 'Aset per Lokasi', 'location', 'purple'),
+//
+          // ]),
+
         ];
     }
 
@@ -422,7 +468,8 @@ final class PosBlueprint
             'expense-entry',
             'general-journal',
             'activity-log',
-            // 'currency-master',
+          // 'currency-master',
+
             'bank-transfer',
             'bank-statement',
             'bank-history',

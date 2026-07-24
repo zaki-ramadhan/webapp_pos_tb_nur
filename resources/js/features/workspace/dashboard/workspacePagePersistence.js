@@ -81,7 +81,8 @@ export function loadWorkspacePageState({
         
         const pageIds = normalizePageIds(parsedValue?.openPageIds, pages, dashboardPage, preferences);
         
-        // Cek URL pathname untuk deep-linking langsung
+      // Cek URL pathname untuk deep-linking langsung
+
         const urlPageId = typeof window !== 'undefined' ? resolvePageIdFromPath(window.location.pathname) : null;
         
         if (urlPageId && pages[urlPageId] && (urlPageId === dashboardPage.id || !isWorkspacePageInactive(urlPageId, preferences))) {
@@ -134,7 +135,8 @@ export function saveWorkspacePageState({
             }),
         );
     } catch {
-        // Abaikan gagal simpan tab
+      // Abaikan gagal simpan tab
+
     }
 }
 
@@ -146,6 +148,7 @@ export function clearWorkspacePageState() {
     try {
         window.localStorage.removeItem(WORKSPACE_PAGE_STATE_STORAGE_KEY);
     } catch {
-        // Abaikan gagal hapus persistence
+      // Abaikan gagal hapus persistence
+
     }
 }

@@ -497,7 +497,8 @@ class DashboardBlueprintProvider
             'transactionTypeOptions' => $transactionTypeOptions,
         ];
 
-        // Gabung data ABC & Apriori
+      // Gabung data ABC & Apriori
+
         foreach ($data['widgets'] as &$w) {
             if ($w['id'] === 'integrated-analysis' || str_starts_with($w['id'], 'integrated-analysis')) {
                 $combinedMetrics = [];

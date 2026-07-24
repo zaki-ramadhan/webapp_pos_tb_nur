@@ -30,10 +30,12 @@ export default function WarehouseView({
         initialPerPage: 25,
     });
 
-    // ─── Pola SalaryAllowance: fetch detail record di level View ─────────────
+  // ─── Pola SalaryAllowance: fetch detail record di level View ─────────────
+
     const recordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
 
-    // Inisialisasi synchronous untuk mock records agar data sudah siap saat mount pertama
+  // Inisialisasi synchronous untuk mock records agar data sudah siap saat mount pertama
+
     const [fetchedDetailRow, setFetchedDetailRow] = useState(() => {
         if (!recordId) return null;
         const mockDetail = page.warehouse?.detailRecords?.[recordId];
@@ -45,14 +47,16 @@ export default function WarehouseView({
     useEffect(() => {
         if (!recordId) { if (activeLevel2Tab?.kind === 'view') { return; } setFetchedDetailRow(null); return; }
 
-        // Cek mock dulu (string id seperti 'warehouse-jakarta')
+      // Cek mock dulu (string id seperti 'warehouse-jakarta')
+
         const mockDetail = page.warehouse?.detailRecords?.[recordId];
         if (mockDetail) {
             setFetchedDetailRow({ ...mockDetail, id: recordId, __source: 'mock' });
             return;
         }
 
-        // Fetch dari backend hanya jika ID numerik
+      // Fetch dari backend hanya jika ID numerik
+
         const numericId = Number(recordId);
         if (!Number.isFinite(numericId) || numericId <= 0) return;
 
@@ -66,7 +70,8 @@ export default function WarehouseView({
                     setFetchedDetailRow({ ...record, __source: 'backend' });
                 }
             } catch {
-                // Ignore – form akan menampilkan data terbatas dari tabel
+              // Ignore – form akan menampilkan data terbatas dari tabel
+
             } finally {
                 if (active) setFetchingId(null);
             }
@@ -75,14 +80,16 @@ export default function WarehouseView({
         return () => { active = false; };
     }, [recordId, page.warehouse?.detailRecords]);
 
-    // ─── Bangun entry lengkap yang dioper ke FormView ─────────────────────────
+  // ─── Bangun entry lengkap yang dioper ke FormView ─────────────────────────
+
     const defaults = useMemo(() => page.warehouse?.createDefaults ?? {}, [page.warehouse]);
     const warehouseEntry = useMemo(
         () => buildWarehouseEntry(fetchedDetailRow, defaults),
         [fetchedDetailRow, defaults],
     );
 
-    // ─── Config untuk tabel ───────────────────────────────────────────────────
+  // ─── Config untuk tabel ───────────────────────────────────────────────────
+
     const config = useMemo(() => {
         const baseConfig = page.warehouse;
         return {

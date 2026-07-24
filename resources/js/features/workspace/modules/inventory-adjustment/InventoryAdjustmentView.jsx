@@ -59,7 +59,8 @@ export default function InventoryAdjustmentView({
 
             const mappedRows = buildInventoryAdjustmentTableRows(rows);
 
-            // Build dynamic filter options from loaded data
+          // Build dynamic filter options from loaded data
+
             const uniqueMonths = [...new Set(mappedRows.map(r => {
                 if (!r.dateFilter) return null;
                 const [y, m] = r.dateFilter.split('-');
@@ -116,8 +117,10 @@ export default function InventoryAdjustmentView({
                 return f;
             });
 
-            // matchesFilter di TableListView untuk dateFilter perlu exact match,
-            // kita pakai prefix month match lewat rowKey custom
+          // matchesFilter di TableListView untuk dateFilter perlu exact match,
+
+          // kita pakai prefix month match lewat rowKey custom
+
             const rowsWithMonthKey = mappedRows.map(r => ({
                 ...r,
                 dateFilter: r.dateFilter ? r.dateFilter.slice(0, 7) : '',

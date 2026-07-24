@@ -119,7 +119,8 @@ export function buildEmployeeRow(record) {
         sellerValue: record.is_salesperson ? 'yes' : 'no',
         attachments: record.attachments ?? [],
 
-        // Opsi kolom tambahan untuk Settings
+      // Opsi kolom tambahan untuk Settings
+
         subjectToIncomeTaxText: record.subject_to_income_tax !== false ? 'Ya' : 'Tidak',
         isSalespersonText: record.is_salesperson ? 'Ya' : 'Tidak',
         tabLabel: record.full_name ?? record.employee_code ?? `Karyawan #${record.id}`,

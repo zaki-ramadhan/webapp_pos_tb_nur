@@ -45,7 +45,8 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
                 isSubCategoryText: row.parent_id ? 'Ya' : 'Tidak',
                 tabLabel: row.name ?? '',
                 
-                // Pemetaan akun tambahan untuk kolom settings
+              // Pemetaan akun tambahan untuk kolom settings
+
                 inventoryAccountLabel: inv ? `[${inv.code}] ${inv.name}` : '-',
                 expenseAccountLabel: exp ? `[${exp.code}] ${exp.name}` : '-',
                 salesAccountLabel: sal ? `[${sal.code}] ${sal.name}` : '-',

@@ -397,7 +397,8 @@ class DashboardAnalyticsQueryService
                 ->where('due_date', '<', date('Y-m-d'))
                 ->count();
 
-            // Hitung catatan mendatang
+          // Hitung catatan mendatang
+
             $today = Carbon::today();
             $targetDay = 15;
             $upcomingDate = $today->day <= $targetDay
@@ -415,7 +416,8 @@ class DashboardAnalyticsQueryService
 
             $upcomingNote = $upcomingDate->format('d') . ' ' . $targetMonthName . ' ' . $upcomingDate->format('Y') . " — Batas Akhir Pelaporan SPT PPh 21 Masa {$reportMonthName} " . $upcomingDate->copy()->subMonth()->format('Y');
 
-            // Hitung catatan jatuh tempo
+          // Hitung catatan jatuh tempo
+
             $overdueSalesInvoicesCount = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])

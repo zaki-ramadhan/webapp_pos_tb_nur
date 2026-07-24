@@ -69,7 +69,8 @@ export const supplierBusinessPartnerTemplate = createTemplate({
             { id: 'code', label: 'ID Pemasok', widthClassName: 'w-[140px]', align: 'left' },
             { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
             
-            // Kolom-kolom baru (default disembunyikan)
+          // Kolom-kolom baru (default disembunyikan)
+
             { id: 'phone', label: 'Telepon Kantor', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
             { id: 'mobilePhone', label: 'Handphone', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
             { id: 'whatsapp', label: 'WhatsApp', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },

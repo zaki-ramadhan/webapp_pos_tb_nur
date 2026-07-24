@@ -48,7 +48,8 @@ export default function SelectField({
     const [localValue, setLocalValue] = useState(defaultValue ?? '');
     const currentValue = isControlled ? value : localValue;
 
-    // Ambil opsi dari children
+  // Ambil opsi dari children
+
     const options = useMemo(() => {
         const list = [];
         const traverse = (nodes) => {
@@ -95,7 +96,8 @@ export default function SelectField({
         return baseLabel;
     }, [selectedOption, prefix, currentValue, placeholder]);
 
-    // Track scroll keyboard
+  // Track scroll keyboard
+
     useEffect(() => {
         if (open && highlightedIndex >= 0 && listRef.current) {
             const activeEl = listRef.current.children[highlightedIndex];
@@ -105,7 +107,8 @@ export default function SelectField({
         }
     }, [highlightedIndex, open]);
 
-    // Reset indeks sorot
+  // Reset indeks sorot
+
     useEffect(() => {
         if (open) {
             const index = options.findIndex((opt) => String(opt.value) === String(currentValue));

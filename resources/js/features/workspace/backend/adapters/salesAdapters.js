@@ -67,7 +67,8 @@ export function mapPartnerRow(record) {
         notes: record.notes ?? '',
         creditLimit: record.credit_limit ?? 0,
 
-        // Opsi kolom tambahan untuk Settings
+      // Opsi kolom tambahan untuk Settings
+
         paymentTermsText: record.payment_term?.name ?? 'C.O.D',
         creditLimitText: record.credit_limit ? Number(record.credit_limit).toLocaleString('id-ID') : '0',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
@@ -170,7 +171,8 @@ export function mapProductRow(record) {
         purchaseReturnAccountId: record.purchase_return_account_id ?? null,
         uninvoicedPurchaseAccountId: record.uninvoiced_purchase_account_id ?? null,
         
-        // Pemetaan kolom baru untuk Settings Table
+      // Pemetaan kolom baru untuk Settings Table
+
         purchaseUnit: record.purchase_unit?.name ?? record.purchase_unit?.code ?? '-',
         barcode: record.barcode ?? '-',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',

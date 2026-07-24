@@ -71,7 +71,8 @@ export function useFormError(explicitError, name, id) {
         console.log('useFormError Check:', { name, id, contextKey, contextError, errors });
     }
 
-    // Prioritaskan error string
+  // Prioritaskan error string
+
     const errorMessage =
         typeof explicitError === 'string' && explicitError
             ? explicitError
@@ -86,7 +87,8 @@ export function useFormError(explicitError, name, id) {
 export function useToggleFieldError({ error, name, id, size, align, containerClassName }) {
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
-    // gunakan error message yang ada
+  // gunakan error message yang ada
+
     const feedbackMessage = typeof resolvedError === 'string' ? resolvedError : '';
 
     const sizeClassName = size === 'md' ? 'h-5 w-5' : 'h-4 w-4';

@@ -19,19 +19,22 @@ const inactivePreferenceChecklistItemIds = new Set([
 const inactiveWorkspaceControlIds = new Set([]);
 
 const pageToFeatureMap = {
-    // Fitur dasar
+  // Fitur dasar
+
     'branch': 'multi-branch',
     'currency-master': 'multi-currency',
     'company-tax': 'tax-feature',
     'transaction-approval': 'approval-feature',
     'department': 'department-center',
     
-    // Seed anggaran
+  // Seed anggaran
+
     'budget': 'budget-feature',
     'budget-monitor': 'budget-feature',
     'budget-transfer': 'budget-feature',
 
-    // Penjualan
+  // Penjualan
+
     'sales-quote': 'sales-quote-order',
     'sales-order': 'sales-quote-order',
     'sales-delivery': 'sales-quote-order',
@@ -40,18 +43,21 @@ const pageToFeatureMap = {
     'sales-commission': 'salesman',
     'sales-target': 'sales-target',
 
-    // Pembelian
+  // Pembelian
+
     'purchase-order': 'purchase-order',
     'goods-receipt': 'purchase-order',
     'purchase-deposit': 'purchase-order',
     'supplier-price': 'supplier-price-list',
 
-    // Pengiriman
+  // Pengiriman
+
     'shipping-master': 'delivery-service',
     'fob-master': 'delivery-service',
     'payment-terms': 'payment-terms',
 
-    // Persediaan
+  // Persediaan
+
     'item-request': 'item-request',
     'stock-transfer': 'multi-warehouse',
     'warehouse-master': 'multi-warehouse',

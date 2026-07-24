@@ -146,7 +146,8 @@ export default function TableToolbar({
                     return;
                 }
 
-                // 1. Periksa kecocokan kolom header
+              // 1. Periksa kecocokan kolom header
+
                 const hasMatchingHeader = headers.some(header => {
                     const normalizedHeader = String(header).toLowerCase().trim();
                     return resolvedColumns.some(col => {
@@ -171,7 +172,8 @@ export default function TableToolbar({
                 try {
                     const mappedRows = rows.map(row => mapImportRow(row, resolvedColumns));
 
-                    // Periksa apakah baris yang dipetakan kosong semua datanya
+                  // Periksa apakah baris yang dipetakan kosong semua datanya
+
                     const hasValidData = mappedRows.some(mappedRow => {
                         return Object.values(mappedRow).some(val => val !== undefined && String(val).trim() !== '');
                     });

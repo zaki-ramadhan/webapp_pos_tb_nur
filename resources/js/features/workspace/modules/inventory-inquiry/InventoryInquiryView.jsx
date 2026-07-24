@@ -81,7 +81,8 @@ export default function InventoryInquiryView({ config, pageId }) {
         });
     }, [config.table.columns, values.itemType]);
 
-    // Pisahkan kolom checkbox dari kolom data
+  // Pisahkan kolom checkbox dari kolom data
+
     const firstColumnIsCheckbox = cleanedColumns[0]?.kind === 'checkbox';
     const dataColumns = useMemo(
         () => firstColumnIsCheckbox ? cleanedColumns.slice(1) : cleanedColumns,
@@ -140,7 +141,8 @@ export default function InventoryInquiryView({ config, pageId }) {
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
     const { handleResizeStart, getCellStyle } = useColumnResize('inventory-inquiry');
 
-    // Reset selection jika data berubah
+  // Reset selection jika data berubah
+
     const serializedIds = sortedRows.map((r) => r.id).join(',');
     useMemo(() => setSelectedIds(new Set()), [serializedIds]);
 

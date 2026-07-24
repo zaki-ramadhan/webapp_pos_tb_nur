@@ -120,7 +120,8 @@ export function GeneralJournalHeader({ config, values, setValues, activeRecordId
         const resourceKey = RESOURCE_LOOKUP_MAP[values.transactionTypeValue];
         const docNumber = values.transactionNumber || values.documentNumber;
 
-        // Navigasi ke halaman tujuan dulu
+      // Navigasi ke halaman tujuan dulu
+
         window.dispatchEvent(new CustomEvent('workspace:open-page', { detail: { pageId } }));
 
         if (!resourceKey || !docNumber) return;

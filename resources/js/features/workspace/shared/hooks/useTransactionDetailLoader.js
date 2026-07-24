@@ -36,11 +36,14 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
     const [localRecord, setLocalRecord] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Normalize activeRecordId to string to prevent string/number type switching from triggering useEffect twice
+  // Normalize activeRecordId to string to prevent string/number type switching from triggering useEffect twice
+
     const normalizedRecordId = activeRecordId !== null && activeRecordId !== undefined ? String(activeRecordId) : null;
 
-    // Refs so the async closure always uses latest values
-    // without making config/buildRecord trigger a new fetch
+  // Refs so the async closure always uses latest values
+
+  // without making config/buildRecord trigger a new fetch
+
     const configRef = useRef(config);
     const buildRecordRef = useRef(buildRecord);
     useEffect(() => { configRef.current = config; }, [config]);
@@ -49,7 +52,8 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
     const lastRecordIdRef = useRef(normalizedRecordId);
 
     useEffect(() => {
-        // Only clear if the record ID itself has changed (switching to another document).
+      // Only clear if the record ID itself has changed (switching to another document).
+
         if (lastRecordIdRef.current !== normalizedRecordId) {
             setLocalRecord(null);
             lastRecordIdRef.current = normalizedRecordId;
@@ -59,13 +63,15 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
             return;
         }
 
-        // 1. Check in-memory cache first (survives HMR, not page refresh)
+      // 1. Check in-memory cache first (survives HMR, not page refresh)
+
         if (window.__savedRecordsCache?.[normalizedRecordId] && window.__savedRecordsCache[normalizedRecordId]?.dockActions?.length) {
             setLocalRecord(window.__savedRecordsCache[normalizedRecordId]);
             return;
         }
 
-        // 2. Check if config has it in rowMap (opening from view data page)
+      // 2. Check if config has it in rowMap (opening from view data page)
+
         const row = configRef.current?.rowMap?.[normalizedRecordId];
         if (row?.__backendRecord) {
             const parsed = buildRecordRef.current
@@ -75,7 +81,8 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
             return;
         }
 
-        // 3. Check if config has it in detailRecords
+      // 3. Check if config has it in detailRecords
+
         const detailRecord = configRef.current?.detailRecords?.[normalizedRecordId];
         if (detailRecord) {
             setLocalRecord(detailRecord);
@@ -87,8 +94,10 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
 
         const shouldShowToast = isResourceActive(resourceName);
 
-        // Delay showing the loading toast slightly (150ms) to prevent flash of loading toasts
-        // on fast network requests and eliminate double toasts from React double-mounting effects.
+      // Delay showing the loading toast slightly (150ms) to prevent flash of loading toasts
+
+      // on fast network requests and eliminate double toasts from React double-mounting effects.
+
         let toastId = null;
         let toastTimer = null;
 
@@ -122,19 +131,23 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
                     window.__savedRecordsCache = window.__savedRecordsCache || {};
                     window.__savedRecordsCache[String(normalizedRecordId)] = parsed;
 
-                    // Update toast immediately so animation starts smoothly
+                  // Update toast immediately so animation starts smoothly
+
                     if (shouldShowToast && toastId) {
                         updateToastToSuccess(toastId, {
                             title: 'Berhasil',
                             message: 'Data berhasil dimuat.'
                         });
                     } else if (shouldShowToast) {
-                        // Dismiss loader if toastTimer was not fired yet
+                      // Dismiss loader if toastTimer was not fired yet
+
                         dismissToast(toastId);
                     }
 
-                    // Defer the heavy React state update slightly (50ms) so that
-                    // the toast transition completes smoothly without thread blocking.
+                  // Defer the heavy React state update slightly (50ms) so that
+
+                  // the toast transition completes smoothly without thread blocking.
+
                     setTimeout(() => {
                         if (active) {
                             setLocalRecord(parsed);
@@ -175,7 +188,8 @@ export function useTransactionDetailLoader({ resourceName, activeRecordId, build
             if (toastTimer) clearTimeout(toastTimer);
             if (toastId) dismissToast(toastId);
         };
-        // Only re-fetch when the identity of the record changes
+      // Only re-fetch when the identity of the record changes
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [normalizedRecordId, resourceName]);
 

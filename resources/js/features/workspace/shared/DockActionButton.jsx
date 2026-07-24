@@ -15,7 +15,8 @@ export default function DockActionButton({
 
     let toneClassName = '';
     if (isDisabled) {
-        // State dinonaktifkan
+      // State dinonaktifkan
+
         toneClassName = 'border-disabled-border bg-tab-view-active-border-t text-disabled-border-t cursor-default opacity-55 shadow-none pointer-events-none';
     } else {
         if (resolvedTone === 'danger') {

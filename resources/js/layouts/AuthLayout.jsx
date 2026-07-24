@@ -10,7 +10,8 @@ export default function AuthLayout({ children, title }) {
     useEffect(() => {
         clearWorkspaceClientState();
 
-        // Kunci scroll halaman
+      // Kunci scroll halaman
+
         document.documentElement.classList.add('overflow-hidden');
         document.body.classList.add('overflow-hidden');
 

@@ -90,7 +90,8 @@ export const customerBusinessPartnerTemplate = createTemplate({
             { id: 'primaryContact', label: 'Kontak Utama', widthClassName: 'w-[130px]', align: 'left', truncate: true },
             { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
             
-            // Kolom-kolom baru (default disembunyikan)
+          // Kolom-kolom baru (default disembunyikan)
+
             { id: 'phone', label: 'Telepon Kantor', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
             { id: 'mobilePhone', label: 'Handphone', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
             { id: 'whatsapp', label: 'WhatsApp', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },

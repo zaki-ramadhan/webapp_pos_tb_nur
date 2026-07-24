@@ -46,7 +46,8 @@ const BrandMark = memo(function BrandMark({
                 localStorage.setItem('logo_cache', dataUrl);
                 setLogoSrc(dataUrl);
             } catch (e) {
-                // Ignore silent canvas failure
+              // Ignore silent canvas failure
+
             }
         };
     }, []);

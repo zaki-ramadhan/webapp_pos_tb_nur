@@ -13,7 +13,8 @@ class AbcAnalysisService
      */
     public function calculate(): array
     {
-        // Query total penjualan per produk
+      // Query total penjualan per produk
+
         $salesData = DB::table('operation_document_lines')
             ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
             ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
@@ -64,7 +65,8 @@ class AbcAnalysisService
             $cumulativeRevenue += $revenue;
             $cumulativeShare = ($cumulativeRevenue / $totalRevenue) * 100;
 
-            // Klasifikasi ABC
+          // Klasifikasi ABC
+
             if ($cumulativeShare <= 80 || $itemsA === 0) {
                 $category = 'A';
                 $color = '#2d77d1';
@@ -82,7 +84,8 @@ class AbcAnalysisService
                 $revenueC += $revenue;
             }
 
-            // Daftar item teratas
+          // Daftar item teratas
+
             if (count($topItems) < 5) {
                 $topItems[] = [
                     'name' => $row->product_name,

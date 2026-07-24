@@ -121,7 +121,8 @@ export function exportToExcelXML(columns, rows, filename = 'export') {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
 
-    // Hitung lebar kolom
+  // Hitung lebar kolom
+
     const colWidths = [
         { wch: 6 },
         ...activeCols.map((col) => {
@@ -138,7 +139,8 @@ export function exportToExcelXML(columns, rows, filename = 'export') {
                 maxLen = Math.max(maxLen, cellStr.length);
             });
 
-            // Tambah padding nama
+          // Tambah padding nama
+
             const optimalWidth = Math.max(12, Math.min(50, maxLen + 4));
             return { wch: optimalWidth };
         })
@@ -238,7 +240,8 @@ export function printTable(columns, rows, title = 'Laporan') {
         format: format,
     });
 
-    // Atur properti metadata
+  // Atur properti metadata
+
     doc.setProperties({
         title: cleanTitle,
         subject: `Laporan ${cleanTitle} - TB Nur`,
@@ -246,22 +249,26 @@ export function printTable(columns, rows, title = 'Laporan') {
         author: 'TB Nur'
     });
 
-    // Gambar header halaman 1
+  // Gambar header halaman 1
+
     const width = doc.internal.pageSize.width;
 
-    // Nama Toko
+  // Nama Toko
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.setTextColor(30, 58, 138);
     doc.text('TB Nur', 36, 45);
 
-    // Judul laporan
+  // Judul laporan
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
     doc.setTextColor(71, 85, 105);
     doc.text(cleanTitle, 36, 58);
 
-    // Tampilkan info waktu & statistik
+  // Tampilkan info waktu & statistik
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
@@ -281,12 +288,14 @@ export function printTable(columns, rows, title = 'Laporan') {
     doc.text(timestampStr, width - 36, 45, { align: 'right' });
     doc.text(statsStr, width - 36, 58, { align: 'right' });
 
-    // Garis pembatas header
+  // Garis pembatas header
+
     doc.setDrawColor(35, 83, 160);
     doc.setLineWidth(2);
     doc.line(36, 75, width - 36, 75);
 
-    // Sesuaikan kolom
+  // Sesuaikan kolom
+
     const columnStyles = {
         0: { halign: 'center' }
     };
@@ -295,7 +304,8 @@ export function printTable(columns, rows, title = 'Laporan') {
         columnStyles[idx + 1] = { halign: align };
     });
 
-    // Buat AutoTable
+  // Buat AutoTable
+
     autoTable(doc, {
         head: headers,
         body: data,
@@ -322,7 +332,8 @@ export function printTable(columns, rows, title = 'Laporan') {
         theme: 'grid',
     });
 
-    // Tambah nomor halaman & header/footer
+  // Tambah nomor halaman & header/footer
+
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
@@ -330,11 +341,13 @@ export function printTable(columns, rows, title = 'Laporan') {
         doc.setFontSize(8);
         doc.setTextColor(100, 116, 139);
 
-        // Nomor halaman footer
+      // Nomor halaman footer
+
         const footerText = `Halaman ${i} dari ${totalPages}`;
         doc.text(footerText, width - 36, doc.internal.pageSize.height - 20, { align: 'right' });
 
-        // Header halaman > 1
+      // Header halaman > 1
+
         if (i > 1) {
             doc.text(`TB Nur — ${cleanTitle}`, 36, 25);
             doc.setDrawColor(226, 232, 240);
@@ -343,7 +356,8 @@ export function printTable(columns, rows, title = 'Laporan') {
         }
     }
 
-    // Buka PDF di window baru
+  // Buka PDF di window baru
+
     try {
         const blob = doc.output('blob');
         const url = URL.createObjectURL(blob);

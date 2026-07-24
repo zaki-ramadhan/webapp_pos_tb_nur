@@ -45,7 +45,8 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
     const [activePageId, setActivePageId] = useState(initialWorkspacePageState.activePageId);
     const [pageOpeningLoading, setPageOpeningLoading] = useState(null);
     
-    // Kelola state tab kotor
+  // Kelola state tab kotor
+
     const {
         dirtyTabs,
         clearPageDirty,
@@ -70,7 +71,8 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
         }
     }, [activePageId]);
 
-    // Helper penutupan halaman
+  // Helper penutupan halaman
+
     function closePageNow(pageId) {
         if (pageId === dashboardPage.id) {
             return;
@@ -78,7 +80,8 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
         clearPageDirty(pageId);
 
-        // Hapus cache halaman saat ditutup
+      // Hapus cache halaman saat ditutup
+
         if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
             window.__clearBackendCache(pageId);
         }

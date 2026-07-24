@@ -37,7 +37,8 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
                     setFetchedRow(record);
                 }
             } catch (err) {
-                // Ignore
+              // Ignore
+
             }
         }
         fetchDetail();
@@ -121,7 +122,8 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             });
             setStatus({ tone: 'error', message: errorMessage });
 
-            // Dispatch backend validation errors to form fields
+          // Dispatch backend validation errors to form fields
+
             const serverFieldErrors = err?.response?.data?.errors;
             if (serverFieldErrors && typeof serverFieldErrors === 'object') {
                 const flat = Object.fromEntries(

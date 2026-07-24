@@ -35,7 +35,8 @@ const listColumns = [
     { id: 'stockAtWarehouse', label: 'Kts (Gdng Peng...)', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
     { id: 'saleableStock', label: 'Stok dapat dijual', widthClassName: 'w-[150px]', align: 'right', noWrap: true },
     
-    // Kolom-kolom baru (default disembunyikan di Settings menu)
+  // Kolom-kolom baru (default disembunyikan di Settings menu)
+
     { id: 'purchasePrice', label: 'Harga Beli', widthClassName: 'w-[150px]', align: 'right', defaultHidden: true, noWrap: true },
     { id: 'purchaseUnit', label: 'Satuan Beli', widthClassName: 'w-[110px]', align: 'left', defaultHidden: true, noWrap: true },
     { id: 'barcode', label: 'Barcode', widthClassName: 'w-[140px]', align: 'left', defaultHidden: true },

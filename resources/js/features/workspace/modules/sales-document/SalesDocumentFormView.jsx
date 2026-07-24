@@ -237,7 +237,8 @@ export default function SalesDocumentFormView({
                             status: 'Ditutup',
                         });
                     } catch {
-                        // Abaikan jika sudah tertutup
+                      // Abaikan jika sudah tertutup
+
                     }
                 }
 

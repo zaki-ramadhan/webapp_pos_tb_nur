@@ -22,7 +22,8 @@ export function useColumnVisibility(schemaKey, initialColumns = []) {
     const [visibleIds, setVisibleIds] = useState(getInitialVisibleIds);
     const [lastSchemaKey, setLastSchemaKey] = useState(schemaKey);
 
-    // Sinkronkan kolom jika schema berubah
+  // Sinkronkan kolom jika schema berubah
+
     if (schemaKey !== lastSchemaKey) {
         setLastSchemaKey(schemaKey);
         setVisibleIds(getInitialVisibleIds());
@@ -31,7 +32,8 @@ export function useColumnVisibility(schemaKey, initialColumns = []) {
     useEffect(() => {
         if (!schemaKey || !visibleIds || visibleIds.length === 0) return;
         localStorage.setItem(`col_vis_${schemaKey}`, JSON.stringify(visibleIds));
-        // Beritahu listener
+      // Beritahu listener
+
         listeners.forEach(listener => listener(schemaKey, visibleIds));
     }, [schemaKey, visibleIds]);
 

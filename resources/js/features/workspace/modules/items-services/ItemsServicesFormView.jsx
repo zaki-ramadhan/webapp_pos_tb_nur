@@ -72,7 +72,8 @@ export default function ItemsServicesFormView({
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId]);
 
-    // Fetch saved stock locations from DB and populate openingStockRows
+  // Fetch saved stock locations from DB and populate openingStockRows
+
     useEffect(() => {
         if (!detailRow?.id) return;
         let active = true;
@@ -94,7 +95,8 @@ export default function ItemsServicesFormView({
                         __fromDb: true,
                     }));
                 setValues((prev) => {
-                    // Don't override if user has already added rows
+                  // Don't override if user has already added rows
+
                     const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
                     if (hasUserRows) return prev;
                     return { ...prev, openingStockRows: stockRows };

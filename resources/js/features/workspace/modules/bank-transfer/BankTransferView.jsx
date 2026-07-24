@@ -31,8 +31,10 @@ export default function BankTransferView({
         enabled: true,
     });
 
-    // Stable form config — excludes loading/error/rows so the form state isn't
-    // reset every time the background data fetch completes.
+  // Stable form config — excludes loading/error/rows so the form state isn't
+
+  // reset every time the background data fetch completes.
+
     const formConfigRef = useRef(null);
     if (!formConfigRef.current) {
         formConfigRef.current = page.bankTransfer;
@@ -40,14 +42,17 @@ export default function BankTransferView({
 
     const mappedRows = useMemo(() => rows.map((record) => buildBankTransferRow(record)), [rows]);
 
-    // rowMap is also stable per fetch result — used only for detail record lookup
+  // rowMap is also stable per fetch result — used only for detail record lookup
+
     const rowMap = useMemo(
         () => mappedRows.reduce((result, row) => { result[row.id] = row; return result; }, {}),
         [mappedRows],
     );
 
-    // formConfig stays referentially stable between fetches so useFormDraftState
-    // doesn't treat it as a "source record change" and wipe user-entered data.
+  // formConfig stays referentially stable between fetches so useFormDraftState
+
+  // doesn't treat it as a "source record change" and wipe user-entered data.
+
     const formConfig = useMemo(
         () => ({ ...formConfigRef.current, rowMap }),
         [rowMap],

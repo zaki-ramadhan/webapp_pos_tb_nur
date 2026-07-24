@@ -40,7 +40,8 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
             if (!matchesFilters) return false;
             if (!normalizedKeyword) return true;
 
-            // Search across all meaningful text columns
+          // Search across all meaningful text columns
+
             const searchFields = ['number', 'date', 'fromBank', 'toBank', 'description', 'purchasePayment', 'fromTotal', 'toTotal'];
             return searchFields.some((field) =>
                 String(row[field] ?? '').toLowerCase().includes(normalizedKeyword),
@@ -50,7 +51,8 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
 
     const { sortedRows, sortKey, sortDir, handleSort } = useTableSort(filteredRows);
 
-    // Inject row-number column at the front
+  // Inject row-number column at the front
+
     const columnsWithNo = useMemo(() => {
         if (filteredRows.length === 0) {
             return config.table.columns;

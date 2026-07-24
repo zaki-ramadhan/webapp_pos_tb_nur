@@ -11,7 +11,8 @@ export function buildWarehouseEntry(backendRecord, defaults) {
         return { ...defaults };
     }
 
-    // Backend record (dari API show/index)
+  // Backend record (dari API show/index)
+
     if (backendRecord.__source === 'backend') {
         const r = backendRecord;
         return {
@@ -34,7 +35,8 @@ export function buildWarehouseEntry(backendRecord, defaults) {
         };
     }
 
-    // Mock detailRecord (dari config.detailRecords)
+  // Mock detailRecord (dari config.detailRecords)
+
     return {
         id: backendRecord.id ?? null,
         code: backendRecord.code ?? '',
@@ -66,7 +68,8 @@ export function mapWarehouseTableRow(record) {
         branchId: record.branch_id ?? record.branch?.id ?? null,
         inactiveValue: record.is_active === false ? 'yes' : 'no',
         
-        // Pemetaan kolom baru untuk Settings
+      // Pemetaan kolom baru untuk Settings
+
         description: record.description ?? '',
         responsiblePerson: record.responsible_person ?? record.responsiblePerson ?? '',
         isDamagedWarehouseText: record.warehouse_type === 'damaged' || record.isDamagedWarehouse ? 'Ya' : 'Tidak',

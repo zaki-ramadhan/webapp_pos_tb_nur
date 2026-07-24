@@ -37,7 +37,8 @@ export default function BackendLookupField({
                     setItems(extractBackendRows(payload));
                 }
             } catch {
-                // Abaikan error
+              // Abaikan error
+
             } finally {
                 if (!ignore) setSearching(false);
             }

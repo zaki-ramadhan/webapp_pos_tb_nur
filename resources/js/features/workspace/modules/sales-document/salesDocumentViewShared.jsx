@@ -272,7 +272,8 @@ export function buildSalesDocumentRightControls(config) {
     }
 
     return [
-        // Hide print and download buttons
+      // Hide print and download buttons
+
         /*
         config.table.downloadItems?.length ? (
             <TransactionToolbarSplitButton key="download" label="Unduh" icon={<DownloadIcon className="h-4 w-4" />} items={config.table.downloadItems} />

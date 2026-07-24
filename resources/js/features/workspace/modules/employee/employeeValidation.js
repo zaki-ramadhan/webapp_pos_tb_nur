@@ -26,7 +26,8 @@ export function validateEmployeeFields(values) {
         errors.website = websiteError;
     }
 
-    // Alamat
+  // Alamat
+
     if (values.postalCode) {
         const postalClean = String(values.postalCode).trim();
         if (!/^\d{5}$/.test(postalClean)) {
@@ -34,7 +35,8 @@ export function validateEmployeeFields(values) {
         }
     }
 
-    // Pajak
+  // Pajak
+
     if (values.subjectToIncomeTax) {
         if (values.taxNumber) {
             const strippedNpwp = String(values.taxNumber).replace(/[^0-9]/g, '');
@@ -58,7 +60,8 @@ export function validateEmployeeFields(values) {
         }
     }
 
-    // Bank
+  // Bank
+
     const hasAnyBankField = [values.bankName, values.bankAccountNumber, values.bankAccountHolder]
         .some((value) => String(value ?? '').trim());
 
