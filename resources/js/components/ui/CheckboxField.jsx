@@ -36,11 +36,12 @@ export default function CheckboxField({
         onChange?.(event);
     }
 
+    const hasContent = Boolean(label || children || feedbackMessage);
+
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <div className={`flex ${alignClassName} gap-3.5 text-xs sm:text-sm leading-6`.trim()}>
+            <div className={`flex ${alignClassName} ${hasContent ? 'gap-3.5' : ''} text-xs sm:text-sm leading-6`.trim()}>
                 <input
-
                     id={id}
                     type="checkbox"
                     disabled={disabled}
@@ -49,21 +50,23 @@ export default function CheckboxField({
                     onChange={handleChange}
                     {...props}
                 />
-                <label
-                    htmlFor={id}
-                    className={`min-w-0 ${disabled ? 'cursor-not-allowed text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
-                >
-                    <span className={`${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
-                        {label}
-                        {children}
-                    </span>
-
-                    {feedbackMessage ? (
-                        <span className={`mt-1 block text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-text' : 'text-slate-500'} ${messageClassName}`.trim()}>
-                            {feedbackMessage}
+                {hasContent && (
+                    <label
+                        htmlFor={id}
+                        className={`min-w-0 ${disabled ? 'cursor-not-allowed text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
+                    >
+                        <span className={`${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
+                            {label}
+                            {children}
                         </span>
-                    ) : null}
-                </label>
+
+                        {feedbackMessage ? (
+                            <span className={`mt-1 block text-[11px] sm:text-xs leading-5 ${resolvedError ? 'text-error-text' : 'text-slate-500'} ${messageClassName}`.trim()}>
+                                {feedbackMessage}
+                            </span>
+                        ) : null}
+                    </label>
+                )}
             </div>
         </div>
     );

@@ -280,7 +280,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {firstColumnIsCheckbox ? (
-                                <DataTableHead className="w-[36px] px-2 text-center">
+                                <DataTableHead className="w-px px-3 text-center">
                                     <input
                                         type="checkbox"
                                         checked={allSelected}
@@ -320,7 +320,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
-                                        <DataTableCell className="px-2 text-center">
+                                        <DataTableCell className="w-px px-3 text-center">
                                             <input
                                                 type="checkbox"
                                                 checked={selectedIds.has(row.id)}

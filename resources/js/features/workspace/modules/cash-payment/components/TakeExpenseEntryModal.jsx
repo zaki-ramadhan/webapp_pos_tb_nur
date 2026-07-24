@@ -179,6 +179,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                     <TransactionDateInput
                         value={endDate}
                         onChange={(_, nativeVal) => setEndDate(nativeVal)}
+                        minDate={startDate}
                         className="max-w-[155px]"
                         inputClassName="text-xs sm:text-sm text-brand-dark h-[36px] px-2"
                     />

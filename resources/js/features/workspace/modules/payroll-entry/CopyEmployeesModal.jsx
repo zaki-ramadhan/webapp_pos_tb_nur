@@ -158,12 +158,11 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                     </SelectField>
                 </div>
 
-                {}
                 <div className="overflow-y-auto max-h-[380px] min-h-[320px] border border-slate-200 rounded-[4px] mt-2">
                     <DataTable>
                         <DataTableHeader>
                             <DataTableRow className="border-t-0 text-white">
-                                <DataTableHead className="text-center w-9 min-w-9">
+                                <DataTableHead className="w-px px-3 text-center">
                                     <input
                                         type="checkbox"
                                         checked={isAllSelected}
@@ -183,30 +182,25 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                         <DataTableBody>
                             {loading ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="px-4 py-8 text-center text-sm text-slate-500">
+                                    <DataTableCell colSpan={3} className="text-center py-6 text-slate-500">
                                         Memuat data karyawan...
                                     </DataTableCell>
                                 </DataTableRow>
                             ) : filteredEmployees.length === 0 ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="px-4 py-8">
-                                        <EmptyState
-                                            title="Belum ada data"
-                                            description="Data karyawan tidak ditemukan untuk kategori ini."
-                                            size="sm"
-                                            tone="subtle"
-                                        />
+                                    <DataTableCell colSpan={3} className="text-center py-6 text-slate-500">
+                                        Belum Ada Data Karyawan
                                     </DataTableCell>
                                 </DataTableRow>
                             ) : (
                                 filteredEmployees.map((emp) => {
-                                    const isSelected = selectedIds.includes(emp.id);
+                                    const checked = selectedIds.includes(emp.id);
                                     return (
-                                        <DataTableRow key={emp.id} className={isSelected ? 'bg-slate-50' : ''}>
-                                            <DataTableCell className="text-center w-9 min-w-9">
+                                        <DataTableRow key={emp.id} className="hover:bg-slate-50">
+                                            <DataTableCell className="w-px px-3 text-center">
                                                 <input
                                                     type="checkbox"
-                                                    checked={isSelected}
+                                                    checked={checked}
                                                     onChange={() => toggleSelect(emp.id)}
                                                     className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-brand-blue-accent focus:ring-brand-blue-accent cursor-pointer"
                                                 />

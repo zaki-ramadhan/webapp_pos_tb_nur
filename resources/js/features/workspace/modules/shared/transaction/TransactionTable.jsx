@@ -91,7 +91,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${column.widthClassName ?? ''} ${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-base font-normal text-white text-center`.trim()}
+                                    className={`${isCheckbox ? 'w-px px-3 text-center' : column.widthClassName ?? ''} ${isCheckbox ? '' : 'px-3'} text-base font-normal text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
                                     style={getCellStyle(column.id, {
                                         position: 'relative',
                                         ...(minWidth ? { minWidth } : {}),
@@ -156,7 +156,7 @@ export function TransactionDataTable({
                                         return (
                                             <DataTableCell
                                                 key={column.id}
-                                                className={`${isCheckbox ? '!px-2.5 !sm:px-2.5' : 'px-3'} text-base text-text-workspace-dark ${resolveTransactionAlignClassName(column.align)} ${cellClassName}`.trim()}
+                                                className={`${isCheckbox ? 'w-px px-3 text-center' : 'px-3'} text-base text-text-workspace-dark ${resolveTransactionAlignClassName(isCheckbox ? 'center' : column.align)} ${cellClassName}`.trim()}
                                                 style={getCellStyle(column.id, isCheckbox ? { minWidth: '0px', width: '1px' } : {})}
                                                 onResizeStart={(e) => handleResizeStart(e, column.id)}
                                             >

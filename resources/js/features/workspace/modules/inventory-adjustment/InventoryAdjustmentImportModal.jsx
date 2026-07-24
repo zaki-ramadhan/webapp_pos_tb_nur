@@ -1,6 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import DocumentModalLayout from '@/features/workspace/modules/shared/document-modal/DocumentModalLayout';
 import SelectField from '@/components/ui/SelectField';
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableHead,
+    DataTableHeader,
+    DataTableRow,
+} from '@/components/ui/DataTable';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { showSuccessToast, showErrorToast } from '@/components/feedback/toast';
 import { parseNumericInput, formatCurrencyValue } from './inventoryAdjustmentShared';
@@ -360,37 +368,35 @@ export default function InventoryAdjustmentImportModal({ open, onClose, onImport
                     {/* Preview Table */}
                     <div className="space-y-2">
                         <h4 className="text-xs font-semibold text-gray-800 uppercase tracking-wider">Pratinjau Data (3 baris pertama)</h4>
-                        <div className="border border-ui-border-light rounded-lg overflow-hidden overflow-x-auto">
-                            <table className="min-w-full text-xs text-left text-gray-500">
-                                <thead className="bg-table-header-bg text-white text-[11px] font-semibold uppercase">
-                                    <tr>
-                                        <th className="px-3 py-2 text-center">Nama Barang</th>
-                                        <th className="px-3 py-2 text-center">Kode</th>
-                                        <th className="px-3 py-2 text-center">Tipe</th>
-                                        <th className="px-3 py-2 text-center">Qty</th>
-                                        <th className="px-3 py-2 text-center">Biaya Satuan</th>
-                                        <th className="px-3 py-2 text-center">Total Biaya</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-ui-border-light bg-white">
-                                    {previewData.map((p, idx) => (
-                                        <tr key={idx} className="hover:bg-tab-inactive-border-l">
-                                            <td className="px-3 py-2 font-medium text-gray-900 truncate max-w-[140px] text-left">{p.name}</td>
-                                            <td className="px-3 py-2 text-left">{p.code}</td>
-                                            <td className="px-3 py-2 text-left">{p.adjustmentType}</td>
-                                            <td className="px-3 py-2 text-left">{p.quantity}</td>
-                                            <td className="px-3 py-2 text-left">{p.unitCost}</td>
-                                            <td className="px-3 py-2 text-left font-medium text-gray-900">{p.totalCost}</td>
-                                        </tr>
-                                    ))}
-                                    {previewData.length === 0 && (
-                                        <tr>
-                                            <td colSpan={6} className="px-3 py-4 text-center text-gray-400">Pilih kolom untuk melihat pratinjau data.</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                        <DataTable wrapperClassName="border-ui-border-light rounded-lg overflow-hidden">
+                            <DataTableHeader className="bg-table-header-bg text-white text-[11px]">
+                                <tr>
+                                    <DataTableHead className="px-3 py-2 text-center text-white">Nama Barang</DataTableHead>
+                                    <DataTableHead className="px-3 py-2 text-center text-white">Kode</DataTableHead>
+                                    <DataTableHead className="px-3 py-2 text-center text-white">Tipe</DataTableHead>
+                                    <DataTableHead className="px-3 py-2 text-center text-white">Qty</DataTableHead>
+                                    <DataTableHead className="px-3 py-2 text-center text-white">Biaya Satuan</DataTableHead>
+                                    <DataTableHead className="px-3 py-2 text-center text-white">Total Biaya</DataTableHead>
+                                </tr>
+                            </DataTableHeader>
+                            <DataTableBody>
+                                {previewData.map((p, idx) => (
+                                    <DataTableRow key={idx} className="hover:bg-tab-inactive-border-l">
+                                        <DataTableCell className="px-3 py-2 truncate max-w-[140px] text-left">{p.name}</DataTableCell>
+                                        <DataTableCell className="px-3 py-2 text-left">{p.code}</DataTableCell>
+                                        <DataTableCell className="px-3 py-2 text-left">{p.adjustmentType}</DataTableCell>
+                                        <DataTableCell className="px-3 py-2 text-left">{p.quantity}</DataTableCell>
+                                        <DataTableCell className="px-3 py-2 text-left">{p.unitCost}</DataTableCell>
+                                        <DataTableCell className="px-3 py-2 text-left">{p.totalCost}</DataTableCell>
+                                    </DataTableRow>
+                                ))}
+                                {previewData.length === 0 && (
+                                    <DataTableRow className="bg-white">
+                                        <DataTableCell colSpan={6} className="px-3 py-4 text-center text-gray-400">Pilih kolom untuk melihat pratinjau data.</DataTableCell>
+                                    </DataTableRow>
+                                )}
+                            </DataTableBody>
+                        </DataTable>
                     </div>
                 </div>
             )}

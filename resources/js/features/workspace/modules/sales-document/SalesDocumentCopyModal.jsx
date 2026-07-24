@@ -455,14 +455,14 @@ export default function SalesDocumentCopyModal({
                                 <DataTable>
                                     <DataTableHeader>
                                         <DataTableRow>
-                                            <DataTableHead className="w-[38px] text-center text-white">
+                                            <DataTableHead className="w-px px-3 text-center text-white">
                                                 <CheckboxField
                                                     id="select-all-items"
                                                     checked={filteredItems.length > 0 && filteredItems.every((item, i) => selectedItems.has(getItemKey(item, i)))}
                                                     onChange={toggleSelectAllItems}
                                                     align="center"
                                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                                    containerClassName="w-auto"
+                                                    containerClassName="flex justify-center"
                                                 />
                                             </DataTableHead>
                                             <DataTableHead className="w-[140px] text-white">Kode #</DataTableHead>
@@ -483,14 +483,14 @@ export default function SalesDocumentCopyModal({
                                                 const key = getItemKey(item, index);
                                                 return (
                                                     <DataTableRow key={key}>
-                                                        <DataTableCell className="text-center px-1">
+                                                        <DataTableCell className="w-px px-3 text-center">
                                                             <CheckboxField
                                                                 id={`select-item-${key}`}
                                                                 checked={selectedItems.has(key)}
                                                                 onChange={() => toggleSelectItem(key)}
                                                                 align="center"
                                                                 inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                                                containerClassName="w-auto"
+                                                                containerClassName="flex justify-center"
                                                             />
                                                         </DataTableCell>
                                                         <DataTableCell className="font-medium text-slate-700 truncate max-w-[140px]">
@@ -526,14 +526,14 @@ export default function SalesDocumentCopyModal({
                             <DataTable>
                                 <DataTableHeader>
                                     <DataTableRow>
-                                        <DataTableHead className="w-[38px] text-center text-white">
+                                        <DataTableHead className="w-px px-3 text-center text-white">
                                             <CheckboxField
                                                 id="select-all-costs"
                                                 checked={additionalCosts.length > 0 && additionalCosts.every((c, i) => selectedCosts.has(getCostKey(c, i)))}
                                                 onChange={toggleSelectAllCosts}
                                                 align="center"
                                                 inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                                containerClassName="w-auto"
+                                                containerClassName="flex justify-center"
                                             />
                                         </DataTableHead>
                                         <DataTableHead className="w-[140px] text-white">Kode #</DataTableHead>
@@ -553,14 +553,14 @@ export default function SalesDocumentCopyModal({
                                             const key = getCostKey(cost, i);
                                             return (
                                                 <DataTableRow key={key}>
-                                                    <DataTableCell className="text-center px-1">
+                                                    <DataTableCell className="w-px px-3 text-center">
                                                         <CheckboxField
                                                             id={`select-cost-${key}`}
                                                             checked={selectedCosts.has(key)}
                                                             onChange={() => toggleSelectCost(key)}
                                                             align="center"
                                                             inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                                            containerClassName="w-auto"
+                                                            containerClassName="flex justify-center"
                                                         />
                                                     </DataTableCell>
                                                     <DataTableCell className="font-medium text-slate-700 truncate max-w-[140px]">
@@ -592,14 +592,14 @@ export default function SalesDocumentCopyModal({
                             <DataTable>
                                 <DataTableHeader>
                                     <DataTableRow>
-                                        <DataTableHead className="w-[38px] text-center text-white">
+                                        <DataTableHead className="w-px px-3 text-center text-white">
                                             <CheckboxField
                                                 id="select-all-advances"
                                                 checked={advancePayments.length > 0 && advancePayments.every((a, i) => selectedAdvances.has(getAdvanceKey(a, i)))}
                                                 onChange={toggleSelectAllAdvances}
                                                 align="center"
                                                 inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                                containerClassName="w-auto"
+                                                containerClassName="flex justify-center"
                                             />
                                         </DataTableHead>
                                         <DataTableHead className="w-[180px] text-white">No Faktur #</DataTableHead>
@@ -619,14 +619,14 @@ export default function SalesDocumentCopyModal({
                                             const key = getAdvanceKey(adv, i);
                                             return (
                                                 <DataTableRow key={key}>
-                                                    <DataTableCell className="text-center px-1">
+                                                    <DataTableCell className="w-px px-3 text-center">
                                                         <CheckboxField
                                                             id={`select-adv-${key}`}
                                                             checked={selectedAdvances.has(key)}
                                                             onChange={() => toggleSelectAdvance(key)}
                                                             align="center"
                                                             inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                                            containerClassName="w-auto"
+                                                            containerClassName="flex justify-center"
                                                         />
                                                     </DataTableCell>
                                                     <DataTableCell className="font-medium text-slate-700 truncate max-w-[180px]">

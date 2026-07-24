@@ -2,6 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 
 import ModalBase from '@/components/ui/ModalBase';
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableHead,
+    DataTableHeader,
+    DataTableRow,
+} from '@/components/ui/DataTable';
 import { CloseIcon, TableActionIcon } from '@/features/workspace/shared/Icons';
 import { importFromFile } from '@/features/workspace/shared/exportUtils';
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
@@ -227,47 +235,45 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                                     </h3>
                                     {loadingProducts && <span className="text-sm text-slate-500">Mencocokkan...</span>}
                                 </div>
-                                <div className="max-h-[240px] overflow-auto border border-slate-200 rounded-[4px] w-full">
-                                    <table className="w-full border-collapse text-left text-sm">
-                                        <thead className="bg-slate-50 text-slate-700 sticky top-0 border-b border-slate-200">
-                                            <tr>
-                                                <th className="px-3 py-2 font-semibold text-center">Kode Input</th>
-                                                <th className="px-3 py-2 font-semibold text-center">Hasil Pencocokan</th>
-                                                <th className="px-3 py-2 font-semibold text-center">Qty</th>
-                                                {columnMapping.price !== -1 && <th className="px-3 py-2 font-semibold text-center">Harga</th>}
-                                                <th className="px-3 py-2 font-semibold text-center">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-100">
-                                            {previewItems.map((item, idx) => (
-                                                <tr key={idx} className={item.valid ? 'hover:bg-slate-50' : 'bg-danger-border/50'}>
-                                                    <td className="px-3 py-2 font-mono text-slate-600">{item.rawCode}</td>
-                                                    <td className="px-3 py-2">
-                                                        <div className="font-medium text-slate-800">{item.name}</div>
-                                                        {item.valid && (
-                                                            <div className="text-xs text-slate-500">
-                                                                Kode Sistem: {item.code} | Unit: {item.unit}
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-3 py-2 text-left font-mono">{item.rawQty}</td>
-                                                    {columnMapping.price !== -1 && (
-                                                        <td className="px-3 py-2 text-left font-mono">
-                                                            {item.price ? `Rp ${Number(item.price).toLocaleString('id-ID')}` : '-'}
-                                                        </td>
+                                <DataTable wrapperClassName="max-h-[240px] overflow-auto border border-slate-200 rounded-[4px] w-full">
+                                    <DataTableHeader className="bg-slate-50 text-slate-700 text-sm">
+                                        <tr>
+                                            <DataTableHead className="px-3 py-2 text-center">Kode Input</DataTableHead>
+                                            <DataTableHead className="px-3 py-2 text-center">Hasil Pencocokan</DataTableHead>
+                                            <DataTableHead className="px-3 py-2 text-center">Qty</DataTableHead>
+                                            {columnMapping.price !== -1 && <DataTableHead className="px-3 py-2 text-center">Harga</DataTableHead>}
+                                            <DataTableHead className="px-3 py-2 text-center">Status</DataTableHead>
+                                        </tr>
+                                    </DataTableHeader>
+                                    <DataTableBody>
+                                        {previewItems.map((item, idx) => (
+                                            <DataTableRow key={idx} className={item.valid ? 'hover:bg-slate-50' : 'bg-danger-border/50'}>
+                                                <DataTableCell className="px-3 py-2 font-mono text-slate-600">{item.rawCode}</DataTableCell>
+                                                <DataTableCell className="px-3 py-2">
+                                                    <div className="text-slate-800">{item.name}</div>
+                                                    {item.valid && (
+                                                        <div className="text-xs text-slate-500">
+                                                            Kode Sistem: {item.code} | Unit: {item.unit}
+                                                        </div>
                                                     )}
-                                                    <td className="px-3 py-2 text-center">
-                                                        {item.valid ? (
-                                                            <span className="inline-flex items-center rounded-full bg-success-bg px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Valid</span>
-                                                        ) : (
-                                                            <span className="inline-flex items-center rounded-full bg-danger-border px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-350/20">Tidak Ditemukan</span>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                </DataTableCell>
+                                                <DataTableCell className="px-3 py-2 text-left font-mono">{item.rawQty}</DataTableCell>
+                                                {columnMapping.price !== -1 && (
+                                                    <DataTableCell className="px-3 py-2 text-left font-mono">
+                                                        {item.price ? `Rp ${Number(item.price).toLocaleString('id-ID')}` : '-'}
+                                                    </DataTableCell>
+                                                )}
+                                                <DataTableCell className="px-3 py-2 text-center">
+                                                    {item.valid ? (
+                                                        <span className="inline-flex items-center rounded-full bg-success-bg px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Valid</span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center rounded-full bg-danger-border px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-350/20">Tidak Ditemukan</span>
+                                                    )}
+                                                </DataTableCell>
+                                            </DataTableRow>
+                                        ))}
+                                    </DataTableBody>
+                                </DataTable>
                             </div>
                         )}
                     </div>

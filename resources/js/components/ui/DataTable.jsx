@@ -9,8 +9,8 @@ function getTextContent(node) {
 }
 
 function calculateMinWidth(label) {
-    if (typeof label !== 'string' || !label) return 80;
-    return Math.ceil(label.length * 8) + 24;
+    if (typeof label !== 'string' || !label.trim()) return 0;
+    return Math.ceil(label.trim().length * 8) + 24;
 }
 
 export function DataTable({ className = '', wrapperClassName = '', children, ...props }) {
@@ -45,7 +45,7 @@ export function DataTableBody({ className = '', children, ...props }) {
 
 export function DataTableRow({ className = '', children, ...props }) {
     return (
-        <tr className={`border-t border-table-row-border text-table-row-text ${className}`.trim()} {...props}>
+        <tr className={`border-b border-table-row-border text-table-row-text ${className}`.trim()} {...props}>
             {children}
         </tr>
     );
@@ -54,6 +54,11 @@ export function DataTableRow({ className = '', children, ...props }) {
 export function DataTableHead({ className = '', children, style: propStyle, onResizeStart = null, ...props }) {
     const hasAlign = /\btext-(left|center|right)\b/.test(className);
     const alignClass = hasAlign ? '' : 'text-left';
+    const isCenter = /\btext-center\b/.test(className);
+    const hasFontWeight = /\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/.test(className);
+    const fontWeightClass = hasFontWeight ? '' : 'font-normal';
+    const hasCustomPx = /\b(!?px-\d+|!?px-\[[^\]]+\])\b/.test(className);
+    const pxClass = hasCustomPx ? '' : 'px-3 sm:px-4';
 
     const widthMatch = className.match(/\b(?:[a-z-]*:)?(?:min-w|w)-\[(\d+(?:px|%|rem|vw|vh))\]/);
     const preferredWidth = widthMatch ? widthMatch[1] : null;
@@ -73,11 +78,11 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
 
     return (
         <th
-            className={`border-r border-table-cell-border px-3 py-2 ${alignClass} text-xs font-light leading-5 last:border-r-0 sm:px-4 sm:text-sm whitespace-nowrap truncate relative select-none ${cleanedClassName}`.trim()}
+            className={`border-r border-table-cell-border ${pxClass} py-2 ${alignClass} text-xs sm:text-sm ${fontWeightClass} leading-5 last:border-r-0 whitespace-nowrap truncate relative select-none ${cleanedClassName}`.trim()}
             style={{ ...style, position: 'relative' }}
             {...props}
         >
-            <div className="w-full truncate block min-w-0">{children}</div>
+            <div className={`w-full truncate min-w-0 ${isCenter ? 'flex items-center justify-center text-center' : 'block'}`}>{children}</div>
             {onResizeStart && (
                 <div
                     className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/40 active:bg-brand-blue/70 transition-colors z-20 touch-none"
@@ -102,13 +107,19 @@ export function DataTableCell({ className = '', children, onResizeStart = null, 
             .trim() + ' text-center';
     }
 
+    const hasFontWeight = /\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/.test(resolvedClassName);
+    const fontWeightClass = hasFontWeight ? '' : 'font-normal';
+    const isCenter = /\btext-center\b/.test(resolvedClassName);
+    const hasCustomPx = /\b(!?px-\d+|!?px-\[[^\]]+\])\b/.test(resolvedClassName);
+    const pxClass = hasCustomPx ? '' : 'px-3 sm:px-4';
+
     return (
         <td
-            className={`border-r border-table-cell-border px-3 py-2 text-sm leading-5 last:border-r-0 sm:px-4 whitespace-nowrap truncate relative ${onResizeStart ? 'select-none' : ''} ${resolvedClassName}`.trim()}
+            className={`border-r border-table-cell-border ${pxClass} py-2 text-sm ${fontWeightClass} leading-5 last:border-r-0 whitespace-nowrap truncate relative ${onResizeStart ? 'select-none' : ''} ${resolvedClassName}`.trim()}
             style={{ ...propStyle, position: onResizeStart ? 'relative' : propStyle?.position }}
             {...props}
         >
-            <div className="w-full truncate block min-w-0">{children}</div>
+            <div className={`w-full truncate min-w-0 ${isCenter ? 'flex items-center justify-center text-center' : 'block'}`}>{children}</div>
             {onResizeStart && (
                 <div
                     className="absolute right-0 top-0 bottom-0 w-[4px] -mr-[2px] cursor-col-resize select-none hover:bg-brand-blue/20 active:bg-brand-blue/40 transition-colors z-10 touch-none"
