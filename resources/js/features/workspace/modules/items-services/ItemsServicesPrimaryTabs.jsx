@@ -105,7 +105,7 @@ export function ItemGroupTab({ values, onChange }) {
                     {groupItems.length > 0 ? (
                         groupItems.map((item, index) => (
                             <DataTableRow key={item.id ?? index} className="border-ui-border-row bg-white">
-                                <DataTableCell className="text-left text-sm font-medium text-blue-600 px-3 py-2">
+                                <DataTableCell className="text-left text-sm font-normal text-blue-600 px-3 py-2">
                                     {item.code ?? item.child_product?.code ?? '-'}
                                 </DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">

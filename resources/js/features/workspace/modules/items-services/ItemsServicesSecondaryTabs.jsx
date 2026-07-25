@@ -435,14 +435,14 @@ export function ItemMutationTab({ productId }) {
                         rows.map((row) => (
                             <DataTableRow key={row.id} className="border-ui-border-row bg-white">
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.date || '-'}</DataTableCell>
-                                <DataTableCell className="text-left text-sm font-medium text-blue-600 px-3 py-2">{row.document_number || '-'}</DataTableCell>
+                                <DataTableCell className="text-left text-sm font-normal text-blue-600 px-3 py-2">{row.document_number || '-'}</DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.document_type || '-'}</DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.description || '-'}</DataTableCell>
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse || '-'}</DataTableCell>
                                 <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.unit_cost) || '0'}</DataTableCell>
                                 <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.in_qty) || '-'}</DataTableCell>
                                 <DataTableCell className="text-right text-sm text-text-workspace-dark px-3 py-2">{formatAmountInput(row.out_qty) || '-'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm font-medium text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
+                                <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2">{formatAmountInput(row.balance) || '0'}</DataTableCell>
                             </DataTableRow>
                         ))
                     ) : (
@@ -524,7 +524,7 @@ export function ItemWarehouseTab({ productId }) {
                         rows.map((row, i) => (
                             <DataTableRow key={row.id ?? i} className="border-ui-border-row bg-white">
                                 <DataTableCell className="text-left text-sm text-text-workspace-dark px-3 py-2">{row.warehouse ?? row.warehouse_name ?? '-'}</DataTableCell>
-                                <DataTableCell className="text-right text-sm font-medium text-text-workspace-dark px-3 py-2 w-[180px]">{formatAmountInput(row.saleable_stock ?? row.stock_on_hand) || '0'}</DataTableCell>
+                                <DataTableCell className="text-right text-sm font-normal text-text-workspace-dark px-3 py-2 w-[180px]">{formatAmountInput(row.saleable_stock ?? row.stock_on_hand) || '0'}</DataTableCell>
                             </DataTableRow>
                         ))
                     ) : (

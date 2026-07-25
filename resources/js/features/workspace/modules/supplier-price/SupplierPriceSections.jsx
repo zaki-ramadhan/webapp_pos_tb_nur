@@ -270,7 +270,7 @@ export function SupplierPriceDetailsSection({ config, values, setValues, isDetai
                                         <DataTableCell className="px-3 text-base text-text-workspace-dark">
                                             {row.unit}
                                         </DataTableCell>
-                                        <DataTableCell className="px-3 text-right text-base text-text-workspace-dark font-medium">
+                                        <DataTableCell className="px-3 text-right text-base text-text-workspace-dark font-normal">
                                             <div className="flex items-center justify-end gap-2">
                                                 <TextInput
                                                     type="number"

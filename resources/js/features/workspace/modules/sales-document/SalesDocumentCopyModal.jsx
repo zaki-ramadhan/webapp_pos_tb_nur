@@ -498,7 +498,7 @@ export default function SalesDocumentCopyModal({
                                                                 containerClassName="flex justify-center"
                                                             />
                                                         </DataTableCell>
-                                                        <DataTableCell className="font-medium text-slate-700 truncate max-w-[140px]">
+                                                        <DataTableCell className="font-normal text-slate-700 truncate max-w-[140px]">
                                                             {item.code ?? item.product_code ?? item.reference_code ?? item.product?.code ?? '-'}
                                                         </DataTableCell>
                                                         <DataTableCell className="text-slate-600 truncate">
@@ -573,7 +573,7 @@ export default function SalesDocumentCopyModal({
                                                             containerClassName="flex justify-center"
                                                         />
                                                     </DataTableCell>
-                                                    <DataTableCell className="font-medium text-slate-700 truncate max-w-[140px]">
+                                                    <DataTableCell className="font-normal text-slate-700 truncate max-w-[140px]">
                                                         {cost.code ?? '-'}
                                                     </DataTableCell>
                                                     <DataTableCell className="text-slate-600 truncate">
@@ -644,7 +644,7 @@ export default function SalesDocumentCopyModal({
                                                             containerClassName="flex justify-center"
                                                         />
                                                     </DataTableCell>
-                                                    <DataTableCell className="font-medium text-slate-700 truncate max-w-[180px]">
+                                                    <DataTableCell className="font-normal text-slate-700 truncate max-w-[180px]">
                                                         {adv.number ?? adv.document_number ?? '-'}
                                                     </DataTableCell>
                                                     <DataTableCell className="text-slate-600">
