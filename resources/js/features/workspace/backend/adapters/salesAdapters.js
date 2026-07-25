@@ -211,7 +211,7 @@ export function mapProductRow(record) {
         salesUnitId: record.sales_unit_id ?? record.sales_unit?.id ?? null,
         attachments: record.attachments ?? [],
         activeStatus: record.is_active !== false ? 'active' : 'inactive',
-        brand: record.brand?.name ?? '-',
+        brand: record.brand?.name ?? null,
         categoryFilter: record.category?.name ?? 'Umum',
         kind: String(record.product_type ?? '').trim().toLowerCase() === 'service' ? 'Jasa' : 'Persediaan',
         inventoryAccountId: record.inventory_account_id ?? null,
@@ -229,7 +229,7 @@ export function mapProductRow(record) {
         barcode: record.barcode ?? '-',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
         bulkPricingEnabledText: rawFlags?.bulk_pricing_enabled ? 'Ya' : 'Tidak',
-        substituteProduct: record.substitute_product?.name ?? '-',
+        substituteProduct: record.substitute_product?.name ?? null,
 
         accounts: {
             inventory: buildAccountVal(record.inventory_account),

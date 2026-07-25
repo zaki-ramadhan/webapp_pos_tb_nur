@@ -42,13 +42,16 @@ export default function ReferenceLookupInput({
     const multiValueMode = Array.isArray(values);
     const selectedLabels = useMemo(() => {
         if (multiValueMode) {
-            return values.filter(Boolean).map((item) => String(item).trim()).filter(Boolean);
+            return values
+                .filter(Boolean)
+                .map((item) => String(item).trim())
+                .filter((label) => label && label !== '-');
         }
 
         const selectedLabel = String(value ?? '').trim();
 
-        return selectedLabel ? [selectedLabel] : [];
-    }, [multiValueMode, value, values]);
+        return (selectedLabel && selectedLabel !== '-') ? [selectedLabel] : [];
+    }, [multiValueMode, values, value]);
     const selectedLabel = selectedLabels[0] ?? '';
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
 

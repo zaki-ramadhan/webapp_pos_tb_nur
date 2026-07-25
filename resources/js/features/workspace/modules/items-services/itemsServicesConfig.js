@@ -263,7 +263,7 @@ function buildFallbackDetailRecord(row, config) {
         unitConversions: isService
             ? []
             : [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: row.unit || 'PCS' }],
-        brand: row.brand ? [row.brand] : [],
+        brand: (row.brand && row.brand !== '-') ? [row.brand] : [],
         purchasePrice: row.purchasePrice ?? '0',
         sellPriceLevel1: row.salePrice ?? '0',
         notes: row.notes ?? '',
