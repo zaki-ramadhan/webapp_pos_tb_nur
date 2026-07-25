@@ -195,6 +195,7 @@ export default function ItemsServicesFormView({
                     default_sale_price: values.sellPriceLevel1 ? parseAmountInput(values.sellPriceLevel1) : null,
                     print_group_details: values.printGroupDetails !== false,
                     allow_edit_group_quantity: Boolean(values.allowEditGroupQuantity),
+                    use_group_price: values.useGroupPrice !== false,
                     notes: values.notes?.trim() || null,
                     is_active: values.isActive !== false,
                     attachment_ids: (values.attachments ?? []).map((att) => att.id),

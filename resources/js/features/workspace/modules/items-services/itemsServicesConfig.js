@@ -93,6 +93,7 @@ const createDefaults = {
     attachments: [],
     printGroupDetails: true,
     allowEditGroupQuantity: false,
+    useGroupPrice: true,
     groupItems: [],
     branchesUsage: '[Semua Cabang]',
     notes: '',
@@ -281,6 +282,7 @@ function buildFallbackDetailRecord(row, config) {
         uninvoicedPurchaseAccountId: row.uninvoicedPurchaseAccountId ?? null,
         printGroupDetails: row.print_group_details ?? row.printGroupDetails ?? true,
         allowEditGroupQuantity: row.allow_edit_group_quantity ?? row.allowEditGroupQuantity ?? false,
+        useGroupPrice: row.use_group_price ?? row.useGroupPrice ?? true,
         groupItems: (row.group_items ?? row.groupItems ?? []).map((gi) => ({
             id: gi.id,
             child_product_id: gi.child_product_id ?? gi.childProduct?.id ?? gi.id,

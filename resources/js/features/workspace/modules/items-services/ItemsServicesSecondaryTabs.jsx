@@ -169,16 +169,26 @@ export function ItemStockTab({ config, values, onChange }) {
 }
 
 export function ItemAccountsTab({ config, values, onChange }) {
-    const fields = [
+    const allFields = [
         { key: 'inventory', idKey: 'inventoryAccountId', label: 'Persediaan' },
+        { key: 'costOfGoodsSold', idKey: 'cogsAccountId', label: 'Beban' },
         { key: 'sales', idKey: 'salesAccountId', label: 'Penjualan' },
         { key: 'salesReturn', idKey: 'salesReturnAccountId', label: 'Retur Penjualan' },
         { key: 'salesDiscount', idKey: 'salesDiscountAccountId', label: 'Diskon Penjualan' },
         { key: 'deliveredGoods', idKey: 'deliveredGoodsAccountId', label: 'Barang Terkirim' },
-        { key: 'costOfGoodsSold', idKey: 'costOfGoodsSoldAccountId', label: 'Beban Pokok Penjualan' },
         { key: 'purchaseReturn', idKey: 'purchaseReturnAccountId', label: 'Retur Pembelian' },
         { key: 'uninvoicedPurchase', idKey: 'uninvoicedPurchaseAccountId', label: 'Pembelian Belum Tertagih' },
     ];
+
+    const fields = allFields.filter(({ key }) => {
+        if (values.kind === 'Jasa') {
+            return key === 'sales' || key === 'salesReturn' || key === 'salesDiscount';
+        }
+        if (values.kind === 'Non Persediaan') {
+            return key !== 'inventory' && key !== 'deliveredGoods';
+        }
+        return true;
+    });
 
     return (
         <div className="space-y-4">
@@ -187,7 +197,7 @@ export function ItemAccountsTab({ config, values, onChange }) {
 
                 <div className="mt-4 space-y-2">
                     {fields.map(({ key, idKey, label }) => (
-                        <FormRow key={key} label={label}>
+                        <FormRow key={key} label={label === 'Beban' && values.kind !== 'Non Persediaan' ? 'Beban Pokok Penjualan' : label}>
                             <AccountLookupField
                                 values={values.accounts[key] ?? []}
                                 placeholder="Cari/Pilih..."
@@ -250,14 +260,14 @@ export function ItemImagesTab({ values, onChange }) {
 }
 
 export function ItemOtherTab({ config, values, onChange }) {
+    const isService = values.kind === 'Jasa';
+
     return (
         <div className="grid gap-8 lg:grid-cols-2">
             <section className="space-y-2">
                 <SectionHeading title={config.labels.otherInfo} />
 
                 <div className="mt-4 space-y-2">
-
-
                     <FormRow label="Catatan">
                         <TextareaField
                             value={values.notes}
@@ -271,48 +281,50 @@ export function ItemOtherTab({ config, values, onChange }) {
                 </div>
             </section>
 
-            <section className="space-y-2">
-                <SectionHeading title={config.labels.dimensionInfo} />
+            {!isService && (
+                <section className="space-y-2">
+                    <SectionHeading title={config.labels.dimensionInfo} />
 
-                <div className="mt-4 space-y-2">
-                    <FormRow label="Panjang (cm)">
-                        <SimpleTextField
-                            value={values.length}
-                            onChange={(event) => onChange('length', event.target.value)}
-                            formatAsAmount
-                            maxLength={10}
-                        />
-                    </FormRow>
+                    <div className="mt-4 space-y-2">
+                        <FormRow label="Panjang (cm)">
+                            <SimpleTextField
+                                value={values.length}
+                                onChange={(event) => onChange('length', event.target.value)}
+                                formatAsAmount
+                                maxLength={10}
+                            />
+                        </FormRow>
 
-                    <FormRow label="Lebar (cm)">
-                        <SimpleTextField
-                            value={values.width}
-                            onChange={(event) => onChange('width', event.target.value)}
-                            formatAsAmount
-                            maxLength={10}
-                        />
-                    </FormRow>
+                        <FormRow label="Lebar (cm)">
+                            <SimpleTextField
+                                value={values.width}
+                                onChange={(event) => onChange('width', event.target.value)}
+                                formatAsAmount
+                                maxLength={10}
+                            />
+                        </FormRow>
 
-                    <FormRow label="Tinggi (cm)">
-                        <SimpleTextField
-                            value={values.height}
-                            onChange={(event) => onChange('height', event.target.value)}
-                            formatAsAmount
-                            maxLength={10}
-                        />
-                    </FormRow>
+                        <FormRow label="Tinggi (cm)">
+                            <SimpleTextField
+                                value={values.height}
+                                onChange={(event) => onChange('height', event.target.value)}
+                                formatAsAmount
+                                maxLength={10}
+                            />
+                        </FormRow>
 
-                    <FormRow label="Berat (gr)">
-                        <SimpleTextField
-                            value={values.weight}
-                            onChange={(event) => onChange('weight', event.target.value)}
-                            formatAsAmount
-                            allowDecimal={false}
-                            maxLength={9}
-                        />
-                    </FormRow>
-                </div>
-            </section>
+                        <FormRow label="Berat (gr)">
+                            <SimpleTextField
+                                value={values.weight}
+                                onChange={(event) => onChange('weight', event.target.value)}
+                                formatAsAmount
+                                allowDecimal={false}
+                                maxLength={10}
+                            />
+                        </FormRow>
+                    </div>
+                </section>
+            )}
         </div>
     );
 }

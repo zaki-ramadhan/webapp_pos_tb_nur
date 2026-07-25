@@ -37,12 +37,37 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
             </FormRow>
 
             <FormRow label="Def. Hrg. Jual Satuan #1">
-                <SimpleTextField
-                    value={values.sellPriceLevel1}
-                    onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
-                    formatAsAmount
-                    maxLength={11}
-                />
+                {values.kind === 'Grup' && !values.bulkPricingEnabled ? (
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="useGroupPrice"
+                                checked={values.useGroupPrice !== false}
+                                onChange={(e) => onChange('useGroupPrice', e.target.checked)}
+                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            />
+                            <label htmlFor="useGroupPrice" className="text-xs sm:text-sm text-brand-dark cursor-pointer select-none">
+                                Harga dari rincian grup
+                            </label>
+                        </div>
+                        {values.useGroupPrice === false && (
+                            <SimpleTextField
+                                value={values.sellPriceLevel1}
+                                onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
+                                formatAsAmount
+                                maxLength={11}
+                            />
+                        )}
+                    </div>
+                ) : (
+                    <SimpleTextField
+                        value={values.sellPriceLevel1}
+                        onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
+                        formatAsAmount
+                        maxLength={11}
+                    />
+                )}
             </FormRow>
 
             <FormRow label="Minimum Jual">
@@ -65,39 +90,44 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                         Menerapkan Harga / Diskon Grosir
                     </span>
                 </div>
-                <div className="flex items-center gap-3">
-                    <TransactionSwitch
-                        checked={values.substituteEnabled}
-                        onChange={(nextValue) => {
-                            onChange('substituteEnabled', nextValue);
-                            if (!nextValue) {
-                                onChange('substituteProduct', []);
-                            }
-                        }}
-                    />
-                    <span className="text-xs sm:text-sm text-brand-dark">
-                        Substitusi dengan{' '}
-                        <Tooltip content="Menghubungkan barang-barang yang bisa menjadi barang pengganti jika stoknya kosong saat jual" portal>
-                            <InfoIcon className="ml-1 inline-flex h-3.5 w-3.5 align-middle text-filter-select-text cursor-help" />
-                        </Tooltip>
-                    </span>
-                </div>
 
-                {values.substituteEnabled && (
-                    <FormRow label="Barang Substitusi">
-                        <BackendLookupField
-                            resource="products"
-                            values={(values.substituteProduct || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
-                            placeholder="Cari/Pilih Barang Substitusi..."
-                            searchLabel="Cari barang"
-                            onSelect={(option) => {
-                                onChange('substituteProduct', [option.name]);
-                            }}
-                            onRemove={() => {
-                                onChange('substituteProduct', []);
-                            }}
-                        />
-                    </FormRow>
+                {values.kind !== 'Non Persediaan' && values.kind !== 'Jasa' && (
+                    <>
+                        <div className="flex items-center gap-3">
+                            <TransactionSwitch
+                                checked={values.substituteEnabled}
+                                onChange={(nextValue) => {
+                                    onChange('substituteEnabled', nextValue);
+                                    if (!nextValue) {
+                                        onChange('substituteProduct', []);
+                                    }
+                                }}
+                            />
+                            <span className="text-xs sm:text-sm text-brand-dark">
+                                Substitusi dengan{' '}
+                                <Tooltip content="Menghubungkan barang-barang yang bisa menjadi barang pengganti jika stoknya kosong saat jual" portal>
+                                    <InfoIcon className="ml-1 inline-flex h-3.5 w-3.5 align-middle text-filter-select-text cursor-help" />
+                                </Tooltip>
+                            </span>
+                        </div>
+
+                        {values.substituteEnabled && (
+                            <FormRow label="Barang Substitusi">
+                                <BackendLookupField
+                                    resource="products"
+                                    values={(values.substituteProduct || []).map((item) => (typeof item === 'string' ? { name: item } : item))}
+                                    placeholder="Cari/Pilih Barang Substitusi..."
+                                    searchLabel="Cari barang"
+                                    onSelect={(option) => {
+                                        onChange('substituteProduct', [option.name]);
+                                    }}
+                                    onRemove={() => {
+                                        onChange('substituteProduct', []);
+                                    }}
+                                />
+                            </FormRow>
+                        )}
+                    </>
                 )}
             </div>
         </section>
@@ -105,6 +135,10 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
 }
 
 export function ItemPurchaseTaxSection({ config, values, onChange }) {
+    if (values.kind === 'Jasa') {
+        return null;
+    }
+
     return (
         <section className="space-y-7">
             <div className="space-y-2">
@@ -163,16 +197,18 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                     />
                 </FormRow>
 
-                <FormRow label="Batas Minimum Stok">
-                    <SimpleTextField
-                        value={values.minimumStock}
-                        onChange={(event) => onChange('minimumStock', event.target.value)}
-                        className="max-w-[420px]"
-                        formatAsAmount
-                        allowDecimal={false}
-                        maxLength={11}
-                    />
-                </FormRow>
+                {values.kind !== 'Non Persediaan' && (
+                    <FormRow label="Batas Minimum Stok">
+                        <SimpleTextField
+                            value={values.minimumStock}
+                            onChange={(event) => onChange('minimumStock', event.target.value)}
+                            className="max-w-[420px]"
+                            formatAsAmount
+                            allowDecimal={false}
+                            maxLength={11}
+                        />
+                    </FormRow>
+                )}
             </div>
         </section>
     );
