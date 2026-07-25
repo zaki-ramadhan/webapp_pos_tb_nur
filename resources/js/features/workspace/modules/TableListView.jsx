@@ -237,7 +237,7 @@ export default function TableListView({
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {paginatedRows.length > 0 && (
-                                <DataTableHead className="w-[50px] px-2.5 text-center text-base font-light text-white">
+                                <DataTableHead className="w-[50px] px-3 text-center text-base font-light text-white">
                                     No.
                                 </DataTableHead>
                             )}
@@ -267,7 +267,7 @@ export default function TableListView({
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
                                     {paginatedRows.length > 0 && (
-                                        <DataTableCell className="px-2.5 text-center text-base text-black">
+                                        <DataTableCell className="w-[50px] px-3 text-center text-base text-black">
                                             {paginationConfig ? (paginationConfig.from + index) : (index + 1)}
                                         </DataTableCell>
                                     )}

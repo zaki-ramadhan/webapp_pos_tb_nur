@@ -42,6 +42,10 @@ export function buildSalesCheckinFilters(rows) {
 }
 
 export function mapPartnerRow(record) {
+    const extendedDetails = typeof record.extended_details === 'string'
+        ? JSON.parse(record.extended_details)
+        : (record.extended_details ?? {});
+
     return {
         id: record.id,
         code: record.code ?? '',
@@ -59,17 +63,40 @@ export function mapPartnerRow(record) {
         categoryId: record.category_id ?? record.category?.id ?? null,
         currencyId: record.currency_id ?? record.currency?.id ?? null,
         paymentTermId: record.payment_term_id ?? record.payment_term?.id ?? null,
-        paymentTerms: record.payment_term?.name ? [record.payment_term.name] : [],
+        paymentTerms: extendedDetails.paymentTerms ?? (record.payment_term?.name ? [record.payment_term.name] : ['C.O.D']),
         branchIds: Array.isArray(record.branches) ? record.branches.map(b => b.id) : [],
         billingAddress: record.billing_address ?? '',
         shippingAddress: record.shipping_address ?? '',
-        taxNumber: record.tax_number ?? '',
-        notes: record.notes ?? '',
+        taxNumber: record.tax_number ?? extendedDetails.taxNumber ?? '',
+        notes: record.notes ?? extendedDetails.notes ?? '',
         creditLimit: record.credit_limit ?? 0,
+        extendedDetails,
 
-      // Opsi kolom tambahan untuk Settings
+        // Tab detail fields from extendedDetails
+        contacts: extendedDetails.contacts ?? [],
+        bankAccounts: extendedDetails.bankAccounts ?? [],
+        openingBalanceRows: extendedDetails.openingBalanceRows ?? [],
+        serviceVendor: Boolean(extendedDetails.serviceVendor),
+        supplierType: extendedDetails.supplierType ?? '- Pilih Tipe Pemasok -',
+        defaultDiscountPercent: extendedDetails.defaultDiscountPercent ?? '',
+        defaultDescription: extendedDetails.defaultDescription ?? '',
+        payableAccount: extendedDetails.payableAccount ?? [],
+        advanceAccount: extendedDetails.advanceAccount ?? [],
+        taxIncluded: Boolean(extendedDetails.taxIncluded),
+        taxIdType: extendedDetails.taxIdType ?? 'NIK',
+        taxName: extendedDetails.taxName ?? '',
+        taxTkuId: extendedDetails.taxTkuId ?? '',
+        taxTransactionType: extendedDetails.taxTransactionType ?? 'Digunggung',
+        taxSameAsBilling: extendedDetails.taxSameAsBilling !== false,
+        taxStreet: extendedDetails.taxStreet ?? '',
+        taxCity: extendedDetails.taxCity ?? '',
+        taxPostalCode: extendedDetails.taxPostalCode ?? '',
+        taxProvince: extendedDetails.taxProvince ?? '',
+        taxCountryName: extendedDetails.taxCountryName ?? '',
+        invoiceNumberOnBill: extendedDetails.invoiceNumberOnBill !== false,
 
-        paymentTermsText: record.payment_term?.name ?? 'C.O.D',
+        // Opsi kolom tambahan untuk Settings
+        paymentTermsText: record.payment_term?.name ?? (extendedDetails.paymentTerms?.[0] ?? 'C.O.D'),
         creditLimitText: record.credit_limit ? Number(record.credit_limit).toLocaleString('id-ID') : '0',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
     };
@@ -104,9 +131,34 @@ export function toPartnerPayload(values) {
         }),
         tax_number: values.taxNumber ?? '',
         notes: values.notes ?? '',
-        credit_limit: values.creditLimit ? (parseFloat(String(values.creditLimit).replace(/[^0-9]/g, '')) || 0) : 0,
+        credit_limit: values.creditLimit ? (parseFloat(String(values.creditLimit).replace(/[^0-9.]/g, '')) || 0) : 0,
         is_active: values.isActive !== false,
         branch_ids: values.branchIds ?? [],
+        extended_details: {
+            contacts: values.contacts ?? [],
+            bankAccounts: values.bankAccounts ?? [],
+            openingBalanceRows: values.openingBalanceRows ?? [],
+            serviceVendor: Boolean(values.serviceVendor),
+            supplierType: values.supplierType ?? '',
+            defaultDiscountPercent: values.defaultDiscountPercent ?? '',
+            defaultDescription: values.defaultDescription ?? '',
+            payableAccount: values.payableAccount ?? [],
+            advanceAccount: values.advanceAccount ?? [],
+            taxIncluded: Boolean(values.taxIncluded),
+            taxIdType: values.taxIdType ?? 'NIK',
+            taxNumber: values.taxNumber ?? '',
+            taxName: values.taxName ?? '',
+            taxTkuId: values.taxTkuId ?? '',
+            taxTransactionType: values.taxTransactionType ?? 'Digunggung',
+            taxSameAsBilling: Boolean(values.taxSameAsBilling),
+            taxStreet: values.taxStreet ?? '',
+            taxCity: values.taxCity ?? '',
+            taxPostalCode: values.taxPostalCode ?? '',
+            taxProvince: values.taxProvince ?? '',
+            taxCountryName: values.taxCountryName ?? '',
+            invoiceNumberOnBill: Boolean(values.invoiceNumberOnBill),
+            notes: values.notes ?? '',
+        },
     };
 }
 

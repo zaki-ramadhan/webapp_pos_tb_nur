@@ -26,6 +26,7 @@ import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLooku
 import { SearchIcon, SortIcon, ChevronDownIcon } from '@/features/workspace/shared/Icons';
 import { Trash2 } from 'lucide-react';
 import { requireSupplierSelection } from './supplierPriceShared';
+import { addDaysToDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 
 export function SupplierPriceHeader({ config, values, setValues }) {
     return (
@@ -68,7 +69,7 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                                 setValues((current) => ({
                                     ...current,
                                     autoEndDate: event.target.checked,
-                                    endDate: event.target.checked ? current.endDate : '',
+                                    endDate: event.target.checked ? (current.endDate || addDaysToDisplayDate(current.effectiveDate, 1)) : '',
                                 }))
                             }
                             align="center"
@@ -80,17 +81,20 @@ export function SupplierPriceHeader({ config, values, setValues }) {
                     <div className="flex items-center gap-3 pt-1">
                         <TransactionDateInput 
                             value={values.effectiveDate} 
-                            onChange={(nextVal) => setValues(curr => ({ ...curr, effectiveDate: nextVal }))}
+                            onChange={(nextVal) => setValues(curr => ({ 
+                                ...curr, 
+                                effectiveDate: nextVal,
+                                endDate: addDaysToDisplayDate(nextVal, 1)
+                            }))}
                             className="w-[160px] shrink-0" 
                         />
                         {values.autoEndDate && (
                             <>
                                 <span className="text-xs sm:text-sm text-brand-dark shrink-0">s/d</span>
                                 <TransactionDateInput 
-                                    value={values.endDate ?? ''} 
+                                    value={values.endDate || addDaysToDisplayDate(values.effectiveDate, 1)} 
                                     onChange={(nextVal) => setValues(curr => ({ ...curr, endDate: nextVal }))}
                                     minDate={values.effectiveDate}
-                                    disableAutoInit={true}
                                     className="w-[160px] shrink-0" 
                                 />
                             </>

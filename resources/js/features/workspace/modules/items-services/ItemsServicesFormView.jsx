@@ -2,13 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 
 import {
     ItemGeneralTab,
+    ItemGroupTab,
     ItemSalesPurchaseTab,
 } from '@/features/workspace/modules/items-services/ItemsServicesPrimaryTabs';
 import {
     ItemAccountsTab,
     ItemImagesTab,
+    ItemMutationTab,
     ItemOtherTab,
     ItemStockTab,
+    ItemWarehouseTab,
 } from '@/features/workspace/modules/items-services/ItemsServicesSecondaryTabs';
 import {
     buildItemsServicesFormValues,
@@ -122,22 +125,35 @@ export default function ItemsServicesFormView({
         }));
     }
 
+    const rightTabs = useMemo(() => {
+        if (!isDetail || values.kind !== 'Persediaan') return [];
+        return [
+            { id: 'mutasi', label: 'Mutasi' },
+            { id: 'gudang', label: 'Gudang' },
+        ];
+    }, [isDetail, values.kind]);
+
     const filteredTabs = useMemo(() => {
-        const hasStockTab = values.kind === 'Persediaan' || values.kind === 'Grup';
+        const isStock = values.kind === 'Persediaan';
+        const isGroup = values.kind === 'Grup';
         return (config.tabs ?? []).filter((tab) => {
             if (tab.id === 'stock') {
-                return hasStockTab;
+                return isStock;
+            }
+            if (tab.id === 'group') {
+                return isGroup;
             }
             return true;
         });
     }, [config.tabs, values.kind]);
 
     useEffect(() => {
-        const tabExists = filteredTabs.some((tab) => tab.id === activeTabId);
+        const allTabs = [...filteredTabs, ...rightTabs];
+        const tabExists = allTabs.some((tab) => tab.id === activeTabId);
         if (!tabExists) {
             setActiveTabId('general');
         }
-    }, [filteredTabs, activeTabId]);
+    }, [filteredTabs, rightTabs, activeTabId]);
 
     const saveDisabled = saving || !isDirty || !values.name?.trim() || (isDetail && !values.code?.trim());
 
@@ -177,6 +193,8 @@ export default function ItemsServicesFormView({
                     minimum_stock: values.minimumStock ? parseAmountInput(values.minimumStock) : null,
                     default_purchase_price: values.purchasePrice ? parseAmountInput(values.purchasePrice) : null,
                     default_sale_price: values.sellPriceLevel1 ? parseAmountInput(values.sellPriceLevel1) : null,
+                    print_group_details: values.printGroupDetails !== false,
+                    allow_edit_group_quantity: Boolean(values.allowEditGroupQuantity),
                     notes: values.notes?.trim() || null,
                     is_active: values.isActive !== false,
                     attachment_ids: (values.attachments ?? []).map((att) => att.id),
@@ -195,6 +213,14 @@ export default function ItemsServicesFormView({
                             quantity: conv.quantity ? parseAmountInput(conv.quantity) : 0,
                         }))
                         .filter((conv) => conv.unit_id && conv.quantity > 0),
+                    group_items: (values.groupItems ?? [])
+                        .map((item) => ({
+                            id: String(item.id).startsWith('group-item-') ? undefined : item.id,
+                            child_product_id: item.child_product_id ?? item.child_product?.id ?? item.id,
+                            unit_id: item.unit_id ?? item.unitId ?? null,
+                            quantity: item.quantity ? parseAmountInput(item.quantity) : 1,
+                        }))
+                        .filter((item) => item.child_product_id && item.quantity > 0),
                 };
 
                 const response = isDetail && detailRow?.id
@@ -260,7 +286,7 @@ export default function ItemsServicesFormView({
 
     return (
         <ModuleFormTemplate
-            form={{ ...config, tabs: filteredTabs }}
+            form={{ ...config, tabs: filteredTabs, rightTabs }}
             activeTabId={activeTabId}
             setActiveTabId={setActiveTabId}
             status={status}
@@ -302,12 +328,18 @@ export default function ItemsServicesFormView({
                         };
                         return <ItemStockTab config={config} values={stockValues} onChange={handleChange} />;
                     })()
+                ) : activeTabId === 'group' ? (
+                    <ItemGroupTab values={values} onChange={handleChange} />
                 ) : activeTabId === 'accounts' ? (
                     <ItemAccountsTab config={config} values={values} onChange={handleChange} />
                 ) : activeTabId === 'images' ? (
                     <ItemImagesTab values={values} onChange={handleChange} />
                 ) : activeTabId === 'other' ? (
                     <ItemOtherTab config={config} values={values} onChange={handleChange} />
+                ) : activeTabId === 'mutasi' ? (
+                    <ItemMutationTab productId={detailRow?.id} />
+                ) : activeTabId === 'gudang' ? (
+                    <ItemWarehouseTab productId={detailRow?.id} />
                 ) : (
                     <ItemGeneralTab
                         config={config}

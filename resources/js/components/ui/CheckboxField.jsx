@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { useToggleFieldError } from './FormErrorContext';
 
 export default function CheckboxField({
@@ -18,6 +19,9 @@ export default function CheckboxField({
     onChange,
     ...props
 }) {
+    const generatedId = useId();
+    const elementId = id || generatedId;
+
     const {
         resolvedError,
         feedbackMessage: resolvedFeedback,
@@ -27,7 +31,7 @@ export default function CheckboxField({
         widthClass,
         contextKey,
         clearError,
-    } = useToggleFieldError({ error, name: props.name, id, size, align, containerClassName });
+    } = useToggleFieldError({ error, name: props.name, id: elementId, size, align, containerClassName });
 
     const feedbackMessage = resolvedFeedback || message || hint;
 
@@ -42,7 +46,7 @@ export default function CheckboxField({
         <div className={`${widthClass} ${containerClassName}`.trim()}>
             <div className={`flex ${alignClassName} ${hasContent ? 'gap-3.5' : ''} text-xs sm:text-sm leading-6`.trim()}>
                 <input
-                    id={id}
+                    id={elementId}
                     type="checkbox"
                     disabled={disabled}
                     aria-invalid={Boolean(resolvedError)}
@@ -52,8 +56,8 @@ export default function CheckboxField({
                 />
                 {hasContent && (
                     <label
-                        htmlFor={id}
-                        className={`min-w-0 ${disabled ? 'cursor-not-allowed text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
+                        htmlFor={elementId}
+                        className={`min-w-0 select-none ${disabled ? 'cursor-not-allowed text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
                     >
                         <span className={`${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
                             {label}

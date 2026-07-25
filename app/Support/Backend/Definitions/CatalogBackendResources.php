@@ -150,7 +150,8 @@ class CatalogBackendResources
                 with: [
                     'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices', 'prices.unit', 'attachments',
                     'inventoryAccount', 'salesAccount', 'salesReturnAccount', 'salesDiscountAccount', 'deliveredGoodsAccount',
-                    'cogsAccount', 'purchaseReturnAccount', 'uninvoicedPurchaseAccount'
+                    'cogsAccount', 'purchaseReturnAccount', 'uninvoicedPurchaseAccount',
+                    'groupItems', 'groupItems.childProduct', 'groupItems.unit'
                 ],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:product_categories,id'],
@@ -167,6 +168,8 @@ class CatalogBackendResources
                     'default_sale_price' => ['nullable', 'numeric', 'min:0'],
                     'notes' => ['nullable', 'string'],
                     'is_active' => ['sometimes', 'boolean'],
+                    'print_group_details' => ['sometimes', 'boolean'],
+                    'allow_edit_group_quantity' => ['sometimes', 'boolean'],
                     'inventory_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'sales_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'sales_return_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
@@ -186,6 +189,11 @@ class CatalogBackendResources
                     'prices.*.price' => ['required_with:prices', 'numeric', 'min:0'],
                     'prices.*.effective_from' => ['nullable', 'date'],
                     'prices.*.effective_until' => ['nullable', 'date'],
+                    'group_items' => ['sometimes', 'array'],
+                    'group_items.*.id' => ['sometimes', 'integer', 'exists:product_group_items,id'],
+                    'group_items.*.child_product_id' => ['required_with:group_items', 'integer', 'exists:products,id'],
+                    'group_items.*.unit_id' => ['nullable', 'integer', 'exists:units,id'],
+                    'group_items.*.quantity' => ['required_with:group_items', 'numeric', 'gt:0'],
                 ],
                 updateRules: fn (Model $record) => [
                     'category_id' => ['nullable', 'integer', 'exists:product_categories,id'],
@@ -202,6 +210,8 @@ class CatalogBackendResources
                     'default_sale_price' => ['nullable', 'numeric', 'min:0'],
                     'notes' => ['nullable', 'string'],
                     'is_active' => ['sometimes', 'boolean'],
+                    'print_group_details' => ['sometimes', 'boolean'],
+                    'allow_edit_group_quantity' => ['sometimes', 'boolean'],
                     'inventory_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'sales_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
                     'sales_return_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
@@ -221,6 +231,11 @@ class CatalogBackendResources
                     'prices.*.price' => ['required_with:prices', 'numeric', 'min:0'],
                     'prices.*.effective_from' => ['nullable', 'date'],
                     'prices.*.effective_until' => ['nullable', 'date'],
+                    'group_items' => ['sometimes', 'array'],
+                    'group_items.*.id' => ['sometimes', 'integer', 'exists:product_group_items,id'],
+                    'group_items.*.child_product_id' => ['required_with:group_items', 'integer', 'exists:products,id'],
+                    'group_items.*.unit_id' => ['nullable', 'integer', 'exists:units,id'],
+                    'group_items.*.quantity' => ['required_with:group_items', 'numeric', 'gt:0'],
                 ],
                 syncUsing: function (Model $record, array $payload): void {
                     if (array_key_exists('unit_conversions', $payload)) {
@@ -240,6 +255,16 @@ class CatalogBackendResources
                             $payload['prices'],
                             ['unit_id', 'price_type', 'price', 'effective_from', 'effective_until'],
                             fn (array $row): bool => filled($row['price_type'] ?? null),
+                        );
+                    }
+
+                    if (array_key_exists('group_items', $payload)) {
+                        BackendRelationSync::syncHasMany(
+                            $record,
+                            'groupItems',
+                            $payload['group_items'],
+                            ['child_product_id', 'unit_id', 'quantity'],
+                            fn (array $row): bool => filled($row['child_product_id'] ?? null),
                         );
                     }
                 },

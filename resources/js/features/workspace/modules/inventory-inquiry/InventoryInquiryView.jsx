@@ -39,6 +39,12 @@ import {
 } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { buildInitialValues, InquiryControl } from './InventoryInquiryControls';
 
+function resolveCellAlignClassName(align) {
+    if (align === 'right') return 'text-right';
+    if (align === 'center') return 'text-center';
+    return 'text-left';
+}
+
 export default function InventoryInquiryView({ config, pageId }) {
     const resource = BACKEND_INVENTORY_RESOURCES[pageId];
     const [values, setValues] = useState(() => buildInitialValues(config));
@@ -317,7 +323,14 @@ export default function InventoryInquiryView({ config, pageId }) {
                             sortedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-ui-border-row ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
+                                    onClick={firstColumnIsCheckbox ? () => toggleRow(row.id) : undefined}
+                                    className={`border-ui-border-row ${
+                                        selectedIds.has(row.id)
+                                            ? 'bg-blue-50/60 hover:bg-blue-50'
+                                            : index % 2 === 1
+                                            ? 'bg-ui-bg-hover'
+                                            : 'bg-white'
+                                    } ${firstColumnIsCheckbox ? 'cursor-pointer transition' : ''}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
                                         <DataTableCell className="w-px px-3 text-center">
@@ -325,6 +338,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                                 type="checkbox"
                                                 checked={selectedIds.has(row.id)}
                                                 onChange={() => toggleRow(row.id)}
+                                                onClick={(e) => e.stopPropagation()}
                                                 aria-label={`Pilih baris ${index + 1}`}
                                                 className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                             />

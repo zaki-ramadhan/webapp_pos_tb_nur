@@ -1,9 +1,16 @@
+import { useState } from 'react';
+import { showErrorToast } from '@/components/feedback/toast';
 import CheckboxField from '@/components/ui/CheckboxField';
+import ModalBase from '@/components/ui/ModalBase';
+import { DataTable, DataTableBody, DataTableCell, DataTableHead, DataTableHeader, DataTableRow } from '@/components/ui/DataTable';
 import TextareaField from '@/components/ui/TextareaField';
 import { AccountLookupField, AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import {
     ChipLookupField,
+    EmptyDataTable,
     FormFieldRow,
+    PartnerInlineTableSection,
+    PlusIcon,
     SectionHeading,
     TextInput,
 } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
@@ -11,6 +18,7 @@ import { BalanceTab, SalesTab, TaxTab } from '@/features/workspace/modules/busin
 import { ContactsTab, GeneralTab, ShippingTab } from '@/features/workspace/modules/business-partner/BusinessPartnerProfileSections';
 import RadioField from '@/components/ui/RadioField';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
+import { TrashIcon } from '@/features/workspace/shared/Icons';
 
 function CustomerOthersTab({ config, values, onChange }) {
     return (
@@ -134,24 +142,161 @@ function SupplierPurchaseTab({ config, values, onChange }) {
     const purchaseConfig = config.purchaseConfig ?? {};
 
     return (
-        <div className="max-w-[500px] space-y-3">
-            <SectionHeading title={purchaseConfig.titleLeft} />
+        <div className="grid gap-8 lg:grid-cols-2">
+            <section className="space-y-6">
+                <div>
+                    <SectionHeading title={purchaseConfig.titleLeft ?? 'Pembelian'} />
 
-            <FormFieldRow label="Batas Saldo Utang">
-                <TextInput
-                    id="creditLimit"
-                    name="creditLimit"
-                    value={values.creditLimit}
-                    onChange={(event) => {
-                        const sanitized = event.target.value.replace(/[^0-9]/g, '');
-                        onChange('creditLimit', sanitized);
-                    }}
-                    prefix="Rp"
-                    className="h-[40px] rounded-[4px] border-ui-border"
-                    prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
-                    inputClassName="text-xs sm:text-sm text-brand-dark"
-                />
-            </FormFieldRow>
+                    <div className="mt-4 space-y-3">
+                        <FormFieldRow label={purchaseConfig.paymentTermsLabel ?? 'Syarat Pembayaran'}>
+                            <BackendLookupField
+                                resource="payment-terms"
+                                values={(values.paymentTerms || []).map(item => typeof item === 'string' ? { name: item } : item)}
+                                placeholder={config.lookupPlaceholders?.default ?? 'Cari/Pilih...'}
+                                searchLabel="Cari syarat pembayaran"
+                                onSelect={(option) => {
+                                    const current = values.paymentTerms || [];
+                                    if (!current.includes(option.name)) {
+                                        onChange('paymentTerms', [...current, option.name]);
+                                    }
+                                }}
+                                onRemove={(option) => {
+                                    const current = values.paymentTerms || [];
+                                    onChange('paymentTerms', current.filter(x => x !== (typeof option === 'string' ? option : option.name)));
+                                }}
+                            />
+                        </FormFieldRow>
+
+                        <FormFieldRow label={purchaseConfig.discountLabel ?? 'Default Diskon (%)'}>
+                            <TextInput
+                                id="defaultDiscountPercent"
+                                name="defaultDiscountPercent"
+                                value={values.defaultDiscountPercent || ''}
+                                onChange={(event) => {
+                                    const sanitized = event.target.value.replace(/[^0-9.]/g, '');
+                                    onChange('defaultDiscountPercent', sanitized);
+                                }}
+                                suffix="%"
+                                className="h-[40px] max-w-[200px] rounded-[4px] border-ui-border"
+                                suffixClassName="bg-input-prefix-bg-compact px-3 text-text-inactive text-xs sm:text-sm"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                            />
+                        </FormFieldRow>
+
+                        <FormFieldRow label={purchaseConfig.descriptionLabel ?? 'Default Deskripsi'}>
+                            <TextareaField
+                                value={values.defaultDescription || ''}
+                                onChange={(event) => onChange('defaultDescription', event.target.value)}
+                                rows={3}
+                                className="rounded-[4px] border-ui-border"
+                                textareaClassName="min-h-[80px] text-xs sm:text-sm text-brand-dark"
+                            />
+                        </FormFieldRow>
+
+                        <FormFieldRow label="Batas Saldo Utang">
+                            <TextInput
+                                id="creditLimit"
+                                name="creditLimit"
+                                value={values.creditLimit || ''}
+                                onChange={(event) => {
+                                    const sanitized = event.target.value.replace(/[^0-9]/g, '');
+                                    onChange('creditLimit', sanitized);
+                                }}
+                                prefix="Rp"
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                            />
+                        </FormFieldRow>
+                    </div>
+                </div>
+
+                <div>
+                    <SectionHeading title="Akun Pembelian" />
+
+                    <div className="mt-4 space-y-3">
+                        <FormFieldRow label={purchaseConfig.payableLabel ?? 'Akun Utang'}>
+                            <AccountLookupField
+                                id="payableAccount"
+                                name="payableAccount"
+                                values={values.payableAccount || []}
+                                placeholder="Cari/Pilih..."
+                                onSelectAccount={(acc) => {
+                                    if (acc && acc.name) {
+                                        const current = values.payableAccount || [];
+                                        if (!current.includes(acc.name)) {
+                                            onChange('payableAccount', [...current, acc.name]);
+                                        }
+                                    }
+                                }}
+                                onRemove={(val) => {
+                                    const current = values.payableAccount || [];
+                                    const targetName = typeof val === 'string' ? val : (val?.name ?? val);
+                                    onChange('payableAccount', current.filter(x => x !== targetName));
+                                }}
+                            />
+                        </FormFieldRow>
+
+                        <FormFieldRow label={purchaseConfig.advanceLabel ?? 'Akun Uang muka'}>
+                            <AccountLookupField
+                                id="advanceAccount"
+                                name="advanceAccount"
+                                values={values.advanceAccount || []}
+                                placeholder="Cari/Pilih..."
+                                onSelectAccount={(acc) => {
+                                    if (acc && acc.name) {
+                                        const current = values.advanceAccount || [];
+                                        if (!current.includes(acc.name)) {
+                                            onChange('advanceAccount', [...current, acc.name]);
+                                        }
+                                    }
+                                }}
+                                onRemove={(val) => {
+                                    const current = values.advanceAccount || [];
+                                    const targetName = typeof val === 'string' ? val : (val?.name ?? val);
+                                    onChange('advanceAccount', current.filter(x => x !== targetName));
+                                }}
+                            />
+                        </FormFieldRow>
+
+                        {purchaseConfig.accountNote && (
+                            <p className="text-xs text-red-500 italic leading-relaxed pt-1">
+                                {purchaseConfig.accountNote}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            <PartnerInlineTableSection
+                title={purchaseConfig.titleRight ?? 'Rekening Bank'}
+                addButtonTitle={purchaseConfig.bankAddLabel ?? 'Tambah rekening bank'}
+                modalTitle="Tambah Rekening Bank Baru"
+                columns={[
+                    { id: 'bankNumber', label: 'No Rekening' },
+                    { id: 'accountName', label: 'Atas Nama' },
+                    { id: 'bankName', label: 'Nama Bank' },
+                ]}
+                items={values?.bankAccounts ?? []}
+                emptyLabel={config.bankTable.emptyLabel}
+                fields={[
+                    { id: 'bankNumber', label: 'No Rekening', required: true, placeholder: 'Contoh: 1234567890' },
+                    { id: 'accountName', label: 'Atas Nama', placeholder: 'Contoh: PT Bangunan Jaya' },
+                    { id: 'bankName', label: 'Nama Bank', placeholder: 'Contoh: BCA, Mandiri, BRI' },
+                ]}
+                onValidateBeforeOpen={() => {
+                    if (!values?.name?.trim()) {
+                        showErrorToast({
+                            title: 'Perhatian',
+                            message: 'Nama wajib diisi terlebih dahulu di Tab Umum.',
+                        });
+                        return false;
+                    }
+                    return true;
+                }}
+                onAdd={(newItem) => onChange('bankAccounts', [...(values?.bankAccounts ?? []), newItem])}
+                onRemove={(index) => onChange('bankAccounts', (values?.bankAccounts ?? []).filter((_, i) => i !== index))}
+            />
         </div>
     );
 }
@@ -182,7 +327,7 @@ function SupplierOthersTab({ config, values, onChange }) {
                         value={values.notes}
                         onChange={(event) => onChange('notes', event.target.value)}
                         rows={4}
-                        className="rounded-[4px] border-ui-border"
+                        className="max-w-full sm:max-w-[50%] rounded-[4px] border-ui-border"
                         textareaClassName="min-h-[98px] text-xs sm:text-sm text-brand-dark"
                     />
                 </FormFieldRow>
@@ -193,7 +338,7 @@ function SupplierOthersTab({ config, values, onChange }) {
 
 export function renderPartnerTab({ config, values, isDetail, activeTabId, onChange }) {
     if (activeTabId === 'contacts') {
-        return <ContactsTab config={config} />;
+        return <ContactsTab config={config} values={values} onChange={onChange} />;
     }
 
     if (activeTabId === 'shipping') {
@@ -213,7 +358,7 @@ export function renderPartnerTab({ config, values, isDetail, activeTabId, onChan
     }
 
     if (activeTabId === 'receivable' || activeTabId === 'payable') {
-        return <BalanceTab config={config} />;
+        return <BalanceTab config={config} values={values} onChange={onChange} />;
     }
 
     if (activeTabId === 'others') {

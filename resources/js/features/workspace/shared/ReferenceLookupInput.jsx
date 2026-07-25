@@ -176,7 +176,9 @@ export default function ReferenceLookupInput({
                                 <span className="truncate">{item}</span>
                                 <button
                                     type="button"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
                                         if (multiValueMode) {
                                             handleRemove(item);
                                             return;
@@ -186,7 +188,7 @@ export default function ReferenceLookupInput({
                                     }}
                                     disabled={disabled}
                                     aria-label={`Hapus ${item}`}
-                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300"
+                                    className="inline-flex h-4 w-4 shrink-0 items-center justify-center disabled:text-slate-300 hover:text-red-500"
                                 >
                                     <CloseIcon className="h-4 w-4" />
                                 </button>

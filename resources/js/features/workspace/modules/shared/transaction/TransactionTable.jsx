@@ -147,7 +147,7 @@ export function TransactionDataTable({
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {activeShowNumbering && (
-                                        <DataTableCell className={`px-3 text-center text-base text-table-row-number ${cellClassName}`.trim()}>
+                                        <DataTableCell className={`w-[50px] px-3 text-center text-base text-table-row-number ${cellClassName}`.trim()}>
                                             {index + 1}
                                         </DataTableCell>
                                     )}

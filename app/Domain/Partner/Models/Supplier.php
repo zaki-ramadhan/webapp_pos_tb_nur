@@ -26,6 +26,7 @@ class Supplier extends DomainModel
         'credit_limit',
         'tax_number',
         'notes',
+        'extended_details',
         'is_active',
     ];
 
@@ -35,6 +36,7 @@ class Supplier extends DomainModel
     {
         return [
             'credit_limit' => 'decimal:2',
+            'extended_details' => 'array',
             'is_active' => 'boolean',
         ];
     }

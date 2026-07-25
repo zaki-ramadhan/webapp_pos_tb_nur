@@ -12,7 +12,7 @@ export default function WorkspaceDialog({
     contentClassName = 'bg-white px-5 py-4 sm:px-6 sm:py-5',
     children,
     footer = null,
-    footerClassName = 'border-t border-ui-border-medium bg-white px-5 py-3 sm:px-6',
+    footerClassName = 'border-t border-ui-border-medium bg-white px-3.5 py-2.5 sm:px-4',
 }) {
     const HeaderIcon = headerIcon ?? InfoIcon;
 

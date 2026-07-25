@@ -62,10 +62,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                         onChange={(nextValue) => onChange('bulkPricingEnabled', nextValue)}
                     />
                     <span className="text-xs sm:text-sm text-brand-dark">
-                        Menerapkan Harga / Diskon Grosir{' '}
-                        <Tooltip content="Mengaktifkan aturan tingkat harga grosir berdasarkan kuantitas pembelian." portal>
-                            <InfoIcon className="ml-1 inline-flex h-3.5 w-3.5 align-middle text-filter-select-text cursor-help" />
-                        </Tooltip>
+                        Menerapkan Harga / Diskon Grosir
                     </span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -78,7 +75,12 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                             }
                         }}
                     />
-                    <span className="text-xs sm:text-sm text-brand-dark">Substitusi dengan</span>
+                    <span className="text-xs sm:text-sm text-brand-dark">
+                        Substitusi dengan{' '}
+                        <Tooltip content="Menghubungkan barang-barang yang bisa menjadi barang pengganti jika stoknya kosong saat jual" portal>
+                            <InfoIcon className="ml-1 inline-flex h-3.5 w-3.5 align-middle text-filter-select-text cursor-help" />
+                        </Tooltip>
+                    </span>
                 </div>
 
                 {values.substituteEnabled && (
@@ -147,6 +149,17 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                         formatAsAmount
                         maxLength={11}
                         className="max-w-[420px]"
+                    />
+                </FormRow>
+
+                <FormRow label="Minimum Pembelian">
+                    <SimpleTextField
+                        value={values.minimumPurchase}
+                        onChange={(event) => onChange('minimumPurchase', event.target.value)}
+                        className="max-w-[420px]"
+                        formatAsAmount
+                        allowDecimal={false}
+                        maxLength={11}
                     />
                 </FormRow>
 

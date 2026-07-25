@@ -143,6 +143,129 @@ class InventoryInquiryQueryService
 
     /**
      * @param  array<string, mixed>  $filters
+     */
+    public function paginateProductMutations(array $filters): LengthAwarePaginator
+    {
+        $productId = filled($filters['product_id'] ?? null) ? (int) $filters['product_id'] : null;
+        if ($productId === null) {
+            return $this->paginateRows(collect(), $filters);
+        }
+
+        $dateFrom = $this->resolveDateFilter($filters['date_from'] ?? null);
+        $dateTo = $this->resolveDateFilter($filters['date_to'] ?? null);
+
+        $rows = collect();
+
+        $invDocs = InventoryDocument::query()
+            ->with(['lines'])
+            ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->when($dateFrom, fn ($q) => $q->whereDate('document_date', '>=', $dateFrom->toDateString()))
+            ->when($dateTo, fn ($q) => $q->whereDate('document_date', '<=', $dateTo->toDateString()))
+            ->get();
+
+        $warehouses = Warehouse::all()->keyBy('id');
+
+        foreach ($invDocs as $doc) {
+            foreach ($doc->lines as $line) {
+                if ((int) $line->product_id !== $productId) {
+                    continue;
+                }
+                $movements = $this->inventoryMovements($doc, $line);
+                foreach ($movements as $whId => $qty) {
+                    $wh = $warehouses->get($whId);
+                    $rows->push([
+                        'id' => 'inv-'.$doc->id.'-'.$line->id.'-'.$whId,
+                        'raw_date' => $doc->document_date ? Carbon::parse($doc->document_date)->timestamp : 0,
+                        'date' => $doc->document_date ? Carbon::parse($doc->document_date)->format('d/m/Y') : '-',
+                        'document_number' => $doc->document_number ?? '-',
+                        'document_type' => match ($doc->document_type) {
+                            'stock_transfer' => 'Pemindahan Barang',
+                            'stock_opname_result' => 'Hasil Stok Opname',
+                            'inventory_adjustment' => 'Penyesuaian Persediaan',
+                            default => ucwords(str_replace('_', ' ', (string) $doc->document_type)),
+                        },
+                        'description' => $doc->notes ?? $line->notes ?? '-',
+                        'warehouse' => $wh?->name ?? '-',
+                        'unit_cost' => $this->formatNumber((float) ($line->unit_cost ?? 0)),
+                        'in_qty' => $qty > 0 ? $this->formatNumber($qty) : '',
+                        'out_qty' => $qty < 0 ? $this->formatNumber(abs($qty)) : '',
+                        'qty_change' => $qty,
+                    ]);
+                }
+            }
+        }
+
+        $opDocs = OperationDocument::query()
+            ->with(['lines', 'warehouse'])
+            ->whereHas('lines', fn ($q) => $q->where('product_id', $productId))
+            ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return'])
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->when($dateFrom, fn ($q) => $q->whereDate('entry_date', '>=', $dateFrom->toDateString()))
+            ->when($dateTo, fn ($q) => $q->whereDate('entry_date', '<=', $dateTo->toDateString()))
+            ->get();
+
+        foreach ($opDocs as $doc) {
+            foreach ($doc->lines as $line) {
+                if ((int) $line->product_id !== $productId) {
+                    continue;
+                }
+                $qty = (float) ($line->quantity ?? 0);
+                if ($doc->document_type === 'sales_delivery' || $doc->document_type === 'sales_invoice' || $doc->document_type === 'purchase_return') {
+                    $qty *= -1;
+                }
+                $whId = $line->warehouse_id ?? $doc->warehouse_id;
+                $wh = $whId ? $warehouses->get($whId) : $doc->warehouse;
+
+                $rows->push([
+                    'id' => 'op-'.$doc->id.'-'.$line->id,
+                    'raw_date' => $doc->entry_date ? Carbon::parse($doc->entry_date)->timestamp : 0,
+                    'date' => $doc->entry_date ? Carbon::parse($doc->entry_date)->format('d/m/Y') : '-',
+                    'document_number' => $doc->document_number ?? '-',
+                    'document_type' => match ($doc->document_type) {
+                        'goods_receipt' => 'Penerimaan Barang',
+                        'sales_delivery' => 'Pengiriman Penjualan',
+                        'sales_invoice' => 'Faktur Penjualan',
+                        'sales_return' => 'Retur Penjualan',
+                        'purchase_return' => 'Retur Pembelian',
+                        default => ucwords(str_replace('_', ' ', (string) $doc->document_type)),
+                    },
+                    'description' => $doc->notes ?? $line->description ?? '-',
+                    'warehouse' => $wh?->name ?? '-',
+                    'unit_cost' => $this->formatNumber((float) ($line->unit_price ?? 0)),
+                    'in_qty' => $qty > 0 ? $this->formatNumber($qty) : '',
+                    'out_qty' => $qty < 0 ? $this->formatNumber(abs($qty)) : '',
+                    'qty_change' => $qty,
+                ]);
+            }
+        }
+
+        $sorted = $rows->sortBy('raw_date')->values();
+        $runningBalance = 0;
+        $finalRows = $sorted->map(function ($row) use (&$runningBalance) {
+            $runningBalance += $row['qty_change'];
+            $row['balance'] = $this->formatNumber($runningBalance);
+
+            return $row;
+        });
+
+        $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
+        if ($search !== '') {
+            $finalRows = $finalRows->filter(function ($row) use ($search) {
+                return collect([
+                    $row['document_number'],
+                    $row['document_type'],
+                    $row['description'],
+                    $row['warehouse'],
+                ])->contains(fn ($val) => str_contains(mb_strtolower((string) $val), $search));
+            })->values();
+        }
+
+        return $this->paginateRows($finalRows, $filters);
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
      * @return Collection<string, float>
      */
     protected function buildStockMap(array $filters): Collection

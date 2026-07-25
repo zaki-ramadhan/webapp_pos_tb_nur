@@ -13,28 +13,33 @@ export default function ModuleFormTemplate({
     children,
     actionsSlot,
 }) {
+    const hasTabs = (form.tabs && form.tabs.length > 0) || (form.rightTabs && form.rightTabs.length > 0);
+
     return (
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-            {form.tabs && form.tabs.length > 0 ? (
-                <div className="shrink-0">
-                    <PreferencesTabs
-                        tabs={form.tabs}
-                        activeTabId={activeTabId}
-                        onSelectTab={setActiveTabId}
-                        className="pl-0 sm:pl-0"
-                    />
-                </div>
-            ) : null}
+            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden">
+                <div className="flex flex-1 min-h-0 flex-col overflow-hidden">
+                    {hasTabs ? (
+                        <div className="shrink-0">
+                            <PreferencesTabs
+                                tabs={form.tabs}
+                                rightTabs={form.rightTabs}
+                                activeTabId={activeTabId}
+                                onSelectTab={setActiveTabId}
+                                className="pl-0 sm:pl-0 pr-0 sm:pr-0"
+                            />
+                        </div>
+                    ) : null}
 
-            <div className="flex flex-1 min-h-0 flex-col gap-4 lg:flex-row overflow-hidden pt-0">
-                <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-ui-border bg-white shadow-card-light overflow-hidden px-4 py-4 -mt-px">
-                    <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
-                        {status && (status.message || status.tone) ? (
-                            <CrudStatusMessage status={status} className="mb-4 shrink-0" />
-                        ) : null}
+                    <div className="flex flex-1 min-h-0 flex-col rounded-[6px] border border-ui-border bg-white shadow-card-light overflow-hidden px-4 py-4 -mt-px">
+                        <div className="order-2 min-w-0 flex-1 lg:order-1 overflow-y-auto pr-1.5 min-h-0 flex flex-col">
+                            {status && (status.message || status.tone) ? (
+                                <CrudStatusMessage status={status} className="mb-4 shrink-0" />
+                            ) : null}
 
-                        <div className="flex-1 min-h-0 flex flex-col">
-                            {children}
+                            <div className="flex-1 min-h-0 flex flex-col">
+                                {children}
+                            </div>
                         </div>
                     </div>
                 </div>

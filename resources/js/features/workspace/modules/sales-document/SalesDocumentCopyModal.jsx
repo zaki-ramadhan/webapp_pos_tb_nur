@@ -479,17 +479,22 @@ export default function SalesDocumentCopyModal({
                                                 </DataTableCell>
                                             </DataTableRow>
                                         ) : filteredItems.length > 0 ? (
-                                            filteredItems.map((item, index) => {
+                                             filteredItems.map((item, index) => {
                                                 const key = getItemKey(item, index);
+                                                const isSelected = selectedItems.has(key);
                                                 return (
-                                                    <DataTableRow key={key}>
+                                                    <DataTableRow
+                                                        key={key}
+                                                        onClick={() => toggleSelectItem(key)}
+                                                        className={`cursor-pointer transition hover:bg-slate-50 ${isSelected ? 'bg-blue-50/60' : ''}`}
+                                                    >
                                                         <DataTableCell className="w-px px-3 text-center">
                                                             <CheckboxField
                                                                 id={`select-item-${key}`}
-                                                                checked={selectedItems.has(key)}
+                                                                checked={isSelected}
                                                                 onChange={() => toggleSelectItem(key)}
                                                                 align="center"
-                                                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                                inputClassName="h-3.5 w-3.5 rounded-[3px] pointer-events-none"
                                                                 containerClassName="flex justify-center"
                                                             />
                                                         </DataTableCell>
@@ -551,15 +556,20 @@ export default function SalesDocumentCopyModal({
                                     ) : additionalCosts.length > 0 ? (
                                         additionalCosts.map((cost, i) => {
                                             const key = getCostKey(cost, i);
+                                            const isSelected = selectedCosts.has(key);
                                             return (
-                                                <DataTableRow key={key}>
+                                                <DataTableRow
+                                                    key={key}
+                                                    onClick={() => toggleSelectCost(key)}
+                                                    className={`cursor-pointer transition hover:bg-slate-50 ${isSelected ? 'bg-blue-50/60' : ''}`}
+                                                >
                                                     <DataTableCell className="w-px px-3 text-center">
                                                         <CheckboxField
                                                             id={`select-cost-${key}`}
-                                                            checked={selectedCosts.has(key)}
+                                                            checked={isSelected}
                                                             onChange={() => toggleSelectCost(key)}
                                                             align="center"
-                                                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                            inputClassName="h-3.5 w-3.5 rounded-[3px] pointer-events-none"
                                                             containerClassName="flex justify-center"
                                                         />
                                                     </DataTableCell>
@@ -617,15 +627,20 @@ export default function SalesDocumentCopyModal({
                                     ) : advancePayments.length > 0 ? (
                                         advancePayments.map((adv, i) => {
                                             const key = getAdvanceKey(adv, i);
+                                            const isSelected = selectedAdvances.has(key);
                                             return (
-                                                <DataTableRow key={key}>
+                                                <DataTableRow
+                                                    key={key}
+                                                    onClick={() => toggleSelectAdvance(key)}
+                                                    className={`cursor-pointer transition hover:bg-slate-50 ${isSelected ? 'bg-blue-50/60' : ''}`}
+                                                >
                                                     <DataTableCell className="w-px px-3 text-center">
                                                         <CheckboxField
                                                             id={`select-adv-${key}`}
-                                                            checked={selectedAdvances.has(key)}
+                                                            checked={isSelected}
                                                             onChange={() => toggleSelectAdvance(key)}
                                                             align="center"
-                                                            inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                                            inputClassName="h-3.5 w-3.5 rounded-[3px] pointer-events-none"
                                                             containerClassName="flex justify-center"
                                                         />
                                                     </DataTableCell>

@@ -7,6 +7,7 @@ import {
     CloseIcon,
     EmptyDataTable,
     FormFieldRow,
+    PartnerInlineTableSection,
     PlusIcon,
     SectionHeading,
     SelectField,
@@ -180,20 +181,41 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
     );
 }
 
-export function ContactsTab({ config }) {
+import { showErrorToast } from '@/components/feedback/toast';
+
+export function ContactsTab({ config, values, onChange }) {
     return (
-        <div>
-            <div className="mb-3 border-b border-ui-border-medium pb-1.5 flex items-center gap-3">
-                <h3 className="text-base sm:text-lg font-normal text-input-brand">{config.contactsTable.title}</h3>
-                <button
-                    type="button"
-                    className="inline-flex h-[34px] w-[56px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue hover:bg-brand-blue-lightest transition"
-                >
-                    <PlusIcon className="h-5 w-5" />
-                </button>
-            </div>
-            <EmptyDataTable columns={config.contactsTable.columns} emptyLabel={config.contactsTable.emptyLabel} />
-        </div>
+        <PartnerInlineTableSection
+            title={config.contactsTable.title}
+            addButtonTitle="Tambah Kontak"
+            modalTitle="Tambah Kontak Baru"
+            columns={[
+                { id: 'fullName', label: 'Nama Lengkap' },
+                { id: 'title', label: 'Posisi Jabatan' },
+                { id: 'email', label: 'Email' },
+                { id: 'mobilePhone', label: 'Handphone' },
+            ]}
+            items={values?.contacts ?? []}
+            emptyLabel={config.contactsTable.emptyLabel}
+            fields={[
+                { id: 'fullName', label: 'Nama Lengkap', required: true, placeholder: 'Contoh: Ahmad Hidayat' },
+                { id: 'title', label: 'Posisi Jabatan', placeholder: 'Contoh: Sales Manager' },
+                { id: 'email', label: 'Email', placeholder: 'Contoh: ahmad@supplier.com' },
+                { id: 'mobilePhone', label: 'Handphone', placeholder: 'Contoh: 08123456789' },
+            ]}
+            onValidateBeforeOpen={() => {
+                if (!values?.name?.trim()) {
+                    showErrorToast({
+                        title: 'Perhatian',
+                        message: 'Nama wajib diisi terlebih dahulu di Tab Umum.',
+                    });
+                    return false;
+                }
+                return true;
+            }}
+            onAdd={(newItem) => onChange('contacts', [...(values?.contacts ?? []), newItem])}
+            onRemove={(index) => onChange('contacts', (values?.contacts ?? []).filter((_, i) => i !== index))}
+        />
     );
 }
 

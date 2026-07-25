@@ -1,4 +1,4 @@
-import { formatIsoDate, normalizeDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { formatIsoDate, normalizeDisplayDate, addDaysToDisplayDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { showWarningToast } from '@/components/feedback/toast';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
@@ -28,11 +28,15 @@ export function requireSupplierSelection(values, partnerLabel = 'Pemasok') {
 }
 
 export function buildFormValues(config) {
+    const todayStr = formatIsoDate(new Date().toISOString());
+    const effectiveDate = config.draft?.effectiveDate || todayStr;
+    const endDate = config.draft?.endDate || addDaysToDisplayDate(effectiveDate, 1);
+
     return {
         supplier: [...(config.draft?.supplier ?? [])],
-        effectiveDate: config.draft?.effectiveDate ?? '',
+        effectiveDate,
         autoEndDate: config.draft?.autoEndDate ?? false,
-        endDate: config.draft?.endDate ?? '',
+        endDate,
         autoNumber: config.draft?.autoNumber ?? true,
         numberingType: config.draft?.numberingType ?? '',
         currencies: [...(config.draft?.currencies ?? [])],

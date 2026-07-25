@@ -42,6 +42,19 @@ export function formatIsoDate(value) {
     return `${day}/${month}/${year}`;
 }
 
+export function addDaysToDisplayDate(value, days = 1) {
+    const normalizedValue = normalizeDisplayDate(value);
+    let date;
+    if (normalizedValue) {
+        const [year, month, day] = normalizedValue.split('-').map(Number);
+        date = new Date(year, month - 1, day);
+    } else {
+        date = new Date();
+    }
+    date.setDate(date.getDate() + days);
+    return `${padNumber(date.getDate())}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()}`;
+}
+
 export function formatDateTime(value) {
     if (!value) {
         return '';

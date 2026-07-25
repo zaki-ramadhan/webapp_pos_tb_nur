@@ -196,13 +196,18 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                 filteredEmployees.map((emp) => {
                                     const checked = selectedIds.includes(emp.id);
                                     return (
-                                        <DataTableRow key={emp.id} className="hover:bg-slate-50">
+                                        <DataTableRow
+                                            key={emp.id}
+                                            onClick={() => toggleSelect(emp.id)}
+                                            className={`cursor-pointer transition hover:bg-slate-50 ${checked ? 'bg-blue-50/60' : ''}`}
+                                        >
                                             <DataTableCell className="w-px px-3 text-center">
                                                 <input
                                                     type="checkbox"
                                                     checked={checked}
                                                     onChange={() => toggleSelect(emp.id)}
-                                                    className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border-slate-300 text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                                 />
                                             </DataTableCell>
                                             <DataTableCell className="text-left font-normal">

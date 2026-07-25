@@ -114,6 +114,12 @@ class WorkspaceBackendResources
                 'minimum-stock',
                 fn (array $filters) => app(InventoryInquiryQueryService::class)->paginateMinimumStocks($filters),
             ),
+            'product-mutations' => self::inventoryInquiryResource(
+                'product-mutations',
+                'Product Mutations',
+                'minimum-stock',
+                fn (array $filters) => app(InventoryInquiryQueryService::class)->paginateProductMutations($filters),
+            ),
         ];
     }
 

@@ -5,6 +5,7 @@ import {
     buildFormState,
     BusinessPartnerTableView,
     DockIcon,
+    formatErrorMessageList,
 } from '@/features/workspace/modules/business-partner/BusinessPartnerViewShared';
 import { renderPartnerTab } from '@/features/workspace/modules/business-partner/BusinessPartnerFormSections';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
@@ -15,6 +16,7 @@ import { mapPartnerRow, toPartnerPayload } from '@/features/workspace/backend/wo
 import { getBackendErrorMessage, getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { dismissToast, showErrorToast, showLoadingToast, showSuccessToast } from '@/components/feedback/toast';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import { FormErrorProvider } from '@/components/ui/FormErrorContext';
 
 function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefresh }) {
     const [fetchedRow, setFetchedRow] = useState(null);
@@ -58,6 +60,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [errorModal, setErrorModal] = useState({ open: false, title: '', message: '' });
 
     useEffect(() => {
         setActiveTabId(config.tabs[0]?.id ?? 'general');
@@ -77,10 +80,15 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
         window.dispatchEvent(new CustomEvent('form-validation-clear'));
 
         if (!values.name?.trim()) {
-            setStatus({ tone: 'error', message: 'Nama wajib diisi.' });
+            setStatus({ tone: 'error', message: 'Nama harus diisi.' });
             window.dispatchEvent(new CustomEvent('form-validation-error', { 
-                detail: { name: 'Nama wajib diisi.' } 
+                detail: { name: 'Nama harus diisi.' } 
             }));
+            setErrorModal({
+                open: true,
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                message: formatErrorMessageList('Nama harus diisi'),
+            });
             return;
         }
 
@@ -88,10 +96,15 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             const emailStr = values.email.trim();
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(emailStr)) {
-                setStatus({ tone: 'error', message: 'Format email tidak valid. Pastikan domain DNS lengkap (contoh: nama@domain.com).' });
+                setStatus({ tone: 'error', message: 'Format email tidak valid.' });
                 window.dispatchEvent(new CustomEvent('form-validation-error', { 
-                    detail: { email: 'Format email tidak valid. Pastikan domain DNS lengkap (contoh: nama@domain.com).' } 
+                    detail: { email: 'Format email tidak valid.' } 
                 }));
+                setErrorModal({
+                    open: true,
+                    title: 'Terjadi Permasalahan pada Pemrosesan',
+                    message: formatErrorMessageList('Format email tidak valid'),
+                });
                 return;
             }
         }
@@ -122,8 +135,6 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             });
             setStatus({ tone: 'error', message: errorMessage });
 
-          // Dispatch backend validation errors to form fields
-
             const serverFieldErrors = err?.response?.data?.errors;
             if (serverFieldErrors && typeof serverFieldErrors === 'object') {
                 const flat = Object.fromEntries(
@@ -133,6 +144,14 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
                     ]),
                 );
                 window.dispatchEvent(new CustomEvent('form-validation-error', { detail: flat }));
+                const missingList = Object.values(flat).filter(Boolean);
+                if (missingList.length > 0) {
+                    setErrorModal({
+                        open: true,
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        message: formatErrorMessageList(missingList),
+                    });
+                }
             }
         }
     };
@@ -165,7 +184,6 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     };
 
     function handleChange(field, nextValue) {
-        setHasSaved(false);
         setValues((currentValues) => ({
             ...currentValues,
             [field]: nextValue,
@@ -175,7 +193,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
     const saveDisabled = processing || !values.name?.trim();
 
     return (
-        <>
+        <FormErrorProvider>
             <ModuleFormTemplate
                 form={config}
                 activeTabId={activeTabId}
@@ -217,7 +235,19 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={performDelete}
             />
-        </>
+
+            <ConfirmationModal
+                open={errorModal.open}
+                title={errorModal.title || 'Terjadi Permasalahan pada Pemrosesan'}
+                message={errorModal.message}
+                confirmLabel="OK"
+                cancelLabel=""
+                confirmVariant="brand-blue"
+                iconVariant="error"
+                onClose={() => setErrorModal({ open: false, title: '', message: '' })}
+                onConfirm={() => setErrorModal({ open: false, title: '', message: '' })}
+            />
+        </FormErrorProvider>
     );
 }
 

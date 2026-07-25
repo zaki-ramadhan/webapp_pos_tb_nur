@@ -3,6 +3,7 @@ import TextInput from '@/components/ui/TextInput';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { ExternalLinkIcon, LinkIcon, RefreshIcon, DownloadIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import ReferenceLookupInput from '@/features/workspace/shared/ReferenceLookupInput';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import ToolbarIconButton from '@/features/workspace/shared/toolbar/ToolbarIconButton';
 import ToolbarExportSplitButton from '@/features/workspace/shared/toolbar/ToolbarExportSplitButton';
 
@@ -113,10 +114,29 @@ export function InquiryControl({
     }
 
     if (control.type === 'lookup') {
+        if (control.id === 'supplierSearch') {
+            return (
+                <AccountLookupTextInput
+                    id="supplierSearch"
+                    resource="suppliers"
+                    value={value}
+                    placeholder={control.placeholder ?? 'Cari/Pilih Pemasok...'}
+                    searchLabel="Cari pemasok"
+                    heightClassName="h-[40px]"
+                    onSelectAccount={(record, label) => {
+                        if (record) {
+                            onLookupSelect?.('supplierSearch', { id: record.id, label, name: record.name, code: record.code });
+                        } else {
+                            onLookupClear?.('supplierSearch');
+                        }
+                    }}
+                    className={`h-[40px] ${control.className ?? 'w-full sm:w-[240px]'}`.trim()}
+                />
+            );
+        }
+
         const lookupItems =
-            control.id === 'supplierSearch'
-                ? suppliers
-                : control.id === 'warehouseSearch'
+            control.id === 'warehouseSearch'
                 ? warehouses
                 : control.id === 'itemSearch'
                 ? products

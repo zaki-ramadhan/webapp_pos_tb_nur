@@ -25,6 +25,8 @@ class Product extends DomainModel
         'default_sale_price',
         'notes',
         'is_active',
+        'print_group_details',
+        'allow_edit_group_quantity',
         'inventory_account_id',
         'sales_account_id',
         'sales_return_account_id',
@@ -60,7 +62,14 @@ class Product extends DomainModel
             'default_purchase_price' => 'decimal:2',
             'default_sale_price' => 'decimal:2',
             'is_active' => 'boolean',
+            'print_group_details' => 'boolean',
+            'allow_edit_group_quantity' => 'boolean',
         ];
+    }
+
+    public function groupItems(): HasMany
+    {
+        return $this->hasMany(ProductGroupItem::class, 'parent_product_id');
     }
 
     public function category(): BelongsTo

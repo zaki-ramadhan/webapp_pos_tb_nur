@@ -61,22 +61,30 @@ export default function AccountLookupSuggestions({
 
                         const isDoc = Boolean(record.document_number);
                         const title = isDoc ? record.document_number : (record.name ?? record.full_name ?? record.label ?? '-');
-                        
+                        const code = isDoc ? '' : (record.code ?? record.employee_code ?? '');
+
                         const rawDate = record.entry_date || record.document_date || record.date || record.created_at || record.transaction_date;
                         let dateStr = '';
                         if (rawDate) {
                             dateStr = formatIsoDate(rawDate);
                         }
-                        
-                        const subtitleLeft = isDoc
-                            ? dateStr
-                            : (record.code ?? record.employee_code ?? '-');
 
-                        const subtitleRight = isDoc
-                            ? `Rp ${Number(record.outstanding_amount ?? record.total_amount ?? 0).toLocaleString('id-ID')}`
-                            : (resource === 'accounts'
-                                ? translateAccountType(record.account_type)
-                                : null);
+                        let subtitleLeft = '';
+                        let subtitleRight = null;
+
+                        if (isDoc) {
+                            subtitleLeft = dateStr;
+                            subtitleRight = `Rp ${Number(record.outstanding_amount ?? record.total_amount ?? 0).toLocaleString('id-ID')}`;
+                        } else if (['suppliers', 'vendors', 'customers', 'employees'].includes(resource)) {
+                            const hp = String(record.mobile_phone ?? record.mobilePhone ?? '').trim();
+                            const telp = String(record.business_phone ?? record.office_phone ?? record.phone ?? '').trim();
+                            const contactParts = [];
+                            if (hp) contactParts.push(`HP:${hp}`);
+                            if (telp && telp !== hp) contactParts.push(`Telp:${telp}`);
+                            subtitleLeft = contactParts.join(', ');
+                        } else if (resource === 'accounts') {
+                            subtitleRight = translateAccountType(record.account_type);
+                        }
 
                         return (
                             <button
@@ -86,21 +94,26 @@ export default function AccountLookupSuggestions({
                                     e.stopPropagation();
                                     onSelectAccount(record, label);
                                 }}
-                                className={`flex w-full items-start gap-3 border-t border-slate-200 px-4 py-3 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
+                                className={`flex w-full flex-col gap-0.5 border-t border-slate-200 px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
-                                <span className="min-w-0 flex-1">
-                                    <span className="block truncate text-sm font-normal text-black">{title}</span>
-                                    {resource !== 'units' ? (
-                                        <span className="mt-1 flex items-center justify-between gap-4 text-xs sm:text-[13px]">
-                                            <span className="truncate text-black">
-                                                {subtitleLeft}
-                                            </span>
+                                <span className="flex w-full items-center justify-between gap-4">
+                                    <span className="truncate text-xs sm:text-sm font-normal text-black">{title}</span>
+                                    {code ? (
+                                        <span className="shrink-0 text-[11px] sm:text-xs font-normal text-black">{code}</span>
+                                    ) : null}
+                                </span>
+                                {(subtitleLeft || subtitleRight) ? (
+                                    <span className="flex w-full items-center justify-between gap-4 text-xs sm:text-[13px]">
+                                        <span className="truncate text-black">
+                                            {subtitleLeft}
+                                        </span>
+                                        {subtitleRight ? (
                                             <span className="shrink-0 text-black italic">
                                                 {subtitleRight}
                                             </span>
-                                        </span>
-                                    ) : null}
-                                </span>
+                                        ) : null}
+                                    </span>
+                                ) : null}
                             </button>
                         );
                     })
