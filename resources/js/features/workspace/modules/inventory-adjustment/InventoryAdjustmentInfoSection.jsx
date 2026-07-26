@@ -19,7 +19,7 @@ export default function InventoryAdjustmentInfoSection({ pageId, config, values,
                 <div className="mt-4 grid gap-y-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-start sm:gap-x-4 pl-3 sm:pl-5">
                     {!isPriceAdjustment && (
                         <>
-                            <TransactionFieldLabel label={config.labels.adjustmentAccount} />
+                            <TransactionFieldLabel label={config.labels?.adjustmentAccount || 'Akun Penyesuaian'} />
                             <div className="w-full max-w-[282px]">
                                 <AccountLookupTextInput
                                     id="inventoryAdjustmentAccount"
