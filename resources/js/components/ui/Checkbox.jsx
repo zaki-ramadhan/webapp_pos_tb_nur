@@ -38,14 +38,6 @@ export function Checkbox({
     const sizeClass = SIZE_CLASSES[size] ?? SIZE_CLASSES.md;
     const iconSizeClass = ICON_SIZE_CLASSES[size] ?? ICON_SIZE_CLASSES.md;
 
-    function handleClick(e) {
-        if (disabled) return;
-        // Delegate click to hidden input if custom box is clicked
-        if (e.target !== inputRef.current) {
-            inputRef.current?.click();
-        }
-    }
-
     function handleChange(e) {
         if (disabled) return;
         onChange?.(e);
@@ -56,7 +48,6 @@ export function Checkbox({
     return (
         <label
             htmlFor={id}
-            onClick={handleClick}
             className={`group relative inline-flex shrink-0 select-none items-center justify-center ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${className}`.trim()}
         >
             <input
