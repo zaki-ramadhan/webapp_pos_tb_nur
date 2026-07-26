@@ -176,13 +176,14 @@ class BackendActivityLogger
             'general-journals' => 'Jurnal Umum',
         ];
 
-        $subject = $this->resolveSubjectLabel($record);
-        if ($subject === null) {
-            $normLabel = strtolower(trim($blueprint->label));
-            $subject = $resourceMap[$blueprint->key] ?? ($resourceMap[$normLabel] ?? $blueprint->label);
+        $moduleStr = $resourceMap[$blueprint->key] ?? ($resourceMap[strtolower(trim($blueprint->label))] ?? $blueprint->label);
+        $subjectStr = $this->resolveSubjectLabel($record);
+
+        if (filled($subjectStr) && strtolower(trim($subjectStr)) !== strtolower(trim($moduleStr))) {
+            return sprintf('%s %s %s', $actionStr, $moduleStr, $subjectStr);
         }
 
-        return sprintf('%s %s', $actionStr, $subject);
+        return sprintf('%s %s', $actionStr, $moduleStr);
     }
 
     /**

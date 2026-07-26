@@ -143,8 +143,16 @@ class DashboardActivityQueryService
             if ($resourceStr === null) {
                 $resourceStr = $log->resource_label ?? ucfirst($log->resource_key);
             }
-            
-            $activityTitle = "{$actionStr} {$resourceStr}";
+
+            $subjectStr = trim((string) ($log->subject_label ?? $log->document_number ?? ''));
+
+            if (filled($log->description) && str_contains($log->description, $resourceStr)) {
+                $activityTitle = $log->description;
+            } elseif (filled($subjectStr) && strtolower($subjectStr) !== strtolower($resourceStr)) {
+                $activityTitle = "{$actionStr} {$resourceStr} {$subjectStr}";
+            } else {
+                $activityTitle = "{$actionStr} {$resourceStr}";
+            }
 
             $userActivities[] = [
                 'id' => $log->id,
