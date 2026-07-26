@@ -4,13 +4,7 @@ import { applyCashPaymentLineItems } from './cashPaymentShared';
 import { showLoadingToast, updateToastToSuccess, updateToastToError } from '@/components/feedback/toast';
 
 export async function processExpenseEntriesImport(selectedRecords, setValues, setStatus) {
-    let toastId = null;
     try {
-        toastId = showLoadingToast({
-            title: 'Mengambil Data',
-            message: 'Sedang mengambil rincian pencatatan beban...',
-        });
-
         let allImportedLines = [];
         let appendedNotes = [];
 
@@ -37,8 +31,8 @@ export async function processExpenseEntriesImport(selectedRecords, setValues, se
         }
 
         if (allImportedLines.length === 0) {
-            updateToastToError(toastId, {
-                title: 'Gagal',
+            setStatus({
+                tone: 'error',
                 message: 'Tidak ada rincian beban yang diimpor.',
             });
             return;
@@ -64,32 +58,16 @@ export async function processExpenseEntriesImport(selectedRecords, setValues, se
             tone: 'success',
             message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
         });
-        updateToastToSuccess(toastId, {
-            title: 'Berhasil',
-            message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Beban.`,
-        });
     } catch (err) {
         setStatus({
             tone: 'error',
             message: 'Gagal mengambil rincian pencatatan beban.',
         });
-        if (toastId) {
-            updateToastToError(toastId, {
-                title: 'Gagal',
-                message: 'Gagal mengambil rincian pencatatan beban.',
-            });
-        }
     }
 }
 
 export async function processPayrollEntriesImport(selectedRecords, setValues, setStatus) {
-    let toastId = null;
     try {
-        toastId = showLoadingToast({
-            title: 'Mengambil Data',
-            message: 'Sedang mengambil rincian pencatatan gaji...',
-        });
-
         let allImportedLines = [];
         let appendedNotes = [];
 
@@ -120,23 +98,18 @@ export async function processPayrollEntriesImport(selectedRecords, setValues, se
                     if (foundAccount) {
                         accountId = foundAccount.id;
                     }
-                } catch (e) {
-
+                } catch {
+                    /* ignore account search error */
                 }
-            }
-
-            let totalVal = parseFloat(fullRecord.total_amount ?? 0);
-            if (totalVal === 0 && fullRecord.lines && fullRecord.lines.length > 0) {
-                totalVal = fullRecord.lines.reduce((sum, line) => sum + parseFloat(line.total_amount ?? 0), 0);
             }
 
             const importedLine = {
                 id: `imported-payroll-line-${fullRecord.id}-${Date.now()}-${Math.random()}`,
                 __lineId: null,
                 __accountId: accountId,
-                accountCode: liabilityAccount?.code ?? accountCode ?? '',
-                accountName: liabilityAccount ? `${liabilityAccount.name} - Gaji` : accountName,
-                amount: formatCurrencyValue(totalVal),
+                accountCode: liabilityAccount?.code ?? accountCode,
+                accountName: liabilityAccount?.name ?? accountName,
+                amount: formatCurrencyValue(fullRecord.total_amount ?? 0),
             };
 
             allImportedLines.push(importedLine);
@@ -146,9 +119,9 @@ export async function processPayrollEntriesImport(selectedRecords, setValues, se
         }
 
         if (allImportedLines.length === 0) {
-            updateToastToError(toastId, {
-                title: 'Gagal',
-                message: 'Tidak ada rincian gaji yang diimpor.',
+            setStatus({
+                tone: 'error',
+                message: 'Tidak ada rincian pencatatan gaji yang diimpor.',
             });
             return;
         }
@@ -157,7 +130,7 @@ export async function processPayrollEntriesImport(selectedRecords, setValues, se
             const combinedNotes = [current.notes?.trim(), ...appendedNotes]
                 .filter(Boolean)
                 .join('\n');
-            
+
             return applyCashPaymentLineItems(
                 {
                     ...current,
@@ -171,22 +144,12 @@ export async function processPayrollEntriesImport(selectedRecords, setValues, se
 
         setStatus({
             tone: 'success',
-            message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.document_number).join(', ')}.`,
-        });
-        updateToastToSuccess(toastId, {
-            title: 'Berhasil',
-            message: `Berhasil mengambil rincian dari ${selectedRecords.length} Pencatatan Gaji.`,
+            message: `Berhasil mengambil rincian dari ${selectedRecords.map((r) => r.number).join(', ')}.`,
         });
     } catch (err) {
         setStatus({
             tone: 'error',
             message: 'Gagal mengambil rincian pencatatan gaji.',
         });
-        if (toastId) {
-            updateToastToError(toastId, {
-                title: 'Gagal',
-                message: 'Gagal mengambil rincian pencatatan gaji.',
-            });
-        }
     }
 }
