@@ -12,8 +12,7 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
-import { showSuccessToast } from '@/components/feedback/toast';
-import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
+import Checkbox from '@/components/ui/Checkbox';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import {
     ExternalLinkIcon,
@@ -367,13 +366,12 @@ export default function InventoryInquiryView({ config, pageId }) {
                         <tr>
                             {firstColumnIsCheckbox ? (
                                 <DataTableHead className="w-px px-3 text-center">
-                                    <input
-                                        type="checkbox"
+                                    <Checkbox
                                         checked={allSelected}
-                                        ref={(el) => { if (el) el.indeterminate = someSelected; }}
+                                        indeterminate={someSelected}
                                         onChange={toggleAll}
+                                        size="sm"
                                         aria-label="Pilih semua"
-                                        className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border-medium text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                     />
                                 </DataTableHead>
                             ) : null}
@@ -413,14 +411,12 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     } ${firstColumnIsCheckbox ? 'cursor-pointer transition' : ''}`.trim()}
                                 >
                                     {firstColumnIsCheckbox ? (
-                                        <DataTableCell className="w-px px-3 text-center">
-                                            <input
-                                                type="checkbox"
+                                        <DataTableCell className="w-px px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                                            <Checkbox
                                                 checked={selectedIds.has(row.id)}
                                                 onChange={() => toggleRow(row.id)}
-                                                onClick={(e) => e.stopPropagation()}
+                                                size="sm"
                                                 aria-label={`Pilih baris ${index + 1}`}
-                                                className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border border-ui-border text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                             />
                                         </DataTableCell>
                                     ) : null}

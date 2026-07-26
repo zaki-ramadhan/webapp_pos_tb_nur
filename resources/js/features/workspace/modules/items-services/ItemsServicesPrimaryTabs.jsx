@@ -14,6 +14,7 @@ import {
     DataTableHeader,
     DataTableRow,
 } from '@/components/ui/DataTable';
+import CheckboxField from '@/components/ui/CheckboxField';
 import { SectionHeading, SimpleTextField } from './itemsServicesViewShared';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
@@ -147,30 +148,20 @@ export function ItemGroupTab({ values, onChange }) {
             </DataTable>
 
             <div className="space-y-2 pt-2">
-                <div className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        id="printGroupDetails"
-                        checked={values.printGroupDetails !== false}
-                        onChange={(e) => onChange('printGroupDetails', e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <label htmlFor="printGroupDetails" className="text-xs sm:text-sm text-brand-dark cursor-pointer select-none">
-                        Tampilkan Rincian saat dicetak
-                    </label>
-                </div>
-                <div className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        id="allowEditGroupQuantity"
-                        checked={Boolean(values.allowEditGroupQuantity)}
-                        onChange={(e) => onChange('allowEditGroupQuantity', e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <label htmlFor="allowEditGroupQuantity" className="text-xs sm:text-sm text-brand-dark cursor-pointer select-none">
-                        Dapat mengubah kuantitas rincian grup
-                    </label>
-                </div>
+                <CheckboxField
+                    id="printGroupDetails"
+                    label="Tampilkan Rincian saat dicetak"
+                    checked={values.printGroupDetails !== false}
+                    onChange={(e) => onChange('printGroupDetails', e.target.checked)}
+                    size="sm"
+                />
+                <CheckboxField
+                    id="allowEditGroupQuantity"
+                    label="Dapat mengubah kuantitas rincian grup"
+                    checked={Boolean(values.allowEditGroupQuantity)}
+                    onChange={(e) => onChange('allowEditGroupQuantity', e.target.checked)}
+                    size="sm"
+                />
             </div>
         </div>
     );

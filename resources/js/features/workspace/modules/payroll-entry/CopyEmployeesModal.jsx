@@ -3,7 +3,7 @@ import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import SelectField from '@/components/ui/SelectField';
 import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
-import { DataTable, DataTableBody, DataTableHead, DataTableHeader, DataTableRow, DataTableCell } from '@/components/ui/DataTable';
+import Checkbox from '@/components/ui/Checkbox';
 import { listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
@@ -168,12 +168,12 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                         <DataTableHeader>
                             <DataTableRow className="border-t-0 text-white">
                                 <DataTableHead className="w-px px-3 text-center">
-                                    <input
-                                        type="checkbox"
+                                    <Checkbox
                                         checked={isAllSelected}
                                         onChange={toggleSelectAll}
                                         disabled={loading || filteredEmployees.length === 0}
-                                        className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
+                                        size="sm"
+                                        aria-label="Pilih semua karyawan"
                                     />
                                 </DataTableHead>
                                 <DataTableHead className="text-left font-light">
@@ -206,13 +206,12 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                             onClick={() => toggleSelect(emp.id)}
                                             className={`cursor-pointer transition hover:bg-slate-50 ${checked ? 'bg-blue-50/60' : ''}`}
                                         >
-                                            <DataTableCell className="w-px px-3 text-center">
-                                                <input
-                                                    type="checkbox"
+                                            <DataTableCell className="w-px px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                                                <Checkbox
                                                     checked={checked}
                                                     onChange={() => toggleSelect(emp.id)}
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="h-3.5 w-3.5 cursor-pointer rounded-[3px] border-slate-300 text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
+                                                    size="sm"
+                                                    aria-label={`Pilih ${emp.full_name}`}
                                                 />
                                             </DataTableCell>
                                             <DataTableCell className="text-left font-normal">

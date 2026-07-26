@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import Checkbox from './Checkbox';
 import { useToggleFieldError } from './FormErrorContext';
 
 export default function CheckboxField({
@@ -15,6 +16,7 @@ export default function CheckboxField({
     inputClassName = '',
     labelClassName = '',
     messageClassName = '',
+    checked,
     children,
     onChange,
     ...props
@@ -25,9 +27,7 @@ export default function CheckboxField({
     const {
         resolvedError,
         feedbackMessage: resolvedFeedback,
-        sizeClassName,
         alignClassName,
-        inputOffsetClassName,
         widthClass,
         contextKey,
         clearError,
@@ -44,13 +44,14 @@ export default function CheckboxField({
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <div className={`flex ${alignClassName} ${hasContent ? 'gap-3.5' : ''} text-xs sm:text-sm leading-6`.trim()}>
-                <input
+            <div className={`flex ${alignClassName} ${hasContent ? 'gap-2.5 sm:gap-3' : ''} text-xs sm:text-sm leading-6`.trim()}>
+                <Checkbox
                     id={elementId}
-                    type="checkbox"
+                    checked={checked}
                     disabled={disabled}
+                    size={size}
                     aria-invalid={Boolean(resolvedError)}
-                    className={`${inputOffsetClassName} shrink-0 rounded-[4px] border border-slate-400 text-[#15529A] focus:ring-2 focus:ring-[#15529A]/30 accent-[#15529A] disabled:border-gray-200 disabled:bg-ui-bg-panel disabled:text-gray-400 cursor-pointer disabled:cursor-not-allowed ${sizeClassName} ${resolvedError ? 'border-error-border' : ''} ${inputClassName}`.trim()}
+                    inputClassName={inputClassName}
                     onChange={handleChange}
                     {...props}
                 />

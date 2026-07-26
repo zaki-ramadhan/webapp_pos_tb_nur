@@ -1,6 +1,7 @@
 import { TransactionSwitch } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import Tooltip from '@/components/ui/Tooltip';
 import { InfoIcon } from '@/features/workspace/shared/Icons';
+import CheckboxField from '@/components/ui/CheckboxField';
 import {
     FormRow,
     LookupField,
@@ -40,18 +41,13 @@ export function ItemSalesInfoSection({ config, values, onChange, isLoading }) {
             <FormRow label="Def. Hrg. Jual Satuan #1">
                 {values.kind === 'Grup' && !values.bulkPricingEnabled ? (
                     <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="useGroupPrice"
-                                checked={values.useGroupPrice !== false}
-                                onChange={(e) => onChange('useGroupPrice', e.target.checked)}
-                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                            />
-                            <label htmlFor="useGroupPrice" className="text-xs sm:text-sm text-brand-dark cursor-pointer select-none">
-                                Ambil Harga dari Rincian Barang
-                            </label>
-                        </div>
+                        <CheckboxField
+                            id="useGroupPrice"
+                            label="Ambil Harga dari Rincian Barang"
+                            checked={values.useGroupPrice !== false}
+                            onChange={(e) => onChange('useGroupPrice', e.target.checked)}
+                            size="sm"
+                        />
                         {values.useGroupPrice === false ? (
                             <SimpleTextField
                                 value={values.sellPriceLevel1}
