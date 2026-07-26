@@ -62,7 +62,7 @@ class ItemLocationPage
                         ['id' => 'address', 'label' => 'Alamat', 'align' => 'center'],
                     ],
                     'rows' => [],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
             ],
         ]);

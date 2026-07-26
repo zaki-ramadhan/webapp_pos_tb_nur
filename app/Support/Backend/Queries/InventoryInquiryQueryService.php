@@ -110,11 +110,14 @@ class InventoryInquiryQueryService
                 'supplier_id' => $supplier?->supplier_id,
                 'item_name' => $product->name,
                 'item_code' => $product->code,
-                'unit' => $product->baseUnit?->name ?? '',
+                'unit' => $product->baseUnit?->name ?? $product->purchaseUnit?->name ?? $product->salesUnit?->name ?? '',
+                'cost_price' => (float) ($product->default_purchase_price ?? $product->default_sale_price ?? 0),
                 'available_stock' => $this->formatNumber($availableStock),
+                'raw_available_stock' => (float) $availableStock,
                 'ordered' => $this->formatNumber($ordered),
                 'requested' => $this->formatNumber($requested),
                 'minimum_limit' => $this->formatNumber($minimum),
+                'raw_minimum_limit' => (float) $minimum,
             ]);
         }
 
@@ -365,7 +368,7 @@ class InventoryInquiryQueryService
     protected function queryProducts(array $filters): Collection
     {
         return Product::query()
-            ->with(['baseUnit'])
+            ->with(['baseUnit', 'purchaseUnit', 'salesUnit'])
             ->when(filled($filters['product_id'] ?? null), fn ($query) => $query->whereKey((int) $filters['product_id']))
             ->where('is_active', true)
             ->get();

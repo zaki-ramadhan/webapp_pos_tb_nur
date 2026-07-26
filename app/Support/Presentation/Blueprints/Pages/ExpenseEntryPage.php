@@ -129,7 +129,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '06/01/2017',
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -154,7 +154,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '06/01/2017',
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => 'Pembebanan biaya promosi akhir tahun.',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -179,7 +179,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '08/12/2016',
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -204,7 +204,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '09/12/2016',
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -229,7 +229,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '11/11/2016',
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -254,7 +254,7 @@ class ExpenseEntryPage
                         'numberingType' => 'Pencatatan Beban',
                         'dueDate' => '10/11/2016',
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => '',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -292,7 +292,7 @@ class ExpenseEntryPage
                             'align' => 'right',
                         ],
                     ],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
                 'summaryRows' => [
                     'paidAmountLabel' => 'Dibayar',
@@ -416,7 +416,7 @@ class ExpenseEntryPage
                             'statusFilter' => 'paid',
                         ],
                     ],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
             ],
         ]);

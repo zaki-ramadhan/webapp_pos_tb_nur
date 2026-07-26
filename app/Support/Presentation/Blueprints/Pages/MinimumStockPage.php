@@ -59,7 +59,7 @@ class MinimumStockPage
                         ['id' => 'minimumLimit', 'label' => 'Batas Minimum Stok', 'widthClassName' => 'w-[250px]', 'align' => 'center'],
                     ],
                     'rows' => [],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
             ],
         ]);

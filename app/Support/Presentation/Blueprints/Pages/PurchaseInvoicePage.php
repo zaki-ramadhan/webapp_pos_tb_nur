@@ -4,10 +4,16 @@ namespace App\Support\Presentation\Blueprints\Pages;
 
 class PurchaseInvoicePage
 {
-    public static function get(array $navigationPages): array
+    public static function get(array $navigationPages, string $pageId = 'purchase-invoice'): array
     {
-        return array_replace($navigationPages['purchase-invoice'], [
-            ...\App\Support\Presentation\PosBlueprint::buildSalesTransactionPage('purchase-invoice-create', 'purchaseInvoice'),
+        $basePage = $navigationPages[$pageId] ?? $navigationPages['purchase-invoice'] ?? [
+            'id' => $pageId,
+            'label' => 'Pesanan Pembelian',
+        ];
+
+        return array_replace($basePage, [
+            'id' => $pageId,
+            ...\App\Support\Presentation\PosBlueprint::buildSalesTransactionPage("{$pageId}-create", 'purchaseInvoice'),
         ]);
     }
 }

@@ -345,12 +345,9 @@ final class PosBlueprint
 
             ]),
             self::navModule('purchases', 'Pembelian', 'purchase', [
-              // self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
-
-              // self::navItem('goods-receipt', 'Penerimaan Barang', 'receipt', 'green'),
-
-              // self::navItem('purchase-deposit', 'Uang Muka Pembelian', 'payment', 'green'),
-
+                self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
+                self::navItem('goods-receipt', 'Penerimaan Barang', 'receipt', 'green'),
+                self::navItem('purchase-deposit', 'Uang Muka Pembelian', 'payment', 'green'),
                 self::navItem('purchase-invoice', 'Faktur Pembelian', 'invoice', 'green'),
                 self::navItem('purchase-payment', 'Pembayaran Pembelian', 'payment', 'green'),
                 self::navItem('purchase-return', 'Retur Pembelian', 'transfer', 'green'),

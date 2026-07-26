@@ -120,7 +120,7 @@ class CashReceiptPage
                         ['id' => 'accountName', 'label' => 'Nama Akun', 'align' => 'left'],
                         ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[150px]', 'align' => 'right'],
                     ],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Penerimaan',
@@ -190,7 +190,7 @@ class CashReceiptPage
                         'payer' => '',
                         'voided' => false,
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => '',
                         'lineItems' => [
                             [

@@ -130,7 +130,7 @@ class BankTransferPage
                         ['id' => 'chargedTo', 'label' => 'Dibebankan ke', 'widthClassName' => 'w-[25%]'],
                         ['id' => 'amount', 'label' => 'Nilai', 'widthClassName' => 'w-[20%]', 'align' => 'right'],
                     ],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Transfer Bank',

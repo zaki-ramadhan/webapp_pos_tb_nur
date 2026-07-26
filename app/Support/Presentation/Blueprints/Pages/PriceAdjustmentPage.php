@@ -15,17 +15,17 @@ class PriceAdjustmentPage
                 'form' => 'Form',
                 'table' => 'Tabel',
             ],
-                'priceAdjustment' => [
-                    'topActions' => [
-                        [
-                            'id' => 'settings',
-                            'label' => 'Pengaturan',
-                            'icon' => 'settings',
-                            'tone' => 'outline',
-                        ],
-                        [
-                            'id' => 'tips',
-                            'label' => 'Petunjuk',
+            'priceAdjustment' => [
+                'topActions' => [
+                    [
+                        'id' => 'settings',
+                        'label' => 'Pengaturan',
+                        'icon' => 'settings',
+                        'tone' => 'outline',
+                    ],
+                    [
+                        'id' => 'tips',
+                        'label' => 'Petunjuk',
                         'icon' => 'idea',
                         'tone' => 'warning',
                     ],
@@ -61,7 +61,7 @@ class PriceAdjustmentPage
                         ['id' => 'unit', 'label' => 'Satuan', 'widthClassName' => 'w-[16%]'],
                         ['id' => 'newPrice', 'label' => 'Harga Baru', 'widthClassName' => 'w-[22%]', 'align' => 'right'],
                     ],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
                 'additionalInfoTitle' => 'Info lainnya',
                 'dockActions' => [
@@ -112,7 +112,7 @@ class PriceAdjustmentPage
                     'settingsLabel' => 'Pengaturan tabel',
                     'searchPlaceholder' => 'Cari...',
                     'pageValue' => '0',
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                     'filters' => [
                         ['id' => 'date', 'rowKey' => 'dateFilter', 'options' => [['value' => 'all', 'label' => 'Tanggal: Semua']]],
                         ['id' => 'inactive', 'rowKey' => 'inactiveFilter', 'options' => [['value' => 'all', 'label' => 'Status: Semua']]],

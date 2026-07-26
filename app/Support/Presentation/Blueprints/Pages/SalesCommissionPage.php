@@ -99,7 +99,7 @@ class SalesCommissionPage
                     'refreshLabel' => 'Muat ulang',
                     'settingsLabel' => 'Pengaturan tabel',
                     'searchPlaceholder' => 'Cari...',
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                     'pageValue' => '1',
                     'columns' => [
 

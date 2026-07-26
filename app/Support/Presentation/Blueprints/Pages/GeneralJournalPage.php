@@ -132,7 +132,7 @@ class GeneralJournalPage
                         'transactionType' => 'Penerimaan Penjualan',
                         'transactionTypeValue' => 'sales-receipt',
                         'branches' => ['TOKO UTAMA'],
-                    '__branchId' => 1,
+                        '__branchId' => 1,
                         'notes' => 'Pembayaran No. Faktur SI.2016.10.00004, SI.2017.02.00005',
                         'lineLookup' => '',
                         'lineItems' => [
@@ -183,7 +183,7 @@ class GeneralJournalPage
                             'align' => 'right',
                         ],
                     ],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Jurnal Umum',

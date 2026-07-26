@@ -196,6 +196,24 @@ class OrganizationBackendResources
                     }
                 },
             ),
+            'fob-terms' => new BackendResourceBlueprint(
+                key: 'fob-terms',
+                label: 'Fob Terms',
+                searchColumns: ['code', 'name', 'notes'],
+                modelClass: \App\Domain\Organization\Models\FobTerm::class,
+                storeRules: [
+                    'code' => ['nullable', 'string', 'max:50', 'unique:fob_terms,code'],
+                    'name' => ['required', 'string', 'max:120'],
+                    'notes' => ['nullable', 'string'],
+                    'is_active' => ['sometimes', 'boolean'],
+                ],
+                updateRules: fn (Model $record) => [
+                    'code' => ['nullable', 'string', 'max:50', Rule::unique('fob_terms', 'code')->ignore($record)],
+                    'name' => ['required', 'string', 'max:120'],
+                    'notes' => ['nullable', 'string'],
+                    'is_active' => ['sometimes', 'boolean'],
+                ],
+            ),
         ];
     }
 }

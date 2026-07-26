@@ -65,7 +65,7 @@ class SupplierPricePage
                         ['id' => 'unit', 'label' => 'Satuan', 'widthClassName' => 'w-[25%]'],
                         ['id' => 'newPrice', 'label' => 'Harga Baru', 'widthClassName' => 'w-[19%]', 'align' => 'right'],
                     ],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
                 'table' => [
                     'createLabel' => 'Tambah Harga Pemasok',
@@ -99,7 +99,7 @@ class SupplierPricePage
                         ['id' => 'endDate', 'label' => 'Tanggal Berakhir', 'widthClassName' => 'w-[18%]'],
                     ],
                     'rows' => [],
-                    'emptyLabel' => 'Belum ada data',
+                    'emptyLabel' => 'Tidak ada data',
                 ],
             ],
         ]);

@@ -151,7 +151,7 @@ class CatalogBackendResources
                     'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices', 'prices.unit', 'attachments',
                     'inventoryAccount', 'salesAccount', 'salesReturnAccount', 'salesDiscountAccount', 'deliveredGoodsAccount',
                     'cogsAccount', 'purchaseReturnAccount', 'uninvoicedPurchaseAccount',
-                    'groupItems', 'groupItems.childProduct', 'groupItems.unit'
+                    'groupItems', 'groupItems.childProduct', 'groupItems.unit', 'supplierPrices', 'supplierPrices.supplier'
                 ],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:product_categories,id'],
@@ -159,6 +159,8 @@ class CatalogBackendResources
                     'base_unit_id' => ['nullable', 'integer', 'exists:units,id'],
                     'purchase_unit_id' => ['nullable', 'integer', 'exists:units,id'],
                     'sales_unit_id' => ['nullable', 'integer', 'exists:units,id'],
+                    'main_supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
+                    'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
                     'code' => ['required', 'string', 'max:50', 'unique:products,code'],
                     'barcode' => ['nullable', 'string', 'max:100', 'unique:products,barcode'],
                     'name' => ['required', 'string', 'max:160'],
@@ -202,6 +204,8 @@ class CatalogBackendResources
                     'base_unit_id' => ['nullable', 'integer', 'exists:units,id'],
                     'purchase_unit_id' => ['nullable', 'integer', 'exists:units,id'],
                     'sales_unit_id' => ['nullable', 'integer', 'exists:units,id'],
+                    'main_supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
+                    'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
                     'code' => ['required', 'string', 'max:50', Rule::unique('products', 'code')->ignore($record)],
                     'barcode' => ['nullable', 'string', 'max:100', Rule::unique('products', 'barcode')->ignore($record)],
                     'name' => ['required', 'string', 'max:160'],
@@ -268,6 +272,22 @@ class CatalogBackendResources
                             ['child_product_id', 'unit_id', 'quantity'],
                             fn (array $row): bool => filled($row['child_product_id'] ?? null),
                         );
+                    }
+
+                    if (array_key_exists('main_supplier_id', $payload) || array_key_exists('supplier_id', $payload)) {
+                        $supplierId = $payload['main_supplier_id'] ?? $payload['supplier_id'];
+                        if (filled($supplierId)) {
+                            \App\Domain\Catalog\Models\SupplierPrice::updateOrCreate(
+                                ['product_id' => $record->id],
+                                [
+                                    'supplier_id' => $supplierId,
+                                    'price' => $record->default_purchase_price ?? 0,
+                                    'effective_from' => now()->toDateString(),
+                                ]
+                            );
+                        } else {
+                            \App\Domain\Catalog\Models\SupplierPrice::where('product_id', $record->id)->delete();
+                        }
                     }
                 },
             ),

@@ -30,7 +30,6 @@ class FeaturePreferences
                         'column' => 2,
                         'items' => [
                             ['id' => 'delivery-service', 'label' => 'Jasa Pengiriman', 'checked' => false],
-                            ['id' => 'payment-terms', 'label' => 'Syarat Pembayaran', 'checked' => false],
                         ],
                     ],
                 ],
