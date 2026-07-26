@@ -55,7 +55,7 @@ export default function SalesDocumentView({
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
                 refreshLabel: config.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: error || 'Belum ada data',
+                emptyLabel: error || 'Tidak ada data',
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

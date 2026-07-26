@@ -83,11 +83,8 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
 
     function handleDiscountPercentChange(e) {
         const val = e.target.value;
-        const cleanVal = val.replace(/[\.,]/g, '');
-        if (cleanVal.length > 3) {
-            return;
-        }
-        onChange({ discountPercent: val });
+        const sanitized = val.replace(/[^0-9.,]/g, '');
+        onChange({ discountPercent: sanitized });
     }
 
     function handleDiscountPercentBlur() {
@@ -108,13 +105,10 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
 
     return (
         <div className="grid gap-y-2.5 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-x-4 sm:items-center">
-            {/* Kode # + Bisa dijual */}
+            {/* Kode # */}
             <TransactionFieldLabel label="Kode #" />
             <div className="flex items-center justify-between h-[34px]">
                 <span className="text-xs sm:text-sm font-medium text-document-code">{code ?? ''}</span>
-                 <span className="text-xs sm:text-sm text-text-darkest">
-                    Bisa dijual : <span className={`font-medium ${parseFloat(form.canSell ?? 0) !== 0 ? 'text-green-700 font-semibold' : 'text-document-code'}`}>{form.canSell ?? 0}</span>
-                </span>
             </div>
 
             {/* Nama Barang */}
@@ -219,21 +213,6 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
                     Stok : <span className={`font-medium ${parseFloat(form.stock ?? 0) !== 0 ? 'text-green-700 font-semibold' : 'text-document-code'}`}>{form.stock ?? 0}</span>
                 </span>
             </div>
-
-            {/* Penjual */}
-            <TransactionFieldLabel label="Penjual" />
-            <AccountLookupField
-                values={form.salesPerson ?? []}
-                placeholder="Cari/Pilih..."
-                searchLabel="Cari penjual"
-                resource="employees"
-                queryParams={{ is_salesperson: 1 }}
-                onRemove={() => onChange({ salesPerson: [], __salesPersonId: null })}
-                onSelectAccount={(rec) =>
-                    onChange({ salesPerson: [rec.name], __salesPersonId: rec.id })
-                }
-                heightClassName={FIELD_H}
-            />
         </div>
     );
 }
@@ -504,12 +483,11 @@ export default function SalesDocumentItemEditModal({
             onTabChange={setActiveTabId}
             closeAriaLabel="Tutup rincian barang"
             panelClassName="max-w-[540px] overflow-hidden rounded-[8px] px-0 py-0 shadow-modal-import"
-            bodyClassName="min-h-[362px] py-2"
             footer={
                 <DocumentModalFooter
-                    deleteLabel={isEdit ? 'Hapus' : 'Batal'}
+                    deleteLabel={isEdit ? 'Hapus' : null}
                     submitLabel="Lanjut"
-                    onDelete={isEdit ? handleDelete : onClose}
+                    onDelete={isEdit ? handleDelete : null}
                     onSubmit={handleSubmit}
                 />
             }

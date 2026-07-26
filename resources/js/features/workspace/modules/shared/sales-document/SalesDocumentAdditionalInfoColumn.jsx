@@ -73,12 +73,21 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
             return (
                 <div key={key} className="grid gap-y-2 sm:grid-cols-[170px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
                     <TransactionFieldLabel label={field.label} required={field.required} />
-                    <ChipLookupField
-                        values={values[field.valueKey] ?? []}
-                        placeholder={field.placeholder ?? 'Cari/Pilih...'}
-                        onRemove={() => {}}
-                        searchLabel={field.searchLabel ?? field.label}
-                        heightClassName={field.heightClassName ?? 'h-[34px]'}
+                    <AccountLookupTextInput
+                        id={field.valueKey}
+                        resource={field.resource ?? 'accounts'}
+                        queryParams={field.queryParams ?? (field.valueKey === 'bankAccounts' ? { account_type: 'Cash/Bank' } : {})}
+                        value={values[field.textValueKey ?? `${field.valueKey}Label`] ?? values[field.valueKey]?.[0] ?? ''}
+                        placeholder={field.placeholder ?? `Cari/Pilih ${field.label}...`}
+                        searchLabel={field.searchLabel ?? `Cari ${field.label}`}
+                        onSelectAccount={(record, label) => {
+                            setValues?.((current) => ({
+                                ...current,
+                                [field.idValueKey ?? `__${field.valueKey}Id`]: record ? record.id : null,
+                                [field.textValueKey ?? `${field.valueKey}Label`]: label || '',
+                                [field.valueKey]: label ? [label] : [],
+                            }));
+                        }}
                     />
                 </div>
             );
@@ -131,8 +140,6 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                 {additionalInfoLeadingFields.map((field, index) =>
                     renderAdditionalField(field, `${field.valueKey ?? field.label}-leading-${index}`),
                 )}
-
-
 
                 {additionalLookupFields.map((field, index) => renderAdditionalField(field, `${field.valueKey ?? field.label}-${index}`))}
 

@@ -61,23 +61,44 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
 
     const handleProcessClick = (actionName) => {
         setProcessOpen(false);
+
+        const errorMessages = [];
+        const validationDetail = {};
+
+        const partnerLabel = config.labels.customer || 'Pelanggan';
+        const errorKey = config.labels.customer ? 'customer' : 'supplier';
+
         if (!values.__partnerId) {
-            const partnerLabel = config.labels.customer || 'Pelanggan';
-            const errorKey = config.labels.customer ? 'customer' : 'supplier';
+            const partnerErrorMsg = `${partnerLabel} harus diisi.`;
+            errorMessages.push(partnerErrorMsg);
+            validationDetail[errorKey] = partnerErrorMsg;
+            validationDetail.__partnerId = partnerErrorMsg;
+        }
+
+        const hasItems = Array.isArray(values.items) && values.items.length > 0;
+        const hasCosts = Array.isArray(values.additionalCosts) && values.additionalCosts.length > 0;
+
+        if (!hasItems && !hasCosts) {
+            const detailsErrorMsg = 'Rincian Barang / Biaya Lainnya harus diisi.';
+            errorMessages.push(detailsErrorMsg);
+            validationDetail.items = detailsErrorMsg;
+            validationDetail.additionalCosts = detailsErrorMsg;
+        }
+
+        if (errorMessages.length > 0) {
             window.dispatchEvent(new CustomEvent('form-validation-error', {
-                detail: {
-                    [errorKey]: `${partnerLabel} harus diisi.`,
-                    __partnerId: `${partnerLabel} harus diisi.`
-                }
+                detail: validationDetail
             }));
+
             showWarningToast({
                 title: 'Perhatian',
-                message: `${partnerLabel} harus diisi terlebih dahulu.`,
+                message: errorMessages.join(' '),
             });
+
             showSystemErrorModal({
                 title: 'Terjadi Permasalahan pada Pemrosesan',
                 description: 'Silakan perbaiki permasalahan berikut ini:',
-                message: `${partnerLabel} harus diisi.`,
+                messages: errorMessages,
                 confirmLabel: 'OK',
             });
             return;
@@ -103,19 +124,36 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
             const nextCosts = [...(current.additionalCosts ?? []), ...(copied.additionalCosts ?? [])];
             const nextAdvances = [...(current.advancePayments ?? []), ...(copied.advancePayments ?? [])];
             
-            return applyComputedTotals({
+            const nextState = {
                 ...current,
                 sourceDocId: copied.sourceDocId ?? current.sourceDocId ?? null,
                 sourceDocType: copied.sourceDocType ?? current.sourceDocType ?? null,
                 additionalCosts: nextCosts,
                 advancePayments: nextAdvances,
-            }, nextItems);
+            };
+
+            if (copied.supplierName || copied.supplierId) {
+                if (!current.supplier || current.supplier.length === 0 || !current.__partnerId) {
+                    if (copied.supplierName) {
+                        nextState.supplier = [copied.supplierName];
+                        nextState.customer = [copied.supplierName];
+                    }
+                    if (copied.supplierId) {
+                        nextState.__partnerId = copied.supplierId;
+                    }
+                }
+            }
+
+            return applyComputedTotals(nextState, nextItems);
         });
         showSuccessToast({
             title: 'Berhasil',
             message: `Berhasil menyalin data dari ${copyOption}.`,
         });
     };
+
+    const takeOptions = config.takeOptions ?? ['Penawaran', 'Pesanan', 'Pengiriman', 'Pembelian', 'Permintaan'];
+    const processOptions = config.processOptions ?? ['Pembayaran'];
 
     return (
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -130,12 +168,12 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                         <span>{config.takeButtonLabel}</span>
                         <ChevronDownIcon className={`h-4 w-4 transition-transform duration-200 ${takeOpen ? 'rotate-180' : ''}`.trim()} />
                     </button>
-                    <DropdownMenu open={takeOpen} onClose={() => setTakeOpen(false)} anchorRef={takeRef} widthClassName="w-[180px]">
-                        <DropdownMenuItem onClick={() => handleTakeClick('Penawaran')}>Penawaran</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleTakeClick('Pesanan')}>Pesanan</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleTakeClick('Pengiriman')}>Pengiriman</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleTakeClick('Pembelian')}>Pembelian</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleTakeClick('Permintaan')}>Permintaan</DropdownMenuItem>
+                    <DropdownMenu open={takeOpen} onClose={() => setTakeOpen(false)} anchorRef={takeRef} widthClassName="w-[200px]">
+                        {takeOptions.map((opt) => (
+                            <DropdownMenuItem key={opt} onClick={() => handleTakeClick(opt)}>
+                                {opt}
+                            </DropdownMenuItem>
+                        ))}
                     </DropdownMenu>
                 </>
             ) : null}
@@ -169,7 +207,11 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
                     </button>
                     {!values.processDisabled ? (
                         <DropdownMenu open={processOpen} onClose={() => setProcessOpen(false)} anchorRef={processRef} widthClassName="w-[180px]">
-                            <DropdownMenuItem onClick={() => handleProcessClick('Pembayaran')}>Pembayaran</DropdownMenuItem>
+                            {processOptions.map((opt) => (
+                                <DropdownMenuItem key={opt} onClick={() => handleProcessClick(opt)}>
+                                    {opt}
+                                </DropdownMenuItem>
+                            ))}
                         </DropdownMenu>
                     ) : null}
                 </>
@@ -251,7 +293,7 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
                     onChange={(event) => setFilters((current) => ({ ...current, [filter.id]: event.target.value }))}
                     containerClassName="w-auto"
                     className="h-[34px] rounded-[4px] border-ui-border"
-                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                    selectClassName="px-3 text-[11px] sm:text-xs text-filter-select-text"
                     iconClassName="mr-2 text-filter-icon"
                 >
                     {filter.options.map((option, optionIndex) => (

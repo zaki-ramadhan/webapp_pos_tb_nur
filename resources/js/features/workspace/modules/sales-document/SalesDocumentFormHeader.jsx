@@ -29,7 +29,7 @@ export default function SalesDocumentFormHeader({
                         <AccountLookupTextInput
                             id="customer"
                             resource={backendConfig?.partnerResource ?? 'customers'}
-                            value={values.customer?.[0] ?? ''}
+                            value={Array.isArray(values.customer) ? (values.customer[0] ?? '') : String(values.customer ?? '')}
                             placeholder={config.customerPlaceholder ?? 'Cari/Pilih Pelanggan...'}
                             searchLabel={config.customerSearchLabel ?? 'Cari pelanggan'}
                             onSelectAccount={(record, label) => {

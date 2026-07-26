@@ -136,9 +136,8 @@ export const defaultPurchaseInvoiceConfig = {
     labels: {
         customer: 'Pemasok',
         entryDate: 'Tanggal',
-        documentNumber: 'No Form #',
+        documentNumber: 'Nomor #',
         preInvoice: 'Tagihan Dimuka',
-        paymentTerms: 'Syarat Pembayaran',
         purchaseOrderNumber: 'No Faktur #',
         address: 'Alamat',
         branch: 'Cabang',
@@ -170,10 +169,30 @@ export const defaultPurchaseInvoiceConfig = {
         columns: purchaseInvoiceListColumns,
         rows: purchaseInvoiceTableRows,
         filters: [
-            { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '18/01/2017', label: 'Tanggal: 18/01/2017' }] },
-            { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pemasok: Semua' }, { value: 'Applus', label: 'Pemasok: Applus' }, { value: 'CV Ganda Putra', label: 'Pemasok: CV Ganda Putra' }] },
-            { id: 'status', rowKey: 'status', options: [{ value: 'all', label: 'Status: Semua' }, { value: 'Belum Lunas', label: 'Status: Belum Lunas' }, { value: 'Lunas', label: 'Status: Lunas' }] },
-            { id: 'printed', rowKey: 'printedStatus', options: [{ value: 'all', label: 'Sudah dicetak: Semua' }, { value: 'printed', label: 'Sudah dicetak: Ya' }, { value: 'unprinted', label: 'Sudah dicetak: Tidak' }] },
+            {
+                id: 'dateType',
+                rowKey: 'dateType',
+                options: [
+                    { value: 'order_date', label: 'Tanggal Faktur' },
+                    { value: 'ship_date', label: 'Tanggal Pengiriman' },
+                ],
+            },
+            {
+                id: 'customer',
+                rowKey: 'customer',
+                options: [
+                    { value: 'all', label: 'Pemasok: Semua' },
+                ],
+            },
+            {
+                id: 'status',
+                rowKey: 'status',
+                options: [
+                    { value: 'all', label: 'Status: Semua' },
+                    { value: 'Belum Lunas', label: 'Status: Belum Lunas' },
+                    { value: 'Lunas', label: 'Status: Lunas' },
+                ],
+            },
         ],
         downloadItems: [{ id: 'download-excel', label: 'Unduh Excel' }],
         printItems: [{ id: 'print-list', label: 'Cetak daftar faktur pembelian' }],
@@ -184,14 +203,14 @@ export const defaultPurchaseInvoiceConfig = {
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: purchaseInvoiceItemColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
         minWidthClassName: 'min-w-[1080px]',
     },
     costSearchPlaceholder: 'Cari/Pilih Akun Perkiraan...',
     additionalCostsTitle: 'Biaya Lainnya',
     costTable: {
         columns: purchaseInvoiceCostColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
     },
     additionalInfoTitle: 'Info lainnya',
     taxInfoTitle: 'Info Pajak',
@@ -204,13 +223,12 @@ export const defaultPurchaseInvoiceConfig = {
     showPreInvoiceOption: true,
     preInvoiceOptionLabel: 'Ya (Mendahului Terima Barang)',
     showAddressPinButton: true,
-    showPaymentTerms: true,
     showPurchaseOrderNumber: true,
     showTaxInfo: true,
     showShippingInfo: true,
     showExtraInfo: true,
     showFobInShippingInfo: false,
-    showFobInAdditionalInfo: true,
+    showFobInAdditionalInfo: false,
     additionalInfoLookupFields: [
         {
             type: 'lookup',

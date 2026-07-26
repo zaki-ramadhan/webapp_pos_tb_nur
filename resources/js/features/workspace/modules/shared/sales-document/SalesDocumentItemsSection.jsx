@@ -1,5 +1,7 @@
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import { showWarningToast } from '@/components/feedback/toast';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function SalesDocumentItemsSection({ config, values, isDetail, handlers }) {
     const itemTitle = values.itemCountLabel || config.itemSectionTitle;
@@ -34,6 +36,27 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             resource={config.itemSearchResource}
             placeholder={config.itemSearchPlaceholder}
             searchLabel="Cari barang dan jasa"
+            onBeforeOpen={() => {
+                if (!values.__partnerId) {
+                    const partnerLabel = config.labels?.customer || 'Pemasok/Pelanggan';
+                    const msg = `${partnerLabel} harus diisi.`;
+                    showWarningToast({ message: msg });
+                    showSystemErrorModal({
+                        title: 'Validasi Gagal',
+                        message: msg,
+                    });
+                    window.dispatchEvent(
+                        new CustomEvent('form-validation-error', {
+                            detail: {
+                                customer: msg,
+                                __partnerId: msg,
+                            },
+                        })
+                    );
+                    return false;
+                }
+                return true;
+            }}
             onSelectAccount={(record) => handlers?.onSelectItem?.(record)}
         />
     ) : null;

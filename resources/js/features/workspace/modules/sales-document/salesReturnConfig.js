@@ -147,7 +147,7 @@ const defaultSalesReturnConfig = {
     hideItemSearchField: true,
     itemTable: {
         columns: salesReturnItemColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
         minWidthClassName: 'min-w-[1060px]',
     },
     additionalInfoTitle: 'Info lainnya',
@@ -179,7 +179,6 @@ const defaultSalesReturnConfig = {
         searchLabel: 'Cari faktur',
     },
     showHeaderTakeButton: false,
-    showPaymentTerms: false,
     showPurchaseOrderNumber: false,
     showTaxInfo: true,
     showShippingInfo: false,
@@ -194,7 +193,7 @@ const defaultSalesReturnConfig = {
     hideCostSearchField: true,
     costTable: {
         columns: salesReturnCostColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
         minWidthClassName: 'min-w-[860px]',
     },
     takeButtonLabel: 'Ambil',

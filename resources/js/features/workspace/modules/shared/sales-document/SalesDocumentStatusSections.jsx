@@ -65,7 +65,7 @@ export function SalesDocumentSummarySection({ config, values }) {
                                     </div>
                                 ))
                             ) : (
-                                <div className="px-4 py-6 text-base text-tab-view-active-text">{config.processedByEmptyLabel ?? 'Belum ada data.'}</div>
+                                <div className="px-4 py-6 text-base text-tab-view-active-text">{config.processedByEmptyLabel ?? 'Tidak ada data.'}</div>
                             )}
                         </div>
                     </div>
@@ -119,13 +119,62 @@ export function SalesDocumentFooter({ values, setValues }) {
         setDiscountInputVal(values.discountValue ?? '0');
     }, [values.discountValue]);
 
+    const currentMode = values.discountMode ?? (values.discountPrefix === 'Rp' ? 'Rp' : '%');
+
+    const toggleDiscountMode = () => {
+        const nextMode = currentMode === '%' ? 'Rp' : '%';
+        const subtotal = (values.items ?? []).reduce((sum, item) => sum + parseNumericInput(item.total), 0);
+        const currentVal = parseNumericInput(discountInputVal);
+
+        let nextDiscountVal = discountInputVal;
+        if (nextMode === 'Rp') {
+            const rupiahAmount = currentMode === '%' ? Math.round(subtotal * (currentVal / 100)) : currentVal;
+            nextDiscountVal = formatCurrencyValue(rupiahAmount);
+        } else {
+            const percentAmount = subtotal > 0 ? Number(((currentVal / subtotal) * 100).toFixed(2)) : 0;
+            nextDiscountVal = String(percentAmount);
+        }
+
+        setDiscountInputVal(nextDiscountVal);
+        setValues?.((current) => {
+            const nextValues = {
+                ...current,
+                discountValue: nextDiscountVal,
+                discountMode: nextMode,
+                discountPrefix: nextMode,
+                isDiscountOverridden: true,
+            };
+            return applyComputedTotals(nextValues, current.items);
+        });
+    };
+
+    const updateDiscountRealtime = (rawVal) => {
+        const sanitized = rawVal.replace(/[^0-9.,]/g, '');
+        setDiscountInputVal(sanitized);
+
+        setValues?.((current) => {
+            const nextValues = {
+                ...current,
+                discountValue: sanitized,
+                discountMode: currentMode,
+                isDiscountOverridden: true,
+            };
+            return applyComputedTotals(nextValues, current.items);
+        });
+    };
+
     const handleDiscountBlur = () => {
         const numeric = Math.max(0, parseNumericInput(discountInputVal));
-        const formatted = formatCurrencyValue(numeric);
+        const mode = currentMode;
+        const formatted = mode === '%'
+            ? String(numeric)
+            : formatCurrencyValue(numeric);
+        setDiscountInputVal(formatted);
         setValues?.((current) => {
             const nextValues = {
                 ...current,
                 discountValue: formatted,
+                discountMode: mode,
                 isDiscountOverridden: true,
             };
             return applyComputedTotals(nextValues, current.items);
@@ -140,7 +189,7 @@ export function SalesDocumentFooter({ values, setValues }) {
 
     const footerParts = [
         { id: 'subtotal', label: 'Sub Total', value: buildCurrencyValue(values.subtotal), align: 'right' },
-        { id: 'discount', label: 'Diskon', value: values.discountValue, isInput: true, prefix: values.discountPrefix },
+        { id: 'discount', label: 'Diskon', value: values.discountValue, isInput: true },
         ...(hasCosts ? [{ id: 'costs', label: 'Total Biaya', value: formatCurrencyValue(subtotalCosts), align: 'right' }] : []),
         ...(hasAdvances ? [{ id: 'advance', label: 'Uang Muka', value: formatCurrencyValue(advanceAmount), align: 'right' }] : []),
         ...(values.taxLabel ? [{ id: 'tax', label: values.taxLabel, value: buildCurrencyValue(values.taxValue), align: 'right' }] : []),
@@ -176,7 +225,16 @@ export function SalesDocumentFooter({ values, setValues }) {
                         <div className="flex items-start justify-between gap-3">
                             <span className="text-xs sm:text-sm text-brand-dark">
                                 {part.label}
-                                {(part.id === 'discount' || part.id === 'tax') ? (
+                                {part.id === 'discount' ? (
+                                    <button
+                                        type="button"
+                                        onClick={toggleDiscountMode}
+                                        className="ml-1 inline-flex cursor-pointer items-center rounded-[4px] border border-brand-blue-border-light bg-blue-50 px-1.5 py-0.5 text-xs font-bold text-brand-blue-accent hover:bg-blue-100 transition-colors select-none"
+                                        title="Klik untuk mengubah antara % (Persen) dan Rp (Rupiah)"
+                                    >
+                                        {currentMode}
+                                    </button>
+                                ) : part.id === 'tax' ? (
                                     <span className="ml-1 inline-flex rounded-[4px] border border-brand-blue-border-light px-1.5 py-0.5 text-xs text-brand-blue-accent">
                                         %
                                     </span>
@@ -187,20 +245,21 @@ export function SalesDocumentFooter({ values, setValues }) {
                         {part.isInput ? (
                             <div className="w-full">
                                 <div className="mt-1 flex h-[32px] w-full overflow-hidden rounded-[4px] border border-ui-border focus-within:ring-2 focus-within:ring-input-focus/30 focus-within:border-brand-blue-border">
-                                    {part.prefix ? (
-                                        <span className="inline-flex items-center border-r border-ui-border-medium bg-input-prefix-bg-compact px-2 text-sm text-text-inactive">
-                                            {part.prefix}
-                                        </span>
-                                    ) : null}
+                                    <button
+                                        type="button"
+                                        onClick={toggleDiscountMode}
+                                        className="inline-flex cursor-pointer items-center border-r border-ui-border-medium bg-blue-50 px-2 text-xs sm:text-sm font-bold text-brand-blue-accent hover:bg-blue-100 transition-colors select-none"
+                                        title="Klik untuk mengubah antara % dan Rp"
+                                    >
+                                        {currentMode}
+                                    </button>
                                     <input
                                         type="text"
-                                        maxLength={values.discountPrefix === '%' ? 3 : 15}
+                                        maxLength={currentMode === '%' ? 6 : 20}
                                         className="flex-1 w-0 bg-transparent px-2 text-right text-sm sm:text-base font-semibold text-text-darkest outline-none border-none"
                                         value={discountInputVal}
-                                        onChange={(e) => {
-                                            const val = e.target.value.replace(/[^0-9]/g, '');
-                                            setDiscountInputVal(val);
-                                        }}
+                                        onFocus={(e) => e.target.select()}
+                                        onChange={(e) => updateDiscountRealtime(e.target.value)}
                                         onBlur={handleDiscountBlur}
                                     />
                                 </div>

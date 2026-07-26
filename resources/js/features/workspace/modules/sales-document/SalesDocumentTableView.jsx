@@ -68,7 +68,7 @@ export default function SalesDocumentTableView({
                 <TransactionDataTable
                     columns={config.table.columns}
                     rows={sortedRows}
-                    emptyLabel={config.table.emptyLabel ?? 'Belum ada data'}
+                    emptyLabel={config.table.emptyLabel ?? 'Tidak ada data'}
                     minWidthClassName="min-w-[1380px]"
                     onRowClick={(row) =>
                         onOpenDetail?.({

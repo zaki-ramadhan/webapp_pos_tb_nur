@@ -40,7 +40,6 @@ export function buildSalesDocumentFormState(source = {}) {
         ...source,
         customer: cloneList(source.customer),
         items: cloneList(source.items),
-        paymentTerms: cloneList(source.paymentTerms),
         bankAccounts: cloneList(source.bankAccounts),
         branches: cloneList(source.branches),
         contacts: cloneList(source.contacts),

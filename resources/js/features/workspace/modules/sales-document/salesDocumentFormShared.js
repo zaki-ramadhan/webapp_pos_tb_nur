@@ -38,11 +38,29 @@ export function buildLookupLabel(record, codeKey = 'code') {
 export function applyComputedTotals(currentValues, nextItems) {
     const subtotalAmount = nextItems.reduce((sum, item) => sum + parseNumericInput(item.total), 0);
     const subtotalCosts = (currentValues.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
-    const discountAmount = currentValues.isDiscountOverridden
-        ? parseNumericInput(currentValues.discountValue)
-        : nextItems.reduce((sum, item) => sum + parseNumericInput(item.discountValue ?? item.discount), 0);
+
+    let discountAmount = 0;
+    if (currentValues.isDiscountOverridden) {
+        const val = parseNumericInput(currentValues.discountValue);
+        const rawValStr = String(currentValues.discountValue ?? '').trim();
+        const isExplicitRp = currentValues.discountMode === 'Rp';
+        const isPercent = !isExplicitRp && (
+            currentValues.discountMode === '%' ||
+            rawValStr.endsWith('%') ||
+            (val <= 100 && val > 0 && !rawValStr.includes('.000') && !rawValStr.includes(',000'))
+        );
+
+        if (isPercent) {
+            discountAmount = Math.max(0, subtotalAmount * (val / 100));
+        } else {
+            discountAmount = Math.max(0, val);
+        }
+    } else {
+        discountAmount = nextItems.reduce((sum, item) => sum + parseNumericInput(item.discountValue ?? item.discount), 0);
+    }
+
     const taxAmount = currentValues.taxEnabled ? Math.max(0, (subtotalAmount - discountAmount) * 0.1) : 0;
-    const totalAmount = subtotalAmount - discountAmount + taxAmount + subtotalCosts;
+    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount + subtotalCosts);
     const nextSummary = Array.isArray(currentValues.summary)
         ? currentValues.summary.map(([label, value], index) => {
               if (index === 0 || String(label).toLowerCase() === 'total') {
@@ -62,7 +80,7 @@ export function applyComputedTotals(currentValues, nextItems) {
         items: nextItems,
         itemCountLabel: nextItems.length ? `${formattedCount} ${currentValues.pageId ? 'Barang' : 'Rincian Barang'} (${formattedQty})` : 'Rincian Barang',
         subtotal: formatCurrencyLabel(subtotalAmount),
-        discountValue: formatCurrencyValue(discountAmount),
+        discountValue: currentValues.isDiscountOverridden ? currentValues.discountValue : formatCurrencyValue(discountAmount),
         taxLabel: currentValues.taxEnabled ? currentValues.taxLabel || 'Pajak' : '',
         taxValue: currentValues.taxEnabled ? formatCurrencyLabel(taxAmount) : '',
         total: formatCurrencyLabel(totalAmount),
@@ -78,8 +96,6 @@ export function buildDocumentComparableSnapshot(values) {
         documentNumber: values.documentNumber,
         autoNumber: values.autoNumber,
         numberingType: values.numberingType,
-        paymentTerms: values.paymentTerms,
-        paymentTermId: values.__paymentTermId,
         shippingDate: values.shippingDate,
         purchaseOrderNumber: values.purchaseOrderNumber,
         address: values.address,

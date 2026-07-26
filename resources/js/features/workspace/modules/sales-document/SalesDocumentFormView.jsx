@@ -140,6 +140,55 @@ export default function SalesDocumentFormView({
         lastInitialSnapshotRef.current = initialSnapshot;
     }, [sourceRecord, initialSnapshot]);
 
+    useEffect(() => {
+        function applyInitialValues(init) {
+            if (!init || isDetail) return;
+            setValues((current) => {
+                const rawItems = Array.isArray(init.items) && init.items.length ? init.items : (current.items ?? []);
+                const nextItems = rawItems.map((item) => {
+                    const qty = parseNumericInput(item.quantity);
+                    const price = parseNumericInput(item.price);
+                    const discount = parseNumericInput(item.discountValue ?? item.discount);
+                    const totalVal = item.total != null && item.total !== 0 ? parseNumericInput(item.total) : Math.max(0, qty * price - discount);
+                    return {
+                        ...item,
+                        quantity: qty,
+                        price: formatCurrencyValue(price),
+                        discount: formatCurrencyValue(discount),
+                        discountValue: formatCurrencyValue(discount),
+                        total: formatCurrencyValue(totalVal),
+                    };
+                });
+                const supplierName = init.supplier ?? init.customer ?? current.customer;
+                const nextSupplier = Array.isArray(supplierName) ? supplierName : (supplierName ? [String(supplierName)] : []);
+                const nextPartnerId = init.__partnerId ?? current.__partnerId;
+                return applyComputedTotals({
+                    ...current,
+                    customer: nextSupplier,
+                    supplier: nextSupplier,
+                    __partnerId: nextPartnerId,
+                }, nextItems);
+            });
+        }
+
+        if (!isDetail && typeof window !== 'undefined' && window.__pendingInitialValues?.[pageId]) {
+            applyInitialValues(window.__pendingInitialValues[pageId]);
+            delete window.__pendingInitialValues[pageId];
+        }
+
+        function handleInitialValuesEvent(e) {
+            if (e.detail?.pageId === pageId && e.detail?.initialValues && !isDetail) {
+                applyInitialValues(e.detail.initialValues);
+                if (typeof window !== 'undefined' && window.__pendingInitialValues) {
+                    delete window.__pendingInitialValues[pageId];
+                }
+            }
+        }
+
+        window.addEventListener('workspace:set-initial-values', handleInitialValuesEvent);
+        return () => window.removeEventListener('workspace:set-initial-values', handleInitialValuesEvent);
+    }, [pageId, isDetail]);
+
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);
     const fieldErrors = useMemo(() => validateSalesDocumentFields(values, config), [config, values]);
     const isDirty = useMemo(() => resolveSalesDocumentDirty(values, initialSnapshot), [initialSnapshot, values]);

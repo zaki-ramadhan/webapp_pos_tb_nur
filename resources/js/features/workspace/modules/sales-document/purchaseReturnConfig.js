@@ -145,7 +145,7 @@ const defaultPurchaseReturnConfig = {
     hideItemSearchField: true,
     itemTable: {
         columns: purchaseReturnItemColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
         minWidthClassName: 'min-w-[1060px]',
     },
     costSearchPlaceholder: 'Cari/Pilih Akun Perkiraan...',
@@ -154,7 +154,7 @@ const defaultPurchaseReturnConfig = {
     hideCostSearchField: true,
     costTable: {
         columns: purchaseReturnCostColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
     },
     additionalInfoTitle: 'Info lainnya',
     taxInfoTitle: 'Info Pajak',
@@ -175,7 +175,6 @@ const defaultPurchaseReturnConfig = {
         searchLabel: 'Cari pembelian atau pemasok',
     },
     showHeaderTakeButton: false,
-    showPaymentTerms: false,
     showPurchaseOrderNumber: false,
     showTaxInfo: true,
     showShippingInfo: false,
