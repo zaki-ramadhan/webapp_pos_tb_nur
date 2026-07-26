@@ -434,10 +434,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                             style={getCellStyle(column.id)}
                                             onResizeStart={(e) => handleResizeStart(e, column.id)}
                                         >
-                                            {column.id === 'productName' && row.productCode
-                                                ? `[${row.productCode}] ${row.productName}`
-                                                : formatTableTextValue(row[column.id])
-                                            }
+                                            {formatTableTextValue(row[column.id])}
                                         </DataTableCell>
                                     ))}
                                 </DataTableRow>

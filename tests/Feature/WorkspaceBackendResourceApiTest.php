@@ -254,7 +254,7 @@ class WorkspaceBackendResourceApiTest extends TestCase
         $minimumStockResponse
             ->assertOk()
             ->assertJsonPath('data.0.item_code', 'ITM-001')
-            ->assertJsonPath('data.0.available_stock', '5.00');
+            ->assertJsonPath('data.0.available_stock', '5');
     }
 
     public function test_taxes_resource_can_be_imported(): void

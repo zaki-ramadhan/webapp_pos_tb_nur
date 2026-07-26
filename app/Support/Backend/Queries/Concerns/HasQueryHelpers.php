@@ -33,6 +33,10 @@ trait HasQueryHelpers
 
     protected function formatNumber(float $value): string
     {
-        return number_format($value, 2, '.', '');
+        if (floor($value) == $value) {
+            return number_format($value, 0, '.', '');
+        }
+
+        return rtrim(rtrim(number_format($value, 4, '.', ''), '0'), '.');
     }
 }
