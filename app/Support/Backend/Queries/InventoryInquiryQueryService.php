@@ -28,26 +28,23 @@ class InventoryInquiryQueryService
         $products = $this->queryProducts($filters)->keyBy('id');
         $rows = collect();
 
-        foreach ($stockMap as $compositeKey => $quantity) {
-            [$productId, $warehouseId] = array_map('intval', explode(':', (string) $compositeKey));
-            $product = $products->get($productId);
-            $warehouse = $warehouses->get($warehouseId);
+        foreach ($products as $product) {
+            foreach ($warehouses as $warehouse) {
+                $compositeKey = sprintf('%d:%d', $product->id, $warehouse->id);
+                $quantity = (float) ($stockMap[$compositeKey] ?? 0);
 
-            if ($product === null || $warehouse === null) {
-                continue;
+                $rows->push([
+                    'id' => $compositeKey,
+                    'product_id' => $product->id,
+                    'product_code' => $product->code,
+                    'product_name' => $product->name,
+                    'warehouse_id' => $warehouse->id,
+                    'warehouse' => $warehouse->name,
+                    'multi_unit_quantity' => sprintf('%s %s', $this->formatNumber($quantity), $product->baseUnit?->name ?? ''),
+                    'saleable_stock' => $this->formatNumber($quantity),
+                    'address' => $this->resolveWarehouseAddress($warehouse),
+                ]);
             }
-
-            $rows->push([
-                'id' => sprintf('%d:%d', $productId, $warehouseId),
-                'product_id' => $productId,
-                'product_code' => $product->code,
-                'product_name' => $product->name,
-                'warehouse_id' => $warehouseId,
-                'warehouse' => $warehouse->name,
-                'multi_unit_quantity' => sprintf('%s %s', $this->formatNumber($quantity), $product->baseUnit?->name ?? ''),
-                'saleable_stock' => $this->formatNumber($quantity),
-                'address' => $this->resolveWarehouseAddress($warehouse),
-            ]);
         }
 
         $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
@@ -306,7 +303,7 @@ class InventoryInquiryQueryService
         $operationDocuments = OperationDocument::query()
             ->with(['lines'])
             ->whereDate('entry_date', '<=', $asOfDate->toDateString())
-            ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_return', 'purchase_return'])
+            ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_return', 'purchase_return', 'inventory_adjustment'])
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->get();
 
