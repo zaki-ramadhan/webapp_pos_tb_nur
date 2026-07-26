@@ -105,14 +105,19 @@ export function ClearableTextInput({
     trailing = null,
     maxLength,
     minLength,
+    loading = false,
+    isLoading = false,
+    ...props
 }) {
     return (
         <TextInput
+            {...props}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
             className={`h-[40px] rounded-[4px] border-ui-border ${className}`.trim()}
             inputClassName="text-xs sm:text-sm text-brand-dark"
+            loading={loading || isLoading}
             trailing={
                 trailing ??
                 (value ? (
@@ -188,7 +193,7 @@ export function LookupField({
 
 import SelectField from '@/components/ui/SelectField';
 
-export function CodeFieldRow({ values, onChange, isDetail }) {
+export function CodeFieldRow({ values, onChange, isDetail, isLoading }) {
     if (!isDetail) {
         return (
             <FormRow label="Kode Barang" required>
@@ -211,6 +216,7 @@ export function CodeFieldRow({ values, onChange, isDetail }) {
                 onChange={(event) => onChange('code', event.target.value)}
                 maxLength={50}
                 minLength={1}
+                isLoading={isLoading}
             />
         </FormRow>
     );

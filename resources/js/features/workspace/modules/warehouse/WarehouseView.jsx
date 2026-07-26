@@ -70,14 +70,15 @@ export default function WarehouseView({
                     setFetchedDetailRow({ ...record, __source: 'backend' });
                 }
             } catch {
-              // Ignore – form akan menampilkan data terbatas dari tabel
-
+                /* Ignore */
             } finally {
                 if (active) setFetchingId(null);
             }
         }
         fetchDetail();
-        return () => { active = false; };
+        return () => {
+            active = false;
+        };
     }, [recordId, page.warehouse?.detailRecords]);
 
   // ─── Bangun entry lengkap yang dioper ke FormView ─────────────────────────

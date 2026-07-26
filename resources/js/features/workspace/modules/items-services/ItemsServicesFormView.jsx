@@ -75,8 +75,6 @@ export default function ItemsServicesFormView({
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId]);
 
-  // Fetch saved stock locations from DB and populate openingStockRows
-
     useEffect(() => {
         if (!detailRow?.id) return;
         let active = true;
@@ -98,14 +96,12 @@ export default function ItemsServicesFormView({
                         __fromDb: true,
                     }));
                 setValues((prev) => {
-                  // Don't override if user has already added rows
-
                     const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
                     if (hasUserRows) return prev;
                     return { ...prev, openingStockRows: stockRows };
                 });
             })
-            .catch(() => {/* silent — tidak hapus data lokal */});
+            .catch(() => {});
 
         return () => { active = false; };
     }, [detailRow?.id]);
@@ -208,6 +204,16 @@ export default function ItemsServicesFormView({
                     cogs_account_id: values.cogsAccountId ?? null,
                     purchase_return_account_id: values.purchaseReturnAccountId ?? null,
                     uninvoiced_purchase_account_id: values.uninvoicedPurchaseAccountId ?? null,
+                    opening_stock_rows: (values.openingStockRows ?? [])
+                        .filter((r) => !r.__fromDb)
+                        .map((r) => ({
+                            warehouse_id: r.warehouse_id ?? r.warehouseId ?? null,
+                            warehouse_name: typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse?.name ?? null),
+                            quantity: parseAmountInput(r.quantity),
+                            unit_cost: parseAmountInput(r.unitCost),
+                            unit_name: typeof r.unit === 'string' ? r.unit : (r.unit?.name ?? null),
+                            date: r.date || null,
+                        })),
                     unit_conversions: (values.unitConversions ?? [])
                         .map((conv) => ({
                             id: String(conv.id).startsWith('conversion-') ? undefined : conv.id,

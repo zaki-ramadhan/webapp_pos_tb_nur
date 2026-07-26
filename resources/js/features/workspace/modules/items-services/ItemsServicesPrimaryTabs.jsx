@@ -18,7 +18,7 @@ import { SectionHeading, SimpleTextField } from './itemsServicesViewShared';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 
-export function ItemGeneralTab({ config, values, onChange, isDetail }) {
+export function ItemGeneralTab({ config, values, onChange, isDetail, isLoading }) {
     return (
         <div className="grid gap-8 lg:grid-cols-2">
             <ItemGeneralInfoSection
@@ -26,17 +26,18 @@ export function ItemGeneralTab({ config, values, onChange, isDetail }) {
                 values={values}
                 onChange={onChange}
                 isDetail={isDetail}
+                isLoading={isLoading}
             />
-            <ItemMoreInfoSection config={config} values={values} onChange={onChange} />
+            <ItemMoreInfoSection config={config} values={values} onChange={onChange} isLoading={isLoading} />
         </div>
     );
 }
 
-export function ItemSalesPurchaseTab({ config, values, onChange }) {
+export function ItemSalesPurchaseTab({ config, values, onChange, isLoading }) {
     return (
         <div className="grid gap-8 lg:grid-cols-2">
-            <ItemSalesInfoSection config={config} values={values} onChange={onChange} />
-            <ItemPurchaseTaxSection config={config} values={values} onChange={onChange} />
+            <ItemSalesInfoSection config={config} values={values} onChange={onChange} isLoading={isLoading} />
+            <ItemPurchaseTaxSection config={config} values={values} onChange={onChange} isLoading={isLoading} />
         </div>
     );
 }

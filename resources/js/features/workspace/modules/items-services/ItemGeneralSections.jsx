@@ -16,7 +16,7 @@ import {
 } from '@/features/workspace/shared/workspaceAvailability';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 
-export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
+export function ItemGeneralInfoSection({ config, values, onChange, isDetail, isLoading }) {
     return (
         <section className="space-y-2">
             <SectionHeading title={config.labels.generalInfo} />
@@ -27,6 +27,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                     onChange={(event) => onChange('name', event.target.value)}
                     maxLength={150}
                     minLength={1}
+                    isLoading={isLoading}
                 />
             </FormRow>
 
@@ -70,7 +71,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                 </SelectField>
             </FormRow>
 
-            <CodeFieldRow values={values} onChange={onChange} isDetail={isDetail} />
+            <CodeFieldRow values={values} onChange={onChange} isDetail={isDetail} isLoading={isLoading} />
 
             {values.kind !== 'Non Persediaan' && values.kind !== 'Jasa' && (
                 <FormRow
@@ -81,6 +82,7 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                         value={values.barcode}
                         onChange={(event) => onChange('barcode', event.target.value)}
                         maxLength={64}
+                        isLoading={isLoading}
                     />
                 </FormRow>
             )}

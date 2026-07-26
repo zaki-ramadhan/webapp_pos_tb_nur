@@ -9,7 +9,7 @@ import {
 } from '@/features/workspace/modules/items-services/itemsServicesViewShared';
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 
-export function ItemSalesInfoSection({ config, values, onChange }) {
+export function ItemSalesInfoSection({ config, values, onChange, isLoading }) {
     return (
         <section className="space-y-2">
             <SectionHeading title={config.labels.salesInfo} />
@@ -31,6 +31,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                         className="max-w-[280px]"
                         type="number"
                         maxLength={3}
+                        isLoading={isLoading}
                     />
                     <span className="text-xs sm:text-sm text-brand-dark">/ Semua Satuan</span>
                 </div>
@@ -48,24 +49,26 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                             />
                             <label htmlFor="useGroupPrice" className="text-xs sm:text-sm text-brand-dark cursor-pointer select-none">
-                                Harga dari rincian grup
+                                Ambil Harga dari Rincian Barang
                             </label>
                         </div>
-                        {values.useGroupPrice === false && (
+                        {values.useGroupPrice === false ? (
                             <SimpleTextField
                                 value={values.sellPriceLevel1}
                                 onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
+                                className="max-w-[280px]"
                                 formatAsAmount
-                                maxLength={11}
+                                isLoading={isLoading}
                             />
-                        )}
+                        ) : null}
                     </div>
                 ) : (
                     <SimpleTextField
                         value={values.sellPriceLevel1}
                         onChange={(event) => onChange('sellPriceLevel1', event.target.value)}
+                        className="max-w-[280px]"
                         formatAsAmount
-                        maxLength={11}
+                        isLoading={isLoading}
                     />
                 )}
             </FormRow>
@@ -134,7 +137,7 @@ export function ItemSalesInfoSection({ config, values, onChange }) {
     );
 }
 
-export function ItemPurchaseTaxSection({ config, values, onChange }) {
+export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) {
     if (values.kind === 'Jasa') {
         return null;
     }
@@ -187,6 +190,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                         formatAsAmount
                         maxLength={11}
                         className="max-w-[420px]"
+                        isLoading={isLoading}
                     />
                 </FormRow>
 
@@ -198,6 +202,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                         formatAsAmount
                         allowDecimal={false}
                         maxLength={11}
+                        isLoading={isLoading}
                     />
                 </FormRow>
 
@@ -210,6 +215,7 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                             formatAsAmount
                             allowDecimal={false}
                             maxLength={11}
+                            isLoading={isLoading}
                         />
                     </FormRow>
                 )}
