@@ -82,13 +82,13 @@ class ItemCategoryPage
                             'id' => 'name',
                             'label' => 'Nama',
                             'align' => 'left',
-                            'widthClassName' => 'w-[50%]',
+                            'widthClassName' => 'w-[75%]',
                         ],
                         [
                             'id' => 'defaultLabel',
                             'label' => 'Kategori Default',
                             'align' => 'center',
-                            'widthClassName' => 'w-[18%]',
+                            'widthClassName' => 'w-[160px]',
                         ],
                         [
                             'id' => 'code',

@@ -39,10 +39,37 @@ class Product extends DomainModel
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];
 
+    protected $appends = ['main_supplier', 'main_supplier_id'];
+
+    public function getMainSupplierAttribute(): ?array
+    {
+        $supplier = $this->relationLoaded('supplierPrices')
+            ? $this->supplierPrices->first()?->supplier
+            : $this->supplierPrices()->with('supplier')->first()?->supplier;
+
+        return $supplier ? [
+            'id' => $supplier->id,
+            'name' => $supplier->name,
+        ] : null;
+    }
+
+    public function getMainSupplierIdAttribute(): ?int
+    {
+        return $this->relationLoaded('supplierPrices')
+            ? $this->supplierPrices->first()?->supplier_id
+            : $this->supplierPrices()->first()?->supplier_id;
+    }
+
     protected static function boot()
     {
         parent::boot();
         static::saving(function ($product) {
+            if (is_null($product->category_id)) {
+                $defaultCat = ProductCategory::where('is_default', true)->first();
+                if ($defaultCat) {
+                    $product->category_id = $defaultCat->id;
+                }
+            }
             if (is_null($product->minimum_stock)) {
                 $product->minimum_stock = 0;
             }

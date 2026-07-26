@@ -36,6 +36,15 @@ class ProductCategory extends DomainModel
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (self $category) {
+            if ($category->is_default) {
+                static::where('id', '!=', $category->id ?? 0)->update(['is_default' => false]);
+            }
+        });
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
