@@ -11,6 +11,7 @@ import {
     SummaryMetric,
 } from '@/features/workspace/dashboard/widgets/DashboardWidgetMetrics';
 import {
+    ActivityListWidget,
     CashAvailabilityWidget,
     OrderStatusWidget,
     RecentActivityWidget,
@@ -165,6 +166,10 @@ export default function DashboardWidgetBody({
 
     if (widget.type === 'recent-activity') {
         return <RecentActivityWidget widget={widget} />;
+    }
+
+    if (widget.type === 'activity-list') {
+        return <ActivityListWidget widget={widget} />;
     }
 
     if (widget.type === 'abc-analysis') {

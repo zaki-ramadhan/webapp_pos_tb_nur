@@ -3,3 +3,5 @@ export { TopProductsWidget } from './components/TopProductsWidget';
 export { CashAvailabilityWidget } from './components/CashAvailabilityWidget';
 export { OrderStatusWidget } from './components/OrderStatusWidget';
 export { RecentActivityWidget } from './components/RecentActivityWidget';
+export { ActivityListWidget } from './components/ActivityListWidget';
+

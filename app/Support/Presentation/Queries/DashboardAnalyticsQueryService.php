@@ -405,41 +405,126 @@ class DashboardAnalyticsQueryService
                 ->where('due_date', '<', date('Y-m-d'))
                 ->count();
 
-          // Hitung catatan mendatang
-
             $today = Carbon::today();
-            $targetDay = 15;
-            $upcomingDate = $today->day <= $targetDay
-                ? Carbon::today()->setDay($targetDay)
-                : Carbon::today()->addMonth()->setDay($targetDay);
-
             $monthMap = [
                 1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
                 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
                 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
             ];
 
+            // 1. Hitung Kegiatan Mendatang
+            $upcomingActivityItems = [];
+            $targetDay = 15;
+            $upcomingDate = $today->day <= $targetDay
+                ? Carbon::today()->setDay($targetDay)
+                : Carbon::today()->addMonth()->setDay($targetDay);
+
             $targetMonthName = $monthMap[$upcomingDate->month] ?? $upcomingDate->format('F');
             $reportMonthName = $monthMap[$upcomingDate->copy()->subMonth()->month] ?? $upcomingDate->copy()->subMonth()->format('F');
-
             $upcomingNote = $upcomingDate->format('d') . ' ' . $targetMonthName . ' ' . $upcomingDate->format('Y') . " — Batas Akhir Pelaporan SPT PPh 21 Masa {$reportMonthName} " . $upcomingDate->copy()->subMonth()->format('Y');
 
-          // Hitung catatan jatuh tempo
+            $upcomingActivityItems[] = [
+                'id' => 'spt-tax',
+                'title' => "Batas Pelaporan SPT PPh 21 Masa {$reportMonthName}",
+                'subtitle' => 'Pajak Bulanan Toko',
+                'date' => $upcomingDate->format('d/m/Y'),
+                'badge' => 'Pajak Toko',
+                'tone' => 'info',
+            ];
 
-            $overdueSalesInvoicesCount = DB::table('operation_documents')
-                ->where('document_type', 'sales_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
-                ->where('outstanding_amount', '>', 0)
-                ->where('due_date', '<', date('Y-m-d'))
-                ->count();
+            $dbUpcomingSO = DB::table('operation_documents')
+                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->where('operation_documents.document_type', 'sales_order')
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'Closed', 'void', 'cancelled'])
+                ->where('operation_documents.entry_date', '>=', date('Y-m-d'))
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.entry_date', 'contacts.name as contact_name')
+                ->orderBy('operation_documents.entry_date', 'asc')
+                ->limit(3)
+                ->get();
 
-            $overduePurchaseInvoicesCount = DB::table('operation_documents')
-                ->where('document_type', 'purchase_invoice')
-                ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
-                ->where('outstanding_amount', '>', 0)
-                ->where('due_date', '<', date('Y-m-d'))
-                ->count();
+            foreach ($dbUpcomingSO as $so) {
+                $upcomingActivityItems[] = [
+                    'id' => 'so-' . $so->id,
+                    'title' => "Pengiriman Pesanan #{$so->document_number}" . ($so->contact_name ? " ({$so->contact_name})" : ''),
+                    'subtitle' => 'Target Pengiriman Penjualan',
+                    'date' => Carbon::parse($so->entry_date)->format('d/m/Y'),
+                    'badge' => 'Pesanan Sales',
+                    'tone' => 'warning',
+                ];
+            }
 
+            $dbUpcomingPO = DB::table('operation_documents')
+                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->where('operation_documents.document_type', 'purchase_order')
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'Closed', 'void', 'cancelled'])
+                ->where('operation_documents.entry_date', '>=', date('Y-m-d'))
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.entry_date', 'contacts.name as contact_name')
+                ->orderBy('operation_documents.entry_date', 'asc')
+                ->limit(3)
+                ->get();
+
+            foreach ($dbUpcomingPO as $po) {
+                $upcomingActivityItems[] = [
+                    'id' => 'po-' . $po->id,
+                    'title' => "Penerimaan PO #{$po->document_number}" . ($po->contact_name ? " ({$po->contact_name})" : ''),
+                    'subtitle' => 'Jadwal Datang Pasokan Supplier',
+                    'date' => Carbon::parse($po->entry_date)->format('d/m/Y'),
+                    'badge' => 'Pembelian PO',
+                    'tone' => 'info',
+                ];
+            }
+
+            // 2. Hitung Kegiatan Terlewat
+            $overdueActivityItems = [];
+
+            $dbOverdueSalesInvoices = DB::table('operation_documents')
+                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->where('operation_documents.document_type', 'sales_invoice')
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->where('operation_documents.outstanding_amount', '>', 0)
+                ->where('operation_documents.due_date', '<', date('Y-m-d'))
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.due_date', 'operation_documents.outstanding_amount', 'contacts.name as contact_name')
+                ->orderBy('operation_documents.due_date', 'asc')
+                ->limit(4)
+                ->get();
+
+            foreach ($dbOverdueSalesInvoices as $inv) {
+                $days = Carbon::parse($inv->due_date)->diffInDays(now());
+                $overdueActivityItems[] = [
+                    'id' => 'sinv-' . $inv->id,
+                    'title' => "Piutang Faktur #" . $inv->document_number . ($inv->contact_name ? " ({$inv->contact_name})" : ''),
+                    'subtitle' => 'Sisa Rp ' . number_format($inv->outstanding_amount, 0, ',', '.') . ' • Due: ' . Carbon::parse($inv->due_date)->format('d/m/Y'),
+                    'date' => Carbon::parse($inv->due_date)->format('d/m/Y'),
+                    'badge' => 'Terlewat ' . $days . ' Hari',
+                    'tone' => 'danger',
+                ];
+            }
+
+            $dbOverduePurchaseInvoices = DB::table('operation_documents')
+                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->where('operation_documents.document_type', 'purchase_invoice')
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->where('operation_documents.outstanding_amount', '>', 0)
+                ->where('operation_documents.due_date', '<', date('Y-m-d'))
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.due_date', 'operation_documents.outstanding_amount', 'contacts.name as contact_name')
+                ->orderBy('operation_documents.due_date', 'asc')
+                ->limit(4)
+                ->get();
+
+            foreach ($dbOverduePurchaseInvoices as $inv) {
+                $days = Carbon::parse($inv->due_date)->diffInDays(now());
+                $overdueActivityItems[] = [
+                    'id' => 'pinv-' . $inv->id,
+                    'title' => "Hutang Supplier #" . $inv->document_number . ($inv->contact_name ? " ({$inv->contact_name})" : ''),
+                    'subtitle' => 'Hutang: Rp ' . number_format($inv->outstanding_amount, 0, ',', '.') . ' • Due: ' . Carbon::parse($inv->due_date)->format('d/m/Y'),
+                    'date' => Carbon::parse($inv->due_date)->format('d/m/Y'),
+                    'badge' => 'Hutang ' . $days . ' Hari',
+                    'tone' => 'danger',
+                ];
+            }
+
+            $overdueSalesInvoicesCount = count($dbOverdueSalesInvoices);
+            $overduePurchaseInvoicesCount = count($dbOverduePurchaseInvoices);
             $overdueCount = $overdueSalesInvoicesCount + $overduePurchaseInvoicesCount;
             if ($overdueCount > 0) {
                 $overdueNote = "{$overdueCount} Faktur melewati batas jatuh tempo pembayaran.";
@@ -526,6 +611,8 @@ class DashboardAnalyticsQueryService
             'userActivities' => $userActivities,
             'upcomingNote' => $upcomingNote,
             'overdueNote' => $overdueNote,
+            'upcomingActivityItems' => $upcomingActivityItems ?? [],
+            'overdueActivityItems' => $overdueActivityItems ?? [],
             'transactionTypeOptions' => $transactionTypeOptions,
             'latestSalesInvoiceDate' => $latestSalesInvoiceDate ?? date('Y-m-d'),
             'salesTrendLabels' => $salesTrendLabels,

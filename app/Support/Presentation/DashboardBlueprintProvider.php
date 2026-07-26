@@ -471,6 +471,22 @@ class DashboardBlueprintProvider
                     'heightClass' => 'min-h-[310px]',
                 ],
                 [
+                    'id' => 'upcoming-activity',
+                    'title' => 'Kegiatan Mendatang',
+                    'type' => 'activity-list',
+                    'items' => $upcomingActivityItems ?? [],
+                    'emptyDescription' => 'Belum ada jadwal kegiatan mendatang.',
+                    'heightClass' => 'min-h-[310px]',
+                ],
+                [
+                    'id' => 'overdue-activity',
+                    'title' => 'Kegiatan Terlewat',
+                    'type' => 'activity-list',
+                    'items' => $overdueActivityItems ?? [],
+                    'emptyDescription' => 'Belum ada kegiatan pembayaran atau pengiriman yang terlewat.',
+                    'heightClass' => 'min-h-[310px]',
+                ],
+                [
                     'id' => 'sales-order-status',
                     'title' => 'Pesanan Penjualan',
                     'type' => 'order-status',
