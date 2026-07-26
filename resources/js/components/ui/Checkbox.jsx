@@ -1,15 +1,15 @@
 import { useEffect, useRef } from 'react';
 
 const SIZE_CLASSES = {
-    sm: 'h-3.5 w-3.5',
-    md: 'h-4 w-4',
-    lg: 'h-5 w-5',
+    sm: 'h-4 w-4',
+    md: 'h-5 w-5',
+    lg: 'h-6 w-6',
 };
 
 const ICON_SIZE_CLASSES = {
-    sm: 'h-2.5 w-2.5',
-    md: 'h-3 w-3',
-    lg: 'h-3.5 w-3.5',
+    sm: 'h-3 w-3',
+    md: 'h-3.5 w-3.5',
+    lg: 'h-4 w-4',
 };
 
 export function Checkbox({
@@ -75,10 +75,10 @@ export function Checkbox({
             />
 
             <span
-                className={`flex shrink-0 items-center justify-center rounded-[4px] border transition-all duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[#15529A]/30 ${sizeClass} ${
+                className={`flex shrink-0 items-center justify-center rounded-[4px] border-[1.5px] transition-all duration-150 ease-in-out focus-within:ring-2 focus-within:ring-[#15529A]/30 ${sizeClass} ${
                     isCheckedOrIndeterminate
                         ? 'border-[#15529A] bg-[#15529A] text-white shadow-xs'
-                        : 'border-slate-300 bg-white group-hover:border-slate-400 peer-focus-visible:ring-2 peer-focus-visible:ring-[#15529A]/40'
+                        : 'border-slate-400 bg-white group-hover:border-slate-600 peer-focus-visible:ring-2 peer-focus-visible:ring-[#15529A]/40'
                 } ${ariaInvalid ? 'border-error-border' : ''} ${inputClassName}`.trim()}
             >
                 {indeterminate ? (
