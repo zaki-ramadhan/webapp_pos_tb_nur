@@ -34,7 +34,7 @@ function TaxRowLabel({ label, showInfo = false }) {
 
     return (
         <div className="pt-1.5 text-xs sm:text-sm leading-6 text-text-contrast">
-            <span className="whitespace-pre-line">{label}</span>
+            <span className="whitespace-nowrap">{label}</span>
             {showInfo ? (
                 <Tooltip content={getTaxTooltip(label)} portal>
                     <InfoIcon className="ml-2 inline h-[18px] w-[18px] align-text-bottom text-text-darkest cursor-help" />

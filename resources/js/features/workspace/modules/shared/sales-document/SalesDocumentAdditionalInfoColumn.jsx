@@ -41,7 +41,7 @@ export default function SalesDocumentAdditionalInfoColumn({ config, values, setV
                             const checked = (values[field.valueKey] ?? '') === option.value;
 
                             return (
-                                <label key={option.value} className="flex items-center gap-3 text-xs sm:text-sm text-brand-dark cursor-pointer">
+                                <label key={option.value} className="flex items-center gap-3 text-xs sm:text-sm text-brand-dark cursor-pointer whitespace-nowrap">
                                     <input
                                         type="radio"
                                         name={field.valueKey}

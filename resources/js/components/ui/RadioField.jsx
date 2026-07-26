@@ -39,7 +39,7 @@ export default function RadioField({
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <div className={`flex ${alignClassName} gap-3.5 text-xs sm:text-sm leading-6`.trim()}>
+            <div className={`flex items-center ${alignClassName} gap-3.5 text-xs sm:text-sm leading-6 whitespace-nowrap`.trim()}>
                 <input
 
                     id={id}
@@ -53,9 +53,9 @@ export default function RadioField({
                 />
                 <label
                     htmlFor={id}
-                    className={`min-w-0 ${disabled ? 'cursor-default text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
+                    className={`whitespace-nowrap shrink-0 ${disabled ? 'cursor-default text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
                 >
-                    <span className={`${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
+                    <span className={`inline-block whitespace-nowrap ${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
                         {label}
                         {children}
                     </span>

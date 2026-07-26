@@ -97,7 +97,7 @@ function SalesCheckboxRow({ row, onToggle }) {
                 size="sm"
                 align="center"
                 label={
-                    <span className="whitespace-pre-line text-xs sm:text-sm leading-6">
+                    <span className="whitespace-nowrap text-xs sm:text-sm leading-6">
                         {row.option?.label}
                     </span>
                 }

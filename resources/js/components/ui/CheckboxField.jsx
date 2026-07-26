@@ -44,7 +44,7 @@ export default function CheckboxField({
 
     return (
         <div className={`${widthClass} ${containerClassName}`.trim()}>
-            <div className={`flex ${alignClassName} ${hasContent ? 'gap-2.5 sm:gap-3' : ''} text-xs sm:text-sm leading-6`.trim()}>
+            <div className={`flex items-center ${alignClassName} ${hasContent ? 'gap-2.5 sm:gap-3' : ''} text-xs sm:text-sm leading-6 whitespace-nowrap`.trim()}>
                 <Checkbox
                     id={elementId}
                     checked={checked}
@@ -58,9 +58,9 @@ export default function CheckboxField({
                 {hasContent && (
                     <label
                         htmlFor={elementId}
-                        className={`min-w-0 select-none ${disabled ? 'cursor-not-allowed text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
+                        className={`select-none whitespace-nowrap shrink-0 ${disabled ? 'cursor-not-allowed text-gray-500 pointer-events-none' : 'cursor-pointer text-slate-600'} ${labelClassName} ${className}`.trim()}
                     >
-                        <span className={`${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
+                        <span className={`inline-block whitespace-nowrap ${disabled ? 'text-gray-500' : 'text-brand-dark'}`.trim()}>
                             {label}
                             {children}
                         </span>
