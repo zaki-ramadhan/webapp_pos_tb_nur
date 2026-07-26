@@ -1,15 +1,15 @@
 import { useEffect, useRef } from 'react';
 
 const SIZE_CLASSES = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6',
+    sm: 'h-5 w-5',
+    md: 'h-6 w-6',
+    lg: 'h-7 w-7',
 };
 
 const ICON_SIZE_CLASSES = {
-    sm: 'h-3 w-3',
-    md: 'h-3.5 w-3.5',
-    lg: 'h-4 w-4',
+    sm: 'h-3.5 w-3.5',
+    md: 'h-4 w-4',
+    lg: 'h-5 w-5',
 };
 
 export function Checkbox({
