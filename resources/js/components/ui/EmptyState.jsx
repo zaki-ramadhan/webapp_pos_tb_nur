@@ -18,7 +18,7 @@ const emptyStateIconMap = {
 };
 
 export default function EmptyState({
-    title = 'Belum ada data',
+    title = 'Tidak ada data',
     description = 'Data akan muncul setelah tersedia.',
     action = null,
     icon = null,

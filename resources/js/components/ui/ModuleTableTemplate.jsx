@@ -177,7 +177,7 @@ export default function ModuleTableTemplate({
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>
                                 {filteredRows.length > 0 && (
-                                    <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-light text-white">
+                                    <DataTableHead className="w-px px-2.5 py-2.5 text-center text-base font-light text-white whitespace-nowrap">
                                         No.
                                     </DataTableHead>
                                 )}
@@ -212,7 +212,7 @@ export default function ModuleTableTemplate({
                                             })
                                         }
                                     >
-                                        <DataTableCell className="px-3 text-center text-base text-table-row-number">
+                                        <DataTableCell className="w-px px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
                                             {index + 1}
                                         </DataTableCell>
                                          {visibleColumns.map((column) => {
@@ -253,7 +253,7 @@ export default function ModuleTableTemplate({
                                     >
                                         {table.loading 
                                             ? 'Memuat data...' 
-                                            : (table.error || table.emptyLabel || 'Belum ada data')
+                                            : (table.error || table.emptyLabel || 'Tidak ada data')
                                         }
                                     </DataTableCell>
                                 </DataTableRow>

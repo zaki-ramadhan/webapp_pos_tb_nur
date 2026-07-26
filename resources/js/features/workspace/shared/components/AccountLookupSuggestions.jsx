@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType } from '@/features/workspace/shared/hooks/useAccountLookupController';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 
@@ -35,12 +35,12 @@ export default function AccountLookupSuggestions({
     };
 
     const entityName = entityLabels[resource] ?? 'data';
-    const resolvedEmptyLabel = emptyLabel ?? `Belum ada data ${entityName}.`;
+    const resolvedEmptyLabel = emptyLabel ?? 'Tidak ada data.';
     const resolvedLoadingLabel = loadingLabel ?? `Memuat ${entityName}...`;
 
     const selectedLabelSet = useMemo(() => new Set(selectedLabels), [selectedLabels]);
     const emptyMessage = query.trim()
-        ? `Tidak ada ${entityName} yang cocok.`
+        ? 'Tidak ada data.'
         : resolvedEmptyLabel;
 
     if (!open) {
@@ -69,7 +69,7 @@ export default function AccountLookupSuggestions({
                             dateStr = formatIsoDate(rawDate);
                         }
 
-                        let subtitleLeft = '';
+                        let subtitleLeft = code;
                         let subtitleRight = null;
 
                         if (isDoc) {
@@ -79,10 +79,12 @@ export default function AccountLookupSuggestions({
                             const hp = String(record.mobile_phone ?? record.mobilePhone ?? '').trim();
                             const telp = String(record.business_phone ?? record.office_phone ?? record.phone ?? '').trim();
                             const contactParts = [];
+                            if (code) contactParts.push(code);
                             if (hp) contactParts.push(`HP:${hp}`);
                             if (telp && telp !== hp) contactParts.push(`Telp:${telp}`);
-                            subtitleLeft = contactParts.join(', ');
+                            subtitleLeft = contactParts.join(' - ');
                         } else if (resource === 'accounts') {
+                            subtitleLeft = code;
                             subtitleRight = translateAccountType(record.account_type);
                         }
 
@@ -94,18 +96,17 @@ export default function AccountLookupSuggestions({
                                     e.stopPropagation();
                                     onSelectAccount(record, label);
                                 }}
-                                className={`flex w-full flex-col gap-0.5 border-t border-slate-200 px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
+                                className={`flex w-full flex-col gap-1.5 border-t border-slate-200 px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
                                 <span className="flex w-full items-center justify-between gap-4">
-                                    <span className="truncate text-xs sm:text-sm font-normal text-black">{title}</span>
-                                    {code ? (
-                                        <span className="shrink-0 text-[11px] sm:text-xs font-normal text-black">{code}</span>
-                                    ) : null}
+                                    <span className="truncate text-xs sm:text-sm font-normal text-black">
+                                        <HighlightText text={title} search={query} />
+                                    </span>
                                 </span>
                                 {(subtitleLeft || subtitleRight) ? (
                                     <span className="flex w-full items-center justify-between gap-4 text-xs sm:text-[13px]">
                                         <span className="truncate text-black">
-                                            {subtitleLeft}
+                                            <HighlightText text={subtitleLeft} search={query} />
                                         </span>
                                         {subtitleRight ? (
                                             <span className="shrink-0 text-black italic">

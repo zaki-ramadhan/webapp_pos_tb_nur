@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { extractBackendRows, listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { useState, useEffect, useMemo } from 'react';
 import AccountLookupSearchInput from './components/AccountLookupSearchInput';
-import { LookupDropdownSurface, LookupEmptyState } from './LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupEmptyState } from './LookupPrimitives';
 import { LoadingIcon } from './Icons';
 
 function useBackendLookupController({ value = '', disabled = false, resource, queryParams = {} }) {
@@ -205,7 +205,7 @@ export default function BackendLookupTextInput({
                                     ) : (
                                         <div className="min-w-0 flex-1">
                                             <span className="block truncate text-sm font-normal text-brand-dark">
-                                                {getOptionLabel(item)}
+                                                <HighlightText text={getOptionLabel(item)} search={ctrl.query} />
                                             </span>
                                         </div>
                                     )}

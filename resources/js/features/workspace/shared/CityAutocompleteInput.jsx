@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFormError } from '@/components/ui/FormErrorContext';
 import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { INDONESIAN_CITIES } from '@/features/workspace/shared/indonesianCities';
-import { LookupDropdownSurface } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface } from '@/features/workspace/shared/LookupPrimitives';
 
 export default function CityAutocompleteInput({
     id,
@@ -79,7 +79,10 @@ export default function CityAutocompleteInput({
 
     const handleSelect = (item) => {
         isSelectingRef.current = true;
-        onSelectCity?.(item);
+        onSelectCity?.({
+            ...item,
+            country: item.country || 'Indonesia',
+        });
         setSearchVal(item.city);
         setOpen(false);
         clearError(contextKey);
@@ -104,25 +107,7 @@ export default function CityAutocompleteInput({
         }, 150);
     };
 
-    const highlightText = (text, highlight) => {
-        const queryStr = String(highlight ?? '').trim();
-        if (!queryStr) return <span>{text}</span>;
-        const regex = new RegExp(`(${queryStr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
-        const parts = text.split(regex);
-        return (
-            <span>
-                {parts.map((part, i) =>
-                    regex.test(part) ? (
-                        <mark key={i} className="bg-yellow-200 text-black p-0">
-                            {part}
-                        </mark>
-                    ) : (
-                        part
-                    )
-                )}
-            </span>
-        );
-    };
+
 
     const hasPrefixMinW = prefixClassName.includes('min-w-');
     const prefixMinWClass = hasPrefixMinW ? '' : 'min-w-[86px]';
@@ -208,11 +193,11 @@ export default function CityAutocompleteInput({
                                     onClick={() => handleSelect(item)}
                                     className="flex w-full flex-col px-4 py-2 text-left hover:bg-info-bg border-b border-border-row-subtle last:border-b-0"
                                 >
-                                    <span className="text-xs sm:text-sm font-medium text-text-workspace-dark">
-                                        {highlightText(item.city, searchVal)}
+                                    <span className="text-xs sm:text-sm font-normal text-text-workspace-dark">
+                                        <HighlightText text={item.city} search={searchVal} />
                                     </span>
-                                    <span className="text-[10px] sm:text-xs text-text-light">
-                                        {highlightText(item.province, searchVal)}
+                                    <span className="text-[10px] sm:text-xs text-black">
+                                        <HighlightText text={item.province} search={searchVal} />
                                     </span>
                                 </button>
                             ))

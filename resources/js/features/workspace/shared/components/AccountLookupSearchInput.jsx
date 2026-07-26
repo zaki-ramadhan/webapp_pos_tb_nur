@@ -85,7 +85,16 @@ export default function AccountLookupSearchInput({
                         id={id}
                         value={value}
                         onFocus={onFocus}
-                        onChange={(event) => onChange(event.target.value)}
+                        onChange={(event) => {
+                            let val = event.target.value;
+                            if (typeof val === 'string') {
+                                if (val.startsWith(' ')) {
+                                    val = val.trimStart();
+                                }
+                                val = val.replace(/[ \t]{2,}/g, ' ');
+                            }
+                            onChange(val);
+                        }}
                         disabled={disabled}
                         placeholder={hasSelectedValue ? '' : placeholder}
                         autoComplete="off"

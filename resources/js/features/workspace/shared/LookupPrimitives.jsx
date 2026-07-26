@@ -29,3 +29,29 @@ export function LookupEmptyState({
         </div>
     );
 }
+
+export function HighlightText({ text = '', search = '', className = 'bg-yellow-200 text-black p-0' }) {
+    const strText = String(text ?? '');
+    const queryStr = String(search ?? '').trim();
+
+    if (!queryStr || !strText) {
+        return <span>{strText}</span>;
+    }
+
+    const regex = new RegExp(`(${queryStr.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+    const parts = strText.split(regex);
+
+    return (
+        <span>
+            {parts.map((part, i) =>
+                regex.test(part) ? (
+                    <mark key={i} className={className}>
+                        {part}
+                    </mark>
+                ) : (
+                    part
+                )
+            )}
+        </span>
+    );
+}

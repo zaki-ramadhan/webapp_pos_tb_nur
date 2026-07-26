@@ -146,7 +146,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
             });
 
         if (importable.length === 0) {
-            setErrorMessage('Tidak ada data valid yang bisa diimpor.');
+            onClose();
             return;
         }
 
@@ -291,10 +291,7 @@ export default function ImportItemsModal({ open, onClose, onImport, mode = 'sale
                         <button
                             type="button"
                             onClick={handleConfirmImport}
-                            disabled={validCount === 0}
-                            className={`inline-flex h-9 items-center justify-center rounded-[4px] px-4 text-sm font-normal text-white transition ${
-                                validCount > 0 ? 'bg-import-action-blue hover:bg-blue-900 cursor-pointer' : 'bg-slate-300 cursor-not-allowed'
-                            }`}
+                            className="inline-flex h-9 items-center justify-center rounded-[4px] px-4 text-sm font-normal text-white bg-import-action-blue hover:bg-blue-900 cursor-pointer transition"
                         >
                             Impor {validCount} Item
                         </button>

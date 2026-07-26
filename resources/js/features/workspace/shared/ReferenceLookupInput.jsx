@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CloseIcon, LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { useFormError } from '@/components/ui/FormErrorContext';
 
 function buildNormalizedSearchValue(value) {
@@ -253,7 +253,9 @@ export default function ReferenceLookupInput({
                                         renderOption(item)
                                     ) : (
                                         <div className="min-w-0">
-                                            <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">{getOptionLabel(item)}</div>
+                                            <div className="truncate text-xs sm:text-sm font-normal text-text-workspace-dark">
+                                                <HighlightText text={getOptionLabel(item)} search={query} />
+                                            </div>
                                         </div>
                                     )}
                                 </button>

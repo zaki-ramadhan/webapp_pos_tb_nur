@@ -139,6 +139,7 @@ export function AccountLookupTextInput({
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     trailingClassName = '',
     onSelectAccount = null,
+    onBeforeOpen = null,
     queryParams = {},
     showType = false,
     resource = 'accounts',
@@ -147,7 +148,7 @@ export function AccountLookupTextInput({
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
 
-    const controller = useAccountLookupController({ value, disabled, queryParams, resource });
+    const controller = useAccountLookupController({ value, disabled, queryParams, resource, onBeforeOpen });
     const inputWrapperRef = useRef(null);
 
     return (

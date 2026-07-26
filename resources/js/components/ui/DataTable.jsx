@@ -56,7 +56,7 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
     const alignClass = hasAlign ? '' : 'text-left';
     const isCenter = /\btext-center\b/.test(className);
     const hasFontWeight = /\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/.test(className);
-    const fontWeightClass = hasFontWeight ? '' : 'font-normal';
+    const fontWeightClass = hasFontWeight ? '' : 'font-light';
     const hasCustomPx = /\b(!?px-\d+|!?px-\[[^\]]+\])\b/.test(className);
     const pxClass = hasCustomPx ? '' : 'px-3 sm:px-4';
 

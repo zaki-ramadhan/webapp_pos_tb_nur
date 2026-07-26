@@ -238,7 +238,6 @@ export const titleMapper = {
     'numbering': 'Penomoran',
     'order-fulfillments': 'Pemenuhan Pesanan',
     'order-fulfillment': 'Pemenuhan Pesanan',
-    'payment-terms': 'Syarat Pembayaran',
     'payment-term': 'Syarat Pembayaran',
     'period-ends': 'Proses Akhir Bulan',
     'period-end': 'Proses Akhir Bulan',

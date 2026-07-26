@@ -82,7 +82,7 @@ const featureDefaults = {
     'sales-target': true,
     'delivery-service': false,
     'payment-terms': false,
-    'purchase-order': false,
+    'purchase-order': true,
     'supplier-price-list': true,
     'item-request': true,
     'multi-warehouse': true,

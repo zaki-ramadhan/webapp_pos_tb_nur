@@ -67,7 +67,7 @@ export function normalizeSelectedLabels({ value, values }) {
     return [];
 }
 
-export default function useAccountLookupController({ value, values, disabled = false, queryParams = {}, resource = 'accounts' }) {
+export default function useAccountLookupController({ value, values, disabled = false, queryParams = {}, resource = 'accounts', onBeforeOpen = null }) {
     const selectedLabels = useMemo(() => normalizeSelectedLabels({ value, values }), [value, values]);
     const selectedValue = selectedLabels[0] ?? '';
     const rootRef = useRef(null);
@@ -173,6 +173,10 @@ export default function useAccountLookupController({ value, values, disabled = f
 
     function openLookup(nextQuery = '') {
         if (disabled) {
+            return;
+        }
+
+        if (onBeforeOpen && onBeforeOpen() === false) {
             return;
         }
 

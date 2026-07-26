@@ -25,6 +25,7 @@ const implementedWorkspacePageIds = new Set([
     'price-adjustment',
     'sales-checkin',
     'purchase-invoice',
+    'purchase-order',
     'purchase-payment',
     'purchase-return',
     'item-request',
