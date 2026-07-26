@@ -43,7 +43,7 @@ export function SalesTeamWidget({ widget }) {
     if (!(widget.rows ?? []).length) {
         return (
             <DashboardWidgetEmptyState
-                title="Belum ada data"
+                title='Tidak ada data'
                 description="Daftar penjual belum terdaftar."
             />
         );

@@ -92,13 +92,13 @@ export function ItemGroupTab({ values, onChange }) {
             </div>
 
             <DataTable wrapperClassName="border-table-wrapper-border">
-                <DataTableHeader className="bg-[#466986] text-white font-medium">
+                <DataTableHeader className="bg-[#466986] text-white font-light">
                     <DataTableRow>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2 w-[160px]">Kode #</DataTableHead>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2">Nama Barang</DataTableHead>
-                        <DataTableHead className="text-right text-white font-normal px-3 py-2 w-[140px]">Kuantitas</DataTableHead>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2 w-[120px]">Satuan</DataTableHead>
-                        <DataTableHead className="text-center text-white font-normal px-2 py-2 w-[60px]">Aksi</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2 w-[160px]">Kode #</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">Nama Barang</DataTableHead>
+                        <DataTableHead className="text-right text-white font-light px-3 py-2 w-[140px]">Kuantitas</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2 w-[120px]">Satuan</DataTableHead>
+                        <DataTableHead className="text-center text-white font-light px-2 py-2 w-[60px]">Aksi</DataTableHead>
                     </DataTableRow>
                 </DataTableHeader>
                 <DataTableBody>
@@ -138,7 +138,7 @@ export function ItemGroupTab({ values, onChange }) {
                     ) : (
                         <DataTableRow className="border-ui-border-row bg-white">
                             <DataTableCell colSpan={5} className="px-3 py-4 text-center text-sm text-text-workspace-dark">
-                                Belum ada data
+                                Tidak ada data
                             </DataTableCell>
                         </DataTableRow>
                     )}

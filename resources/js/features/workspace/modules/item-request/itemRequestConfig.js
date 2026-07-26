@@ -135,7 +135,7 @@ const defaultItemRequestConfig = {
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: itemRequestDetailColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
         copyItems: [{ id: 'copy-lines', label: 'Salin rincian barang' }],
     },
     additionalInfoTitle: 'Info lainnya',

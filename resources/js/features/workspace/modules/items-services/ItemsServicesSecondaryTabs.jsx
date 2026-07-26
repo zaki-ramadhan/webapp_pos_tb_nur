@@ -411,17 +411,17 @@ export function ItemMutationTab({ productId }) {
             </div>
 
             <DataTable wrapperClassName="border-table-wrapper-border">
-                <DataTableHeader className="bg-[#466986] text-white font-medium">
+                <DataTableHeader className="bg-[#466986] text-white font-light">
                     <DataTableRow>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2">Tanggal</DataTableHead>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2">No. Sumber #</DataTableHead>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2">Tipe Transaksi</DataTableHead>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2">Keterangan</DataTableHead>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2">Gudang</DataTableHead>
-                        <DataTableHead className="text-right text-white font-normal px-3 py-2">Nilai Satuan</DataTableHead>
-                        <DataTableHead className="text-right text-white font-normal px-3 py-2">Masuk</DataTableHead>
-                        <DataTableHead className="text-right text-white font-normal px-3 py-2">Keluar</DataTableHead>
-                        <DataTableHead className="text-right text-white font-normal px-3 py-2">Saldo</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">Tanggal</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">No. Sumber #</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">Tipe Transaksi</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">Keterangan</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">Gudang</DataTableHead>
+                        <DataTableHead className="text-right text-white font-light px-3 py-2">Nilai Satuan</DataTableHead>
+                        <DataTableHead className="text-right text-white font-light px-3 py-2">Masuk</DataTableHead>
+                        <DataTableHead className="text-right text-white font-light px-3 py-2">Keluar</DataTableHead>
+                        <DataTableHead className="text-right text-white font-light px-3 py-2">Saldo</DataTableHead>
                     </DataTableRow>
                 </DataTableHeader>
                 <DataTableBody>
@@ -448,7 +448,7 @@ export function ItemMutationTab({ productId }) {
                     ) : (
                         <DataTableRow className="border-ui-border-row bg-white">
                             <DataTableCell colSpan={9} className="px-3 py-4 text-center text-sm text-text-workspace-dark">
-                                Belum ada data
+                                Tidak ada data
                             </DataTableCell>
                         </DataTableRow>
                     )}
@@ -507,10 +507,10 @@ export function ItemWarehouseTab({ productId }) {
             </div>
 
             <DataTable wrapperClassName="border-table-wrapper-border">
-                <DataTableHeader className="bg-[#466986] text-white font-medium">
+                <DataTableHeader className="bg-[#466986] text-white font-light">
                     <DataTableRow>
-                        <DataTableHead className="text-left text-white font-normal px-3 py-2">Gudang</DataTableHead>
-                        <DataTableHead className="text-right text-white font-normal px-3 py-2 w-[180px]">Saldo</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">Gudang</DataTableHead>
+                        <DataTableHead className="text-right text-white font-light px-3 py-2 w-[180px]">Saldo</DataTableHead>
                     </DataTableRow>
                 </DataTableHeader>
                 <DataTableBody>
@@ -530,7 +530,7 @@ export function ItemWarehouseTab({ productId }) {
                     ) : (
                         <DataTableRow className="border-ui-border-row bg-white">
                             <DataTableCell colSpan={2} className="px-3 py-4 text-center text-sm text-text-workspace-dark">
-                                Belum ada data
+                                Tidak ada data
                             </DataTableCell>
                         </DataTableRow>
                     )}

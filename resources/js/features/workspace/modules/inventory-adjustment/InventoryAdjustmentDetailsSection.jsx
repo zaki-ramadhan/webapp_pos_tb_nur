@@ -62,7 +62,7 @@ export default function InventoryAdjustmentDetailsSection({
 
         if (isDiscountMode || isColumnsToggled) {
             return [
-                { id: 'no', label: 'No.', widthClassName: 'w-[50px]', align: 'center', kind: 'spacer' },
+                { id: 'no', label: 'No.', widthClassName: 'w-px', align: 'center', kind: 'spacer' },
                 { id: 'salesCategory', label: 'Kategori Penjualan', widthClassName: 'w-[160px]', align: 'left' },
                 { id: 'name', label: 'Nama Barang', widthClassName: 'w-[220px]', align: 'left' },
                 { id: 'code', label: 'Kode Barang', widthClassName: 'w-[130px]', align: 'left' },
@@ -74,7 +74,7 @@ export default function InventoryAdjustmentDetailsSection({
         }
 
         return [
-            { id: 'no', label: 'No.', widthClassName: 'w-[50px]', align: 'center', kind: 'spacer' },
+            { id: 'no', label: 'No.', widthClassName: 'w-px', align: 'center', kind: 'spacer' },
             { id: 'name', label: 'Nama Barang', widthClassName: 'w-[40%]', align: 'left' },
             { id: 'code', label: 'Kode Barang', widthClassName: 'w-[150px]', align: 'left' },
             { id: 'unit', label: 'Satuan', widthClassName: 'w-[100px]', align: 'left' },

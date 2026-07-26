@@ -9,8 +9,8 @@ export function buildEmployeePayload(values) {
     const hasBankAccount = bankName && bankAccountNumber && bankAccountHolder;
 
     return {
-        branch_id: values.__branchId ?? 1,
-        department_id: values.__departmentId ?? null,
+        branch_id: values.branchId ?? values.__branchId ?? values.branch?.[0]?.id ?? 1,
+        department_id: values.departmentId ?? values.__departmentId ?? values.department?.[0]?.id ?? null,
         employee_code: employeeCode,
         employee_id_type: emptyStringToNull(values.employeeIdType),
         salutation: emptyStringToNull(values.salutation),

@@ -22,7 +22,7 @@ class SecuritySanitizerTest extends TestCase
 
         $this->assertEquals('Semen Tiga Roda', $sanitized['name']);
         $this->assertEquals('alert("hack")PM-01', $sanitized['code']);
-        $this->assertEquals('Ini adalah deskripsi  produk.', $sanitized['description']);
+        $this->assertEquals('Ini adalah deskripsi produk.', $sanitized['description']);
         $this->assertEquals(10, $sanitized['quantity']);
     }
 }

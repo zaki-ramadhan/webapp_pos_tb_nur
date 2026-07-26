@@ -153,7 +153,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                         <IntegratedMatrixChart rules={widget.rules ?? []} />
                     ) : (
                         <p className="text-sm text-slate-500 py-6 text-center bg-white border border-slate-100 rounded-md">
-                            Belum ada data pola hubungan belanja yang terbentuk pada periode ini.
+                            Tidak ada data pola hubungan belanja yang terbentuk pada periode ini.
                         </p>
                     )}
                 </WidgetSection>

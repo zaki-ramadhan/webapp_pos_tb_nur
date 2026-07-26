@@ -12,6 +12,7 @@ import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/Wo
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
+import { usePage } from '@inertiajs/react';
 import {
     WarehouseAddressTab,
     WarehouseGeneralTab,
@@ -52,7 +53,31 @@ export default function WarehouseFormView({
     onRefresh,
     onPersist,
 }) {
-    const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'warehouse-general');
+    const user = usePage()?.props?.auth?.user;
+    const roleName = String(user?.role ?? '').trim().toLowerCase();
+
+    const isSuperAdmin = useMemo(() => {
+        if (!user) return true;
+        if (!roleName) return true;
+        return (
+            roleName.includes('super') ||
+            roleName.includes('admin') ||
+            roleName.includes('pemilik') ||
+            roleName.includes('owner') ||
+            Boolean(user.is_super_admin || user.is_admin)
+        );
+    }, [user, roleName]);
+
+    const filteredTabs = useMemo(() => {
+        return (config.tabs ?? []).filter((tab) => {
+            if (tab.id === 'warehouse-users') {
+                return isSuperAdmin;
+            }
+            return true;
+        });
+    }, [config.tabs, isSuperAdmin]);
+
+    const [activeTabId, setActiveTabId] = useState(filteredTabs?.[0]?.id ?? 'warehouse-general');
     const [values, setValues] = useState(() => entryToFormValues(entry));
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
@@ -68,8 +93,8 @@ export default function WarehouseFormView({
 
     const activeTabInstanceId = activeLevel2Tab?.id;
     useEffect(() => {
-        setActiveTabId(config.tabs?.[0]?.id ?? 'warehouse-general');
-    }, [activeTabInstanceId, config.tabs]);
+        setActiveTabId(filteredTabs?.[0]?.id ?? 'warehouse-general');
+    }, [activeTabInstanceId, filteredTabs]);
 
     const initialValues = useMemo(() => entryToFormValues(entry), [serializedEntry]);
 
@@ -187,7 +212,7 @@ export default function WarehouseFormView({
     return (
         <ModuleFormTemplate
             form={{
-                tabs: config.tabs,
+                tabs: filteredTabs,
                 saveLabel: config.saveLabel,
             }}
             activeTabId={activeTabId}

@@ -110,7 +110,7 @@ const defaultConfig = {
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
         columns: priceAdjustmentDetailColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
         minWidthClassName: 'min-w-[980px]',
     },
     additionalInfoTitle: 'Info lainnya',

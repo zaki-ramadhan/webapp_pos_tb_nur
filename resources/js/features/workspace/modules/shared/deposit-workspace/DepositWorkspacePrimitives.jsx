@@ -86,7 +86,7 @@ export function DepositFooterSummary({ items = [] }) {
     );
 }
 
-export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], emptyLabel = 'Belum ada data.' }) {
+export function DepositLinkedRowsSection({ title, icon = 'payment', rows = [], emptyLabel = 'Tidak ada data.' }) {
     return (
         <section>
             <div className="flex items-center gap-3 border-b border-ui-border-medium pb-3">

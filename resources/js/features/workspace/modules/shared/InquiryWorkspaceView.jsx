@@ -271,7 +271,7 @@ export default function InquiryWorkspaceView({
                                 ) : (
                                     <DataTableRow className="bg-white">
                                         <DataTableCell colSpan={resolvedColumns.length + 1} className="px-3 py-3 text-center text-base text-text-workspace-dark">
-                                            {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
+                                            {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
                                         </DataTableCell>
                                     </DataTableRow>
                                 )}

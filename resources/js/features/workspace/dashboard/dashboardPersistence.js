@@ -185,7 +185,7 @@ function buildFallbackWidget(libraryItem) {
         type: 'blank',
         emptyState: {
             enabled: true,
-            title: 'Belum ada data',
+            title: 'Tidak ada data',
             description: 'Data widget akan muncul setelah tersedia.',
         },
         gridClass: 'md:col-span-1 lg:col-span-2 xl:col-span-4',

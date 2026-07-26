@@ -27,7 +27,6 @@ const defaultAccountValues = {
 };
 
 const listColumns = [
-    { id: 'image', label: 'Foto', widthClassName: 'w-[70px]', align: 'center', type: 'image' },
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[20%]', align: 'left', truncate: true },
     { id: 'code', label: 'Kode Barang', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'kind', label: 'Jenis Barang', widthClassName: 'w-[120px]', align: 'left' },
@@ -188,7 +187,7 @@ const defaultConfig = {
     },
     openingStockTable: {
         columns: stockOpeningColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
     },
     accountNote:
         'Akun-akun yang dapat dipilih sesuai dengan akun-akun yang dimasukkan pada formulir Preferensi bagian akun default barang',
@@ -248,22 +247,48 @@ function buildBarcode(code) {
 }
 
 function buildFallbackDetailRecord(row, config) {
-    const category = inferCategory(row);
     const isService = row.kind === 'Jasa';
+
+    const supplierObj = row.main_supplier ?? row.mainSupplier ?? row.supplier_prices?.[0]?.supplier ?? row.supplierPrices?.[0]?.supplier ?? row.supplier;
+    const supplierName = supplierObj?.name ?? (typeof supplierObj === 'string' ? supplierObj : (row.supplierName ?? ''));
+    const supplierId = supplierObj?.id ?? row.main_supplier_id ?? row.mainSupplierId ?? row.supplier_id ?? row.supplier_prices?.[0]?.supplier_id ?? null;
+
+    const categoryObj = row.category ?? inferCategory(row);
+    const categoryName = typeof categoryObj === 'object' ? (categoryObj.name ?? '') : categoryObj;
+    const categoryId = typeof categoryObj === 'object' ? categoryObj.id : (row.category_id ?? row.categoryId ?? null);
+
+    const brandObj = row.brand;
+    const brandName = (typeof brandObj === 'object' ? brandObj?.name : brandObj) ?? '';
+    const brandId = typeof brandObj === 'object' ? brandObj?.id : (row.brand_id ?? row.brandId ?? null);
+
+    const baseUnitObj = row.base_unit ?? row.baseUnit ?? row.unit;
+    const baseUnitName = (typeof baseUnitObj === 'object' ? baseUnitObj?.name : baseUnitObj) ?? '';
+    const baseUnitId = typeof baseUnitObj === 'object' ? baseUnitObj?.id : (row.base_unit_id ?? row.baseUnitId ?? null);
+
+    const purchaseUnitObj = row.purchase_unit ?? row.purchaseUnit;
+    const purchaseUnitName = (typeof purchaseUnitObj === 'object' ? purchaseUnitObj?.name : purchaseUnitObj) ?? '';
+    const purchaseUnitId = typeof purchaseUnitObj === 'object' ? purchaseUnitObj?.id : (row.purchase_unit_id ?? row.purchaseUnitId ?? null);
 
     return {
         ...config.createDefaults,
         name: row.name ?? '',
-        category: [category],
+        category: categoryName ? [{ id: categoryId, name: categoryName }] : [inferCategory(row)],
+        categoryId: categoryId,
         kind: row.kind ?? config.createDefaults.kind,
         codeAuto: false,
         code: row.code ?? '',
-        barcode: buildBarcode(row.code),
-        primaryUnit: row.unit ? [row.unit] : [],
+        barcode: row.barcode ?? buildBarcode(row.code),
+        primaryUnit: baseUnitName ? [{ id: baseUnitId, name: baseUnitName }] : (row.unit ? [{ name: row.unit }] : []),
+        baseUnitId: baseUnitId,
         unitConversions: isService
             ? []
-            : [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: row.unit || 'PCS' }],
-        brand: (row.brand && row.brand !== '-') ? [row.brand] : [],
+            : [{ id: `${row.id}-conv-1`, unit: ['Box'], quantity: '10', baseUnit: baseUnitName || row.unit || 'PCS' }],
+        brand: (brandName && brandName !== '-') ? [{ id: brandId, name: brandName }] : [],
+        brandId: brandId,
+        mainSupplier: supplierName ? [{ id: supplierId, name: supplierName }] : [],
+        mainSupplierId: supplierId,
+        purchaseUnit: purchaseUnitName ? [{ id: purchaseUnitId, name: purchaseUnitName }] : [],
+        purchaseUnitId: purchaseUnitId,
         purchasePrice: row.purchasePrice ?? '0',
         sellPriceLevel1: row.salePrice ?? '0',
         notes: row.notes ?? '',

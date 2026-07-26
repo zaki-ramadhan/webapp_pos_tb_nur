@@ -20,7 +20,7 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%' }
     const values = chartData.map((item) => item.value);
     const hasData = hasNonZeroValue(values);
     const data = {
-        labels: hasData ? chartData.map((item) => item.label) : ['Belum ada data'],
+        labels: hasData ? chartData.map((item) => item.label) : ['Tidak ada data'],
         datasets: [
             {
                 data: hasData ? values : [100],
@@ -56,7 +56,7 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%' }
                       }
                     : {
                           label() {
-                              return 'Belum ada data untuk divisualisasikan';
+                              return 'Tidak ada data untuk divisualisasikan';
                           },
                       },
             },

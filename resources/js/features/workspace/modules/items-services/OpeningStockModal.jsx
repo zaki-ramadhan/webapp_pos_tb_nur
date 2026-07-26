@@ -33,6 +33,7 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
 
     function handleSave() {
         if (!warehouse.length || !date || qtyVal <= 0 || costVal <= 0) {
+            onClose();
             return;
         }
 
@@ -59,7 +60,6 @@ export default function OpeningStockModal({ open, onClose, onConfirm, initialUni
                 <div className="flex justify-end">
                     <Button
                         onClick={handleSave}
-                        disabled={qtyVal <= 0 || costVal <= 0 || !warehouse.length}
                         size="sm"
                         variant="primary"
                     >

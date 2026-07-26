@@ -110,7 +110,7 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
                 ...tableProps,
                 rows: resolvedRows,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
-                emptyLabel: error || 'Belum ada data',
+                emptyLabel: error || 'Tidak ada data',
             },
         }),
         [config, error, tableProps, resolvedRows],

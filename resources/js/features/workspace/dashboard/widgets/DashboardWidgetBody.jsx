@@ -23,7 +23,7 @@ function WidgetEmptyState({ widget }) {
 
     return (
         <DashboardWidgetEmptyState
-            title={emptyState.title ?? 'Belum ada data'}
+            title={emptyState.title ?? 'Tidak ada data'}
             description={emptyState.description ?? 'Data widget akan muncul setelah tersedia.'}
         />
     );
@@ -121,7 +121,7 @@ export default function DashboardWidgetBody({
     if (widget.type === 'note') {
         return (
             <DashboardWidgetEmptyState
-                title={widget.noteTitle ?? 'Belum ada data'}
+                title={widget.noteTitle ?? 'Tidak ada data'}
                 description={widget.noteDescription ?? widget.note ?? 'Data widget belum tersedia.'}
             />
         );

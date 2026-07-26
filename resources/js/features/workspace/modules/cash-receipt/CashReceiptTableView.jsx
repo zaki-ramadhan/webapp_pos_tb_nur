@@ -73,7 +73,7 @@ export default function CashReceiptTableView({
                 <TransactionDataTable
                     columns={config.table.columns}
                     rows={sortedRows}
-                    emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
+                    emptyLabel={loading ? 'Memuat data...' : (error || 'Tidak ada data')}
                     minWidthClassName="min-w-[1380px]"
                     onRowClick={(row) =>
                         onOpenDetail?.({

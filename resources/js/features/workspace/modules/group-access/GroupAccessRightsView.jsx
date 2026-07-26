@@ -84,9 +84,9 @@ function PermissionMatrix({
                 <table className="w-full min-w-[860px] border-collapse">
                     <thead className="sticky top-0 z-10">
                         <tr className="bg-tab-view-active-text text-white">
-                            <th className="px-5 py-2 text-center text-sm font-semibold">Hak Akses</th>
+                            <th className="px-5 py-2 text-center text-sm font-light">Hak Akses</th>
                             {columns.map((column) => (
-                                <th key={column.id} className="px-4 py-2 text-center text-sm font-semibold">
+                                <th key={column.id} className="px-4 py-2 text-center text-sm font-light">
                                     {column.label}
                                 </th>
                             ))}

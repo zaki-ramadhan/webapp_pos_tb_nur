@@ -257,12 +257,19 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
     useEffect(() => {
         function handleOpenPage(e) {
-            const { pageId, recordId, tabLabel, label, targetTabId } = e.detail || {};
+            const { pageId, recordId, tabLabel, label, targetTabId, mode, openForm, initialValues } = e.detail || {};
             if (!pageId) return;
 
             openPageById(pageId);
 
-            if (targetTabId) {
+            if (initialValues) {
+                window.__pendingInitialValues = window.__pendingInitialValues || {};
+                window.__pendingInitialValues[pageId] = initialValues;
+            }
+
+            if (openForm || mode === 'form' || initialValues) {
+                handleOpenDefaultContentTab(pageId);
+            } else if (targetTabId) {
                 const page = pages[pageId];
                 if (page?.subtab && targetTabId === page.subtab.id) {
                     handleOpenDefaultContentTab(pageId);
@@ -272,6 +279,12 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
                         [pageId]: targetTabId,
                     }));
                 }
+            }
+
+            if (initialValues) {
+                window.dispatchEvent(new CustomEvent('workspace:set-initial-values', {
+                    detail: { pageId, initialValues }
+                }));
             }
 
             if (recordId != null) {

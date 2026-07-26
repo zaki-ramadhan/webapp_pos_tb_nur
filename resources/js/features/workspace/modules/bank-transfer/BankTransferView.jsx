@@ -68,7 +68,7 @@ export default function BankTransferView({
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
                 refreshLabel: page.bankTransfer?.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: error || page.bankTransfer.table?.emptyLabel || 'Belum ada data',
+                emptyLabel: error || page.bankTransfer.table?.emptyLabel || 'Tidak ada data',
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

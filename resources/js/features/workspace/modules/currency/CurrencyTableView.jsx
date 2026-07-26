@@ -46,7 +46,7 @@ export default function CurrencyTableView({ page, rows, total, loading, error, o
     const resolvedTable = {
         ...table,
         rows,
-        emptyLabel: error || (rows.length === 0 ? 'Belum ada data' : undefined),
+        emptyLabel: error || (rows.length === 0 ? 'Tidak ada data' : undefined),
         onRefresh,
         loading,
     };

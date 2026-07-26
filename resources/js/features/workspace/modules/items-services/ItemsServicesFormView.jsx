@@ -190,6 +190,7 @@ export default function ItemsServicesFormView({
                     base_unit_id: values.primaryUnit?.[0]?.id ?? values.baseUnitId ?? null,
                     purchase_unit_id: values.purchaseUnit?.[0]?.id ?? values.purchaseUnitId ?? null,
                     sales_unit_id: values.salesUnit?.[0]?.id ?? values.salesUnitId ?? null,
+                    main_supplier_id: values.mainSupplier?.[0]?.id ?? values.mainSupplierId ?? values.supplierId ?? null,
                     minimum_stock: values.minimumStock ? parseAmountInput(values.minimumStock) : null,
                     default_purchase_price: values.purchasePrice ? parseAmountInput(values.purchasePrice) : null,
                     default_sale_price: values.sellPriceLevel1 ? parseAmountInput(values.sellPriceLevel1) : null,

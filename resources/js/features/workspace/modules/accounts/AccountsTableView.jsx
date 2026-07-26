@@ -70,7 +70,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                                     }
                                     containerClassName="w-auto shrink-0"
                                     className="h-[34px] min-w-[128px] rounded-[4px] border-ui-border"
-                                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
+                                    selectClassName="px-3 text-[11px] sm:text-xs text-filter-select-text"
                                     iconClassName="mr-2 text-filter-icon"
                                 >
                                     {filter.options.map((option, index) => (
@@ -165,7 +165,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
 
                         return <span className="block truncate">{row[column.id]}</span>;
                     }}
-                    emptyLabel={loading ? 'Memuat data...' : (error || 'Belum ada data')}
+                    emptyLabel={loading ? 'Memuat data...' : (error || 'Tidak ada data')}
                 />
             </div>
 

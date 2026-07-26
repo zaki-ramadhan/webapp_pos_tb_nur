@@ -81,7 +81,6 @@ export const defaultSalesDepositConfig = {
         depositAmount: 'Uang Muka',
         purchaseOrderNumber: 'No. PO',
         tax: 'Pajak',
-        paymentTerms: 'Syarat Pembayaran',
         address: 'Alamat',
         branch: 'Cabang',
         notes: 'Keterangan',

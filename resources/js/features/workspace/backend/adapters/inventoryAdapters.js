@@ -40,16 +40,21 @@ export function mapInventoryRows(pageId, records) {
     }
 
     return records.map((record) => ({
-        id: record.id,
+        id: String(record.id),
+        productId: String(record.id),
         selected: false,
         supplier: record.supplier ?? '',
+        supplierId: record.supplier_id ?? null,
         itemName: record.item_name ?? '',
         itemCode: record.item_code ?? '',
         unit: record.unit ?? '',
+        costPrice: Number(record.cost_price ?? record.default_purchase_price ?? record.price ?? 0),
         availableStock: record.available_stock ?? '',
+        rawAvailableStock: Number(record.raw_available_stock ?? 0),
         ordered: record.ordered ?? '',
         requested: record.requested ?? '',
         minimumLimit: record.minimum_limit ?? '',
+        rawMinimumLimit: Number(record.raw_minimum_limit ?? 0),
     }));
 }
 

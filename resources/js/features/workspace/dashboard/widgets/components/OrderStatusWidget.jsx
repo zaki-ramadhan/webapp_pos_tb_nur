@@ -14,7 +14,7 @@ export function OrderStatusWidget({ widget }) {
     const segments = widget.segments ?? [];
 
     if (!segments.length) {
-        return <DashboardWidgetEmptyState title="Belum ada data" description="Status pesanan belum tersedia." />;
+        return <DashboardWidgetEmptyState title='Tidak ada data' description="Status pesanan belum tersedia." />;
     }
 
     return (

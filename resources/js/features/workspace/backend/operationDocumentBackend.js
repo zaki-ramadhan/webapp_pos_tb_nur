@@ -161,8 +161,6 @@ export function buildOperationDocumentRecord(record, config, pageId) {
     return {
         __backendRecordId: record.id,
         __partnerId: record.customer_id ?? record.supplier_id ?? null,
-        __paymentTermId: record.payment_term_id ?? null,
-        paymentTermName: record.payment_term?.name ?? '',
         __relatedDocumentId: record.related_document_id ?? null,
         returnSource: metadata.return_source ?? 'Faktur',
         returnSourceReferences: record.related_document?.document_number ? [record.related_document.document_number] : [],
@@ -180,7 +178,6 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         itemSearch: '',
         items: lines,
         itemCountLabel: lines.length ? `${formatAmountInput(lines.length)} ${config.itemSectionTitle} (${formattedQty})` : config.itemSectionTitle,
-        paymentTerms: record.payment_term?.name ? [record.payment_term.name] : [],
         purchaseOrderNumber: record.reference_number ?? '',
         address:
             metadata.address
@@ -213,8 +210,10 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         showProcessButton: config.showProcessButton ?? false,
         processDisabled: record.status === 'Lunas',
         subtotal: `Rp ${formatCurrencyValue(subtotalValue)}`,
-        discountValue: formatCurrencyValue(record.discount_total ?? 0),
-        discountPrefix: 'Rp',
+        discountValue: metadata.discount_input_value ?? (record.discount_total > 0 ? formatCurrencyValue(record.discount_total) : '0'),
+        discountMode: metadata.discount_mode ?? '%',
+        discountPrefix: metadata.discount_mode ?? '%',
+        isDiscountOverridden: Boolean(metadata.is_discount_overridden || metadata.discount_input_value),
         taxLabel: taxValue ? 'Pajak' : '',
         taxValue,
         total: `Rp ${formatCurrencyValue(totalValue)}`,
@@ -224,7 +223,19 @@ export function buildOperationDocumentRecord(record, config, pageId) {
 }
 
 export function parseNumericInput(value) {
-    return parseAmountInput(value, { emptyValue: 0 }) ?? 0;
+    if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : 0;
+    }
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (/^\d+([.,]\d+)?$/.test(trimmed)) {
+            if (/^\d{1,3}\.\d{3}$/.test(trimmed)) {
+                return parseFloat(trimmed.replace(/\./g, '')) || 0;
+            }
+            return parseFloat(trimmed.replace(',', '.')) || 0;
+        }
+    }
+    return parseAmountInput(value, { allowDecimal: true, emptyValue: 0 }) ?? 0;
 }
 
 export function buildGeneratedDocumentNumber(pageId) {
@@ -256,13 +267,20 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
         .filter((item) => item.description || item.reference_code || item.quantity > 0 || item.total_amount > 0);
     const subtotalAmount = lines.reduce((sum, line) => sum + Number(line.total_amount ?? 0), 0);
     const subtotalCosts = (values.additionalCosts ?? []).reduce((sum, cost) => sum + parseNumericInput(cost.amount), 0);
-    const discountAmount = parseNumericInput(values.discountValue);
+    const val = parseNumericInput(values.discountValue);
+    const rawValStr = String(values.discountValue ?? '').trim();
+    const isExplicitRp = values.discountMode === 'Rp';
+    const isPercent = !isExplicitRp && (
+        values.discountMode === '%' ||
+        rawValStr.endsWith('%') ||
+        (val <= 100 && val > 0 && !rawValStr.includes('.000') && !rawValStr.includes(',000'))
+    );
+    const discountAmount = isPercent ? Math.max(0, subtotalAmount * (val / 100)) : Math.max(0, val);
     const taxAmount = values.taxEnabled ? Math.max(0, (subtotalAmount - discountAmount) * 0.1) : 0;
-    const totalAmount = subtotalAmount - discountAmount + taxAmount + subtotalCosts;
+    const totalAmount = Math.max(0, subtotalAmount - discountAmount + taxAmount + subtotalCosts);
 
     return {
         [backendConfig.partnerField]: values.__partnerId,
-        payment_term_id: values.__paymentTermId ?? null,
         branch_id: null,
         document_number: values.documentNumber?.trim() || buildGeneratedDocumentNumber(pageId),
         reference_number: values.purchaseOrderNumber?.trim() || null,
@@ -288,6 +306,9 @@ export function buildOperationDocumentPayload(values, pageId, backendConfig) {
             additional_costs: values.additionalCosts ?? [],
             advance_payments: values.advancePayments ?? [],
             return_source: values.returnSource ?? 'Faktur',
+            discount_mode: isPercent ? '%' : 'Rp',
+            discount_input_value: values.discountValue ?? '0',
+            is_discount_overridden: Boolean(values.isDiscountOverridden),
         },
         lines,
     };

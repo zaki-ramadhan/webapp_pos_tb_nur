@@ -35,7 +35,7 @@ export default function JournalActivityLogView({ page, activeLevel2Tab, onOpenDe
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
                 refreshLabel: page.journalActivityLog?.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: error || 'Belum ada data',
+                emptyLabel: error || 'Tidak ada data',
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

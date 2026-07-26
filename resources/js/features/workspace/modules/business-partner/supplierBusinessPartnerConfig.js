@@ -28,7 +28,6 @@ const SUPPLIER_DEFAULTS = {
     contacts: [],
     serviceVendor: false,
     supplierType: '- Pilih Tipe Pemasok -',
-    paymentTerms: ['C.O.D'],
     defaultDiscountPercent: '',
     defaultDescription: '',
     payableAccount: [],
@@ -76,7 +75,6 @@ export const supplierBusinessPartnerTemplate = createTemplate({
             { id: 'whatsapp', label: 'WhatsApp', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true, noWrap: true },
             { id: 'email', label: 'Email', widthClassName: 'w-[180px]', align: 'left', defaultHidden: true },
             { id: 'taxNumber', label: 'NPWP / NIK', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
-            { id: 'paymentTermsText', label: 'Syarat Pembayaran', widthClassName: 'w-[150px]', align: 'left', defaultHidden: true },
             { id: 'creditLimitText', label: 'Batas Piutang', widthClassName: 'w-[150px]', align: 'right', defaultHidden: true, noWrap: true },
             { id: 'categoryName', label: 'Kategori', widthClassName: 'w-[130px]', align: 'left', defaultHidden: true },
             { id: 'notes', label: 'Catatan', widthClassName: 'w-[200px]', align: 'left', defaultHidden: true, truncate: true },
@@ -119,7 +117,6 @@ export const supplierBusinessPartnerTemplate = createTemplate({
     purchaseConfig: {
         titleLeft: 'Pembelian',
         titleRight: 'Rekening Bank',
-        paymentTermsLabel: 'Syarat Pembayaran',
         discountLabel: 'Default Diskon (%)',
         descriptionLabel: 'Default Deskripsi',
         payableLabel: 'Akun Utang',

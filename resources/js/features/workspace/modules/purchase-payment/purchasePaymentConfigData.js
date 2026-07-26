@@ -130,7 +130,7 @@ export const defaultPurchasePaymentConfig = {
             { id: 'discount', label: 'Diskon', widthClassName: 'w-[150px]', align: 'right' },
             { id: 'payment', label: 'Pembayaran', widthClassName: 'w-[160px]', align: 'right' },
         ],
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
         minWidthClassName: 'min-w-[1200px]',
     },
     infoTitle: 'Info lainnya',

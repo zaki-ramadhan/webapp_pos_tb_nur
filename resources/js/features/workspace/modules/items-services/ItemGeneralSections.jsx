@@ -38,13 +38,16 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                     searchLabel="Cari kategori barang"
                     onSelect={(option) => {
                         const current = values.category || [];
-                        if (!current.includes(option.name)) {
-                            onChange('category', [...current, option.name]);
+                        if (!current.some((x) => (x.name ?? x) === option.name)) {
+                            onChange('category', [...current, { id: option.id, name: option.name }]);
+                            onChange('categoryId', option.id);
                         }
                     }}
                     onRemove={(option) => {
                         const current = values.category || [];
-                        onChange('category', current.filter((x) => x !== option.name));
+                        const nameToRemove = option.name ?? option;
+                        onChange('category', current.filter((x) => (x.name ?? x) !== nameToRemove));
+                        onChange('categoryId', null);
                     }}
                 />
             </FormRow>
@@ -90,10 +93,12 @@ export function ItemGeneralInfoSection({ config, values, onChange, isDetail }) {
                         placeholder="Cari/Pilih Satuan..."
                         searchLabel="Cari satuan"
                         onSelect={(option) => {
-                            onChange('primaryUnit', [option.name]);
+                            onChange('primaryUnit', [{ id: option.id, name: option.name }]);
+                            onChange('baseUnitId', option.id);
                         }}
                         onRemove={() => {
                             onChange('primaryUnit', []);
+                            onChange('baseUnitId', null);
                         }}
                     />
                 </div>
@@ -121,10 +126,12 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
                         placeholder="Cari/Pilih Merek..."
                         searchLabel="Cari merek"
                         onSelect={(option) => {
-                            onChange('brand', [option.name]);
+                            onChange('brand', [{ id: option.id, name: option.name }]);
+                            onChange('brandId', option.id);
                         }}
                         onRemove={() => {
                             onChange('brand', []);
+                            onChange('brandId', null);
                         }}
                         disabled={isBrandFieldInactive}
                     />

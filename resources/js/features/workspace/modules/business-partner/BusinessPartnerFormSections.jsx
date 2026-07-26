@@ -148,25 +148,6 @@ function SupplierPurchaseTab({ config, values, onChange }) {
                     <SectionHeading title={purchaseConfig.titleLeft ?? 'Pembelian'} />
 
                     <div className="mt-4 space-y-3">
-                        <FormFieldRow label={purchaseConfig.paymentTermsLabel ?? 'Syarat Pembayaran'}>
-                            <BackendLookupField
-                                resource="payment-terms"
-                                values={(values.paymentTerms || []).map(item => typeof item === 'string' ? { name: item } : item)}
-                                placeholder={config.lookupPlaceholders?.default ?? 'Cari/Pilih...'}
-                                searchLabel="Cari syarat pembayaran"
-                                onSelect={(option) => {
-                                    const current = values.paymentTerms || [];
-                                    if (!current.includes(option.name)) {
-                                        onChange('paymentTerms', [...current, option.name]);
-                                    }
-                                }}
-                                onRemove={(option) => {
-                                    const current = values.paymentTerms || [];
-                                    onChange('paymentTerms', current.filter(x => x !== (typeof option === 'string' ? option : option.name)));
-                                }}
-                            />
-                        </FormFieldRow>
-
                         <FormFieldRow label={purchaseConfig.discountLabel ?? 'Default Diskon (%)'}>
                             <TextInput
                                 id="defaultDiscountPercent"

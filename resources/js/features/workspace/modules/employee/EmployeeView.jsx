@@ -95,7 +95,7 @@ export default function EmployeeView({
                 pageValue: employeeResource.total.toLocaleString('id-ID'),
                 loading: employeeResource.loading,
                 refreshLabel: page.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: employeeResource.error || page.table?.emptyLabel || 'Belum ada data',
+                emptyLabel: employeeResource.error || page.table?.emptyLabel || 'Tidak ada data',
                 onRefresh: employeeResource.reload,
                 pagination: {
                     page: employeeResource.page,

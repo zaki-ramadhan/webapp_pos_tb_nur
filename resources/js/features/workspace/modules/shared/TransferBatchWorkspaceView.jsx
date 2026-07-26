@@ -191,7 +191,7 @@ export default function TransferBatchWorkspaceView({ config }) {
                                         colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0) + 1}
                                         className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                     >
-                                        {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
+                                        {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
                                     </DataTableCell>
                                 </DataTableRow>
                             )}
@@ -205,8 +205,8 @@ export default function TransferBatchWorkspaceView({ config }) {
                         tone="subtle"
                         size="sm"
                         iconName={config.emptyState?.icon ?? 'document'}
-                        title={config.emptyState?.title ?? 'Belum ada data'}
-                        description={config.emptyState?.description ?? 'Belum ada data'}
+                        title={config.emptyState?.title ?? 'Tidak ada data'}
+                        description={config.emptyState?.description ?? 'Tidak ada data'}
                         className="min-h-[260px] px-6 py-10"
                         titleClassName="text-base font-medium text-text-muted"
                         descriptionClassName="mt-2 text-sm leading-5 text-text-light"

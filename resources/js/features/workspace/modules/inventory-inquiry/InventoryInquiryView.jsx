@@ -11,8 +11,7 @@ import {
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import Pagination from '@/components/ui/Pagination';
-import Button from '@/components/ui/Button';
-import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 import { showSuccessToast } from '@/components/feedback/toast';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
@@ -37,6 +36,7 @@ import {
     buildInventoryFilters,
     mapInventoryRows,
 } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
 import { buildInitialValues, InquiryControl } from './InventoryInquiryControls';
 
 function resolveCellAlignClassName(align) {
@@ -51,7 +51,6 @@ export default function InventoryInquiryView({ config, pageId }) {
     const [keyword, setKeyword] = useState(config.search?.value ?? '');
     const [filters, setFilters] = useState(() => buildInventoryFilters(pageId, {}));
     const [selectedIds, setSelectedIds] = useState(() => new Set());
-    const [warningModal, setWarningModal] = useState({ open: false, title: '', message: '' });
 
     const {
         rows: rawRows,
@@ -156,17 +155,19 @@ export default function InventoryInquiryView({ config, pageId }) {
     const someSelected = !allSelected && sortedRows.some((r) => selectedIds.has(r.id));
 
     const resolvedControls = useMemo(() => {
-        return (config.controls ?? []).map((control) => {
-            if (control.id === 'itemSearch') {
-                const isWarehouseMode = values.itemType === 'warehouse';
-                return {
-                    ...control,
-                    id: isWarehouseMode ? 'warehouseSearch' : 'itemSearch',
-                    placeholder: isWarehouseMode ? 'Cari/Pilih Gudang' : 'Cari/Pilih Barang',
-                };
-            }
-            return control;
-        });
+        return (config.controls ?? [])
+            .filter((control) => control.id !== 'request')
+            .map((control) => {
+                if (control.id === 'itemSearch') {
+                    const isWarehouseMode = values.itemType === 'warehouse';
+                    return {
+                        ...control,
+                        id: isWarehouseMode ? 'warehouseSearch' : 'itemSearch',
+                        placeholder: isWarehouseMode ? 'Cari/Pilih Gudang' : 'Cari/Pilih Barang',
+                    };
+                }
+                return control;
+            });
     }, [config.controls, values.itemType]);
 
     function toggleAll() {
@@ -193,19 +194,98 @@ export default function InventoryInquiryView({ config, pageId }) {
         setFilters(buildInventoryFilters(pageId, nextValues));
     }
 
+    useEffect(() => {
+        if (error) {
+            showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: typeof error === 'string' ? error : (error.message || 'Terjadi kesalahan saat memuat data.'),
+            });
+        }
+    }, [error]);
+
     function handleButtonClick(controlId) {
         if (controlId === 'order' || controlId === 'request') {
             if (selectedIds.size === 0) {
-                setWarningModal({
-                    open: true,
-                    title: 'Peringatan',
-                    message: `Silakan pilih minimal satu barang terlebih dahulu untuk melakukan tindakan ${controlId === 'order' ? 'Pesan' : 'Minta'}.`,
+                showSystemErrorModal({
+                    title: 'Terjadi Permasalahan pada Pemrosesan',
+                    description: 'Silakan perbaiki permasalahan berikut ini:',
+                    message: 'Barang belum ada yang dicentang',
                 });
                 return;
             }
-            
+
+            const selectedRows = tableRows.filter((row) => selectedIds.has(row.id));
+            const hasMissingSupplier = selectedRows.some((row) => !row.supplier || !String(row.supplier).trim());
+
+            if (hasMissingSupplier) {
+                showSystemErrorModal({
+                    title: 'Terjadi Permasalahan pada Pemrosesan',
+                    description: 'Silakan perbaiki permasalahan berikut ini:',
+                    message: 'Belum ada pemasok',
+                });
+                return;
+            }
+
+            const targetPageId = controlId === 'order' ? 'purchase-order' : 'item-request';
+
+            const lineItems = selectedRows.map((row) => {
+                const minLimit = parseNumericInput(row.rawMinimumLimit ?? row.minimumLimit ?? row.minimumStock ?? 1);
+                const currentStock = parseNumericInput(row.rawAvailableStock ?? row.availableStock ?? 0);
+                const qtyNeeded = Math.max(1, minLimit - currentStock);
+
+                const price = parseNumericInput(row.costPrice || row.price || 0);
+                const name = row.itemName || row.productName || row.name || '';
+                const code = row.itemCode || row.productCode || row.code || '';
+                const unit = row.unit || row.baseUnit || 'Pcs';
+                return {
+                    id: String(row.productId || row.id),
+                    name: name,
+                    code: code,
+                    quantity: qtyNeeded,
+                    unit: unit,
+                    price: price,
+                    discount: 0,
+                    discountValue: 0,
+                    total: qtyNeeded * price,
+                };
+            });
+
+            const firstRow = selectedRows[0];
+            const supplierName = firstRow?.supplier || '';
+            const supplierId = firstRow?.supplierId || firstRow?.supplier_id || null;
+
+            const matchingSupplier = suppliers.find((s) =>
+                (supplierId && Number(s.id) === Number(supplierId)) ||
+                (supplierName && s.name?.toLowerCase() === supplierName.toLowerCase()) ||
+                (supplierName && s.full_name?.toLowerCase() === supplierName.toLowerCase())
+            );
+
+            const resolvedSupplierName = matchingSupplier
+                ? (matchingSupplier.name || matchingSupplier.full_name)
+                : supplierName;
+            const resolvedSupplierId = matchingSupplier ? matchingSupplier.id : supplierId;
+
+            const initialValues = {
+                customer: resolvedSupplierName ? [resolvedSupplierName] : [],
+                supplier: resolvedSupplierName ? [resolvedSupplierName] : [],
+                __partnerId: resolvedSupplierId,
+                items: lineItems,
+            };
+
+            window.dispatchEvent(
+                new CustomEvent('workspace:open-page', {
+                    detail: {
+                        pageId: targetPageId,
+                        mode: 'form',
+                        initialValues,
+                    },
+                }),
+            );
+
             showSuccessToast({
-                message: `Draf dokumen ${controlId === 'order' ? 'Pemesanan Pembelian' : 'Permintaan Barang'} berhasil dibuat untuk ${selectedIds.size} barang.`,
+                title: 'Berhasil',
+                message: `Berhasil memuat ${selectedIds.size} barang ke formulir ${controlId === 'order' ? 'Pesanan Pembelian' : 'Permintaan Barang'}.`,
             });
         }
     }
@@ -369,7 +449,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     colSpan={dataColumns.length + 1}
                                     className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                 >
-                                    {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Belum ada data')}
+                                    {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}
@@ -390,28 +470,6 @@ export default function InventoryInquiryView({ config, pageId }) {
                     className="mt-3"
                 />
             ) : null}
-
-            <WorkspaceDialog
-                open={warningModal.open}
-                onClose={() => setWarningModal((prev) => ({ ...prev, open: false }))}
-                title={warningModal.title}
-                footer={
-                    <div className="flex justify-end">
-                        <Button
-                            variant="primary"
-                            size="md"
-                            onClick={() => setWarningModal((prev) => ({ ...prev, open: false }))}
-                            className="bg-[#0c50a4] hover:bg-[#0a4288]"
-                        >
-                            OK
-                        </Button>
-                    </div>
-                }
-            >
-                <div className="text-sm text-brand-dark py-2">
-                    {warningModal.message}
-                </div>
-            </WorkspaceDialog>
         </div>
     );
 }

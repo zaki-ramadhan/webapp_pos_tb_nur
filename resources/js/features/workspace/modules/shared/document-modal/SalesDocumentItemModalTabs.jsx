@@ -151,7 +151,7 @@ export function ItemSerialTab({ detail }) {
                     {serialNumbers.length ? (
                         serialNumbers.map((serialNumber) => <SerialRow key={serialNumber} value={serialNumber} />)
                     ) : (
-                        <div className="px-4 py-6 text-center text-base text-text-placeholder">Belum ada data</div>
+                        <div className="px-4 py-6 text-center text-base text-text-placeholder">Tidak ada data</div>
                     )}
                 </div>
             </div>

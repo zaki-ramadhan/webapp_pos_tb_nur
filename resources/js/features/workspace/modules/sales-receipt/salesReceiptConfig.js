@@ -132,7 +132,7 @@ export const defaultSalesReceiptConfig = {
     sectionTabs: salesReceiptSectionTabs,
     invoiceTable: {
         columns: salesReceiptInvoiceColumns,
-        emptyLabel: 'Belum ada data',
+        emptyLabel: 'Tidak ada data',
     },
     draft: salesReceiptDraft,
     detailRecords: salesReceiptDetailRecords,

@@ -19,7 +19,7 @@ import { isWorkspacePageInactive } from '@/features/workspace/shared/workspaceAv
 export default function DiscountInfoTab({ values, setValues }) {
     const discountColumns = useMemo(
         () => [
-            { id: 'spacer', label: '', widthClassName: 'w-[64px]', align: 'center' },
+            { id: 'spacer', label: '', widthClassName: 'w-px', align: 'center' },
             { id: 'account', label: 'Akun Diskon', widthClassName: 'w-[68%]', align: 'left' },
             { id: 'amount', label: 'Diskon', widthClassName: 'w-[32%]', align: 'right' },
         ],
@@ -168,7 +168,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                                     </span>
                                 </DataTableCell>
                                 <DataTableCell colSpan={2} className="px-2.5 py-6 text-center text-base text-text-workspace-dark">
-                                    Belum ada data
+                                    Tidak ada data
                                 </DataTableCell>
                             </DataTableRow>
                         )}

@@ -43,7 +43,7 @@ export function TopProductsWidget({ widget }) {
     if (!(widget.items ?? []).length) {
         return (
             <DashboardWidgetEmptyState
-                title="Belum ada data"
+                title='Tidak ada data'
                 description="Belum ada peringkat barang terlaris."
             />
         );

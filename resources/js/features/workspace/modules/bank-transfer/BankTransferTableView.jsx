@@ -58,7 +58,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
             return config.table.columns;
         }
         return [
-            { id: '__no', label: 'No.', widthClassName: 'w-[64px]' },
+            { id: '__no', label: 'No.', widthClassName: 'w-px' },
             ...config.table.columns,
         ];
     }, [config.table.columns, filteredRows.length]);
@@ -107,7 +107,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
                     columns={columnsWithNo}
                     rows={rowsWithNo}
                     showNumbering={false}
-                    emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Belum ada data')}
+                    emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Tidak ada data')}
                     minWidthClassName="min-w-[1280px]"
                     onRowClick={(row) => onOpenDetail?.({ recordId: row.id, label: row.number, tabLabel: row.number })}
                     getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}

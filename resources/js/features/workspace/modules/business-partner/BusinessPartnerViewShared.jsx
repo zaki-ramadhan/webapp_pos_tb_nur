@@ -155,7 +155,7 @@ export function PartnerInlineTableSection({
     modalTitle = 'Tambah Data Baru',
     columns = [],
     items = [],
-    emptyLabel = 'Belum ada data',
+    emptyLabel = 'Tidak ada data',
     fields = [],
     onValidateBeforeOpen,
     onAdd,
@@ -229,13 +229,13 @@ export function PartnerInlineTableSection({
                 <DataTable wrapperClassName="border-table-wrapper-border">
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
-                            <DataTableHead className="w-[50px] px-3 text-center text-base font-light text-white">No.</DataTableHead>
+                            <DataTableHead className="w-px px-2.5 text-center text-base font-light text-white whitespace-nowrap">No.</DataTableHead>
                             {columns.map((col) => (
-                                <DataTableHead key={col.id} className={`px-3 text-base font-normal text-white ${col.align === 'right' ? 'text-right' : 'text-left'}`}>
+                                <DataTableHead key={col.id} className={`px-3 text-base font-light text-white ${col.align === 'right' ? 'text-right' : 'text-left'}`}>
                                     {col.label}
                                 </DataTableHead>
                             ))}
-                            <DataTableHead className="w-[60px] px-3 text-center text-base font-normal text-white">Aksi</DataTableHead>
+                            <DataTableHead className="w-[60px] px-3 text-center text-base font-light text-white">Aksi</DataTableHead>
                         </tr>
                     </DataTableHeader>
                     <DataTableBody>

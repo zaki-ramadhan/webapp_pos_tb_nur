@@ -4,7 +4,7 @@ export function RecentActivityWidget({ widget }) {
     const items = widget.items ?? [];
 
     if (!items.length) {
-        return <DashboardWidgetEmptyState title="Belum ada data" description="Belum ada riwayat aktivitas." />;
+        return <DashboardWidgetEmptyState title='Tidak ada data' description="Belum ada riwayat aktivitas." />;
     }
 
     const dateGroups = [];

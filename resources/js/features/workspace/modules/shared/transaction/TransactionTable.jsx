@@ -81,7 +81,7 @@ export function TransactionDataTable({
                 <DataTableHeader className="bg-table-header-bg">
                     <tr>
                         {activeShowNumbering && (
-                            <DataTableHead className="w-[50px] px-3 text-center text-base font-light text-white">
+                            <DataTableHead className="w-px px-2.5 text-center text-base font-light text-white whitespace-nowrap">
                                 No.
                             </DataTableHead>
                         )}
@@ -91,7 +91,7 @@ export function TransactionDataTable({
                             return (
                                 <DataTableHead
                                     key={column.id}
-                                    className={`${isCheckbox ? 'w-px px-3 text-center' : column.widthClassName ?? ''} ${isCheckbox ? '' : 'px-3'} text-base font-normal text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
+                                    className={`${isCheckbox ? 'w-px px-3 text-center' : column.widthClassName ?? ''} ${isCheckbox ? '' : 'px-3'} text-base font-light text-white ${resolveTransactionAlignClassName(column.align)}`.trim()}
                                     style={getCellStyle(column.id, {
                                         position: 'relative',
                                         ...(minWidth ? { minWidth } : {}),
@@ -147,7 +147,7 @@ export function TransactionDataTable({
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {activeShowNumbering && (
-                                        <DataTableCell className={`w-[50px] px-3 text-center text-base text-table-row-number ${cellClassName}`.trim()}>
+                                        <DataTableCell className={`w-px px-2.5 text-center text-base text-table-row-number whitespace-nowrap ${cellClassName}`.trim()}>
                                             {index + 1}
                                         </DataTableCell>
                                     )}

@@ -62,8 +62,6 @@ export function mapPartnerRow(record) {
         tabLabel: record.name ?? '',
         categoryId: record.category_id ?? record.category?.id ?? null,
         currencyId: record.currency_id ?? record.currency?.id ?? null,
-        paymentTermId: record.payment_term_id ?? record.payment_term?.id ?? null,
-        paymentTerms: extendedDetails.paymentTerms ?? (record.payment_term?.name ? [record.payment_term.name] : ['C.O.D']),
         branchIds: Array.isArray(record.branches) ? record.branches.map(b => b.id) : [],
         billingAddress: record.billing_address ?? '',
         shippingAddress: record.shipping_address ?? '',
@@ -96,7 +94,6 @@ export function mapPartnerRow(record) {
         invoiceNumberOnBill: extendedDetails.invoiceNumberOnBill !== false,
 
         // Opsi kolom tambahan untuk Settings
-        paymentTermsText: record.payment_term?.name ?? (extendedDetails.paymentTerms?.[0] ?? 'C.O.D'),
         creditLimitText: record.credit_limit ? Number(record.credit_limit).toLocaleString('id-ID') : '0',
         isActiveText: record.is_active ? 'Tidak' : 'Ya',
     };
@@ -106,9 +103,8 @@ export function toPartnerPayload(values) {
     return {
         code: values.code?.trim() ?? '',
         name: values.name?.trim() ?? '',
-        category_id: values.categoryId ?? null,
-        currency_id: values.currencyId ?? null,
-        payment_term_id: values.paymentTermId ?? null,
+        category_id: values.categoryId ?? values.category?.[0]?.id ?? null,
+        currency_id: values.currencyId ?? values.defaultCurrency?.[0]?.id ?? values.currency?.[0]?.id ?? null,
         business_phone: values.businessPhone?.trim() ?? values.phone?.trim() ?? '',
         mobile_phone: values.mobilePhone?.trim() ?? '',
         whatsapp_phone: values.whatsapp?.trim() ?? '',
@@ -211,6 +207,12 @@ export function mapProductRow(record) {
         salesUnitId: record.sales_unit_id ?? record.sales_unit?.id ?? null,
         attachments: record.attachments ?? [],
         activeStatus: record.is_active !== false ? 'active' : 'inactive',
+        mainSupplier: record.main_supplier ?? record.mainSupplier ?? record.supplier_prices?.[0]?.supplier ?? record.supplierPrices?.[0]?.supplier ?? null,
+        mainSupplierId: record.main_supplier_id ?? record.mainSupplierId ?? record.supplier_prices?.[0]?.supplier_id ?? record.supplierPrices?.[0]?.supplier_id ?? null,
+        main_supplier: record.main_supplier ?? record.mainSupplier ?? record.supplier_prices?.[0]?.supplier ?? record.supplierPrices?.[0]?.supplier ?? null,
+        main_supplier_id: record.main_supplier_id ?? record.mainSupplierId ?? record.supplier_prices?.[0]?.supplier_id ?? record.supplierPrices?.[0]?.supplier_id ?? null,
+        supplier_prices: record.supplier_prices ?? record.supplierPrices ?? [],
+        supplierPrices: record.supplier_prices ?? record.supplierPrices ?? [],
         brand: record.brand?.name ?? null,
         categoryFilter: record.category?.name ?? 'Umum',
         kind: String(record.product_type ?? '').trim().toLowerCase() === 'service' ? 'Jasa' : 'Persediaan',

@@ -7,7 +7,7 @@ import TextareaField from '@/components/ui/TextareaField';
 import AttachmentDockButton from '@/features/workspace/shared/AttachmentDockButton';
 import { showCrudSuccessToast } from '@/features/workspace/shared/crudFeedback';
 import { CloseIcon, CogIcon, FileIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 
 export function SuggestionTextInput({
     value = '',
@@ -15,7 +15,7 @@ export function SuggestionTextInput({
     options = [],
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
-    emptyLabel = 'Tidak ada data yang cocok.',
+    emptyLabel = 'Tidak ada data.',
     className = 'h-[40px] rounded-[4px] border-slate-400',
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
     ...props
@@ -130,7 +130,7 @@ export function SuggestionTextInput({
                                         onClick={() => handleSelect(option)}
                                         className={`block w-full border-t border-slate-300 px-4 py-3 text-left text-sm text-brand-dark transition first:border-t-0 hover:bg-workspace-hover-bg odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest font-medium' : ''}`.trim()}
                                     >
-                                        {option}
+                                        <HighlightText text={option} search={normalizedValue} />
                                     </button>
                                 );
                             })

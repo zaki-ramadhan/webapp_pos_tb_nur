@@ -142,7 +142,7 @@ export default function ActivityLogView({ page }) {
         };
     }, [cleanedColumns, sortedRows]);
 
-    const emptyLabel = loading ? 'Memuat data...' : (error || 'Belum ada data');
+    const emptyLabel = loading ? 'Memuat data...' : (error || 'Tidak ada data');
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">

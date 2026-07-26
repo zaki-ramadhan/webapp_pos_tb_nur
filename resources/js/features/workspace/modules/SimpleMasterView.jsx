@@ -70,7 +70,7 @@ export default function SimpleMasterView({ page, mode, activeLevel2Tab, level2Ta
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
                 refreshLabel: page.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: error || 'Belum ada data',
+                emptyLabel: error || 'Tidak ada data',
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

@@ -110,6 +110,11 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                 };
             });
 
+        if (selectedIds.length === 0) {
+            onClose();
+            return;
+        }
+
         if (onConfirm) {
             onConfirm(selectedList);
         }
@@ -133,7 +138,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                         variant="primary"
                         size="md"
                         onClick={handleConfirm}
-                        disabled={loading || selectedIds.length === 0}
+                        disabled={loading}
                     >
                         Lanjut
                     </Button>
@@ -141,7 +146,7 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
             }
         >
             <div className="flex flex-col gap-1.5">
-                {}
+                { }
                 <div className="w-full sm:max-w-[50%]">
                     <SelectField
                         value={selectedStatus}
@@ -171,10 +176,10 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                                         className="h-3.5 w-3.5 rounded-[3px] border-slate-300 text-[#15529A] focus:ring-[#15529A] accent-[#15529A]"
                                     />
                                 </DataTableHead>
-                                <DataTableHead className="text-left font-normal">
+                                <DataTableHead className="text-left font-light">
                                     Karyawan
                                 </DataTableHead>
-                                <DataTableHead className="text-center font-normal w-[160px]">
+                                <DataTableHead className="text-center font-light w-[160px]">
                                     Nilai
                                 </DataTableHead>
                             </DataTableRow>
@@ -182,14 +187,14 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                         <DataTableBody>
                             {loading ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="text-center py-6 text-slate-500">
+                                    <DataTableCell colSpan={3} className="text-center py-2.5 text-slate-500">
                                         Memuat data karyawan...
                                     </DataTableCell>
                                 </DataTableRow>
                             ) : filteredEmployees.length === 0 ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="text-center py-6 text-slate-500">
-                                        Belum Ada Data Karyawan
+                                    <DataTableCell colSpan={3} className="text-center py-2.5 text-slate-500">
+                                        Tidak ada data Karyawan
                                     </DataTableCell>
                                 </DataTableRow>
                             ) : (

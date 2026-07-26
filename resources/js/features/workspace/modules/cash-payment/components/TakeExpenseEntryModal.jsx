@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import TextInput from '@/components/ui/TextInput';
+import CheckboxField from '@/components/ui/CheckboxField';
 import Button from '@/components/ui/Button';
 import { SearchIcon, LoadingIcon } from '@/features/workspace/shared/Icons';
 import { listBackendResource, extractBackendRows } from '@/features/workspace/backend/workspaceBackendApi';
@@ -100,7 +101,10 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
 
     function handleLanjut() {
         const selectedRecords = records.filter((r) => selectedIds.has(String(r.id)));
-        if (selectedRecords.length === 0) return;
+        if (selectedRecords.length === 0) {
+            onClose();
+            return;
+        }
         onApply(selectedRecords);
         onClose();
     }
@@ -140,7 +144,6 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                         variant="primary"
                         size="md"
                         onClick={handleLanjut}
-                        disabled={selectedIds.size === 0}
                         className="rounded-[4px] px-6 font-normal"
                     >
                         Lanjut
@@ -191,7 +194,7 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                 <TransactionDataTable
                     columns={columns}
                     rows={filteredRecords}
-                    emptyLabel={loading ? 'Memuat data...' : 'Belum ada data'}
+                    emptyLabel={loading ? 'Memuat data...' : 'Tidak ada data'}
                     minWidthClassName="min-w-[800px]"
                     showNumbering={false}
                     onRowClick={(row) => handleToggleRecord(row.id)}
@@ -204,12 +207,13 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                     renderHeaderCell={(column) => {
                         if (column.id === 'checkbox') {
                             return (
-                                <input
-                                    type="checkbox"
+                                <CheckboxField
+                                    id="take-expense-select-all"
                                     checked={allChecked}
                                     onChange={handleSelectAll}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="h-4 w-4 rounded border-white/30 bg-transparent text-pink-accent focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                                    align="center"
+                                    inputClassName="h-3.5 w-3.5 rounded-[3px]"
+                                    containerClassName="flex justify-center"
                                 />
                             );
                         }
@@ -219,12 +223,13 @@ export default function TakeExpenseEntryModal({ open, onClose, onApply }) {
                         if (column.id === 'checkbox') {
                             const isSelected = selectedIds.has(String(row.id));
                             return (
-                                <input
-                                    type="checkbox"
+                                <CheckboxField
+                                    id={`take-expense-item-${row.id}`}
                                     checked={isSelected}
                                     onChange={() => handleToggleRecord(row.id)}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="h-4 w-4 rounded border-ui-border text-pink-accent focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                                    align="center"
+                                    inputClassName="h-3.5 w-3.5 rounded-[3px] pointer-events-none"
+                                    containerClassName="flex justify-center"
                                 />
                             );
                         }

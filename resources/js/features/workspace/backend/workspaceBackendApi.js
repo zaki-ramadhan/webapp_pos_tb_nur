@@ -26,14 +26,35 @@ export async function getBackendResource(resource, recordId) {
     return response.data?.data ?? null;
 }
 
+export function sanitizePayload(payload) {
+    if (payload === null || payload === undefined) {
+        return payload;
+    }
+    if (typeof payload === 'string') {
+        const trimmed = payload.trim();
+        return trimmed.replace(/[ \t]{2,}/g, ' ');
+    }
+    if (Array.isArray(payload)) {
+        return payload.map(sanitizePayload);
+    }
+    if (typeof payload === 'object' && !(payload instanceof File) && !(payload instanceof FormData)) {
+        const sanitized = {};
+        for (const [key, value] of Object.entries(payload)) {
+            sanitized[key] = sanitizePayload(value);
+        }
+        return sanitized;
+    }
+    return payload;
+}
+
 export async function createBackendResource(resource, payload) {
-    const response = await getBackendClient().post(`/api/backend/${resource}`, payload);
+    const response = await getBackendClient().post(`/api/backend/${resource}`, sanitizePayload(payload));
 
     return response.data;
 }
 
 export async function updateBackendResource(resource, recordId, payload) {
-    const response = await getBackendClient().put(`/api/backend/${resource}/${recordId}`, payload);
+    const response = await getBackendClient().put(`/api/backend/${resource}/${recordId}`, sanitizePayload(payload));
 
     return response.data;
 }

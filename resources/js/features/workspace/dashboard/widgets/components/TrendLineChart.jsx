@@ -79,7 +79,7 @@ export default function TrendLineChart({
               }))
             : [
                   {
-                      label: 'Belum ada data',
+                      label: 'Tidak ada data',
                       data: labels.map(() => 0),
                       borderColor: 'var(--color-ui-border)',
                       backgroundColor: toRgba('var(--color-ui-border)', 0.16),

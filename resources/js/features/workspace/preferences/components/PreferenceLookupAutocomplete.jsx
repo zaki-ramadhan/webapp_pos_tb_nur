@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import TextInput from '@/components/ui/TextInput';
 import { CloseIcon, SearchIcon } from '@/features/workspace/shared/Icons';
-import { LookupDropdownSurface } from '@/features/workspace/shared/LookupPrimitives';
+import { HighlightText, LookupDropdownSurface } from '@/features/workspace/shared/LookupPrimitives';
 
 export default function PreferenceLookupAutocomplete({ field, value, onChange, options = [] }) {
     const [query, setQuery] = useState('');
@@ -78,7 +78,7 @@ export default function PreferenceLookupAutocomplete({ field, value, onChange, o
                                     onClick={() => handleSelect(option)}
                                     className="flex w-full items-start px-3 py-2 text-left text-xs sm:text-sm text-text-workspace-dark hover:bg-info-bg border-b border-border-row-subtle last:border-b-0"
                                 >
-                                    {option}
+                                    <HighlightText text={option} search={query} />
                                 </button>
                             ))
                         ) : (

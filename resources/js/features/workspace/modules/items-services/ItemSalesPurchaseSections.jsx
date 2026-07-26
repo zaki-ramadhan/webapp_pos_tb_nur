@@ -151,10 +151,12 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                         placeholder="Cari/Pilih Pemasok..."
                         searchLabel="Cari pemasok"
                         onSelect={(option) => {
-                            onChange('mainSupplier', [option.name]);
+                            onChange('mainSupplier', [{ id: option.id, name: option.name }]);
+                            onChange('mainSupplierId', option.id);
                         }}
                         onRemove={() => {
                             onChange('mainSupplier', []);
+                            onChange('mainSupplierId', null);
                         }}
                     />
                 </FormRow>
@@ -166,10 +168,12 @@ export function ItemPurchaseTaxSection({ config, values, onChange }) {
                         placeholder="Cari/Pilih..."
                         searchLabel="Cari satuan beli"
                         onSelect={(option) => {
-                            onChange('purchaseUnit', [option.name]);
+                            onChange('purchaseUnit', [{ id: option.id, name: option.name }]);
+                            onChange('purchaseUnitId', option.id);
                         }}
                         onRemove={() => {
                             onChange('purchaseUnit', []);
+                            onChange('purchaseUnitId', null);
                         }}
                         className="max-w-[420px]"
                     />

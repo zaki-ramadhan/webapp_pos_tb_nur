@@ -40,7 +40,7 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                         className={`h-[34px] rounded-[4px] ${
                             filter.disabled ? 'border-warning-border bg-warning-bg' : 'border-ui-border bg-white'
                         }`.trim()}
-                        selectClassName={`px-3 text-xs sm:text-sm ${filter.disabled ? 'text-warning-label-text' : 'text-filter-select-text'}`.trim()}
+                        selectClassName={`px-3 text-[11px] sm:text-xs ${filter.disabled ? 'text-warning-label-text' : 'text-filter-select-text'}`.trim()}
                         iconClassName={`mr-2 ${filter.disabled ? 'text-warning-label-text' : 'text-filter-icon'}`.trim()}
                     >
                         {filter.options.map((option, optionIndex) => (
@@ -307,7 +307,7 @@ export default function TableListView({
                                         ? 'Memuat data...' 
                                         : table.error
                                         ? table.error
-                                        : (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Belum ada data'))
+                                        : (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Tidak ada data'))
                                     }
                                 </DataTableCell>
                             </DataTableRow>

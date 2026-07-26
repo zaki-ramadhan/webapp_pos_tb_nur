@@ -15,13 +15,13 @@ export const CONTACTS_TABLE = {
         { id: 'email', label: 'Email' },
         { id: 'mobilePhone', label: 'Handphone' },
     ],
-    emptyLabel: 'Belum ada data',
+    emptyLabel: 'Tidak ada data',
 };
 
 export const SHIPPING_TABLE = {
     title: 'Alamat lainnya',
     columns: [{ id: 'address', label: 'Alamat' }],
-    emptyLabel: 'Belum ada data',
+    emptyLabel: 'Tidak ada data',
 };
 
 export const CUSTOMER_BALANCE_TABLE = {
@@ -33,7 +33,7 @@ export const CUSTOMER_BALANCE_TABLE = {
         { id: 'number', label: 'Nomor #', widthClassName: 'w-[180px]' },
         { id: 'notes', label: 'Keterangan' },
     ],
-    emptyLabel: 'Belum ada data',
+    emptyLabel: 'Tidak ada data',
 };
 
 export const SUPPLIER_BALANCE_TABLE = {
@@ -45,7 +45,7 @@ export const SUPPLIER_BALANCE_TABLE = {
         { id: 'number', label: 'Nomor #', widthClassName: 'w-[180px]' },
         { id: 'notes', label: 'Keterangan' },
     ],
-    emptyLabel: 'Belum ada data',
+    emptyLabel: 'Tidak ada data',
 };
 
 export const SUPPLIER_BANK_TABLE = {
@@ -55,7 +55,7 @@ export const SUPPLIER_BANK_TABLE = {
         { id: 'accountName', label: 'Atas Nama', widthClassName: 'w-[24%]' },
         { id: 'bankName', label: 'Nama Bank' },
     ],
-    emptyLabel: 'Belum ada data',
+    emptyLabel: 'Tidak ada data',
 };
 
 export const LOOKUP_PLACEHOLDERS = {
@@ -333,7 +333,6 @@ export function resolveBusinessPartnerRecord(kind, row = {}, config, templates) 
         shippingCountry: baseRecord.shippingCountry ?? shippingCountry,
         shippingSameAsBilling: baseRecord.shippingSameAsBilling ?? (row.id ? (row.billingAddress === row.shippingAddress) : config.formDefaults.shippingSameAsBilling),
         paymentTermId: baseRecord.paymentTermId ?? row.paymentTermId ?? config.formDefaults.paymentTermId,
-        paymentTerms: baseRecord.paymentTerms ?? row.paymentTerms ?? config.formDefaults.paymentTerms,
         branchIds: baseRecord.branchIds ?? row.branchIds ?? config.formDefaults.branchIds,
         categoryId: baseRecord.categoryId ?? row.categoryId ?? config.formDefaults.categoryId,
         currencyId: baseRecord.currencyId ?? row.currencyId ?? config.formDefaults.currencyId,

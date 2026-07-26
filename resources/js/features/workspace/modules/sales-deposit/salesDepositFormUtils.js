@@ -20,7 +20,6 @@ export function getComparableTransactionFields(state) {
         taxInvoiceNumber: state.taxInvoiceNumber,
         taxRate: state.taxRate,
         paymentTermName: state.paymentTermName,
-        __paymentTermId: state.__paymentTermId,
         address: state.address,
         notes: state.notes,
     };
