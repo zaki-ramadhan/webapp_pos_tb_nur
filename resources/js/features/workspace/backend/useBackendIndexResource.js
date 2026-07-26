@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { showErrorToast } from '@/components/feedback/toast';
 
 import {
     extractBackendRows,
@@ -17,6 +16,18 @@ function sanitizeFilters(filters = {}) {
 // Cache global SWR
 const globalCache = new Map();
 const CACHE_FRESH_THRESHOLD_MS = 5000;
+
+const HELPER_LOOKUP_RESOURCES = new Set([
+    'units',
+    'brands',
+    'product-categories',
+    'customer-categories',
+    'supplier-categories',
+    'payment-terms',
+    'taxes',
+    'item-locations',
+    'chart-of-accounts',
+]);
 
 function getCacheKey(resource, filters) {
     return `${resource}::${JSON.stringify(filters)}`;
@@ -159,8 +170,6 @@ export default function useBackendIndexResource({
         }
 
         async function run() {
-          // Tampilkan loading spinner jika tidak ada cache, atau jika force refresh
-
             if (!cachedEntry || isForceRefresh) {
                 setLoading(true);
             }
@@ -169,11 +178,7 @@ export default function useBackendIndexResource({
             try {
                 const nextPayload = await listBackendResource(resource, requestFilters);
 
-                if (!active) {
-                    return;
-                }
-
-              // Perbarui cache
+                if (!active) return;
 
                 globalCache.set(currentCacheKey, {
                     payload: nextPayload,
@@ -182,18 +187,9 @@ export default function useBackendIndexResource({
 
                 setPayload(nextPayload);
             } catch (requestError) {
-                if (!active) {
-                    return;
-                }
-
                 const errorMsg = getBackendErrorMessage(requestError);
+                if (!active) return;
                 setError(errorMsg);
-                if (isForceRefresh) {
-                    showErrorToast({
-                        title: 'Refresh Gagal',
-                        message: errorMsg,
-                    });
-                }
             } finally {
                 if (active) {
                     setLoading(false);
