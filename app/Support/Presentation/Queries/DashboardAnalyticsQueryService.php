@@ -433,11 +433,11 @@ class DashboardAnalyticsQueryService
             ];
 
             $dbUpcomingSO = DB::table('operation_documents')
-                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->leftJoin('customers', 'operation_documents.customer_id', '=', 'customers.id')
                 ->where('operation_documents.document_type', 'sales_order')
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'Closed', 'void', 'cancelled'])
                 ->where('operation_documents.entry_date', '>=', date('Y-m-d'))
-                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.entry_date', 'contacts.name as contact_name')
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.entry_date', 'customers.name as contact_name')
                 ->orderBy('operation_documents.entry_date', 'asc')
                 ->limit(3)
                 ->get();
@@ -454,11 +454,11 @@ class DashboardAnalyticsQueryService
             }
 
             $dbUpcomingPO = DB::table('operation_documents')
-                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->leftJoin('suppliers', 'operation_documents.supplier_id', '=', 'suppliers.id')
                 ->where('operation_documents.document_type', 'purchase_order')
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'Closed', 'void', 'cancelled'])
                 ->where('operation_documents.entry_date', '>=', date('Y-m-d'))
-                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.entry_date', 'contacts.name as contact_name')
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.entry_date', 'suppliers.name as contact_name')
                 ->orderBy('operation_documents.entry_date', 'asc')
                 ->limit(3)
                 ->get();
@@ -478,12 +478,12 @@ class DashboardAnalyticsQueryService
             $overdueActivityItems = [];
 
             $dbOverdueSalesInvoices = DB::table('operation_documents')
-                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->leftJoin('customers', 'operation_documents.customer_id', '=', 'customers.id')
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->where('operation_documents.outstanding_amount', '>', 0)
                 ->where('operation_documents.due_date', '<', date('Y-m-d'))
-                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.due_date', 'operation_documents.outstanding_amount', 'contacts.name as contact_name')
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.due_date', 'operation_documents.outstanding_amount', 'customers.name as contact_name')
                 ->orderBy('operation_documents.due_date', 'asc')
                 ->limit(4)
                 ->get();
@@ -501,12 +501,12 @@ class DashboardAnalyticsQueryService
             }
 
             $dbOverduePurchaseInvoices = DB::table('operation_documents')
-                ->leftJoin('contacts', 'operation_documents.contact_id', '=', 'contacts.id')
+                ->leftJoin('suppliers', 'operation_documents.supplier_id', '=', 'suppliers.id')
                 ->where('operation_documents.document_type', 'purchase_invoice')
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
                 ->where('operation_documents.outstanding_amount', '>', 0)
                 ->where('operation_documents.due_date', '<', date('Y-m-d'))
-                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.due_date', 'operation_documents.outstanding_amount', 'contacts.name as contact_name')
+                ->select('operation_documents.id', 'operation_documents.document_number', 'operation_documents.due_date', 'operation_documents.outstanding_amount', 'suppliers.name as contact_name')
                 ->orderBy('operation_documents.due_date', 'asc')
                 ->limit(4)
                 ->get();
