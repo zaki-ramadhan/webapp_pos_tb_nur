@@ -325,9 +325,9 @@ class DashboardAnalyticsQueryService
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
                 ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
-                ->where('operation_documents.document_type', 'sales_invoice')
-                ->where('operation_documents.status', 'Posted')
-                ->whereYear('operation_documents.entry_date', $resolvedYear)
+                ->whereIn('operation_documents.document_type', ['sales_invoice', 'sales_delivery', 'cash_sale'])
+                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->when($resolvedYear, fn ($q) => $q->whereYear('operation_documents.entry_date', $resolvedYear))
                 ->select(
                     'products.id as product_id',
                     'products.name',
@@ -336,12 +336,15 @@ class DashboardAnalyticsQueryService
                     'units.name as unit_name'
                 )
                 ->groupBy('products.id', 'products.name', 'units.name')
-                ->orderByDesc('revenue')
+                ->orderByDesc(DB::raw('SUM(operation_document_lines.quantity)'))
                 ->limit(5)
                 ->get();
+
+            $totalTopUnits = (float) $dbTopProducts->sum('units_sold');
             $topProductsItems = [];
+
             foreach ($dbTopProducts as $tp) {
-                $pctShare = $totalSalesVal > 0 ? ($tp->revenue / $totalSalesVal) * 100 : 0;
+                $pctShare = $totalTopUnits > 0 ? ($tp->units_sold / $totalTopUnits) * 100 : 0;
                 
                 $imageAttachment = DB::table('attachments')
                     ->where('attachable_type', \App\Domain\Catalog\Models\Product::class)
@@ -350,9 +353,14 @@ class DashboardAnalyticsQueryService
                     ->first();
                 $imageUrl = $imageAttachment ? asset('storage/' . $imageAttachment->file_path) : null;
 
+                $unitsSold = (float) $tp->units_sold;
+                $formattedUnits = (floor($unitsSold) == $unitsSold
+                    ? number_format($unitsSold, 0, ',', '.')
+                    : rtrim(rtrim(number_format($unitsSold, 2, ',', '.'), '0'), ',')) . ' ' . ($tp->unit_name ?? 'pcs');
+
                 $topProductsItems[] = [
                     'name' => $tp->name,
-                    'units' => number_format($tp->units_sold, 0, ',', '.') . ' ' . ($tp->unit_name ?? 'pcs'),
+                    'units' => $formattedUnits,
                     'share' => number_format($pctShare, 1, ',', '.') . '%',
                     'revenue' => $formatCurrencyShort($tp->revenue),
                     'imageUrl' => $imageUrl,
