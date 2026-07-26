@@ -806,6 +806,7 @@ class BackendResourceWriter
             foreach ($recordLines as $line) {
                 if ($line->total_amount > 0) {
                     $accId = optional($line->product)->sales_account_id
+                        ?? optional(optional($line->product)->category)->sales_account_id
                         ?? DB::table('accounts')->where('code', 'like', '41%')->value('id');
                     if ($accId) {
                         $lines[] = ['account_id' => $accId, 'description' => 'Pendapatan - ' . (optional($line->product)->name ?? 'Barang'), 'debit_amount' => 0.00, 'credit_amount' => $line->total_amount, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];
@@ -819,6 +820,7 @@ class BackendResourceWriter
             foreach ($recordLines as $line) {
                 if ($line->total_amount > 0) {
                     $accId = optional($line->product)->inventory_account_id
+                        ?? optional(optional($line->product)->category)->inventory_account_id
                         ?? DB::table('accounts')->where('code', 'like', '11%')->value('id');
                     if ($accId) {
                         $lines[] = ['account_id' => $accId, 'description' => 'Persediaan - ' . (optional($line->product)->name ?? 'Barang'), 'debit_amount' => $line->total_amount, 'credit_amount' => 0.00, 'total_amount' => $line->total_amount, 'sort_order' => $sortOrder++];

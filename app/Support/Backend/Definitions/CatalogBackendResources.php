@@ -289,6 +289,42 @@ class CatalogBackendResources
                             \App\Domain\Catalog\Models\SupplierPrice::where('product_id', $record->id)->delete();
                         }
                     }
+
+                    if (array_key_exists('opening_stock_rows', $payload) && is_array($payload['opening_stock_rows'])) {
+                        foreach ($payload['opening_stock_rows'] as $stockRow) {
+                            $qty = (float) ($stockRow['quantity'] ?? 0);
+                            $cost = (float) ($stockRow['unit_cost'] ?? $record->default_purchase_price ?? 0);
+                            if ($qty > 0) {
+                                $warehouseId = $stockRow['warehouse_id'] ?? null;
+                                if (!$warehouseId && !empty($stockRow['warehouse_name'])) {
+                                    $warehouseId = \App\Domain\Inventory\Models\Warehouse::where('name', $stockRow['warehouse_name'])->value('id');
+                                }
+                                if (!$warehouseId) {
+                                    $warehouseId = \App\Domain\Inventory\Models\Warehouse::where('is_active', true)->value('id') ?? 1;
+                                }
+
+                                $doc = \App\Domain\Inventory\Models\OperationDocument::create([
+                                    'document_type' => 'inventory_adjustment',
+                                    'document_number' => 'SA-' . ($record->code ?? $record->id) . '-' . time() . '-' . rand(10, 99),
+                                    'warehouse_id' => $warehouseId,
+                                    'status' => 'posted',
+                                    'issued_at' => $stockRow['date'] ?? now()->toDateString(),
+                                    'notes' => 'Stok awal barang: ' . $record->name,
+                                    'total_amount' => $qty * $cost,
+                                ]);
+
+                                \App\Domain\Inventory\Models\OperationDocumentLine::create([
+                                    'operation_document_id' => $doc->id,
+                                    'product_id' => $record->id,
+                                    'warehouse_id' => $warehouseId,
+                                    'unit_id' => $record->base_unit_id,
+                                    'quantity' => $qty,
+                                    'unit_price' => $cost,
+                                    'total_amount' => $qty * $cost,
+                                ]);
+                            }
+                        }
+                    }
                 },
             ),
             'supplier-prices' => new BackendResourceBlueprint(
