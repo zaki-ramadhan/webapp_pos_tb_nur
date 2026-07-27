@@ -31,13 +31,8 @@ export default function TrendLineChart({
     const maxVal = allValues.length > 0 ? Math.max(...allValues) : 0;
     const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
 
-    const upperLimit = Math.max(0, maxVal);
-    const lowerLimit = Math.min(0, minVal);
-    const totalSpan = upperLimit - lowerLimit;
-
-    const getNiceStepSize = (span) => {
+    const getNiceStepSize = (span, targetDivisions = 4) => {
         if (!span || span <= 0) return valueFormat === 'currency' ? 25000 : 1;
-        const targetDivisions = yDivisions || 5;
         const rawStep = span / targetDivisions;
         const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
         const ratio = rawStep / magnitude;
@@ -50,19 +45,29 @@ export default function TrendLineChart({
         return niceStep * magnitude;
     };
 
-    const stepSize = getNiceStepSize(totalSpan);
-
     let yMin = 0;
     let yMax = 0;
+    let stepSize = undefined;
 
-    if (minVal < 0) {
-        yMin = Math.floor(minVal / stepSize) * stepSize;
-        const ceilMax = Math.ceil(maxVal / stepSize) * stepSize;
-        yMax = ceilMax >= stepSize ? ceilMax : stepSize;
-    } else {
+    if (minVal >= 0) {
+        // Mode A: All Positive -> 0 at bottom baseline
+        const span = Math.max(maxVal, 1);
+        stepSize = getNiceStepSize(span, 4);
         yMin = 0;
-        const ceilMax = Math.ceil(maxVal / stepSize) * stepSize;
-        yMax = Math.max(ceilMax, stepSize * 4);
+        yMax = Math.max(Math.ceil(maxVal / stepSize) * stepSize, stepSize * 4);
+    } else if (maxVal <= 0) {
+        // Mode B: All Negative -> 0 at top ceiling baseline
+        const span = Math.abs(minVal);
+        stepSize = getNiceStepSize(span, 4);
+        yMax = 0;
+        yMin = Math.min(Math.floor(minVal / stepSize) * stepSize, -stepSize * 4);
+    } else {
+        // Mode C: Mixed Positive & Negative -> 0 symmetric in middle
+        const maxAbs = Math.max(Math.abs(minVal), Math.abs(maxVal));
+        stepSize = getNiceStepSize(maxAbs, 2);
+        const steps = Math.max(2, Math.ceil(maxAbs / stepSize));
+        yMin = -steps * stepSize;
+        yMax = steps * stepSize;
     }
 
     const datasets =
