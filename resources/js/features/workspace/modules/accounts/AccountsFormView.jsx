@@ -65,14 +65,14 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     );
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     
-    const tabs = useMemo(() => {
+    const { leftTabs, rightTabs } = useMemo(() => {
         const isSub = isDetail
             ? (backendRecord ? Boolean(backendRecord.is_sub_account || backendRecord.parent_id || !backendRecord.has_children) : true)
             : Boolean(values.isSubAccount || values.parentId);
 
         if (isDetail) {
             if (isSub) {
-                // Akun Anak / Akun Transaksi: Informasi Umum, Saldo (jika valid), Lain-lain, Histori.
+                // Akun Anak / Akun Transaksi: Left (Informasi Umum, Saldo, Lain-lain), Right (Histori).
                 const subTabs = [
                     { id: 'general', label: 'Informasi Umum' },
                     { id: 'others', label: 'Lain-lain' },
@@ -80,15 +80,20 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                 if (shouldShowSaldoTab(values.type || backendRecord?.type || backendRecord?.account_type)) {
                     subTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
                 }
-                subTabs.push({ id: 'history', label: 'Histori' });
-                return subTabs;
+                return {
+                    leftTabs: subTabs,
+                    rightTabs: [{ id: 'history', label: 'Histori' }],
+                };
             } else {
-                // Akun Induk (Parent Account dengan anak): Informasi Umum, Lain-lain, Akun Anak.
-                return [
-                    { id: 'general', label: 'Informasi Umum' },
-                    { id: 'others', label: 'Lain-lain' },
-                    { id: 'children', label: 'Akun Anak' },
-                ];
+                // Akun Induk: Informasi Umum, Lain-lain, Akun Anak.
+                return {
+                    leftTabs: [
+                        { id: 'general', label: 'Informasi Umum' },
+                        { id: 'others', label: 'Lain-lain' },
+                        { id: 'children', label: 'Akun Anak' },
+                    ],
+                    rightTabs: [],
+                };
             }
         }
 
@@ -100,7 +105,10 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         if (isSub && shouldShowSaldoTab(values.type)) {
             createTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
         }
-        return createTabs;
+        return {
+            leftTabs: createTabs,
+            rightTabs: [],
+        };
     }, [isDetail, backendRecord, values.isSubAccount, values.parentId, values.type]);
 
     const [activeTabId, setActiveTabId] = useState('general');
@@ -125,11 +133,13 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
 
     const [lastSavedAt, setLastSavedAt] = useState(null);
 
+    const allTabs = useMemo(() => [...leftTabs, ...rightTabs], [leftTabs, rightTabs]);
+
     useEffect(() => {
-        if (!tabs.some((t) => t.id === activeTabId)) {
+        if (!allTabs.some((t) => t.id === activeTabId)) {
             setActiveTabId('general');
         }
-    }, [tabs, activeTabId]);
+    }, [allTabs, activeTabId]);
 
     const prevHasRecordRef = useRef(Boolean(backendRecord));
 
@@ -262,7 +272,8 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         <ModuleFormTemplate
             validationMessage={validationMessage}
             form={{
-                tabs: tabs,
+                tabs: leftTabs,
+                rightTabs: rightTabs,
                 saveLabel: 'Simpan',
             }}
             activeTabId={activeTabId}

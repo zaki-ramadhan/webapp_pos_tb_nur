@@ -60,7 +60,12 @@ class BackendResourceIndexQuery
                 continue;
             }
             if ($key === 'exclude_id' && Schema::hasColumn($tableName, 'id')) {
-                if (is_array($value)) {
+                if ($tableName === 'accounts' && !is_array($value)) {
+                    $targetId = (int) $value;
+                    $childIds = \Illuminate\Support\Facades\DB::table('accounts')->where('parent_id', $targetId)->pluck('id')->all();
+                    $excludedIds = array_merge([$targetId], $childIds);
+                    $query->whereNotIn("{$tableName}.id", $excludedIds);
+                } elseif (is_array($value)) {
                     $query->whereNotIn("{$tableName}.id", $value);
                 } else {
                     $query->where("{$tableName}.id", '!=', $value);

@@ -160,7 +160,8 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                         }
 
                         if (column.id === 'balance') {
-                            return <span className={row.negative ? 'text-red-600 font-medium' : ''}>{row.balance}</span>;
+                            const isNegative = Boolean(row.negative || (typeof row.balance === 'string' && row.balance.startsWith('-')));
+                            return <span className={isNegative ? 'text-red-600 font-medium' : ''}>{row.balance}</span>;
                         }
 
                         return <span className="block truncate">{row[column.id]}</span>;

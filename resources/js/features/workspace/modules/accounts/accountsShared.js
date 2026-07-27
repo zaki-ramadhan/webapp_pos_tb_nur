@@ -170,16 +170,16 @@ export function mapAccountRow(record) {
 
 export function openingBalanceLabel(value) {
     const numericValue = Number(value ?? 0);
+    if (!Number.isFinite(numericValue) || numericValue === 0) return '0';
+
     const absVal = Math.abs(numericValue);
     const formattedValue = formatBalanceLabel(absVal);
 
-    if (!formattedValue) return 'Rp 0';
-
     if (numericValue < 0) {
-        return `Rp -${formattedValue}`;
+        return `-${formattedValue}`;
     }
 
-    return `Rp ${formattedValue}`;
+    return formattedValue;
 }
 
 export function buildAccountSourceRecord(record, config) {

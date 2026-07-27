@@ -86,14 +86,30 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             values={selectedParentAccount}
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari akun perkiraan"
-                            queryParams={excludeId ? { exclude_id: excludeId } : {}}
+                            queryParams={{
+                                ...(excludeId ? { exclude_id: excludeId } : {}),
+                                ...(values.type ? { account_type: values.type } : {}),
+                            }}
                             getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
+                            renderOption={(option) => (
+                                <div className="flex flex-col gap-0.5 w-full py-0.5 select-none">
+                                    <span className="truncate text-xs sm:text-sm font-normal text-brand-dark">
+                                        {option.name}
+                                    </span>
+                                    <div className="flex justify-end text-[11px] sm:text-xs font-normal italic text-slate-500">
+                                        <span>{option.code || option.id}</span>
+                                    </div>
+                                </div>
+                            )}
                             onSelect={(option) => {
                                 onChange('parentId', option.id);
                                 onChange('parentAccount', [option.name]);
                                 onChange('parentAccountLabel', `${option.code} - ${option.name}`);
                                 onChange('parentAccountCode', option.code);
                                 onChange('parentAccountName', option.name);
+                                if (option.account_type && !values.type) {
+                                    onChange('type', option.account_type);
+                                }
                             }}
                             onRemove={() => {
                                 onChange('parentId', null);
