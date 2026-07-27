@@ -31,11 +31,14 @@ export default function TrendLineChart({
     const maxVal = allValues.length > 0 ? Math.max(...allValues) : 0;
     const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
 
-    const valRange = Math.abs(maxVal - minVal);
+    const upperLimit = Math.max(0, maxVal);
+    const lowerLimit = Math.min(0, minVal);
+    const totalSpan = upperLimit - lowerLimit;
 
-    const getStepSize = (val) => {
-        if (val <= 0) return undefined;
-        const rawStep = val / yDivisions;
+    const getNiceStepSize = (span) => {
+        if (!span || span <= 0) return valueFormat === 'currency' ? 25000 : 1;
+        const targetDivisions = yDivisions || 5;
+        const rawStep = span / targetDivisions;
         const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
         const ratio = rawStep / magnitude;
         let niceStep;
@@ -47,29 +50,19 @@ export default function TrendLineChart({
         return niceStep * magnitude;
     };
 
-    let stepSize = getStepSize(valRange);
-    let yMin = undefined;
-    let yMax = undefined;
+    const stepSize = getNiceStepSize(totalSpan);
 
-    if (stepSize === undefined || valRange === 0) {
-        stepSize = valueFormat === 'currency' ? 25000 : 1;
-        if (minVal < 0) {
-            yMin = Math.floor(minVal / stepSize) * stepSize;
-            const computedMax = Math.ceil(maxVal / stepSize) * stepSize;
-            yMax = computedMax > 0 ? computedMax : stepSize * 2;
-        } else {
-            yMin = 0;
-            yMax = yDivisions * stepSize;
-        }
+    let yMin = 0;
+    let yMax = 0;
+
+    if (minVal < 0) {
+        yMin = Math.floor(minVal / stepSize) * stepSize;
+        const ceilMax = Math.ceil(maxVal / stepSize) * stepSize;
+        yMax = ceilMax >= stepSize ? ceilMax : stepSize;
     } else {
-        if (minVal < 0) {
-            yMin = Math.floor(minVal / stepSize) * stepSize;
-            const computedMax = Math.ceil(maxVal / stepSize) * stepSize;
-            yMax = computedMax > 0 ? computedMax : stepSize * 2;
-        } else {
-            yMin = 0;
-            yMax = Math.max(Math.ceil(maxVal / stepSize) * stepSize, yDivisions * stepSize);
-        }
+        yMin = 0;
+        const ceilMax = Math.ceil(maxVal / stepSize) * stepSize;
+        yMax = Math.max(ceilMax, stepSize * 4);
     }
 
     const datasets =
