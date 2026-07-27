@@ -194,8 +194,13 @@ class EmployeesPage
                         ],
                         'taxAllowanceStatusOptions' => [
                             'Tidak Kawin (Tidak ada tanggungan)',
+                            'Tidak Kawin (1 Tanggungan)',
+                            'Tidak Kawin (2 Tanggungan)',
+                            'Tidak Kawin (3 Tanggungan)',
                             'Kawin (Tidak ada tanggungan)',
-                            'Kawin (1 tanggungan)',
+                            'Kawin (1 Tanggungan)',
+                            'Kawin (2 Tanggungan)',
+                            'Kawin (3 Tanggungan)',
                         ],
                         'taxStartMonthOptions' => [
                             'Januari',
@@ -211,10 +216,7 @@ class EmployeesPage
                             'November',
                             'Desember',
                         ],
-                        'taxStartYearOptions' => [
-                            '2026',
-                            '2025',
-                        ],
+                        'taxStartYearOptions' => array_map('strval', range((int) date('Y') + 1, (int) date('Y') - 5)),
                         'taxCalculationNote' => 'Penghasilan dan PPh sebelumnya HANYA PERLU diisikan jika PPh sudah dihitung dan dibayarkan dari januari, namun Pencatatan gaji di TB Nur POS hanya di isi mulai bulan April 2026',
                         'defaults' => [
                             'salutation' => 'Bapak',

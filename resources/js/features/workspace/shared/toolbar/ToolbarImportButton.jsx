@@ -167,9 +167,9 @@ export default function ToolbarImportButton({ importConfig, sizeStyle, resource 
                                         </p>
                                     </div>
                                 </div>
-                                
+
                                 <div className="flex flex-col gap-1.5 pl-7.5 border-t border-amber-200/60 pt-2.5">
-                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">Harus Diisi Terlebih Dahulu:</span>
+                                    <span className="text-sm font-medium text-amber-700">Harus Diisi Terlebih Dahulu:</span>
                                     <div className="flex flex-col gap-1">
                                         {guide.dependencies.map((dep, idx) => (
                                             <div key={idx} className="flex items-center gap-2 text-[13px] text-amber-800 font-medium">

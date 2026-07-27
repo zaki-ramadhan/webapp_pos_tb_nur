@@ -58,22 +58,24 @@ export function GeneralTab({ config, values, isDetail, onChange }) {
                         </FormFieldRow>
                     )}
 
-                    <FormFieldRow label={config.labels.category}>
-                        <BackendLookupField
-                            resource={config.type === 'customer' ? 'customer-categories' : 'supplier-categories'}
-                            values={(values.category || []).map(name => typeof name === 'string' ? { name } : name)}
-                            placeholder={config.lookupPlaceholders.category}
-                            searchLabel="Cari kategori"
-                            onSelect={(option) => {
-                                onChange('categoryId', option.id);
-                                onChange('category', [option.name]);
-                            }}
-                            onRemove={() => {
-                                onChange('categoryId', null);
-                                onChange('category', []);
-                            }}
-                        />
-                    </FormFieldRow>
+                    {(config.type ?? config.partnerType) !== 'customer' && (
+                        <FormFieldRow label={config.labels.category}>
+                            <BackendLookupField
+                                resource="supplier-categories"
+                                values={(values.category || []).map(name => typeof name === 'string' ? { name } : name)}
+                                placeholder={config.lookupPlaceholders?.category}
+                                searchLabel="Cari kategori"
+                                onSelect={(option) => {
+                                    onChange('categoryId', option.id);
+                                    onChange('category', [option.name]);
+                                }}
+                                onRemove={() => {
+                                    onChange('categoryId', null);
+                                    onChange('category', []);
+                                }}
+                            />
+                        </FormFieldRow>
+                    )}
 
                     <FormFieldRow label={config.labels.businessPhone}>
                         <TextInput

@@ -100,19 +100,37 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
 
     function closeAllPagesExceptDashboard() {
         setOpenPages((currentPages) => {
+            const pagesToKeep = currentPages.filter(
+                (page) => page.id === dashboardPage.id || page.id === activePageId
+            );
+
             currentPages.forEach((page) => {
-                if (page.id !== dashboardPage.id) {
+                if (!pagesToKeep.some((k) => k.id === page.id)) {
                     clearPageDirty(page.id);
                     if (typeof window !== 'undefined' && typeof window.__clearBackendCache === 'function') {
                         window.__clearBackendCache(page.id);
                     }
                 }
             });
-            return [dashboardPage];
+
+            return pagesToKeep;
         });
-        setPageLevel2ContentTabs({});
-        setActiveLevel2Tabs({});
-        setActivePageId(dashboardPage.id);
+
+        setPageLevel2ContentTabs((currentTabs) => {
+            const updated = {};
+            if (activePageId && activePageId !== dashboardPage.id && currentTabs[activePageId]) {
+                updated[activePageId] = currentTabs[activePageId];
+            }
+            return updated;
+        });
+
+        setActiveLevel2Tabs((currentTabs) => {
+            const updated = {};
+            if (activePageId && activePageId !== dashboardPage.id && currentTabs[activePageId]) {
+                updated[activePageId] = currentTabs[activePageId];
+            }
+            return updated;
+        });
     }
 
     const {

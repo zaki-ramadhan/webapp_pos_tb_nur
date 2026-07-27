@@ -128,6 +128,7 @@ export function createTemplate({
     othersConfig = null,
 }) {
     return {
+        type,
         partnerType: type,
         topActions: HELP_TOP_ACTIONS,
         tabs,
