@@ -95,9 +95,8 @@ export function buildOperationDocumentTableRows(pageId, records) {
             customerShort: truncateText(partnerName),
             shipping: record.shipping_method ?? '',
             shippingShort: truncateText(record.shipping_method ?? ''),
-            notes: record.notes ?? '',
             status: mapDocumentStatus(record.status ?? 'Draft'),
-            requiredIdType: record.metadata?.required_id_type ?? '',
+            requiredIdType: record.metadata?.required_id_type ?? (record.customer?.tax_number ? (String(record.customer.tax_number).length >= 16 ? 'NIK' : 'NPWP') : '-'),
             age: record.metadata?.age_days ?? '',
             total: totalText,
             statusTone: String(record.status ?? '').toLowerCase().includes('lunas') || String(record.status ?? '').toLowerCase().includes('proses')
