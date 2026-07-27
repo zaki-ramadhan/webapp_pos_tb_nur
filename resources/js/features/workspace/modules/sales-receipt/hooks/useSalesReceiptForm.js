@@ -35,6 +35,7 @@ export default function useSalesReceiptForm({
 }) {
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const [activeInvoiceModal, setActiveInvoiceModal] = useState(null);
+    const [unpaidInvoicesModalOpen, setUnpaidInvoicesModalOpen] = useState(false);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
@@ -253,6 +254,18 @@ export default function useSalesReceiptForm({
 
     const handlers = useMemo(
         () => ({
+            onOpenUnpaidInvoicesModal: () => setUnpaidInvoicesModalOpen(true),
+            onCloseUnpaidInvoicesModal: () => setUnpaidInvoicesModalOpen(false),
+            onConfirmUnpaidInvoices: (selectedRecords) => {
+                if (!selectedRecords?.length) return;
+                setValues((current) => {
+                    const newInvoiceItems = selectedRecords.map((rec) => buildSalesReceiptInvoiceFromRecord(rec));
+                    const existingIds = new Set((current.invoices ?? []).map((inv) => String(inv.id)));
+                    const filteredNew = newInvoiceItems.filter((inv) => !existingIds.has(String(inv.id)));
+                    return applySalesReceiptInvoices(current, [...(current.invoices ?? []), ...filteredNew]);
+                });
+                setStatus({ tone: '', message: '' });
+            },
             onSelectInvoice: () =>
                 selectLookup('sales-invoices', 'faktur penjualan', (record) => buildLookupLabel(record, 'document_number'), (record) =>
                     setValues((current) =>
@@ -309,6 +322,8 @@ export default function useSalesReceiptForm({
         setActiveSectionId,
         activeInvoiceModal,
         setActiveInvoiceModal,
+        unpaidInvoicesModalOpen,
+        setUnpaidInvoicesModalOpen,
         status,
         setStatus,
         saving,

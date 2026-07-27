@@ -85,15 +85,13 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                         />
                     </div>
 
-                    {isDetail ? (
-                        <button
-                            type="button"
-                            className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-base text-brand-blue-accent"
-                            onClick={handlers.onSelectInvoice}
-                        >
-                            Ambil
-                        </button>
-                    ) : null}
+                    <button
+                        type="button"
+                        className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-4 text-sm font-medium text-brand-blue-accent hover:bg-brand-blue-lightest transition cursor-pointer select-none"
+                        onClick={handlers.onOpenUnpaidInvoicesModal}
+                    >
+                        Ambil
+                    </button>
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
@@ -229,28 +227,6 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                         </>
                     ) : null}
 
-                    {isDetail ? (
-                        <>
-                            <TransactionFieldLabel label={config.labels.voided} />
-                            <CheckboxField
-                                id="voided"
-                                label="Ya"
-                                checked={values.voided}
-                                onChange={(event) =>
-                                    setValues((current) => ({
-                                        ...current,
-                                        voided: event.target.checked,
-                                    }))
-                                }
-                                align="center"
-                                inputClassName="h-3.5 w-3.5 rounded-[3px]"
-                                containerClassName="w-auto inline-flex h-[34px]"
-                            />
-                        </>
-                    ) : null}
-
-
-
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TransactionReadonlyTextarea
                         value={values.notes}
@@ -268,15 +244,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                     {isDetail ? (
                         <>
                             <TransactionFieldLabel label={config.labels.reconcileStatus} />
-                            <div className="pt-1 text-base italic text-brand-dark">{values.reconcileStatus || 'Belum'}</div>
-
-                            <TransactionFieldLabel label={config.labels.printStatus} />
-                            <TextInput
-                                value={values.printStatus}
-                                readOnly
-                                className="h-[34px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-text-workspace-muted"
-                            />
+                            <div className="pt-1 text-xs sm:text-sm italic text-brand-dark">{values.reconcileStatus || 'Belum'}</div>
                         </>
                     ) : null}
                 </div>

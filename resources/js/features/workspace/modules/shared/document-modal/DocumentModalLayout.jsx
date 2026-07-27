@@ -49,6 +49,7 @@ export default function DocumentModalLayout({
     onTabChange,
     closeAriaLabel,
     panelClassName,
+    contentClassName = 'px-4 pb-3 pt-2',
     bodyClassName = 'py-3',
     children,
     footer = null,
@@ -78,7 +79,7 @@ export default function DocumentModalLayout({
                 </div>
             </div>
  
-            <div className="bg-white px-4 pb-3 pt-2">
+            <div className={`bg-white ${contentClassName}`.trim()}>
                 {tabs?.length ? (
                     <div className="flex flex-wrap border-b border-ui-border-medium mt-0 mb-2">
                         {tabs.map((tab) => (

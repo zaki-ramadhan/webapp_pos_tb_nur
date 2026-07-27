@@ -4,6 +4,7 @@ import TextInput from '@/components/ui/TextInput';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import SalesReceiptInvoiceModal from '@/features/workspace/modules/sales-receipt/SalesReceiptInvoiceModal';
+import SalesReceiptUnpaidInvoicesModal from '@/features/workspace/modules/sales-receipt/SalesReceiptUnpaidInvoicesModal';
 import {
     SalesReceiptAdditionalInfoSection,
     SalesReceiptInvoicesSection,
@@ -40,6 +41,8 @@ export default function SalesReceiptFormView({
         setActiveSectionId,
         activeInvoiceModal,
         setActiveInvoiceModal,
+        unpaidInvoicesModalOpen,
+        setUnpaidInvoicesModalOpen,
         status,
         saving,
         deleteConfirmationOpen,
@@ -319,6 +322,12 @@ export default function SalesReceiptFormView({
                 cancelLabel="Batal"
                 confirmVariant="primary"
                 confirmLoading={saving}
+            />
+            <SalesReceiptUnpaidInvoicesModal
+                open={unpaidInvoicesModalOpen}
+                onClose={() => setUnpaidInvoicesModalOpen(false)}
+                customerId={values.__customerId}
+                onConfirm={handlers.onConfirmUnpaidInvoices}
             />
         </>
     );
