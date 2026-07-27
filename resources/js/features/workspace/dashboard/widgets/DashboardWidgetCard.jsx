@@ -80,7 +80,14 @@ export default function DashboardWidgetCard({
         'sales-summary': { pageId: 'sales-invoice', label: 'Faktur Penjualan' },
         'purchase-summary': { pageId: 'purchase-invoice', label: 'Faktur Pembelian' },
         'sales-team-performance': { pageId: 'employees', label: 'Karyawan' },
-        'top-products': { pageId: 'items-services', label: 'Barang & Jasa' },
+        'top-products': {
+            title: 'Barang Paling Laku',
+            description: 'Widget ini menghitung akumulasi kuantitas barang terlaris dari rincian transaksi penjualan:',
+            sources: [
+                { pageId: 'sales-invoice', label: 'Faktur Penjualan (Sumber Transaksi Penjualan)' },
+                { pageId: 'items-services', label: 'Barang & Jasa (Master Data Barang)' },
+            ]
+        },
         'overdue-activity': {
             title: 'Kegiatan Terlewat',
             description: 'Widget ini memantau faktur penjualan/pembelian yang melewati jatuh tempo:',
