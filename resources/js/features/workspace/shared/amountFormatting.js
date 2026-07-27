@@ -124,12 +124,12 @@ export function formatDisplayValue(val) {
 
       // Currency values (e.g. Rp 1000 or -Rp 1000)
 
-        if (/^-?Rp\s*\d[\d\.,]*$/i.test(trimmed)) {
-            const isNegative = trimmed.startsWith('-');
-            const rawNum = trimmed.replace(/^-?Rp\s*/i, '');
+        if (/^(-?Rp\s*|Rp\s*-?)\d[\d\.,]*$/i.test(trimmed)) {
+            const isNegative = trimmed.includes('-');
+            const rawNum = trimmed.replace(/^(Rp\s*-?|-?Rp\s*)/i, '');
             const parsed = parseAmountInput(rawNum, { allowDecimal: true, emptyValue: null });
             if (parsed !== null) {
-                return `${isNegative ? '-Rp ' : 'Rp '}${formatAmountInput(parsed, { allowDecimal: true })}`;
+                return `${isNegative ? 'Rp -' : 'Rp '}${formatAmountInput(parsed, { allowDecimal: true })}`;
             }
         }
 

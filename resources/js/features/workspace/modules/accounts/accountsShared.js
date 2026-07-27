@@ -176,7 +176,7 @@ export function openingBalanceLabel(value) {
     if (!formattedValue) return 'Rp 0';
 
     if (numericValue < 0) {
-        return `-Rp ${formattedValue}`;
+        return `Rp -${formattedValue}`;
     }
 
     return `Rp ${formattedValue}`;

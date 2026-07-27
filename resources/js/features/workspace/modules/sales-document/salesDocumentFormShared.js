@@ -19,7 +19,7 @@ export function formatCurrencyValue(value) {
 export function formatCurrencyLabel(value) {
     const numericValue = Number(value ?? 0);
     if (numericValue < 0) {
-        return `-Rp ${formatCurrencyValue(Math.abs(numericValue))}`;
+        return `Rp -${formatCurrencyValue(Math.abs(numericValue))}`;
     }
     return `Rp ${formatCurrencyValue(numericValue)}`;
 }
