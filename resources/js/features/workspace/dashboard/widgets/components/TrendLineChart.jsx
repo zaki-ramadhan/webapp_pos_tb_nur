@@ -49,10 +49,14 @@ export default function TrendLineChart({
     let yMax = 0;
     let stepSize = undefined;
 
-    if (minVal >= 0) {
+    if (minVal === 0 && maxVal === 0) {
+        // Zero / No Data State: clean round default baseline steps
+        stepSize = valueFormat === 'currency' ? 25000 : 1;
+        yMin = 0;
+        yMax = valueFormat === 'currency' ? 100000 : 4;
+    } else if (minVal >= 0) {
         // Mode A: All Positive -> 0 at bottom baseline
-        const span = Math.max(maxVal, 1);
-        stepSize = getNiceStepSize(span, 4);
+        stepSize = getNiceStepSize(maxVal, 4);
         yMin = 0;
         yMax = Math.max(Math.ceil(maxVal / stepSize) * stepSize, stepSize * 4);
     } else if (maxVal <= 0) {
@@ -160,6 +164,7 @@ export default function TrendLineChart({
                     display: false,
                 },
                 ticks: {
+                    precision: 0,
                     color: 'var(--color-text-dark)',
                     font: {
                         size: 12,
