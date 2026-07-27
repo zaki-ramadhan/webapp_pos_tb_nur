@@ -11,3 +11,9 @@ export function buildTodayDisplayDate() {
 
     return formatDisplayDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
 }
+
+export function buildFirstDayOfMonthDisplayDate() {
+    const today = new Date();
+
+    return formatDisplayDate(new Date(today.getFullYear(), today.getMonth(), 1));
+}

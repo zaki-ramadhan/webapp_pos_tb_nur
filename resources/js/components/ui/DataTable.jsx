@@ -55,15 +55,16 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
     const hasAlign = /\btext-(left|center|right)\b/.test(className);
     const alignClass = hasAlign ? '' : 'text-left';
     const isCenter = /\btext-center\b/.test(className);
-    const hasFontWeight = /\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/.test(className);
-    const fontWeightClass = hasFontWeight ? '' : 'font-light';
     const hasCustomPx = /\b(!?px-\d+|!?px-\[[^\]]+\])\b/.test(className);
     const pxClass = hasCustomPx ? '' : 'px-3 sm:px-4';
 
     const widthMatch = className.match(/\b(?:[a-z-]*:)?(?:min-w|w)-\[(\d+(?:px|%|rem|vw|vh))\]/);
     const preferredWidth = widthMatch ? widthMatch[1] : null;
 
-    const cleanedClassName = className.replace(/\b(?:[a-z-]*:)?(?:min-w|w|max-w)-\[[^\]]+\]/g, '').trim();
+    const cleanedClassName = className
+        .replace(/\bfont-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)\b/g, '')
+        .replace(/\b(?:[a-z-]*:)?(?:min-w|w|max-w)-\[[^\]]+\]/g, '')
+        .trim();
 
     const textContent = getTextContent(children).trim();
     const safeMinWidth = calculateMinWidth(textContent);
@@ -78,7 +79,7 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
 
     return (
         <th
-            className={`border-r border-table-cell-border ${pxClass} py-2 ${alignClass} text-xs sm:text-sm ${fontWeightClass} leading-5 last:border-r-0 whitespace-nowrap truncate relative select-none ${cleanedClassName}`.trim()}
+            className={`border-r border-table-cell-border ${pxClass} py-2 ${alignClass} text-xs sm:text-sm font-light leading-5 last:border-r-0 whitespace-nowrap truncate relative select-none ${cleanedClassName}`.trim()}
             style={{ ...style, position: 'relative' }}
             {...props}
         >
