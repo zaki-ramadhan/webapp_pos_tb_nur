@@ -4,7 +4,10 @@ const compactNumberFormatter = new Intl.NumberFormat('id-ID', {
 });
 
 function normalizeNumericString(value) {
-    let normalizedValue = String(value ?? '')
+    const rawStr = String(value ?? '').trim();
+    const isNegative = rawStr.includes('-') || (rawStr.startsWith('(') && rawStr.endsWith(')'));
+
+    let normalizedValue = rawStr
         .toLowerCase()
         .replace(/\s+/g, '')
         .replace(/rp|idr/g, '')
@@ -14,21 +17,23 @@ function normalizeNumericString(value) {
         .replace(/ribu/g, 'rb')
         .replace(/[^0-9,.\-a-z]/g, '');
 
-    let multiplier = 1;
+    let multiplier = isNegative ? -1 : 1;
 
     if (normalizedValue.endsWith('jt')) {
-        multiplier = 1_000_000;
+        multiplier *= 1_000_000;
         normalizedValue = normalizedValue.slice(0, -2);
     } else if (normalizedValue.endsWith('rb')) {
-        multiplier = 1_000;
+        multiplier *= 1_000;
         normalizedValue = normalizedValue.slice(0, -2);
     } else if (normalizedValue.endsWith('b')) {
-        multiplier = 1_000_000_000;
+        multiplier *= 1_000_000_000;
         normalizedValue = normalizedValue.slice(0, -1);
     } else if (normalizedValue.endsWith('t')) {
-        multiplier = 1_000_000_000_000;
+        multiplier *= 1_000_000_000_000;
         normalizedValue = normalizedValue.slice(0, -1);
     }
+
+    normalizedValue = normalizedValue.replace(/-/g, '');
 
     if (normalizedValue.includes('.') && normalizedValue.includes(',')) {
         normalizedValue = normalizedValue.replace(/\./g, '').replace(',', '.');
@@ -146,7 +151,9 @@ export function formatChartValue(value = 0, format = 'number') {
     }
 
     if (format === 'currency') {
-        return `Rp ${compactNumberFormatter.format(numericValue)}`;
+        const absVal = Math.abs(numericValue);
+        const formatted = compactNumberFormatter.format(absVal);
+        return numericValue < 0 ? `Rp -${formatted}` : `Rp ${formatted}`;
     }
 
     if (format === 'percent') {
@@ -155,7 +162,9 @@ export function formatChartValue(value = 0, format = 'number') {
         })}%`;
     }
 
-    return compactNumberFormatter.format(numericValue);
+    const isNegative = numericValue < 0;
+    const formatted = compactNumberFormatter.format(Math.abs(numericValue));
+    return isNegative ? `-${formatted}` : formatted;
 }
 
 export function hasNonZeroValue(values = []) {

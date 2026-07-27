@@ -31,7 +31,7 @@ export default function TrendLineChart({
     const maxVal = allValues.length > 0 ? Math.max(...allValues) : 0;
     const minVal = allValues.length > 0 ? Math.min(...allValues) : 0;
 
-    const valRange = maxVal - (minVal < 0 ? minVal : 0);
+    const valRange = Math.abs(maxVal - minVal);
 
     const getStepSize = (val) => {
         if (val <= 0) return undefined;
@@ -48,20 +48,26 @@ export default function TrendLineChart({
     };
 
     let stepSize = getStepSize(valRange);
-    let yMin = 0;
+    let yMin = undefined;
     let yMax = undefined;
 
     if (stepSize === undefined || valRange === 0) {
         stepSize = valueFormat === 'currency' ? 25000 : 1;
-        yMin = 0;
-        yMax = yDivisions * stepSize;
+        if (minVal < 0) {
+            yMin = Math.floor(minVal / stepSize) * stepSize;
+            yMax = Math.ceil(maxVal / stepSize) * stepSize;
+        } else {
+            yMin = 0;
+            yMax = yDivisions * stepSize;
+        }
     } else {
-        yMin = minVal < 0
-            ? Math.floor(minVal / stepSize) * stepSize
-            : 0;
-        yMax = minVal < 0
-            ? Math.ceil(maxVal / stepSize) * stepSize
-            : yDivisions * stepSize;
+        if (minVal < 0) {
+            yMin = Math.floor(minVal / stepSize) * stepSize;
+            yMax = Math.ceil(maxVal / stepSize) * stepSize;
+        } else {
+            yMin = 0;
+            yMax = Math.ceil(maxVal / stepSize) * stepSize;
+        }
     }
 
     const datasets =
