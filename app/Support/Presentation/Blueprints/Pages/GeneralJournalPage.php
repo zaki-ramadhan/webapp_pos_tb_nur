@@ -58,7 +58,7 @@ class GeneralJournalPage
                 ],
                 'totalLabels' => [
                     'debit' => 'Total Debit',
-                    'credit' => 'Total Credit',
+                    'credit' => 'Total Kredit',
                 ],
                 'dockActions' => [
                     [

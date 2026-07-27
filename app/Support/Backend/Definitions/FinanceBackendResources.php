@@ -124,6 +124,10 @@ class FinanceBackendResources
                     if (array_key_exists('user_ids', $payload)) {
                         BackendRelationSync::syncBelongsToMany($record, 'users', $payload['user_ids']);
                     }
+
+                    if ($record instanceof Account) {
+                        self::syncAccountOpeningBalanceJournal($record);
+                    }
                 },
             ),
             'taxes' => new BackendResourceBlueprint(
@@ -175,5 +179,92 @@ class FinanceBackendResources
                 ],
             ),
         ];
+    }
+
+    public static function syncAccountOpeningBalanceJournal(Account $account): void
+    {
+        $balance = (float) ($account->opening_balance ?? 0);
+        $date = $account->opening_balance_date ? \Carbon\Carbon::parse($account->opening_balance_date)->format('Y-m-d') : date('Y-m-d');
+
+        $journal = \App\Domain\Support\Models\OperationDocument::where('document_type', 'general_journal')
+            ->where('metadata->is_opening_balance', true)
+            ->where('metadata->account_id', $account->id)
+            ->first();
+
+        if (abs($balance) < 0.001) {
+            if ($journal) {
+                $journal->lines()->delete();
+                $journal->delete();
+            }
+            return;
+        }
+
+        $type = strtolower($account->account_type ?? '');
+        $isAssetOrExpense = ! (str_contains($type, 'liability')
+            || str_contains($type, 'equity')
+            || str_contains($type, 'revenue')
+            || str_contains($type, 'utang')
+            || str_contains($type, 'modal')
+            || str_contains($type, 'pendapatan')
+            || str_contains($type, 'liabilitas'));
+
+        $debitAmount = $isAssetOrExpense ? ($balance > 0 ? $balance : 0.0) : ($balance < 0 ? abs($balance) : 0.0);
+        $creditAmount = $isAssetOrExpense ? ($balance < 0 ? abs($balance) : 0.0) : ($balance > 0 ? $balance : 0.0);
+
+        /** @var \App\Support\Backend\BackendResourceWriter $writer */
+        $writer = app(\App\Support\Backend\BackendResourceWriter::class);
+        $docNumber = $journal?->document_number ?? $writer->generateNextSequentialNumber('general-journals', $date);
+        $description = 'Saldo Awal akun ' . $account->name;
+
+        if (! $journal) {
+            $journal = new \App\Domain\Support\Models\OperationDocument();
+        }
+
+        $journal->fill([
+            'branch_id' => 1,
+            'document_number' => $docNumber,
+            'document_type' => 'general_journal',
+            'entry_date' => $date,
+            'effective_date' => $date,
+            'status' => 'Disetujui',
+            'notes' => $description,
+            'total_amount' => abs($balance),
+            'metadata' => [
+                'transaction_type_label' => 'Jurnal Umum',
+                'transaction_type_value' => 'general-journal',
+                'is_opening_balance' => true,
+                'account_id' => $account->id,
+            ],
+        ]);
+        $journal->save();
+
+        $journal->lines()->delete();
+
+        $journal->lines()->create([
+            'account_id' => $account->id,
+            'reference_code' => $account->code,
+            'description' => $description,
+            'debit_amount' => $debitAmount,
+            'credit_amount' => $creditAmount,
+            'total_amount' => abs($balance),
+            'sort_order' => 0,
+        ]);
+
+        $equityAccount = Account::where('code', '310.100-01')
+            ->orWhere('account_type', 'like', '%equity%')
+            ->orWhere('account_type', 'like', '%modal%')
+            ->first();
+
+        if ($equityAccount) {
+            $journal->lines()->create([
+                'account_id' => $equityAccount->id,
+                'reference_code' => $equityAccount->code,
+                'description' => 'Ekuitas Saldo Awal',
+                'debit_amount' => $creditAmount,
+                'credit_amount' => $debitAmount,
+                'total_amount' => abs($balance),
+                'sort_order' => 1,
+            ]);
+        }
     }
 }

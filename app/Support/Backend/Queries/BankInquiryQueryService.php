@@ -126,10 +126,9 @@ class BankInquiryQueryService
                 ['id', 'asc'],
             ])
             ->values()
-            ->map(function (array $row) use (&$balances, $accountMap): array {
+            ->map(function (array $row) use (&$balances): array {
                 $accountId = (int) $row['account_id'];
-                $openingBalance = (float) ($accountMap->get($accountId)?->opening_balance ?? 0);
-                $currentBalance = $balances[$accountId] ?? $openingBalance;
+                $currentBalance = $balances[$accountId] ?? 0;
                 $currentBalance += (float) $row['net_amount'];
                 $balances[$accountId] = $currentBalance;
                 $row['balance'] = $this->formatNumber($currentBalance);
@@ -167,7 +166,19 @@ class BankInquiryQueryService
         $query = Account::query();
 
         if (filled($filters['account_id'] ?? null)) {
-            return $query->whereKey((int) $filters['account_id'])->get()->keyBy('id');
+            $targetAccount = Account::with('children')->find((int) $filters['account_id']);
+            if (! $targetAccount) {
+                return collect();
+            }
+
+            $accountIds = [$targetAccount->id];
+            if ($targetAccount->children->isNotEmpty()) {
+                foreach ($targetAccount->children as $child) {
+                    $accountIds[] = (int) $child->id;
+                }
+            }
+
+            return Account::whereIn('id', $accountIds)->get()->keyBy('id');
         }
 
         $accounts = $query

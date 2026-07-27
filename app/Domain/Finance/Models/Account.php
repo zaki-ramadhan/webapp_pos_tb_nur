@@ -61,4 +61,29 @@ class Account extends DomainModel
     {
         return $this->belongsToMany(User::class);
     }
+
+    protected $appends = ['current_balance'];
+
+    public function getCurrentBalanceAttribute(): float
+    {
+        $children = $this->relationLoaded('children') ? $this->children : $this->children()->get();
+
+        if ($children->isNotEmpty()) {
+            return (float) $children->sum('current_balance');
+        }
+
+        $debitSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('debit_amount');
+        $creditSum = (float) \App\Domain\Support\Models\OperationDocumentLine::where('account_id', $this->id)->sum('credit_amount');
+
+        if ($debitSum == 0.0 && $creditSum == 0.0) {
+            return (float) ($this->opening_balance ?? 0);
+        }
+
+        $type = strtolower($this->account_type ?? '');
+        if (str_contains($type, 'liability') || str_contains($type, 'equity') || str_contains($type, 'revenue') || str_contains($type, 'utang') || str_contains($type, 'modal') || str_contains($type, 'pendapatan') || str_contains($type, 'liabilitas')) {
+            return $creditSum - $debitSum;
+        }
+
+        return $debitSum - $creditSum;
+    }
 }

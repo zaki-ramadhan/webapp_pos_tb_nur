@@ -16,7 +16,21 @@ trait HasQueryHelpers
             return null;
         }
 
-        return Carbon::parse((string) $value);
+        $str = trim((string) $value);
+
+        if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $str)) {
+            try {
+                return Carbon::createFromFormat('d/m/Y', $str)->startOfDay();
+            } catch (\Throwable) {
+                // fallback
+            }
+        }
+
+        try {
+            return Carbon::parse($str);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**

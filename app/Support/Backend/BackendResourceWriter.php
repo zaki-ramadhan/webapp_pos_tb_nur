@@ -443,6 +443,19 @@ class BackendResourceWriter
                 }
             }
 
+            if (isset($payload['lines']) && is_array($payload['lines'])) {
+                foreach ($payload['lines'] as &$line) {
+                    if (empty($line['account_id']) && !empty($line['reference_code'])) {
+                        $code = trim($line['reference_code']);
+                        $accId = \App\Domain\Finance\Models\Account::where('code', $code)->value('id');
+                        if ($accId) {
+                            $line['account_id'] = $accId;
+                        }
+                    }
+                }
+                unset($line);
+            }
+
             $record->fill(Arr::only($payload, $record->getFillable()));
             $record->save();
 
@@ -627,7 +640,7 @@ class BackendResourceWriter
     /**
      * Generate nomor dokumen sekuensial urut ala Accurate.
      */
-    protected function generateNextSequentialNumber(string $resourceKey, ?string $entryDate): string
+    public function generateNextSequentialNumber(string $resourceKey, ?string $entryDate = null): string
     {
         $prefixes = [
             'sales-quotes' => 'SQ',
