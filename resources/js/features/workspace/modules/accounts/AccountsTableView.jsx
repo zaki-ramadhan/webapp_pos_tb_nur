@@ -160,7 +160,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
                         }
 
                         if (column.id === 'balance') {
-                            return <span className={row.negative ? 'text-red-500' : ''}>{row.balance}</span>;
+                            return <span className={row.negative ? 'text-red-600 font-medium' : ''}>{row.balance}</span>;
                         }
 
                         return <span className="block truncate">{row[column.id]}</span>;

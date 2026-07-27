@@ -11,6 +11,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
+import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { TransactionDualTotalCard, TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
@@ -57,30 +58,24 @@ export default function GeneralJournalFormView({
         buildRecord,
         config,
     });
-    const [values, setValues] = useState(() => buildFormState(sourceRecord, config));
-    const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
-    const initialComparable = useMemo(() => buildFormState(sourceRecord, config), [config, sourceRecord]);
+    const [values, setValues, isDirty, resetForm] = useFormDraftState({
+        sourceRecord,
+        buildFormState: (rec, cfg) => buildFormState(rec, cfg),
+        config,
+        pageId,
+        activeTabId: activeLevel2Tab?.id,
+    });
 
-    const lastInitialComparableRef = useRef(initialComparable);
+    const isDetail = Boolean(values.__backendRecordId ?? activeRecordId);
 
     useEffect(() => {
         setActiveSectionId(config.sectionTabs?.[0]?.id ?? 'details');
-        setValues(buildFormState(sourceRecord, config));
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-        lastInitialComparableRef.current = initialComparable;
-    }, [config, sourceRecord, initialComparable]);
+    }, [config, sourceRecord]);
 
     const validationMessage = useMemo(() => validateJournalValues(values, config), [config, values]);
-    const isDirty = useMemo(() => !areComparableValuesEqual(lastInitialComparableRef.current, values), [values]);
     const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
-
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
 
     async function selectLookup(resource, title, onApply) {
         try {
@@ -199,7 +194,7 @@ export default function GeneralJournalFormView({
                         label: record.document_number ?? resolvedDocumentNumber,
                         tabLabel: record.document_number ?? resolvedDocumentNumber,
                     });
-                    setValues(buildFormState(config.draft, config));
+                    resetForm(buildFormState(config.draft, config));
                 }
             },
         });

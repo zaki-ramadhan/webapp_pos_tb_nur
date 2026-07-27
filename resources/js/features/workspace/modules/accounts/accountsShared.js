@@ -120,28 +120,43 @@ export function formatBalanceLabel(value) {
         return '';
     }
 
-    return new Intl.NumberFormat('id-ID', {
+    const absVal = Math.abs(numericValue);
+    const formatted = new Intl.NumberFormat('id-ID', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
-    }).format(numericValue);
+    }).format(absVal);
+
+    if (numericValue < 0) {
+        return `-${formatted}`;
+    }
+
+    return formatted;
+}
+
+export function getRecordEffectiveBalance(record) {
+    if (record?.current_balance !== undefined) {
+        return Number(record.current_balance);
+    }
+
+    if (Array.isArray(record?.children) && record.children.length > 0) {
+        return record.children.reduce((sum, child) => {
+            return sum + getRecordEffectiveBalance(child);
+        }, 0);
+    }
+
+    return Number(record?.opening_balance ?? 0);
 }
 
 export function mapAccountRow(record) {
-    let openingBalance = Number(record.opening_balance ?? 0);
-
-    if (Array.isArray(record.children) && record.children.length > 0) {
-        openingBalance = record.children.reduce((sum, child) => {
-            return sum + Number(child.opening_balance ?? 0);
-        }, 0);
-    }
+    const effectiveBalance = getRecordEffectiveBalance(record);
 
     return {
         id: String(record.id),
         code: record.code ?? '',
         name: record.name ?? '',
         type: mapDbToUiType(record.account_type ?? ''),
-        balance: formatBalanceLabel(openingBalance),
-        negative: openingBalance < 0,
+        balance: openingBalanceLabel(effectiveBalance),
+        negative: effectiveBalance < 0,
         level: record.parent_id ? 1 : 0,
         parentId: record.parent_id ? String(record.parent_id) : null,
         inactiveValue: record.is_active === false ? 'inactive' : 'active',
@@ -154,9 +169,17 @@ export function mapAccountRow(record) {
 }
 
 export function openingBalanceLabel(value) {
-    const formattedValue = formatBalanceLabel(value);
+    const numericValue = Number(value ?? 0);
+    const absVal = Math.abs(numericValue);
+    const formattedValue = formatBalanceLabel(absVal);
 
-    return formattedValue ? `Rp ${formattedValue}` : '';
+    if (!formattedValue) return 'Rp 0';
+
+    if (numericValue < 0) {
+        return `-Rp ${formattedValue}`;
+    }
+
+    return `Rp ${formattedValue}`;
 }
 
 export function buildAccountSourceRecord(record, config) {
@@ -166,16 +189,11 @@ export function buildAccountSourceRecord(record, config) {
               code: child.code ?? '',
               name: child.name ?? '',
               level: 1,
-              openingBalance: child.opening_balance ?? 0,
+              openingBalance: getRecordEffectiveBalance(child),
           }))
         : [];
 
-    let calculatedBalance = Number(record.opening_balance ?? 0);
-    if (childAccounts.length > 0) {
-        calculatedBalance = childAccounts.reduce((sum, child) => {
-            return sum + Number(child.openingBalance ?? 0);
-        }, 0);
-    }
+    const calculatedBalance = getRecordEffectiveBalance(record);
 
     return {
         ...config.createValues,
@@ -199,6 +217,7 @@ export function buildAccountSourceRecord(record, config) {
         currency: record.currency?.name ? [record.currency.name] : [...(config.createValues.currency ?? [])],
         currencyLabel: record.currency?.name ?? config.createValues.currency?.[0] ?? '',
         balanceLabel: openingBalanceLabel(calculatedBalance),
+        negative: calculatedBalance < 0,
         branch: Array.isArray(record.branches) && record.branches.length
             ? record.branches.map((branch) => branch.name).filter(Boolean)
             : [...(config.createValues.branch ?? [])],

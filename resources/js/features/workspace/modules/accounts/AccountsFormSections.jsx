@@ -139,7 +139,9 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
 
             {isDetail ? (
                 <AccountsFormFieldRow label={config.labels.balance}>
-                    <div className="pt-1 text-lg text-brand-dark">{values.balanceLabel}</div>
+                    <div className={`pt-1 text-lg font-medium ${values.negative ? 'text-red-600' : 'text-brand-dark'}`}>
+                        {values.balanceLabel || 'Rp 0'}
+                    </div>
                 </AccountsFormFieldRow>
             ) : null}
         </div>

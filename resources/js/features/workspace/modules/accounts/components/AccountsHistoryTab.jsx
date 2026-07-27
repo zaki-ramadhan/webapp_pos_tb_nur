@@ -108,6 +108,18 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
         };
     }, [computedRows]);
 
+    const finalEndingBalance = useMemo(() => {
+        if (computedRows.length > 0) {
+            return computedRows[computedRows.length - 1].computedBalance;
+        }
+        return initialOpeningBalance;
+    }, [computedRows, initialOpeningBalance]);
+
+    const isFinalBalanceNegative = finalEndingBalance < 0;
+    const formattedFinalBalance = isFinalBalanceNegative
+        ? `-${formatCurrencyValue(finalEndingBalance)}`
+        : formatCurrencyValue(finalEndingBalance);
+
     const handleRowClick = (row) => {
         if (!row || !row.document_id || !row.document_type) return;
 
@@ -143,7 +155,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
 
     const isOpeningBalanceNegative = initialOpeningBalance < 0;
     const formattedOpeningBalance = isOpeningBalanceNegative
-        ? `(${formatCurrencyValue(initialOpeningBalance)})`
+        ? `-${formatCurrencyValue(initialOpeningBalance)}`
         : formatCurrencyValue(initialOpeningBalance);
 
     return (
@@ -200,13 +212,13 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                         <>
                             {/* Baris Saldo Awal */}
                             <DataTableRow className="hover:bg-slate-50 transition-colors select-none">
-                                <DataTableCell className="text-center text-text-light">-</DataTableCell>
-                                <DataTableCell className="font-mono font-medium text-center">-</DataTableCell>
+                                <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
+                                <DataTableCell className="text-center text-text-workspace-dark">-</DataTableCell>
                                 <DataTableCell>Saldo Awal</DataTableCell>
                                 <DataTableCell>{getOpeningDateLabel(startDate)}</DataTableCell>
-                                <DataTableCell className="text-right font-medium">0</DataTableCell>
-                                <DataTableCell className="text-center font-medium">-</DataTableCell>
-                                <DataTableCell className={`text-right font-medium ${isOpeningBalanceNegative ? 'text-red-600' : ''}`}>
+                                <DataTableCell className="text-right">0</DataTableCell>
+                                <DataTableCell className="text-center">-</DataTableCell>
+                                <DataTableCell className={`text-right ${isOpeningBalanceNegative ? 'text-red-600' : ''}`}>
                                     {formattedOpeningBalance}
                                 </DataTableCell>
                             </DataTableRow>
@@ -217,7 +229,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                                 const typeLabel = isCreditMutation ? 'Kredit' : 'Debit';
                                 const isNegativeBalance = Number(row.computedBalance ?? row.balance ?? 0) < 0;
                                 const formattedBalance = isNegativeBalance
-                                    ? `(${formatCurrencyValue(row.computedBalance ?? row.balance)})`
+                                    ? `-${formatCurrencyValue(row.computedBalance ?? row.balance)}`
                                     : formatCurrencyValue(row.computedBalance ?? row.balance);
                                 const isClickable = Boolean(row.document_id && row.document_type);
 
@@ -227,42 +239,41 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                                         onClick={() => handleRowClick(row)}
                                         className={`transition-colors ${isClickable ? 'cursor-pointer hover:bg-slate-100' : 'hover:bg-slate-50'}`}
                                     >
-                                        <DataTableCell className="text-center text-text-light">{row.date || '-'}</DataTableCell>
-                                        <DataTableCell className="font-mono font-medium">{row.source_number || '-'}</DataTableCell>
+                                        <DataTableCell className="text-center text-text-workspace-dark">{row.date || '-'}</DataTableCell>
+                                        <DataTableCell className="text-text-workspace-dark">{row.source_number || '-'}</DataTableCell>
                                         <DataTableCell>{row.transaction_type || '-'}</DataTableCell>
                                         <DataTableCell>{row.description || '-'}</DataTableCell>
-                                        <DataTableCell className={`text-right font-medium ${isCreditMutation ? 'text-red-600' : ''}`}>
+                                        <DataTableCell className={`text-right ${isCreditMutation ? 'text-red-600' : ''}`}>
                                             {formatCurrencyValue(row.mutation)}
                                         </DataTableCell>
-                                        <DataTableCell className={`text-center font-medium ${isCreditMutation ? 'text-red-600' : ''}`}>
+                                        <DataTableCell className="text-center text-text-workspace-dark">
                                             {typeLabel}
                                         </DataTableCell>
-                                        <DataTableCell className={`text-right font-medium ${isNegativeBalance ? 'text-red-600' : ''}`}>
+                                        <DataTableCell className={`text-right ${isNegativeBalance ? 'text-red-600' : ''}`}>
                                             {formattedBalance}
                                         </DataTableCell>
                                     </DataTableRow>
                                 );
                             })}
+
+                            {/* Baris Total (Dengan merge colSpan={4} & Saldo Akhir) */}
+                            <DataTableRow className="hover:bg-slate-50 transition-colors select-none">
+                                <DataTableCell colSpan={4} className="text-text-workspace-dark font-normal">
+                                    Total
+                                </DataTableCell>
+                                <DataTableCell className={`text-right ${totalMutation.isCredit ? 'text-red-600' : ''}`}>
+                                    {formatCurrencyValue(totalMutation.amount)}
+                                </DataTableCell>
+                                <DataTableCell className="text-center text-text-workspace-dark">
+                                    {totalMutation.type}
+                                </DataTableCell>
+                                <DataTableCell className={`text-right ${isFinalBalanceNegative ? 'text-red-600' : ''}`}>
+                                    {formattedFinalBalance}
+                                </DataTableCell>
+                            </DataTableRow>
                         </>
                     )}
                 </DataTableBody>
-                {computedRows.length > 0 && (
-                    <tfoot className="border-t-2 border-ui-border bg-slate-50 font-medium text-brand-dark">
-                        <tr>
-                            <td className="px-3 sm:px-4 py-2.5 text-sm text-center">-</td>
-                            <td className="px-3 sm:px-4 py-2.5 text-sm font-mono font-medium text-center">-</td>
-                            <td className="px-3 sm:px-4 py-2.5 text-sm font-medium">Total</td>
-                            <td className="px-3 sm:px-4 py-2.5 text-sm font-medium">Total</td>
-                            <td className={`px-3 sm:px-4 py-2.5 text-right text-sm font-medium ${totalMutation.isCredit ? 'text-red-600' : ''}`}>
-                                {formatCurrencyValue(totalMutation.amount)}
-                            </td>
-                            <td className={`px-3 sm:px-4 py-2.5 text-center text-sm font-medium ${totalMutation.isCredit ? 'text-red-600' : ''}`}>
-                                {totalMutation.type}
-                            </td>
-                            <td className="px-3 sm:px-4 py-2.5 text-right font-medium">-</td>
-                        </tr>
-                    </tfoot>
-                )}
             </DataTable>
         </div>
     );
