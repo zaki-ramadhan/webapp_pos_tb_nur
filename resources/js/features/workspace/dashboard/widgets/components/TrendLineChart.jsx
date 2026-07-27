@@ -155,7 +155,7 @@ export default function TrendLineChart({
                 ...(yMax !== undefined ? { max: yMax } : {}),
                 ...(stepSize !== undefined ? { stepSize } : {}),
                 grid: {
-                    color: (context) => (context.tick?.value === 0 ? 'var(--color-tab-view-active-text, #475569)' : 'var(--color-chart-grid-light)'),
+                    color: (context) => (context.tick?.value === 0 ? '#94a3b8' : '#e2e8f0'),
                     lineWidth: (context) => (context.tick?.value === 0 ? 1.5 : 1),
                 },
                 border: {
