@@ -14,9 +14,11 @@ import { buildAccountDetailRecord } from './accountsConfig';
 import {
     AccountsChildrenTab,
     AccountsGeneralTab,
+    AccountsHistoryTab,
     AccountsOpeningBalanceTab,
     AccountsOthersTab,
 } from './AccountsFormSections';
+
 import {
     buildAccountPayload,
     buildAccountSourceRecord,
@@ -64,33 +66,42 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     
     const tabs = useMemo(() => {
-        const baseTabs = isDetail
-            ? [
-                  { id: 'general', label: 'Informasi Umum' },
-                  { id: 'others', label: 'Lain-lain' },
-                  { id: 'children', label: 'Akun Anak' },
-              ]
-            : [
-                  { id: 'general', label: 'Informasi Umum' },
-                  { id: 'opening-balance', label: 'Saldo' },
-                  { id: 'others', label: 'Lain-lain' },
-              ];
+        const isSub = Boolean(values.isSubAccount || values.parentId);
 
-        const showSaldo = shouldShowSaldoTab(values.type);
-
-        if (showSaldo) {
-            if (isDetail && !baseTabs.some((t) => t.id === 'opening-balance')) {
+        if (isDetail) {
+            if (isSub) {
+                // Akun Anak (Sub Account): Informasi Umum, Saldo (jika valid), Lain-lain, Histori.
+                const subTabs = [
+                    { id: 'general', label: 'Informasi Umum' },
+                    { id: 'others', label: 'Lain-lain' },
+                ];
+                if (shouldShowSaldoTab(values.type)) {
+                    subTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
+                }
+                subTabs.push({ id: 'history', label: 'Histori' });
+                return subTabs;
+            } else {
+                // Akun Induk (Parent Account): Informasi Umum, Lain-lain, Akun Anak. (TANPA Saldo, TANPA Histori).
                 return [
-                    baseTabs[0],
-                    { id: 'opening-balance', label: 'Saldo' },
-                    ...baseTabs.slice(1),
+                    { id: 'general', label: 'Informasi Umum' },
+                    { id: 'others', label: 'Lain-lain' },
+                    { id: 'children', label: 'Akun Anak' },
                 ];
             }
-            return baseTabs;
-        } else {
-            return baseTabs.filter((t) => t.id !== 'opening-balance');
         }
-    }, [isDetail, values.type]);
+
+        // Mode Tambah Data Baru:
+        // Jika Akun Anak (isSub): Informasi Umum, Saldo (jika valid), Lain-lain.
+        // Jika Akun Induk (!isSub): Informasi Umum, Lain-lain. (TANPA Saldo).
+        const createTabs = [
+            { id: 'general', label: 'Informasi Umum' },
+            { id: 'others', label: 'Lain-lain' },
+        ];
+        if (isSub && shouldShowSaldoTab(values.type)) {
+            createTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
+        }
+        return createTabs;
+    }, [isDetail, values.isSubAccount, values.parentId, values.type]);
 
     const [activeTabId, setActiveTabId] = useState('general');
     const [status, setStatus] = useState({ tone: '', message: '' });
@@ -278,7 +289,13 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                 ) : activeTabId === 'others' ? (
                     <AccountsOthersTab config={config} values={values} isDetail={isDetail} onChange={handleChange} />
                 ) : activeTabId === 'children' ? (
-                    <AccountsChildrenTab values={values} />
+                    <AccountsChildrenTab values={values} onOpenDetail={onOpenDetail} />
+                ) : activeTabId === 'history' ? (
+                    <AccountsHistoryTab
+                        recordId={recordId}
+                        openingBalanceValue={values.openingBalanceValue}
+                        openingBalanceDate={values.openingBalanceDate}
+                    />
                 ) : (
                     <AccountsGeneralTab config={config} values={values} isDetail={isDetail} onChange={handleChange} excludeId={recordId} />
                 )}

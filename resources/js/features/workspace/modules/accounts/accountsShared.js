@@ -127,7 +127,13 @@ export function formatBalanceLabel(value) {
 }
 
 export function mapAccountRow(record) {
-    const openingBalance = Number(record.opening_balance ?? 0);
+    let openingBalance = Number(record.opening_balance ?? 0);
+
+    if (Array.isArray(record.children) && record.children.length > 0) {
+        openingBalance = record.children.reduce((sum, child) => {
+            return sum + Number(child.opening_balance ?? 0);
+        }, 0);
+    }
 
     return {
         id: String(record.id),
@@ -137,10 +143,8 @@ export function mapAccountRow(record) {
         balance: formatBalanceLabel(openingBalance),
         negative: openingBalance < 0,
         level: record.parent_id ? 1 : 0,
+        parentId: record.parent_id ? String(record.parent_id) : null,
         inactiveValue: record.is_active === false ? 'inactive' : 'active',
-        
-      // Pemetaan kolom baru
-
         currencyName: record.currency?.name ?? '-',
         openingBalanceDate: record.opening_balance_date ? formatDisplayDate(record.opening_balance_date) : '-',
         isSubAccountText: record.parent ? `${record.parent.code} - ${record.parent.name}` : '-',
@@ -162,8 +166,16 @@ export function buildAccountSourceRecord(record, config) {
               code: child.code ?? '',
               name: child.name ?? '',
               level: 1,
+              openingBalance: child.opening_balance ?? 0,
           }))
         : [];
+
+    let calculatedBalance = Number(record.opening_balance ?? 0);
+    if (childAccounts.length > 0) {
+        calculatedBalance = childAccounts.reduce((sum, child) => {
+            return sum + Number(child.openingBalance ?? 0);
+        }, 0);
+    }
 
     return {
         ...config.createValues,
@@ -186,7 +198,7 @@ export function buildAccountSourceRecord(record, config) {
         name: record.name ?? '',
         currency: record.currency?.name ? [record.currency.name] : [...(config.createValues.currency ?? [])],
         currencyLabel: record.currency?.name ?? config.createValues.currency?.[0] ?? '',
-        balanceLabel: openingBalanceLabel(record.opening_balance),
+        balanceLabel: openingBalanceLabel(calculatedBalance),
         branch: Array.isArray(record.branches) && record.branches.length
             ? record.branches.map((branch) => branch.name).filter(Boolean)
             : [...(config.createValues.branch ?? [])],

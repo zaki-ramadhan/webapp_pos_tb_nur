@@ -1,3 +1,5 @@
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
 const accountTopActions = [
     {
         id: 'tips',
@@ -53,7 +55,7 @@ const accountCreateValues = {
     branchIds: [1],
     branch: ['JAKARTA'],
     openingBalanceValue: '',
-    openingBalanceDate: '30/09/2016',
+    openingBalanceDate: buildTodayDisplayDate(),
     notes: '',
     allUsers: true,
 };

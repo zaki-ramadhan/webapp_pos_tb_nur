@@ -15,6 +15,8 @@ import {
     AccountsReadonlyTrailingIcon,
 } from './accountsViewShared';
 
+import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+
 export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupData, excludeId }) {
     const selectedParentAccount = useMemo(() => {
         if (!values.parentId) return [];
@@ -24,27 +26,38 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
         return [{ id: values.parentId, code, name, label }];
     }, [values.parentId, values.parentAccountLabel, values.parentAccountCode, values.parentAccountName, values.parentAccount]);
 
+    const isSubAccountEdit = isDetail && Boolean(values.isSubAccount || values.parentId);
+
     return (
         <div className="grid grid-cols-1 gap-y-3.5 max-w-[980px]">
             <AccountsFormFieldRow label={config.labels.type}>
-                <SelectField
-                    value={values.type}
-                    onChange={(event) => onChange('type', event.target.value)}
-                    className="h-[40px] rounded-[4px] border-ui-border"
-                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                >
-                    {config.typeOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </SelectField>
+                {isSubAccountEdit ? (
+                    <TextInput
+                        value={values.type}
+                        readOnly
+                        className="h-[40px] rounded-[4px] border-ui-border bg-slate-100"
+                        inputClassName="text-xs sm:text-sm text-brand-dark font-medium"
+                    />
+                ) : (
+                    <SelectField
+                        value={values.type}
+                        onChange={(event) => onChange('type', event.target.value)}
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
+                    >
+                        {config.typeOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </SelectField>
+                )}
             </AccountsFormFieldRow>
 
             <div className="grid gap-3 lg:grid-cols-[180px_minmax(0,430px)] lg:items-start">
                 <div className="pt-2 lg:pt-1.5 flex items-center">
                     <CheckboxField
-                        id="accounts-sub-account"
+                        id={`accounts-sub-account-${excludeId ?? 'new'}`}
                         label={config.labels.isSubAccount}
                         checked={Boolean(values.isSubAccount)}
                         onChange={(event) => {
@@ -61,8 +74,8 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             }
                         }}
                         align="center"
-                        labelClassName="text-xs sm:text-sm font-normal text-brand-dark"
-                        inputClassName="mt-0 h-[18px] w-[18px]"
+                        labelClassName="text-xs sm:text-sm font-normal text-brand-dark cursor-pointer"
+                        inputClassName="mt-0 h-[18px] w-[18px] cursor-pointer"
                         containerClassName="w-auto"
                     />
                 </div>
@@ -116,9 +129,11 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                         className="h-[40px] rounded-[4px] border-ui-border"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
-                    <p className="mt-2.5 text-xs sm:text-sm font-normal italic text-text-light leading-relaxed">
-                        {config.helperText.nameExample}
-                    </p>
+                    {['kas dan bank', 'cash/bank'].includes(String(values.type ?? '').toLowerCase().trim()) ? (
+                        <p className="mt-2.5 text-xs sm:text-sm font-normal italic text-text-light leading-relaxed">
+                            {config.helperText.nameExample}
+                        </p>
+                    ) : null}
                 </div>
             </div>
 
@@ -143,7 +158,7 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
                         onChange={(event) => onChange('openingBalanceValue', sanitizeNumericInput(event.target.value))}
                         prefix="Rp"
                         maxLength={11}
-                        className="h-[40px] rounded-[4px] border-ui-border"
+                        className="h-[40px] rounded-[4px] border-ui-border w-full max-w-[200px]"
                         prefixClassName="min-w-[34px] bg-input-prefix-bg-compact px-3 text-text-inactive"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
@@ -151,10 +166,9 @@ export function AccountsOpeningBalanceTab({ config, values, onChange }) {
 
                 <AccountsFormFieldRow label={config.labels.openingBalanceDate}>
                     <TransactionDateInput
-                        value={values.openingBalanceDate}
+                        value={values.openingBalanceDate || buildTodayDisplayDate()}
                         onChange={(nextValue) => onChange('openingBalanceDate', nextValue)}
-                        disableAutoInit={true}
-                        className="max-w-[430px]"
+                        className="w-full max-w-[200px]"
                     />
                 </AccountsFormFieldRow>
             </div>
@@ -193,17 +207,6 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
                 />
             </AccountsFormFieldRow>
 
-            {isDetail ? (
-                <AccountsFormFieldRow label={config.labels.cashBankReference}>
-                    <TextInput
-                        value={values.cashBankReference}
-                        readOnly
-                        className="h-[40px] rounded-[4px] border-green-370 bg-success-bg"
-                        inputClassName="text-xs sm:text-sm text-green-820"
-                        containerClassName="w-full max-w-[280px]"
-                    />
-                </AccountsFormFieldRow>
-            ) : null}
 
             <div className="border-b border-ui-border-medium pb-2.5">
                 <h3 className="text-lg font-medium text-brand-dark">{config.headingLabels.userAccess}</h3>
@@ -269,42 +272,5 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
     );
 }
 
-export function AccountsChildrenTab({ values }) {
-    if (!values.childAccounts || values.childAccounts.length === 0) {
-        return (
-            <div className="w-full flex justify-center py-6">
-                <EmptyState
-                    title="Tidak Ada Akun Anak"
-                    description="Akun perkiraan ini tidak memiliki sub-akun/akun anak."
-                    iconName="default"
-                    size="sm"
-                    tone="subtle"
-                />
-            </div>
-        );
-    }
-
-    return (
-        <div className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_310px]">
-            <div className="space-y-1.5">
-                {values.childAccounts.map((item) => (
-                    <div
-                        key={`${item.id}-name`}
-                        className="rounded-[3px] bg-bg-disabled-dark px-4 py-2.5 text-xs sm:text-sm text-brand-dark"
-                        style={{ paddingLeft: `${16 + item.level * 18}px` }}
-                    >
-                        {item.name}
-                    </div>
-                ))}
-            </div>
-
-            <div className="space-y-1.5">
-                {values.childAccounts.map((item) => (
-                    <div key={`${item.id}-code`} className="rounded-[3px] bg-bg-disabled-dark px-4 py-2.5 text-xs sm:text-sm text-brand-dark">
-                        {item.code}
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
+export { AccountsChildrenTab } from './components/AccountsChildrenTab';
+export { AccountsHistoryTab } from './components/AccountsHistoryTab';

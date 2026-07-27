@@ -48,6 +48,8 @@ class BankInquiryQueryService
             ->map(function (array $row, int $index): array {
                 return [
                     'id' => $row['id'],
+                    'document_id' => $row['document_id'] ?? null,
+                    'document_type' => $row['document_type'] ?? null,
                     'date' => $row['date_label'],
                     'source_number' => $row['document_number'],
                     'check_number' => $row['check_number'],
@@ -334,6 +336,8 @@ class BankInquiryQueryService
 
         return [
             'id' => $id,
+            'document_id' => $document->id,
+            'document_type' => $document->document_type,
             'account_id' => $accountId,
             'account_name' => $accountName,
             'document_number' => (string) $document->document_number,
@@ -343,7 +347,7 @@ class BankInquiryQueryService
             'debit' => $this->formatNumber($debit),
             'credit' => $this->formatNumber($credit),
             'mutation' => $this->formatNumber(abs($netAmount)),
-            'type' => $netAmount >= 0 ? 'Debit' : 'Credit',
+            'type' => $netAmount >= 0 ? 'Debit' : 'Kredit',
             'status' => $document->is_closed ? 'Reconciled' : 'Open',
             'date_label' => $date->format('Y-m-d'),
             'sortable_date' => $date->toDateString(),

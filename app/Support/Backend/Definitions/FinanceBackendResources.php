@@ -67,7 +67,7 @@ class FinanceBackendResources
                 label: 'Accounts',
                 searchColumns: ['code', 'name', 'account_type', 'notes'],
                 modelClass: Account::class,
-                with: ['parent', 'currency', 'branches', 'users'],
+                with: ['parent', 'children', 'currency', 'branches', 'users'],
                 indexRules: [
                     'account_type' => ['sometimes'],
                     'exclude_type' => ['sometimes'],
