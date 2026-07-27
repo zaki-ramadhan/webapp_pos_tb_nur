@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Calculator } from 'lucide-react';
+import DocumentStamp from '@/components/ui/DocumentStamp';
 import { buildCurrencyValue, TransactionSectionHeading } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { TableActionIcon } from '@/features/workspace/shared/Icons';
 import { parseNumericInput } from '@/features/workspace/backend/operationDocumentBackend';
@@ -111,8 +112,7 @@ export function SalesDocumentSmartlinkSection() {
         </div>
     );
 }
-
-export function SalesDocumentFooter({ values, setValues }) {
+export function SalesDocumentFooter({ values, setValues, isDetail, pageId }) {
     const [discountInputVal, setDiscountInputVal] = useState(values.discountValue ?? '0');
 
     useEffect(() => {

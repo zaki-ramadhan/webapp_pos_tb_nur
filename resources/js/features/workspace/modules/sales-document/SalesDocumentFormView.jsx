@@ -18,6 +18,7 @@ import SalesDocumentItemModal from '@/features/workspace/modules/sales-document/
 import SalesDocumentItemEditModal from '@/features/workspace/modules/sales-document/SalesDocumentItemEditModal';
 import SalesDocumentCostEditModal from '@/features/workspace/modules/sales-document/SalesDocumentCostEditModal';
 import SalesDocumentAdvanceEditModal from '@/features/workspace/modules/sales-document/SalesDocumentAdvanceEditModal';
+import DocumentStamp from '@/components/ui/DocumentStamp';
 import {
     buildSalesDocumentFormState,
     SalesDocumentAdditionalCostSection,
@@ -500,11 +501,21 @@ export default function SalesDocumentFormView({
                 sectionTabs={resolvedSectionTabs}
                 activeSectionId={activeSectionId}
                 onSectionChange={setActiveSectionId}
-                footer={config.showFooter !== false ? <SalesDocumentFooter values={values} setValues={setValues} /> : null}
+                footer={config.showFooter !== false ? <SalesDocumentFooter values={values} setValues={setValues} isDetail={isDetail} pageId={pageId} /> : null}
                 dockActions={dockActions}
             >
                 <CrudStatusMessage status={status} className="mb-4" />
                 <div className="relative flex-1 flex flex-col min-h-0">
+                    {isDetail && (pageId === 'sales-invoice' || pageId === 'purchase-invoice') ? (
+                        <DocumentStamp
+                            label={
+                                values.status === 'Lunas' || (values.outstandingAmount !== undefined && parseNumericInput(values.outstandingAmount) <= 0)
+                                    ? 'LUNAS'
+                                    : 'BELUM LUNAS'
+                            }
+                            className="absolute bottom-4 right-12 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none"
+                        />
+                    ) : null}
                     <ActiveSectionComponent
                         {...buildSectionProps(activeSectionId, config, values, setValues, isDetail, handlers)}
                     />

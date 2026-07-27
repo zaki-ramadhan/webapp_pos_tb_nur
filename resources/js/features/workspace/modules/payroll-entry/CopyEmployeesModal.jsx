@@ -4,6 +4,14 @@ import SelectField from '@/components/ui/SelectField';
 import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
 import Checkbox from '@/components/ui/Checkbox';
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableHead,
+    DataTableHeader,
+    DataTableRow,
+} from '@/components/ui/DataTable';
 import { listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInput';
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
