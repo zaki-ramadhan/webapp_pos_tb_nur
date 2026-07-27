@@ -55,7 +55,8 @@ export default function TrendLineChart({
         stepSize = valueFormat === 'currency' ? 25000 : 1;
         if (minVal < 0) {
             yMin = Math.floor(minVal / stepSize) * stepSize;
-            yMax = Math.ceil(maxVal / stepSize) * stepSize;
+            const computedMax = Math.ceil(maxVal / stepSize) * stepSize;
+            yMax = computedMax > 0 ? computedMax : stepSize * 2;
         } else {
             yMin = 0;
             yMax = yDivisions * stepSize;
@@ -63,10 +64,11 @@ export default function TrendLineChart({
     } else {
         if (minVal < 0) {
             yMin = Math.floor(minVal / stepSize) * stepSize;
-            yMax = Math.ceil(maxVal / stepSize) * stepSize;
+            const computedMax = Math.ceil(maxVal / stepSize) * stepSize;
+            yMax = computedMax > 0 ? computedMax : stepSize * 2;
         } else {
             yMin = 0;
-            yMax = Math.ceil(maxVal / stepSize) * stepSize;
+            yMax = Math.max(Math.ceil(maxVal / stepSize) * stepSize, yDivisions * stepSize);
         }
     }
 
@@ -153,7 +155,8 @@ export default function TrendLineChart({
                 ...(yMax !== undefined ? { max: yMax } : {}),
                 ...(stepSize !== undefined ? { stepSize } : {}),
                 grid: {
-                    color: 'var(--color-chart-grid-light)',
+                    color: (context) => (context.tick?.value === 0 ? 'var(--color-tab-view-active-text, #475569)' : 'var(--color-chart-grid-light)'),
+                    lineWidth: (context) => (context.tick?.value === 0 ? 1.5 : 1),
                 },
                 border: {
                     display: false,
