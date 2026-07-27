@@ -60,6 +60,7 @@ class BankInquiryQueryService
                     'debit' => $row['debit'],
                     'credit' => $row['credit'],
                     'balance' => $row['balance'],
+                    'is_opening_balance' => (bool) ($row['is_opening_balance'] ?? false),
                     'index' => $index + 1,
                     'account_id' => $row['account_id'],
                     'account_name' => $row['account_name'],
@@ -363,6 +364,7 @@ class BankInquiryQueryService
             'date_label' => $date->format('Y-m-d'),
             'sortable_date' => $date->toDateString(),
             'net_amount' => $netAmount,
+            'is_opening_balance' => (bool) ($document->metadata['is_opening_balance'] ?? false),
         ];
     }
 

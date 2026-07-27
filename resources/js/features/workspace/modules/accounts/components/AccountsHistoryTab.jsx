@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { listBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
+import { listBackendResource, getBackendResource } from '@/features/workspace/backend/workspaceBackendApi';
 import { TransactionDateInput } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import { buildFirstDayOfMonthDisplayDate, buildTodayDisplayDate, formatDisplayDate } from '@/features/workspace/shared/dateDefaults';
 import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
@@ -17,6 +17,21 @@ function formatCurrencyValue(amount) {
     const val = Number(amount ?? 0);
     if (!Number.isFinite(val) || val === 0) return '0';
     return formatAmountInput(Math.abs(val));
+}
+
+function formatHistoryDate(dateVal) {
+    if (!dateVal) return '-';
+    if (typeof dateVal === 'string') {
+        const parts = dateVal.trim().split(/[/.-]/);
+        if (parts.length === 3) {
+            if (parts[0].length === 4) {
+                return `${parts[2].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[0]}`;
+            } else if (parts[2].length === 4) {
+                return `${parts[0].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[2]}`;
+            }
+        }
+    }
+    return String(dateVal);
 }
 
 function getOpeningDateLabel(startDateStr) {
@@ -37,22 +52,34 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
     const [startDate, setStartDate] = useState(() => buildFirstDayOfMonthDisplayDate());
     const [endDate, setEndDate] = useState(() => buildTodayDisplayDate());
     const [rows, setRows] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [accountInfo, setAccountInfo] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const initialOpeningBalance = Number(openingBalanceValue ?? 0);
-    const hasOpeningBalance = initialOpeningBalance !== 0;
+    const initialOpeningBalance = useMemo(() => {
+        if (accountInfo && accountInfo.opening_balance !== undefined && accountInfo.opening_balance !== null) {
+            return Number(accountInfo.opening_balance ?? 0);
+        }
+        return Number(openingBalanceValue ?? 0);
+    }, [accountInfo, openingBalanceValue]);
 
     const loadHistory = async () => {
         if (!recordId) return;
         setLoading(true);
         try {
-            const res = await listBackendResource('bank-histories', {
-                account_id: recordId,
-                start_date: startDate,
-                end_date: endDate,
-                per_page: 200,
-            });
-            setRows(Array.isArray(res?.data) ? res.data : []);
+            const [historyRes, accountRes] = await Promise.all([
+                listBackendResource('bank-histories', {
+                    account_id: recordId,
+                    start_date: startDate,
+                    end_date: endDate,
+                    per_page: 200,
+                }),
+                getBackendResource('accounts', recordId).catch(() => null),
+            ]);
+
+            setRows(Array.isArray(historyRes?.data) ? historyRes.data : []);
+            if (accountRes) {
+                setAccountInfo(accountRes);
+            }
         } catch (error) {
             console.error('Failed to load account history', error);
             setRows([]);
@@ -78,12 +105,21 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [recordId, startDate, endDate]);
 
-    // Akumulasi saldo riil secara progresif dari Saldo Awal
+    // Akumulasi saldo riil secara progresif dari Saldo Awal (deduplikasi jurnal saldo awal)
     const computedRows = useMemo(() => {
+        const realRows = rows.filter((r) => {
+            const isOpBal = Boolean(
+                r.is_opening_balance ||
+                (r.description && String(r.description).startsWith('Saldo Awal akun'))
+            );
+            return !isOpBal;
+        });
+
         let currentBal = initialOpeningBalance;
-        return rows.map((r) => {
-            const debit = Number(r.debit ?? 0);
-            const credit = Number(r.credit ?? 0);
+        return realRows.map((r) => {
+            const isCreditMutation = r.type === 'Kredit' || r.type === 'Cr' || r.type === 'Credit' || Number(r.credit ?? 0) > 0;
+            const debit = Number(r.debit ?? (isCreditMutation ? 0 : r.mutation) ?? 0);
+            const credit = Number(r.credit ?? (isCreditMutation ? r.mutation : 0) ?? 0);
             const net = debit - credit;
             currentBal += net;
             return {
@@ -97,8 +133,11 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
         let debits = 0;
         let credits = 0;
         computedRows.forEach((r) => {
-            debits += Number(r.debit ?? 0);
-            credits += Number(r.credit ?? 0);
+            const isCreditMutation = r.type === 'Kredit' || r.type === 'Cr' || r.type === 'Credit' || Number(r.credit ?? 0) > 0;
+            const debit = Number(r.debit ?? (isCreditMutation ? 0 : r.mutation) ?? 0);
+            const credit = Number(r.credit ?? (isCreditMutation ? r.mutation : 0) ?? 0);
+            debits += debit;
+            credits += credit;
         });
         const diff = debits - credits;
         return {
@@ -115,9 +154,9 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
         return initialOpeningBalance;
     }, [computedRows, initialOpeningBalance]);
 
-    const isFinalBalanceNegative = finalEndingBalance < 0;
+    const isFinalBalanceNegative = Number(finalEndingBalance ?? 0) < 0;
     const formattedFinalBalance = isFinalBalanceNegative
-        ? `-${formatCurrencyValue(finalEndingBalance)}`
+        ? `-${formatCurrencyValue(Math.abs(finalEndingBalance))}`
         : formatCurrencyValue(finalEndingBalance);
 
     const handleRowClick = (row) => {
@@ -153,9 +192,9 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
         );
     };
 
-    const isOpeningBalanceNegative = initialOpeningBalance < 0;
+    const isOpeningBalanceNegative = Number(initialOpeningBalance ?? 0) < 0;
     const formattedOpeningBalance = isOpeningBalanceNegative
-        ? `-${formatCurrencyValue(initialOpeningBalance)}`
+        ? `-${formatCurrencyValue(Math.abs(initialOpeningBalance))}`
         : formatCurrencyValue(initialOpeningBalance);
 
     return (
@@ -168,7 +207,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                         className="w-full"
                     />
                 </div>
-                <span className="text-xs sm:text-sm text-text-light font-medium px-1">s/d</span>
+                <span className="text-xs text-slate-500 font-normal">s/d</span>
                 <div className="w-[160px]">
                     <TransactionDateInput
                         value={endDate}
@@ -186,7 +225,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
             <DataTable>
                 <DataTableHeader className="bg-[#476278]">
                     <DataTableRow className="border-b-0">
-                        <DataTableHead className="text-center w-[120px] text-white">Tanggal</DataTableHead>
+                        <DataTableHead className="text-center w-[120px] whitespace-nowrap text-white">Tanggal</DataTableHead>
                         <DataTableHead className="w-[160px] text-white">No. Sumber #</DataTableHead>
                         <DataTableHead className="w-[160px] text-white">Tipe Transaksi</DataTableHead>
                         <DataTableHead className="w-[240px] text-white">Keterangan</DataTableHead>
@@ -202,12 +241,6 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                                 Memuat data...
                             </DataTableCell>
                         </DataTableRow>
-                    ) : computedRows.length === 0 ? (
-                        <DataTableRow className="bg-white">
-                            <DataTableCell colSpan={7} className="py-6 text-center text-sm text-text-workspace-dark">
-                                Tidak ada data
-                            </DataTableCell>
-                        </DataTableRow>
                     ) : (
                         <>
                             {/* Baris Saldo Awal */}
@@ -218,7 +251,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                                 <DataTableCell>{getOpeningDateLabel(startDate)}</DataTableCell>
                                 <DataTableCell className="text-right">0</DataTableCell>
                                 <DataTableCell className="text-center">-</DataTableCell>
-                                <DataTableCell className={`text-right ${isOpeningBalanceNegative ? 'text-red-600' : ''}`}>
+                                <DataTableCell className={`text-right ${isOpeningBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
                                     {formattedOpeningBalance}
                                 </DataTableCell>
                             </DataTableRow>
@@ -227,10 +260,11 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                             {computedRows.map((row, index) => {
                                 const isCreditMutation = row.type === 'Kredit' || row.type === 'Cr' || row.type === 'Credit' || Number(row.credit ?? 0) > 0;
                                 const typeLabel = isCreditMutation ? 'Kredit' : 'Debit';
-                                const isNegativeBalance = Number(row.computedBalance ?? row.balance ?? 0) < 0;
+                                const balVal = Number(row.computedBalance ?? row.balance ?? 0);
+                                const isNegativeBalance = balVal < 0;
                                 const formattedBalance = isNegativeBalance
-                                    ? `-${formatCurrencyValue(row.computedBalance ?? row.balance)}`
-                                    : formatCurrencyValue(row.computedBalance ?? row.balance);
+                                    ? `-${formatCurrencyValue(Math.abs(balVal))}`
+                                    : formatCurrencyValue(balVal);
                                 const isClickable = Boolean(row.document_id && row.document_type);
 
                                 return (
@@ -239,7 +273,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                                         onClick={() => handleRowClick(row)}
                                         className={`transition-colors ${isClickable ? 'cursor-pointer hover:bg-slate-100' : 'hover:bg-slate-50'}`}
                                     >
-                                        <DataTableCell className="text-center text-text-workspace-dark">{row.date || '-'}</DataTableCell>
+                                        <DataTableCell className="text-center whitespace-nowrap text-text-workspace-dark">{formatHistoryDate(row.date)}</DataTableCell>
                                         <DataTableCell className="text-text-workspace-dark">{row.source_number || '-'}</DataTableCell>
                                         <DataTableCell>{row.transaction_type || '-'}</DataTableCell>
                                         <DataTableCell>{row.description || '-'}</DataTableCell>
@@ -249,7 +283,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                                         <DataTableCell className="text-center text-text-workspace-dark">
                                             {typeLabel}
                                         </DataTableCell>
-                                        <DataTableCell className={`text-right ${isNegativeBalance ? 'text-red-600' : ''}`}>
+                                        <DataTableCell className={`text-right ${isNegativeBalance ? 'text-red-600' : 'text-slate-700'}`}>
                                             {formattedBalance}
                                         </DataTableCell>
                                     </DataTableRow>
@@ -267,7 +301,7 @@ export function AccountsHistoryTab({ recordId, openingBalanceValue = 0, openingB
                                 <DataTableCell className="text-center text-text-workspace-dark">
                                     {totalMutation.type}
                                 </DataTableCell>
-                                <DataTableCell className={`text-right ${isFinalBalanceNegative ? 'text-red-600' : ''}`}>
+                                <DataTableCell className={`text-right ${isFinalBalanceNegative ? 'text-red-600' : 'text-slate-700'}`}>
                                     {formattedFinalBalance}
                                 </DataTableCell>
                             </DataTableRow>

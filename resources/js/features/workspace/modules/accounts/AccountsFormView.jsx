@@ -66,22 +66,24 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     const [values, setValues] = useState(() => buildFormState(sourceRecord));
     
     const tabs = useMemo(() => {
-        const isSub = Boolean(values.isSubAccount || values.parentId);
+        const isSub = isDetail
+            ? (backendRecord ? Boolean(backendRecord.is_sub_account || backendRecord.parent_id || !backendRecord.has_children) : true)
+            : Boolean(values.isSubAccount || values.parentId);
 
         if (isDetail) {
             if (isSub) {
-                // Akun Anak (Sub Account): Informasi Umum, Saldo (jika valid), Lain-lain, Histori.
+                // Akun Anak / Akun Transaksi: Informasi Umum, Saldo (jika valid), Lain-lain, Histori.
                 const subTabs = [
                     { id: 'general', label: 'Informasi Umum' },
                     { id: 'others', label: 'Lain-lain' },
                 ];
-                if (shouldShowSaldoTab(values.type)) {
+                if (shouldShowSaldoTab(values.type || backendRecord?.type || backendRecord?.account_type)) {
                     subTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
                 }
                 subTabs.push({ id: 'history', label: 'Histori' });
                 return subTabs;
             } else {
-                // Akun Induk (Parent Account): Informasi Umum, Lain-lain, Akun Anak. (TANPA Saldo, TANPA Histori).
+                // Akun Induk (Parent Account dengan anak): Informasi Umum, Lain-lain, Akun Anak.
                 return [
                     { id: 'general', label: 'Informasi Umum' },
                     { id: 'others', label: 'Lain-lain' },
@@ -91,8 +93,6 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         }
 
         // Mode Tambah Data Baru:
-        // Jika Akun Anak (isSub): Informasi Umum, Saldo (jika valid), Lain-lain.
-        // Jika Akun Induk (!isSub): Informasi Umum, Lain-lain. (TANPA Saldo).
         const createTabs = [
             { id: 'general', label: 'Informasi Umum' },
             { id: 'others', label: 'Lain-lain' },
@@ -101,7 +101,7 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             createTabs.splice(1, 0, { id: 'opening-balance', label: 'Saldo' });
         }
         return createTabs;
-    }, [isDetail, values.isSubAccount, values.parentId, values.type]);
+    }, [isDetail, backendRecord, values.isSubAccount, values.parentId, values.type]);
 
     const [activeTabId, setActiveTabId] = useState('general');
     const [status, setStatus] = useState({ tone: '', message: '' });
