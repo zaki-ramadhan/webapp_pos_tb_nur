@@ -1,4 +1,4 @@
-import { normalizeDisplayDate } from './dateHelpers';
+import { normalizeDisplayDate, formatIsoDate } from './dateHelpers';
 
 export const BACKEND_BANK_RESOURCES = {
     'bank-statement': 'bank-statements',
@@ -20,7 +20,7 @@ export function mapBankRows(pageId, records) {
         if (pageId === 'bank-history') {
             return {
                 id: record.id,
-                date: record.date ?? '',
+                date: formatIsoDate(record.date),
                 sourceNumber: record.source_number ?? '',
                 checkNumber: record.check_number ?? '',
                 transactionType: record.transaction_type ?? '',
@@ -37,7 +37,7 @@ export function mapBankRows(pageId, records) {
         if (pageId === 'bank-reconciliation') {
             return {
                 id: record.id,
-                date: record.date ?? '',
+                date: formatIsoDate(record.date),
                 documentNumber: record.document_number ?? '',
                 transactionType: record.transaction_type ?? '',
                 description: record.description ?? '',
