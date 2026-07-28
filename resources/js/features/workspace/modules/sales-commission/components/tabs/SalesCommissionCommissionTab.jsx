@@ -1,0 +1,238 @@
+import CheckboxField from '@/components/ui/CheckboxField';
+import SelectField from '@/components/ui/SelectField';
+import TextInput from '@/components/ui/TextInput';
+import RadioField from '@/components/ui/RadioField';
+
+function FormFieldRow({ label, required = false, align = 'center', children }) {
+    return (
+        <div className={`grid gap-3 lg:grid-cols-[440px_minmax(0,1fr)] ${align === 'start' ? 'lg:items-start' : 'lg:items-center'}`.trim()}>
+            <label className={`${align === 'start' ? 'pt-2' : ''} text-base leading-[1.35] text-brand-dark`.trim()}>
+                {label}
+                {required ? <span className="text-tab-active-border-t"> *</span> : null}
+            </label>
+            <div>{children}</div>
+        </div>
+    );
+}
+
+function RadioOption({ checked, label, onChange }) {
+    return (
+        <RadioField
+            id={label}
+            checked={checked}
+            onChange={onChange}
+            label={label}
+            inputClassName="h-[22px] w-[22px] border-ui-border"
+            containerClassName="w-auto inline-flex items-center"
+        />
+    );
+}
+
+export function SalesCommissionCommissionTab({ config, values, setValues }) {
+    const setValue = (field, nextValue) =>
+        setValues((current) => ({
+            ...current,
+            [field]: nextValue,
+        }));
+
+    const toggleOrderSelection = (optionId, checked) =>
+        setValues((current) => ({
+            ...current,
+            orderSelections: checked
+                ? [...new Set([...current.orderSelections, optionId])]
+                : current.orderSelections.filter((value) => value !== optionId),
+        }));
+
+    return (
+        <div className="space-y-3">
+            <FormFieldRow label={config.labels.period}>
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+                    {config.periodOptions.map((option) => (
+                        <RadioOption
+                            key={option.id}
+                            checked={values.periodType === option.id}
+                            label={option.label}
+                            onChange={() => setValue('periodType', option.id)}
+                        />
+                    ))}
+                </div>
+            </FormFieldRow>
+
+            <FormFieldRow label={config.labels.name} required>
+                <TextInput
+                    value={values.name}
+                    onChange={(event) => setValue('name', event.target.value)}
+                    className="h-[40px] rounded-[4px] border-ui-border"
+                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                />
+            </FormFieldRow>
+
+            <FormFieldRow label={config.labels.salespeople} required>
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+                    {config.salespeopleOptions.map((option) => (
+                        <RadioOption
+                            key={option.id}
+                            checked={values.sellerScope === option.id}
+                            label={option.label}
+                            onChange={() => setValue('sellerScope', option.id)}
+                        />
+                    ))}
+                </div>
+            </FormFieldRow>
+
+            <FormFieldRow label={config.labels.order} required align="start">
+                <div className="grid gap-3 xl:grid-cols-5">
+                    {config.orderOptions.map((option) => (
+                        <CheckboxField
+                            key={option.id}
+                            id={`commission-order-${option.id}`}
+                            label={option.label}
+                            checked={values.orderSelections.includes(option.id)}
+                            onChange={(event) => toggleOrderSelection(option.id, event.target.checked)}
+                            align="center"
+                            labelClassName="text-base"
+                            inputClassName="mt-0 h-[18px] w-[18px]"
+                            containerClassName="w-auto"
+                        />
+                    ))}
+                </div>
+            </FormFieldRow>
+
+            <FormFieldRow label={config.labels.productScope} required>
+                <SelectField
+                    value={values.productScope}
+                    onChange={(event) => setValue('productScope', event.target.value)}
+                    className="h-[40px] max-w-[426px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs sm:text-sm text-brand-dark"
+                >
+                    {config.productScopeOptions.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </SelectField>
+            </FormFieldRow>
+
+            <FormFieldRow label={config.labels.supplierScope} required>
+                <SelectField
+                    value={values.supplierScope}
+                    onChange={(event) => setValue('supplierScope', event.target.value)}
+                    className="h-[40px] max-w-[426px] rounded-[4px] border-ui-border"
+                    selectClassName="text-xs sm:text-sm text-brand-dark"
+                >
+                    {config.supplierScopeOptions.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </SelectField>
+            </FormFieldRow>
+
+            <FormFieldRow label={config.labels.condition} required align="start">
+                <div className="space-y-3">
+                    <RadioOption
+                        checked={values.conditionType === 'none'}
+                        label={config.conditionOptions.none}
+                        onChange={() => setValue('conditionType', 'none')}
+                    />
+
+                    <div className="grid gap-3 xl:grid-cols-[440px_1fr_70px_1fr] xl:items-center">
+                        <RadioOption
+                            checked={values.conditionType === 'sales-range'}
+                            label={config.conditionOptions.salesRange}
+                            onChange={() => setValue('conditionType', 'sales-range')}
+                        />
+                        <TextInput
+                            value={values.salesValueFrom}
+                            onChange={(event) => setValue('salesValueFrom', event.target.value)}
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
+                        <div className="text-center text-xs sm:text-sm text-brand-dark">s/d</div>
+                        <TextInput
+                            value={values.salesValueTo}
+                            onChange={(event) => setValue('salesValueTo', event.target.value)}
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
+                    </div>
+
+                    <div className="grid gap-3 xl:grid-cols-[440px_1fr_70px_1fr] xl:items-center">
+                        <RadioOption
+                            checked={values.conditionType === 'quantity-range'}
+                            label={config.conditionOptions.quantityRange}
+                            onChange={() => setValue('conditionType', 'quantity-range')}
+                        />
+                        <TextInput
+                            value={values.quantityFrom}
+                            onChange={(event) => setValue('quantityFrom', event.target.value)}
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
+                        <div className="text-center text-xs sm:text-sm text-brand-dark">s/d</div>
+                        <TextInput
+                            value={values.quantityTo}
+                            onChange={(event) => setValue('quantityTo', event.target.value)}
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
+                    </div>
+
+                    <div className="grid gap-3 xl:grid-cols-[440px_1fr_420px] xl:items-center">
+                        <RadioOption
+                            checked={values.conditionType === 'quantity-unit'}
+                            label={config.conditionOptions.quantityUnit}
+                            onChange={() => setValue('conditionType', 'quantity-unit')}
+                        />
+                        <TextInput
+                            value={values.quantityUnit}
+                            onChange={(event) => setValue('quantityUnit', event.target.value)}
+                            className="h-[34px] rounded-[4px] border-ui-border"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
+                        />
+                        <div className="text-xs sm:text-sm text-brand-dark">{config.conditionUnitLabel}</div>
+                    </div>
+                </div>
+            </FormFieldRow>
+
+            <FormFieldRow label={config.labels.reward} required>
+                <div className="grid gap-3 xl:grid-cols-[170px_270px_120px_420px] xl:items-center">
+                    <SelectField
+                        value={values.rewardType}
+                        onChange={(event) => setValue('rewardType', event.target.value)}
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
+                    >
+                        {config.rewardTypeOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </SelectField>
+
+                    <TextInput
+                        value={values.rewardValue}
+                        onChange={(event) => setValue('rewardValue', event.target.value)}
+                        className="h-[34px] rounded-[4px] border-ui-border"
+                        inputClassName="text-right text-xs sm:text-sm text-brand-dark"
+                    />
+
+                    <div className="text-center text-xs sm:text-sm text-brand-dark">{config.rewardMiddleLabel}</div>
+
+                    <SelectField
+                        value={values.rewardBase}
+                        onChange={(event) => setValue('rewardBase', event.target.value)}
+                        className="h-[40px] rounded-[4px] border-ui-border"
+                        selectClassName="text-xs sm:text-sm text-brand-dark"
+                    >
+                        {config.rewardBaseOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </SelectField>
+                </div>
+            </FormFieldRow>
+        </div>
+    );
+}
