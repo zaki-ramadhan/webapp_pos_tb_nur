@@ -148,27 +148,7 @@ export default function ActivityLogView({ page }) {
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 resourceName="activity-log"
-                filters={filtersConfig.map((filter) => (
-                    <SelectField
-                        key={filter.id}
-                        value={filters[filter.id]}
-                        onChange={(event) =>
-                            setFilters((currentFilters) => ({
-                                ...currentFilters,
-                                [filter.id]: event.target.value,
-                            }))
-                        }
-                        containerClassName="w-auto shrink-0"
-                        className="h-[34px] rounded-[4px] border-ui-border"
-                        selectClassName="text-xs sm:text-sm text-filter-select-text"
-                    >
-                        {filter.options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </SelectField>
-                ))}
+                filters={null}
                 size="compact"
                 refreshButton={{
                     label: table.refreshLabel,

@@ -86,9 +86,6 @@ class BackendActivityLogger
             'payroll-entry',
             'sales-receipt',
             'purchase-payment',
-            'budget',
-            'budget-monitor',
-            'budget-transfer',
         ];
 
         if (in_array($blueprint->permissionKey(), $journalKeys, true)) {

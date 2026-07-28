@@ -35,10 +35,11 @@ class JournalActivityLogPage
                         ['id' => 'journal-log-export', 'label' => 'Ekspor log aktivitas'],
                     ],
                     'columns' => [
-                        ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[150px]'],
-                        ['id' => 'number', 'label' => 'No. Jurnal', 'widthClassName' => 'w-[34%]'],
-                        ['id' => 'transactionNumber', 'label' => 'No. Trans #', 'widthClassName' => 'w-[34%]'],
-                        ['id' => 'typeLabel', 'label' => 'Tipe Transaksi', 'widthClassName' => 'w-[260px]'],
+                        ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[140px]'],
+                        ['id' => 'number', 'label' => 'No. Jurnal', 'widthClassName' => 'w-[28%]'],
+                        ['id' => 'transactionNumber', 'label' => 'No. Trans #', 'widthClassName' => 'w-[28%]'],
+                        ['id' => 'typeLabel', 'label' => 'Tipe Transaksi', 'widthClassName' => 'w-[220px]'],
+                        ['id' => 'isDeleted', 'label' => 'Dihapus', 'widthClassName' => 'w-[120px]'],
                     ],
                     'rows' => array_map(
                         fn (array $row) => [
@@ -94,13 +95,18 @@ class JournalActivityLogPage
             'sales-receipt' => 'Penerimaan Penjualan',
             'purchase-payment' => 'Pembayaran Pembelian',
             'sales-invoice' => 'Faktur Penjualan',
+            'cash-payment' => 'Pembayaran',
+            'cash-receipt' => 'Penerimaan',
+            'bank-transfer' => 'Transfer Bank',
+            'expense-entry' => 'Pencatatan Beban',
+            'sales-deposit' => 'Uang Muka Penjualan',
             'tax-payment' => 'Pembayaran',
             'payroll-entry' => 'Pencatatan Gaji',
             'delivery-order' => 'Pengiriman Pesanan',
             'sales-return' => 'Retur Penjualan',
             'purchase-return' => 'Retur Pembelian',
-            'period-end' => 'Jurnal Umum',
-            default => $fallback ?: 'Jurnal Umum',
+            'general-journal' => 'Jurnal Umum',
+            default => ($fallback && $fallback !== 'General Journals') ? $fallback : 'Jurnal Umum',
         };
     }
 }

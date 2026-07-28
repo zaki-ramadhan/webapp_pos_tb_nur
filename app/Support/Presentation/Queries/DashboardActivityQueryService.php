@@ -19,11 +19,22 @@ class DashboardActivityQueryService
             return [];
         }
 
+        $sevenDaysAgo = Carbon::now()->subDays(7)->startOfDay();
+
         $logs = DB::table('activity_logs')
             ->where('actor_user_id', $user->id)
+            ->where('occurred_at', '>=', $sevenDaysAgo)
             ->orderBy('occurred_at', 'desc')
-            ->limit(3)
+            ->limit(50)
             ->get();
+
+        if ($logs->isEmpty()) {
+            $logs = DB::table('activity_logs')
+                ->where('actor_user_id', $user->id)
+                ->orderBy('occurred_at', 'desc')
+                ->limit(30)
+                ->get();
+        }
 
         $daysIndo = [
             'Sunday' => 'Minggu',
@@ -48,7 +59,8 @@ class DashboardActivityQueryService
         ];
 
         $resourceMap = [
-            'budget' => 'Anggaran',
+            'brand' => 'Merek',
+            'brands' => 'Merek',
             'general-journal' => 'Jurnal Umum',
             'general-journals' => 'Jurnal Umum',
             'employee' => 'Karyawan',

@@ -107,33 +107,7 @@ export default function JournalActivityLogTableView({ config, onOpenDetail }) {
             <TableToolbar
                 resourceName="journal-activity-log"
                 size="compact"
-                filters={
-                    filtersConfig.length ? (
-                        <>
-                            {filtersConfig.map((filter) => (
-                                <SelectField
-                                    key={filter.id}
-                                    value={filters[filter.id]}
-                                    onChange={(event) =>
-                                        setFilters((currentFilters) => ({
-                                            ...currentFilters,
-                                            [filter.id]: event.target.value,
-                                        }))
-                                    }
-                                    containerClassName="w-auto shrink-0"
-                                    className="h-[34px] rounded-[4px] border-ui-border"
-                                    selectClassName="text-xs sm:text-sm text-filter-select-text"
-                                >
-                                    {filter.options.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </SelectField>
-                            ))}
-                        </>
-                    ) : null
-                }
+                filters={null}
                 refreshButton={{
                     label: config.table.refreshLabel,
                     icon: <RefreshIcon className="h-4.5 w-4.5" />,

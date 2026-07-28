@@ -221,16 +221,30 @@ export function buildActivityLogFilters(rows) {
 }
 
 export function mapJournalActivityRows(records) {
-    return records.map((record) => {
+    const totalCount = records.length;
+
+    return records.map((record, index) => {
         const transactionDate = normalizeDisplayDate(record.metadata?.transaction_date) || normalizeDisplayDate(record.occurred_at);
+        const dateObj = record.occurred_at ? new Date(record.occurred_at) : new Date();
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const seq = String(totalCount - index).padStart(5, '0');
+        const jvNumber = record.metadata?.jv_number ?? `JV.${year}.${month}.${seq}`;
+        const transNumber = record.document_number ?? record.subject_label ?? '-';
+        const actionStr = String(record.action ?? '').toLowerCase();
+        const isDeleted = actionStr === 'delete' || actionStr === 'void';
 
         return {
             id: record.id,
+            __backendRecord: record,
             date: formatIsoDate(record.occurred_at),
-            number: record.document_number ?? `LOG-${record.id}`,
-            transactionNumber: record.subject_label ?? translateDescription(record.description) ?? '-',
+            number: jvNumber,
+            transactionNumber: transNumber,
             typeLabel: mapResourceLabel(record.resource_key, record.permission_key, record.resource_label),
+            isDeleted: isDeleted ? 'Ya' : 'Tidak',
+            isDeletedValue: isDeleted ? 'yes' : 'no',
             amount: record.metadata?.amount ?? '',
+            actorName: record.actor_name ?? record.actor_email ?? 'Zaki Ramadhan',
             dateValue: normalizeDisplayDate(record.occurred_at),
             transactionDateValue: transactionDate || 'empty',
             transactionTypeValue: record.resource_key ?? '',
