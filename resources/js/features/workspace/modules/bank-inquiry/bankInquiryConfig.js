@@ -1,6 +1,7 @@
-import { buildTodayDisplayDate } from '@/features/workspace/shared/dateDefaults';
+import { buildTodayDisplayDate, buildFirstDayOfMonthDisplayDate } from '@/features/workspace/shared/dateDefaults';
 
 const todayDisplayDate = buildTodayDisplayDate();
+const firstDayOfMonthDisplayDate = buildFirstDayOfMonthDisplayDate();
 
 function createSearchControl() {
     return {
@@ -34,7 +35,7 @@ function createAction(id, icon, label, tone = 'default') {
 
 const DEFAULT_CONTROLS = [
     createSearchControl(),
-    createDateControl('startDate', todayDisplayDate),
+    createDateControl('startDate', firstDayOfMonthDisplayDate),
     {
         type: 'label',
         label: 's/d',
