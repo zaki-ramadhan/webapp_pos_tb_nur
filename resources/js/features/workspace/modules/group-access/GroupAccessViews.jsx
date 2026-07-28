@@ -1,2 +1,2 @@
-export { default as GroupAccessFormView } from '@/features/workspace/modules/group-access/GroupAccessFormView';
-export { default as GroupAccessTableView } from '@/features/workspace/modules/group-access/GroupAccessTableView';
+export { default as GroupAccessFormView } from './GroupAccessFormView';
+export { default as GroupAccessTableView } from './GroupAccessTableView';
