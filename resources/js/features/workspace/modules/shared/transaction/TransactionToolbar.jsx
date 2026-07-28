@@ -273,7 +273,10 @@ function TransactionColumnSettingsPanel({ anchorRef, columns, visibleIds, onTogg
     );
 }
 
-export function TransactionExportExcelButton({ columns, rows, filename = 'export', label = 'Ekspor Excel' }) {
+export function TransactionExportExcelButton({ columns, rows, filename = 'export', label = 'Ekspor Excel', disabled }) {
+    const isTableEmpty = (rows ?? []).length === 0;
+    const resolvedDisabled = disabled !== undefined ? disabled : isTableEmpty;
+
     const cleanedColumns = useMemo(() => {
         return (columns ?? [])
             .map(col => col ? { ...col, label: cleanHeaderLabel(col.label) } : col)
@@ -284,6 +287,7 @@ export function TransactionExportExcelButton({ columns, rows, filename = 'export
     const [visibleIds] = useColumnVisibility(schemaKey, cleanedColumns);
 
     const handleExport = () => {
+        if (resolvedDisabled) return;
         const activeCols = cleanedColumns.filter(col => {
             if (visibleIds && visibleIds.length > 0) {
                 return visibleIds.includes(col.id);
@@ -297,6 +301,7 @@ export function TransactionExportExcelButton({ columns, rows, filename = 'export
         <TransactionToolbarIconButton
             label={label}
             onClick={handleExport}
+            disabled={resolvedDisabled}
         >
             <ExternalLinkIcon className="h-4 w-4" />
         </TransactionToolbarIconButton>
