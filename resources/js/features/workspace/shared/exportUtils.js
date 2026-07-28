@@ -283,7 +283,7 @@ export function printTable(columns, rows, title = 'Laporan') {
         minute: '2-digit'
     });
     const timestampStr = `Dibuat pada: ${localeDate} ${localeTime}`;
-    const statsStr = `Total data: ${rows.length} entri`;
+    const statsStr = `Total data: ${rows.length} data`;
 
     doc.text(timestampStr, width - 36, 45, { align: 'right' });
     doc.text(statsStr, width - 36, 58, { align: 'right' });
@@ -291,7 +291,7 @@ export function printTable(columns, rows, title = 'Laporan') {
   // Garis pembatas header
 
     doc.setDrawColor(35, 83, 160);
-    doc.setLineWidth(2);
+    doc.setLineWidth(1);
     doc.line(36, 75, width - 36, 75);
 
   // Sesuaikan kolom

@@ -174,11 +174,10 @@ class PayrollEntryPage
                         [
                             'id' => 'date',
                             'rowKey' => 'dateFilter',
-                            'options' => [
-                                ['value' => 'all', 'label' => 'Tanggal: Semua'],
-                                ['value' => '2017', 'label' => 'Tanggal: 2017'],
-                                ['value' => '2016', 'label' => 'Tanggal: 2016'],
-                            ],
+                            'options' => array_merge(
+                                [['value' => 'all', 'label' => 'Tanggal: Semua']],
+                                array_map(fn($y) => ['value' => (string)$y, 'label' => 'Tanggal: ' . $y], range(intval(date('Y')) + 1, intval(date('Y')) - 5))
+                            ),
                         ],
                         [
                             'id' => 'status',
@@ -195,19 +194,26 @@ class PayrollEntryPage
                             'options' => [
                                 ['value' => 'all', 'label' => 'Bulan: Semua'],
                                 ['value' => 'january', 'label' => 'Bulan: Januari'],
+                                ['value' => 'february', 'label' => 'Bulan: Februari'],
+                                ['value' => 'march', 'label' => 'Bulan: Maret'],
+                                ['value' => 'april', 'label' => 'Bulan: April'],
+                                ['value' => 'may', 'label' => 'Bulan: Mei'],
+                                ['value' => 'june', 'label' => 'Bulan: Juni'],
+                                ['value' => 'july', 'label' => 'Bulan: Juli'],
+                                ['value' => 'august', 'label' => 'Bulan: Agustus'],
+                                ['value' => 'september', 'label' => 'Bulan: September'],
+                                ['value' => 'october', 'label' => 'Bulan: Oktober'],
                                 ['value' => 'november', 'label' => 'Bulan: November'],
                                 ['value' => 'december', 'label' => 'Bulan: Desember'],
-                                ['value' => 'october', 'label' => 'Bulan: Oktober'],
                             ],
                         ],
                         [
                             'id' => 'year',
                             'rowKey' => 'yearValue',
-                            'options' => [
-                                ['value' => 'all', 'label' => 'Tahun: Semua'],
-                                ['value' => '2017', 'label' => 'Tahun: 2017'],
-                                ['value' => '2016', 'label' => 'Tahun: 2016'],
-                            ],
+                            'options' => array_merge(
+                                [['value' => 'all', 'label' => 'Tahun: Semua']],
+                                array_map(fn($y) => ['value' => (string)$y, 'label' => 'Tahun: ' . $y], range(intval(date('Y')) + 1, intval(date('Y')) - 5))
+                            ),
                         ],
                     ],
                     'columns' => [

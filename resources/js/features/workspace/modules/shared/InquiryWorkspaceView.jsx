@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import { TransactionToolbarIconButton, TransactionExportExcelButton, TransactionSwitchViewButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
+import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
 import {
     RefreshIcon,
 } from '@/features/workspace/shared/Icons';
@@ -232,9 +233,9 @@ export default function InquiryWorkspaceView({
                                                     if (column.id === 'type') {
                                                         const valStr = String(val || '').toLowerCase();
                                                         if (valStr.includes('debit') || valStr.includes('db') || valStr.includes('dr')) {
-                                                            cellContent = <span className="text-slate-700">Dr</span>;
+                                                            cellContent = <span className="text-slate-700 font-normal">Debit</span>;
                                                         } else if (valStr.includes('credit') || valStr.includes('cr') || valStr.includes('kredit')) {
-                                                            cellContent = <span className="text-slate-700">Cr</span>;
+                                                            cellContent = <span className="text-slate-700 font-normal">Kredit</span>;
                                                         } else {
                                                             cellContent = formatTableTextValue(val, column);
                                                         }
@@ -244,6 +245,16 @@ export default function InquiryWorkspaceView({
                                                         const formattedVal = formatTableTextValue(val, column);
                                                         if (isCredit) {
                                                             cellContent = <span className="text-rose-600">{formattedVal}</span>;
+                                                        } else {
+                                                            cellContent = <span className="text-slate-700">{formattedVal}</span>;
+                                                        }
+                                                    } else if (column.id === 'balance') {
+                                                        const formattedVal = formatTableTextValue(val, column);
+                                                        const strVal = String(val ?? '');
+                                                        const numVal = parseNumericInput(val);
+                                                        const isNegative = strVal.includes('-') || (numVal < 0 && numVal !== 0);
+                                                        if (isNegative) {
+                                                            cellContent = <span className="text-red-600 font-medium">{formattedVal}</span>;
                                                         } else {
                                                             cellContent = <span className="text-slate-700">{formattedVal}</span>;
                                                         }

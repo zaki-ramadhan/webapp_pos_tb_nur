@@ -198,10 +198,10 @@ class GeneralJournalPage
                         [
                             'id' => 'date',
                             'rowKey' => 'dateFilter',
-                            'options' => [
-                                ['value' => 'all', 'label' => 'Tanggal: Semua'],
-                                ['value' => '2017', 'label' => 'Tanggal: 2017'],
-                            ],
+                            'options' => array_merge(
+                                [['value' => 'all', 'label' => 'Tanggal: Semua']],
+                                array_map(fn($y) => ['value' => (string)$y, 'label' => 'Tanggal: ' . $y], range(intval(date('Y')) + 1, intval(date('Y')) - 5))
+                            ),
                         ],
                         [
                             'id' => 'transactionType',
