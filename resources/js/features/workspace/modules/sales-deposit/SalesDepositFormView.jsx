@@ -34,6 +34,7 @@ import {
     validateSalesDepositValues,
 } from './salesDepositShared';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import CheckboxField from '@/components/ui/CheckboxField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { getComparableTransactionFields, calculateDepositTaxes } from './salesDepositFormUtils';
@@ -160,36 +161,20 @@ export default function SalesDepositFormView({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-                if (isDetail && record && activeLevel2Tab?.id) {
-                    window.dispatchEvent(
-                        new CustomEvent('workspace:update-tab-label', {
-                            detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
-                                tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
-                            },
-                        })
-                    );
-                }
-
-                if (record) {
-                    const parsed = buildRecord ? buildRecord(record) : record;
-                    setLocalRecord(parsed);
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(record.id)] = parsed;
-                }
-
-                if (!values.__backendRecordId && record?.id) {
-                    onOpenDetail?.({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    resetForm();
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'sales-deposits',
+                    onRefresh,
+                    buildRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail: Boolean(values.__backendRecordId),
+                    onOpenDetail,
+                }),
         });
     }
 

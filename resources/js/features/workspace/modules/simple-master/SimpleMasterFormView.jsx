@@ -177,6 +177,12 @@ export default function SimpleMasterFormView({
             const record = response?.data ?? null;
 
             setHasSaved(true);
+            if (typeof window !== 'undefined' && window.__clearBackendCache) {
+                window.__clearBackendCache(page.id);
+                if (backendConfig?.resource) {
+                    window.__clearBackendCache(backendConfig.resource);
+                }
+            }
             await onRefresh?.();
             if (isDetailMode && record) {
                 setFetchedRow(record);

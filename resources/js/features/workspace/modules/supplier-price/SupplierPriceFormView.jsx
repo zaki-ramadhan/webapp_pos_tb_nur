@@ -69,7 +69,7 @@ export default function SupplierPriceFormView({
     const dockActions = useMemo(
         () =>
             (config.dockActions ?? [])
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
+                .filter((action) => action.id === 'save' || (isDetail && action.id === 'delete'))
                 .map((action) => {
                     if (action.id === 'save') {
                         return {

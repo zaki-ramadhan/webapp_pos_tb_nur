@@ -34,6 +34,7 @@ import {
     CashReceiptHeader,
 } from '@/features/workspace/modules/cash-receipt/components/CashReceiptFormSections';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import { useFormLineItems } from '@/features/workspace/shared/hooks/useFormLineItems';
@@ -141,34 +142,20 @@ export default function CashReceiptFormView({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-                if (isDetail && record && activeLevel2Tab?.id) {
-                    window.dispatchEvent(
-                        new CustomEvent('workspace:update-tab-label', {
-                            detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
-                                tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
-                            },
-                        })
-                    );
-                }
-
-                if (record) {
-                    const parsed = buildCashReceiptRecord(record, config);
-                    setLocalRecord(parsed);
-                }
-
-                if (!isDetail && record?.id) {
-                    onOpenDetail?.({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    resetForm();
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'cash-receipts',
+                    onRefresh,
+                    buildRecord: buildCashReceiptRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail,
+                    onOpenDetail,
+                }),
         });
     }
 

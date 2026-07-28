@@ -14,7 +14,7 @@ import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/us
 import { useFormDraftState } from '@/features/workspace/shared/hooks/useFormDraftState';
 import { TransactionDualTotalCard, TransactionFormLayout } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { executeCrudFormAction, rejectCrudFormAction, handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import {
@@ -169,34 +169,21 @@ export default function GeneralJournalFormView({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-                if (isDetail && record && activeLevel2Tab?.id) {
-                    window.dispatchEvent(
-                        new CustomEvent('workspace:update-tab-label', {
-                            detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
-                                tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
-                            },
-                        })
-                    );
-                }
-
-                if (record) {
-                    const parsed = buildJournalRecordFromBackend(record, config);
-                    setLocalRecord(parsed);
-                }
-
-                if (!isDetail && record?.id) {
-                    onOpenDetail?.({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    resetForm(buildFormState(config.draft, config));
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'general-journals',
+                    onRefresh,
+                    buildRecord: buildJournalRecordFromBackend,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail,
+                    onOpenDetail,
+                    resetFallback: buildFormState(config.draft, config),
+                }),
         });
     }, [validationMessage, isDetail, values, config, onRefresh, activeLevel2Tab, pageId, onOpenDetail]);
 

@@ -41,6 +41,7 @@ import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils';
 import SalesDocumentFormHeader from './SalesDocumentFormHeader';
 import {
@@ -297,42 +298,20 @@ export default function SalesDocumentFormView({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-                if (isDetail && record && activeLevel2Tab?.id) {
-                    window.dispatchEvent(
-                        new CustomEvent('workspace:update-tab-label', {
-                            detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
-                                tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
-                            },
-                        })
-                    );
-                }
-
-                if (record) {
-                    const parsed = buildRecord ? buildRecord(record) : record;
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(record.id)] = parsed;
-
-                    if (isDetail) {
-                        const nextValues = buildSalesDocumentFormState(parsed);
-                        setValues(nextValues);
-                        setLocalRecord(parsed);
-                    }
-                }
-
-                if (!isDetail && record?.id && onOpenDetail) {
-                    onOpenDetail({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    const emptyDraftValues = buildSalesDocumentFormState(config.draft ?? {});
-                    setValues(emptyDraftValues);
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: backendConfig?.resource,
+                    onRefresh,
+                    buildRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail,
+                    onOpenDetail,
+                }),
         });
 
         if (result && result.isStockWarning) {
@@ -459,7 +438,9 @@ export default function SalesDocumentFormView({
 
     const dockActions = useMemo(
         () =>
-            (values.dockActions ?? []).map((action) => {
+            (values.dockActions ?? [])
+                .filter((action) => action.id === 'save' || (isDetail && action.id === 'delete'))
+                .map((action) => {
                 if (action.id === 'save') {
                     return {
                         ...action,

@@ -20,6 +20,7 @@ import {
     ItemRequestFormHeader,
 } from './ItemRequestSections';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils';
 import {
     applyItemRequestItems,
@@ -160,29 +161,20 @@ export default function ItemRequestFormView({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-                if (isDetail && record && activeLevel2Tab?.id) {
-                    window.dispatchEvent(
-                        new CustomEvent('workspace:update-tab-label', {
-                            detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
-                                tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
-                            },
-                        })
-                    );
-                }
-
-                if (!values.__backendRecordId && record?.id) {
-                    onOpenDetail?.({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    resetForm();
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'item-requests',
+                    onRefresh,
+                    buildRecord: buildItemRequestRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail: Boolean(values.__backendRecordId),
+                    onOpenDetail,
+                }),
         });
     }
 

@@ -130,3 +130,59 @@ export async function executeCrudFormAction({
         setSaving(false);
     }
 }
+
+export async function handleFormSaveSuccess({
+    pageId,
+    resourceKey,
+    onRefresh,
+    record,
+    resolvedDocumentNumber,
+    buildRecord,
+    config,
+    setLocalRecord,
+    resetForm,
+    activeLevel2Tab,
+    isDetail,
+    onOpenDetail,
+    resetFallback = null,
+}) {
+    if (typeof window !== 'undefined' && window.__clearBackendCache) {
+        if (pageId) window.__clearBackendCache(pageId);
+        if (resourceKey) window.__clearBackendCache(resourceKey);
+    }
+    await onRefresh?.();
+
+    const parsed = record ? (buildRecord ? buildRecord(record, config) : record) : null;
+    if (parsed) {
+        setLocalRecord?.(parsed);
+        resetForm?.(parsed);
+        if (window.__savedRecordsCache && record?.id) {
+            window.__savedRecordsCache[String(record.id)] = parsed;
+        }
+    } else {
+        resetForm?.(resetFallback);
+    }
+
+    if (activeLevel2Tab?.id) {
+        const displayLabel = record?.document_number ?? record?.number ?? resolvedDocumentNumber ?? '';
+        if (displayLabel) {
+            window.dispatchEvent(
+                new CustomEvent('workspace:update-tab-label', {
+                    detail: {
+                        pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
+                        tabId: activeLevel2Tab.id,
+                        label: displayLabel,
+                    },
+                })
+            );
+        }
+    }
+
+    if (!isDetail && record?.id && onOpenDetail) {
+        onOpenDetail({
+            recordId: String(record.id),
+            label: record.document_number ?? resolvedDocumentNumber,
+            tabLabel: record.document_number ?? resolvedDocumentNumber,
+        });
+    }
+}

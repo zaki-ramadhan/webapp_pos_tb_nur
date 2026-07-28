@@ -32,6 +32,7 @@ import {
     parseNumericInput,
 } from './expenseEntryShared';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 
 export default function ExpenseEntryFormView({
     pageId,
@@ -151,36 +152,20 @@ export default function ExpenseEntryFormView({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-                if (isDetail && record && activeLevel2Tab?.id) {
-                    window.dispatchEvent(
-                        new CustomEvent('workspace:update-tab-label', {
-                            detail: {
-                                pageId: pageId ?? (typeof page !== 'undefined' ? page?.id : null),
-                                tabId: activeLevel2Tab.id,
-                                label: record?.name ?? record?.full_name ?? record?.countryName ?? record?.country_name ?? record?.number ?? values?.name ?? values?.fullName ?? values?.groupName ?? '',
-                            },
-                        })
-                    );
-                }
-
-                if (record) {
-                    const parsed = buildRecord ? buildRecord(record, config) : record;
-                    setLocalRecord(parsed);
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(record.id)] = parsed;
-                }
-
-                if (!isDetail && record?.id) {
-                    onOpenDetail?.({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    resetForm();
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'expense-entries',
+                    onRefresh,
+                    buildRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail,
+                    onOpenDetail,
+                }),
         });
     }, [isDetail, values, buildRecord, config, onRefresh, activeLevel2Tab, pageId, onOpenDetail, handleSave]);
 

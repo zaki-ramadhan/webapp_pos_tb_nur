@@ -219,6 +219,10 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             },
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akun perkiraan gagal disimpan.'),
             onSuccess: async ({ payload, savedRecord }) => {
+                if (typeof window !== 'undefined' && window.__clearBackendCache) {
+                    window.__clearBackendCache(pageId);
+                    window.__clearBackendCache('accounts');
+                }
                 await onReload?.();
                 if (isDetail && savedRecord && activeLevel2Tab?.id) {
                     window.dispatchEvent(

@@ -17,7 +17,7 @@ import {
     buildSalesReceiptPayload,
     validateSalesReceiptValues,
 } from '@/features/workspace/modules/sales-receipt/salesReceiptViewShared';
-import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
+import { executeCrudFormAction, rejectCrudFormAction, handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
 import { promptSelectBackendRecord } from '@/features/workspace/shared/promptLookupSelection';
 import { executeImportPendingAction } from '@/features/workspace/shared/crudFeedback';
@@ -203,23 +203,20 @@ export default function useSalesReceiptForm({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-
-                if (record) {
-                    const parsed = buildRecord ? buildRecord(record, config) : record;
-                    setLocalRecord(parsed);
-                }
-
-                if (!values.__backendRecordId && record?.id) {
-                    onOpenDetail?.({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    resetForm();
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'sales-receipts',
+                    onRefresh,
+                    buildRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail: Boolean(values.__backendRecordId),
+                    onOpenDetail,
+                }),
         });
     }
 
@@ -292,7 +289,7 @@ export default function useSalesReceiptForm({
     const dockActions = useMemo(
         () =>
             (values.dockActions ?? config.draft?.dockActions ?? [])
-                .filter((action) => (isDetail ? true : action.id !== 'delete'))
+                .filter((action) => action.id === 'save' || (isDetail && action.id === 'delete'))
                 .map((action) => {
                     if (action.id === 'save') {
                         return {

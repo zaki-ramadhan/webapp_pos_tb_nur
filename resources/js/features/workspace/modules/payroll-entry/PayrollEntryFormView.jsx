@@ -22,6 +22,7 @@ import {
     getBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
+import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
 import { normalizeDisplayDate } from '@/features/workspace/backend/adapters/dateHelpers';
 import { calculatePayrollTotals, buildPayrollPayload } from './payrollEntryFormUtils';
 
@@ -228,7 +229,7 @@ export default function PayrollEntryFormView({
         });
     }, []);
 
-    const { totalGross, totalPaid } = useMemo(() => calculatePayrollTotals(employeeRows), [employeeRows]);
+    const { totalGross, totalPaid, totalHealthPremi, totalPensionJkkJkm, totalIncomeTax } = useMemo(() => calculatePayrollTotals(employeeRows), [employeeRows]);
 
     const onDelete = useCallback(async () => {
         if (!values.__backendRecordId) {
@@ -273,36 +274,20 @@ export default function PayrollEntryFormView({
                     resolvedDocumentNumber,
                 };
             },
-            onSuccess: async ({ record, resolvedDocumentNumber }) => {
-                await onRefresh?.();
-
-                if (record) {
-                    const parsed = buildRecord ? buildRecord(record, config) : record;
-                    window.__savedRecordsCache = window.__savedRecordsCache || {};
-                    window.__savedRecordsCache[String(record.id)] = parsed;
-
-                    if (isDetail) {
-                        const nextValues = {
-                            ...buildDefaultValues(config),
-                            ...parsed,
-                        };
-                        const nextEmployeeRows = parsed.employeeRows ?? [];
-                        setValues(nextValues);
-                        setEmployeeRows(nextEmployeeRows);
-                        setLocalRecord(parsed);
-                    }
-                }
-
-                if (!isDetail && record?.id && onOpenDetail) {
-                    onOpenDetail({
-                        recordId: String(record.id),
-                        label: record.document_number ?? resolvedDocumentNumber,
-                        tabLabel: record.document_number ?? resolvedDocumentNumber,
-                    });
-                    setValues(buildDefaultValues(config));
-                    setEmployeeRows([]);
-                }
-            },
+            onSuccess: (params) =>
+                handleFormSaveSuccess({
+                    ...params,
+                    pageId,
+                    resourceKey: 'payroll-entries',
+                    onRefresh,
+                    buildRecord,
+                    config,
+                    setLocalRecord,
+                    resetForm,
+                    activeLevel2Tab,
+                    isDetail,
+                    onOpenDetail,
+                }),
         });
     }, [isDetail, values, employeeRows, handleSave, onRefresh, buildRecord, config, onOpenDetail]);
 
@@ -364,6 +349,33 @@ export default function PayrollEntryFormView({
                     label: 'Pendapatan Bruto',
                     value: `Rp ${totalGross.toLocaleString('id-ID')}`,
                 },
+                ...(totalHealthPremi > 0
+                    ? [
+                          {
+                              id: 'health-premi',
+                              label: 'Premi Kesehatan',
+                              value: `Rp ${totalHealthPremi.toLocaleString('id-ID')}`,
+                          },
+                      ]
+                    : []),
+                ...(totalPensionJkkJkm > 0
+                    ? [
+                          {
+                              id: 'pension-jkk-jkm',
+                              label: 'Pensiun/JKK/JKM',
+                              value: `Rp ${totalPensionJkkJkm.toLocaleString('id-ID')}`,
+                          },
+                      ]
+                    : []),
+                ...(totalIncomeTax > 0
+                    ? [
+                          {
+                              id: 'income-tax',
+                              label: 'Pajak Penghasilan',
+                              value: `Rp ${totalIncomeTax.toLocaleString('id-ID')}`,
+                          },
+                      ]
+                    : []),
                 {
                     id: 'paid-salary',
                     label: 'Gaji dibayarkan',
@@ -371,7 +383,7 @@ export default function PayrollEntryFormView({
                 },
             ],
         };
-    }, [config, employeeRows, totalGross, totalPaid]);
+    }, [config, employeeRows, totalGross, totalPaid, totalHealthPremi, totalPensionJkkJkm, totalIncomeTax]);
 
     const addEmployeeToRows = useCallback((emp) => {
         setEmployeeRows((prev) => {
