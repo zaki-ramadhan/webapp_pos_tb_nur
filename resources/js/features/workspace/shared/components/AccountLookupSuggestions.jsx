@@ -96,7 +96,7 @@ export default function AccountLookupSuggestions({
                                     e.stopPropagation();
                                     onSelectAccount(record, label);
                                 }}
-                                className={`flex w-full flex-col gap-1.5 border-t border-slate-200 px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#fafbfc] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
+                                className={`flex w-full flex-col gap-1.5 border-t border-slate-200 px-4 py-2.5 text-left transition first:border-t-0 hover:bg-ui-bg-hover odd:bg-white even:bg-[#F8F8F8] ${selected ? '!bg-brand-blue-lightest' : ''}`.trim()}
                             >
                                 <span className="flex w-full items-center justify-between gap-4">
                                     <span className="truncate text-xs sm:text-sm font-normal text-black">

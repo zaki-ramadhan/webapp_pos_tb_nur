@@ -87,7 +87,7 @@ export function createDeleteDockAction({
  * Gabungkan callback runtime ke aksi dock.
  */
 export function mapDockActions(actions, { saving, saveDisabled = false, onSave, onDelete, saveTone } = {}) {
-    return actions.map(action => {
+    return actions.filter(action => action.id === 'save' || action.id === 'delete').map(action => {
         if (action.id === 'save') {
             return {
                 ...action,

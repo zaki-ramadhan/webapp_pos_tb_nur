@@ -123,7 +123,7 @@ export default function TransactionDateInput({
     const hasMaxWidth = layoutClasses.some((c) => c.startsWith('max-w-'));
 
     const defaultWidth = hasWidth ? '' : 'w-full';
-    const defaultMaxWidth = hasMaxWidth ? '' : 'max-w-[180px]';
+    const defaultMaxWidth = hasMaxWidth ? '' : 'max-w-[160px]';
 
     const wrapperClassName = `relative ${defaultWidth} ${defaultMaxWidth} ${layoutClasses.join(' ')}`.trim();
     const hasHeight = styleClasses.some((c) => c.startsWith('h-') || c.startsWith('min-h-') || c.startsWith('max-h-'));

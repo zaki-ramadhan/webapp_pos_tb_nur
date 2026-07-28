@@ -1,9 +1,25 @@
-export function normalizeComparableValue(value) {
-    if (Array.isArray(value)) {
-        return value.map((item) => normalizeComparableValue(item));
+export function normalizeComparableValue(value, seen = new WeakSet()) {
+    if (value === null || value === undefined) {
+        return false;
     }
 
-    if (value && typeof value === 'object') {
+    if (typeof value === 'function') {
+        return undefined;
+    }
+
+    if (typeof value === 'object') {
+        if (seen.has(value)) {
+            return undefined;
+        }
+        if (value.$$typeof || value.nodeType || typeof value.then === 'function') {
+            return undefined;
+        }
+        seen.add(value);
+
+        if (Array.isArray(value)) {
+            return value.map((item) => normalizeComparableValue(item, seen));
+        }
+
         return Object.keys(value)
             .sort()
             .reduce((result, key) => {
@@ -17,7 +33,10 @@ export function normalizeComparableValue(value) {
                 ) {
                     return result;
                 }
-                result[key] = normalizeComparableValue(value[key]);
+                const norm = normalizeComparableValue(value[key], seen);
+                if (norm !== undefined) {
+                    result[key] = norm;
+                }
                 return result;
             }, {});
     }
@@ -30,13 +49,17 @@ export function normalizeComparableValue(value) {
     }
 
     if (value === 1) return true;
-    if (value === 0 || value === null || value === undefined || value === false) return false;
+    if (value === 0 || value === false) return false;
 
     return value;
 }
 
 export function areComparableValuesEqual(left, right) {
-    return JSON.stringify(normalizeComparableValue(left)) === JSON.stringify(normalizeComparableValue(right));
+    try {
+        return JSON.stringify(normalizeComparableValue(left)) === JSON.stringify(normalizeComparableValue(right));
+    } catch {
+        return false;
+    }
 }
 
 export function validateRequiredChecks(checks = []) {

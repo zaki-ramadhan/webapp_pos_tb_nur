@@ -8,7 +8,7 @@ import FormattedAmountInput from '@/features/workspace/shared/FormattedAmountInp
 import { parseAmountInput } from '@/features/workspace/shared/amountFormatting';
 import { PencilIcon } from '@/features/workspace/shared/Icons';
 import { showErrorToast, showSuccessToast } from '@/components/feedback/toast';
-import { formatNum, parse, calculatePayrollTotals, calculateSingleField } from './payrollEntryEmployeeModalUtils';
+import { formatNum, parse, calculatePayrollTotals, calculateSingleField, calculateGrossUpTaxAllowance, calculatePph21 } from './payrollEntryEmployeeModalUtils';
 
 export default function PayrollEntryEmployeeModal({
     open,
@@ -19,6 +19,7 @@ export default function PayrollEntryEmployeeModal({
 }) {
     const [activeTab, setActiveTab] = useState('rincian-gaji');
     const [fetchingLast, setFetchingLast] = useState(false);
+    const [hasLastPayroll, setHasLastPayroll] = useState(false);
 
     const [employeeModalValues, setEmployeeModalValues] = useState({
         employeeId: '',
@@ -43,6 +44,27 @@ export default function PayrollEntryEmployeeModal({
         incomeTax: '',
         notes: '',
     });
+
+    useEffect(() => {
+        let isMounted = true;
+        if (open && selectedEmployeeRow?.employeeId) {
+            window.axios
+                .get(`/api/backend/employees/${selectedEmployeeRow.employeeId}/last-payroll-line`)
+                .then((res) => {
+                    if (!isMounted) return;
+                    const data = res?.data?.data;
+                    setHasLastPayroll(Boolean(data && data.attributes));
+                })
+                .catch(() => {
+                    if (isMounted) setHasLastPayroll(false);
+                });
+        } else {
+            setHasLastPayroll(false);
+        }
+        return () => {
+            isMounted = false;
+        };
+    }, [open, selectedEmployeeRow?.employeeId]);
 
     useEffect(() => {
         if (open && selectedEmployeeRow) {
@@ -87,11 +109,30 @@ export default function PayrollEntryEmployeeModal({
     } = calculatePayrollTotals(employeeModalValues);
 
     const handleCalculate = (fieldName) => {
+        const basic = parse(employeeModalValues.basicSalary);
+        if (basic <= 0) {
+            showErrorToast({ message: 'Isi Gaji Pokok terlebih dahulu sebelum menghitung persentase otomatis.' });
+            return;
+        }
+
+        if (fieldName === 'taxAllowance') {
+            const taxVal = calculateGrossUpTaxAllowance(employeeModalValues);
+            const formatted = taxVal > 0 ? taxVal.toLocaleString('id-ID') : '0';
+            setEmployeeModalValues(prev => ({
+                ...prev,
+                taxAllowance: formatted,
+                incomeTax: formatted,
+            }));
+            showSuccessToast({ message: 'Tunjangan & Pajak PPh 21 berhasil dihitung.' });
+            return;
+        }
+
         const val = calculateSingleField(fieldName, employeeModalValues);
         setEmployeeModalValues(prev => ({
             ...prev,
             [fieldName]: val,
         }));
+        showSuccessToast({ message: 'Nilai otomatis berhasil dihitung dari Gaji Pokok.' });
     };
 
     const handleFetchLastSalary = async () => {
@@ -241,27 +282,14 @@ export default function PayrollEntryEmployeeModal({
                         <span className="text-sm text-black font-normal italic">
                             {employeeModalValues.employeeName} [{employeeModalValues.employeeId}]
                         </span>
-                        <TransactionHeaderButton
-                            label={fetchingLast ? 'Memuat...' : 'Ambil Gaji bulan lalu'}
-                            disabled={fetchingLast}
-                            onClick={handleFetchLastSalary}
-                            className="h-8 text-xs font-normal"
-                        />
-                    </div>
-
-                    <div className="space-y-2.5">
-                        <h3 className="text-sm font-normal text-black border-b border-zinc-200 pb-1.5">
-                            Tunjangan Pensiun dibayarkan Toko
-                        </h3>
-                        <InputRow
-                            label="Tunjangan Pensiun/THT/JHT"
-                            id="pensionAllowance"
-                            value={employeeModalValues.pensionAllowance}
-                            onChange={(e) => formatFieldChange('pensionAllowance', e.target.value)}
-                            showCalc
-                            onCalc={() => handleCalculate('pensionAllowance')}
-                            indent
-                        />
+                        {hasLastPayroll && (
+                            <TransactionHeaderButton
+                                label={fetchingLast ? 'Memuat...' : 'Ambil Gaji bulan lalu'}
+                                disabled={fetchingLast}
+                                onClick={handleFetchLastSalary}
+                                className="h-8 text-xs font-normal"
+                            />
+                        )}
                     </div>
 
                     <div className="space-y-2.5 pt-2">
@@ -280,8 +308,6 @@ export default function PayrollEntryEmployeeModal({
                             id="taxAllowance"
                             value={employeeModalValues.taxAllowance}
                             onChange={(e) => formatFieldChange('taxAllowance', e.target.value)}
-                            showCalc
-                            onCalc={() => handleCalculate('taxAllowance')}
                             indent
                         />
                         <InputRow
@@ -306,13 +332,6 @@ export default function PayrollEntryEmployeeModal({
                             indent
                         />
                         <InputRow
-                            label="Tunjangan Telekomunikasi"
-                            id="telecommunicationAllowance"
-                            value={employeeModalValues.telecommunicationAllowance}
-                            onChange={(e) => formatFieldChange('telecommunicationAllowance', e.target.value)}
-                            indent
-                        />
-                        <InputRow
                             label="Tunjangan Lembur"
                             id="overtimeAllowance"
                             value={employeeModalValues.overtimeAllowance}
@@ -333,6 +352,8 @@ export default function PayrollEntryEmployeeModal({
                             id="jkkAllowance"
                             value={employeeModalValues.jkkAllowance}
                             onChange={(e) => formatFieldChange('jkkAllowance', e.target.value)}
+                            showCalc
+                            onCalc={() => handleCalculate('jkkAllowance')}
                             indent
                         />
                         <InputRow
@@ -355,13 +376,6 @@ export default function PayrollEntryEmployeeModal({
                             id="salaryReduction"
                             value={employeeModalValues.salaryReduction}
                             onChange={(e) => formatFieldChange('salaryReduction', e.target.value)}
-                            indent
-                        />
-                        <InputRow
-                            label="Iuran Bulanan dan lainnya"
-                            id="monthlyDeduction"
-                            value={employeeModalValues.monthlyDeduction}
-                            onChange={(e) => formatFieldChange('monthlyDeduction', e.target.value)}
                             indent
                         />
                         <InputRow
@@ -465,7 +479,11 @@ function InputRow({ label, value, onChange, id, showCalc, onCalc, indent = false
                 {showCalc && (
                     <button
                         type="button"
-                        onClick={onCalc}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onCalc?.(e);
+                        }}
                         disabled={disabled}
                         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] border border-[#2353a0] bg-white text-[#2353a0] hover:bg-[#2353a0]/5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Hitung BPJS / standar otomatis"

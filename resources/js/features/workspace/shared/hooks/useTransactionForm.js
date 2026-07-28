@@ -159,7 +159,7 @@ export function buildWorkspaceDockActions({
     additionalMaps = {}
 }) {
     return (dockActions ?? [])
-        .filter((action) => (isDetail ? true : action.id !== 'delete'))
+        .filter((action) => action.id === 'save' || (isDetail && action.id === 'delete'))
         .map((action) => {
             if (additionalMaps[action.id]) {
                 return additionalMaps[action.id](action);

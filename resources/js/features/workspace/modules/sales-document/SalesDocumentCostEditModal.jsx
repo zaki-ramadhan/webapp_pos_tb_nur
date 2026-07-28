@@ -14,26 +14,8 @@ import { parseNumericInput, formatCurrencyValue } from '@/features/workspace/sha
 
 const MODAL_TABS = [
     { id: 'cost', label: 'Biaya Lainnya' },
-    { id: 'info', label: 'Info lainnya' },
-    { id: 'deferral', label: 'Penangguhan' },
+    { id: 'info', label: 'Catatan' },
 ];
-
-const MONTHS = [
-    { value: 1, label: 'Januari' },
-    { value: 2, label: 'Februari' },
-    { value: 3, label: 'Maret' },
-    { value: 4, label: 'April' },
-    { value: 5, label: 'Mei' },
-    { value: 6, label: 'Juni' },
-    { value: 7, label: 'Juli' },
-    { value: 8, label: 'Agustus' },
-    { value: 9, label: 'September' },
-    { value: 10, label: 'Oktober' },
-    { value: 11, label: 'November' },
-    { value: 12, label: 'Desember' },
-];
-
-const YEARS = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
 
 const FIELD_H = 'h-[38px]';
 const FIELD_ROUNDED = 'rounded-[4px]';
@@ -122,121 +104,6 @@ function CostInfoTab({ form, onChange }) {
     );
 }
 
-// ─── Tab: Penangguhan ─────────────────────────────────────────────────────────
-
-function CostDeferralTab({ form, onChange, errors = {} }) {
-    const { isDeferred, deferredAccount, recognitionMonths, recognitionMode, recognitionStartMonth, recognitionStartYear } = form;
-
-    return (
-        <div className="space-y-4">
-            <div>
-                <ToggleSwitch
-                    label="Tangguhkan Pendapatan dan akui per akhir Bulan"
-                    checked={isDeferred}
-                    onChange={(checked) => onChange({ isDeferred: checked })}
-                />
-            </div>
-
-            {isDeferred && (
-                <div className="grid gap-y-2.5 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-x-4 sm:items-center pl-1">
-                    {/* Akun Penangguhan */}
-                    <TransactionFieldLabel label="Akun Penangguhan" required />
-                    <AccountLookupField
-                        values={deferredAccount}
-                        placeholder="Cari/Pilih Akun Perkiraan..."
-                        searchLabel="Cari akun penangguhan"
-                        resource="accounts"
-                        queryParams={{ account_type: 'Other Current Liability' }}
-                        onRemove={() => onChange({ deferredAccount: [], __deferredAccountId: null })}
-                        onSelectAccount={(rec) =>
-                            onChange({ deferredAccount: [rec.name], __deferredAccountId: rec.id })
-                        }
-                        error={errors.deferredAccount}
-                        heightClassName={FIELD_H}
-                    />
-
-                    {/* Pengakuan/bln selama */}
-                    <TransactionFieldLabel label="Pengakuan/bln selama" required />
-                    <div className="flex items-center gap-2">
-                        <FormattedAmountInput
-                            value={recognitionMonths}
-                            onChange={(e) => onChange({ recognitionMonths: e.target.value })}
-                            allowDecimal={false}
-                            allowNegative={false}
-                            maxLength={3}
-                            clearable={false}
-                            error={errors.recognitionMonths}
-                            containerClassName="!w-20 !max-w-none"
-                            className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER} w-20`}
-                            inputClassName={FIELD_INPUT_RIGHT_CLS}
-                        />
-                        <span className="text-xs sm:text-sm text-brand-dark">Bulan</span>
-                    </div>
-
-                    {/* Mulai Pengakuan */}
-                    <div className="sm:col-start-1 sm:col-span-1 self-start pt-1.5">
-                        <TransactionFieldLabel label="Mulai Pengakuan" />
-                    </div>
-                    <div className="space-y-2.5">
-                        {/* Radio 1: Specific Month/Year */}
-                        <div className="flex items-center gap-3">
-                            <input
-                                type="radio"
-                                id="rec-mode-specific"
-                                name="recognitionMode"
-                                checked={recognitionMode === 'specific'}
-                                onChange={() => onChange({ recognitionMode: 'specific' })}
-                                className="h-4 w-4 text-brand-blue-accent border-slate-300 focus:ring-brand-blue cursor-pointer"
-                            />
-                            <div className="flex items-center gap-2">
-                                <SelectField
-                                    value={recognitionStartMonth}
-                                    onChange={(e) => onChange({ recognitionStartMonth: Number(e.target.value) })}
-                                    disabled={recognitionMode !== 'specific'}
-                                    className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER} w-[140px]`}
-                                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                                >
-                                    {MONTHS.map((m) => (
-                                        <option key={m.value} value={m.value}>{m.label}</option>
-                                    ))}
-                                </SelectField>
-                                <SelectField
-                                    value={recognitionStartYear}
-                                    onChange={(e) => onChange({ recognitionStartYear: Number(e.target.value) })}
-                                    disabled={recognitionMode !== 'specific'}
-                                    className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER} w-[100px]`}
-                                    selectClassName="text-xs sm:text-sm text-brand-dark"
-                                >
-                                    {YEARS.map((y) => (
-                                        <option key={y} value={y}>{y}</option>
-                                    ))}
-                                </SelectField>
-                            </div>
-                        </div>
-
-                        {/* Radio 2: Manual */}
-                        <div className="flex items-center gap-3">
-                            <input
-                                type="radio"
-                                id="rec-mode-manual"
-                                name="recognitionMode"
-                                checked={recognitionMode === 'manual'}
-                                onChange={() => onChange({ recognitionMode: 'manual' })}
-                                className="h-4 w-4 text-brand-blue-accent border-slate-300 focus:ring-brand-blue cursor-pointer"
-                            />
-                            <label htmlFor="rec-mode-manual" className="text-xs sm:text-sm text-brand-dark cursor-pointer">
-                                Belum Ditentukan/jurnal manual
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
-
-// ─── Form Initializer ─────────────────────────────────────────────────────────
-
 function buildInitialForm(item) {
     if (item) {
         return {
@@ -248,15 +115,6 @@ function buildInitialForm(item) {
             code: item.code ?? '',
             amount: item.amount ?? '0',
             notes: item.notes ?? '',
-          // Deferral
-
-            isDeferred: Boolean(item.isDeferred),
-            deferredAccount: item.deferredAccount ?? [],
-            __deferredAccountId: item.__deferredAccountId ?? null,
-            recognitionMonths: item.recognitionMonths ?? '0',
-            recognitionMode: item.recognitionMode ?? 'specific',
-            recognitionStartMonth: item.recognitionStartMonth ?? new Date().getMonth() + 1,
-            recognitionStartYear: item.recognitionStartYear ?? new Date().getFullYear(),
         };
     }
     return {
@@ -268,15 +126,6 @@ function buildInitialForm(item) {
         code: '',
         amount: '0',
         notes: '',
-      // Deferral
-
-        isDeferred: false,
-        deferredAccount: [],
-        __deferredAccountId: null,
-        recognitionMonths: '0',
-        recognitionMode: 'specific',
-        recognitionStartMonth: new Date().getMonth() + 1,
-        recognitionStartYear: new Date().getFullYear(),
     };
 }
 
@@ -321,23 +170,9 @@ export default function SalesDocumentCostEditModal({
             newErrors.amount = 'Jumlah biaya harus lebih besar dari 0.';
         }
 
-        if (form.isDeferred) {
-            if (!form.__deferredAccountId) {
-                newErrors.deferredAccount = 'Akun penangguhan harus diisi.';
-            }
-            const monthsNum = parseNumericInput(form.recognitionMonths);
-            if (monthsNum <= 0) {
-                newErrors.recognitionMonths = 'Durasi pengakuan harus lebih besar dari 0 bulan.';
-            }
-        }
-
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            if (newErrors.deferredAccount || newErrors.recognitionMonths) {
-                setActiveTabId('deferral');
-            } else {
-                setActiveTabId('cost');
-            }
+            setActiveTabId('cost');
             const firstErrorMsg = Object.values(newErrors)[0];
             showErrorToast({ message: firstErrorMsg });
             return;
@@ -353,15 +188,6 @@ export default function SalesDocumentCostEditModal({
             code: form.code,
             amount: formatCurrencyValue(amountValue),
             notes: form.notes,
-          // Deferral fields
-
-            isDeferred: form.isDeferred,
-            deferredAccount: form.deferredAccount,
-            __deferredAccountId: form.__deferredAccountId,
-            recognitionMonths: String(parseNumericInput(form.recognitionMonths)),
-            recognitionMode: form.recognitionMode,
-            recognitionStartMonth: form.recognitionStartMonth,
-            recognitionStartYear: form.recognitionStartYear,
         };
 
         onSubmit?.(nextCost);
@@ -395,8 +221,6 @@ export default function SalesDocumentCostEditModal({
         >
             {activeTabId === 'info' ? (
                 <CostInfoTab form={form} onChange={handleChange} />
-            ) : activeTabId === 'deferral' ? (
-                <CostDeferralTab form={form} onChange={handleChange} errors={errors} />
             ) : (
                 <CostDetailTab form={form} onChange={handleChange} errors={errors} />
             )}

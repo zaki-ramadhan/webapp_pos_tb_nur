@@ -85,20 +85,16 @@ export default function CashPaymentTableView({
                     onClick: onRefresh,
                     loading,
                 }}
+                exportConfig={false}
                 rightControls={
                     <>
-                        <TransactionToolbarSplitButton
-                            label={config.table.downloadLabel}
-                            icon={<DownloadIcon className="h-4 w-4" />}
-                            items={config.table.downloadItems}
-                        />
                         <TransactionToolbarIconButton label={config.table.printLabel}>
                             <PrintIcon className="h-4 w-4" />
                         </TransactionToolbarIconButton>
                         <TransactionToolbarSplitButton
                             label={config.table.settingsLabel}
                             icon={<CogIcon className="h-4 w-4" />}
-                            items={config.table.settingsItems}
+                            items={(config.table.settingsItems ?? []).filter(item => !item.id?.includes('export') && !item.id?.includes('ekspor'))}
                         />
                     </>
                 }

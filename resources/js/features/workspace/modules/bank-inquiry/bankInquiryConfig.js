@@ -18,7 +18,7 @@ function createDateControl(id, value) {
         id,
         type: 'date',
         value,
-        wrapperClassName: 'w-full sm:w-[200px] md:w-[220px]',
+        wrapperClassName: 'w-full sm:w-[150px] md:w-[160px]',
         className: 'w-full',
     };
 }

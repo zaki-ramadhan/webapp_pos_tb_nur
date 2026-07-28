@@ -12,11 +12,29 @@ export function calculatePayrollTotals(employeeRows = []) {
                 typeof row.paidSalaryRaw === 'number'
                     ? row.paidSalaryRaw
                     : parseFloat(String(row.paidSalary ?? '').replace(/[^0-9.-]+/g, '')) || 0;
+            const healthPremi =
+                typeof row.healthPremiDeductionRaw === 'number'
+                    ? row.healthPremiDeductionRaw
+                    : parseFloat(String(row.healthPremiDeduction ?? row.healthPremiAllowance ?? row.breakdown?.healthPremiDeduction ?? '').replace(/[^0-9.-]+/g, '')) || 0;
+            const pensionJkkJkm =
+                (typeof row.pensionAllowanceRaw === 'number' ? row.pensionAllowanceRaw : parseFloat(String(row.pensionAllowance ?? row.breakdown?.pensionAllowance ?? '').replace(/[^0-9.-]+/g, '')) || 0) +
+                (typeof row.jkkAllowanceRaw === 'number' ? row.jkkAllowanceRaw : parseFloat(String(row.jkkAllowance ?? row.breakdown?.jkkAllowance ?? '').replace(/[^0-9.-]+/g, '')) || 0) +
+                (typeof row.jkmAllowanceRaw === 'number' ? row.jkmAllowanceRaw : parseFloat(String(row.jkmAllowance ?? row.breakdown?.jkmAllowance ?? '').replace(/[^0-9.-]+/g, '')) || 0) +
+                (typeof row.pensionDeductionRaw === 'number' ? row.pensionDeductionRaw : parseFloat(String(row.pensionDeduction ?? row.breakdown?.pensionDeduction ?? '').replace(/[^0-9.-]+/g, '')) || 0);
+
+            const incomeTax =
+                typeof row.incomeTaxRaw === 'number'
+                    ? row.incomeTaxRaw
+                    : parseFloat(String(row.incomeTax ?? row.breakdown?.incomeTax ?? '').replace(/[^0-9.-]+/g, '')) || 0;
+
             acc.totalGross += gross;
             acc.totalPaid += paid;
+            acc.totalHealthPremi += healthPremi;
+            acc.totalPensionJkkJkm += pensionJkkJkm;
+            acc.totalIncomeTax += incomeTax;
             return acc;
         },
-        { totalGross: 0, totalPaid: 0 }
+        { totalGross: 0, totalPaid: 0, totalHealthPremi: 0, totalPensionJkkJkm: 0, totalIncomeTax: 0 }
     );
 }
 
@@ -76,19 +94,16 @@ export function buildPayrollPayload(values, employeeRows, isDetail) {
                         employee_id: row.employeeId,
                         employee_code: row.employeeCode,
                         employee_name: row.employeeName,
-                        pensionAllowance: row.pensionAllowance ?? 0,
                         basicSalary: row.basicSalary ?? 0,
                         taxAllowance: row.taxAllowance ?? 0,
                         positionAllowance: row.positionAllowance ?? 0,
                         mealAllowance: row.mealAllowance ?? 0,
                         transportAllowance: row.transportAllowance ?? 0,
-                        telecommunicationAllowance: row.telecommunicationAllowance ?? 0,
                         overtimeAllowance: row.overtimeAllowance ?? 0,
                         healthPremiAllowance: row.healthPremiAllowance ?? 0,
                         jkkAllowance: row.jkkAllowance ?? 0,
                         jkmAllowance: row.jkmAllowance ?? 0,
                         salaryReduction: row.salaryReduction ?? 0,
-                        monthlyDeduction: row.monthlyDeduction ?? 0,
                         installmentDeduction: row.installmentDeduction ?? 0,
                         pensionDeduction: row.pensionDeduction ?? 0,
                         healthPremiDeduction: row.healthPremiDeduction ?? 0,

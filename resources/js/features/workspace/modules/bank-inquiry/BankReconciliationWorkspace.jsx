@@ -11,7 +11,7 @@ import Pagination from '@/components/ui/Pagination';
 function JurnalCard({ row }) {
     const debitNum = row.debit ? (parseFloat(String(row.debit).replace(/\./g, '').replace(/,/g, '.')) || 0) : 0;
     const creditNum = row.credit ? (parseFloat(String(row.credit).replace(/\./g, '').replace(/,/g, '.')) || 0) : 0;
-    
+
     const isDebit = debitNum > 0;
     const num = isDebit ? debitNum : creditNum;
     const formattedAmount = new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(num);
@@ -53,7 +53,7 @@ export default function BankReconciliationWorkspace({
     const [keyword, setKeyword] = useState(filters.search || '');
     const [startDate, setStartDate] = useState(filters.start_date || '');
     const [endDate, setEndDate] = useState(filters.end_date || '');
-    
+
   // Confirmation dialog state
 
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -80,17 +80,17 @@ export default function BankReconciliationWorkspace({
     const handleReconcileSingle = async (docNumber, isClosed) => {
         setReconcilingIds(prev => ({ ...prev, [docNumber]: true }));
         const toastId = showLoadingToast({ message: isClosed ? 'Merekonsiliasikan...' : 'Membatalkan rekonsiliasi...' });
-        
+
         try {
             await axios.post('/api/backend/bank-reconciliations/reconcile', {
                 document_numbers: [docNumber],
                 is_closed: isClosed,
             });
-            showSuccessToast({ 
-                title: 'Berhasil', 
-                message: isClosed 
-                    ? `Dokumen ${docNumber} berhasil direkonsiliasikan.` 
-                    : `Rekonsiliasi dokumen ${docNumber} berhasil dibatalkan.` 
+            showSuccessToast({
+                title: 'Berhasil',
+                message: isClosed
+                    ? `Dokumen ${docNumber} berhasil direkonsiliasikan.`
+                    : `Rekonsiliasi dokumen ${docNumber} berhasil dibatalkan.`
             });
             onRefresh?.();
         } catch (err) {

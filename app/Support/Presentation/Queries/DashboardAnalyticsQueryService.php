@@ -523,11 +523,34 @@ class DashboardAnalyticsQueryService
                 ];
             }
 
+            $dbOverduePayroll = DB::table('operation_documents')
+                ->where('document_type', 'payroll_entry')
+                ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled', 'Lunas', 'lunas'])
+                ->where('outstanding_amount', '>', 0)
+                ->where('due_date', '<', date('Y-m-d'))
+                ->select('id', 'document_number', 'due_date', 'outstanding_amount')
+                ->orderBy('due_date', 'asc')
+                ->limit(4)
+                ->get();
+
+            foreach ($dbOverduePayroll as $pay) {
+                $days = Carbon::parse($pay->due_date)->diffInDays(now());
+                $overdueActivityItems[] = [
+                    'id' => 'pay-' . $pay->id,
+                    'title' => "Gaji Karyawan #" . $pay->document_number,
+                    'subtitle' => 'Utang Gaji: Rp ' . number_format($pay->outstanding_amount, 0, ',', '.') . ' • Due: ' . Carbon::parse($pay->due_date)->format('d/m/Y'),
+                    'date' => Carbon::parse($pay->due_date)->format('d/m/Y'),
+                    'badge' => 'Terlewat ' . $days . ' Hari',
+                    'tone' => 'danger',
+                ];
+            }
+
             $overdueSalesInvoicesCount = count($dbOverdueSalesInvoices);
             $overduePurchaseInvoicesCount = count($dbOverduePurchaseInvoices);
-            $overdueCount = $overdueSalesInvoicesCount + $overduePurchaseInvoicesCount;
+            $overduePayrollCount = count($dbOverduePayroll);
+            $overdueCount = $overdueSalesInvoicesCount + $overduePurchaseInvoicesCount + $overduePayrollCount;
             if ($overdueCount > 0) {
-                $overdueNote = "{$overdueCount} Faktur melewati batas jatuh tempo pembayaran.";
+                $overdueNote = "{$overdueCount} Kewajiban/faktur melewati batas jatuh tempo.";
             } else {
                 $overdueNote = "Belum ada kegiatan pembayaran yang terlewat.";
             }

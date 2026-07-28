@@ -36,7 +36,7 @@
     --color-ui-border-light: #d1d9e6;
     --color-ui-border-medium: #b0bacd;
     --color-ui-border-dark: #9daac3;
-    --color-ui-bg-hover: #f1f5f9;
+    --color-ui-bg-hover: #F8F8F8;
     --color-text-dark: #1e293b;
     --color-text-medium: #4f5d75;
     --color-text-muted: #64748b;
@@ -72,7 +72,7 @@
     --color-danger-bg: #fff1f5;
     --color-danger-text: #9a4f66;
     --color-table-border: #cbd5e1;
-    --color-table-header-bg: #60778f;
+    --color-table-header-bg: #5B6F85;
     --color-table-row-border: #e2e8f0;
     --color-table-row-text: #1b2436;
     --color-table-cell-border: #e2e8f0;
@@ -405,7 +405,7 @@
     --color-text-workspace-dark: #1b2436;
     --color-text-workspace-muted: #5f6779;
     --color-text-workspace-tab-inactive: #7d8698;
-    --color-workspace-hover-bg: #f8fafc;
+    --color-workspace-hover-bg: #EEEEEE;
     --color-ui-border-row: #dde1e8;
     --color-warning-badge-text: #8b6511;
     --color-warning-label-text: #9a7b35;
@@ -763,4 +763,27 @@ input[type="checkbox"]:disabled + label,
 label:has(input[type="checkbox"]:disabled) {
     cursor: not-allowed !important;
 }
+
+/* Enforce global table header background color #5B6F85 */
+thead,
+.bg-table-header-bg,
+th {
+    background-color: #5B6F85 !important;
+    color: #ffffff !important;
+}
+
+/* Enforce global non-white alternating row background color #F8F8F8 */
+.bg-ui-bg-hover {
+    background-color: #F8F8F8 !important;
+}
+
+/* Enforce global table row hover background color #EEEEEE */
+tbody tr:hover,
+tbody tr:hover > td,
+tr.hover\:bg-workspace-hover-bg:hover,
+div.hover\:bg-workspace-hover-bg:hover {
+    background-color: #EEEEEE !important;
+}
+
+
 

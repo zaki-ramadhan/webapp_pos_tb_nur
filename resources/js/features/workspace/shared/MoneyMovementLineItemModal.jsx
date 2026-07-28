@@ -42,15 +42,6 @@ export default function MoneyMovementLineItemModal({
 
     const [notes, setNotes] = useState('');
 
-    const [deferred, setDeferred] = useState(false);
-    const [deferredAccount, setDeferredAccount] = useState(null);
-    const [deferredDuration, setDeferredDuration] = useState('0');
-    const [deferredStartType, setDeferredStartType] = useState('period');
-    const [deferredStartMonth, setDeferredStartMonth] = useState(6);
-    const [deferredStartYear, setDeferredStartYear] = useState(2026);
-
-  // Sync state when modal opens or inputs change
-
     useEffect(() => {
         if (!open) return;
 
@@ -66,44 +57,18 @@ export default function MoneyMovementLineItemModal({
             });
             setAmount(currentItem.amount ? String(parseNumericInput(currentItem.amount)) : '0');
             setNotes(currentItem.notes ?? '');
-            setDeferred(Boolean(currentItem.deferred));
-            setDeferredAccount(
-                currentItem.deferredAccountId
-                    ? {
-                          id: currentItem.deferredAccountId,
-                          code: '',
-                          name: currentItem.deferredAccountLabel,
-                      }
-                    : null
-            );
-            setDeferredDuration(String(currentItem.deferredDuration ?? '0'));
-            setDeferredStartType(currentItem.deferredStartType ?? 'period');
-            setDeferredStartMonth(currentItem.deferredStartMonth ?? 6);
-            setDeferredStartYear(currentItem.deferredStartYear ?? 2026);
         } else if (record) {
           // Adding new with selected account from lookup
 
             setSelectedAccount(record);
             setAmount('0');
             setNotes('');
-            setDeferred(false);
-            setDeferredAccount(null);
-            setDeferredDuration('0');
-            setDeferredStartType('period');
-            setDeferredStartMonth(6);
-            setDeferredStartYear(2026);
         } else {
           // Fresh new
 
             setSelectedAccount(null);
             setAmount('0');
             setNotes('');
-            setDeferred(false);
-            setDeferredAccount(null);
-            setDeferredDuration('0');
-            setDeferredStartType('period');
-            setDeferredStartMonth(6);
-            setDeferredStartYear(2026);
         }
     }, [open, record, currentItem]);
 
@@ -121,21 +86,6 @@ export default function MoneyMovementLineItemModal({
             return;
         }
 
-        if (deferred) {
-            if (!deferredAccount?.id) {
-                showErrorToast({ message: isPayment ? 'Akun beban ditangguhkan harus dipilih.' : 'Akun pendapatan ditangguhkan harus dipilih.' });
-                setActiveTab('deferred');
-                return;
-            }
-
-            const parsedDuration = parseInt(deferredDuration, 10);
-            if (isNaN(parsedDuration) || parsedDuration <= 0) {
-                showErrorToast({ message: 'Durasi pengakuan harus lebih besar dari 0 bulan.' });
-                setActiveTab('deferred');
-                return;
-            }
-        }
-
         onSave({
             id: currentItem?.id ?? `draft-line-${Date.now()}`,
             __lineId: currentItem?.__lineId ?? null,
@@ -144,20 +94,12 @@ export default function MoneyMovementLineItemModal({
             accountName: selectedAccount.name ?? '',
             amount: formatCurrencyValue(parsedAmount),
             notes: notes.trim(),
-            deferred,
-            deferredAccountId: deferred ? deferredAccount.id : null,
-            deferredAccountLabel: deferred ? deferredAccount.name : '',
-            deferredDuration: deferred ? parseInt(deferredDuration, 10) : 0,
-            deferredStartType: deferred ? deferredStartType : 'period',
-            deferredStartMonth: deferred ? deferredStartMonth : 6,
-            deferredStartYear: deferred ? deferredStartYear : 2026,
         });
     };
 
     const tabs = [
         { id: 'detail', label: isPayment ? 'Rincian Pembayaran' : 'Rincian Penerimaan' },
-        { id: 'notes', label: 'Info lainnya' },
-        { id: 'deferred', label: 'Penangguhan' },
+        { id: 'notes', label: 'Catatan' },
     ];
 
     return (
@@ -228,7 +170,7 @@ export default function MoneyMovementLineItemModal({
 
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-4">
                             <span className="text-sm text-slate-700 font-normal">
-                                {isPayment ? 'Untuk Pembayaran' : 'Untuk Penerimaan'}
+                                {isPayment ? 'Untuk Pembayaran' : 'Atas Penerimaan'}
                             </span>
                             <div className="w-full">
                                 <AccountLookupField
@@ -276,130 +218,6 @@ export default function MoneyMovementLineItemModal({
                                 />
                             </div>
                         </div>
-                    </div>
-                )}
-
-                {activeTab === 'deferred' && (
-                    <div className="flex flex-col gap-4 flex-1 pb-4">
-                        {/* Switch */}
-                        <div className="flex items-center gap-3">
-                            <button
-                                type="button"
-                                role="switch"
-                                aria-checked={deferred}
-                                onClick={() => setDeferred(!deferred)}
-                                className={`relative inline-flex h-[22px] w-[34px] items-center rounded-full transition-colors duration-200 cursor-pointer ${
-                                    deferred ? 'bg-blue-600' : 'bg-slate-300'
-                                }`}
-                            >
-                                <span
-                                    className={`inline-block h-[16px] w-[16px] transform rounded-full bg-white shadow transition-transform duration-200 ${
-                                        deferred ? 'translate-x-[15px]' : 'translate-x-[3px]'
-                                    }`}
-                                />
-                            </button>
-                            <span className="text-sm text-slate-700 font-normal">
-                                {isPayment
-                                    ? 'Tangguhkan Biaya/beban dan akui per akhir Bulan'
-                                    : 'Tangguhkan Pendapatan dan akui per akhir Bulan'}
-                            </span>
-                        </div>
-
-                        {/* Deferred Form Fields */}
-                        {deferred && (
-                            <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-y-4 border-t border-ui-border-lightest pt-4 mt-2">
-                                <span className="text-sm text-slate-700 font-normal">
-                                    {isPayment ? 'Akun Beban Ditangguhkan' : 'Akun Pendapatan Ditangguhkan'}{' '}
-                                    <span className="text-red-500">*</span>
-                                </span>
-                                <div className="w-full">
-                                    <AccountLookupField
-                                        value={deferredAccount ? buildAccountLookupLabel(deferredAccount) : ''}
-                                        placeholder="Cari/Pilih Akun Perkiraan..."
-                                        searchLabel={isPayment ? 'Cari akun beban ditangguhkan' : 'Cari akun pendapatan ditangguhkan'}
-                                        showType={true}
-                                        queryParams={{ exclude_type: ['Cash/Bank', 'Receivable', 'Payable', 'Inventory', 'Accumulated Depreciation'] }}
-                                        onSelectAccount={(rec) => setDeferredAccount(rec)}
-                                        onRemove={() => setDeferredAccount(null)}
-                                    />
-                                </div>
-
-                                <span className="text-sm text-slate-700 font-normal">
-                                    Pengakuan/bln selama
-                                </span>
-                                <div className="flex items-center gap-3">
-                                    <div className="max-w-[80px]">
-                                        <TextInput
-                                            type="number"
-                                            value={deferredDuration}
-                                            onChange={(e) => setDeferredDuration(e.target.value)}
-                                            className="h-[36px] rounded-[4px] border-ui-border text-center"
-                                            inputClassName="text-sm font-normal text-slate-700 text-center"
-                                        />
-                                    </div>
-                                    <span className="text-sm text-slate-700">Bulan</span>
-                                </div>
-
-                                <span className="text-sm text-slate-700 font-normal">Mulai Pengakuan</span>
-                                <div className="flex flex-col gap-3">
-                                    {/* Option 1: Month/Year Dropdowns */}
-                                    <div className="flex items-center gap-3">
-                                        <input
-                                            type="radio"
-                                            id="start_type_period"
-                                            name="deferredStartType"
-                                            checked={deferredStartType === 'period'}
-                                            onChange={() => setDeferredStartType('period')}
-                                            className="h-4 w-4 text-blue-600 cursor-pointer"
-                                        />
-                                        <div className="flex items-center gap-2">
-                                            <SelectField
-                                                value={deferredStartMonth}
-                                                onChange={(e) => setDeferredStartMonth(parseInt(e.target.value, 10))}
-                                                disabled={deferredStartType !== 'period'}
-                                                className="h-[36px] w-[120px] rounded-[4px] border-ui-border"
-                                                selectClassName="py-1 px-2 text-sm font-normal text-slate-700"
-                                            >
-                                                {MONTHS.map((m) => (
-                                                    <option key={m.value} value={m.value}>
-                                                        {m.label}
-                                                    </option>
-                                                ))}
-                                            </SelectField>
-
-                                            <SelectField
-                                                value={deferredStartYear}
-                                                onChange={(e) => setDeferredStartYear(parseInt(e.target.value, 10))}
-                                                disabled={deferredStartType !== 'period'}
-                                                className="h-[36px] w-[90px] rounded-[4px] border-ui-border"
-                                                selectClassName="py-1 px-2 text-sm font-normal text-slate-700"
-                                            >
-                                                {YEARS.map((y) => (
-                                                    <option key={y} value={y}>
-                                                        {y}
-                                                    </option>
-                                                ))}
-                                            </SelectField>
-                                        </div>
-                                    </div>
-
-                                    {/* Option 2: Manual */}
-                                    <div className="flex items-center gap-3">
-                                        <input
-                                            type="radio"
-                                            id="start_type_manual"
-                                            name="deferredStartType"
-                                            checked={deferredStartType === 'manual'}
-                                            onChange={() => setDeferredStartType('manual')}
-                                            className="h-4 w-4 text-blue-600 cursor-pointer"
-                                        />
-                                        <label htmlFor="start_type_manual" className="text-sm text-slate-700 cursor-pointer select-none">
-                                            Belum Ditentukan/jurnal manual
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 )}
             </div>

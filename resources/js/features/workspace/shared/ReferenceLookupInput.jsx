@@ -247,7 +247,7 @@ export default function ReferenceLookupInput({
                                         e.stopPropagation();
                                         handleSelect(item);
                                     }}
-                                    className="flex w-full items-start gap-3 border-b border-slate-200 px-3 py-3 text-left transition last:border-b-0 odd:bg-white even:bg-[#fafbfc] hover:!bg-ui-bg-hover"
+                                    className="flex w-full items-start gap-3 border-b border-slate-200 px-3 py-3 text-left transition last:border-b-0 odd:bg-white even:bg-[#F8F8F8] hover:!bg-ui-bg-hover"
                                 >
                                     {renderOption ? (
                                         renderOption(item)

@@ -111,9 +111,6 @@ class OperationBackendResources
     private static function makeFinanceResources(): array
     {
         return [
-            'budgets' => self::documentResource('budgets', 'Budgets', 'budget', Budget::class, self::accountingRules(requireLines: false)),
-            'budget-monitors' => self::documentResource('budget-monitors', 'Budget Monitors', 'budget-monitor', Budget::class, self::accountingRules(requireLines: false)),
-            'budget-transfers' => self::documentResource('budget-transfers', 'Budget Transfers', 'budget-transfer', BudgetTransfer::class, self::accountingRules(requireLines: false)),
             'expense-entries' => self::documentResource('expense-entries', 'Expense Entries', 'expense-entry', ExpenseEntry::class, self::expenseEntryRules()),
             'payroll-entries' => self::documentResource('payroll-entries', 'Payroll Entries', 'payroll-entry', PayrollEntry::class, self::accountingRules()),
             'general-journals' => self::documentResource('general-journals', 'General Journals', 'general-journal', GeneralJournal::class, self::journalRules()),

@@ -59,12 +59,26 @@ export function buildGeneralJournalFilters(baseFilters = [], rows = []) {
 export function buildGeneralJournalRow(record) {
     const documentType = record?.document_type ?? 'general_journal';
     const lines = Array.isArray(record?.lines) ? record.lines : [];
-    
+    let docNum = record?.document_number ?? '';
+
     let transactionTypeValue = record?.metadata?.transaction_type_value ?? record?.process_type ?? documentType;
     transactionTypeValue = String(transactionTypeValue).replace(/_/g, '-');
     if (transactionTypeValue === 'general-journals') transactionTypeValue = 'general-journal';
     if (transactionTypeValue === 'expense-entries') transactionTypeValue = 'expense-entry';
     if (transactionTypeValue === 'payroll-entries') transactionTypeValue = 'payroll-entry';
+    if (transactionTypeValue === 'cash-payments') transactionTypeValue = 'cash-payment';
+    if (transactionTypeValue === 'cash-receipts') transactionTypeValue = 'cash-receipt';
+    if (transactionTypeValue === 'bank-transfers') transactionTypeValue = 'bank-transfer';
+
+    if (transactionTypeValue === 'general-journal' && docNum) {
+        if (docNum.startsWith('JV-EXP-')) transactionTypeValue = 'expense-entry';
+        else if (docNum.startsWith('JV-EPY-')) transactionTypeValue = 'payroll-entry';
+        else if (docNum.startsWith('JV-CP-')) transactionTypeValue = 'cash-payment';
+        else if (docNum.startsWith('JV-CR-')) transactionTypeValue = 'cash-receipt';
+        else if (docNum.startsWith('JV-BT-')) transactionTypeValue = 'bank-transfer';
+        else if (docNum.startsWith('JV-SI-')) transactionTypeValue = 'sales-invoice';
+        else if (docNum.startsWith('JV-PI-')) transactionTypeValue = 'purchase-invoice';
+    }
 
     const TYPE_LABEL_MAP = {
         'general-journal': 'Jurnal Umum',
@@ -95,20 +109,30 @@ export function buildGeneralJournalRow(record) {
 
     const totalAmount = Math.max(debitAmount, creditAmount, Number(record?.total_amount ?? 0));
 
-    let docNum = record?.document_number ?? '';
-    if (documentType !== 'general_journal' && docNum && !docNum.startsWith('JV')) {
-        docNum = `JV.${docNum}`;
+    let txNum = record?.metadata?.transaction_number 
+        || record?.related_document?.document_number 
+        || record?.reference_number;
+
+    if (!txNum && docNum) {
+        if (docNum.startsWith('JV-EXP-')) txNum = docNum.substring(7);
+        else if (docNum.startsWith('JV-EPY-')) txNum = docNum.substring(7);
+        else if (docNum.startsWith('JV-CP-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-CR-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-BT-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-SI-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-PI-')) txNum = docNum.substring(6);
+        else txNum = docNum;
     }
+
+    const cleanNotes = (record?.notes ?? '').replace(/^Posting otomatis dari\s*/i, '');
 
     return {
         id: String(record?.id ?? ''),
         __backendRecord: record,
         documentNumber: docNum,
-        transactionNumber: transactionTypeValue === 'general-journal'
-            ? (record?.reference_number || '-')
-            : (record?.metadata?.transaction_number || record?.reference_number || record?.document_number || String(record?.id || '')),
+        transactionNumber: txNum || docNum,
         date: entryDate,
-        description: record?.notes ?? '',
+        description: cleanNotes,
         total: formatCurrencyValue(totalAmount),
         totalCurrency: formatCurrencyLabel(totalAmount),
         dateFilter: entryDate,
@@ -185,6 +209,20 @@ export function buildJournalRecordFromBackend(record = {}, config) {
     if (transactionTypeValue === 'general-journals') transactionTypeValue = 'general-journal';
     if (transactionTypeValue === 'expense-entries') transactionTypeValue = 'expense-entry';
     if (transactionTypeValue === 'payroll-entries') transactionTypeValue = 'payroll-entry';
+    if (transactionTypeValue === 'cash-payments') transactionTypeValue = 'cash-payment';
+    if (transactionTypeValue === 'cash-receipts') transactionTypeValue = 'cash-receipt';
+    if (transactionTypeValue === 'bank-transfers') transactionTypeValue = 'bank-transfer';
+
+    let docNum = record.document_number ?? '';
+    if (transactionTypeValue === 'general-journal' && docNum) {
+        if (docNum.startsWith('JV-EXP-')) transactionTypeValue = 'expense-entry';
+        else if (docNum.startsWith('JV-EPY-')) transactionTypeValue = 'payroll-entry';
+        else if (docNum.startsWith('JV-CP-')) transactionTypeValue = 'cash-payment';
+        else if (docNum.startsWith('JV-CR-')) transactionTypeValue = 'cash-receipt';
+        else if (docNum.startsWith('JV-BT-')) transactionTypeValue = 'bank-transfer';
+        else if (docNum.startsWith('JV-SI-')) transactionTypeValue = 'sales-invoice';
+        else if (docNum.startsWith('JV-PI-')) transactionTypeValue = 'purchase-invoice';
+    }
 
     const TYPE_LABEL_MAP = {
         'general-journal': 'Jurnal Umum',
@@ -200,18 +238,25 @@ export function buildJournalRecordFromBackend(record = {}, config) {
 
     const transactionTypeLabel = metadata.transaction_type_label ?? TYPE_LABEL_MAP[transactionTypeValue] ?? 'Jurnal Umum';
 
-    let docNum = record.document_number ?? '';
-    if (documentType !== 'general_journal' && docNum && !docNum.startsWith('JV')) {
-        docNum = `JV.${docNum}`;
+    let txNum = metadata.transaction_number || record.reference_number;
+    if (!txNum && docNum) {
+        if (docNum.startsWith('JV-EXP-')) txNum = docNum.substring(7);
+        else if (docNum.startsWith('JV-EPY-')) txNum = docNum.substring(7);
+        else if (docNum.startsWith('JV-CP-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-CR-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-BT-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-SI-')) txNum = docNum.substring(6);
+        else if (docNum.startsWith('JV-PI-')) txNum = docNum.substring(6);
+        else txNum = docNum;
     }
+
+    const cleanNotes = (record.notes ?? '').replace(/^Posting otomatis dari\s*/i, '');
 
     return applyJournalLineItems(
         {
             __backendRecordId: record.id ?? null,
             documentNumber: docNum,
-            transactionNumber: transactionTypeValue === 'general-journal'
-                ? (record.reference_number || '')
-                : (metadata.transaction_number || record.reference_number || record.document_number || String(record.id || '')),
+            transactionNumber: txNum || docNum,
             entryDate: formatIsoDate(record.entry_date),
             autoNumber: false,
             numberingType: record.numbering_type ?? config.defaults?.numberingType ?? '',
@@ -219,8 +264,7 @@ export function buildJournalRecordFromBackend(record = {}, config) {
             transactionTypeValue: transactionTypeValue,
             __branchId: record.branch_id ?? null,
             branches: record.branch?.name ? [record.branch.name] : [],
-            notes: record.notes ?? '',
-            lineLookup: '',
+            notes: cleanNotes,
             saveTone: 'muted',
         },
         lineItems,

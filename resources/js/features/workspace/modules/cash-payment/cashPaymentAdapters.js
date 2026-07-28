@@ -32,8 +32,15 @@ export function buildCashPaymentFilters(baseFilters = [], rows = []) {
 }
 
 export function buildCashPaymentRow(record) {
-    const primaryAccountLabel = buildLookupLabel(record?.primary_account ?? {}, 'code');
-    const bankLabel = record?.metadata?.cash_bank_label ?? primaryAccountLabel;
+    const primaryAccountName = record?.primary_account?.name ?? '';
+    let bankLabel = primaryAccountName;
+    if (!bankLabel) {
+        const rawLabel = record?.metadata?.cash_bank_label ?? buildLookupLabel(record?.primary_account ?? {}, 'code');
+        bankLabel = String(rawLabel ?? '')
+            .replace(/^\[[^\]]+\]\s*[-–—]?\s*/, '')
+            .replace(/^[A-Za-z0-9.-]+\s*[-–—]\s*/, '')
+            .trim();
+    }
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const entryDate = formatIsoDate(record?.entry_date);
 
