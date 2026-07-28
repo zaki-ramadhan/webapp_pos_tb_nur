@@ -764,13 +764,47 @@ class BackendResourceWriter
             'purchase_invoice' => 'JV-PI-',
         ];
 
+        $transactionLabels = [
+            'expense_entry'    => 'Pencatatan Beban',
+            'payroll_entry'    => 'Pencatatan Gaji',
+            'cash_payment'     => 'Pembayaran Kas',
+            'cash_receipt'     => 'Penerimaan Kas',
+            'bank_transfer'    => 'Transfer Bank',
+            'sales_invoice'    => 'Faktur Penjualan',
+            'purchase_invoice' => 'Faktur Pembelian',
+        ];
+
+        $transactionValues = [
+            'expense_entry'    => 'expense-entry',
+            'payroll_entry'    => 'payroll-entry',
+            'cash_payment'     => 'cash-payment',
+            'cash_receipt'     => 'cash-receipt',
+            'bank_transfer'    => 'bank-transfer',
+            'sales_invoice'    => 'sales-invoice',
+            'purchase_invoice' => 'purchase-invoice',
+        ];
+
+        $cleanNotes = trim((string) $record->notes);
+        $cleanNotes = preg_replace('/^Posting otomatis dari\s*/i', '', $cleanNotes);
+        if ($cleanNotes === '') {
+            $label = $transactionLabels[$record->document_type] ?? 'Transaksi';
+            $cleanNotes = $label . ' ' . $record->document_number;
+        }
+
         $journal->branch_id       = $record->branch_id;
         $journal->department_id   = $record->department_id;
         $journal->document_number = ($prefixes[$record->document_type] ?? 'JV-') . $record->document_number;
         $journal->entry_date      = $record->entry_date;
         $journal->status          = 'Posted';
-        $journal->notes           = 'Posting otomatis dari ' . $record->document_number . ($record->notes ? ' - ' . $record->notes : '');
+        $journal->notes           = $cleanNotes;
         $journal->total_amount    = $record->total_amount;
+
+        $meta = is_array($journal->metadata) ? $journal->metadata : (json_decode($journal->metadata ?? '[]', true) ?: []);
+        $meta['transaction_number'] = $record->document_number;
+        $meta['transaction_type_label'] = $transactionLabels[$record->document_type] ?? 'Jurnal Umum';
+        $meta['transaction_type_value'] = $transactionValues[$record->document_type] ?? 'general-journal';
+        $journal->metadata = $meta;
+
         $journal->save();
 
         $lines      = [];
@@ -806,11 +840,27 @@ class BackendResourceWriter
                 }
             }
         } elseif ($docType === 'bank_transfer') {
+            $transferFeeTotal = 0.0;
+            foreach ($recordLines as $line) {
+                if (($line->attributes['kind'] ?? '') === 'fee' && $line->account_id && $line->total_amount > 0) {
+                    $feeAmt = (float) $line->total_amount;
+                    $transferFeeTotal += $feeAmt;
+                    $lines[] = [
+                        'account_id' => $line->account_id,
+                        'description' => $line->description ?? 'Biaya Transfer',
+                        'debit_amount' => $feeAmt,
+                        'credit_amount' => 0.00,
+                        'total_amount' => $feeAmt,
+                        'sort_order' => $sortOrder++
+                    ];
+                }
+            }
             if ($record->secondary_account_id) {
                 $lines[] = ['account_id' => $record->secondary_account_id, 'description' => 'Kas/Bank Penerima', 'debit_amount' => $record->total_amount, 'credit_amount' => 0.00, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
             }
             if ($record->primary_account_id) {
-                $lines[] = ['account_id' => $record->primary_account_id, 'description' => 'Kas/Bank Pengirim', 'debit_amount' => 0.00, 'credit_amount' => $record->total_amount, 'total_amount' => $record->total_amount, 'sort_order' => $sortOrder++];
+                $totalSenderCredit = $record->total_amount + $transferFeeTotal;
+                $lines[] = ['account_id' => $record->primary_account_id, 'description' => 'Kas/Bank Pengirim', 'debit_amount' => 0.00, 'credit_amount' => $totalSenderCredit, 'total_amount' => $totalSenderCredit, 'sort_order' => $sortOrder++];
             }
         } elseif ($docType === 'sales_invoice') {
             if ($record->primary_account_id) {

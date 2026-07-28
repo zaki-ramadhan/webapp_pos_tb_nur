@@ -60,15 +60,31 @@ class BackendResourceIndexQuery
                 continue;
             }
             if ($key === 'exclude_id' && Schema::hasColumn($tableName, 'id')) {
+                if (empty($value) && $value !== 0 && $value !== '0') {
+                    continue;
+                }
                 if ($tableName === 'accounts' && !is_array($value)) {
                     $targetId = (int) $value;
-                    $childIds = \Illuminate\Support\Facades\DB::table('accounts')->where('parent_id', $targetId)->pluck('id')->all();
-                    $excludedIds = array_merge([$targetId], $childIds);
-                    $query->whereNotIn("{$tableName}.id", $excludedIds);
+                    if ($targetId <= 0) {
+                        continue;
+                    }
+                    if (filter_var($filters['exclude_children'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                        $childIds = \Illuminate\Support\Facades\DB::table('accounts')->where('parent_id', $targetId)->pluck('id')->all();
+                        $excludedIds = array_merge([$targetId], $childIds);
+                        $query->whereNotIn("{$tableName}.id", $excludedIds);
+                    } else {
+                        $query->where("{$tableName}.id", '!=', $targetId);
+                    }
                 } elseif (is_array($value)) {
-                    $query->whereNotIn("{$tableName}.id", $value);
+                    $validIds = array_filter(array_map('intval', $value), fn ($id) => $id > 0);
+                    if (!empty($validIds)) {
+                        $query->whereNotIn("{$tableName}.id", $validIds);
+                    }
                 } else {
-                    $query->where("{$tableName}.id", '!=', $value);
+                    $targetId = (int) $value;
+                    if ($targetId > 0) {
+                        $query->where("{$tableName}.id", '!=', $targetId);
+                    }
                 }
                 continue;
             }

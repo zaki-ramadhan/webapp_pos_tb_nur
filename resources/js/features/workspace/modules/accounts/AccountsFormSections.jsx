@@ -87,7 +87,7 @@ export function AccountsGeneralTab({ config, values, isDetail, onChange, lookupD
                             placeholder="Cari/Pilih..."
                             searchLabel="Cari akun perkiraan"
                             queryParams={{
-                                ...(excludeId ? { exclude_id: excludeId } : {}),
+                                ...(excludeId ? { exclude_id: excludeId, exclude_children: true } : {}),
                                 ...(values.type ? { account_type: values.type } : {}),
                             }}
                             getOptionLabel={(option) => option ? (option.code ? `${option.code} - ${option.name}` : option.name) : ''}
