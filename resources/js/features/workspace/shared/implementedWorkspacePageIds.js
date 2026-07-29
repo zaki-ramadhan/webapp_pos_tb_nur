@@ -13,7 +13,6 @@ const implementedWorkspacePageIds = new Set([
     'cash-receipt',
     'department',
     'item-unit',
-    'item-brand',
     'employees',
     'journal-activity-log',
     'salary-allowance',
@@ -22,28 +21,21 @@ const implementedWorkspacePageIds = new Set([
     'sales-receipt',
     'sales-return',
     'inventory-adjustment',
-    'price-adjustment',
     'sales-checkin',
     'purchase-invoice',
-    'purchase-order',
     'purchase-payment',
     'purchase-return',
-    'item-request',
     'item-location',
     'minimum-stock',
     'delivery-order',
-  // Modul aktif baru
-
     'payroll-entry',
     'items-services',
     'warehouse-master',
     'item-category',
-    'supplier-price',
     'suppliers',
     'customers',
     'users',
     'preferences',
-    'sales-commission',
 ]);
 
 export default implementedWorkspacePageIds;

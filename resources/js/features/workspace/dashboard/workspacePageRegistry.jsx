@@ -13,7 +13,6 @@ import GroupAccessView from '@/features/workspace/modules/group-access/GroupAcce
 import InventoryAdjustmentView from '@/features/workspace/modules/inventory-adjustment/InventoryAdjustmentView';
 import InventoryInquiryView from '@/features/workspace/modules/inventory-inquiry/InventoryInquiryView';
 import ItemCategoryView from '@/features/workspace/modules/item-category/ItemCategoryView';
-import ItemRequestView from '@/features/workspace/modules/item-request/ItemRequestView';
 import ItemsServicesView from '@/features/workspace/modules/items-services/ItemsServicesView';
 import PayrollEntryView from '@/features/workspace/modules/payroll-entry/PayrollEntryView';
 import PreferencesView from '@/features/workspace/preferences/PreferencesView';
@@ -21,14 +20,12 @@ import PurchaseInvoiceView from '@/features/workspace/modules/sales-document/Pur
 import PurchasePaymentView from '@/features/workspace/modules/purchase-payment/PurchasePaymentView';
 import PurchaseReturnView from '@/features/workspace/modules/sales-document/PurchaseReturnView';
 import SalaryAllowanceView from '@/features/workspace/modules/salary-allowance/SalaryAllowanceView';
-import SalesCommissionView from '@/features/workspace/modules/sales-commission/SalesCommissionView';
 import SalesCheckinView from '@/features/workspace/modules/sales-checkin/SalesCheckinView';
 import SalesDepositView from '@/features/workspace/modules/sales-deposit/SalesDepositView';
 import SalesInvoiceView from '@/features/workspace/modules/sales-document/SalesInvoiceView';
 import SalesReceiptView from '@/features/workspace/modules/sales-receipt/SalesReceiptView';
 import SalesReturnView from '@/features/workspace/modules/sales-document/SalesReturnView';
 import SimpleMasterView from '@/features/workspace/modules/SimpleMasterView';
-import SupplierPriceView from '@/features/workspace/modules/supplier-price/SupplierPriceView';
 import TableListView from '@/features/workspace/modules/TableListView';
 import UsersManagementView from '@/features/workspace/modules/users-management/UsersManagementView';
 import WarehouseView from '@/features/workspace/modules/warehouse/WarehouseView';
@@ -47,7 +44,6 @@ export const STATIC_PAGE_RENDERERS = {
 export const CONTENT_PAGE_COMPONENTS = {
     department: DepartmentView,
     employees: EmployeeView,
-    'supplier-price': SupplierPriceView,
     'payroll-entry': PayrollEntryView,
     users: UsersManagementView,
     'journal-activity-log': JournalActivityLogView,
@@ -65,22 +61,17 @@ export const LEVEL2_DETAIL_PAGE_COMPONENTS = {
     'sales-receipt': SalesReceiptView,
     'sales-return': SalesReturnView,
     'purchase-invoice': PurchaseInvoiceView,
-    'purchase-order': PurchaseInvoiceView,
     'goods-receipt': PurchaseInvoiceView,
     'purchase-deposit': PurchaseInvoiceView,
     'purchase-payment': PurchasePaymentView,
     'purchase-return': PurchaseReturnView,
     'stock-transfer': BankTransferView,
-    'item-request': ItemRequestView,
     'currency-master': CurrencyView,
     'warehouse-master': WarehouseView,
     'items-services': ItemsServicesView,
     'item-unit': SimpleMasterView,
-    'item-brand': SimpleMasterView,
     'item-category': ItemCategoryView,
-    'price-adjustment': InventoryAdjustmentView,
     'inventory-adjustment': InventoryAdjustmentView,
-    'sales-commission': SalesCommissionView,
     accounts: AccountsView,
     'group-access': GroupAccessView,
     'bank-transfer': BankTransferView,

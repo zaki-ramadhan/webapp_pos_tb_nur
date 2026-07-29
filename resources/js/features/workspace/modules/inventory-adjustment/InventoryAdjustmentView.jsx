@@ -9,7 +9,7 @@ import useBackendIndexResource from '@/features/workspace/backend/useBackendInde
 import {
     buildInventoryAdjustmentConfig,
     buildInventoryAdjustmentRecord,
-} from '@/features/workspace/modules/price-adjustment/priceAdjustmentConfig';
+} from './inventoryAdjustmentConfig';
 import {
     InventoryAdjustmentFormView,
     InventoryAdjustmentTableView,
