@@ -637,6 +637,12 @@ class BackendResourceWriter
             return true;
         }
 
+      // Format titik frontend: PREFIX.YYYY.MM.HHMMSS (tanpa DD)
+
+        if (preg_match('/^[A-Z]+(\.[A-Z]+)?\.\d{4}\.\d{2}\.\d{6}$/', $number)) {
+            return true;
+        }
+
       // Format strip baru: PREFIX-YYYYMMDD-HHMMSS
 
         if (preg_match('/^[A-Z]+(\.[A-Z]+)?-\d{8}-\d{6}$/', $number)) {
