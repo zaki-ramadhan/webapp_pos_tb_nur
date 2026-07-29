@@ -6,7 +6,7 @@ import {
     mapBankRows,
 } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { bankInquiryPageConfigs } from './bankInquiryConfig';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import BankReconciliationWorkspace from './BankReconciliationWorkspace';
 
 export default function BankInquiryView({ page }) {
@@ -31,7 +31,29 @@ export default function BankInquiryView({ page }) {
         filters,
         initialPerPage: 25,
     });
-    const tableRows = useMemo(() => mapBankRows(page.id, rows), [page.id, rows]);
+    const isAccountSelected = Boolean(filters.search?.trim() || filters.account_id);
+    const tableRows = useMemo(() => {
+        if (!isAccountSelected && (page.id === 'bank-history' || page.id === 'account-history')) {
+            return [];
+        }
+        return mapBankRows(page.id, rows);
+    }, [page.id, rows, isAccountSelected]);
+
+    const handleValuesChange = useCallback((values) => {
+        const nextFilters = buildBankFilters(values);
+        setFilters((prev) => {
+            if (
+                prev.search === nextFilters.search &&
+                prev.account_id === nextFilters.account_id &&
+                prev.start_date === nextFilters.start_date &&
+                prev.end_date === nextFilters.end_date &&
+                prev.per_page === nextFilters.per_page
+            ) {
+                return prev;
+            }
+            return nextFilters;
+        });
+    }, []);
 
     if (page.id === 'bank-reconciliation') {
         return (
@@ -59,12 +81,13 @@ export default function BankInquiryView({ page }) {
     return (
         <InquiryWorkspaceView
             key={page.id}
+            pageId={page.id}
             config={config}
             rows={tableRows}
             loading={loading}
             error={error}
             onRefresh={reload}
-            onValuesChange={(values) => setFilters(buildBankFilters(values))}
+            onValuesChange={handleValuesChange}
             pagination={{
                 page: currentPage,
                 perPage,

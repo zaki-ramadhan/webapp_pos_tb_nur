@@ -43,7 +43,14 @@ class BankInquiryQueryService
      */
     public function paginateHistory(array $filters): LengthAwarePaginator
     {
-        $rows = $this->buildLedgerRows($filters)
+        $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
+        $accountId = $filters['account_id'] ?? null;
+
+        if (empty($accountId) && $search === '') {
+            return $this->paginateRows(collect(), $filters);
+        }
+
+        $rows = $this->buildLedgerRows($filters, includeOpeningBalanceRow: true)
             ->values()
             ->map(function (array $row, int $index): array {
                 return [
@@ -75,7 +82,7 @@ class BankInquiryQueryService
      */
     public function paginateReconciliation(array $filters): LengthAwarePaginator
     {
-        $rows = $this->buildLedgerRows($filters)
+        $rows = $this->buildLedgerRows($filters, includeOpeningBalanceRow: false)
             ->map(function (array $row): array {
                 return [
                     'id' => $row['id'],
@@ -99,7 +106,7 @@ class BankInquiryQueryService
      * @param  array<string, mixed>  $filters
      * @return Collection<int, array<string, mixed>>
      */
-    protected function buildLedgerRows(array $filters): Collection
+    protected function buildLedgerRows(array $filters, bool $includeOpeningBalanceRow = false): Collection
     {
         $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
         $accountMap = $this->resolveAccountMap($filters);
@@ -110,52 +117,89 @@ class BankInquiryQueryService
         }
 
         $documents = $this->queryDocuments($filters);
-        $rows = collect();
+        $allRows = collect();
 
         foreach ($documents as $document) {
-            $rows = $rows->merge($this->rowsFromDocumentLines($document, $accountMap));
-            $rows = $rows->merge($this->rowsFromSyntheticAccounts($document, $accountMap));
+            $allRows = $allRows->merge($this->rowsFromDocumentLines($document, $accountMap));
+            $allRows = $allRows->merge($this->rowsFromSyntheticAccounts($document, $accountMap));
+        }
+
+        $openingRows = collect();
+        $realRows = collect();
+
+        foreach ($allRows as $row) {
+            $isOpBal = (bool) ($row['is_opening_balance'] ?? false)
+                || (isset($row['description']) && str_starts_with($row['description'], 'Saldo Awal akun'));
+
+            if ($isOpBal) {
+                $openingRows->push($row);
+            } else {
+                $realRows->push($row);
+            }
         }
 
         $balances = [];
+        foreach ($accountMap as $accId => $account) {
+            $balances[(int) $accId] = (float) ($account->opening_balance ?? 0);
+        }
 
-        $rows = $rows
-            ->sortBy([
-                ['sortable_date', 'asc'],
-                ['account_name', 'asc'],
-                ['document_number', 'asc'],
-                ['id', 'asc'],
-            ])
-            ->values()
-            ->map(function (array $row) use (&$balances): array {
-                $accountId = (int) $row['account_id'];
-                $currentBalance = $balances[$accountId] ?? 0;
-                $currentBalance += (float) $row['net_amount'];
-                $balances[$accountId] = $currentBalance;
-                $row['balance'] = $this->formatNumber($currentBalance);
+        foreach ($openingRows as $opRow) {
+            $accId = (int) $opRow['account_id'];
+            $balances[$accId] = ($balances[$accId] ?? 0) + (float) $opRow['net_amount'];
+        }
 
-                return $row;
-            })
-            ->filter(function (array $row) use ($search): bool {
-                if ($search === '') {
-                    return true;
-                }
+        $sortedRealRows = $realRows->sortBy([
+            ['sortable_date', 'asc'],
+            ['account_name', 'asc'],
+            ['document_number', 'asc'],
+            ['id', 'asc'],
+        ])->values();
 
-                return collect([
-                    $row['date_label'],
-                    $row['document_number'],
-                    $row['check_number'],
-                    $row['transaction_type'],
-                    $row['description'],
-                    $row['mutation'],
-                    $row['type'],
-                    $row['balance'],
-                    $row['account_name'],
-                ])->contains(fn ($value) => str_contains(mb_strtolower((string) $value), $search));
-            })
-            ->values();
+        $startDate = $this->resolveDateFilter($filters['start_date'] ?? null);
+        $outputRows = collect();
 
-        return $rows;
+        if ($includeOpeningBalanceRow && count($accountIds) === 1) {
+            $accId = $accountIds[0];
+            $accName = $accountMap->get($accId)?->name ?? '';
+            $initialBal = $balances[$accId] ?? 0;
+
+            $outputRows->push([
+                'id' => 'opening-balance',
+                'document_id' => null,
+                'document_type' => null,
+                'date' => '-',
+                'date_label' => '-',
+                'sortable_date' => '0000-00-00',
+                'document_number' => '-',
+                'check_number' => '',
+                'transaction_type' => 'Saldo Awal',
+                'description' => $startDate ? sprintf('Saldo per %s', $startDate->copy()->subDay()->format('d/m/Y')) : 'Saldo Awal',
+                'debit' => $this->formatNumber(0),
+                'credit' => $this->formatNumber(0),
+                'mutation' => $this->formatNumber(0),
+                'type' => '-',
+                'status' => 'Reconciled',
+                'balance' => $this->formatNumber($initialBal),
+                'net_amount' => 0,
+                'is_opening_balance' => true,
+                'account_id' => $accId,
+                'account_name' => $accName,
+            ]);
+        }
+
+        $computedRealRows = $sortedRealRows->map(function (array $row) use (&$balances): array {
+            $accountId = (int) $row['account_id'];
+            $currentBalance = $balances[$accountId] ?? 0;
+            $currentBalance += (float) $row['net_amount'];
+            $balances[$accountId] = $currentBalance;
+            $row['balance'] = $this->formatNumber($currentBalance);
+
+            return $row;
+        });
+
+        $outputRows = $outputRows->concat($computedRealRows);
+
+        return $outputRows->values();
     }
 
     /**
@@ -182,16 +226,53 @@ class BankInquiryQueryService
             return Account::whereIn('id', $accountIds)->get()->keyBy('id');
         }
 
-        $accounts = $query
+        $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
+
+        if ($search !== '') {
+            $cleanSearch = trim(preg_replace('/\s+/', ' ', str_replace(['[', ']'], ' ', $search)));
+
+            $searchParts = array_map('trim', explode('-', str_replace(['[', ']'], '', $search)));
+            if (count($searchParts) < 2) {
+                $words = explode(' ', $cleanSearch);
+                if (count($words) > 1 && preg_match('/^[0-9.-]+$/', $words[0])) {
+                    $searchParts = [$words[0], implode(' ', array_slice($words, 1))];
+                }
+            }
+
+            $codeQuery = mb_strtolower($searchParts[0] ?? $cleanSearch);
+            $nameQuery = mb_strtolower(count($searchParts) > 1 ? implode(' ', array_slice($searchParts, 1)) : $cleanSearch);
+
+            $matchedAccounts = $query
+                ->where(function ($builder) use ($cleanSearch, $codeQuery, $nameQuery): void {
+                    $builder->whereRaw('LOWER(name) LIKE ?', ["%{$cleanSearch}%"])
+                        ->orWhereRaw('LOWER(code) LIKE ?', ["%{$cleanSearch}%"])
+                        ->orWhereRaw('LOWER(name) LIKE ?', ["%{$nameQuery}%"])
+                        ->orWhereRaw('LOWER(code) LIKE ?', ["%{$codeQuery}%"]);
+                })
+                ->where(function ($builder): void {
+                    $builder
+                        ->whereNotNull('cash_bank_reference')
+                        ->orWhere('account_type', 'like', '%bank%')
+                        ->orWhere('account_type', 'like', '%cash%')
+                        ->orWhere('account_type', 'like', '%kas%');
+                })
+                ->get();
+
+            if ($matchedAccounts->isNotEmpty()) {
+                return $matchedAccounts->keyBy('id');
+            }
+        }
+
+        return Account::query()
             ->where(function ($builder): void {
                 $builder
                     ->whereNotNull('cash_bank_reference')
                     ->orWhere('account_type', 'like', '%bank%')
-                    ->orWhere('account_type', 'like', '%cash%');
+                    ->orWhere('account_type', 'like', '%cash%')
+                    ->orWhere('account_type', 'like', '%kas%');
             })
-            ->get();
-
-        return $accounts->keyBy('id');
+            ->get()
+            ->keyBy('id');
     }
 
     /**

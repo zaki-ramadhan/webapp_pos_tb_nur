@@ -1,3 +1,5 @@
+import { openSourceDocument } from '@/features/workspace/backend/adapters/bankAdapters';
+
 export function formatDisplayDate(dateStr) {
     if (!dateStr) return '';
     const str = String(dateStr).trim();
@@ -17,9 +19,15 @@ export default function JurnalCard({ row }) {
     const formattedAmount = new Intl.NumberFormat('id-ID', { minimumFractionDigits: 0 }).format(num);
     const typeLabel = isDebit ? '(Debit)' : '(Kredit)';
     const displayDate = formatDisplayDate(row.date);
+    const isClickable = Boolean(row.document_id && row.document_type);
 
     return (
-        <div className="border border-[#a8d4e7] rounded-[4px] bg-[#eef7fc] overflow-hidden flex flex-col justify-between min-h-[110px] h-full shadow-xs">
+        <div
+            onClick={isClickable ? () => openSourceDocument(row) : undefined}
+            className={`border border-[#a8d4e7] rounded-[4px] bg-[#eef7fc] overflow-hidden flex flex-col justify-between min-h-[110px] h-full shadow-xs ${
+                isClickable ? 'cursor-pointer transition hover:bg-[#e4f3fa]' : ''
+            }`.trim()}
+        >
             <div className="p-3 flex-1 flex flex-col gap-1 bg-[#eef7fc]">
                 <div className="flex justify-between items-center text-sm font-normal text-slate-900">
                     <span>{displayDate}</span>
@@ -36,7 +44,9 @@ export default function JurnalCard({ row }) {
                     </div>
                 )}
             </div>
-            <div className="bg-[#e1f1f9] px-3 py-2 text-sm font-normal text-slate-900 border-t border-[#bcdfe8] text-left">
+            <div className={`bg-[#e1f1f9] px-3 py-2 text-sm font-normal border-t border-[#bcdfe8] text-left ${
+                isClickable ? 'text-brand-blue font-medium hover:underline' : 'text-slate-900'
+            }`.trim()}>
                 {row.documentNumber || row.sourceNumber || row.document_number}
             </div>
         </div>

@@ -15,13 +15,63 @@ export function buildBankFilters(values) {
     };
 }
 
+export function openSourceDocument(row) {
+    if (!row) return;
+
+    const documentId = row.document_id || row.id;
+    const documentType = row.document_type || row.documentType;
+
+    if (!documentId || !documentType) return;
+
+    const docTypeToPageId = {
+        general_journal: 'general-journal',
+        bank_transfer: 'bank-transfer',
+        cash_receipt: 'cash-receipt',
+        sales_receipt: 'sales-receipt',
+        cash_payment: 'cash-payment',
+        purchase_payment: 'purchase-payment',
+        expense_entry: 'expense-entry',
+        payroll_entry: 'payroll-entry',
+        sales_invoice: 'sales-invoice',
+        purchase_invoice: 'purchase-invoice',
+        sales_deposit: 'sales-deposit',
+        sales_order: 'sales-order',
+        purchase_order: 'purchase-order',
+        item_request: 'item-request',
+        inventory_adjustment: 'inventory-adjustment',
+        stock_opname: 'stock-opname',
+    };
+
+    const pageId = docTypeToPageId[documentType] || String(documentType).replace(/_/g, '-');
+    const targetRecordId = String(documentId);
+    const label = row.sourceNumber || row.documentNumber || row.document_number || `Dokumen #${targetRecordId}`;
+
+    window.dispatchEvent(
+        new CustomEvent('workspace:open-page', {
+            detail: {
+                pageId,
+                recordId: targetRecordId,
+                label,
+                tabLabel: label,
+            },
+        }),
+    );
+}
+
 export function mapBankRows(pageId, records) {
     return records.map((record, index) => {
+        const base = {
+            id: record.id,
+            document_id: record.document_id ?? record.id ?? null,
+            document_type: record.document_type ?? null,
+            document_number: record.document_number ?? record.source_number ?? '',
+        };
+
         if (pageId === 'bank-history') {
             return {
-                id: record.id,
+                ...base,
                 date: formatIsoDate(record.date),
-                sourceNumber: record.source_number ?? '',
+                sourceNumber: record.source_number ?? record.document_number ?? '',
                 checkNumber: record.check_number ?? '',
                 transactionType: record.transaction_type ?? '',
                 description: record.description ?? '',
@@ -36,9 +86,9 @@ export function mapBankRows(pageId, records) {
 
         if (pageId === 'bank-reconciliation') {
             return {
-                id: record.id,
+                ...base,
                 date: formatIsoDate(record.date),
-                documentNumber: record.document_number ?? '',
+                documentNumber: record.document_number ?? record.source_number ?? '',
                 transactionType: record.transaction_type ?? '',
                 description: record.description ?? '',
                 debit: record.debit ?? '',
@@ -49,7 +99,7 @@ export function mapBankRows(pageId, records) {
         }
 
         return {
-            id: record.id,
+            ...base,
             date: record.date ?? '',
             description: record.description ?? '',
             mutation: record.mutation ?? '',

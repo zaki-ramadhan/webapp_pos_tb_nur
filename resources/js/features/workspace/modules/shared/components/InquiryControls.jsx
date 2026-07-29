@@ -111,7 +111,7 @@ export function InquiryControl({ control, value, onChange }) {
                 inputClassName="text-sm text-brand-dark py-1 h-full"
                 trailingClassName="w-[32px] shrink-0 justify-center px-0 h-full"
                 onSelectAccount={(record, label) => {
-                    onChange(control.id, label);
+                    onChange(control.id, label, record ? { account_id: record.id } : { account_id: '' });
                 }}
             />
         );
