@@ -81,7 +81,10 @@ export function TransactionDataTable({
                 <DataTableHeader className="bg-table-header-bg">
                     <tr>
                         {activeShowNumbering && (
-                            <DataTableHead className="w-px px-2.5 text-center text-base font-light text-white whitespace-nowrap">
+                            <DataTableHead
+                                className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base font-light text-white whitespace-nowrap"
+                                style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                            >
                                 No.
                             </DataTableHead>
                         )}
@@ -147,7 +150,10 @@ export function TransactionDataTable({
                                     onClick={clickable ? () => onRowClick(row, index) : undefined}
                                 >
                                     {activeShowNumbering && (
-                                        <DataTableCell className={`w-px px-2.5 text-center text-base text-table-row-number whitespace-nowrap ${cellClassName}`.trim()}>
+                                        <DataTableCell
+                                            className={`w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap ${cellClassName}`.trim()}
+                                            style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                                        >
                                             {index + 1}
                                         </DataTableCell>
                                     )}

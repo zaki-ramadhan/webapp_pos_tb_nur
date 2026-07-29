@@ -69,11 +69,22 @@ function CostDetailTab({ form, onChange, errors = {} }) {
             <TransactionFieldLabel label="Nama Biaya" required />
             <TextInput
                 value={name}
-                onChange={(e) => onChange({ name: e.target.value })}
-                placeholder="Masukkan nama biaya"
+                readOnly
+                trailing={
+                    name ? (
+                        <button
+                            type="button"
+                            className="text-lg font-semibold text-brand-dark"
+                            onClick={() => onChange({ name: '' })}
+                        >
+                            ×
+                        </button>
+                    ) : null
+                }
                 error={errors.name}
                 className={`${FIELD_H} ${FIELD_ROUNDED} ${FIELD_BORDER}`}
                 inputClassName={FIELD_INPUT_CLS}
+                trailingClassName="px-3"
             />
 
             {/* Jumlah */}

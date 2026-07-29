@@ -4,6 +4,41 @@ import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/featur
 import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType } from '@/features/workspace/shared/hooks/useAccountLookupController';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
 
+function resolveDocumentTypeLabel(record, resource) {
+    if (record.numbering_type) return record.numbering_type;
+    const docType = record.document_type || record.type;
+    const typeMap = {
+        sales_invoice: 'Faktur Penjualan',
+        purchase_invoice: 'Faktur Pembelian',
+        sales_delivery: 'Pengiriman Penjualan',
+        delivery_order: 'Pengiriman Penjualan',
+        goods_receipt: 'Penerimaan Barang',
+        sales_order: 'Pesanan Penjualan',
+        purchase_order: 'Pesanan Pembelian',
+        sales_quote: 'Penawaran Penjualan',
+        sales_return: 'Retur Penjualan',
+        purchase_return: 'Retur Pembelian',
+        item_request: 'Permintaan Barang',
+        sales_deposit: 'Uang Muka Penjualan',
+    };
+    if (typeMap[docType]) return typeMap[docType];
+
+    const resourceMap = {
+        'sales-invoices': 'Faktur Penjualan',
+        'purchase-invoices': 'Faktur Pembelian',
+        'sales-deliveries': 'Pengiriman Penjualan',
+        'goods-receipts': 'Penerimaan Barang',
+        'sales-orders': 'Pesanan Penjualan',
+        'purchase-orders': 'Pesanan Pembelian',
+        'sales-quotes': 'Penawaran Penjualan',
+        'sales-returns': 'Retur Penjualan',
+        'purchase-returns': 'Retur Pembelian',
+        'item-requests': 'Permintaan Barang',
+        'sales-deposits': 'Uang Muka Penjualan',
+    };
+    return resourceMap[resource] ?? 'Faktur';
+}
+
 export default function AccountLookupSuggestions({
     open,
     query,
@@ -74,7 +109,7 @@ export default function AccountLookupSuggestions({
 
                         if (isDoc) {
                             subtitleLeft = dateStr;
-                            subtitleRight = `Rp ${Number(record.outstanding_amount ?? record.total_amount ?? 0).toLocaleString('id-ID')}`;
+                            subtitleRight = resolveDocumentTypeLabel(record, resource);
                         } else if (['suppliers', 'vendors', 'customers', 'employees'].includes(resource)) {
                             const hp = String(record.mobile_phone ?? record.mobilePhone ?? '').trim();
                             const telp = String(record.business_phone ?? record.office_phone ?? record.phone ?? '').trim();

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import Button from '@/components/ui/Button';
@@ -81,8 +81,21 @@ export default function SystemErrorModal({
         }
     }
 
-    function handleConfirm() {
-        onConfirm?.();
+    function handleConfirm(event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        if (onConfirm) {
+            onConfirm();
+        } else {
+            onClose?.();
+        }
+    }
+
+    function handleClose(event) {
+        if (event) {
+            event.stopPropagation();
+        }
         onClose?.();
     }
 
@@ -99,7 +112,7 @@ export default function SystemErrorModal({
     return (
         <ModalBase
             open={open}
-            onBackdropClick={dismissible ? onClose : undefined}
+            onBackdropClick={dismissible ? handleClose : undefined}
             className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-dialog-large`.trim()}
         >
@@ -113,7 +126,7 @@ export default function SystemErrorModal({
                     {dismissible ? (
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] text-white/90 transition-colors hover:text-red-800 active:text-red-950 cursor-pointer"
                             aria-label={closeLabel}
                         >
@@ -156,7 +169,7 @@ export default function SystemErrorModal({
                     <Button
                         size="md"
                         onClick={handleConfirm}
-                        className="min-w-[80px] rounded-[6px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover"
+                        className="min-w-[80px] rounded-[6px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover cursor-pointer"
                     >
                         {confirmLabel}
                     </Button>
@@ -178,21 +191,16 @@ function SystemErrorModalContainer({
     onDestroy,
 }) {
     const [open, setOpen] = useState(true);
+    const hasClosedRef = useRef(false);
 
-    function handleClose() {
+    function cleanup(result) {
+        if (hasClosedRef.current) return;
+        hasClosedRef.current = true;
         setOpen(false);
+        resolve(result);
         setTimeout(() => {
-            resolve(false);
             onDestroy();
-        }, 300);
-    }
-
-    function handleConfirm() {
-        setOpen(false);
-        setTimeout(() => {
-            resolve(true);
-            onDestroy();
-        }, 300);
+        }, 100);
     }
 
     return (
@@ -205,11 +213,12 @@ function SystemErrorModalContainer({
             confirmLabel={confirmLabel}
             copyLabel={copyLabel}
             copiedLabel={copiedLabel}
-            onClose={handleClose}
-            onConfirm={handleConfirm}
+            onClose={() => cleanup(false)}
+            onConfirm={() => cleanup(true)}
         />
     );
 }
+
 
 export function showSystemErrorModal(options = {}) {
     return new Promise((resolve) => {

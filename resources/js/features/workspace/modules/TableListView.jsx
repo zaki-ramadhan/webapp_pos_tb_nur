@@ -236,11 +236,12 @@ export default function TableListView({
                 >
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
-                            {paginatedRows.length > 0 && (
-                                <DataTableHead className="w-[50px] px-3 text-center text-base font-light text-white">
-                                    No.
-                                </DataTableHead>
-                            )}
+                            <DataTableHead
+                                className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 py-2.5 text-center text-base font-light text-white whitespace-nowrap"
+                                style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                            >
+                                No.
+                            </DataTableHead>
                             {visibleColumns.map((column) => (
                                 <SortableTableHeaderCell
                                     key={column.id}
@@ -266,11 +267,12 @@ export default function TableListView({
                                     className={`border-ui-border-row ${onRowClick ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''} ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
-                                    {paginatedRows.length > 0 && (
-                                        <DataTableCell className="w-[50px] px-3 text-center text-base text-black">
-                                            {paginationConfig ? (paginationConfig.from + index) : (index + 1)}
-                                        </DataTableCell>
-                                    )}
+                                    <DataTableCell
+                                        className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap"
+                                        style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                                    >
+                                        {paginationConfig ? (paginationConfig.from + index) : (index + 1)}
+                                    </DataTableCell>
                                     {visibleColumns.map((column) => (
                                         <DataTableCell
                                             key={column.id}
@@ -302,9 +304,9 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length} className="px-2.5 py-3 text-center text-base text-black">
-                                    {table.loading 
-                                        ? 'Memuat data...' 
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-black">
+                                    {table.loading
+                                        ? 'Memuat data...'
                                         : table.error
                                         ? table.error
                                         : (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Tidak ada data'))
@@ -315,7 +317,7 @@ export default function TableListView({
                     </DataTableBody>
                 </DataTable>
             </div>
- 
+
             {paginationConfig ? (
                 <Pagination
                     page={paginationConfig.page}

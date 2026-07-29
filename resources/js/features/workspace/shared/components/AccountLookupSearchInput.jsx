@@ -18,6 +18,7 @@ export default function AccountLookupSearchInput({
     inputClassName,
     trailingClassName,
     loading,
+    onBeforeOpen = null,
     onFocus,
     onChange,
     onClear,
@@ -30,6 +31,12 @@ export default function AccountLookupSearchInput({
 
     function focusInputFromWrapper(event) {
         if (disabled) {
+            return;
+        }
+
+        if (onBeforeOpen && onBeforeOpen() === false) {
+            event.preventDefault();
+            event.stopPropagation();
             return;
         }
 
@@ -84,7 +91,13 @@ export default function AccountLookupSearchInput({
                         ref={inputRef}
                         id={id}
                         value={value}
-                        onFocus={onFocus}
+                        onFocus={(event) => {
+                            if (onBeforeOpen && onBeforeOpen() === false) {
+                                event.target.blur();
+                                return;
+                            }
+                            onFocus?.(event);
+                        }}
                         onChange={(event) => {
                             let val = event.target.value;
                             if (typeof val === 'string') {

@@ -38,10 +38,18 @@ export function FormErrorProvider({ children }) {
 
         window.addEventListener('form-validation-error', onSet);
         window.addEventListener('form-validation-clear', onClear);
+        window.addEventListener('workspace:open-page', onClear);
+        window.addEventListener('workspace:page-activated', onClear);
+        window.addEventListener('workspace:close-tab', onClear);
+        window.addEventListener('workspace:select-tab', onClear);
 
         return () => {
             window.removeEventListener('form-validation-error', onSet);
             window.removeEventListener('form-validation-clear', onClear);
+            window.removeEventListener('workspace:open-page', onClear);
+            window.removeEventListener('workspace:page-activated', onClear);
+            window.removeEventListener('workspace:close-tab', onClear);
+            window.removeEventListener('workspace:select-tab', onClear);
         };
     }, []);
 

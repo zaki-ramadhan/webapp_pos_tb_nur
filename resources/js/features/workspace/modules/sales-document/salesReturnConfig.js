@@ -20,7 +20,6 @@ const salesReturnSectionTabs = [
 ];
 
 const salesReturnListColumns = [
-    { id: 'rowSpacer', label: '', widthClassName: 'w-[38px]', align: 'center' },
     { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[200px]', align: 'left' },
@@ -140,6 +139,7 @@ const defaultSalesReturnConfig = {
     },
     sectionTabs: salesReturnSectionTabs,
     itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
+    itemSearchResource: 'products',
     itemSectionTitle: 'Rincian Barang',
     itemSectionLeadingAction: { label: 'Ambil' },
     itemSectionLeadingActionDetailOnly: true,
@@ -157,7 +157,6 @@ const defaultSalesReturnConfig = {
             type: 'radio-group',
             label: 'Pengembalian Barang',
             valueKey: 'returnItemMode',
-            detailOnly: true,
             options: [
                 { value: 'returned', label: 'Barang Dikembalikan', showInfoIcon: true },
                 { value: 'not-returned', label: 'Barang TIDAK Dikembalikan', showInfoIcon: true },
@@ -174,7 +173,7 @@ const defaultSalesReturnConfig = {
         required: true,
         selectValueKey: 'returnSource',
         valueKey: 'returnSourceReferences',
-        options: ['Faktur', 'Penerimaan', 'Tanpa Faktur'],
+        options: ['Faktur', 'Uang Muka', 'Tanpa Faktur'],
         placeholder: 'Cari/Pilih Faktur...',
         searchLabel: 'Cari faktur',
     },

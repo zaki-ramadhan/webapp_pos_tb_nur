@@ -1,5 +1,6 @@
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function SalesDocumentAdditionalCostSection({ config, values, setValues, handlers }) {
     const costLeadingAction =
@@ -8,6 +9,9 @@ export function SalesDocumentAdditionalCostSection({ config, values, setValues, 
             : config.costSectionLeadingActionCreateOnly && values.documentNumber
               ? null
               : config.costSectionLeadingAction;
+
+    const isWithoutInvoiceMode = values.returnSource === 'Tanpa Faktur';
+    const hideSearchField = isWithoutInvoiceMode ? false : (config.hideCostSearchField ?? false);
 
     return (
         <SearchableTableSection
@@ -20,14 +24,36 @@ export function SalesDocumentAdditionalCostSection({ config, values, setValues, 
                     placeholder={config.costSearchPlaceholder}
                     searchLabel={`Cari ${config.additionalCostsTitle}`}
                     dialogTitle={`Pilih ${config.additionalCostsTitle}`}
-                    onSelectAccount={(record) => handlers?.onSelectCostAccount?.(record)}
+                    onSelectAccount={(record) => {
+                        if (!record) return;
+                        if (!values.__partnerId) {
+                            const partnerLabel = config.labels?.customer || 'Pemasok/Pelanggan';
+                            const msg = `${partnerLabel} harus diisi.`;
+                            showSystemErrorModal({
+                                title: 'Terjadi Permasalahan pada Pemrosesan',
+                                description: 'Silakan perbaiki permasalahan berikut ini:',
+                                message: msg,
+                                confirmLabel: 'OK',
+                            });
+                            window.dispatchEvent(
+                                new CustomEvent('form-validation-error', {
+                                    detail: {
+                                        customer: msg,
+                                        __partnerId: msg,
+                                    },
+                                })
+                            );
+                            return;
+                        }
+                        handlers?.onSelectCostAccount?.(record);
+                    }}
                 />
             }
             title={config.additionalCostsTitle}
             columns={config.costTable.columns}
             rows={values.additionalCosts}
             emptyLabel={config.costTable.emptyLabel}
-            hideSearchField={config.hideCostSearchField}
+            hideSearchField={hideSearchField}
             leadingAction={costLeadingAction}
             showTitleSearchButton={config.showCostTitleSearchButton}
             titleRequired={false}

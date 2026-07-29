@@ -39,9 +39,11 @@ export default function SortableTableHeaderCell({
     const textClass = 'block whitespace-nowrap truncate min-w-0 flex-1';
     const isCheckbox = columnId === 'checkbox' || (!label && widthClassName === 'w-px');
     const minWidth = isCheckbox ? null : getColumnMinWidth(label);
+    const isWFull = widthClassName.includes('w-full');
     const resolvedStyle = {
         ...(minWidth ? { minWidth: `${minWidth}px` } : {}),
         ...(isCheckbox ? { minWidth: '0px', width: '1px' } : {}),
+        ...(isWFull ? { width: '100%' } : {}),
         ...propStyle,
     };
 

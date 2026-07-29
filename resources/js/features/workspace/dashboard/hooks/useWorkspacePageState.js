@@ -170,6 +170,12 @@ export default function useWorkspacePageState({ dashboard, onCloseMobileWorkspac
     } = resolveLevel2State(activePage, activePageContentTabs, activeLevel2Tabs);
 
     useEffect(() => {
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('form-validation-clear'));
+        }
+    }, [activePage.id, activeLevel2TabId]);
+
+    useEffect(() => {
         setOpenPages((currentPages) => {
             const nextPages = currentPages
                 .map((page) => pages[page.id])

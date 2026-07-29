@@ -47,23 +47,23 @@ export default function AddressStack({ prefixValue = 'Jalan', values, readOnly =
                     />
                 </>
             ) : (
-                <div className="grid gap-3 grid-cols-[minmax(0,1fr)_190px]">
+                <div className="grid gap-3 grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_190px]">
                     <CityAutocompleteInput
                         value={values.city}
                         onChange={(nextValue) => onChange?.('city', nextValue)}
                         onSelectCity={handleSelectCity}
                         prefix="Kota"
                         disabled={readOnly}
-                        prefixClassName="min-w-[62px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-slate-600"
-                        dropdownLeftOffsetClassName="left-[62px]"
+                        prefixClassName="min-w-[92px] 2xl:min-w-[62px] border-slate-400 bg-input-prefix-bg px-3 text-xs sm:text-sm text-slate-600"
+                        dropdownLeftOffsetClassName="left-[92px] 2xl:left-[62px]"
                     />
                     <TextInput
                         value={values.postalCode}
                         onChange={(event) => onChange?.('postalCode', event.target.value.replace(/[^0-9]/g, ''))}
                         readOnly={readOnly}
-                        prefix="K.Pos"
+                        prefix="Kode Pos"
                         className="h-[40px] rounded-[4px] border-slate-400"
-                        prefixClassName="min-w-[50px] bg-input-prefix-bg px-2.5 text-slate-600"
+                        prefixClassName="min-w-[92px] 2xl:min-w-[50px] bg-input-prefix-bg px-3 2xl:px-2.5 text-slate-600"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
                     />
                 </div>

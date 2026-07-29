@@ -165,6 +165,7 @@ export function AccountLookupTextInput({
                 inputClassName={inputClassName}
                 trailingClassName={trailingClassName}
                 loading={controller.loading && controller.open}
+                onBeforeOpen={onBeforeOpen}
                 onFocus={controller.handleInputFocus}
                 onChange={controller.handleInputChange}
                 error={Boolean(resolvedError)}

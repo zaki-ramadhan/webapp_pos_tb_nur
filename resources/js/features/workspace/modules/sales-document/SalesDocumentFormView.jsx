@@ -41,7 +41,7 @@ import CrudStatusMessage from '@/features/workspace/shared/CrudStatusMessage';
 import { showCrudErrorToast } from '@/features/workspace/shared/crudFeedback';
 import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { useTransactionForm } from '@/features/workspace/shared/hooks/useTransactionForm';
-import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
+import { handleFormSaveSuccess, clearValidationErrors } from '@/features/workspace/shared/crudFormActions';
 import { mergeImportedItems } from '@/features/workspace/shared/importMergeUtils';
 import SalesDocumentFormHeader from './SalesDocumentFormHeader';
 import {
@@ -189,6 +189,11 @@ export default function SalesDocumentFormView({
 
         window.addEventListener('workspace:set-initial-values', handleInitialValuesEvent);
         return () => window.removeEventListener('workspace:set-initial-values', handleInitialValuesEvent);
+    }, [pageId, isDetail]);
+
+    useEffect(() => {
+        clearValidationErrors();
+        return () => clearValidationErrors();
     }, [pageId, isDetail]);
 
     const validationMessage = useMemo(() => validateSalesDocumentValues(values, config), [config, values]);

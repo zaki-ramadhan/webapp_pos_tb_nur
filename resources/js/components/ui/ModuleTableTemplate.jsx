@@ -176,11 +176,12 @@ export default function ModuleTableTemplate({
                     <DataTable wrapperClassName="border-table-wrapper-border">
                         <DataTableHeader className="bg-table-header-bg">
                             <tr>
-                                {filteredRows.length > 0 && (
-                                    <DataTableHead className="w-px px-2.5 py-2.5 text-center text-base font-light text-white whitespace-nowrap">
-                                        No.
-                                    </DataTableHead>
-                                )}
+                                <DataTableHead
+                                    className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 py-2.5 text-center text-base font-light text-white whitespace-nowrap"
+                                    style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                                >
+                                    No.
+                                </DataTableHead>
                             {visibleColumns.map((column) => (
                                     <SortableTableHeaderCell
                                         key={column.id}
@@ -212,7 +213,10 @@ export default function ModuleTableTemplate({
                                             })
                                         }
                                     >
-                                        <DataTableCell className="w-px px-2.5 text-center text-base text-table-row-number whitespace-nowrap">
+                                        <DataTableCell
+                                            className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap"
+                                            style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+                                        >
                                             {index + 1}
                                         </DataTableCell>
                                          {visibleColumns.map((column) => {
@@ -248,7 +252,7 @@ export default function ModuleTableTemplate({
                             ) : (
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
-                                        colSpan={visibleColumns.length + (filteredRows.length > 0 ? 1 : 0)}
+                                        colSpan={visibleColumns.length + 1}
                                         className="px-3 py-3 text-center text-base text-text-workspace-dark"
                                     >
                                         {table.loading 

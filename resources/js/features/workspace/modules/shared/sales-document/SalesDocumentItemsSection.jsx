@@ -61,6 +61,9 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
         />
     ) : null;
 
+    const isWithoutInvoiceMode = values.returnSource === 'Tanpa Faktur';
+    const hideSearchField = isWithoutInvoiceMode ? false : (config.hideItemSearchField ?? false);
+
     return (
         <SearchableTableSection
             searchValue={values.itemSearch}
@@ -72,7 +75,7 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             emptyLabel={config.itemTable.emptyLabel}
             minWidthClassName={config.itemTable.minWidthClassName ?? 'min-w-[1000px]'}
             showTitleSearchButton={config.showItemTitleSearchButton ?? false}
-            hideSearchField={config.hideItemSearchField}
+            hideSearchField={hideSearchField}
             leadingAction={itemLeadingAction}
             extraActions={importButton}
             onTitleClick={itemTitleClick}

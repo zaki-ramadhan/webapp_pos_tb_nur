@@ -11,6 +11,7 @@ const FOCUSABLE = [
 
 export default function ModalBase({
     open = false,
+    isOpen = false,
     children,
     className = '',
     panelClassName = '',
@@ -18,9 +19,10 @@ export default function ModalBase({
 }) {
     const panelRef = useRef(null);
     const previousFocusRef = useRef(null);
+    const isModalOpen = Boolean(open || isOpen);
 
     useEffect(() => {
-        if (!open) return;
+        if (!isModalOpen) return;
 
         previousFocusRef.current = document.activeElement;
 
@@ -35,10 +37,10 @@ export default function ModalBase({
             cancelAnimationFrame(frame);
             previousFocusRef.current?.focus();
         };
-    }, [open]);
+    }, [isModalOpen]);
 
     useEffect(() => {
-        if (!open) return;
+        if (!isModalOpen) return;
 
         function handleKeyDown(event) {
             if (event.key !== 'Tab') return;
@@ -65,9 +67,9 @@ export default function ModalBase({
 
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [open]);
+    }, [isModalOpen]);
 
-    if (!open) return null;
+    if (!isModalOpen) return null;
 
     const hasBg = className.split(' ').some((c) => c.startsWith('bg-'));
     const backdropBg = hasBg ? '' : 'bg-modal-overlay-bg';

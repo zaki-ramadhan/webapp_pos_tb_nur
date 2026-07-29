@@ -73,6 +73,9 @@ export function DataTableHead({ className = '', children, style: propStyle, onRe
     if (preferredWidth && !style.width) {
         style.width = preferredWidth;
     }
+    if (preferredWidth && !style.minWidth && preferredWidth.endsWith('px')) {
+        style.minWidth = preferredWidth;
+    }
     if (!style.minWidth) {
         style.minWidth = `${safeMinWidth}px`;
     }

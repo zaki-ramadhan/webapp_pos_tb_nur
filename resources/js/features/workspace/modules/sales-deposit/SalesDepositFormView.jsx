@@ -34,7 +34,7 @@ import {
     validateSalesDepositValues,
 } from './salesDepositShared';
 import { useTransactionForm, buildWorkspaceDockActions } from '@/features/workspace/shared/hooks/useTransactionForm';
-import { handleFormSaveSuccess } from '@/features/workspace/shared/crudFormActions';
+import { handleFormSaveSuccess, clearValidationErrors } from '@/features/workspace/shared/crudFormActions';
 import CheckboxField from '@/components/ui/CheckboxField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { getComparableTransactionFields, calculateDepositTaxes } from './salesDepositFormUtils';
@@ -110,6 +110,11 @@ export default function SalesDepositFormView({
             };
         });
     }, [committedDepositAmount, values.taxEnabled, values.taxIncluded, values.taxRate, values.__taxId]);
+
+    useEffect(() => {
+        clearValidationErrors();
+        return () => clearValidationErrors();
+    }, [pageId, isDetail]);
 
     const validationMessage = useMemo(() => validateSalesDepositValues(values, config), [config, values]);
 

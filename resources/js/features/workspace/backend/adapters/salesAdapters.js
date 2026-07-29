@@ -46,10 +46,15 @@ export function mapPartnerRow(record) {
         ? JSON.parse(record.extended_details)
         : (record.extended_details ?? {});
 
+    const numericBalance = Number(record.balance ?? 0);
+    const formattedBalance = numericBalance !== 0 ? numericBalance.toLocaleString('id-ID') : '0';
+
     return {
         id: record.id,
         code: record.code ?? '',
         name: record.name ?? '',
+        balance: formattedBalance,
+        balanceValue: numericBalance,
         categoryName: record.category?.name ?? 'Umum',
         phone: record.business_phone ?? record.mobile_phone ?? record.whatsapp_phone ?? '',
         businessPhone: record.business_phone ?? '',

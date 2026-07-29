@@ -12,7 +12,7 @@ function dispatchValidationErrors(errors) {
     window.dispatchEvent(new CustomEvent('form-validation-error', { detail: errors ?? {} }));
 }
 
-function clearValidationErrors() {
+export function clearValidationErrors() {
     window.dispatchEvent(new CustomEvent('form-validation-clear'));
 }
 

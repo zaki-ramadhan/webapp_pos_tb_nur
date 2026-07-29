@@ -9,6 +9,7 @@ import {
     SalesDocumentHeaderButtons,
 } from '@/features/workspace/modules/sales-document/salesDocumentViewShared';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export default function SalesDocumentFormHeader({
     pageId,
@@ -62,25 +63,25 @@ export default function SalesDocumentFormHeader({
                     const selectedSource = values[config.headerSelectLookupField.selectValueKey] ?? 'Faktur';
                     const isWithoutInvoice = selectedSource === 'Tanpa Faktur';
                     
-                    const resolvedResource = selectedSource === 'Penerimaan'
-                        ? (isPurchase ? 'goods-receipts' : 'sales-deliveries')
+                    const resolvedResource = selectedSource === 'Uang Muka'
+                        ? (isPurchase ? 'purchase-deposits' : 'sales-deposits')
                         : (isPurchase ? 'purchase-invoices' : 'sales-invoices');
                     
                     const resolvedPlaceholder = isWithoutInvoice
                         ? 'Tidak memerlukan dokumen...'
-                        : selectedSource === 'Penerimaan'
-                            ? (isPurchase ? 'Cari/Pilih Penerimaan Barang...' : 'Cari/Pilih Pengiriman Pesanan...')
+                        : selectedSource === 'Uang Muka'
+                            ? (isPurchase ? 'Cari/Pilih Uang Muka Pembelian...' : 'Cari/Pilih Uang Muka Penjualan...')
                             : (config.headerSelectLookupField.placeholder ?? 'Cari/Pilih Faktur...');
                     
-                    const resolvedSearchLabel = selectedSource === 'Penerimaan'
-                        ? (isPurchase ? 'Cari penerimaan barang' : 'Cari pengiriman pesanan')
+                    const resolvedSearchLabel = selectedSource === 'Uang Muka'
+                        ? (isPurchase ? 'Cari uang muka pembelian' : 'Cari uang muka penjualan')
                         : (config.headerSelectLookupField.searchLabel ?? 'Cari faktur');
 
                     return (
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
                             <TransactionFieldLabel label={config.headerSelectLookupField.label} required={config.headerSelectLookupField.required} />
-                            <div className="w-full max-w-full flex items-center gap-x-2">
-                                <div className="w-[110px] shrink-0">
+                            <div className="w-full flex items-center gap-x-2">
+                                <div className="w-auto min-w-[138px] shrink-0">
                                     <SelectField
                                         value={selectedSource}
                                         onChange={(event) => {
@@ -102,23 +103,47 @@ export default function SalesDocumentFormHeader({
                                         ))}
                                     </SelectField>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <AccountLookupTextInput
-                                        id={config.headerSelectLookupField.valueKey}
-                                        resource={resolvedResource}
-                                        value={values[config.headerSelectLookupField.valueKey]?.[0] ?? ''}
-                                        placeholder={resolvedPlaceholder}
-                                        searchLabel={resolvedSearchLabel}
-                                        disabled={isWithoutInvoice}
-                                        onSelectAccount={(record, label) => {
-                                            setValues((current) => ({
-                                                ...current,
-                                                __relatedDocumentId: record ? record.id : null,
-                                                [config.headerSelectLookupField.valueKey]: label ? [label] : [],
-                                            }));
-                                        }}
-                                    />
-                                </div>
+                                {!isWithoutInvoice && (
+                                    <div className="flex-1 min-w-0 w-full">
+                                        <AccountLookupTextInput
+                                            id={config.headerSelectLookupField.valueKey}
+                                            resource={resolvedResource}
+                                            value={values[config.headerSelectLookupField.valueKey]?.[0] ?? ''}
+                                            placeholder={resolvedPlaceholder}
+                                            searchLabel={resolvedSearchLabel}
+                                            queryParams={values.__partnerId ? { customer_id: values.__partnerId, partner_id: values.__partnerId } : {}}
+                                             onBeforeOpen={() => {
+                                                if (!values.__partnerId) {
+                                                    const partnerLabel = config.labels?.customer || 'Pelanggan';
+                                                    const msg = `${partnerLabel} harus diisi.`;
+                                                    showSystemErrorModal({
+                                                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                                                        description: 'Silakan perbaiki permasalahan berikut ini:',
+                                                        message: msg,
+                                                        confirmLabel: 'OK',
+                                                    });
+                                                    window.dispatchEvent(
+                                                        new CustomEvent('form-validation-error', {
+                                                            detail: {
+                                                                customer: msg,
+                                                                __partnerId: msg,
+                                                            },
+                                                        })
+                                                    );
+                                                    return false;
+                                                }
+                                                return true;
+                                            }}
+                                            onSelectAccount={(record, label) => {
+                                                setValues((current) => ({
+                                                    ...current,
+                                                    __relatedDocumentId: record ? record.id : null,
+                                                    [config.headerSelectLookupField.valueKey]: label ? [label] : [],
+                                                }));
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     );

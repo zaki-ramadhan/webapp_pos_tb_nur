@@ -29,9 +29,10 @@ function FormattedMessage({ message, iconVariant }) {
         );
     }
 
-    const textColor = iconVariant === 'error' || iconVariant === 'danger' ? 'text-red-600 font-normal' : 'text-slate-800 font-normal';
+    const isCancelOrDelete = message.includes('dibatalkan') || message.includes('dihapus') || iconVariant === 'error' || iconVariant === 'danger' || iconVariant === 'warning';
+    const textColor = isCancelOrDelete ? 'text-red-600 font-medium' : 'text-slate-800 font-normal';
 
-    return <p className={`text-xs sm:text-sm leading-6 whitespace-pre-line ${textColor}`}>{message}</p>;
+    return <p className={`text-sm sm:text-base leading-6 whitespace-pre-line ${textColor}`}>{message}</p>;
 }
 
 export default function ConfirmationModal({
