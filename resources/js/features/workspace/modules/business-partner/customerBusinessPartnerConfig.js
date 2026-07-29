@@ -80,11 +80,16 @@ export const customerBusinessPartnerTemplate = createTemplate({
         { id: 'shipping', label: 'Pengiriman' },
         { id: 'sales', label: 'Penjualan' },
         { id: 'tax', label: 'Pajak' },
+        { id: 'receivable', label: 'Saldo Piutang' },
+        { id: 'others', label: 'Lain-lain' },
+    ],
+    rightTabs: [
+        { id: 'receivables_history', label: 'Piutang' },
     ],
     table: createTableConfig({
         createLabel: 'Tambah Pelanggan',
         columns: [
-            { id: 'name', label: 'Nama', widthClassName: 'w-[25%]', align: 'left' },
+            { id: 'name', label: 'Nama', widthClassName: 'w-full min-w-[200px]', align: 'left' },
             { id: 'code', label: 'ID Pelanggan', widthClassName: 'w-[140px]', align: 'left' },
             { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
             

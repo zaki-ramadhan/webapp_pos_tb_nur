@@ -64,7 +64,7 @@ export const supplierBusinessPartnerTemplate = createTemplate({
     table: createTableConfig({
         createLabel: 'Tambah Pemasok',
         columns: [
-            { id: 'name', label: 'Nama', widthClassName: 'w-[25%]', align: 'left' },
+            { id: 'name', label: 'Nama', widthClassName: 'w-full min-w-[200px]', align: 'left' },
             { id: 'code', label: 'ID Pemasok', widthClassName: 'w-[140px]', align: 'left' },
             { id: 'balance', label: 'Saldo', widthClassName: 'w-[150px]', align: 'right' },
             

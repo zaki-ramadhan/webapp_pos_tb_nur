@@ -111,6 +111,7 @@ export function createTableConfig({ createLabel, rows, filters, pageValue, colum
 export function createTemplate({
     type,
     tabs,
+    rightTabs = [],
     table,
     labels,
     lookupPlaceholders = {},
@@ -132,6 +133,7 @@ export function createTemplate({
         partnerType: type,
         topActions: HELP_TOP_ACTIONS,
         tabs,
+        rightTabs,
         table,
         labels,
         lookupPlaceholders: {
@@ -182,6 +184,7 @@ export function mergeBusinessPartnerConfig(baseConfig, pageConfig = {}) {
         ...pageConfig,
         topActions: pageConfig.topActions ?? baseConfig.topActions,
         tabs: pageConfig.tabs ?? baseConfig.tabs,
+        rightTabs: pageConfig.rightTabs ?? baseConfig.rightTabs,
         table: {
             ...baseConfig.table,
             ...(pageConfig.table ?? {}),
@@ -264,101 +267,97 @@ export function resolveBusinessPartnerConfig(kind, pageConfig = {}, templates) {
     };
 }
 
+function parseAddressObj(addr) {
+    if (!addr) return {};
+    if (typeof addr === 'object') return addr;
+    try {
+        return JSON.parse(addr);
+    } catch {
+        return { street: String(addr) };
+    }
+}
+
 export function resolveBusinessPartnerRecord(kind, row = {}, config, templates) {
     const template = templates[kind];
     const explicitDetail = config.detailRecords?.[row.id] ?? template.detailRecords[row.id];
     const baseRecord = explicitDetail ?? {};
 
-    let billingStreet = '';
-    let billingCity = '';
-    let billingPostalCode = '';
-    let billingProvince = '';
-    let billingCountry = '';
+    const rawBilling = row.billingAddress ?? row.billing_address;
+    const parsedBilling = parseAddressObj(rawBilling);
+    const billingStreet = baseRecord.billingStreet ?? parsedBilling.street ?? parsedBilling.address ?? (typeof rawBilling === 'string' && !rawBilling.startsWith('{') ? rawBilling : '');
+    const billingCity = baseRecord.billingCity ?? parsedBilling.city ?? '';
+    const billingPostalCode = baseRecord.billingPostalCode ?? parsedBilling.postalCode ?? parsedBilling.postal_code ?? '';
+    const billingProvince = baseRecord.billingProvince ?? parsedBilling.province ?? '';
+    const billingCountry = baseRecord.billingCountry ?? parsedBilling.country ?? '';
 
-    if (row.billingAddress) {
-        try {
-            const parsed = JSON.parse(row.billingAddress);
-            billingStreet = parsed.street ?? '';
-            billingCity = parsed.city ?? '';
-            billingPostalCode = parsed.postalCode ?? '';
-            billingProvince = parsed.province ?? '';
-            billingCountry = parsed.country ?? '';
-        } catch (e) {
-            billingStreet = row.billingAddress;
-        }
-    }
+    const rawShipping = row.shippingAddress ?? row.shipping_address;
+    const parsedShipping = parseAddressObj(rawShipping);
+    const shippingStreet = baseRecord.shippingStreet ?? parsedShipping.street ?? parsedShipping.address ?? (typeof rawShipping === 'string' && !rawShipping.startsWith('{') ? rawShipping : '');
+    const shippingCity = baseRecord.shippingCity ?? parsedShipping.city ?? '';
+    const shippingPostalCode = baseRecord.shippingPostalCode ?? parsedShipping.postalCode ?? parsedShipping.postal_code ?? '';
+    const shippingProvince = baseRecord.shippingProvince ?? parsedShipping.province ?? '';
+    const shippingCountry = baseRecord.shippingCountry ?? parsedShipping.country ?? '';
 
-    let shippingStreet = '';
-    let shippingCity = '';
-    let shippingPostalCode = '';
-    let shippingProvince = '';
-    let shippingCountry = '';
-
-    if (row.shippingAddress) {
-        try {
-            const parsed = JSON.parse(row.shippingAddress);
-            shippingStreet = parsed.street ?? '';
-            shippingCity = parsed.city ?? '';
-            shippingPostalCode = parsed.postalCode ?? '';
-            shippingProvince = parsed.province ?? '';
-            shippingCountry = parsed.country ?? '';
-        } catch (e) {
-            shippingStreet = row.shippingAddress;
-        }
-    }
+    const rawTax = row.taxAddress ?? row.tax_address;
+    const parsedTax = parseAddressObj(rawTax);
+    const taxStreet = baseRecord.taxStreet ?? parsedTax.street ?? parsedTax.address ?? (typeof rawTax === 'string' && !rawTax.startsWith('{') ? rawTax : '');
+    const taxCity = baseRecord.taxCity ?? parsedTax.city ?? '';
+    const taxPostalCode = baseRecord.taxPostalCode ?? parsedTax.postalCode ?? parsedTax.postal_code ?? '';
+    const taxProvince = baseRecord.taxProvince ?? parsedTax.province ?? '';
+    const taxCountryName = baseRecord.taxCountryName ?? parsedTax.country ?? '';
 
     return cloneFormValues({
         ...config.formDefaults,
         ...baseRecord,
         name: baseRecord.name ?? row.name ?? config.formDefaults.name,
         code: baseRecord.code ?? row.code ?? config.formDefaults.code,
-        category: baseRecord.category ?? (row.category ? [row.category] : config.formDefaults.category),
+        category: baseRecord.category ?? (row.category ? (Array.isArray(row.category) ? row.category : [row.category]) : config.formDefaults.category),
         detailActionLabel: baseRecord.detailActionLabel ?? '',
-        businessPhone: baseRecord.businessPhone ?? row.businessPhone ?? row.phone ?? config.formDefaults.businessPhone,
-        mobilePhone: baseRecord.mobilePhone ?? row.mobilePhone ?? config.formDefaults.mobilePhone,
+        businessPhone: baseRecord.businessPhone ?? row.businessPhone ?? row.business_phone ?? row.phone ?? config.formDefaults.businessPhone,
+        mobilePhone: baseRecord.mobilePhone ?? row.mobilePhone ?? row.mobile_phone ?? config.formDefaults.mobilePhone,
         whatsapp: baseRecord.whatsapp ?? row.whatsapp ?? config.formDefaults.whatsapp,
         email: baseRecord.email ?? row.email ?? config.formDefaults.email,
         fax: baseRecord.fax ?? row.fax ?? config.formDefaults.fax,
         website: baseRecord.website ?? row.website ?? config.formDefaults.website,
         notes: baseRecord.notes ?? row.notes ?? config.formDefaults.notes,
-        taxNumber: baseRecord.taxNumber ?? row.taxNumber ?? config.formDefaults.taxNumber,
-        billingStreet: baseRecord.billingStreet ?? billingStreet,
-        billingCity: baseRecord.billingCity ?? billingCity,
-        billingPostalCode: baseRecord.billingPostalCode ?? billingPostalCode,
-        billingProvince: baseRecord.billingProvince ?? billingProvince,
-        billingCountry: baseRecord.billingCountry ?? billingCountry,
-        shippingStreet: baseRecord.shippingStreet ?? shippingStreet,
-        shippingCity: baseRecord.shippingCity ?? shippingCity,
-        shippingPostalCode: baseRecord.shippingPostalCode ?? shippingPostalCode,
-        shippingProvince: baseRecord.shippingProvince ?? shippingProvince,
-        shippingCountry: baseRecord.shippingCountry ?? shippingCountry,
-        shippingSameAsBilling: baseRecord.shippingSameAsBilling ?? (row.id ? (row.billingAddress === row.shippingAddress) : config.formDefaults.shippingSameAsBilling),
-        paymentTermId: baseRecord.paymentTermId ?? row.paymentTermId ?? config.formDefaults.paymentTermId,
-        branchIds: baseRecord.branchIds ?? row.branchIds ?? config.formDefaults.branchIds,
-        categoryId: baseRecord.categoryId ?? row.categoryId ?? config.formDefaults.categoryId,
-        currencyId: baseRecord.currencyId ?? row.currencyId ?? config.formDefaults.currencyId,
-        creditLimit: baseRecord.creditLimit ?? row.creditLimit ?? config.formDefaults.creditLimit,
-        isActive: baseRecord.isActive ?? row.isActive ?? config.formDefaults.isActive,
+        taxNumber: baseRecord.taxNumber ?? row.taxNumber ?? row.tax_number ?? config.formDefaults.taxNumber,
+        billingStreet,
+        billingCity,
+        billingPostalCode,
+        billingProvince,
+        billingCountry,
+        shippingStreet,
+        shippingCity,
+        shippingPostalCode,
+        shippingProvince,
+        shippingCountry,
+        shippingSameAsBilling: baseRecord.shippingSameAsBilling ?? row.shippingSameAsBilling ?? row.shipping_same_as_billing ?? (row.id ? (row.billingAddress === row.shippingAddress || row.billing_address === row.shipping_address) : config.formDefaults.shippingSameAsBilling),
+        paymentTermId: baseRecord.paymentTermId ?? row.paymentTermId ?? row.payment_term_id ?? config.formDefaults.paymentTermId,
+        branchIds: baseRecord.branchIds ?? row.branchIds ?? row.branch_ids ?? config.formDefaults.branchIds,
+        categoryId: baseRecord.categoryId ?? row.categoryId ?? row.category_id ?? config.formDefaults.categoryId,
+        currencyId: baseRecord.currencyId ?? row.currencyId ?? row.currency_id ?? config.formDefaults.currencyId,
+        creditLimit: baseRecord.creditLimit ?? row.creditLimit ?? row.credit_limit ?? config.formDefaults.creditLimit,
+        isActive: baseRecord.isActive ?? row.isActive ?? row.is_active ?? config.formDefaults.isActive,
         contacts: baseRecord.contacts ?? row.contacts ?? config.formDefaults.contacts,
         bankAccounts: baseRecord.bankAccounts ?? row.bankAccounts ?? config.formDefaults.bankAccounts,
         openingBalanceRows: baseRecord.openingBalanceRows ?? row.openingBalanceRows ?? config.formDefaults.openingBalanceRows,
-        serviceVendor: baseRecord.serviceVendor ?? row.serviceVendor ?? config.formDefaults.serviceVendor,
-        supplierType: baseRecord.supplierType ?? row.supplierType ?? config.formDefaults.supplierType,
-        defaultDiscountPercent: baseRecord.defaultDiscountPercent ?? row.defaultDiscountPercent ?? config.formDefaults.defaultDiscountPercent,
-        defaultDescription: baseRecord.defaultDescription ?? row.defaultDescription ?? config.formDefaults.defaultDescription,
-        payableAccount: baseRecord.payableAccount ?? row.payableAccount ?? config.formDefaults.payableAccount,
-        advanceAccount: baseRecord.advanceAccount ?? row.advanceAccount ?? config.formDefaults.advanceAccount,
-        taxIncluded: baseRecord.taxIncluded ?? row.taxIncluded ?? config.formDefaults.taxIncluded,
-        taxIdType: baseRecord.taxIdType ?? row.taxIdType ?? config.formDefaults.taxIdType,
-        taxName: baseRecord.taxName ?? row.taxName ?? config.formDefaults.taxName,
-        taxTkuId: baseRecord.taxTkuId ?? row.taxTkuId ?? config.formDefaults.taxTkuId,
-        taxTransactionType: baseRecord.taxTransactionType ?? row.taxTransactionType ?? config.formDefaults.taxTransactionType,
-        taxSameAsBilling: baseRecord.taxSameAsBilling ?? row.taxSameAsBilling ?? config.formDefaults.taxSameAsBilling,
-        taxStreet: baseRecord.taxStreet ?? row.taxStreet ?? config.formDefaults.taxStreet,
-        taxCity: baseRecord.taxCity ?? row.taxCity ?? config.formDefaults.taxCity,
-        taxPostalCode: baseRecord.taxPostalCode ?? row.taxPostalCode ?? config.formDefaults.taxPostalCode,
-        taxProvince: baseRecord.taxProvince ?? row.taxProvince ?? config.formDefaults.taxProvince,
-        taxCountryName: baseRecord.taxCountryName ?? row.taxCountryName ?? config.formDefaults.taxCountryName,
-        invoiceNumberOnBill: baseRecord.invoiceNumberOnBill ?? row.invoiceNumberOnBill ?? config.formDefaults.invoiceNumberOnBill,
+        serviceVendor: baseRecord.serviceVendor ?? row.serviceVendor ?? row.service_vendor ?? config.formDefaults.serviceVendor,
+        supplierType: baseRecord.supplierType ?? row.supplierType ?? row.supplier_type ?? config.formDefaults.supplierType,
+        defaultDiscountPercent: baseRecord.defaultDiscountPercent ?? row.defaultDiscountPercent ?? row.default_discount_percent ?? config.formDefaults.defaultDiscountPercent,
+        defaultDescription: baseRecord.defaultDescription ?? row.defaultDescription ?? row.default_description ?? config.formDefaults.defaultDescription,
+        payableAccount: baseRecord.payableAccount ?? row.payableAccount ?? row.payable_account ?? config.formDefaults.payableAccount,
+        advanceAccount: baseRecord.advanceAccount ?? row.advanceAccount ?? row.advance_account ?? config.formDefaults.advanceAccount,
+        taxIncluded: baseRecord.taxIncluded ?? row.taxIncluded ?? row.tax_included ?? config.formDefaults.taxIncluded,
+        taxIdType: baseRecord.taxIdType ?? row.taxIdType ?? row.tax_id_type ?? config.formDefaults.taxIdType,
+        taxName: baseRecord.taxName ?? row.taxName ?? row.tax_name ?? config.formDefaults.taxName,
+        taxTkuId: baseRecord.taxTkuId ?? row.taxTkuId ?? row.tax_tku_id ?? config.formDefaults.taxTkuId,
+        taxTransactionType: baseRecord.taxTransactionType ?? row.taxTransactionType ?? row.tax_transaction_type ?? config.formDefaults.taxTransactionType,
+        taxSameAsBilling: baseRecord.taxSameAsBilling ?? row.taxSameAsBilling ?? row.tax_same_as_billing ?? config.formDefaults.taxSameAsBilling,
+        taxStreet,
+        taxCity,
+        taxPostalCode,
+        taxProvince,
+        taxCountryName,
+        invoiceNumberOnBill: baseRecord.invoiceNumberOnBill ?? row.invoiceNumberOnBill ?? row.invoice_number_on_bill ?? config.formDefaults.invoiceNumberOnBill,
     });
 }

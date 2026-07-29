@@ -133,7 +133,7 @@ export default function GeneralTab({ config, values, isDetail, onChange }) {
                     <FormFieldRow label={config.labels.billingAddress}>
                         <AddressStack
                             prefixValue="Jalan"
-                            layout="vertical"
+                            layout="grid"
                             values={{
                                 street: values.billingStreet,
                                 city: values.billingCity,

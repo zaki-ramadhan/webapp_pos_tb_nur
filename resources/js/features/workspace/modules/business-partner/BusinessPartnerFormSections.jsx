@@ -3,8 +3,13 @@ import { BalanceTab, SalesTab, TaxTab } from './BusinessPartnerTransactionSectio
 import CustomerOthersTab from './components/tabs/CustomerOthersTab';
 import SupplierPurchaseTab from './components/tabs/SupplierPurchaseTab';
 import SupplierOthersTab from './components/tabs/SupplierOthersTab';
+import CustomerReceivablesTab from './components/tabs/CustomerReceivablesTab';
 
 export function renderPartnerTab({ config, values, isDetail, activeTabId, onChange }) {
+    if (activeTabId === 'receivables_history' || activeTabId === 'piutang') {
+        return <CustomerReceivablesTab recordId={values.__backendRecordId || values.id} />;
+    }
+
     if (activeTabId === 'contacts') {
         return <ContactsTab config={config} values={values} onChange={onChange} />;
     }

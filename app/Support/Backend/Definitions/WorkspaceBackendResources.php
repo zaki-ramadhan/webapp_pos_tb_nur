@@ -120,6 +120,12 @@ class WorkspaceBackendResources
                 'minimum-stock',
                 fn (array $filters) => app(InventoryInquiryQueryService::class)->paginateProductMutations($filters),
             ),
+            'customer-receivables' => self::customerInquiryResource(
+                'customer-receivables',
+                'Customer Receivables',
+                'customer',
+                fn (array $filters) => app(\App\Support\Backend\Queries\CustomerInquiryQueryService::class)->paginateReceivables($filters),
+            ),
         ];
     }
 
@@ -201,6 +207,28 @@ class WorkspaceBackendResources
                 'warehouse_id' => ['nullable', 'integer', 'exists:warehouses,id'],
                 'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
                 'as_of_date' => ['nullable', 'string'],
+            ],
+            indexUsing: $indexUsing,
+            showUsing: self::unsupportedShow(),
+            readOnly: true,
+        );
+    }
+
+    private static function customerInquiryResource(
+        string $key,
+        string $label,
+        string $permissionKey,
+        \Closure $indexUsing,
+    ): BackendResourceBlueprint {
+        return new BackendResourceBlueprint(
+            key: $key,
+            label: $label,
+            permissionKey: $permissionKey,
+            modelClass: ActivityLog::class,
+            indexRules: [
+                'customer_id' => ['nullable', 'integer', 'exists:customers,id'],
+                'start_date' => ['nullable', 'string'],
+                'end_date' => ['nullable', 'string'],
             ],
             indexUsing: $indexUsing,
             showUsing: self::unsupportedShow(),
