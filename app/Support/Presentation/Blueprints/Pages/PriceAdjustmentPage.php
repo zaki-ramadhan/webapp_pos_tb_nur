@@ -6,7 +6,11 @@ class PriceAdjustmentPage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['price-adjustment'], [
+        $basePage = $navigationPages['price-adjustment'] ?? [
+            'id' => 'price-adjustment',
+            'label' => 'Penyesuaian Harga',
+        ];
+        return array_replace($basePage, [
             'subtab' => [
                 'id' => 'price-adjustment-create',
                 'label' => 'Data Baru',

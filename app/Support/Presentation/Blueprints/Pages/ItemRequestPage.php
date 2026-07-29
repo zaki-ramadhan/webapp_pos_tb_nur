@@ -6,7 +6,11 @@ class ItemRequestPage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['item-request'], [
+        $basePage = $navigationPages['item-request'] ?? [
+            'id' => 'item-request',
+            'label' => 'Permintaan Barang',
+        ];
+        return array_replace($basePage, [
             'subtab' => [
                 'id' => 'item-request-create',
                 'label' => 'Data Baru',

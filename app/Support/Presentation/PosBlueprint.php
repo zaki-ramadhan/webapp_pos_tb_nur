@@ -337,21 +337,21 @@ final class PosBlueprint
               // self::navItem('sales-category', 'Kategori Penjualan', 'category', 'blue'),
 
                 self::navItem('customers', 'Pelanggan', 'customer', 'blue'),
-                self::navItem('price-adjustment', 'Penyesuaian Harga atau Diskon', 'category', 'amber'),
-                self::navItem('sales-commission', 'Komisi Penjual', 'employee', 'amber'),
+              // self::navItem('price-adjustment', 'Penyesuaian Harga atau Diskon', 'category', 'amber'),
+              // self::navItem('sales-commission', 'Komisi Penjual', 'employee', 'amber'),
               // self::navItem('sales-target', 'Target Penjualan', 'budget', 'amber'),
 
               // self::navItem('sales-checkin', 'Check-in', 'checkin', 'purple'),
 
             ]),
             self::navModule('purchases', 'Pembelian', 'purchase', [
-                self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
+              // self::navItem('purchase-order', 'Pesanan Pembelian', 'invoice', 'green'),
                 self::navItem('goods-receipt', 'Penerimaan Barang', 'receipt', 'green'),
                 self::navItem('purchase-deposit', 'Uang Muka Pembelian', 'payment', 'green'),
                 self::navItem('purchase-invoice', 'Faktur Pembelian', 'invoice', 'green'),
                 self::navItem('purchase-payment', 'Pembayaran Pembelian', 'payment', 'green'),
                 self::navItem('purchase-return', 'Retur Pembelian', 'transfer', 'green'),
-                self::navItem('supplier-price', 'Harga Pemasok', 'salary', 'amber'),
+              // self::navItem('supplier-price', 'Harga Pemasok', 'salary', 'amber'),
               // self::navItem('supplier-category', 'Kategori Pemasok', 'group', 'blue'),
 
                 self::navItem('suppliers', 'Pemasok', 'supplier', 'blue'),
@@ -361,7 +361,7 @@ final class PosBlueprint
 
             ]),
             self::navModule('inventory', 'Persediaan', 'inventory', [
-                self::navItem('item-request', 'Permintaan Barang', 'invoice', 'green'),
+              // self::navItem('item-request', 'Permintaan Barang', 'invoice', 'green'),
               // self::navItem('stock-transfer', 'Pemindahan Barang', 'truck', 'green'),
 
                 self::navItem('inventory-adjustment', 'Penyesuaian Persediaan', 'stock', 'green'),
@@ -379,7 +379,7 @@ final class PosBlueprint
                 self::navItem('warehouse-master', 'Gudang', 'warehouse', 'blue'),
                 self::navItem('item-unit', 'Satuan Barang', 'unit', 'blue'),
                 self::navItem('item-category', 'Kategori Barang', 'category', 'blue'),
-                self::navItem('item-brand', 'Merek Barang', 'box', 'blue'),
+              // self::navItem('item-brand', 'Merek Barang', 'box', 'blue'),
               // self::navItem('order-fulfillment', 'Pemenuhan Pesanan', 'inventory', 'purple'),
 
                 self::navItem('item-location', 'Barang per gudang', 'location', 'purple'),
@@ -465,8 +465,6 @@ final class PosBlueprint
             'expense-entry',
             'general-journal',
             'activity-log',
-          // 'currency-master',
-
             'bank-transfer',
             'bank-statement',
             'bank-history',
@@ -483,12 +481,10 @@ final class PosBlueprint
             'sales-receipt',
             'sales-return',
             'inventory-adjustment',
-            'price-adjustment',
             'sales-checkin',
             'purchase-invoice',
             'purchase-payment',
             'purchase-return',
-            'item-request',
             'item-location',
             'minimum-stock',
             'delivery-order',
@@ -496,13 +492,10 @@ final class PosBlueprint
             'items-services',
             'warehouse-master',
             'item-category',
-            'item-brand',
-            'supplier-price',
             'suppliers',
             'customers',
             'users',
             'preferences',
-            'sales-commission',
         ], true);
     }
 

@@ -1,4 +1,12 @@
-const inactiveWorkspacePageIds = new Set(['transaction-approval']);
+const inactiveWorkspacePageIds = new Set([
+    'transaction-approval',
+    'price-adjustment',
+    'purchase-order',
+    'sales-commission',
+    'supplier-price',
+    'item-request',
+    'item-brand',
+]);
 
 const inactiveReportCategoryIds = new Set([
     'profit-center',

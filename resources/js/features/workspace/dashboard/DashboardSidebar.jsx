@@ -17,7 +17,7 @@ const DISABLED_SIDEBAR_GROUP_IDS = new Set(['fixed-assets', 'tax-center']);
 function getVisiblePanelItems(item, preferences) {
     return (item.panel?.items ?? []).filter((panelItem) => {
         const isInactive = isWorkspacePageInactive(panelItem.id, preferences);
-        const isImplemented = panelItem.implemented !== false || implementedWorkspacePageIds.has(panelItem.id);
+        const isImplemented = panelItem.implemented !== false && implementedWorkspacePageIds.has(panelItem.id);
         return !isInactive && isImplemented;
     });
 }

@@ -6,7 +6,11 @@ class ItemBrandPage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['item-brand'], [
+        $basePage = $navigationPages['item-brand'] ?? [
+            'id' => 'item-brand',
+            'label' => 'Merek Barang',
+        ];
+        return array_replace($basePage, [
             'subtab' => [
                 'id' => 'item-brand-create',
                 'label' => 'Data Baru',

@@ -6,7 +6,11 @@ class SupplierPricePage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['supplier-price'], [
+        $basePage = $navigationPages['supplier-price'] ?? [
+            'id' => 'supplier-price',
+            'label' => 'Harga Pemasok',
+        ];
+        return array_replace($basePage, [
             'subtab' => [
                 'id' => 'supplier-price-create',
                 'label' => 'Data Baru',

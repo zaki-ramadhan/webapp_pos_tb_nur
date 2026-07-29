@@ -6,7 +6,11 @@ class SalesCommissionPage
 {
     public static function get(array $navigationPages): array
     {
-        return array_replace($navigationPages['sales-commission'], [
+        $basePage = $navigationPages['sales-commission'] ?? [
+            'id' => 'sales-commission',
+            'label' => 'Komisi Penjual',
+        ];
+        return array_replace($basePage, [
             'subtab' => [
                 'id' => 'sales-commission-create',
                 'label' => 'Data Baru',
