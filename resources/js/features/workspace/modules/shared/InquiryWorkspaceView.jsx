@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { openSourceDocument } from '@/features/workspace/backend/adapters/bankAdapters';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
+import BankLedgerTable from '@/features/workspace/modules/shared/BankLedgerTable';
 import { TransactionToolbarIconButton, TransactionExportExcelButton, TransactionSwitchViewButton } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import formatTableTextValue from '@/features/workspace/shared/formatTableTextValue';
 import { parseNumericInput } from '@/features/workspace/shared/transactionFormatters';
@@ -34,6 +36,7 @@ function buildInitialControlValues(controls) {
 }
 
 export default function InquiryWorkspaceView({
+    pageId = '',
     config,
     rows = null,
     loading = false,
@@ -42,6 +45,7 @@ export default function InquiryWorkspaceView({
     onValuesChange = null,
     pagination = null,
 }) {
+    const activePageId = pageId || config.id || '';
     const controls = config.controls ?? [];
     const hasSidePanel = config.sidePanel?.hidden !== true;
     const [values, setValues] = useState(() => buildInitialControlValues(controls));
@@ -49,12 +53,21 @@ export default function InquiryWorkspaceView({
     const keyword = keywordControl ? values[keywordControl.id] ?? '' : '';
     const [isAlternativeView, setIsAlternativeView] = useState(false);
 
+    const onValuesChangeRef = useRef(onValuesChange);
     useEffect(() => {
-        onValuesChange?.(values);
-    }, [onValuesChange, values]);
+        onValuesChangeRef.current = onValuesChange;
+    });
+
+    useEffect(() => {
+        onValuesChangeRef.current?.(values);
+    }, [values]);
 
     const filteredRows = useMemo(() => {
-        const sourceRows = rows ?? config.table.rows ?? [];
+        if (rows !== null && rows !== undefined) {
+            return rows;
+        }
+
+        const sourceRows = config.table.rows ?? [];
         const normalizedKeyword = keyword.trim().toLowerCase();
 
         if (!normalizedKeyword) {
@@ -75,10 +88,11 @@ export default function InquiryWorkspaceView({
         );
     }, [config.table.columns, config.table.rows, config.table.searchKeys, keyword, rows]);
 
-    function handleChange(controlId, nextValue) {
+    function handleChange(controlId, nextValue, extra = null) {
         setValues((currentValues) => ({
             ...currentValues,
             [controlId]: nextValue,
+            ...(extra ? extra : {}),
         }));
     }
 
@@ -187,112 +201,108 @@ export default function InquiryWorkspaceView({
             >
                 <div className="min-w-0 overflow-hidden flex flex-col">
                     <div className="min-h-0 overflow-x-auto">
-                        <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-table-wrapper-border">
-                            <DataTableHeader className="bg-table-header-bg">
-                                <tr>
-                                    {sortedRows.length > 0 && (
-                                        <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-light text-white">
-                                            No.
-                                        </DataTableHead>
-                                    )}
-                                    {resolvedColumns.map((column) => (
-                                        <SortableTableHeaderCell
-                                            key={column.id}
-                                            label={column.label}
-                                            align={column.align}
-                                            widthClassName={column.widthClassName}
-                                            sortable={column.sortable !== false}
-                                            sortDirection={sortKey === column.id ? sortDir : null}
-                                            onSort={() => handleSort(column.id)}
-                                            style={getCellStyle(column.id, { position: 'relative' })}
-                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
-                                        />
-                                    ))}
-                                </tr>
-                            </DataTableHeader>
+                        {activePageId === 'bank-history' || activePageId === 'account-history' ? (
+                            <BankLedgerTable
+                                rows={rows ?? []}
+                                loading={loading}
+                                startDate={values.startDate ?? ''}
+                                emptyLabel={config.table.emptyLabel}
+                                className={config.table.tableClassName ?? 'min-w-[1200px]'}
+                            />
+                        ) : (
+                            <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-table-wrapper-border">
+                                <DataTableHeader className="bg-table-header-bg">
+                                    <tr>
+                                        {sortedRows.length > 0 && (
+                                            <DataTableHead className="w-[50px] px-3 py-2.5 text-center text-base font-light text-white">
+                                                No.
+                                            </DataTableHead>
+                                        )}
+                                        {resolvedColumns.map((column) => (
+                                            <SortableTableHeaderCell
+                                                key={column.id}
+                                                label={column.label}
+                                                align={column.align}
+                                                widthClassName={column.widthClassName}
+                                                sortable={column.sortable !== false}
+                                                sortDirection={sortKey === column.id ? sortDir : null}
+                                                onSort={() => handleSort(column.id)}
+                                                style={getCellStyle(column.id, { position: 'relative' })}
+                                                onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                            />
+                                        ))}
+                                    </tr>
+                                </DataTableHeader>
 
-                            <DataTableBody>
-                                {sortedRows.length ? (
-                                    sortedRows.map((row, index) => {
-                                        const offset = pagination ? pagination.from - 1 : 0;
-                                        const displayIndex = offset + index + 1;
-                                        return (
-                                            <DataTableRow
-                                                key={row.id || index}
-                                                className={`cursor-pointer border-ui-border-row transition hover:bg-workspace-hover-bg ${
-                                                    index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
-                                                }`.trim()}
-                                            >
-                                                <DataTableCell className="px-3 text-center text-base text-table-row-number">
-                                                    {displayIndex}
-                                                </DataTableCell>
-                                                {resolvedColumns.map((column) => {
-                                                    let cellContent = null;
-                                                    const val = row[column.id];
+                                <DataTableBody>
+                                    {sortedRows.length ? (
+                                        sortedRows.map((row, index) => {
+                                            const offset = pagination ? pagination.from - 1 : 0;
+                                            const displayIndex = offset + index + 1;
+                                            const isClickable = Boolean(row.document_id && row.document_type);
+                                            return (
+                                                <DataTableRow
+                                                    key={row.id || index}
+                                                    onClick={isClickable ? () => openSourceDocument(row) : undefined}
+                                                    className={`${isClickable ? 'cursor-pointer' : ''} border-ui-border-row transition hover:bg-workspace-hover-bg ${
+                                                        index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'
+                                                    }`.trim()}
+                                                >
+                                                    <DataTableCell className="px-3 text-center text-base text-table-row-number">
+                                                        {displayIndex}
+                                                    </DataTableCell>
+                                                    {resolvedColumns.map((column) => {
+                                                        let cellContent = null;
+                                                        const val = row[column.id];
 
-                                                    if (column.id === 'type') {
-                                                        const valStr = String(val || '').toLowerCase();
-                                                        if (valStr.includes('debit') || valStr.includes('db') || valStr.includes('dr')) {
-                                                            cellContent = <span className="text-slate-700 font-normal">Debit</span>;
-                                                        } else if (valStr.includes('credit') || valStr.includes('cr') || valStr.includes('kredit')) {
-                                                            cellContent = <span className="text-slate-700 font-normal">Kredit</span>;
+                                                        if (column.id === 'action' || column.cell) {
+                                                            cellContent = column.cell ? column.cell(row) : null;
+                                                        } else if (column.id === 'sourceNumber') {
+                                                            cellContent = (
+                                                                <span className="text-slate-900 font-normal">
+                                                                    {val || '-'}
+                                                                </span>
+                                                            );
+                                                        } else if (column.id === 'balance' || column.id === 'mutation') {
+                                                            const num = parseNumericInput(val);
+                                                            const formattedVal = formatTableTextValue(val, column);
+                                                            if (num < 0) {
+                                                                cellContent = <span className="text-red-600">{formattedVal}</span>;
+                                                            } else {
+                                                                cellContent = <span className="text-slate-700">{formattedVal}</span>;
+                                                            }
                                                         } else {
                                                             cellContent = formatTableTextValue(val, column);
                                                         }
-                                                    } else if (column.id === 'mutation') {
-                                                        const typeVal = String(row['type'] || '').toLowerCase();
-                                                        const isCredit = typeVal.includes('credit') || typeVal.includes('cr') || typeVal.includes('kredit');
-                                                        const formattedVal = formatTableTextValue(val, column);
-                                                        if (isCredit) {
-                                                            cellContent = <span className="text-rose-600">{formattedVal}</span>;
-                                                        } else {
-                                                            cellContent = <span className="text-slate-700">{formattedVal}</span>;
-                                                        }
-                                                    } else if (column.id === 'balance') {
-                                                        const formattedVal = formatTableTextValue(val, column);
-                                                        const strVal = String(val ?? '');
-                                                        const numVal = parseNumericInput(val);
-                                                        const isNegative = strVal.includes('-') || (numVal < 0 && numVal !== 0);
-                                                        if (isNegative) {
-                                                            cellContent = <span className="text-red-600 font-medium">{formattedVal}</span>;
-                                                        } else {
-                                                            cellContent = <span className="text-slate-700">{formattedVal}</span>;
-                                                        }
-                                                    } else {
-                                                        cellContent = formatTableTextValue(val, column);
-                                                    }
 
-                                                    return (
-                                                        <DataTableCell
-                                                            key={column.id}
-                                                            className={`px-2.5 text-base text-text-workspace-dark ${
-                                                                column.align === 'right' ? 'text-right' : 
-                                                                column.align === 'center' ? 'text-center' : 'text-left'
-                                                            }`.trim()}
-                                                            style={getCellStyle(column.id)}
-                                                            onResizeStart={(e) => handleResizeStart(e, column.id)}
-                                                        >
-                                                            {cellContent}
-                                                        </DataTableCell>
-                                                    );
-                                                })}
-                                            </DataTableRow>
-                                        );
-                                    })
-                                ) : (
-                                    <DataTableRow className="bg-white">
-                                        <DataTableCell colSpan={resolvedColumns.length + 1} className="px-3 py-3 text-center text-base text-text-workspace-dark">
-                                            {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
-                                        </DataTableCell>
-                                    </DataTableRow>
-                                )}
-                            </DataTableBody>
-                        </DataTable>
+                                                        return (
+                                                            <DataTableCell
+                                                                key={column.id}
+                                                                className={`px-2.5 text-base text-text-workspace-dark ${
+                                                                    column.align === 'right' ? 'text-right' : 
+                                                                    column.align === 'center' ? 'text-center' : 'text-left'
+                                                                }`.trim()}
+                                                                style={getCellStyle(column.id)}
+                                                                onResizeStart={(e) => handleResizeStart(e, column.id)}
+                                                            >
+                                                                {cellContent}
+                                                            </DataTableCell>
+                                                        );
+                                                    })}
+                                                </DataTableRow>
+                                            );
+                                        })
+                                    ) : (
+                                        <DataTableRow className="bg-white">
+                                            <DataTableCell colSpan={resolvedColumns.length + 1} className="px-3 py-3 text-center text-base text-text-workspace-dark">
+                                                {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
+                                            </DataTableCell>
+                                        </DataTableRow>
+                                    )}
+                                </DataTableBody>
+                            </DataTable>
+                        )}
                     </div>
-
-                    {!hasRows ? (
-                        <div className={`border-t border-table-row-border bg-white ${config.table.emptySpaceClassName ?? CONTENT_MIN_HEIGHT_CLASS_NAME}`.trim()} />
-                    ) : null}
 
                     {pagination ? (
                         <Pagination
