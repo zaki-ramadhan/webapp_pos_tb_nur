@@ -213,7 +213,10 @@ class OperationBackendResources
                         fn (array $row): bool => filled($row['product_id'] ?? null)
                             || filled($row['fixed_asset_id'] ?? null)
                             || filled($row['account_id'] ?? null)
-                            || filled($row['description'] ?? null),
+                            || filled($row['description'] ?? null)
+                            || filled($row['reference_code'] ?? null)
+                            || filled($row['payment_amount'] ?? null)
+                            || filled($row['total_amount'] ?? null),
                     );
                 }
             },

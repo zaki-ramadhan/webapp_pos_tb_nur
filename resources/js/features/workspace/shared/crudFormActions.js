@@ -140,7 +140,8 @@ export async function handleFormSaveSuccess({
     buildRecord,
     config,
     setLocalRecord,
-    resetForm,
+    resetForm = null,
+    setValues = null,
     activeLevel2Tab,
     isDetail,
     onOpenDetail,
@@ -155,12 +156,20 @@ export async function handleFormSaveSuccess({
     const parsed = record ? (buildRecord ? buildRecord(record, config) : record) : null;
     if (parsed) {
         setLocalRecord?.(parsed);
-        resetForm?.(parsed);
+        if (typeof resetForm === 'function') {
+            resetForm(parsed);
+        } else if (typeof setValues === 'function') {
+            setValues(parsed);
+        }
         if (window.__savedRecordsCache && record?.id) {
             window.__savedRecordsCache[String(record.id)] = parsed;
         }
     } else {
-        resetForm?.(resetFallback);
+        if (typeof resetForm === 'function') {
+            resetForm(resetFallback);
+        } else if (typeof setValues === 'function' && resetFallback) {
+            setValues(resetFallback);
+        }
     }
 
     if (activeLevel2Tab?.id) {
@@ -184,5 +193,12 @@ export async function handleFormSaveSuccess({
             label: record.document_number ?? resolvedDocumentNumber,
             tabLabel: record.document_number ?? resolvedDocumentNumber,
         });
+        if (activeLevel2Tab?.id) {
+            window.dispatchEvent(
+                new CustomEvent('workspace:close-tab', {
+                    detail: { tabId: activeLevel2Tab.id },
+                })
+            );
+        }
     }
 }

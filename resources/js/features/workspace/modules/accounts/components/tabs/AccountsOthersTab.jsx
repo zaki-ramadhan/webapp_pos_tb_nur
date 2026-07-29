@@ -42,7 +42,6 @@ export function AccountsOthersTab({ config, values, isDetail, onChange }) {
 
             <div className="space-y-3">
                 <CheckboxField
-                    id="accounts-all-users"
                     label={config.labels.allUsers}
                     checked={Boolean(values.allUsers)}
                     onChange={(event) => {

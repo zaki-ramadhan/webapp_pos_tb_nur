@@ -42,7 +42,6 @@ export function ItemSalesInfoSection({ config, values, onChange, isLoading }) {
                 {values.kind === 'Grup' && !values.bulkPricingEnabled ? (
                     <div className="space-y-2">
                         <CheckboxField
-                            id="useGroupPrice"
                             label="Ambil Harga dari Rincian Barang"
                             checked={values.useGroupPrice !== false}
                             onChange={(e) => onChange('useGroupPrice', e.target.checked)}

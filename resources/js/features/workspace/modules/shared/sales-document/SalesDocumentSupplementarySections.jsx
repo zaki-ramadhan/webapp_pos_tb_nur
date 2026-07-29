@@ -30,6 +30,7 @@ export function SalesDocumentAdditionalCostSection({ config, values, setValues, 
             hideSearchField={config.hideCostSearchField}
             leadingAction={costLeadingAction}
             showTitleSearchButton={config.showCostTitleSearchButton}
+            titleRequired={false}
             minWidthClassName={config.costTable.minWidthClassName ?? 'min-w-[900px]'}
             onRowClick={handlers?.onEditCostItem}
         />

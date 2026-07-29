@@ -33,7 +33,7 @@ export default function BankInquiryView({ page }) {
     });
     const isAccountSelected = Boolean(filters.search?.trim() || filters.account_id);
     const tableRows = useMemo(() => {
-        if (!isAccountSelected && (page.id === 'bank-history' || page.id === 'account-history')) {
+        if (!isAccountSelected && (page.id === 'bank-history' || page.id === 'account-history' || page.id === 'bank-statement')) {
             return [];
         }
         return mapBankRows(page.id, rows);

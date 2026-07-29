@@ -3,8 +3,10 @@ import ChipLookupField from '@/features/workspace/shared/ChipLookupField';
 import { TransactionDateInput, TransactionFieldLabel, TransactionSectionHeading } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
 import CheckboxField from '@/components/ui/CheckboxField';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
+import { applyComputedTotals } from '@/features/workspace/modules/sales-document/salesDocumentFormShared';
 
-function SalesDocumentInvoiceTaxSection({ config, values }) {
+function SalesDocumentInvoiceTaxSection({ config, values, setValues }) {
+    const activeSetValues = setValues || values.setValues;
     return (
         <div>
             <TransactionSectionHeading title="Info Pajak" icon="tax" />
@@ -13,19 +15,23 @@ function SalesDocumentInvoiceTaxSection({ config, values }) {
                     <TransactionFieldLabel label="Pajak" />
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm text-brand-dark whitespace-nowrap">
                         <CheckboxField
-                            id="taxEnabled"
                             label="Kena Pajak"
-                            checked={values.taxEnabled}
-                            onChange={(event) => values.setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))}
+                            checked={Boolean(values.taxEnabled)}
+                            onChange={(event) => {
+                                const checked = event.target.checked;
+                                activeSetValues?.((current) => applyComputedTotals({ ...current, taxEnabled: checked }, current.items ?? []));
+                            }}
                             align="center"
                             inputClassName="h-3.5 w-3.5 rounded-[3px]"
                             containerClassName="w-auto inline-flex"
                         />
                         <CheckboxField
-                            id="taxIncluded"
                             label="Total termasuk Pajak"
-                            checked={values.taxIncluded}
-                            onChange={(event) => values.setValues?.((current) => ({ ...current, taxIncluded: event.target.checked }))}
+                            checked={Boolean(values.taxIncluded)}
+                            onChange={(event) => {
+                                const checked = event.target.checked;
+                                activeSetValues?.((current) => applyComputedTotals({ ...current, taxIncluded: checked }, current.items ?? []));
+                            }}
                             align="center"
                             inputClassName="h-3.5 w-3.5 rounded-[3px]"
                             containerClassName="w-auto inline-flex"
@@ -40,7 +46,7 @@ function SalesDocumentInvoiceTaxSection({ config, values }) {
                         <TransactionFieldLabel label="Tgl Pengiriman" />
                         <TransactionDateInput
                             value={values.shippingDate}
-                            onChange={(nextDisplayValue) => values.setValues?.((current) => ({ ...current, shippingDate: nextDisplayValue }))}
+                            onChange={(nextDisplayValue) => activeSetValues?.((current) => ({ ...current, shippingDate: nextDisplayValue }))}
                             className="w-full"
                         />
                     </div>
@@ -53,7 +59,7 @@ function SalesDocumentInvoiceTaxSection({ config, values }) {
 export default function SalesDocumentTaxShippingColumn({ config, values, setValues, handlers }) {
     return (
         <section className="pb-6">
-            {config.taxInfoMode === 'invoice' ? <SalesDocumentInvoiceTaxSection config={config} values={{ ...values, setValues, handlers }} /> : null}
+            {config.taxInfoMode === 'invoice' ? <SalesDocumentInvoiceTaxSection config={config} values={values} setValues={setValues} /> : null}
             {config.showTaxInfo !== false && config.taxInfoMode !== 'invoice' ? (
                 <>
                     <TransactionSectionHeading title={config.taxInfoTitle} icon="tax" />
@@ -62,19 +68,23 @@ export default function SalesDocumentTaxShippingColumn({ config, values, setValu
                             <TransactionFieldLabel label={config.labels.tax} />
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm text-brand-dark whitespace-nowrap">
                                 <CheckboxField
-                                    id="taxEnabled"
                                     label="Kena Pajak"
-                                    checked={values.taxEnabled}
-                                    onChange={(event) => setValues?.((current) => ({ ...current, taxEnabled: event.target.checked }))}
+                                    checked={Boolean(values.taxEnabled)}
+                                    onChange={(event) => {
+                                        const checked = event.target.checked;
+                                        setValues?.((current) => applyComputedTotals({ ...current, taxEnabled: checked }, current.items ?? []));
+                                    }}
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
                                     containerClassName="w-auto inline-flex"
                                 />
                                 <CheckboxField
-                                    id="taxIncluded"
                                     label="Total termasuk Pajak"
-                                    checked={values.taxIncluded}
-                                    onChange={(event) => setValues?.((current) => ({ ...current, taxIncluded: event.target.checked }))}
+                                    checked={Boolean(values.taxIncluded)}
+                                    onChange={(event) => {
+                                        const checked = event.target.checked;
+                                        setValues?.((current) => applyComputedTotals({ ...current, taxIncluded: checked }, current.items ?? []));
+                                    }}
                                     align="center"
                                     inputClassName="h-3.5 w-3.5 rounded-[3px]"
                                     containerClassName="w-auto inline-flex"

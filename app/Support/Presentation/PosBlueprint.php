@@ -317,7 +317,7 @@ final class PosBlueprint
                 self::navItem('cash-payment', 'Pembayaran', 'payment', 'green'),
                 self::navItem('cash-receipt', 'Penerimaan', 'receipt', 'green'),
                 self::navItem('bank-transfer', 'Transfer Bank', 'transfer', 'green'),
-                self::navItem('bank-statement', 'Rekening Koran', 'bank', 'purple'),
+                // self::navItem('bank-statement', 'Rekening Koran', 'bank', 'purple'),
                 self::navItem('bank-history', 'Histori Bank', 'history', 'purple'),
                 self::navItem('bank-reconciliation', 'Rekonsiliasi Bank', 'invoice', 'purple'),
             ]),

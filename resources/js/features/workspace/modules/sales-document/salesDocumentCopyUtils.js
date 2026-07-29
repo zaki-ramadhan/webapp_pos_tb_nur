@@ -13,33 +13,12 @@ export const SALES_DOCUMENT_COPY_CONFIG_MAP = {
         placeholder: '',
         tabs: [],
     },
-    'Penawaran': {
-        mode: 'document',
-        resource: 'sales-quotes',
-        title: 'Penawaran Penjualan',
-        placeholder: 'Cari/Pilih Penawaran...',
-        tabs: ['Rincian Barang', 'Biaya Lainnya'],
-    },
     'Pesanan': {
         mode: 'document',
         resource: 'sales-orders',
         title: 'Pesanan Penjualan',
         placeholder: 'Cari/Pilih Pesanan...',
         tabs: ['Informasi Pesanan'],
-    },
-    'Pesanan penjualan': {
-        mode: 'document',
-        resource: 'sales-orders',
-        title: 'Pesanan Penjualan',
-        placeholder: 'Cari/Pilih Pesanan Penjualan...',
-        tabs: ['Informasi Pesanan'],
-    },
-    'Pengiriman': {
-        mode: 'document',
-        resource: 'sales-deliveries',
-        title: 'Pengiriman Penjualan',
-        placeholder: 'Cari/Pilih Pengiriman...',
-        tabs: ['Rincian Barang', 'Biaya Lainnya', 'Uang Muka'],
     },
     'Pembelian': {
         mode: 'document',

@@ -269,8 +269,7 @@ export const defaultSalesInvoiceConfig = {
         enabled: true,
     },
     hideAddItemButton: true,
-    hideImportButton: true,
-    itemSearchResource: 'products',
+    takeOptions: ['Pesanan'],
     draft: salesInvoiceDraft,
     detailRecords: salesInvoiceDetailRecords,
 };
@@ -299,10 +298,12 @@ export function buildSalesInvoiceRecord(row = {}) {
         taxValue: 'Rp 0',
     });
 
-    if (row.status === 'Lunas') {
+    const resolvedStatus = row.status ?? row.__backendRecord?.status ?? record.status ?? record.rawStatus;
+    if (resolvedStatus === 'Lunas' || (record.outstandingAmount !== undefined && Number(record.outstandingAmount) <= 0 && Number(record.total_amount ?? record.totalAmount ?? 0) > 0)) {
         record.processDisabled = true;
         record.processStamp = 'LUNAS';
         record.processStampTone = 'green';
+        record.status = 'Lunas';
     } else {
         record.processDisabled = false;
         record.processStamp = 'BELUM\nLUNAS';

@@ -104,7 +104,6 @@ export const bankInquiryPageConfigs = {
         actions: [
             createAction('reload', 'link', 'Muat ulang'),
             createAction('export-excel', 'download', 'Ekspor Excel'),
-            createAction('switch-view', 'columns', 'Ubah Tampilan'),
         ],
         table: {
             columns: [

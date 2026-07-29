@@ -19,6 +19,13 @@ class BankInquiryQueryService
      */
     public function paginateStatement(array $filters): LengthAwarePaginator
     {
+        $search = mb_strtolower(trim((string) ($filters['search'] ?? '')));
+        $accountId = $filters['account_id'] ?? null;
+
+        if (empty($accountId) && $search === '') {
+            return $this->paginateRows(collect(), $filters);
+        }
+
         $rows = $this->buildLedgerRows($filters)
             ->map(function (array $row): array {
                 return [

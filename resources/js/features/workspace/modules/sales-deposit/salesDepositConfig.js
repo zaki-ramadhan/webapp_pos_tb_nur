@@ -50,7 +50,7 @@ const salesDepositDraft = {
     customer: [],
     entryDate: todayDisplayDate,
     autoNumber: true,
-    numberingType: 'Faktur Penjualan',
+    numberingType: 'Uang Muka Penjualan',
     documentNumber: '',
     currency: '',
     depositAmount: '0',
@@ -85,7 +85,7 @@ export const defaultSalesDepositConfig = {
         branch: 'Cabang',
         notes: 'Keterangan',
     },
-    numberingOptions: ['Faktur Penjualan', 'Uang Muka Penjualan'],
+    numberingOptions: ['Uang Muka Penjualan'],
     table: {
         createLabel: 'Tambah Uang Muka Penjualan',
         refreshLabel: 'Muat ulang',

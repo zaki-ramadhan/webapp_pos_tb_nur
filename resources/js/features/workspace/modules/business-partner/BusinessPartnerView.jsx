@@ -119,7 +119,22 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             if (isDetail) {
                 await update(recordId, payload);
             } else {
-                await store(payload);
+                const res = await store(payload);
+                const savedRecord = res?.data ?? res;
+                if (savedRecord?.id && onOpenDetail) {
+                    onOpenDetail({
+                        recordId: String(savedRecord.id),
+                        label: savedRecord.name ?? payload.name,
+                        tabLabel: savedRecord.name ?? payload.name,
+                    });
+                    if (activeLevel2Tab?.id) {
+                        window.dispatchEvent(
+                            new CustomEvent('workspace:close-tab', {
+                                detail: { tabId: activeLevel2Tab.id },
+                            })
+                        );
+                    }
+                }
             }
             dismissToast(loadingToastId);
             showSuccessToast({

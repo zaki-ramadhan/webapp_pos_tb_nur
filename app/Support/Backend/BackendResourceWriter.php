@@ -161,6 +161,15 @@ class BackendResourceWriter
                     'stock-transfers', 'delivery-orders', 'asset-changes', 'asset-disposals', 'asset-moves',
                     'item-requests', 'price-adjustments',
                 ];
+                if (isset($payload['lines']) && is_array($payload['lines'])) {
+                    foreach ($payload['lines'] as &$line) {
+                        if (isset($line['payment_amount']) && (!isset($line['total_amount']) || (float)$line['total_amount'] === 0.0)) {
+                            $line['total_amount'] = (float) $line['payment_amount'];
+                        }
+                    }
+                    unset($line);
+                }
+
                 if (in_array($blueprint->key, $itemKeys) && isset($payload['lines']) && is_array($payload['lines'])) {
                     $subtotal = 0.0;
                     $discountTotal = 0.0;
@@ -907,10 +916,12 @@ class BackendResourceWriter
             return;
         }
 
-        $currentDocs = [];
-        if (method_exists($record, 'lines')) {
-            $currentDocs = $record->lines()->pluck('reference_code')->filter()->unique()->toArray();
-        }
+        $currentDocs = DB::table('operation_document_lines')
+            ->where('operation_document_id', $record->id)
+            ->pluck('reference_code')
+            ->filter()
+            ->unique()
+            ->toArray();
 
         $allDocs = array_unique(array_merge($currentDocs, $oldDocs ?? []));
         if (empty($allDocs)) {
@@ -928,20 +939,32 @@ class BackendResourceWriter
             $totalPaid = (float) DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
                 ->where('operation_document_lines.reference_code', $docNum)
-                ->whereNotIn('operation_documents.status', ['Void', 'Cancelled'])
+                ->where(function ($q) {
+                    $q->whereNull('operation_documents.status')
+                      ->orWhereNotIn('operation_documents.status', ['Void', 'Cancelled']);
+                })
                 ->sum('operation_document_lines.total_amount');
 
-            $totalAmount = (float) $sourceDoc->total_amount;
-            $outstanding = max(0.00, $totalAmount - $totalPaid);
-            
-          // For safety and floats comparison, round to 2 decimals
+            $advanceTotal = 0.0;
+            if ($sourceDoc->metadata && isset($sourceDoc->metadata['advance_payments']) && is_array($sourceDoc->metadata['advance_payments'])) {
+                foreach ($sourceDoc->metadata['advance_payments'] as $adv) {
+                    $amt = $adv['amount'] ?? 0;
+                    if (is_string($amt)) {
+                        $amt = (float) preg_replace('/[^\d]/', '', $amt);
+                    }
+                    $advanceTotal += (float) $amt;
+                }
+            }
 
+            $totalPaidCombined = $totalPaid + $advanceTotal;
+            $totalAmount = (float) $sourceDoc->total_amount;
+            $outstanding = max(0.00, $totalAmount - $totalPaidCombined);
             $outstanding = round($outstanding, 2);
 
             $status = $outstanding <= 0.01 ? 'Lunas' : 'Belum Lunas';
 
             $sourceDoc->update([
-                'paid_amount' => $totalPaid,
+                'paid_amount' => $totalPaidCombined,
                 'outstanding_amount' => $outstanding,
                 'status' => $status,
             ]);
@@ -978,7 +1001,10 @@ class BackendResourceWriter
           // Search all operation_documents of type 'sales_invoice' that are active
 
             $invoices = \App\Domain\Support\Models\OperationDocument::where('document_type', 'sales_invoice')
-                ->whereNotIn('status', ['Void', 'Cancelled'])
+                ->where(function ($q) {
+                    $q->whereNull('status')
+                      ->orWhereNotIn('status', ['Void', 'Cancelled']);
+                })
                 ->get();
 
             foreach ($invoices as $invoice) {

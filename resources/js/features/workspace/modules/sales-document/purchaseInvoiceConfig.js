@@ -66,20 +66,25 @@ export function buildPurchaseInvoiceRecord(row = {}, config) {
     const currencyPrefix = currency === 'USD' ? '$' : 'Rp';
     const totalValue = row.total ? `${currencyPrefix} ${row.total}` : (record.total || `${currencyPrefix} 0`);
 
+    const resolvedStatus = row.status ?? row.__backendRecord?.status ?? record.status ?? record.rawStatus;
+    const isLunas = resolvedStatus === 'Lunas' || (record.outstandingAmount !== undefined && Number(record.outstandingAmount) <= 0 && Number(record.total_amount ?? record.totalAmount ?? 0) > 0);
+
     return {
         ...record,
+        status: isLunas ? 'Lunas' : (record.status ?? 'Belum Lunas'),
+        rawStatus: resolvedStatus,
         purchaseOrderNumber: row.billNumber ?? record.purchaseOrderNumber ?? '',
         summary: buildPurchaseInvoiceSummary(row, {
             ...record,
             total: totalValue,
         }),
-        summaryStatusTone: record.summaryStatusTone ?? 'warning',
+        summaryStatusTone: isLunas ? 'success' : (record.summaryStatusTone ?? 'warning'),
         showSecondaryHeaderAction: false,
         showProcessButton: true,
         showProcessButtonOnCreate: false,
-        processDisabled: row.status === 'Lunas',
-        processStamp: row.status === 'Lunas' ? 'LUNAS' : (record.processStamp || 'BELUM\nLUNAS'),
-        processStampTone: row.status === 'Lunas' ? 'green' : (record.processStampTone ?? 'gray'),
+        processDisabled: isLunas,
+            processStamp: isLunas ? 'LUNAS' : 'BELUM\nLUNAS',
+            processStampTone: isLunas ? 'green' : 'gray',
         subtotal: record.subtotal || totalValue,
         discountPrefix: record.discountPrefix || currencyPrefix,
         total: record.total || totalValue,

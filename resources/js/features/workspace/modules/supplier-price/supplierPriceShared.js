@@ -12,10 +12,6 @@ export function requireSupplierSelection(values, partnerLabel = 'Pemasok') {
                 __supplierId: `${partnerLabel} wajib dipilih.`,
             }
         }));
-        showWarningToast({
-            title: 'Perhatian',
-            message: `${partnerLabel} harus diisi terlebih dahulu.`,
-        });
         showSystemErrorModal({
             title: 'Terjadi Permasalahan pada Pemrosesan',
             description: 'Silakan perbaiki permasalahan berikut ini:',

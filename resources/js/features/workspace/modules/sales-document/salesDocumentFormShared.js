@@ -162,6 +162,17 @@ export function validateSalesDocumentValues(values, config) {
         }
     }
 
+    const additionalCosts = values.additionalCosts ?? [];
+    for (let i = 0; i < additionalCosts.length; i++) {
+        const cost = additionalCosts[i];
+        if (!String(cost?.name ?? '').trim()) {
+            return `Nama biaya ke-${i + 1} dari Biaya Lainnya harus diisi.`;
+        }
+        if (parseNumericInput(cost?.amount) <= 0) {
+            return `Jumlah biaya untuk '${cost.name}' harus lebih besar dari 0.`;
+        }
+    }
+
     if (config?.pageId === 'sales-invoice') {
         const totalAdvance = (values.advancePayments ?? []).reduce((sum, adv) => sum + parseNumericInput(adv.amount), 0);
         const totalInvoice = parseNumericInput(values.total);

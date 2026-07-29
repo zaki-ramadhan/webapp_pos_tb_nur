@@ -106,7 +106,8 @@ export function buildSalesDepositRow(record) {
 export function buildSalesDepositRecord(record = {}, config) {
     const totalAmount = Number(record?.total_amount ?? record?.paid_amount ?? 0);
     const subtotalAmount = Number(record?.subtotal ?? totalAmount);
-    const status = record?.status ?? 'Draft';
+    const isLunas = record?.status === 'Lunas' || (record?.outstanding_amount !== undefined && Number(record?.outstanding_amount) <= 0 && totalAmount > 0);
+    const status = isLunas ? 'Lunas' : (record?.status ?? 'Belum Lunas');
     const printStatus = record?.metadata?.print_status ?? 'Belum cetak/email';
 
     return {
@@ -135,11 +136,13 @@ export function buildSalesDepositRecord(record = {}, config) {
         address: record.metadata?.address ?? '',
         branches: [],
         notes: record.notes ?? '',
+        status,
+        rawStatus: record?.status ?? status,
         summary: buildSummaryRows(totalAmount, status, printStatus),
         usedDepositRows: [],
         approvalStamp: record.metadata?.approval_stamp ?? '',
-        statusStamp: status.toUpperCase(),
-        statusTone: status === 'Lunas' ? 'green' : 'gray',
+        statusStamp: isLunas ? 'LUNAS' : (status ? status.toUpperCase() : 'BELUM LUNAS'),
+        statusTone: isLunas ? 'green' : 'gray',
         processButtonLabel: 'Proses',
         dockActions: config.detailRecords?.[record.document_number]?.dockActions ?? config.draft?.dockActions ?? [],
         subtotal: formatCurrencyLabel(record.subtotal ?? totalAmount),

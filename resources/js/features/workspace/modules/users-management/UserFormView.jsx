@@ -173,6 +173,13 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                 const record = res?.data ?? res;
                 if (!isDetail && record?.id && onOpenDetail) {
                     onOpenDetail({ recordId: String(record.id), label: record.name ?? inputVal, tabLabel: record.name ?? inputVal });
+                    if (activeLevel2Tab?.id) {
+                        window.dispatchEvent(
+                            new CustomEvent('workspace:close-tab', {
+                                detail: { tabId: activeLevel2Tab.id },
+                            })
+                        );
+                    }
                 }
             },
         });

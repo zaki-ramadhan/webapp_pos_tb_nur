@@ -19,7 +19,6 @@ export default function TaxTab({ config, values, onChange }) {
                 <div className="mt-4 space-y-3">
                     <FormFieldRow label={config.labels?.taxCheckbox ?? 'Pajak'}>
                         <CheckboxField
-                            id="taxIncluded"
                             label={taxOptions.includedLabel ?? 'Default Faktur sudah termasuk Pajak'}
                             checked={Boolean(values.taxIncluded)}
                             onChange={(event) => onChange('taxIncluded', event.target.checked)}
@@ -94,7 +93,6 @@ export default function TaxTab({ config, values, onChange }) {
                     <FormFieldRow label="Alamat Pajak">
                         <div className="space-y-3">
                             <CheckboxField
-                                id="taxSameAsBilling"
                                 label={taxOptions.addressSameLabel ?? 'Alamat pajak sama dengan alamat pembayaran'}
                                 checked={Boolean(values.taxSameAsBilling)}
                                 onChange={(event) => onChange('taxSameAsBilling', event.target.checked)}

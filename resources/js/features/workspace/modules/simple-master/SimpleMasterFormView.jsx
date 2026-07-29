@@ -211,6 +211,13 @@ export default function SimpleMasterFormView({
                     label: row[backendConfig.labelField] ?? row.name ?? row.id,
                     tabLabel: row.tabLabel ?? row[backendConfig.labelField] ?? row.name ?? row.id,
                 });
+                if (activeLevel2Tab?.id) {
+                    window.dispatchEvent(
+                        new CustomEvent('workspace:close-tab', {
+                            detail: { tabId: activeLevel2Tab.id },
+                        })
+                    );
+                }
                 setValues(buildSimpleMasterFormValues(form, null));
             }
         } catch (error) {

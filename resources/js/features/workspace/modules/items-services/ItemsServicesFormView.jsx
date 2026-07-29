@@ -258,6 +258,13 @@ export default function ItemsServicesFormView({
                         label: record.name ?? values.name.trim(),
                         tabLabel: record.name ?? values.name.trim(),
                     });
+                    if (activeLevel2Tab?.id) {
+                        window.dispatchEvent(
+                            new CustomEvent('workspace:close-tab', {
+                                detail: { tabId: activeLevel2Tab.id },
+                            })
+                        );
+                    }
                     setValues(buildFormValues(config, null));
                 }
             },

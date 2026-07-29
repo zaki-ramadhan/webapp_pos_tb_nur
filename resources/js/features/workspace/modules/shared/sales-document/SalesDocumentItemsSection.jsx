@@ -1,6 +1,5 @@
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
-import { showWarningToast } from '@/components/feedback/toast';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function SalesDocumentItemsSection({ config, values, isDetail, handlers }) {
@@ -36,14 +35,16 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             resource={config.itemSearchResource}
             placeholder={config.itemSearchPlaceholder}
             searchLabel="Cari barang dan jasa"
-            onBeforeOpen={() => {
+            onSelectAccount={(record) => {
+                if (!record) return;
                 if (!values.__partnerId) {
                     const partnerLabel = config.labels?.customer || 'Pemasok/Pelanggan';
                     const msg = `${partnerLabel} harus diisi.`;
-                    showWarningToast({ message: msg });
                     showSystemErrorModal({
-                        title: 'Validasi Gagal',
+                        title: 'Terjadi Permasalahan pada Pemrosesan',
+                        description: 'Silakan perbaiki permasalahan berikut ini:',
                         message: msg,
+                        confirmLabel: 'OK',
                     });
                     window.dispatchEvent(
                         new CustomEvent('form-validation-error', {
@@ -53,11 +54,10 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
                             },
                         })
                     );
-                    return false;
+                    return;
                 }
-                return true;
+                handlers?.onSelectItem?.(record);
             }}
-            onSelectAccount={(record) => handlers?.onSelectItem?.(record)}
         />
     ) : null;
 

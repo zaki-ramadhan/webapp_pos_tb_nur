@@ -194,6 +194,10 @@ export function buildOperationDocumentRecord(record, config, pageId) {
         costSearch: '',
         additionalCosts: metadata.additional_costs ?? [],
         advancePayments: metadata.advance_payments ?? [],
+        status: mapDocumentStatus(record.status ?? 'Draft'),
+        rawStatus: record.status ?? 'Draft',
+        paidAmount: record.paid_amount ?? 0,
+        outstandingAmount: record.outstanding_amount ?? 0,
         summary: [
             ['Total', `Rp ${formatCurrencyValue(totalValue)}`],
             ['Status', mapDocumentStatus(record.status ?? 'Draft')],

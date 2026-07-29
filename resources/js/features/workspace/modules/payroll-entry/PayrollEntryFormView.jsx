@@ -283,7 +283,7 @@ export default function PayrollEntryFormView({
                     buildRecord,
                     config,
                     setLocalRecord,
-                    resetForm,
+                    setValues,
                     activeLevel2Tab,
                     isDetail,
                     onOpenDetail,

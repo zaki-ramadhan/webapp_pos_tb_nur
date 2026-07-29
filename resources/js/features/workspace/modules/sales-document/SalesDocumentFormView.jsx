@@ -307,7 +307,7 @@ export default function SalesDocumentFormView({
                     buildRecord,
                     config,
                     setLocalRecord,
-                    resetForm,
+                    setValues,
                     activeLevel2Tab,
                     isDetail,
                     onOpenDetail,
@@ -490,11 +490,14 @@ export default function SalesDocumentFormView({
                     {isDetail && (pageId === 'sales-invoice' || pageId === 'purchase-invoice') ? (
                         <DocumentStamp
                             label={
-                                values.status === 'Lunas' || (values.outstandingAmount !== undefined && parseNumericInput(values.outstandingAmount) <= 0)
+                                values.status === 'Lunas' ||
+                                values.rawStatus === 'Lunas' ||
+                                values.processStamp === 'LUNAS' ||
+                                (values.outstandingAmount !== undefined && values.outstandingAmount !== null && parseNumericInput(values.outstandingAmount) <= 0 && parseNumericInput(values.total ?? values.total_amount) > 0)
                                     ? 'LUNAS'
                                     : 'BELUM LUNAS'
                             }
-                            className="absolute bottom-4 right-12 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none"
+                            className="absolute top-[54%] right-10 sm:right-14 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none -translate-y-1/2"
                         />
                     ) : null}
                     <ActiveSectionComponent

@@ -232,9 +232,9 @@ export default function SalesDepositFormView({
                 dockActions={dockActions}
             >
                 <CrudStatusMessage status={status} className="mb-4" />
-                <div className="relative">
-                    {isDetail && values.approvalStamp ? <DepositStamp label={values.approvalStamp} tone="blue" className="right-[12%] top-[-8px]" /> : null}
-                    {isDetail && values.statusStamp ? <DepositStamp label={values.statusStamp} tone={values.statusTone} className={activeSectionId === 'invoice-info' ? 'left-[49%] top-[37%]' : 'left-[49%] top-[33%]'} /> : null}
+                <div className="relative flex-1 flex flex-col min-h-0">
+                    {isDetail && values.approvalStamp ? <DepositStamp label={values.approvalStamp} tone="blue" className="absolute top-[54%] right-10 sm:right-14 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none -translate-y-1/2" /> : null}
+                    {isDetail && values.statusStamp ? <DepositStamp label={values.statusStamp} tone={values.statusTone} className="absolute top-[54%] right-10 sm:right-14 z-30 pointer-events-none w-[140px] h-[140px] opacity-85 select-none -translate-y-1/2" /> : null}
 
                     {activeSectionId === 'additional-info' ? (
                         <DepositInfoSection config={config} values={values} setValues={setValues} isDetail={isDetail} />
@@ -315,15 +315,16 @@ export default function SalesDepositFormView({
                                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                                         <TransactionFieldLabel label={config.labels.tax} />
                                         <div className="flex flex-wrap gap-8 text-xs sm:text-sm text-brand-dark">
-                                            <CheckboxField
-                                                id="taxEnabled"
+                                             <CheckboxField
                                                 label="Kena Pajak"
                                                 checked={values.taxEnabled}
                                                 onChange={(event) =>
                                                     setValues((current) => ({
                                                         ...current,
                                                         taxEnabled: event.target.checked,
-                                                        ...(!event.target.checked ? { __taxId: null, taxName: '', taxRate: 0 } : {}),
+                                                        ...(!event.target.checked
+                                                            ? { __taxId: null, taxName: '', taxRate: 0 }
+                                                            : { taxTransactionType: current.taxTransactionType || 'Faktur Pajak' }),
                                                     }))
                                                 }
                                                 align="center"
@@ -331,7 +332,6 @@ export default function SalesDepositFormView({
                                                 containerClassName="w-auto inline-flex"
                                             />
                                             <CheckboxField
-                                                id="taxIncluded"
                                                 label="Total termasuk Pajak"
                                                 checked={values.taxIncluded}
                                                 onChange={(event) =>
@@ -401,10 +401,8 @@ export default function SalesDepositFormView({
                                                     className="h-[40px] rounded-[4px] border-ui-border w-full bg-slate-50"
                                                     selectClassName="text-xs sm:text-sm text-brand-dark"
                                                 >
-                                                    <option value="Faktur Pajak">Faktur Pajak</option>
-                                                    <option value="Digunggung">Digunggung</option>
-                                                    <option value="Ekspor">Ekspor</option>
-                                                    <option value="Dokumen Tertentu">Dokumen Tertentu</option>
+                                                    <option value="Faktur Pajak">Faktur Pajak (Standar)</option>
+                                                    <option value="Digunggung">Digunggung (Penjualan Eceran)</option>
                                                 </SelectField>
                                             </div>
                                         </div>

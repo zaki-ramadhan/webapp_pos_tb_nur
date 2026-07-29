@@ -152,7 +152,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
         });
     };
 
-    const takeOptions = config.takeOptions ?? ['Penawaran', 'Pesanan', 'Pengiriman', 'Pembelian', 'Permintaan'];
+    const takeOptions = config.takeOptions ?? ['Pesanan', 'Pembelian', 'Permintaan'];
     const processOptions = config.processOptions ?? ['Pembayaran'];
 
     return (
