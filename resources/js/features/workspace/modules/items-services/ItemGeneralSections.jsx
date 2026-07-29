@@ -148,49 +148,6 @@ export function ItemMoreInfoSection({ config, values, onChange }) {
                 </div>
             </FormRow>
 
-            {values.kind !== 'Non Persediaan' && (
-                <div className="space-y-2 pt-2">
-                    <div className="flex items-center gap-3">
-                        <TransactionSwitch
-                            checked={values.serialEnabled}
-                            onChange={(nextValue) => onChange('serialEnabled', nextValue)}
-                        />
-                        <span className="text-xs sm:text-sm text-brand-dark">
-                            Aktifkan No. Seri/Produksi
-                        </span>
-                    </div>
-
-                    {values.serialEnabled && (
-                        <div className="pl-8 space-y-2">
-                            <RadioField
-                                id="serialTypeUnique"
-                                name="serialType"
-                                label="Nomor Unik"
-                                checked={values.serialType === 'unique'}
-                                onChange={() => onChange('serialType', 'unique')}
-                            />
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
-                                <RadioField
-                                    id="serialTypeProduction"
-                                    name="serialType"
-                                    label="Nomor Produksi"
-                                    checked={values.serialType === 'production'}
-                                    onChange={() => onChange('serialType', 'production')}
-                                />
-                                <div className="flex items-center gap-2 self-start sm:self-auto">
-                                    <TransactionSwitch
-                                        checked={values.useExpiryDate}
-                                        onChange={(nextValue) => onChange('useExpiryDate', nextValue)}
-                                    />
-                                    <span className="text-xs sm:text-sm text-brand-dark">
-                                        Pakai tanggal kadaluarsa
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
         </section>
     );
 }
