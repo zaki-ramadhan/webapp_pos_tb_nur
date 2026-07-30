@@ -264,7 +264,6 @@ class GroupAccessPage
                                         \App\Support\Presentation\PosBlueprint::accessRow('payment', 'Pembayaran', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('receipt', 'Penerimaan', ['create' => true, 'update' => true, 'delete' => true]),
                                         \App\Support\Presentation\PosBlueprint::accessRow('bank-transfer', 'Transfer Bank', ['create' => true, 'update' => true, 'delete' => true]),
-                                        \App\Support\Presentation\PosBlueprint::accessRow('bank-reconciliation', 'Rekonsiliasi Bank', ['active' => true, 'update' => true, 'view' => true]),
                                     ]),
                                 ]),
                                 \App\Support\Presentation\PosBlueprint::accessCategory('sales', 'Penjualan', 'sales', [

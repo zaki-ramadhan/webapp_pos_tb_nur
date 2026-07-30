@@ -6,6 +6,7 @@ const inactiveWorkspacePageIds = new Set([
     'supplier-price',
     'item-request',
     'item-brand',
+    'bank-reconciliation',
 ]);
 
 const inactiveReportCategoryIds = new Set([

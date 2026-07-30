@@ -7,7 +7,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendAdapters';
 import { bankInquiryPageConfigs } from './bankInquiryConfig';
 import { useCallback, useMemo, useState } from 'react';
-import BankReconciliationWorkspace from './BankReconciliationWorkspace';
+
 
 export default function BankInquiryView({ page }) {
     const config = bankInquiryPageConfigs[page.id] ?? bankInquiryPageConfigs['bank-statement'];
@@ -55,28 +55,7 @@ export default function BankInquiryView({ page }) {
         });
     }, []);
 
-    if (page.id === 'bank-reconciliation') {
-        return (
-            <BankReconciliationWorkspace
-                rows={tableRows}
-                loading={loading}
-                onRefresh={reload}
-                filters={filters}
-                onFiltersChange={setFilters}
-                config={config}
-                pagination={{
-                    page: currentPage,
-                    perPage,
-                    total,
-                    lastPage,
-                    from,
-                    to,
-                    onPageChange: setPage,
-                    onPerPageChange: setPerPage,
-                }}
-            />
-        );
-    }
+
 
     return (
         <InquiryWorkspaceView

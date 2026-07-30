@@ -319,7 +319,7 @@ final class PosBlueprint
                 self::navItem('bank-transfer', 'Transfer Bank', 'transfer', 'green'),
                 // self::navItem('bank-statement', 'Rekening Koran', 'bank', 'purple'),
                 self::navItem('bank-history', 'Histori Bank', 'history', 'purple'),
-                self::navItem('bank-reconciliation', 'Rekonsiliasi Bank', 'invoice', 'purple'),
+              // self::navItem('bank-reconciliation', 'Rekonsiliasi Bank', 'invoice', 'purple'),
             ]),
             self::navModule('sales', 'Penjualan', 'sales', [
               // self::navItem('sales-quote', 'Penawaran Penjualan', 'receipt', 'green'),
@@ -468,7 +468,6 @@ final class PosBlueprint
             'bank-transfer',
             'bank-statement',
             'bank-history',
-            'bank-reconciliation',
             'cash-payment',
             'cash-receipt',
             'department',
