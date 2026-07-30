@@ -54,7 +54,9 @@ export function InventoryAdjustmentFormView({
     const sourceRecord = useMemo(
         () =>
             activeRecordId
-                ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId) ?? { id: activeRecordId }, config)
+                ? typeof buildRecord === 'function'
+                    ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId) ?? { id: activeRecordId }, config)
+                    : (config.table.rows.find((row) => row.id === activeRecordId) ?? { id: activeRecordId })
                 : config.draft,
         [activeRecordId, buildRecord, config],
     );

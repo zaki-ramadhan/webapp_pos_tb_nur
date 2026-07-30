@@ -77,7 +77,7 @@ export default function SalesDocumentView({
                 const backendRecord = row.__backendRecord ?? (row.entry_date || row.document_number ? row : null);
                 if (backendRecord) {
                     const parsed = buildOperationDocumentRecord(backendRecord, resolvedConfig, pageId);
-                    const baseRecord = buildRecord(row);
+                    const baseRecord = typeof buildRecord === 'function' ? buildRecord(row) : {};
                     return {
                         ...baseRecord,
                         ...parsed,
@@ -86,7 +86,7 @@ export default function SalesDocumentView({
                 }
             }
 
-            return buildRecord(row);
+            return typeof buildRecord === 'function' ? buildRecord(row) : {};
         },
         [backendConfig, buildRecord, pageId, resolvedConfig],
     );
