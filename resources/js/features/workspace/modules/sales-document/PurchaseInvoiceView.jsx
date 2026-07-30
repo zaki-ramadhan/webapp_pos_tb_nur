@@ -30,6 +30,7 @@ export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, level
                 ],
                 table: {
                     ...baseConfig.table,
+                    resourceName: 'purchase-orders',
                     createLabel: 'Tambah Pesanan Pembelian',
                     columns: [
                         { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },

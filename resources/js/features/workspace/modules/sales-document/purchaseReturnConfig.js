@@ -126,6 +126,7 @@ const defaultPurchaseReturnConfig = {
         pageValue: '18',
         columns: purchaseReturnListColumns,
         rows: purchaseReturnTableRows,
+        resourceName: 'purchase-returns',
         filters: [
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '30/01/2017', label: 'Tanggal: 30/01/2017' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Pemasok: Semua' }, { value: 'SAMSANG', label: 'Pemasok: SAMSANG' }, { value: 'Applus', label: 'Pemasok: Applus' }] },

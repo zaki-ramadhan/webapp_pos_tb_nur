@@ -168,11 +168,13 @@ export const defaultPurchaseInvoiceConfig = {
         pageValue: '56',
         columns: purchaseInvoiceListColumns,
         rows: purchaseInvoiceTableRows,
+        resourceName: 'purchase-invoices',
         filters: [
             {
                 id: 'dateType',
                 rowKey: 'dateType',
                 options: [
+                    { value: 'all', label: 'Tanggal: Semua' },
                     { value: 'order_date', label: 'Tanggal Faktur' },
                     { value: 'ship_date', label: 'Tanggal Pengiriman' },
                 ],

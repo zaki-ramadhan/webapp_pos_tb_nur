@@ -30,7 +30,10 @@ export default function SalesDocumentTableView({
         return config.table.rows.filter((row) => {
             const matchesFilters = (config.table.filters ?? []).every((filter) => {
                 const selectedValue = filters[filter.id];
-                return !selectedValue || selectedValue === 'all' ? true : row[filter.rowKey] === selectedValue;
+                if (!selectedValue || selectedValue === 'all' || filter.id === 'dateType' || filter.rowKey === 'dateType') {
+                    return true;
+                }
+                return row[filter.rowKey] === selectedValue;
             });
 
             if (!matchesFilters) {

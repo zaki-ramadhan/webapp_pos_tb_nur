@@ -148,6 +148,7 @@ const defaultSalesOrderConfig = {
         pageValue: '12',
         columns: salesOrderListColumns,
         rows: [],
+        resourceName: 'sales-orders',
         filters: [
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '10/02/2017', label: 'Tanggal: 10/02/2017' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Dipesan oleh: Semua' }, { value: 'Abadi Phone Center', label: 'Dipesan oleh: Abadi Phone Center' }] },
@@ -222,6 +223,8 @@ export const defaultSalesInvoiceConfig = {
     showProcessButton: true,
     showProcessButtonOnCreate: true,
     hideFilterButton: true,
+    hideImportButton: true,
+    hideItemImportButton: true,
     labels: {
         ...defaultSalesOrderConfig.labels,
         customer: 'Pelanggan',
