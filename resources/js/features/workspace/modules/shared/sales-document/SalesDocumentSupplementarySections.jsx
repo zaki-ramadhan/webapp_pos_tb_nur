@@ -1,6 +1,7 @@
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { SearchableTableSection } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
 import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
+export { SalesDocumentFooter } from './SalesDocumentStatusSections';
 
 export function SalesDocumentAdditionalCostSection({ config, values, setValues, handlers }) {
     const costLeadingAction =

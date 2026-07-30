@@ -9,7 +9,15 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
     const hideAddItem = config.hideAddItemButton || false;
     const hideImport = config.hideItemImportButton || config.hideImportButton || false;
 
-    const itemLeadingAction = hideAddItem
+    const hasRelatedDocument = Boolean(
+        values.__relatedDocumentId ||
+        values.__relatedDocumentRecord ||
+        (Array.isArray(values.returnSourceReferences) && values.returnSourceReferences.length > 0)
+    );
+    const isReturnMode = (values.returnSource === 'Faktur' || values.returnSource === 'Uang Muka');
+    const showFetchButtonForReturn = isReturnMode && hasRelatedDocument;
+
+    const baseLeadingAction = hideAddItem
         ? null
         : config.itemSectionLeadingActionDetailOnly && !isDetail
             ? null
@@ -17,8 +25,14 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
                 ? null
                 : config.itemSectionLeadingAction ?? (!isDetail ? { label: 'Tambah Item', onClick: handlers?.onCreateItem } : null);
 
+    const itemLeadingAction = showFetchButtonForReturn
+        ? { label: 'Ambil', onClick: handlers?.onOpenFetchItemsModal }
+        : baseLeadingAction;
+
     const itemRowClick = canOpenItemModal ? config.onOpenItemModal : handlers?.onEditItem;
-    const itemTitleClick = canOpenItemModal ? config.onOpenItemModal : handlers?.onCreateItem;
+    const itemTitleClick = showFetchButtonForReturn
+        ? handlers?.onOpenFetchItemsModal
+        : (canOpenItemModal ? config.onOpenItemModal : handlers?.onCreateItem);
 
     const importButton = !isDetail && handlers?.onImportClick && !hideImport ? (
         <button
@@ -37,25 +51,6 @@ export function SalesDocumentItemsSection({ config, values, isDetail, handlers }
             searchLabel="Cari barang dan jasa"
             onSelectAccount={(record) => {
                 if (!record) return;
-                if (!values.__partnerId) {
-                    const partnerLabel = config.labels?.customer || 'Pemasok/Pelanggan';
-                    const msg = `${partnerLabel} harus diisi.`;
-                    showSystemErrorModal({
-                        title: 'Terjadi Permasalahan pada Pemrosesan',
-                        description: 'Silakan perbaiki permasalahan berikut ini:',
-                        message: msg,
-                        confirmLabel: 'OK',
-                    });
-                    window.dispatchEvent(
-                        new CustomEvent('form-validation-error', {
-                            detail: {
-                                customer: msg,
-                                __partnerId: msg,
-                            },
-                        })
-                    );
-                    return;
-                }
                 handlers?.onSelectItem?.(record);
             }}
         />

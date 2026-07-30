@@ -24,6 +24,21 @@ export function formatCurrencyLabel(value) {
     return `Rp ${formatCurrencyValue(numericValue)}`;
 }
 
+export function normalizeDocumentItemRow(item) {
+    const qty = parseFloat(item.quantity) || 0;
+    const price = parseFloat(String(item.price).replace(/[^\d.-]/g, '')) || 0;
+    const discount = parseFloat(String(item.discount ?? item.discountValue ?? 0).replace(/[^\d.-]/g, '')) || 0;
+    const total = Math.max(0, qty * price - discount);
+
+    return {
+        ...item,
+        quantity: qty,
+        price: formatCurrencyValue(price),
+        discount: formatCurrencyValue(discount),
+        total: formatCurrencyValue(total),
+    };
+}
+
 export function buildLookupLabel(record, codeKey = 'code') {
     const code = String(record?.[codeKey] ?? '').trim();
     const name = String(record?.name ?? record?.title ?? '').trim();

@@ -6,11 +6,20 @@ export {
 } from '@/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives';
 
 export {
-    SalesDocumentAdditionalCostSection,
     SalesDocumentAdditionalInfoSection,
-    SalesDocumentAdvancePaymentsSection,
-    SalesDocumentFooter,
+} from '@/features/workspace/modules/shared/sales-document/SalesDocumentInfoSections';
+
+export {
     SalesDocumentItemsSection,
+} from '@/features/workspace/modules/shared/sales-document/SalesDocumentItemsSection';
+
+export {
+    SalesDocumentAdditionalCostSection,
+    SalesDocumentAdvancePaymentsSection,
+} from '@/features/workspace/modules/shared/sales-document/SalesDocumentSupplementarySections';
+
+export {
+    SalesDocumentFooter,
     SalesDocumentSmartlinkSection,
     SalesDocumentSummarySection,
-} from '@/features/workspace/modules/shared/sales-document/SalesDocumentSectionsContent';
+} from '@/features/workspace/modules/shared/sales-document/SalesDocumentStatusSections';

@@ -18,6 +18,7 @@ import SalesDocumentItemModal from '@/features/workspace/modules/sales-document/
 import SalesDocumentItemEditModal from '@/features/workspace/modules/sales-document/SalesDocumentItemEditModal';
 import SalesDocumentCostEditModal from '@/features/workspace/modules/sales-document/SalesDocumentCostEditModal';
 import SalesDocumentAdvanceEditModal from '@/features/workspace/modules/sales-document/SalesDocumentAdvanceEditModal';
+import SalesReturnFetchItemsModal from '@/features/workspace/modules/sales-document/modals/SalesReturnFetchItemsModal';
 import DocumentStamp from '@/components/ui/DocumentStamp';
 import {
     buildSalesDocumentFormState,
@@ -53,6 +54,7 @@ import {
     validateSalesDocumentFields,
     promptCostEditor,
     formatCurrencyValue,
+    normalizeDocumentItemRow,
 } from './salesDocumentFormShared';
 
 const sectionComponentMap = {
@@ -86,6 +88,7 @@ export default function SalesDocumentFormView({
     const [stockWarningData, setStockWarningData] = useState(null);
     const [editCostOpen, setEditCostOpen] = useState(false);
     const [editingCostItem, setEditingCostItem] = useState(null);
+    const [returnFetchItemsModalOpen, setReturnFetchItemsModalOpen] = useState(false);
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
     const [sourceRecord, setLocalRecord, isLoading] = useTransactionDetailLoader({
         resourceName: backendConfig?.resource ?? 'sales-documents',
@@ -373,18 +376,24 @@ export default function SalesDocumentFormView({
                             id: item.id || `imported-item-${Date.now()}-${Math.random()}`,
                         }))
                     );
-                    return mergedItems.map((item) => {
-                        const qty = parseFloat(item.quantity) || 0;
-                        const price = parseFloat(String(item.price).replace(/[^\d.-]/g, '')) || 0;
-                        const discount = parseFloat(String(item.discount).replace(/[^\d.-]/g, '')) || 0;
-                        const total = Math.max(0, qty * price - discount);
-                        return {
-                            ...item,
-                            total: total.toLocaleString('id-ID'),
-                        };
-                    });
+                    return mergedItems.map(normalizeDocumentItemRow);
                 });
                 showSuccessToast({ message: `${importedItems.length} item berhasil diimpor.` });
+            },
+            onOpenFetchItemsModal: () => setReturnFetchItemsModalOpen(true),
+            onConfirmReturnItems: (selectedItems) => {
+                if (!selectedItems?.length) return;
+                updateItems((existingItems) => {
+                    const mergedItems = mergeImportedItems(
+                        existingItems,
+                        selectedItems.map((item) => ({
+                            ...item,
+                            id: item.id || `return-item-${Date.now()}-${Math.random()}`,
+                        }))
+                    );
+                    return mergedItems.map(normalizeDocumentItemRow);
+                });
+                showSuccessToast({ message: `${selectedItems.length} barang rincian retur berhasil diambil.` });
             },
             onSelectItem: (record) => {
                 setEditingProduct(record);
@@ -611,6 +620,15 @@ export default function SalesDocumentFormView({
                     }));
                     showSuccessToast({ message: `Rujukan uang muka [${target.number}] dihapus.` });
                 }}
+            />
+            <SalesReturnFetchItemsModal
+                open={returnFetchItemsModalOpen}
+                onClose={() => setReturnFetchItemsModalOpen(false)}
+                relatedDocumentId={values.__relatedDocumentId}
+                relatedDocumentRecord={values.__relatedDocumentRecord}
+                relatedDocumentNumber={Array.isArray(values.returnSourceReferences) ? values.returnSourceReferences[0] : ''}
+                isPurchase={String(pageId || '').toLowerCase().includes('purchase')}
+                onConfirmItems={handlers.onConfirmReturnItems}
             />
             <ImportItemsModal
                 open={importModalOpen}
