@@ -30,16 +30,14 @@ class PreferencesPage
             ],
             'workspace' => [
                 'topTab' => 'Toko',
-                'defaultSidebarItemId' => 'features',
+                'defaultSidebarItemId' => 'company-root',
                 'companyTabs' => [
                     ['id' => 'company-info', 'label' => 'Info Toko'],
                     ['id' => 'company-address', 'label' => 'Alamat'],
                 ],
-                'featureTabs' => FeaturePreferences::tabs(),
+                'featureTabs' => [],
                 'attachmentsTabs' => WorkflowPreferences::attachmentsTabs($attachmentsNotice),
-                'sidebarItems' => [
-                    ['id' => 'features', 'label' => 'Fitur'],
-                ],
+                'sidebarItems' => [],
                 'actions' => [
                     [
                         'id' => 'save',

@@ -3,9 +3,9 @@ import { CloseIcon } from '@/features/workspace/shared/Icons';
 export default function PreferenceAddressTokenField({ field, tokens = [], onClear }) {
     if (tokens.length === 0) return null;
     return (
-        <div className="group flex h-[34px] w-full items-center overflow-hidden rounded-[3px] border border-ui-border-medium bg-white shadow-inset-light">
+        <div className="group flex h-[38px] w-full items-center overflow-hidden rounded-[4px] border border-ui-border bg-white">
             {field?.label ? (
-                <span className="flex h-full min-w-[62px] items-center border-r border-ui-border-medium px-3 text-xs sm:text-sm text-text-light select-none bg-tab-view-inactive-text">
+                <span className="flex h-full min-w-[62px] items-center border-r border-ui-border bg-input-prefix-bg px-3 text-xs sm:text-sm text-input-prefix-text select-none">
                     {field.label}
                 </span>
             ) : null}

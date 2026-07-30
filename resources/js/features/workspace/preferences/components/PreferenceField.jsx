@@ -135,8 +135,8 @@ const PREFERENCE_FIELD_RENDERERS = {
                         </button>
                     ) : null
                 }
-                className="h-[34px] rounded-[3px] border-ui-border"
-                inputClassName="text-xs sm:text-sm"
+                className="h-[38px] max-w-[340px] rounded-[4px] border-ui-border"
+                inputClassName="text-xs sm:text-sm text-brand-dark"
             />
         );
     },

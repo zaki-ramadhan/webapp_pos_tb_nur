@@ -27,7 +27,7 @@ export default function PreferenceAddressTextField({ field, value, onChange, cla
                 ) : null
             }
             trailingClassName="px-2.5 text-text-trailing-label"
-            className={`h-[34px] rounded-[3px] border-ui-border-medium shadow-inset-light ${
+            className={`h-[38px] rounded-[4px] border-ui-border ${
                 readOnly ? 'bg-ui-bg-panel-lighter' : ''
             } ${className}`.trim()}
             inputClassName={`text-xs sm:text-sm text-brand-dark ${readOnly ? 'text-text-readonly-input' : ''}`}
