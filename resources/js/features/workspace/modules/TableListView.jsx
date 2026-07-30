@@ -43,11 +43,15 @@ function TableListFilters({ filters, values, onChange, filterButtonLabel = '' })
                         selectClassName={`px-3 text-[11px] sm:text-xs ${filter.disabled ? 'text-warning-label-text' : 'text-filter-select-text'}`.trim()}
                         iconClassName={`mr-2 ${filter.disabled ? 'text-warning-label-text' : 'text-filter-icon'}`.trim()}
                     >
-                        {filter.options.map((option, optionIndex) => (
-                            <option key={`${filter.id}-${option.value}-${optionIndex}`} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
+                        {filter.options.map((option, optionIndex) => {
+                            const val = typeof option === 'object' && option !== null ? (option.value ?? option.id ?? '') : option;
+                            const lbl = typeof option === 'object' && option !== null ? (option.label ?? option.name ?? val) : option;
+                            return (
+                                <option key={`${filter.id}-${val}-${optionIndex}`} value={val}>
+                                    {lbl}
+                                </option>
+                            );
+                        })}
                     </SelectField>
 
                     {filter.disabled && filter.hint ? (

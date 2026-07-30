@@ -106,11 +106,15 @@ export default function ModuleTableTemplate({
                     selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
                     iconClassName="mr-2 text-filter-icon"
                 >
-                    {table.filterOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
+                    {table.filterOptions.map((option, optionIndex) => {
+                        const val = typeof option === 'object' && option !== null ? (option.value ?? option.id ?? '') : option;
+                        const lbl = typeof option === 'object' && option !== null ? (option.label ?? option.name ?? val) : option;
+                        return (
+                            <option key={`${val}-${optionIndex}`} value={val}>
+                                {lbl}
+                            </option>
+                        );
+                    })}
                 </SelectField>
             );
         }

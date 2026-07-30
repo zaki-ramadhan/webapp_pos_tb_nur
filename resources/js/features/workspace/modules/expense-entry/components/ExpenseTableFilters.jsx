@@ -16,11 +16,15 @@ export default function ExpenseTableFilters({ table, filters, setFilters }) {
                     className="h-[36px] w-[180px] rounded-[4px] border-ui-border"
                     selectClassName="text-xs sm:text-sm text-brand-dark"
                 >
-                    {filter.options.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
+                    {filter.options.map((option, optionIndex) => {
+                        const val = typeof option === 'object' && option !== null ? (option.value ?? option.id ?? '') : option;
+                        const lbl = typeof option === 'object' && option !== null ? (option.label ?? option.name ?? val) : option;
+                        return (
+                            <option key={`${filter.id}-${val}-${optionIndex}`} value={val}>
+                                {lbl}
+                            </option>
+                        );
+                    })}
                 </SelectField>
             ))}
         </div>

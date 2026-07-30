@@ -296,11 +296,15 @@ export function SalesDocumentFilterBar({ config, filters, setFilters }) {
                     selectClassName="px-3 text-[11px] sm:text-xs text-filter-select-text"
                     iconClassName="mr-2 text-filter-icon"
                 >
-                    {filter.options.map((option, optionIndex) => (
-                        <option key={`${filter.id}-${option.label}-${optionIndex}`} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
+                    {filter.options.map((option, optionIndex) => {
+                        const val = typeof option === 'object' && option !== null ? (option.value ?? option.id ?? '') : option;
+                        const lbl = typeof option === 'object' && option !== null ? (option.label ?? option.name ?? val) : option;
+                        return (
+                            <option key={`${filter.id}-${val}-${optionIndex}`} value={val}>
+                                {lbl}
+                            </option>
+                        );
+                    })}
                 </SelectField>
             ))}
 
