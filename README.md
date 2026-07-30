@@ -32,13 +32,14 @@ Aplikasi menggunakan metode **FIFO (First-In-First-Out)** untuk pencatatan arus 
 
 ### B. Unified Document Model (Pola Desain Database)
 Untuk transaksi keuangan dan stok, kami tidak membuat puluhan tabel transaksi terpisah. Kami menerapkan pola **Unified Document Model**:
-*   Semua transaksi keuangan (Penawaran, Sales Order, Invoice, Pembayaran Kas/Bank) disimpan dalam tabel terpadu `operation_documents` dan detail item di `operation_document_lines`. Kolom `document_type` bertindak sebagai pembeda.
+*   Semua transaksi keuangan (Sales Order, Invoice, Pembayaran Kas/Bank) disimpan dalam tabel terpadu `operation_documents` dan detail item di `operation_document_lines`. Kolom `document_type` bertindak sebagai pembeda.
 *   Semua pergerakan barang non-keuangan (Mutasi barang antar-gudang, stock opname, koreksi penyesuaian) disimpan dalam tabel `inventory_documents` dan `inventory_document_lines`.
 *   **Alasan Teknis**: Mengurangi jumlah table join di database, menyederhanakan query, serta mempercepat proses audit transaksi.
 
 ### C. Multitab Workspace SPA (Single Page Application)
 *   Menggunakan **Inertia.js + React 19**.
 *   Sistem tab workspace di frontend memungkinkan pengguna membuka banyak modul sekaligus (seperti browser tab di dalam aplikasi) tanpa melakukan reload halaman penuh. State form dan input yang sedang dikerjakan tidak akan hilang jika pengguna berpindah tab.
+*   **Streamlined Workspace Toolbar**: Desain tampilan tabel menggunakan `TableToolbar` ringkas tanpa dropdown filter atas yang tidak perlu, sehingga antarmuka lebih bersih dan fokus pada pencarian serta tombol aksi utama.
 
 ---
 
@@ -58,7 +59,7 @@ Semua endpoint dilindungi oleh middleware `auth` dan `throttle:api`:
 | **PUT** | `/api/backend/{resource}/{id}`| Edit/Update data | Memicu audit log & penyesuaian HPP |
 | **DELETE**| `/api/backend/{resource}/{id}`| Hapus data | Soft delete / Hard delete |
 
-*(Catatan: `{resource}` di atas dinamis, bernilai `products`, `customers`, `suppliers`, `employees`, `sales-invoices`, dll.)*
+*(Catatan: `{resource}` di atas dinamis, bernilai `items-services`, `customers`, `suppliers`, `employees`, `sales-invoices`, `sales-deposits`, `sales-receipts`, `purchase-invoices`, `purchase-payments`, `cash-payments`, `cash-receipts`, `bank-transfers`, `inventory-adjustments`, dll.)*
 
 ---
 
@@ -74,29 +75,29 @@ Berikut adalah ringkasan entitas utama di database MySQL `post_tb_nur`:
     *   `employees` & `employee_bank_accounts`: Data staf, gaji, dan rekening transfer.
 
 2.  **Grup Katalog & Partner**
-    *   `products`: Data barang & jasa (SKU, nama, stok minimal).
+    *   `products`: Data barang & jasa (SKU, nama, stok minimal, tanpa toggle seri/produksi).
     *   `units` & `product_unit_conversions`: Satuan unit (Pcs, Sak, Kubik) dan konversinya.
     *   `product_prices`: Harga bertingkat (Tiering) untuk retail vs kontraktor.
     *   `customers` & `suppliers`: Data kontak pembeli dan pemasok tempo.
 
 3.  **Grup Transaksi**
-    *   `operation_documents` & `_lines`: Faktur penjualan/POS, retur, hutang-piutang, kas masuk/keluar.
-    *   `inventory_documents` & `_lines`: Mutasi stok antar-gudang, stok opname, koreksi stok.
+    *   `operation_documents` & `_lines`: Faktur penjualan/POS, retur, hutang-piutang, kas masuk/keluar, saldo awal piutang/hutang.
+    *   `inventory_documents` & `_lines`: Mutasi stok antar-gudang, stok opname, penyesuaian persediaan.
 
 ---
 
-## 📂 Peta Halaman & Modul Aplikasi (Frontend Workspace)
+## 📂 Peta Halaman & Modul Aktif Aplikasi (Frontend Workspace)
 
 Halaman diletakkan secara modular pada direktori `resources/js/features/workspace/modules`:
 
-1.  **Pengaturan**: Preferensi toko, format penomoran nota, hak akses role & permission, manajemen user, approval transaksi keuangan.
+1.  **Pengaturan**: Preferensi toko, format penomoran nota, hak akses role & permission, manajemen user.
 2.  **Perusahaan**: Manajemen cabang, departemen, pajak perusahaan, penggajian karyawan (payroll), log aktivitas audit staf.
 3.  **Buku Besar (Accounting)**: Chart of Accounts (COA) / rekening perkiraan, beban biaya, payroll bulanan, jurnal umum manual.
-4.  **Kas & Bank**: Pencatatan uang masuk, uang keluar non-dagang, transfer saldo antar bank, rekonsiliasi laporan bank.
-5.  **Penjualan (Sales)**: Uang muka penjualan, penawaran harga, order penjualan, faktur penjualan (POS/tempo), penerimaan pembayaran piutang, retur penjualan, database pelanggan, check-in kunjungan sales.
-6.  **Pembelian (Purchasing)**: Permintaan pembelian, order pembelian, faktur pembelian (hutang), pembayaran hutang supplier, retur pembelian, master harga supplier.
-7.  **Persediaan (Inventory)**: Permintaan mutasi barang antar gudang, penyesuaian stok selisih, opname stok fisik, kategori barang, cek kartu stok gudang.
-8.  **Laporan**: Cetak Laporan Laba Rugi, Neraca Keuangan, Arus Kas, Buku Pembantu Piutang, Kartu Stok Barang.
+4.  **Kas & Bank**: Pencatatan uang keluar (pembayaran), uang masuk (penerimaan), transfer saldo antar bank, histori bank.
+5.  **Penjualan (Sales)**: Uang muka penjualan, faktur penjualan (POS/tempo), penerimaan pembayaran piutang, retur penjualan, database pelanggan, check-in kunjungan sales.
+6.  **Pembelian (Purchasing)**: Faktur pembelian (hutang), pembayaran hutang supplier, retur pembelian, database pemasok.
+7.  **Persediaan (Inventory)**: Master Barang & Jasa, penyesuaian persediaan stok, opname stok fisik, lokasi & minimum stok gudang.
+8.  **Laporan**: Cetak Laporan Laba Rugi, Neraca Keuangan, Arus Kas, Buku Pembantu Piutang/Hutang, Kartu Stok Barang.
 
 ---
 

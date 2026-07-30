@@ -274,15 +274,7 @@ export default function TableToolbar({
 
     return (
         <div className={className}>
-            {filters ? (
-                <div className={`mb-2.5 flex flex-wrap items-center justify-between gap-3 ${topRowClassName}`.trim()}>
-                    <div className="flex w-full flex-wrap items-center gap-2">
-                        {filters}
-                    </div>
-                </div>
-            ) : null}
-
-            <div className={`flex flex-col justify-between gap-3 md:flex-row md:items-center ${filters ? 'mt-1' : ''} ${bottomRowClassName}`.trim()}>
+            <div className={`flex flex-col justify-between gap-3 md:flex-row md:items-center ${bottomRowClassName}`.trim()}>
                 <div className="flex flex-wrap items-center gap-2">
                     {createButton ? (
                         <Tooltip content="Tambah" portal>
