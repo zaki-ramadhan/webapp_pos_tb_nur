@@ -15,20 +15,23 @@ export default function CashPaymentView({ page, mode, activeLevel2Tab, level2Tab
 
     const config = useMemo(() => {
         const rows = mappedRows;
+        const pageConfig = page?.cashPayment || page?.cash_payment || page || {};
+        const tableConfig = pageConfig.table || {};
+
         return {
-            ...page.cashPayment,
+            ...pageConfig,
             rowMap: rows.reduce((result, row) => {
                 result[row.id] = row;
                 return result;
             }, {}),
             table: {
-                ...page.cashPayment.table,
+                ...tableConfig,
                 ...tableProps,
-                filters: buildCashPaymentFilters(page.cashPayment.table?.filters, rows),
+                filters: buildCashPaymentFilters(tableConfig.filters, rows),
                 pageValue: total.toLocaleString('id-ID'),
             },
         };
-    }, [page.cashPayment, mappedRows, tableProps, total]);
+    }, [page, mappedRows, tableProps, total]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

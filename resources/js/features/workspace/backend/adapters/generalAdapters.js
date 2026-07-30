@@ -19,6 +19,8 @@ const RESOURCE_LABEL_TRANSLATIONS = {
     'preference': 'Preferensi',
     'user': 'Pengguna',
     'users': 'Pengguna',
+    'journal-activity-log': 'Log Aktivitas Jurnal',
+    'journal-activity-logs': 'Log Aktivitas Jurnal',
     'expense-entry': 'Pencatatan Beban',
     'expense-entries': 'Pencatatan Beban',
     'payroll-entry': 'Pencatatan Gaji',

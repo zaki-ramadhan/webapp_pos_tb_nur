@@ -316,7 +316,7 @@ export default function EmployeeFormView({
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
                 title="Konfirmasi"
-                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name}`}
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.fullName || values.employeeCode || values.name || 'karyawan ini'}`}
                 confirmLabel="Ya"
                 cancelLabel="Batal"
                 confirmVariant="primary"

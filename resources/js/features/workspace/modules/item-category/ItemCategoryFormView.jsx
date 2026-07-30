@@ -230,7 +230,7 @@ export default function ItemCategoryFormView({
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
                 title="Konfirmasi"
-                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name}`}
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name || values.code || 'kategori ini'}`}
                 confirmLabel="Ya"
                 cancelLabel="Batal"
                 confirmVariant="primary"

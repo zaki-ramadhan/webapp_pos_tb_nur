@@ -186,16 +186,17 @@ export default function InventoryAdjustmentView({
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <InventoryAdjustmentFormView
-            pageId={page.id}
-            config={config}
-            activeLevel2Tab={lastActiveFormTab}
-            buildRecord={resolvedBuildRecord}
-            backendConfig={backendConfig}
-            onOpenContent={onOpenContent}
-            onOpenDetail={onOpenDetail}
-            onCloseDetail={onCloseDetail}
-            onRefresh={reload}
-        />
+                        key={lastActiveFormTab.id}
+                        pageId={page.id}
+                        config={config}
+                        activeLevel2Tab={lastActiveFormTab}
+                        buildRecord={resolvedBuildRecord}
+                        backendConfig={backendConfig}
+                        onOpenContent={onOpenContent}
+                        onOpenDetail={onOpenDetail}
+                        onCloseDetail={onCloseDetail}
+                        onRefresh={reload}
+                    />
                 </div>
             )}
         </div>

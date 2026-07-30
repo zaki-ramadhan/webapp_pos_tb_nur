@@ -97,15 +97,23 @@ export default function PayrollEntryEmployeeModal({
 
     const {
         basicSalary,
+        taxAllowance = 0,
+        positionAllowance = 0,
+        mealAllowance = 0,
+        transportAllowance = 0,
+        overtimeAllowance = 0,
+        healthPremiAllowance = 0,
+        jkkAllowance = 0,
+        jkmAllowance = 0,
         grossIncome,
         totalDeductions,
         paidSalary,
         incomeTax,
-        salaryReduction,
-        monthlyDeduction,
-        installmentDeduction,
-        pensionDeduction,
-        healthPremiDeduction,
+        salaryReduction = 0,
+        monthlyDeduction = 0,
+        installmentDeduction = 0,
+        pensionDeduction = 0,
+        healthPremiDeduction = 0,
     } = calculatePayrollTotals(employeeModalValues);
 
     const handleCalculate = (fieldName) => {
@@ -192,7 +200,7 @@ export default function PayrollEntryEmployeeModal({
             positionAllowance: positionAllowance,
             mealAllowance: mealAllowance,
             transportAllowance: transportAllowance,
-            telecommunicationAllowance: telecommunicationAllowance,
+            telecommunicationAllowance: parse(employeeModalValues.telecommunicationAllowance),
             overtimeAllowance: overtimeAllowance,
             healthPremiAllowance: healthPremiAllowance,
             jkkAllowance: jkkAllowance,

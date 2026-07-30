@@ -58,13 +58,14 @@ export default function UsersManagementView({ page, mode, activeLevel2Tab, level
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <UserFormView
-            form={page.form}
-            tableRows={resolvedTable.rows}
-            activeLevel2Tab={lastActiveFormTab}
-            onRefresh={usersResource.reload}
-            onOpenDetail={onOpenDetail}
-            lookupData={lookupData}
-        />
+                        key={lastActiveFormTab.id}
+                        form={page.form}
+                        tableRows={resolvedTable.rows}
+                        activeLevel2Tab={lastActiveFormTab}
+                        onRefresh={usersResource.reload}
+                        onOpenDetail={onOpenDetail}
+                        lookupData={lookupData}
+                    />
                 </div>
             )}
         </div>

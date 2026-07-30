@@ -26,32 +26,37 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, level2Ta
 
     const mappedRows = useMemo(() => backendRows.map(mapPayrollEntryRow), [backendRows]);
 
-    const resolvedConfig = useMemo(() => ({
-        ...page.payrollEntry,
-        rowMap: mappedRows.reduce((result, row) => {
-            result[row.id] = row;
-            return result;
-        }, {}),
-        table: {
-            ...page.payrollEntry.table,
-            rows: mappedRows,
-            pageValue: total.toLocaleString('id-ID'),
-            loading,
-            refreshLabel: page.payrollEntry?.table?.refreshLabel || 'Muat ulang',
-            emptyLabel: error || page.payrollEntry.table?.emptyLabel || 'Tidak ada data',
-            onRefresh: reload,
-            pagination: {
-                page: currentPage,
-                perPage,
-                total,
-                lastPage,
-                from,
-                to,
-                onPageChange: setPage,
-                onPerPageChange: setPerPage,
+    const resolvedConfig = useMemo(() => {
+        const pageConfig = page?.payrollEntry || page?.payroll_entry || page || {};
+        const tableConfig = pageConfig.table || {};
+
+        return {
+            ...pageConfig,
+            rowMap: mappedRows.reduce((result, row) => {
+                result[row.id] = row;
+                return result;
+            }, {}),
+            table: {
+                ...tableConfig,
+                rows: mappedRows,
+                pageValue: total.toLocaleString('id-ID'),
+                loading,
+                refreshLabel: tableConfig.refreshLabel || 'Muat ulang',
+                emptyLabel: error || tableConfig.emptyLabel || 'Tidak ada data',
+                onRefresh: reload,
+                pagination: {
+                    page: currentPage,
+                    perPage,
+                    total,
+                    lastPage,
+                    from,
+                    to,
+                    onPageChange: setPage,
+                    onPerPageChange: setPerPage,
+                },
             },
-        },
-    }), [error, loading, mappedRows, page.payrollEntry, reload, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
+        };
+    }, [error, loading, mappedRows, page, reload, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

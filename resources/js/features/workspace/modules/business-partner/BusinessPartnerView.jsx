@@ -243,7 +243,7 @@ function BusinessPartnerFormView({ config, activeLevel2Tab, partnerType, onRefre
             <ConfirmationModal
                 open={showDeleteConfirm}
                 title="Konfirmasi"
-                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name || values.code}`}
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name || values.fullName || values.code || 'mitra ini'}`}
                 confirmLabel="Ya"
                 cancelLabel="Batal"
                 confirmVariant="primary"

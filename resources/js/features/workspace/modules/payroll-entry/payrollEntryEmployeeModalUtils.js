@@ -98,6 +98,14 @@ export function calculatePayrollTotals(employeeModalValues) {
 
     return {
         basicSalary,
+        taxAllowance,
+        positionAllowance,
+        mealAllowance,
+        transportAllowance,
+        overtimeAllowance,
+        healthPremiAllowance,
+        jkkAllowance,
+        jkmAllowance,
         grossIncome,
         totalDeductions,
         paidSalary,

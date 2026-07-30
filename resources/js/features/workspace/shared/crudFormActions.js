@@ -156,13 +156,30 @@ export async function handleFormSaveSuccess({
     const parsed = record ? (buildRecord ? buildRecord(record, config) : record) : null;
     if (parsed) {
         setLocalRecord?.(parsed);
-        if (typeof resetForm === 'function') {
-            resetForm(parsed);
-        } else if (typeof setValues === 'function') {
-            setValues(parsed);
-        }
         if (window.__savedRecordsCache && record?.id) {
             window.__savedRecordsCache[String(record.id)] = parsed;
+        }
+
+        if (isDetail) {
+            if (typeof resetForm === 'function') {
+                resetForm(parsed);
+            } else if (typeof setValues === 'function') {
+                setValues(parsed);
+            }
+        } else {
+            if (typeof resetForm === 'function') {
+                resetForm(resetFallback);
+            } else if (typeof setValues === 'function') {
+                if (resetFallback) {
+                    setValues(resetFallback);
+                } else if (typeof buildRecord === 'function') {
+                    try {
+                        setValues(buildRecord(null, config));
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            }
         }
     } else {
         if (typeof resetForm === 'function') {

@@ -29,9 +29,11 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
     });
     const config = useMemo(() => {
         const mappedRows = rows.map(buildExpenseEntryRow);
+        const pageConfig = page?.expenseEntry || page?.expense_entry || page || {};
+        const tableConfig = pageConfig.table || {};
 
         return {
-            ...page.expenseEntry,
+            ...pageConfig,
             rowMap: mappedRows.reduce((result, row) => {
                 result[row.id] = row;
                 return result;
@@ -39,9 +41,9 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
             table: {
                 loading,
 
-                ...page.expenseEntry.table,
+                ...tableConfig,
                 rows: mappedRows,
-                filters: buildExpenseEntryFilters(page.expenseEntry.table?.filters, mappedRows),
+                filters: buildExpenseEntryFilters(tableConfig.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 pagination: {
                     page: currentPage,
@@ -53,12 +55,12 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                emptyLabel: error || page.expenseEntry.table?.emptyLabel,
-                refreshLabel: page.expenseEntry?.table?.refreshLabel || 'Muat ulang',
+                emptyLabel: error || tableConfig.emptyLabel,
+                refreshLabel: tableConfig.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
             },
         };
-    }, [error, loading, page.expenseEntry, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
+    }, [error, loading, page, rows, total, currentPage, perPage, lastPage, from, to, setPage, setPerPage, reload]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

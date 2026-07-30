@@ -233,7 +233,7 @@ export default function DepartmentFormView({
                 onClose={() => setDeleteConfirmationOpen(false)}
                 onConfirm={handleDelete}
                 title="Konfirmasi"
-                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name}`}
+                message={`Apakah Anda yakin akan melakukan penghapusan data:\n${values.name || values.code || 'departemen ini'}`}
                 confirmLabel="Ya"
                 cancelLabel="Batal"
                 confirmVariant="primary"

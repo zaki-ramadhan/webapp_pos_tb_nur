@@ -53,22 +53,25 @@ export default function BankTransferView({
 
   // doesn't treat it as a "source record change" and wipe user-entered data.
 
-    const formConfig = useMemo(
-        () => ({ ...formConfigRef.current, rowMap }),
-        [rowMap],
-    );
+    const formConfig = useMemo(() => {
+        const pageConfig = page?.bankTransfer || page?.bank_transfer || page || {};
+        return { ...pageConfig, ...formConfigRef.current, rowMap };
+    }, [page, rowMap]);
 
-    const tableConfig = useMemo(
-        () => ({
+    const tableConfig = useMemo(() => {
+        const pageConfig = page?.bankTransfer || page?.bank_transfer || page || {};
+        const tableConfigBase = pageConfig.table || {};
+
+        return {
             ...formConfig,
             table: {
-                ...page.bankTransfer.table,
+                ...tableConfigBase,
                 rows: mappedRows,
-                filters: buildBankTransferFilters(page.bankTransfer.table?.filters ?? [], mappedRows),
+                filters: buildBankTransferFilters(tableConfigBase.filters ?? [], mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
-                refreshLabel: page.bankTransfer?.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: error || page.bankTransfer.table?.emptyLabel || 'Tidak ada data',
+                refreshLabel: tableConfigBase.refreshLabel || 'Muat ulang',
+                emptyLabel: error || tableConfigBase.emptyLabel || 'Tidak ada data',
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,
@@ -81,9 +84,8 @@ export default function BankTransferView({
                     onPerPageChange: setPerPage,
                 },
             },
-        }),
-        [formConfig, page.bankTransfer, mappedRows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage],
-    );
+        };
+    }, [formConfig, page, mappedRows, total, loading, error, reload, currentPage, perPage, lastPage, from, to, setPage, setPerPage]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 
@@ -103,14 +105,15 @@ export default function BankTransferView({
             {lastActiveFormTab && (
                 <div className={mode === 'form' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
                     <BankTransferFormView
-            pageId={page.id}
-            config={formConfig}
-            activeLevel2Tab={lastActiveFormTab}
-            onOpenContent={onOpenContent}
-            onOpenDetail={onOpenDetail}
-            onCloseDetail={onCloseDetail}
-            onRefresh={reload}
-        />
+                        key={lastActiveFormTab.id}
+                        pageId={page.id}
+                        config={formConfig}
+                        activeLevel2Tab={lastActiveFormTab}
+                        onOpenContent={onOpenContent}
+                        onOpenDetail={onOpenDetail}
+                        onCloseDetail={onCloseDetail}
+                        onRefresh={reload}
+                    />
                 </div>
             )}
         </div>

@@ -311,7 +311,7 @@ final class PosBlueprint
 
               // self::navItem('account-history', 'Histori Akun', 'history', 'purple'),
 
-                self::navItem('journal-activity-log', 'Log Aktivitas', 'activity', 'purple'),
+                self::navItem('journal-activity-log', 'Log Aktivitas Jurnal', 'activity', 'purple'),
             ]),
             self::navModule('cash-bank', 'Kas & Bank', 'bank', [
                 self::navItem('cash-payment', 'Pembayaran', 'payment', 'green'),
