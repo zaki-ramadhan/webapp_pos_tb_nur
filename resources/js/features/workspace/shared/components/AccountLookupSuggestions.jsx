@@ -3,6 +3,7 @@ import { LoadingIcon, SearchIcon } from '@/features/workspace/shared/Icons';
 import { HighlightText, LookupDropdownSurface, LookupEmptyState } from '@/features/workspace/shared/LookupPrimitives';
 import { buildAccountLookupLabel, buildAccountLookupMeta, translateAccountType } from '@/features/workspace/shared/hooks/useAccountLookupController';
 import { formatIsoDate } from '@/features/workspace/backend/workspaceBackendAdapters';
+import { formatCurrencyValue } from '@/features/workspace/shared/transactionFormatters';
 
 function resolveDocumentTypeLabel(record, resource) {
     if (record.numbering_type) return record.numbering_type;
@@ -120,7 +121,20 @@ export default function AccountLookupSuggestions({
                             subtitleLeft = contactParts.join(' - ');
                         } else if (resource === 'accounts') {
                             subtitleLeft = code;
-                            subtitleRight = translateAccountType(record.account_type);
+                            const rawBalance = record.balance ?? record.current_balance ?? record.opening_balance ?? record.balanceValue;
+                            if (rawBalance !== undefined && rawBalance !== null && rawBalance !== '') {
+                                const numBalance = typeof rawBalance === 'number' ? rawBalance : parseFloat(String(rawBalance).replace(/[^0-9.-]+/g, ''));
+                                if (!isNaN(numBalance)) {
+                                    subtitleRight = numBalance < 0
+                                        ? `-Rp ${formatCurrencyValue(Math.abs(numBalance))}`
+                                        : `Rp ${formatCurrencyValue(numBalance)}`;
+                                } else {
+                                    const strVal = String(rawBalance);
+                                    subtitleRight = strVal.startsWith('Rp') ? strVal : `Rp ${strVal}`;
+                                }
+                            } else {
+                                subtitleRight = translateAccountType(record.account_type);
+                            }
                         }
 
                         return (

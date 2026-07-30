@@ -1,20 +1,20 @@
 import UnpaidDocumentsSelectionModal from '@/features/workspace/modules/shared/document-modal/UnpaidDocumentsSelectionModal';
 
-export default function SalesReceiptUnpaidInvoicesModal({
+export default function PurchasePaymentUnpaidInvoicesModal({
     open = false,
     onClose,
     onConfirm,
-    customerId = null,
+    supplierId = null,
 }) {
     return (
         <UnpaidDocumentsSelectionModal
             open={open}
             onClose={onClose}
             onConfirm={onConfirm}
-            title="Daftar Faktur Penjualan Belum Lunas"
-            resource="sales-invoices"
-            partnerId={customerId}
-            partnerQueryKey="customer_id"
+            title="Daftar Faktur Pembelian Belum Lunas"
+            resource="purchase-invoices"
+            partnerId={supplierId}
+            partnerQueryKey="supplier_id"
         />
     );
 }

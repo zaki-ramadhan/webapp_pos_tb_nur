@@ -1,11 +1,33 @@
-import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
-import { buildLookupLabel } from '@/features/workspace/shared/transactionFormatters';
-import { TableActionIcon } from '@/features/workspace/shared/Icons';
+import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 import { TransactionLineItemsSection } from '@/features/workspace/modules/shared/TransactionWorkspaceShared';
-
-const EMPTY_SELECTED_INVOICES = [];
+import { showSystemErrorModal } from '@/components/ui/SystemErrorModal';
 
 export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpenInvoice, handlers = {} }) {
+    const hasSupplier = Boolean(values.__supplierId || (Array.isArray(values.payee) && values.payee.length > 0));
+
+    const handleTakeClick = () => {
+        const hasBank = Boolean(values.__bankAccountId || (Array.isArray(values.bankAccounts) && values.bankAccounts.length > 0));
+        if (!hasBank) {
+            const msg = 'Bank harus diisi.';
+            showSystemErrorModal({
+                title: 'Terjadi Permasalahan pada Pemrosesan',
+                description: 'Silakan perbaiki permasalahan berikut ini:',
+                message: msg,
+                confirmLabel: 'OK',
+            });
+            window.dispatchEvent(
+                new CustomEvent('form-validation-error', {
+                    detail: {
+                        bankAccounts: msg,
+                        __bankAccountId: msg,
+                    },
+                })
+            );
+            return;
+        }
+        handlers?.onOpenUnpaidInvoicesModal?.();
+    };
+
     return (
         <TransactionLineItemsSection
             title={
@@ -15,33 +37,25 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
             searchInput={
                 <div className="flex items-center gap-3">
                     <div className="min-w-0 flex-1">
-                        <BackendLookupField
+                        <AccountLookupTextInput
+                            id="invoiceSearch"
                             resource="purchase-invoices"
-                            values={EMPTY_SELECTED_INVOICES}
+                            value={values.invoiceSearch ?? ''}
                             placeholder={config.invoiceSearchPlaceholder}
                             searchLabel="Cari faktur pembelian"
-                            getOptionLabel={(record) => buildLookupLabel(record, 'document_number')}
-                            getOptionSearchText={(record) =>
-                                [
-                                    record?.document_number,
-                                    record?.reference_number,
-                                    record?.supplier?.name,
-                                    record?.notes,
-                                ]
-                                    .filter(Boolean)
-                                    .join(' ')
-                            }
-                            onSelect={handlers.onSelectInvoiceRecord}
-                            emptyTitle="Faktur tidak ditemukan"
-                            emptyDescription="Coba nomor faktur atau nama pemasok lain."
+                            queryParams={values.__supplierId ? { supplier_id: values.__supplierId, partner_id: values.__supplierId } : {}}
+                            onSelectAccount={(record) => {
+                                if (!record) return;
+                                handlers?.onSelectInvoiceRecord?.(record);
+                            }}
                         />
                     </div>
 
-                    {isDetail ? (
+                    {hasSupplier ? (
                         <button
                             type="button"
-                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-5 text-base text-brand-blue-accent shrink-0"
-                            onClick={handlers.onSelectInvoice}
+                            className="inline-flex h-[40px] items-center justify-center rounded-[4px] border border-brand-blue-border bg-white px-5 text-base text-brand-blue-accent shrink-0 cursor-pointer hover:bg-brand-blue-lightest transition"
+                            onClick={handleTakeClick}
                         >
                             {config.takeButtonLabel}
                         </button>
@@ -52,19 +66,8 @@ export function PurchasePaymentDetailsSection({ config, values, isDetail, onOpen
             rows={values.invoices}
             emptyLabel={config.invoiceTable.emptyLabel}
             minWidthClassName={config.invoiceTable.minWidthClassName ?? 'min-w-[1080px]'}
-            emptyLeadingCellContent={
-                <span className="inline-flex items-center justify-center">
-                    <TableActionIcon className="h-4 w-4" />
-                </span>
-            }
             onRowClick={onOpenInvoice}
             getRowClassName={() => 'cursor-pointer transition hover:bg-workspace-hover-bg'}
-            spacerHeaderContent=""
-            spacerCellContent={() => (
-                <span className="inline-flex items-center justify-center text-text-workspace-inactive">
-                    <TableActionIcon className="h-4 w-4" />
-                </span>
-            )}
             cellClassName="!py-1.5"
         />
     );

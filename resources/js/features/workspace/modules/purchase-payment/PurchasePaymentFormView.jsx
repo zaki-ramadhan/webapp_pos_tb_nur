@@ -9,6 +9,7 @@ import {
 } from '@/features/workspace/backend/workspaceBackendApi';
 import { useTransactionDetailLoader } from '@/features/workspace/shared/hooks/useTransactionDetailLoader';
 import PurchasePaymentInvoiceModal from '@/features/workspace/modules/purchase-payment/PurchasePaymentInvoiceModal';
+import PurchasePaymentUnpaidInvoicesModal from '@/features/workspace/modules/purchase-payment/PurchasePaymentUnpaidInvoicesModal';
 import {
     TransactionDualTotalCard,
     TransactionFormLayout,
@@ -63,6 +64,7 @@ export default function PurchasePaymentFormView({
         onSync: useCallback(() => setActiveInvoice(null), []),
     });
     const [activeInvoice, setActiveInvoice] = useState(null);
+    const [unpaidInvoicesModalOpen, setUnpaidInvoicesModalOpen] = useState(false);
 
     useEffect(() => {
         setActiveSectionId((isDetail ? config.detailSectionTabs : config.sectionTabs)?.[0]?.id ?? 'details');
@@ -160,70 +162,74 @@ export default function PurchasePaymentFormView({
         });
     }
 
-    const handlers = useMemo(
-        () => {
-            const appendInvoiceRecord = (record) =>
-                setValues((current) =>
-                    applyPurchasePaymentInvoices(current, [
-                        ...(current.invoices ?? []),
-                        buildPurchasePaymentInvoiceFromRecord(record),
-                    ]),
-                );
+    const appendInvoiceRecord = useCallback((record) => {
+        setValues((current) =>
+            applyPurchasePaymentInvoices(current, [
+                ...(current.invoices ?? []),
+                buildPurchasePaymentInvoiceFromRecord(record),
+            ]),
+        );
+    }, [setValues]);
 
-            return {
-                onSelectPayee: () =>
-                    selectLookup('suppliers', 'pemasok', (record) =>
-                        setValues((current) => ({
-                            ...current,
-                            __supplierId: record.id,
-                            payee: [buildLookupLabel(record)],
-                        })),
-                    ),
-                onRemovePayee: () =>
+    const handlers = useMemo(
+        () => ({
+            onSelectPayee: () =>
+                selectLookup('suppliers', 'pemasok', (record) =>
                     setValues((current) => ({
                         ...current,
-                        __supplierId: null,
-                        payee: [],
+                        __supplierId: record.id,
+                        payee: [buildLookupLabel(record)],
                     })),
-                onSelectBankAccount: () =>
-                    selectLookup('accounts', 'bank pembayaran', (record) =>
-                        setValues((current) => ({
-                            ...current,
-                            __bankAccountId: record.id,
-                            bankAccounts: [buildLookupLabel(record)],
-                        })),
-                    ),
-                onRemoveBankAccount: () =>
+                ),
+            onRemovePayee: () =>
+                setValues((current) => ({
+                    ...current,
+                    __supplierId: null,
+                    payee: [],
+                })),
+            onSelectBankAccount: () =>
+                selectLookup('accounts', 'bank pembayaran', (record) =>
                     setValues((current) => ({
                         ...current,
-                        __bankAccountId: null,
-                        bankAccounts: [],
+                        __bankAccountId: record.id,
+                        bankAccounts: [buildLookupLabel(record)],
                     })),
-                onSelectBranch: () =>
-                    selectLookup('branches', 'cabang', (record) =>
-                        setValues((current) => ({
-                            ...current,
-                            __branchId: record.id,
-                            branches: [buildLookupLabel(record)],
-                        })),
-                    ),
-                onRemoveBranch: (value) =>
+                ),
+            onRemoveBankAccount: () =>
+                setValues((current) => ({
+                    ...current,
+                    __bankAccountId: null,
+                    bankAccounts: [],
+                })),
+            onSelectBranch: () =>
+                selectLookup('branches', 'cabang', (record) =>
                     setValues((current) => ({
                         ...current,
-                        __branchId: null,
-                        branches: (current.branches ?? []).filter((item) => item !== value),
+                        __branchId: record.id,
+                        branches: [buildLookupLabel(record)],
                     })),
-                onSelectInvoice: () =>
-                    selectLookup(
-                        'purchase-invoices',
-                        'faktur pembelian',
-                        appendInvoiceRecord,
-                        (record) => buildLookupLabel(record, 'document_number')
-                    ),
-                onSelectInvoiceRecord: appendInvoiceRecord,
-            };
-        },
-        [selectLookup],
+                ),
+            onRemoveBranch: (value) =>
+                setValues((current) => ({
+                    ...current,
+                    __branchId: null,
+                    branches: (current.branches ?? []).filter((item) => item !== value),
+                })),
+            onSelectInvoice: () =>
+                selectLookup(
+                    'purchase-invoices',
+                    'faktur pembelian',
+                    appendInvoiceRecord,
+                    (record) => buildLookupLabel(record, 'document_number')
+                ),
+            onSelectInvoiceRecord: appendInvoiceRecord,
+            onOpenUnpaidInvoicesModal: () => setUnpaidInvoicesModalOpen(true),
+            onConfirmUnpaidInvoices: (selectedRecords) => {
+                if (!selectedRecords?.length) return;
+                selectedRecords.forEach(appendInvoiceRecord);
+            },
+        }),
+        [selectLookup, appendInvoiceRecord, setValues],
     );
 
     return (
@@ -261,6 +267,12 @@ export default function PurchasePaymentFormView({
                 )}
             </TransactionFormLayout>
 
+            <PurchasePaymentUnpaidInvoicesModal
+                open={unpaidInvoicesModalOpen}
+                onClose={() => setUnpaidInvoicesModalOpen(false)}
+                onConfirm={handlers.onConfirmUnpaidInvoices}
+                supplierId={values.__supplierId}
+            />
             <PurchasePaymentInvoiceModal
                 open={Boolean(activeInvoice)}
                 onClose={() => setActiveInvoice(null)}
