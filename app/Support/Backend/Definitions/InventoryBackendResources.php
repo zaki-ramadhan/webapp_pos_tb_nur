@@ -2,7 +2,6 @@
 
 namespace App\Support\Backend\Definitions;
 
-use App\Domain\Inventory\Models\ItemRequest;
 use App\Domain\Inventory\Models\StockOpnameOrder;
 use App\Domain\Inventory\Models\StockOpnameResult;
 use App\Domain\Inventory\Models\StockTransfer;
@@ -19,24 +18,6 @@ class InventoryBackendResources
     public static function definitions(): array
     {
         return [
-            'item-requests' => new BackendResourceBlueprint(
-                key: 'item-requests',
-                label: 'Item Requests',
-                permissionKey: 'item-request',
-                searchColumns: ['document_number', 'request_type', 'status', 'notes'],
-                modelClass: ItemRequest::class,
-                with: ['branch', 'lines.product', 'lines.unit', 'lines.department'],
-                storeRules: self::itemRequestRules(),
-                updateRules: fn (Model $record) => self::itemRequestRules($record),
-                syncUsing: function (Model $record, array $payload): void {
-                    self::syncLines(
-                        $record,
-                        $payload,
-                        ['product_id', 'unit_id', 'department_id', 'item_name', 'item_code', 'quantity', 'line_date', 'notes', 'attributes', 'sort_order'],
-                        fn (array $row): bool => filled($row['product_id'] ?? null) || filled($row['item_name'] ?? null),
-                    );
-                },
-            ),
             'stock-transfers' => new BackendResourceBlueprint(
                 key: 'stock-transfers',
                 label: 'Stock Transfers',
@@ -106,27 +87,6 @@ class InventoryBackendResources
                     );
                 },
             ),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private static function itemRequestRules(?Model $record = null): array
-    {
-        return [
-            'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-            'document_number' => self::documentNumberRule('inventory_documents', $record),
-            'request_type' => ['required', 'string', 'max:80'],
-            'numbering_type' => ['nullable', 'string', 'max:120'],
-            'status' => ['nullable', 'string', 'max:80'],
-            'document_date' => ['required', 'date'],
-            'effective_date' => ['nullable', 'date'],
-            'notes' => ['nullable', 'string'],
-            'is_closed' => ['sometimes', 'boolean'],
-            'metadata' => ['sometimes', 'array'],
-            'lines' => ['sometimes', 'array'],
-            ...self::lineRules('lines', true, false, true),
         ];
     }
 

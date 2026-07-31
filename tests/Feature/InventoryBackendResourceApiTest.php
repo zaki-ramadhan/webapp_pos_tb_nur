@@ -22,7 +22,7 @@ class InventoryBackendResourceApiTest extends TestCase
         parent::setUp();
     }
 
-    public function test_item_request_resource_can_store_header_and_lines(): void
+    public function test_stock_transfer_resource_can_store_header_and_lines(): void
     {
         $user = User::factory()->create();
         $branch = Branch::query()->create([
@@ -30,21 +30,33 @@ class InventoryBackendResourceApiTest extends TestCase
             'name' => 'Cabang Inventori',
             'is_active' => true,
         ]);
-
-        $response = $this->actingAs($user)->postJson('/api/backend/item-requests', [
+        $warehouse1 = Warehouse::query()->create([
             'branch_id' => $branch->id,
-            'document_number' => 'PR.2026.05.00001',
-            'request_type' => 'Beli Barang',
-            'numbering_type' => 'Permintaan Pembelian',
-            'status' => 'Menunggu diproses',
+            'code' => 'WH-01',
+            'name' => 'Gudang 1',
+            'is_active' => true,
+        ]);
+        $warehouse2 = Warehouse::query()->create([
+            'branch_id' => $branch->id,
+            'code' => 'WH-02',
+            'name' => 'Gudang 2',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/api/backend/stock-transfers', [
+            'branch_id' => $branch->id,
+            'warehouse_id' => $warehouse1->id,
+            'counterpart_warehouse_id' => $warehouse2->id,
+            'document_number' => 'ST.2026.05.00001',
+            'process_type' => 'Transfer',
+            'status' => 'Selesai',
             'document_date' => '2026-05-13',
-            'notes' => 'Permintaan stok untuk gudang utama.',
+            'notes' => 'Transfer stok antar gudang.',
             'lines' => [
                 [
                     'item_name' => 'Semen Instan 40kg',
                     'item_code' => 'SMN-040',
                     'quantity' => 25,
-                    'line_date' => '2026-05-15',
                     'notes' => 'Prioritas tinggi',
                 ],
             ],
@@ -52,13 +64,13 @@ class InventoryBackendResourceApiTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonPath('data.document_type', 'item_request')
+            ->assertJsonPath('data.document_type', 'stock_transfer')
             ->assertJsonPath('data.branch_id', $branch->id)
             ->assertJsonPath('data.lines.0.item_name', 'Semen Instan 40kg');
 
         $this->assertDatabaseHas('inventory_documents', [
-            'document_type' => 'item_request',
-            'document_number' => 'PR.2026.05.00001',
+            'document_type' => 'stock_transfer',
+            'document_number' => 'ST.2026.05.00001',
             'branch_id' => $branch->id,
         ]);
 

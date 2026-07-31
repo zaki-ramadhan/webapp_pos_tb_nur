@@ -22,11 +22,8 @@ use App\Domain\Inventory\Models\WorkOrder;
 use App\Domain\Purchasing\Models\GoodsReceipt;
 use App\Domain\Purchasing\Models\PurchaseDeposit;
 use App\Domain\Purchasing\Models\PurchaseInvoice;
-use App\Domain\Purchasing\Models\PurchaseOrder;
 use App\Domain\Purchasing\Models\PurchasePayment;
 use App\Domain\Purchasing\Models\PurchaseReturn;
-use App\Domain\Sales\Models\PriceAdjustment;
-use App\Domain\Sales\Models\SalesCommission;
 use App\Domain\Sales\Models\DeliveryOrder;
 use App\Domain\Sales\Models\SalesDelivery;
 use App\Domain\Sales\Models\SalesDeposit;
@@ -71,8 +68,6 @@ class OperationBackendResources
             'sales-invoices' => self::documentResource('sales-invoices', 'Sales Invoices', 'sales-invoice', SalesInvoice::class, self::salesRules()),
             'sales-receipts' => self::documentResource('sales-receipts', 'Sales Receipts', 'sales-receipt', SalesReceipt::class, self::salesPaymentRules()),
             'sales-returns' => self::documentResource('sales-returns', 'Sales Returns', 'sales-return', SalesReturn::class, self::salesRules()),
-            'price-adjustments' => self::documentResource('price-adjustments', 'Price Adjustments', 'price-adjustment', PriceAdjustment::class, self::inventoryLikeRules()),
-            'sales-commissions' => self::documentResource('sales-commissions', 'Sales Commissions', 'sales-commission', SalesCommission::class, self::accountingRules(requireLines: false)),
             'sales-targets' => self::documentResource('sales-targets', 'Sales Targets', 'sales-target', SalesTarget::class, self::accountingRules(requireLines: false)),
         ];
     }
@@ -83,7 +78,6 @@ class OperationBackendResources
     private static function makePurchasingResources(): array
     {
         return [
-            'purchase-orders' => self::documentResource('purchase-orders', 'Purchase Orders', 'purchase-order', PurchaseOrder::class, self::purchaseRules()),
             'goods-receipts' => self::documentResource('goods-receipts', 'Goods Receipts', 'goods-receipt', GoodsReceipt::class, self::purchaseRules()),
             'purchase-deposits' => self::documentResource('purchase-deposits', 'Purchase Deposits', 'purchase-deposit', PurchaseDeposit::class, self::purchaseRules(requireLines: false)),
             'purchase-invoices' => self::documentResource('purchase-invoices', 'Purchase Invoices', 'purchase-invoice', PurchaseInvoice::class, self::purchaseRules()),

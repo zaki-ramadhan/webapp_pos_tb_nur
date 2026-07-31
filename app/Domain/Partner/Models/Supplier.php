@@ -82,9 +82,4 @@ class Supplier extends DomainModel
     {
         return $this->belongsToMany(Branch::class, 'branch_supplier');
     }
-
-    public function prices(): HasMany
-    {
-        return $this->hasMany(\App\Domain\Catalog\Models\SupplierPrice::class);
-    }
 }

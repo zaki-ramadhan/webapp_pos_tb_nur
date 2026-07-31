@@ -2,10 +2,8 @@
 
 namespace App\Support\Backend\Definitions;
 
-use App\Domain\Catalog\Models\Brand;
 use App\Domain\Catalog\Models\Product;
 use App\Domain\Catalog\Models\ProductCategory;
-use App\Domain\Catalog\Models\SupplierPrice;
 use App\Domain\Catalog\Models\Unit;
 use App\Domain\Catalog\Models\Warehouse;
 use App\Support\Backend\BackendRelationSync;
@@ -21,22 +19,6 @@ class CatalogBackendResources
     public static function definitions(): array
     {
         return [
-            'brands' => new BackendResourceBlueprint(
-                key: 'brands',
-                label: 'Brands',
-                searchColumns: ['code', 'name'],
-                modelClass: Brand::class,
-                storeRules: [
-                    'code' => ['nullable', 'string', 'max:50', 'unique:brands,code'],
-                    'name' => ['required', 'string', 'max:120'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'code' => ['nullable', 'string', 'max:50', Rule::unique('brands', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-            ),
             'units' => new BackendResourceBlueprint(
                 key: 'units',
                 label: 'Units',
@@ -148,14 +130,13 @@ class CatalogBackendResources
                 searchColumns: ['code', 'barcode', 'name', 'product_type'],
                 modelClass: Product::class,
                 with: [
-                    'category', 'brand', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices', 'prices.unit', 'attachments',
+                    'category', 'baseUnit', 'purchaseUnit', 'salesUnit', 'unitConversions', 'prices', 'prices.unit', 'attachments',
                     'inventoryAccount', 'salesAccount', 'salesReturnAccount', 'salesDiscountAccount', 'deliveredGoodsAccount',
                     'cogsAccount', 'purchaseReturnAccount', 'uninvoicedPurchaseAccount',
-                    'groupItems', 'groupItems.childProduct', 'groupItems.unit', 'supplierPrices', 'supplierPrices.supplier'
+                    'groupItems', 'groupItems.childProduct', 'groupItems.unit'
                 ],
                 storeRules: [
                     'category_id' => ['nullable', 'integer', 'exists:product_categories,id'],
-                    'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
                     'base_unit_id' => ['nullable', 'integer', 'exists:units,id'],
                     'purchase_unit_id' => ['nullable', 'integer', 'exists:units,id'],
                     'sales_unit_id' => ['nullable', 'integer', 'exists:units,id'],
@@ -326,31 +307,6 @@ class CatalogBackendResources
                         }
                     }
                 },
-            ),
-            'supplier-prices' => new BackendResourceBlueprint(
-                key: 'supplier-prices',
-                label: 'Supplier Prices',
-                searchColumns: ['notes'],
-                modelClass: SupplierPrice::class,
-                with: ['supplier', 'product', 'unit'],
-                storeRules: [
-                    'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
-                    'product_id' => ['required', 'integer', 'exists:products,id'],
-                    'unit_id' => ['nullable', 'integer', 'exists:units,id'],
-                    'price' => ['required', 'numeric', 'min:0'],
-                    'effective_from' => ['required', 'date'],
-                    'effective_until' => ['nullable', 'date', 'after_or_equal:effective_from'],
-                    'notes' => ['nullable', 'string'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
-                    'product_id' => ['required', 'integer', 'exists:products,id'],
-                    'unit_id' => ['nullable', 'integer', 'exists:units,id'],
-                    'price' => ['required', 'numeric', 'min:0'],
-                    'effective_from' => ['required', 'date'],
-                    'effective_until' => ['nullable', 'date', 'after_or_equal:effective_from'],
-                    'notes' => ['nullable', 'string'],
-                ],
             ),
         ];
     }

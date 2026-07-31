@@ -28,7 +28,6 @@ trait BackendResourceImportExportTrait
             'branch_id' => \App\Domain\Organization\Models\Branch::class,
             'parent_id' => $blueprint->modelClass(),
             'category_id' => \App\Domain\Catalog\Models\ProductCategory::class,
-            'brand_id' => \App\Domain\Catalog\Models\Brand::class,
             'base_unit_id' => \App\Domain\Catalog\Models\Unit::class,
             'purchase_unit_id' => \App\Domain\Catalog\Models\Unit::class,
             'sales_unit_id' => \App\Domain\Catalog\Models\Unit::class,

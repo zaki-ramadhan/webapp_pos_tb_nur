@@ -3,7 +3,6 @@
 namespace App\Support\Backend\Queries;
 
 use App\Domain\Catalog\Models\Product;
-use App\Domain\Catalog\Models\SupplierPrice;
 use App\Domain\Catalog\Models\Warehouse;
 use App\Domain\Inventory\Models\InventoryDocument;
 use App\Domain\Inventory\Models\InventoryDocumentLine;
@@ -371,19 +370,9 @@ class InventoryInquiryQueryService
             ->get();
     }
 
-    /**
-     * @param  array<int, int>  $productIds
-     * @return Collection<int, SupplierPrice>
-     */
     protected function resolveSupplierMap(array $productIds): Collection
     {
-        return SupplierPrice::query()
-            ->with('supplier')
-            ->whereIn('product_id', $productIds)
-            ->orderByDesc('effective_from')
-            ->get()
-            ->unique('product_id')
-            ->keyBy('product_id');
+        return collect();
     }
 
     /**

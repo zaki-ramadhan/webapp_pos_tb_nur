@@ -86,6 +86,11 @@ class InventoryDocument extends DomainModel
         return $this->belongsTo(self::class, 'related_document_id');
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ProductCategory::class);
+    }
+
     public function productCategory(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class);
@@ -93,7 +98,7 @@ class InventoryDocument extends DomainModel
 
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
     public function supplier(): BelongsTo

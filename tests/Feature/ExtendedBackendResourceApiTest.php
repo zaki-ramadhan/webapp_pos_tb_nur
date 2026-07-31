@@ -21,7 +21,7 @@ class ExtendedBackendResourceApiTest extends TestCase
         parent::setUp();
     }
 
-    public function test_purchase_order_resource_can_store_basic_operation_document(): void
+    public function test_purchase_invoice_resource_can_store_basic_operation_document(): void
     {
         $user = User::factory()->create();
         $supplier = Supplier::query()->create([
@@ -30,12 +30,12 @@ class ExtendedBackendResourceApiTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->actingAs($user)->postJson('/api/backend/purchase-orders', [
+        $response = $this->actingAs($user)->postJson('/api/backend/purchase-invoices', [
             'supplier_id' => $supplier->id,
-            'document_number' => 'PO.2026.05.00001',
+            'document_number' => 'PI.2026.05.00001',
             'entry_date' => '2026-05-13',
             'status' => 'Draft',
-            'notes' => 'Pesanan pembelian awal.',
+            'notes' => 'Faktur pembelian awal.',
             'lines' => [
                 [
                     'description' => 'Besi Hollow 4x4',
@@ -49,13 +49,13 @@ class ExtendedBackendResourceApiTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonPath('data.document_type', 'purchase_order')
+            ->assertJsonPath('data.document_type', 'purchase_invoice')
             ->assertJsonPath('data.supplier_id', $supplier->id)
             ->assertJsonPath('data.lines.0.description', 'Besi Hollow 4x4');
 
         $this->assertDatabaseHas('operation_documents', [
-            'document_type' => 'purchase_order',
-            'document_number' => 'PO.2026.05.00001',
+            'document_type' => 'purchase_invoice',
+            'document_number' => 'PI.2026.05.00001',
             'supplier_id' => $supplier->id,
         ]);
     }

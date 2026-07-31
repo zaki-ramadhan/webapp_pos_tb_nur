@@ -43,21 +43,12 @@ class Product extends DomainModel
 
     public function getMainSupplierAttribute(): ?array
     {
-        $supplier = $this->relationLoaded('supplierPrices')
-            ? $this->supplierPrices->first()?->supplier
-            : $this->supplierPrices()->with('supplier')->first()?->supplier;
-
-        return $supplier ? [
-            'id' => $supplier->id,
-            'name' => $supplier->name,
-        ] : null;
+        return null;
     }
 
     public function getMainSupplierIdAttribute(): ?int
     {
-        return $this->relationLoaded('supplierPrices')
-            ? $this->supplierPrices->first()?->supplier_id
-            : $this->supplierPrices()->first()?->supplier_id;
+        return null;
     }
 
     protected static function boot()
@@ -106,7 +97,7 @@ class Product extends DomainModel
 
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
     public function baseUnit(): BelongsTo
@@ -136,7 +127,7 @@ class Product extends DomainModel
 
     public function supplierPrices(): HasMany
     {
-        return $this->hasMany(SupplierPrice::class);
+        return $this->hasMany(ProductPrice::class, 'product_id');
     }
 
     public function inventoryAccount(): BelongsTo
