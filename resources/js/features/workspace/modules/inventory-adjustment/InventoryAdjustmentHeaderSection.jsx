@@ -17,8 +17,11 @@ function InventoryAdjustmentFieldRow({ label, required = false, labelClassName =
 
 import BackendLookupField from '@/features/workspace/shared/BackendLookupField';
 
-export default function InventoryAdjustmentHeader({ config, values, setValues, isDetail, pageId }) {
+export default function InventoryAdjustmentHeader({ config = {}, values, setValues, isDetail, pageId }) {
     const isPriceAdjustment = pageId === 'price-adjustment';
+    const labels = config.labels ?? {};
+    const numberingOptions = config.numberingOptions ?? ['Penyesuaian Persediaan', 'Manual'];
+    const adjustmentTypeOptions = config.adjustmentTypeOptions ?? ['Pengurangan Stok', 'Penambahan Stok', 'Penyesuaian Nilai'];
 
     if (isPriceAdjustment) {
         return (
@@ -27,7 +30,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                     {/* Left Column */}
                     <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
-                            <TransactionFieldLabel label={config.labels.salesCategory} required />
+                            <TransactionFieldLabel label={labels.salesCategory || 'Kategori Penjualan'} required />
                             <div className="max-w-[282px] w-full">
                                 <BackendLookupField
                                     resource="sales-categories"
@@ -60,7 +63,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                         </div>
 
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
-                            <TransactionFieldLabel label={config.labels.adjustmentType} />
+                            <TransactionFieldLabel label={labels.adjustmentType || 'Tipe Penyesuaian'} />
                             <div className="max-w-[282px] w-full">
                                 <SelectField
                                     value={values.adjustmentType}
@@ -74,7 +77,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                     className="h-[40px] rounded-[4px] border-ui-border w-full"
                                     selectClassName="text-xs sm:text-sm text-brand-dark"
                                 >
-                                    {config.adjustmentTypeOptions.map((option) => (
+                                    {adjustmentTypeOptions.map((option) => (
                                         <option key={option} value={option}>
                                             {option}
                                         </option>
@@ -84,7 +87,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                         </div>
 
                         <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
-                            <TransactionFieldLabel label={config.labels.effectiveDate} required />
+                            <TransactionFieldLabel label={labels.effectiveDate || 'Tanggal Efektif'} required />
                             <div className="max-w-[282px] w-full">
                                 <TransactionDateInput
                                     value={values.effectiveDate}
@@ -105,7 +108,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                     <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
                         <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                             <div className="flex items-center justify-start gap-4">
-                                <TransactionFieldLabel label={config.labels.documentNumber} required />
+                                <TransactionFieldLabel label={labels.documentNumber || 'Nomor #'} required />
                             </div>
 
                             <div className="max-w-[282px] w-full justify-self-end">
@@ -140,7 +143,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                         className="h-[40px] rounded-[4px] border-ui-border w-full"
                                         selectClassName="text-xs sm:text-sm text-brand-dark"
                                     >
-                                        {config.numberingOptions.map((option) => (
+                                        {numberingOptions.map((option) => (
                                             <option key={option} value={option}>
                                                 {option}
                                             </option>
@@ -161,7 +164,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                 {/* Left Column */}
                 <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px]">
                     <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-x-4">
-                        <TransactionFieldLabel label={config.labels.date} required />
+                        <TransactionFieldLabel label={labels.date || 'Tanggal'} required />
                         <div className="max-w-[282px] w-full">
                             <TransactionDateInput
                                 value={values.date}
@@ -180,7 +183,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                 <div className="flex flex-col gap-y-2 w-full md:max-w-[480px] xl:max-w-[540px] 2xl:max-w-[620px] md:pl-12 lg:pl-16 xl:pl-20 2xl:pl-28">
                     <div className="grid grid-cols-[140px_minmax(0,1fr)] items-center gap-x-4 w-full">
                         <div className="flex items-center justify-start gap-4">
-                            <TransactionFieldLabel label={config.labels.documentNumber} required />
+                            <TransactionFieldLabel label={labels.documentNumber || 'No Penyesuaian #'} required />
                         </div>
 
                         <div className="max-w-[282px] w-full justify-self-end">
@@ -215,7 +218,7 @@ export default function InventoryAdjustmentHeader({ config, values, setValues, i
                                     className="h-[40px] rounded-[4px] border-ui-border w-full"
                                     selectClassName="text-xs sm:text-sm text-brand-dark"
                                 >
-                                    {config.numberingOptions.map((option) => (
+                                    {numberingOptions.map((option) => (
                                         <option key={option} value={option}>
                                             {option}
                                         </option>

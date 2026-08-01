@@ -66,7 +66,12 @@ const baseInventoryAdjustmentConfig = {
     labels: {
         date: 'Tanggal',
         documentNumber: 'No Penyesuaian #',
+        salesCategory: 'Kategori Penjualan',
+        adjustmentType: 'Tipe Penyesuaian',
+        effectiveDate: 'Tanggal Efektif',
     },
+    numberingOptions: ['Penyesuaian Persediaan', 'Manual'],
+    adjustmentTypeOptions: ['Pengurangan Stok', 'Penambahan Stok', 'Penyesuaian Nilai'],
     sectionTabs: inventoryAdjustmentSectionTabs,
     table: {
         columns: inventoryAdjustmentListColumns,
