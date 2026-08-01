@@ -84,17 +84,24 @@ export default function ItemsServicesFormView({
                 if (!active) return;
                 const rows = extractBackendRows(response);
                 const stockRows = rows
-                    .filter((r) => parseAmountInput(r.stock_on_hand) !== 0)
-                    .map((r) => ({
-                        id: `db-stock-${r.id ?? r.warehouse_id}`,
-                        date: '-',
-                        warehouse: r.warehouse_name ?? r.warehouse?.name ?? '-',
-                        quantity: parseAmountInput(r.stock_on_hand),
-                        unit: r.unit_name ?? r.unit?.name ?? '-',
-                        unitCost: parseAmountInput(r.average_cost ?? r.unit_cost),
-                        serials: [],
-                        __fromDb: true,
-                    }));
+                    .map((r) => {
+                        const qty = parseAmountInput(r.saleable_stock ?? r.stock_on_hand ?? r.quantity ?? 0);
+                        const warehouseName = typeof r.warehouse === 'string' ? r.warehouse : (r.warehouse_name ?? r.warehouse?.name ?? '-');
+                        const unitName = typeof r.unit === 'string' ? r.unit : (r.unit_name ?? r.unit?.name ?? detailRow?.unit ?? detailRow?.baseUnit?.name ?? detailRow?.primaryUnit?.[0]?.name ?? 'PCS');
+                        const cost = parseAmountInput(r.unit_cost ?? r.average_cost ?? detailRow?.purchasePrice ?? 0);
+                        return {
+                            id: `db-stock-${r.id ?? r.warehouse_id}`,
+                            date: r.date ?? '-',
+                            warehouse: warehouseName,
+                            quantity: qty,
+                            unit: unitName,
+                            unitCost: cost,
+                            serials: [],
+                            __fromDb: true,
+                        };
+                    })
+                    .filter((r) => r.quantity !== 0);
+
                 setValues((prev) => {
                     const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
                     if (hasUserRows) return prev;
