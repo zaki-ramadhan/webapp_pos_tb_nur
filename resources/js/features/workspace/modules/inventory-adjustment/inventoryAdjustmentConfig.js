@@ -63,12 +63,15 @@ const draftRecord = {
 const baseInventoryAdjustmentConfig = {
     title: 'Penyesuaian Persediaan',
     newTitle: 'Penyesuaian Persediaan Baru',
+    additionalInfoTitle: 'Informasi Tambahan',
     labels: {
         date: 'Tanggal',
         documentNumber: 'No Penyesuaian #',
         salesCategory: 'Kategori Penjualan',
         adjustmentType: 'Tipe Penyesuaian',
         effectiveDate: 'Tanggal Efektif',
+        adjustmentAccount: 'Akun Penyesuaian',
+        notes: 'Keterangan',
     },
     numberingOptions: ['Penyesuaian Persediaan', 'Manual'],
     adjustmentTypeOptions: ['Pengurangan Stok', 'Penambahan Stok', 'Penyesuaian Nilai'],
