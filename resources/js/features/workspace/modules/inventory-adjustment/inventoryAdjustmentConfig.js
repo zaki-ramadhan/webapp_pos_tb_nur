@@ -63,6 +63,10 @@ const draftRecord = {
 const baseInventoryAdjustmentConfig = {
     title: 'Penyesuaian Persediaan',
     newTitle: 'Penyesuaian Persediaan Baru',
+    labels: {
+        date: 'Tanggal',
+        documentNumber: 'No Penyesuaian #',
+    },
     sectionTabs: inventoryAdjustmentSectionTabs,
     table: {
         columns: inventoryAdjustmentListColumns,
@@ -79,19 +83,19 @@ const baseInventoryAdjustmentConfig = {
     formDefaults: draftRecord,
 };
 
-export function buildInventoryAdjustmentConfig(page) {
-    const isNew = page.mode !== 'detail';
+export function buildInventoryAdjustmentConfig(page = {}) {
+    const isNew = page?.mode !== 'detail';
 
     return {
         ...baseInventoryAdjustmentConfig,
-        id: page.id,
-        title: isNew ? baseInventoryAdjustmentConfig.newTitle : (page.label || baseInventoryAdjustmentConfig.title),
-        tabLabel: isNew ? 'Penyesuaian Persediaan' : (page.tabLabel || page.label || baseInventoryAdjustmentConfig.title),
+        id: page?.id,
+        title: isNew ? baseInventoryAdjustmentConfig.newTitle : (page?.label || baseInventoryAdjustmentConfig.title),
+        tabLabel: isNew ? 'Penyesuaian Persediaan' : (page?.tabLabel || page?.label || baseInventoryAdjustmentConfig.title),
         isNew,
         dockActions: isNew ? createDockActions : detailDockActions,
         formDefaults: {
             ...draftRecord,
-            date: page.date || draftRecord.date,
+            date: page?.date || draftRecord.date,
         },
     };
 }

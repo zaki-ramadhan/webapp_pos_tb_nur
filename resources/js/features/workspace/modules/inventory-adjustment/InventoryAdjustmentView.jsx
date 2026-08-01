@@ -22,7 +22,7 @@ export default function InventoryAdjustmentView({
     onOpenContent,
     onOpenDetail,
     onCloseDetail,}) {
-    const backendConfig = INVENTORY_ADJUSTMENT_BACKEND_CONFIG[page.id] ?? null;
+    const backendConfig = INVENTORY_ADJUSTMENT_BACKEND_CONFIG[page?.id] ?? null;
     const {
         rows,
         total,
@@ -41,16 +41,16 @@ export default function InventoryAdjustmentView({
         initialPerPage: 25,
         enabled: Boolean(backendConfig),
     });
-    const pageConfig = page.inventoryAdjustment ?? page.priceAdjustment;
-    const isPriceAdjustment = page.id === 'price-adjustment';
+    const pageConfig = page?.inventoryAdjustment ?? page?.priceAdjustment ?? page ?? {};
+    const isPriceAdjustment = page?.id === 'price-adjustment';
     const config = useMemo(
         () => {
             const baseConfig = buildInventoryAdjustmentConfig(pageConfig);
 
             baseConfig.labels = {
-                ...baseConfig.labels,
-                date: baseConfig.labels.date || 'Tanggal',
-                documentNumber: isPriceAdjustment ? (baseConfig.labels.documentNumber || 'Nomor #') : 'No Penyesuaian #',
+                ...(baseConfig.labels ?? {}),
+                date: baseConfig.labels?.date || 'Tanggal',
+                documentNumber: isPriceAdjustment ? (baseConfig.labels?.documentNumber || 'Nomor #') : 'No Penyesuaian #',
             };
 
             if (!backendConfig) {
@@ -168,11 +168,11 @@ export default function InventoryAdjustmentView({
 
     useEffect(() => {
         if (activeLevel2Tab && activeLevel2Tab.kind === 'content') {
-            setLastActiveFormTab(activeLevel2Tab);
+            setLastActiveFormTab((prev) => (prev?.id === activeLevel2Tab.id ? prev : activeLevel2Tab));
         } else if (!activeLevel2Tab) {
             setLastActiveFormTab(null);
         }
-    }, [activeLevel2Tab]);
+    }, [activeLevel2Tab?.id, activeLevel2Tab?.kind]);
 
     return (
         <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
