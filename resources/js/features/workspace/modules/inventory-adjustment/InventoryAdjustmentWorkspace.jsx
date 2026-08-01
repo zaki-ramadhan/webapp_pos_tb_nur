@@ -51,14 +51,19 @@ export function InventoryAdjustmentFormView({
     onRefresh,
 }) {
     const activeRecordId = activeLevel2Tab?.tabType === 'detail' ? activeLevel2Tab.recordId : null;
+    const targetRow = useMemo(
+        () => (activeRecordId ? config.table?.rows?.find((row) => row.id === activeRecordId) : null),
+        [activeRecordId, config.table?.rows],
+    );
+
     const sourceRecord = useMemo(
         () =>
             activeRecordId
                 ? typeof buildRecord === 'function'
-                    ? buildRecord(config.table.rows.find((row) => row.id === activeRecordId) ?? { id: activeRecordId }, config)
-                    : (config.table.rows.find((row) => row.id === activeRecordId) ?? { id: activeRecordId })
-                : config.draft,
-        [activeRecordId, buildRecord, config],
+                    ? buildRecord(targetRow ?? { id: activeRecordId }, config)
+                    : (targetRow ?? { id: activeRecordId })
+                : (config.draft ?? config.formDefaults),
+        [activeRecordId, buildRecord, targetRow],
     );
     const [activeSectionId, setActiveSectionId] = useState(config.sectionTabs?.[0]?.id ?? 'details');
     const [values, setValues] = useState(() => buildFormValues(sourceRecord));
