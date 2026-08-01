@@ -81,6 +81,9 @@ const baseInventoryAdjustmentConfig = {
         emptyLabel: 'Belum ada rincian barang yang ditambahkan.',
         columns: inventoryAdjustmentDetailColumns,
     },
+    itemTable: {
+        columns: inventoryAdjustmentDetailColumns,
+    },
     dockActions: {
         create: createDockActions,
         detail: detailDockActions,

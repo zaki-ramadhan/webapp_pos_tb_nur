@@ -57,8 +57,10 @@ export default function InventoryAdjustmentDetailsSection({
         }));
     }, [filteredItems, isPriceAdjustment, docSalesCategory]);
 
+    const defaultColumns = config?.detailTable?.columns ?? config?.itemTable?.columns ?? [];
+
     const columns = useMemo(() => {
-        if (!isPriceAdjustment) return config.itemTable.columns;
+        if (!isPriceAdjustment) return defaultColumns;
 
         if (isDiscountMode || isColumnsToggled) {
             return [
@@ -80,7 +82,7 @@ export default function InventoryAdjustmentDetailsSection({
             { id: 'unit', label: 'Satuan', widthClassName: 'w-[100px]', align: 'left' },
             { id: 'newDiscount', label: 'Diskon Baru (%)', widthClassName: 'w-[130px]', align: 'right' },
         ];
-    }, [isPriceAdjustment, isDiscountMode, isColumnsToggled, config.itemTable.columns]);
+    }, [isPriceAdjustment, isDiscountMode, isColumnsToggled, defaultColumns]);
 
     const customSearchInput = (
         <div className="flex gap-2 w-full items-center">
@@ -94,7 +96,7 @@ export default function InventoryAdjustmentDetailsSection({
                                 itemSearch: event.target.value,
                             }))
                         }
-                        placeholder={config.detailSearchPlaceholder}
+                        placeholder={config?.detailSearchPlaceholder || 'Cari/Pilih Rincian Barang'}
                         trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
                         className="h-[40px] w-full rounded-[4px] border-ui-border"
                         inputClassName="text-xs sm:text-sm text-brand-dark"
