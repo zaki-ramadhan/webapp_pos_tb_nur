@@ -251,7 +251,7 @@ class BackendResourceWriter
                     $depositId = $adv['__depositId'] ?? null;
                     if ($depositId) {
                         $deposit = DB::table('operation_documents')->where('id', $depositId)->first();
-                        if ($deposit && $deposit->tax_id && !$invoiceTaxId) {
+                        if ($deposit && !empty($deposit->tax_id ?? null) && !$invoiceTaxId) {
                             throw \Illuminate\Validation\ValidationException::withMessages([
                                 'tax_id' => ["Uang Muka [{$deposit->document_number}] menggunakan PPN. Faktur Penjualan ini juga wajib menggunakan PPN."]
                             ]);
@@ -662,11 +662,11 @@ class BackendResourceWriter
             'sales-orders' => 'SO',
             'sales-deliveries' => 'SD',
             'sales-invoices' => 'SI',
-            'sales-returns' => 'SR',
+            'sales-returns' => 'SRT',
             'purchase-orders' => 'PO',
             'goods-receipts' => 'GR',
             'purchase-invoices' => 'PI',
-            'purchase-returns' => 'PR',
+            'purchase-returns' => 'PRT',
             'payroll-entries' => 'EPY',
             'expense-entries' => 'EXP',
             'general-journals' => 'JV',
@@ -675,7 +675,7 @@ class BackendResourceWriter
             'bank-transfers' => 'BT',
             'sales-deposits' => 'DP',
             'purchase-payments' => 'PP',
-            'sales-receipts' => 'SR',
+            'sales-receipts' => 'RCT',
             'item-requests' => 'IR',
         ];
 
@@ -688,17 +688,14 @@ class BackendResourceWriter
         $isInventory = in_array($resourceKey, ['item-requests', 'inventory-adjustments', 'stock-transfers', 'stock-opname-results', 'work-orders', 'material-additions', 'work-completions'], true);
         $targetTable = $isInventory ? 'inventory_documents' : 'operation_documents';
 
-      // Cari nomor terakhir di bulan dan tahun yang sama dengan lockForUpdate untuk mencegah bentrokan concurrency
-
+        // Cari nomor terakhir di bulan dan tahun yang sama dengan lockForUpdate untuk mencegah bentrokan concurrency
         $latest = DB::table($targetTable)
-            ->where('document_type', $this->getDocumentTypeFromResource($resourceKey))
             ->where('document_number', 'like', "{$prefix}.{$year}.{$month}.%")
             ->lockForUpdate()
             ->orderBy('id', 'desc')
             ->get()
             ->first(function ($doc) {
-              // Hanya ambil yang berformat PREFIX.YYYY.MM.00001 (4 bagian)
-
+                // Hanya ambil yang berformat PREFIX.YYYY.MM.00001 (4 bagian)
                 $parts = explode('.', $doc->document_number);
                 return count($parts) === 4 && is_numeric(end($parts)) && strlen(end($parts)) === 5;
             });
@@ -712,8 +709,16 @@ class BackendResourceWriter
             }
         }
 
-        $seqString = str_pad($nextSeq, 5, '0', STR_PAD_LEFT);
-        return "{$prefix}.{$year}.{$month}.{$seqString}";
+        do {
+            $seqString = str_pad($nextSeq, 5, '0', STR_PAD_LEFT);
+            $candidateNumber = "{$prefix}.{$year}.{$month}.{$seqString}";
+            $exists = DB::table($targetTable)->where('document_number', $candidateNumber)->exists();
+            if ($exists) {
+                $nextSeq++;
+            }
+        } while ($exists);
+
+        return $candidateNumber;
     }
 
     /**
@@ -807,7 +812,6 @@ class BackendResourceWriter
         }
 
         $journal->branch_id       = $record->branch_id;
-        $journal->department_id   = $record->department_id;
         $journal->document_number = ($prefixes[$record->document_type] ?? 'JV-') . $record->document_number;
         $journal->entry_date      = $record->entry_date;
         $journal->status          = 'Posted';

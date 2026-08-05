@@ -108,7 +108,21 @@ export default function AccountLookupSuggestions({
                         let subtitleLeft = code;
                         let subtitleRight = null;
 
-                        if (isDoc) {
+                        if (resource === 'sales-deposits') {
+                            subtitleLeft = dateStr;
+                            const totalAmt = parseFloat(String(record.total_amount ?? 0).replace(/[^0-9.-]+/g, '')) || 0;
+                            const paidAmt = parseFloat(String(record.paid_amount ?? 0).replace(/[^0-9.-]+/g, '')) || 0;
+                            const rawOutstanding = record.outstanding_amount;
+                            const parsedOutstanding = rawOutstanding !== undefined && rawOutstanding !== null && rawOutstanding !== ''
+                                ? parseFloat(String(rawOutstanding).replace(/[^0-9.-]+/g, ''))
+                                : NaN;
+                            
+                            const sisaSaldo = !isNaN(parsedOutstanding) && (parsedOutstanding > 0 || paidAmt > 0)
+                                ? parsedOutstanding
+                                : Math.max(0, totalAmt - paidAmt);
+
+                            subtitleRight = `Rp ${formatCurrencyValue(sisaSaldo)}`;
+                        } else if (isDoc) {
                             subtitleLeft = dateStr;
                             subtitleRight = resolveDocumentTypeLabel(record, resource);
                         } else if (['suppliers', 'vendors', 'customers', 'employees'].includes(resource)) {
@@ -121,20 +135,7 @@ export default function AccountLookupSuggestions({
                             subtitleLeft = contactParts.join(' - ');
                         } else if (resource === 'accounts') {
                             subtitleLeft = code;
-                            const rawBalance = record.balance ?? record.current_balance ?? record.opening_balance ?? record.balanceValue;
-                            if (rawBalance !== undefined && rawBalance !== null && rawBalance !== '') {
-                                const numBalance = typeof rawBalance === 'number' ? rawBalance : parseFloat(String(rawBalance).replace(/[^0-9.-]+/g, ''));
-                                if (!isNaN(numBalance)) {
-                                    subtitleRight = numBalance < 0
-                                        ? `-Rp ${formatCurrencyValue(Math.abs(numBalance))}`
-                                        : `Rp ${formatCurrencyValue(numBalance)}`;
-                                } else {
-                                    const strVal = String(rawBalance);
-                                    subtitleRight = strVal.startsWith('Rp') ? strVal : `Rp ${strVal}`;
-                                }
-                            } else {
-                                subtitleRight = translateAccountType(record.account_type);
-                            }
+                            subtitleRight = translateAccountType(record.account_type);
                         }
 
                         return (

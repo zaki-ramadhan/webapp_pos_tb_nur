@@ -86,7 +86,7 @@ export default function SalesDocumentAdvanceEditModal({
         if (amountValue <= 0) {
             newErrors.amount = 'Nilai uang muka harus lebih besar dari 0.';
         } else if (maxAllowed != null && amountValue > maxAllowed) {
-            newErrors.amount = `Nilai uang muka tidak boleh melebihi sisa faktur (Maksimal Rp ${formatCurrencyValue(maxAllowed)}).`;
+            newErrors.amount = `Nilai uang muka tidak boleh melebihi sisa faktur / sisa saldo uang muka (Maksimal Rp ${formatCurrencyValue(maxAllowed)}).`;
         }
 
         if (Object.keys(newErrors).length > 0) {

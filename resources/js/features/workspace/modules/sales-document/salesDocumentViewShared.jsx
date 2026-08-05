@@ -152,7 +152,7 @@ export function SalesDocumentHeaderButtons({ config, values, setValues, isDetail
         });
     };
 
-    const takeOptions = config.takeOptions ?? ['Pesanan', 'Pembelian', 'Permintaan'];
+    const takeOptions = config.takeOptions ?? ['Pembelian'];
     const processOptions = config.processOptions ?? ['Pembayaran'];
 
     return (
@@ -343,7 +343,7 @@ export function salesDocumentToolbarConfig(config, onCreate, keyword, setKeyword
     return {
         size: 'compact',
         className: 'space-y-3',
-        filters: config.table.filters?.length ? <SalesDocumentFilterBar config={config} filters={filters} setFilters={setFilters} /> : null,
+        filters: null,
         createButton: {
             label: config.table.createLabel,
             onClick: onCreate,

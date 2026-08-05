@@ -54,8 +54,9 @@ export default function SalesDocumentView({
                 filters: buildOperationDocumentFilters(config.table.filters, mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
+                error,
                 refreshLabel: config.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: error || 'Tidak ada data',
+                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,
@@ -104,7 +105,7 @@ export default function SalesDocumentView({
     return (
         <div className="flex flex-1 flex-col min-h-0 w-full h-full relative">
             <div className={mode === 'table' ? 'flex flex-1 flex-col min-h-0 w-full h-full' : 'hidden'}>
-                <SalesDocumentTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} />
+                <SalesDocumentTableView config={resolvedConfig} onCreate={onOpenContent} onOpenDetail={onOpenDetail} onRefresh={reload} loading={loading} />
             </div>
             {level2Tabs.map((tab) => {
                 if (tab.kind !== 'content') return null;

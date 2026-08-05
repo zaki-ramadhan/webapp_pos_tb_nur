@@ -22,9 +22,9 @@ export const SALES_DOCUMENT_COPY_CONFIG_MAP = {
     },
     'Pembelian': {
         mode: 'document',
-        resource: 'purchase-orders',
-        title: 'Pesanan Pembelian',
-        placeholder: 'Cari/Pilih Pesanan Pembelian...',
+        resource: 'purchase-invoices',
+        title: 'Salin dari Faktur Pembelian',
+        placeholder: 'Cari/Pilih Pembelian/Pemasok...',
         tabs: ['Rincian Barang'],
     },
     'Permintaan': {

@@ -160,6 +160,7 @@ const defaultSalesOrderConfig = {
         settingsItems: [{ id: 'arrange-columns', label: 'Atur kolom' }],
     },
     sectionTabs: salesOrderSectionTabs,
+    itemSearchResource: 'products',
     itemSearchPlaceholder: 'Cari/Pilih Barang & Jasa...',
     itemSectionTitle: 'Rincian Barang',
     itemTable: {
@@ -272,7 +273,7 @@ export const defaultSalesInvoiceConfig = {
         enabled: true,
     },
     hideAddItemButton: true,
-    takeOptions: ['Pesanan'],
+    showHeaderTakeButton: false,
     draft: salesInvoiceDraft,
     detailRecords: salesInvoiceDetailRecords,
 };

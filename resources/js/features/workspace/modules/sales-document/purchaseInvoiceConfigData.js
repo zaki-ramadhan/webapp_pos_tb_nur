@@ -252,6 +252,7 @@ export const defaultPurchaseInvoiceConfig = {
     initialSectionId: 'details',
     detailInitialSectionId: 'details',
     takeButtonLabel: 'Ambil',
+    takeOptions: ['Pembelian'],
     processButtonLabel: 'Proses',
     showProcessButtonOnCreate: true,
     draft: defaultPurchaseInvoiceDraft,

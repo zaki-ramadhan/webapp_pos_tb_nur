@@ -401,12 +401,17 @@ export default function SalesDocumentFormView({
                 setEditItemOpen(true);
             },
             onSelectAdvancePayment: (record) => {
+                const availableAmt = Number(record.outstanding_amount ?? record.deposit_amount ?? record.total_amount ?? record.amount ?? 0);
+                const remainingInvoice = Math.max(0, parseNumericInput(values.total) - (values.advancePayments ?? [])
+                    .reduce((sum, entry) => sum + parseNumericInput(entry.amount), 0));
+                const initialAmt = availableAmt > 0 ? Math.min(availableAmt, remainingInvoice) : remainingInvoice;
                 const newAdvance = {
                     id: `advance-item-${Date.now()}-${Math.random()}`,
                     __lineId: null,
                     __depositId: record.id,
                     number: record.document_number || record.number || '',
-                    amount: formatCurrencyValue(Number(record.outstanding_amount ?? record.deposit_amount ?? record.total_amount ?? record.amount ?? 0)),
+                    availableAmount: availableAmt > 0 ? availableAmt : null,
+                    amount: formatCurrencyValue(initialAmt),
                     notes: record.notes ?? '',
                     tax_id: record.tax_id ?? null,
                     isNew: true,
@@ -590,9 +595,13 @@ export default function SalesDocumentFormView({
                 open={editAdvanceOpen}
                 onClose={() => setEditAdvanceOpen(false)}
                 item={editingAdvanceItem}
-                maxAllowed={Math.max(0, parseNumericInput(values.total) - (values.advancePayments ?? [])
-                    .filter((entry) => entry.id !== editingAdvanceItem?.id && entry.__depositId !== editingAdvanceItem?.__depositId)
-                    .reduce((sum, entry) => sum + parseNumericInput(entry.amount), 0))}
+                maxAllowed={(() => {
+                    const remainingInvoice = Math.max(0, parseNumericInput(values.total) - (values.advancePayments ?? [])
+                        .filter((entry) => entry.id !== editingAdvanceItem?.id && entry.__depositId !== editingAdvanceItem?.__depositId)
+                        .reduce((sum, entry) => sum + parseNumericInput(entry.amount), 0));
+                    const depositAvailable = editingAdvanceItem?.availableAmount ?? Infinity;
+                    return Math.min(remainingInvoice, depositAvailable);
+                })()}
                 onSubmit={(nextAdvance) => {
                     const exists = (values.advancePayments ?? []).some((entry) => entry.id === nextAdvance.id || entry.__depositId === nextAdvance.__depositId);
                     setValues((current) => {
