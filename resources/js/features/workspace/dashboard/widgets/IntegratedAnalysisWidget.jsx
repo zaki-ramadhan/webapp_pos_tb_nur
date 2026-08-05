@@ -54,7 +54,7 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
 
     const transactionMetric = getMetric(widget.metrics, 'Transaksi');
     const validRulesMetric = getMetric(widget.metrics, 'Rule Valid');
-    const itemAMetric = getMetric(widget.metrics, 'Item A');
+    const itemAMetric = getMetric(widget.metrics, 'Fokus Stok (Kat A)') || getMetric(widget.metrics, 'Item A');
     const totalMetric = getMetric(widget.metrics, 'Nilai Analisis');
 
     const summaryItems = [

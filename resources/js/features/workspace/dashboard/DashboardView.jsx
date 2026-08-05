@@ -1,13 +1,11 @@
-import { forwardRef, useCallback, useImperativeHandle, useMemo } from 'react';
-import { router } from '@inertiajs/react';
+import { forwardRef, useImperativeHandle, useMemo } from 'react';
 
+import Button from '@/components/ui/Button';
+import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
 import DashboardActivePageContent from '@/features/workspace/dashboard/DashboardActivePageContent';
 import DashboardSidebar from '@/features/workspace/dashboard/DashboardSidebar';
 import { WorkspaceDraftStateProvider } from '@/features/workspace/dashboard/WorkspaceDraftState';
-import { buildWidgetTemplateMap } from '@/features/workspace/dashboard/dashboardPersistence';
 import DashboardPageTabs from '@/features/workspace/dashboard/DashboardPageTabs';
-import DashboardViewModals from '@/features/workspace/dashboard/DashboardViewModals';
-import useDashboardPreferencesState from '@/features/workspace/dashboard/useDashboardPreferencesState';
 
 import { resolveLevel2State, resolveActivePageContentTabs } from '@/features/workspace/dashboard/dashboardPageState';
 import useWorkspacePageState from './hooks/useWorkspacePageState';
@@ -19,7 +17,6 @@ const DashboardView = forwardRef(function DashboardView(
         topbarHeight = 0,
         mobileWorkspaceMenuOpen = false,
         onCloseMobileWorkspaceMenu,
-        user,
     },
     ref,
 ) {
@@ -29,18 +26,15 @@ const DashboardView = forwardRef(function DashboardView(
         openPages,
         activePageId,
         setActivePageId,
-        pageOpeningLoading,
         pendingCloseRequest,
         setPendingCloseRequest,
         handleTogglePanel,
         openPageById,
         handleSelectPanelItem,
         activePage,
-        activePageContentTabs,
         isDashboardPageActive,
         activeLevel2TabId,
         activeLevel2Tab,
-        activePageMode,
         draftStateValue,
         tabItems,
         decoratedLevel2Tabs,
@@ -64,38 +58,6 @@ const DashboardView = forwardRef(function DashboardView(
     useImperativeHandle(ref, () => ({
         openPage: openPageById,
     }));
-
-    const widgetTemplateMap = useMemo(() => buildWidgetTemplateMap(dashboard.widgets ?? []), [dashboard.widgets]);
-    const {
-        isWidgetLibraryLoading,
-        isWidgetLibraryOpen,
-        setIsWidgetLibraryOpen,
-        isDashboardActionsOpen,
-        setIsDashboardActionsOpen,
-        activeDashboardModal,
-        setActiveDashboardModal,
-        dashboardItems,
-        selectedDashboardId,
-        activeDashboardWidgets,
-        selectedDashboard,
-        handleOpenWidgetLibrary,
-        handleSelectDashboardAction,
-        handleCreateDashboard,
-        handleUpdateDashboard,
-        handleDeleteDashboard,
-        handleSelectDashboard,
-        handleRenameWidget,
-        handleAddWidget,
-        handleRemoveWidget,
-        handleRefreshWidget,
-        handleReorderWidgets,
-        filteredLibraryItems,
-    } = useDashboardPreferencesState({
-        dashboard,
-        widgets,
-        widgetTemplateMap,
-        user,
-    });
 
     const renderedPages = useMemo(() => {
         return openPages.map((page) => {
@@ -150,20 +112,8 @@ const DashboardView = forwardRef(function DashboardView(
 
                     <DashboardActivePageContent
                         dashboard={dashboard}
-                        widgets={widgets}
-                        isLoading={!widgets}
-                        dashboardItems={dashboardItems}
-                        selectedDashboardId={selectedDashboardId}
-                        isDashboardActionsOpen={isDashboardActionsOpen}
-                        handleOpenWidgetLibrary={handleOpenWidgetLibrary}
-                        handleSelectDashboard={handleSelectDashboard}
-                        handleSelectDashboardAction={handleSelectDashboardAction}
-                        setIsDashboardActionsOpen={setIsDashboardActionsOpen}
-                        activeDashboardWidgets={activeDashboardWidgets}
-                        handleRefreshWidget={handleRefreshWidget}
-                        handleRenameWidget={handleRenameWidget}
-                        handleRemoveWidget={handleRemoveWidget}
-                        handleReorderWidgets={handleReorderWidgets}
+                        widgets={widgets ?? dashboard?.widgets}
+                        isLoading={!widgets && !dashboard?.widgets}
                         renderedPages={renderedPages}
                         activePageId={activePageId}
                         detailTabOpeners={detailTabOpeners}
@@ -176,24 +126,29 @@ const DashboardView = forwardRef(function DashboardView(
                 </div>
             </section>
 
-            <DashboardViewModals
-                dashboard={dashboard}
-                isWidgetLibraryLoading={isWidgetLibraryLoading}
-                pageOpeningLoading={pageOpeningLoading}
-                isWidgetLibraryOpen={isWidgetLibraryOpen}
-                setIsWidgetLibraryOpen={setIsWidgetLibraryOpen}
-                handleAddWidget={handleAddWidget}
-                activeDashboardModal={activeDashboardModal}
-                setActiveDashboardModal={setActiveDashboardModal}
-                handleCreateDashboard={handleCreateDashboard}
-                selectedDashboard={selectedDashboard}
-                handleUpdateDashboard={handleUpdateDashboard}
-                handleDeleteDashboard={handleDeleteDashboard}
-                unsavedChangesModalOpen={Boolean(pendingCloseRequest)}
-                onCloseUnsavedChangesModal={() => setPendingCloseRequest(null)}
-                onConfirmUnsavedChangesModal={handleConfirmPendingClose}
-                filteredLibraryItems={filteredLibraryItems}
-            />
+            {Boolean(pendingCloseRequest) && (
+                <WorkspaceDialog
+                    open={Boolean(pendingCloseRequest)}
+                    onClose={() => setPendingCloseRequest(null)}
+                    title="Tutup Halaman?"
+                    closeLabel="Tutup dialog konfirmasi"
+                    maxWidthClassName="max-w-[440px]"
+                    footer={
+                        <div className="flex justify-end gap-2">
+                            <Button variant="secondary" size="md" onClick={() => setPendingCloseRequest(null)}>
+                                Batal
+                            </Button>
+                            <Button variant="danger" size="md" onClick={handleConfirmPendingClose}>
+                                Tutup Halaman
+                            </Button>
+                        </div>
+                    }
+                >
+                    <p className="text-sm text-slate-600">
+                        Ada perubahan yang belum disimpan di halaman ini. Apakah Anda yakin ingin menutupnya?
+                    </p>
+                </WorkspaceDialog>
+            )}
         </WorkspaceDraftStateProvider>
     );
 });

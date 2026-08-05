@@ -35,7 +35,6 @@ import JournalActivityLogView from '@/features/workspace/modules/journal-activit
 export const STATIC_PAGE_RENDERERS = {
     preferences: (page) => <PreferencesView page={page} />,
     'activity-log': (page) => <ActivityLogView page={page} />,
-    'sales-checkin': (page) => <SalesCheckinView page={page} />,
     'minimum-stock': (page) => <InventoryInquiryView config={page.minimumStock} pageId="minimum-stock" />,
     'item-location': (page) => <InventoryInquiryView config={page.itemLocation} pageId="item-location" />,
     'salary-allowance': (page) => <SalaryAllowanceView page={page} />,

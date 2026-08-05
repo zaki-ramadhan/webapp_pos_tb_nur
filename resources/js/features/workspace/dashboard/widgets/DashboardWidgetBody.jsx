@@ -11,11 +11,8 @@ import {
     SummaryMetric,
 } from '@/features/workspace/dashboard/widgets/DashboardWidgetMetrics';
 import {
-    ActivityListWidget,
     CashAvailabilityWidget,
-    OrderStatusWidget,
     RecentActivityWidget,
-    SalesTeamWidget,
     TopProductsWidget,
 } from '@/features/workspace/dashboard/widgets/DashboardSupplementaryWidgets';
 
@@ -148,10 +145,6 @@ export default function DashboardWidgetBody({
         return <SummaryMetric widget={widget} />;
     }
 
-    if (widget.type === 'sales-team') {
-        return <SalesTeamWidget widget={widget} />;
-    }
-
     if (widget.type === 'top-products') {
         return <TopProductsWidget widget={widget} />;
     }
@@ -160,16 +153,8 @@ export default function DashboardWidgetBody({
         return <CashAvailabilityWidget widget={widget} />;
     }
 
-    if (widget.type === 'order-status') {
-        return <OrderStatusWidget widget={widget} />;
-    }
-
     if (widget.type === 'recent-activity') {
         return <RecentActivityWidget widget={widget} />;
-    }
-
-    if (widget.type === 'activity-list') {
-        return <ActivityListWidget widget={widget} />;
     }
 
     if (widget.type === 'abc-analysis') {

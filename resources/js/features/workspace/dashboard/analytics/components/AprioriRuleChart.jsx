@@ -109,11 +109,9 @@ export default function AprioriRuleChart({ rules }) {
                 ticks: {
                     color: 'var(--color-tab-view-active-text)',
                     font: {
-                        size: 14,
+                        size: 13,
                     },
-                },
-                afterFit(scale) {
-                    scale.width = 220;
+                    padding: 6,
                 },
             },
         },
@@ -121,8 +119,10 @@ export default function AprioriRuleChart({ rules }) {
 
     return (
         <div onContextMenu={(e) => e.preventDefault()} className="rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
-            <div className="h-[250px] rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card sm:h-[270px] lg:h-[280px]">
-                <Bar ref={chartRef} data={resolveChartObject(data)} options={resolveChartObject(options)} />
+            <div className="overflow-x-auto custom-scrollbar rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card">
+                <div className="h-[250px] min-w-[550px] sm:h-[270px] sm:min-w-[650px] lg:h-[280px]">
+                    <Bar ref={chartRef} data={resolveChartObject(data)} options={resolveChartObject(options)} />
+                </div>
             </div>
         </div>
     );

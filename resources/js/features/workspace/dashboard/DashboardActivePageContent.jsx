@@ -1,4 +1,3 @@
-import DashboardToolbar from '@/features/workspace/dashboard/DashboardToolbar';
 import DashboardWidgetGrid from '@/features/workspace/dashboard/DashboardWidgetGrid';
 import renderWorkspaceActivePage from '@/features/workspace/dashboard/renderWorkspaceActivePage';
 import { FormErrorProvider } from '@/components/ui/FormErrorContext';
@@ -7,17 +6,7 @@ export default function DashboardActivePageContent({
     dashboard,
     widgets,
     isLoading = false,
-    dashboardItems,
-    selectedDashboardId,
-    isDashboardActionsOpen,
-    handleOpenWidgetLibrary,
-    handleSelectDashboard,
-    handleSelectDashboardAction,
-    setIsDashboardActionsOpen,
-    activeDashboardWidgets,
     handleRefreshWidget,
-    handleRenameWidget,
-    handleRemoveWidget,
     handleReorderWidgets,
     renderedPages = [],
     activePageId,
@@ -27,37 +16,16 @@ export default function DashboardActivePageContent({
     handleCloseDetailTab,
     closeLevel2TabNow,
 }) {
+    const activeDashboardWidgets = widgets ?? dashboard?.widgets ?? [];
+
     return (
         <div className="min-h-0 min-w-0 flex-1 flex flex-col overflow-y-auto">
             {/* Dashboard Widget View */}
             <div className={activePageId === 'dashboard' ? 'flex flex-1 flex-col min-h-0 min-w-0' : 'hidden'}>
-                <DashboardToolbar
-                    dashboard={{
-                        ...dashboard,
-                        toolbar: {
-                            ...dashboard.toolbar,
-                            dashboards: dashboardItems,
-                            selectedDashboardId,
-                            dashboardActions: {
-                                ...dashboard.toolbar.dashboardActions,
-                                open: isDashboardActionsOpen,
-                            },
-                            onOpenWidgetLibrary: handleOpenWidgetLibrary,
-                            onSelectDashboard: handleSelectDashboard,
-                            onToggleDashboardActions: () =>
-                                setIsDashboardActionsOpen((currentValue) => !currentValue),
-                            onCloseDashboardActions: () => setIsDashboardActionsOpen(false),
-                            onSelectDashboardAction: handleSelectDashboardAction,
-                        },
-                    }}
-                />
-
                 <div className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-tab-active-bg px-1.5 py-1.5 sm:px-2 sm:py-2">
                     <DashboardWidgetGrid
                         widgets={activeDashboardWidgets}
                         onRefreshWidget={handleRefreshWidget}
-                        onRenameWidget={handleRenameWidget}
-                        onRemoveWidget={handleRemoveWidget}
                         onReorderWidgets={handleReorderWidgets}
                         isLoading={isLoading}
                     />

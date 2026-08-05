@@ -63,12 +63,17 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%' }
         },
     };
 
+    const primaryNonZeroItem = chartData.find((item) => item.value > 0);
+    const resolvedPercentage = (percentage === '0%' && primaryNonZeroItem && primaryNonZeroItem.percentText)
+        ? primaryNonZeroItem.percentText
+        : percentage;
+
     return (
         <div onContextMenu={(e) => e.preventDefault()} className="w-full max-w-[152px] p-1 sm:max-w-[160px] lg:max-w-[168px]">
             <div className="group relative h-[132px] sm:h-[140px] lg:h-[148px]">
                 <Doughnut data={resolveChartObject(data)} options={resolveChartObject(options)} />
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-150 group-hover:opacity-0">
-                    <span className="text-lg font-semibold leading-none text-brand-darker sm:text-xl md:text-2xl lg:text-2xl">{percentage}</span>
+                    <span className="text-lg font-semibold leading-none text-brand-darker sm:text-xl md:text-2xl lg:text-2xl">{resolvedPercentage}</span>
                     <span className="mt-0.5 text-xs text-black normal-case tracking-normal">Ringkasan</span>
                 </div>
             </div>

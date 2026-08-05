@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 
-import DashboardFormModal from '@/features/workspace/dashboard/DashboardFormModal';
 import DashboardWidgetBody from '@/features/workspace/dashboard/widgets/DashboardWidgetBody';
 import DashboardWidgetCard from '@/features/workspace/dashboard/widgets/DashboardWidgetCard';
 
@@ -13,15 +12,12 @@ function wait(ms) {
 export default function DashboardWidgetGrid({
     widgets = [],
     onRefreshWidget = null,
-    onRenameWidget = null,
-    onRemoveWidget = null,
     onReorderWidgets = null,
     isLoading = false,
 }) {
     const [analyticsDetailsExpanded, setAnalyticsDetailsExpanded] = useState(false);
     const [refreshingByWidgetId, setRefreshingByWidgetId] = useState({});
     const [refreshErrorByWidgetId, setRefreshErrorByWidgetId] = useState({});
-    const [renamingWidgetId, setRenamingWidgetId] = useState(null);
 
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
@@ -69,99 +65,123 @@ export default function DashboardWidgetGrid({
         [onRefreshWidget, refreshingByWidgetId],
     );
 
-    const handleRenameWidget = useCallback((widget) => {
-        setRenamingWidgetId(widget?.id ?? null);
-    }, []);
+    const renderWidgetCard = useCallback(
+        (widget, index) => {
+            const isWide = widget.id === 'integrated-analysis' || widget.type === 'integrated-analysis';
+            const isDragged = draggedIndex === index;
+            const isDragOver = dragOverIndex === index && draggedIndex !== index;
 
-    const handleSubmitWidgetRename = useCallback((nextTitle) => {
-        onRenameWidget?.(renamingWidgetId, nextTitle);
-        setRenamingWidgetId(null);
-    }, [onRenameWidget, renamingWidgetId]);
+            const spanClass = isWide ? 'min-w-0 md:col-span-2 xl:col-span-2' : 'min-w-0 flex-1';
+            const dragClass = isDragged
+                ? 'opacity-40 scale-[0.98] transition-all duration-200'
+                : isDragOver
+                ? 'ring-2 ring-brand-blue ring-offset-1 scale-[1.01] transition-all duration-200'
+                : 'transition-all duration-200';
 
-    const renamingWidget = widgets.find((widget) => widget.id === renamingWidgetId) ?? null;
+            return (
+                <div
+                    key={widget.id}
+                    className={`${spanClass} ${dragClass} flex flex-col`.trim()}
+                    draggable={draggableWidgetId === widget.id}
+                    onDragStart={(e) => {
+                        setDraggedIndex(index);
+                        e.dataTransfer.effectAllowed = 'move';
+                    }}
+                    onDragEnd={() => {
+                        setDraggedIndex(null);
+                        setDragOverIndex(null);
+                        setDraggableWidgetId(null);
+                    }}
+                    onDragOver={(e) => {
+                        e.preventDefault();
+                        if (dragOverIndex !== index) {
+                            setDragOverIndex(index);
+                        }
+                    }}
+                    onDrop={() => {
+                        if (draggedIndex !== null && draggedIndex !== index) {
+                            onReorderWidgets?.(draggedIndex, index);
+                        }
+                    }}
+                >
+                    <DashboardWidgetCard
+                        widget={widget}
+                        onRefresh={handleRefreshWidget}
+                        isRefreshing={Boolean(refreshingByWidgetId[widget.id])}
+                        refreshError={refreshErrorByWidgetId[widget.id] ?? null}
+                        dragHandleProps={{
+                            onMouseEnter: () => setDraggableWidgetId(widget.id),
+                            onMouseLeave: () => setDraggableWidgetId(null),
+                        }}
+                    >
+                        <DashboardWidgetBody
+                            widget={widget}
+                            analyticsDetailsExpanded={analyticsDetailsExpanded}
+                            onToggleAnalyticsDetails={handleToggleAnalyticsDetails}
+                            isLoading={isLoading}
+                        />
+                    </DashboardWidgetCard>
+                </div>
+            );
+        },
+        [
+            analyticsDetailsExpanded,
+            dragOverIndex,
+            draggedIndex,
+            draggableWidgetId,
+            handleRefreshWidget,
+            handleToggleAnalyticsDetails,
+            isLoading,
+            onReorderWidgets,
+            refreshErrorByWidgetId,
+            refreshingByWidgetId,
+        ],
+    );
 
-    return (
-        <>
-            <div className="grid min-w-0 grid-cols-1 gap-1.5 sm:gap-2 md:grid-cols-2 xl:grid-cols-3">
-                {widgets.map((widget, index) => {
-                    const isWide = widget.id === 'integrated-analysis' || 
-                                   widget.type === 'integrated-analysis';
-                    const isDragged = draggedIndex === index;
-                    const isDragOver = dragOverIndex === index && draggedIndex !== index;
+    const renderGridItems = useCallback(() => {
+        const items = [];
+        let i = 0;
 
-                    const spanClass = isWide ? "min-w-0 md:col-span-2" : "min-w-0";
-                    const dragClass = isDragged
-                        ? 'opacity-40 scale-[0.98] transition-all duration-200'
-                        : isDragOver
-                        ? 'ring-2 ring-brand-blue ring-offset-1 scale-[1.01] transition-all duration-200'
-                        : 'transition-all duration-200';
+        while (i < widgets.length) {
+            const widget = widgets[i];
 
-                    return (
-                        <div
-                            key={widget.id}
-                            className={`${spanClass} ${dragClass}`.trim()}
-                            draggable={draggableWidgetId === widget.id}
-                            onDragStart={(e) => {
-                                setDraggedIndex(index);
-                                e.dataTransfer.effectAllowed = 'move';
-                            }}
-                            onDragEnd={() => {
-                                setDraggedIndex(null);
-                                setDragOverIndex(null);
-                                setDraggableWidgetId(null);
-                            }}
-                            onDragOver={(e) => {
-                                e.preventDefault();
-                                if (dragOverIndex !== index) {
-                                    setDragOverIndex(index);
-                                }
-                            }}
-                            onDrop={() => {
-                                if (draggedIndex !== null && draggedIndex !== index) {
-                                    onReorderWidgets?.(draggedIndex, index);
-                                }
-                            }}
-                        >
-                            <DashboardWidgetCard
-                                widget={widget}
-                                onRefresh={handleRefreshWidget}
-                                onRename={handleRenameWidget}
-                                onRemove={onRemoveWidget}
-                                isRefreshing={Boolean(refreshingByWidgetId[widget.id])}
-                                refreshError={refreshErrorByWidgetId[widget.id] ?? null}
-                                canRemove={widgets.length > 1}
-                                dragHandleProps={{
-                                    onMouseEnter: () => setDraggableWidgetId(widget.id),
-                                    onMouseLeave: () => setDraggableWidgetId(null),
-                                }}
-                            >
-                                <DashboardWidgetBody
-                                    widget={widget}
-                                    analyticsDetailsExpanded={analyticsDetailsExpanded}
-                                    onToggleAnalyticsDetails={handleToggleAnalyticsDetails}
-                                    isLoading={isLoading}
-                                />
-                            </DashboardWidgetCard>
+            if (widget.id === 'integrated-analysis' || widget.type === 'integrated-analysis') {
+                const reg1Index = i + 1;
+                const reg2Index = i + 2;
+
+                if (
+                    reg2Index < widgets.length &&
+                    !(widgets[reg1Index].id === 'integrated-analysis' || widgets[reg1Index].type === 'integrated-analysis') &&
+                    !(widgets[reg2Index].id === 'integrated-analysis' || widgets[reg2Index].type === 'integrated-analysis')
+                ) {
+                    const reg1Widget = widgets[reg1Index];
+                    const reg2Widget = widgets[reg2Index];
+
+                    items.push(
+                        <div key={`stacked-group-${widget.id}`} className="contents">
+                            {renderWidgetCard(widget, i)}
+                            <div className="md:contents xl:flex xl:flex-col xl:gap-2 xl:h-full xl:justify-between min-w-0 flex-1">
+                                {renderWidgetCard(reg1Widget, reg1Index)}
+                                {renderWidgetCard(reg2Widget, reg2Index)}
+                            </div>
                         </div>
                     );
-                })}
-            </div>
 
-            <DashboardFormModal
-                open={Boolean(renamingWidget)}
-                mode="add"
-                modal={{
-                    title: 'Ubah Judul Widget',
-                    closeLabel: 'Tutup modal ubah judul widget',
-                    nameLabel: 'Judul widget',
-                    clearLabel: 'Kosongkan judul widget',
-                    deleteLabel: '',
-                    submitLabel: 'Simpan',
-                }}
-                initialValue={renamingWidget?.title ?? ''}
-                onClose={() => setRenamingWidgetId(null)}
-                onSubmit={handleSubmitWidgetRename}
-            />
-        </>
+                    i += 3;
+                    continue;
+                }
+            }
+
+            items.push(renderWidgetCard(widget, i));
+            i += 1;
+        }
+
+        return items;
+    }, [renderWidgetCard, widgets]);
+
+    return (
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:gap-2.5 xl:grid-cols-3">
+            {renderGridItems()}
+        </div>
     );
 }

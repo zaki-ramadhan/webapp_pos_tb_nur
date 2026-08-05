@@ -19,9 +19,9 @@ function MetricCaption({ children }) {
 
 export function CashAvailabilityWidget({ widget }) {
     return (
-        <div className="flex h-full flex-col gap-3">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-                <span className="text-sm font-medium text-brand-darker">{widget.balanceLabel}</span>
+        <div className="flex flex-1 min-h-0 flex-col justify-between gap-3">
+            <div className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between shrink-0">
+                <span className="text-sm font-medium text-brand-darker">{widget.balanceLabel ?? 'Estimasi Saldo Kas Berjalan'}</span>
                 <div className="flex flex-wrap items-baseline gap-2 sm:justify-end">
                     <span className="text-base font-semibold leading-none text-brand-darker sm:text-lg">
                         {widget.balanceValue}
@@ -30,13 +30,15 @@ export function CashAvailabilityWidget({ widget }) {
                     <WidgetPeriod value={widget.period} />
                 </div>
             </div>
-            <TrendLineChart
-                labels={widget.labels ?? []}
-                series={widget.series ?? []}
-                accent={widget.accent}
-                valueFormat={widget.valueFormat ?? 'currency'}
-                heightClassName="h-[188px] sm:h-[200px]"
-            />
+            <div className="flex-1 min-h-0 flex flex-col">
+                <TrendLineChart
+                    labels={widget.labels ?? []}
+                    series={widget.series ?? []}
+                    accent={widget.accent}
+                    valueFormat={widget.valueFormat ?? 'currency'}
+                    heightClassName="flex-1 min-h-[160px]"
+                />
+            </div>
         </div>
     );
 }

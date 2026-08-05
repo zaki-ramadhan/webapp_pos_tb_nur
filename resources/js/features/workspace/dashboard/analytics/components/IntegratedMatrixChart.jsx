@@ -20,13 +20,25 @@ export default function IntegratedMatrixChart({ rules }) {
         const ant = rule.antecedentAbc ?? 'C';
         const cons = rule.consequentAbc ?? 'C';
         let labelTactic = 'Penataan Rak';
+        let barColor = '#6366f1'; // Indigo
+        let hoverColor = '#4f46e5';
 
-        if (ant === 'A' && cons === 'C') {
-            labelTactic = 'A → C Jual Silang';
-        } else if (ant === 'A' && cons === 'A') {
+        if (ant === 'A' && cons === 'A') {
             labelTactic = 'A → A Paket Bundling';
-        } else if (ant === 'B' && cons === 'B') {
-            labelTactic = 'B → B Paket Pelengkap';
+            barColor = '#059669'; // Emerald Green
+            hoverColor = '#047857';
+        } else if ((ant === 'A' && cons === 'C') || (ant === 'C' && cons === 'A')) {
+            labelTactic = 'A ↔ C Jual Silang';
+            barColor = '#2563eb'; // Royal Blue
+            hoverColor = '#1d4ed8';
+        } else if (ant === 'B' || cons === 'B') {
+            labelTactic = `${ant} → ${cons} Paket Pelengkap`;
+            barColor = '#d97706'; // Amber Gold
+            hoverColor = '#b45309';
+        } else {
+            labelTactic = 'C → C Penataan Rak';
+            barColor = '#6366f1'; // Indigo
+            hoverColor = '#4f46e5';
         }
 
         return {
@@ -37,11 +49,12 @@ export default function IntegratedMatrixChart({ rules }) {
             support: rule.support,
             lift: rule.lift,
             labelTactic,
+            barColor,
+            hoverColor,
         };
     });
 
     const confidenceValues = chartData.map((item) => item.confidence);
-    const confidencePalette = buildSingleHueEmphasisPalette(confidenceValues, 'var(--color-badge-group-a)', analyticsBarPaletteOptions);
 
     const data = {
         labels: chartData.map((item) => item.label),
@@ -49,10 +62,10 @@ export default function IntegratedMatrixChart({ rules }) {
             {
                 label: 'Confidence',
                 data: confidenceValues,
-                backgroundColor: confidencePalette.backgroundColor,
-                hoverBackgroundColor: confidencePalette.hoverBackgroundColor,
-                borderColor: confidencePalette.borderColor,
-                hoverBorderColor: confidencePalette.hoverBorderColor,
+                backgroundColor: chartData.map((item) => item.barColor),
+                hoverBackgroundColor: chartData.map((item) => item.hoverColor),
+                borderColor: chartData.map((item) => item.barColor),
+                hoverBorderColor: chartData.map((item) => item.hoverColor),
                 borderWidth: 0.5,
                 borderRadius: 4,
                 barThickness: 22,
@@ -126,11 +139,9 @@ export default function IntegratedMatrixChart({ rules }) {
                 ticks: {
                     color: 'var(--color-brand-darker)',
                     font: {
-                        size: 13,
+                        size: 12,
                     },
-                },
-                afterFit(scale) {
-                    scale.width = 340;
+                    padding: 6,
                 },
             },
         },
@@ -138,36 +149,38 @@ export default function IntegratedMatrixChart({ rules }) {
 
     return (
         <div onContextMenu={(e) => e.preventDefault()} className="space-y-4 rounded-[8px] bg-[linear-gradient(180deg,#f7fafd_0%,#f1f5fa_100%)] p-2">
-            <div className="h-[260px] rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card sm:h-[280px]">
-                <Bar ref={chartRef} data={resolveChartObject(data)} options={resolveChartObject(options)} />
+            <div className="overflow-x-auto custom-scrollbar rounded-[8px] border border-abc-card-border bg-white p-3 shadow-abc-card">
+                <div className="h-[260px] min-w-[650px] sm:h-[280px] sm:min-w-[750px]">
+                    <Bar ref={chartRef} data={resolveChartObject(data)} options={resolveChartObject(options)} />
+                </div>
             </div>
 
             <div className="grid gap-3 border border-slate-100 bg-white rounded-lg p-3 shadow-widget-medium grid-cols-2 lg:grid-cols-4">
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a border border-black/45" />
+                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#2563eb]" />
                     <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">A → C Jual Silang (Fokus 100%)</p>
+                        <p className="text-sm font-semibold text-brand-darker leading-4">A → C Jual Silang (Prioritas Utama)</p>
                         <p className="text-sm text-slate-500 mt-1">Barang aksesoris (C) dipicu produk inti (A).</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/75 border border-black/45" />
+                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#059669]" />
                     <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">A → A Paket Bundling (65%)</p>
+                        <p className="text-sm font-semibold text-brand-darker leading-4">A → A Paket Bundling (Sangat Kuat)</p>
                         <p className="text-sm text-slate-500 mt-1">Bundling diskon produk inti omzet terbesar.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/50 border border-black/45" />
+                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#d97706]" />
                     <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">B → B Paket Pelengkap (40%)</p>
+                        <p className="text-sm font-semibold text-brand-darker leading-4">B → B Paket Pelengkap (Rutin)</p>
                         <p className="text-sm text-slate-500 mt-1">Produk pendukung rutin yang stabil.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-2">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-badge-group-a/25 border border-black/45" />
+                    <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#6366f1]" />
                     <div>
-                        <p className="text-sm font-semibold text-brand-darker leading-4">Display Rak Rakit (18%)</p>
+                        <p className="text-sm font-semibold text-brand-darker leading-4">Display Rak Rakit (Pendukung)</p>
                         <p className="text-sm text-slate-500 mt-1">Penataan letak rak berdampingan.</p>
                     </div>
                 </div>

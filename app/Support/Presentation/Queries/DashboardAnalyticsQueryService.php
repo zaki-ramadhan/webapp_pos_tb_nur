@@ -123,10 +123,10 @@ class DashboardAnalyticsQueryService
                 ->where(function ($q) {
                     $q->where(function ($sub) {
                         $sub->where('document_type', 'payroll_entry')
-                            ->where('status', 'Posted');
+                            ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar']);
                     })->orWhere(function ($sub) {
                         $sub->where('document_type', 'expense_entry')
-                            ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                            ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas']);
                     });
                 })
                 ->whereYear('entry_date', $resolvedYear)
@@ -218,10 +218,10 @@ class DashboardAnalyticsQueryService
                     ->where(function ($q) {
                         $q->where(function ($sub) {
                             $sub->where('document_type', 'payroll_entry')
-                                ->where('status', 'Posted');
+                                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar']);
                         })->orWhere(function ($sub) {
                             $sub->where('document_type', 'expense_entry')
-                                ->whereIn('status', ['Sedang diproses', 'Terbayar']);
+                                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas']);
                         });
                     })
                     ->sum('total_amount');
@@ -231,12 +231,12 @@ class DashboardAnalyticsQueryService
  
             $totalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
-                ->where('status', 'Posted')
+                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar'])
                 ->whereYear('entry_date', $resolvedYear)
                 ->sum('total_amount');
             $totalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
-                ->whereIn('status', ['Sedang diproses', 'Terbayar'])
+                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas'])
                 ->whereYear('entry_date', $resolvedYear)
                 ->sum('total_amount');
             $totalExpense = $totalGaji + $totalOperasional;
@@ -245,12 +245,12 @@ class DashboardAnalyticsQueryService
 
             $prevTotalGaji = DB::table('operation_documents')
                 ->where('document_type', 'payroll_entry')
-                ->where('status', 'Posted')
+                ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar'])
                 ->whereYear('entry_date', $prevYear)
                 ->sum('total_amount');
             $prevTotalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
-                ->whereIn('status', ['Sedang diproses', 'Terbayar'])
+                ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas'])
                 ->whereYear('entry_date', $prevYear)
                 ->sum('total_amount');
 
@@ -286,40 +286,6 @@ class DashboardAnalyticsQueryService
             $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
             $lewatJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '<', $latestSalesInvoiceDate)->sum('outstanding_amount');
             $hariIniPurchase = (float) (clone $purchaseInvoiceQuery)->where('entry_date', $latestSalesInvoiceDate)->sum('total_amount');
-
-            $dbSalespeople = DB::table('employees')
-                ->where('is_active', 1)
-                ->where('is_salesperson', 1)
-                ->select('id', 'full_name', 'position')
-                ->get();
-            $salesTeamRows = [];
-            foreach ($dbSalespeople as $sp) {
-                $totalVal = 0;
-                $spUser = DB::table('users')->where('name', 'like', "%{$sp->full_name}%")->first();
-                if ($spUser) {
-                    $totalVal = DB::table('operation_documents')
-                        ->where('document_type', 'sales_invoice')
-                        ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
-                        ->where('responsible_user_id', $spUser->id)
-                        ->whereYear('entry_date', $resolvedYear)
-                        ->sum('total_amount');
-                }
-                $targetVal = 50000000;
-                $pct = $totalVal > 0 ? round(($totalVal / $targetVal) * 100, 1) : 0;
-                $pctStr = (string) $pct;
-                if (str_contains($pctStr, '.')) {
-                    $pctStr = rtrim(rtrim($pctStr, '0'), '.');
-                }
-                $targetPercent = $pctStr . '%';
-                $salesTeamRows[] = [
-                    'name' => $sp->full_name,
-                    'role' => $sp->position ?? 'Salesperson',
-                    'totalValue' => $totalVal > 0 ? $formatCurrencyShort($totalVal) : 'Rp 0',
-                    'targetPercent' => $targetPercent,
-                    'targetValue' => $formatCurrencyShort($targetVal),
-                    'avatarUrl' => ($spUser && trim((string)$spUser->google_avatar) !== '') ? $spUser->google_avatar : null,
-                ];
-            }
 
             $dbTopProducts = DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
@@ -686,13 +652,9 @@ class DashboardAnalyticsQueryService
             'belumJatuhTempoPurchase' => $belumJatuhTempoPurchase,
             'lewatJatuhTempoPurchase' => $lewatJatuhTempoPurchase,
             'hariIniPurchase' => $hariIniPurchase,
-            'salesTeamRows' => $salesTeamRows,
             'topProductsItems' => $topProductsItems,
             'cashAvailabilityLabels' => $cashAvailabilityLabels,
             'cashAvailabilitySeries' => $cashAvailabilitySeries,
-            'totalSalesOrders' => $totalSalesOrders,
-            'pendingSalesOrders' => $pendingSalesOrders,
-            'overdueSalesOrders' => $overdueSalesOrders,
         ];
     }
 

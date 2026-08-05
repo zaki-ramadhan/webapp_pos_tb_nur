@@ -28,151 +28,8 @@ class DashboardBlueprintProvider
         $navigationPages = PosBlueprint::buildNavigationPages($navigationModules);
 
         $data = [
-            'toolbar' => [
-                'widgetLabel' => 'Widget',
-                'dashboards' => [
-                    [
-                        'id' => 'main-dashboard',
-                        'label' => 'Dashboard Utama',
-                    ],
-                    [
-                        'id' => 'sales-dashboard',
-                        'label' => 'Dashboard Penjualan',
-                    ],
-                    [
-                        'id' => 'stock-dashboard',
-                        'label' => 'Dashboard Stok',
-                    ],
-                ],
-                'selectedDashboardId' => 'main-dashboard',
-                'dashboardActions' => [
-                    'label' => 'Opsi dashboard',
-                    'items' => [
-                        [
-                            'id' => 'add',
-                            'label' => 'Tambah Dashboard',
-                        ],
-                        [
-                            'id' => 'edit',
-                            'label' => 'Ubah Dashboard',
-                        ],
-                    ],
-                ],
-                'addDashboardModal' => [
-                    'title' => 'Dashboard',
-                    'closeLabel' => 'Tutup modal dashboard',
-                    'nameLabel' => 'Nama Dashboard',
-                    'submitLabel' => 'Lanjut',
-                    'clearLabel' => 'Kosongkan nama dashboard',
-                    'deleteLabel' => 'Hapus',
-                ],
-                'editDashboardModal' => [
-                    'title' => 'Dashboard',
-                    'closeLabel' => 'Tutup modal dashboard',
-                    'nameLabel' => 'Nama Dashboard',
-                    'submitLabel' => 'Lanjut',
-                    'clearLabel' => 'Kosongkan nama dashboard',
-                    'deleteLabel' => 'Hapus',
-                ],
-                'loadingOverlay' => [
-                    'title' => 'Menyiapkan Widget',
-                    'description' => 'Mohon tunggu sebentar, daftar widget sedang dipersiapkan.',
-                    'durationMs' => 850,
-                ],
-                'widgetLibraryModal' => [
-                    'title' => 'Widget',
-                    'closeLabel' => 'Tutup widget library',
-                    'searchPlaceholder' => 'Ketik kata kunci',
-                    'emptyLabel' => 'Tidak ada widget yang cocok dengan kata kunci tersebut.',
-                    'items' => [
-                        [
-                            'id' => 'integrated-analysis',
-                            'title' => 'Analisis Kombinasi Produk & Prioritas Omzet (Metode Apriori & ABC)',
-                            'description' => 'Strategi display produk sering dibeli bersama (Apriori) & prioritas stok penyumbang omzet (ABC).',
-                            'icon' => 'asset',
-
-                        ],
-                        [
-                            'id' => 'recent-activity',
-                            'title' => 'Aktivitas Terakhir Anda',
-                            'description' => 'Menampilkan riwayat aktivitas terakhir pengguna.',
-                            'icon' => 'activity',
-                        ],
-                        [
-                            'id' => 'upcoming-activity',
-                            'title' => 'Kegiatan Mendatang',
-                            'description' => 'Daftar jadwal kegiatan mendatang.',
-                            'icon' => 'activity',
-                        ],
-                        [
-                            'id' => 'sales-trend',
-                            'title' => 'Tren Penjualan',
-                            'description' => 'Grafik garis tren transaksi penjualan toko seminggu terakhir.',
-                            'icon' => 'cash-flow',
-                        ],
-                        [
-                            'id' => 'profit-loss',
-                            'title' => 'Laba/Rugi Tahun Ini',
-                            'description' => 'Analisa breakdown laba bersih, HPP, dan pengeluaran operasional.',
-                            'icon' => 'asset',
-                        ],
-                        [
-                            'id' => 'cash-flow',
-                            'title' => 'Arus Kas',
-                            'description' => 'Grafik perbandingan kas masuk dan kas keluar harian.',
-                            'icon' => 'cash-flow',
-                        ],
-                        [
-                            'id' => 'company-expense',
-                            'title' => 'Beban Toko',
-                            'description' => 'Distribusi pengeluaran kas operasional dan gaji.',
-                            'icon' => 'expense',
-                        ],
-                        [
-                            'id' => 'sales-summary',
-                            'title' => 'Penjualan',
-                            'description' => 'Ringkasan faktur lunas, belum lunas, dan jatuh tempo penjualan.',
-                            'icon' => 'cash-flow',
-                        ],
-                        [
-                            'id' => 'purchase-summary',
-                            'title' => 'Pembelian',
-                            'description' => 'Ringkasan faktur lunas, belum lunas, dan jatuh tempo pembelian.',
-                            'icon' => 'expense',
-                        ],
-                        [
-                            'id' => 'sales-team-performance',
-                            'title' => 'Penjualan Penjual',
-                            'description' => 'Peringkat pencapaian omzet penjualan per salesperson.',
-                            'icon' => 'stock',
-                        ],
-                        [
-                            'id' => 'top-products',
-                            'title' => 'Barang Paling Laku',
-                            'description' => 'Daftar barang terlaris berdasarkan omzet dan kuantitas.',
-                            'icon' => 'stock',
-                        ],
-                        [
-                            'id' => 'overdue-activity',
-                            'title' => 'Kegiatan Terlewat',
-                            'description' => 'Daftar jadwal kegiatan yang sudah lewat jatuh tempo.',
-                            'icon' => 'activity',
-                        ],
-                        [
-                            'id' => 'cash-availability',
-                            'title' => 'Ketersediaan Kas',
-                            'description' => 'Histori saldo kas berjalan dikalkulasi dari inflow dan outflow.',
-                            'icon' => 'cash-flow',
-                        ],
-                        [
-                            'id' => 'sales-order-status',
-                            'title' => 'Pesanan Penjualan',
-                            'description' => 'Status pesanan menunggu proses dan pending.',
-                            'icon' => 'stock',
-                        ],
-                    ],
-                ],
-                'searchModal' => [
+            'toolbar' => [],
+            'searchModal' => [
                     'closeLabel' => 'Tutup pencarian menu',
                     'searchPlaceholder' => 'Cari...',
                     'topLabel' => 'Menu Teratas',
@@ -190,7 +47,6 @@ class DashboardBlueprintProvider
                         'activity-log',
                     ],
                 ],
-            ],
             'sidebar' => [
                 'items' => PosBlueprint::buildSidebarItems($navigationModules),
             ],
@@ -355,7 +211,7 @@ class DashboardBlueprintProvider
                     'title' => 'Beban Toko',
                     'type' => 'expense',
                     'totalValue' => 'Rp ' . number_format($totalExpense, 0, ',', '.'),
-                    'percentage' => ($totalExpense > 0 ? $pctGaji : 0) . '%',
+                    'percentage' => ($totalExpense > 0 ? ($pctGaji > 0 ? $pctGaji : $pctOpr) : 0) . '%',
                     'period' => '1 Jan - ' . self::dateId($latestSalesInvoiceDate),
                     'compare' => 'Dibanding 1 Jan - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
                     'trend' => $expenseTrend,
@@ -441,13 +297,6 @@ class DashboardBlueprintProvider
                     'heightClass' => 'min-h-[210px]',
                 ],
                 [
-                    'id' => 'sales-team-performance',
-                    'title' => 'Penjualan Penjual',
-                    'type' => 'sales-team',
-                    'rows' => $salesTeamRows,
-                    'heightClass' => 'min-h-[310px]',
-                ],
-                [
                     'id' => 'top-products',
                     'title' => 'Barang Paling Laku',
                     'type' => 'top-products',
@@ -468,45 +317,6 @@ class DashboardBlueprintProvider
                         ],
                     ],
                     'valueFormat' => 'currency',
-                    'heightClass' => 'min-h-[310px]',
-                ],
-                [
-                    'id' => 'upcoming-activity',
-                    'title' => 'Kegiatan Mendatang',
-                    'type' => 'activity-list',
-                    'items' => $upcomingActivityItems ?? [],
-                    'emptyDescription' => 'Belum ada jadwal kegiatan mendatang.',
-                    'heightClass' => 'min-h-[310px]',
-                ],
-                [
-                    'id' => 'overdue-activity',
-                    'title' => 'Kegiatan Terlewat',
-                    'type' => 'activity-list',
-                    'items' => $overdueActivityItems ?? [],
-                    'emptyDescription' => 'Belum ada kegiatan pembayaran atau pengiriman yang terlewat.',
-                    'heightClass' => 'min-h-[310px]',
-                ],
-                [
-                    'id' => 'sales-order-status',
-                    'title' => 'Pesanan Penjualan',
-                    'type' => 'order-status',
-                    'primaryLabel' => 'Menunggu diproses',
-                    'primaryValue' => (string) $pendingSalesOrders,
-                    'statusTitle' => 'Pengiriman Hari Ini dan Terlewat',
-                    'segments' => [
-                        [
-                            'label' => 'Hari Ini',
-                            'value' => $totalSalesOrders . ' Pesanan',
-                            'numericValue' => $totalSalesOrders,
-                            'color' => '#ffd15d',
-                        ],
-                        [
-                            'label' => 'Terlewat',
-                            'value' => $pendingSalesOrders . ' Pesanan',
-                            'numericValue' => $pendingSalesOrders,
-                            'color' => '#ff4a17',
-                        ],
-                    ],
                     'heightClass' => 'min-h-[310px]',
                 ],
             ],
