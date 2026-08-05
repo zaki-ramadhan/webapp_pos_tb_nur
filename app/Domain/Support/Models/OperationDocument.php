@@ -23,7 +23,6 @@ class OperationDocument extends DomainModel
     protected $fillable = [
         'document_type',
         'branch_id',
-        'department_id',
         'warehouse_id',
         'counterpart_warehouse_id',
         'customer_id',
@@ -31,21 +30,15 @@ class OperationDocument extends DomainModel
         'currency_id',
         'primary_account_id',
         'secondary_account_id',
-        'tax_id',
         'related_document_id',
         'responsible_user_id',
         'document_number',
-        'external_number',
         'reference_number',
-        'numbering_type',
         'status',
-        'process_type',
         'payment_method',
         'entry_date',
         'due_date',
-        'shipping_date',
         'check_date',
-        'effective_date',
         'is_closed',
         'subtotal',
         'discount_total',
@@ -53,17 +46,14 @@ class OperationDocument extends DomainModel
         'total_amount',
         'paid_amount',
         'outstanding_amount',
-        'flags',
         'metadata',
         'notes',
     ];
 
     protected array $searchable = [
         'document_number',
-        'external_number',
         'reference_number',
         'status',
-        'process_type',
         'payment_method',
         'notes',
     ];
@@ -73,9 +63,7 @@ class OperationDocument extends DomainModel
         return [
             'entry_date' => 'date',
             'due_date' => 'date',
-            'shipping_date' => 'date',
             'check_date' => 'date',
-            'effective_date' => 'date',
             'is_closed' => 'boolean',
             'subtotal' => 'decimal:2',
             'discount_total' => 'decimal:2',
@@ -83,7 +71,6 @@ class OperationDocument extends DomainModel
             'total_amount' => 'decimal:2',
             'paid_amount' => 'decimal:2',
             'outstanding_amount' => 'decimal:2',
-            'flags' => 'array',
             'metadata' => 'array',
         ];
     }

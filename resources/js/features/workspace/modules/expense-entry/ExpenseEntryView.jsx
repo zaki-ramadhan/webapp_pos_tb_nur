@@ -40,7 +40,7 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
             }, {}),
             table: {
                 loading,
-
+                error,
                 ...tableConfig,
                 rows: mappedRows,
                 filters: buildExpenseEntryFilters(tableConfig.filters, mappedRows),
@@ -55,7 +55,7 @@ export default function ExpenseEntryView({ page, mode, activeLevel2Tab, level2Ta
                     onPageChange: setPage,
                     onPerPageChange: setPerPage,
                 },
-                emptyLabel: error || tableConfig.emptyLabel,
+                emptyLabel: loading ? 'Memuat data...' : (error || tableConfig.emptyLabel || 'Tidak ada data'),
                 refreshLabel: tableConfig.refreshLabel || 'Muat ulang',
                 onRefresh: reload,
             },

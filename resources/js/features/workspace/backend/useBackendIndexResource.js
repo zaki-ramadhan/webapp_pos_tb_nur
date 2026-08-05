@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import {
     extractBackendRows,
@@ -80,10 +81,22 @@ export default function useBackendIndexResource({
     enabled = true,
     initialPerPage = 25,
 }) {
+    const inertiaPage = usePage();
+    const authUser = inertiaPage?.props?.auth?.user ?? null;
+    const isSuperAdmin = Boolean(authUser?.isSuperAdmin || authUser?.role === 'Super Admin' || authUser?.role === 'super_admin');
+
+    const resourceAbility = authUser?.abilities?.[resource] ?? null;
+    const isForbiddenInstantly = Boolean(
+        enabled &&
+        resource &&
+        !isSuperAdmin &&
+        (resourceAbility === null || resourceAbility?.view === false)
+    );
+
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(initialPerPage);
     const [loading, setLoading] = useState(() => {
-        if (!enabled || !resource) return false;
+        if (!enabled || !resource || isForbiddenInstantly) return false;
         const initialFilters = {
             ...sanitizeFilters(filters),
             page: 1,
@@ -93,7 +106,7 @@ export default function useBackendIndexResource({
         const cached = globalCache.get(key);
         return !cached;
     });
-    const [error, setError] = useState('');
+    const [error, setError] = useState(() => isForbiddenInstantly ? 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.' : '');
     const [reloadVersion, setReloadVersion] = useState(0);
     const [revalidateVersion, setRevalidateVersion] = useState(0);
     const [payload, setPayload] = useState(null);
@@ -135,7 +148,7 @@ export default function useBackendIndexResource({
     }, [serializedFilters]);
 
     useEffect(() => {
-        if (!enabled || !resource) {
+        if (!enabled || !resource || isForbiddenInstantly) {
             return undefined;
         }
 
@@ -230,8 +243,8 @@ export default function useBackendIndexResource({
         });
     }, [enabled, resource]);
 
-    const rows = useMemo(() => extractBackendRows(payload), [payload]);
-    const total = useMemo(() => extractBackendTotal(payload), [payload]);
+    const rows = useMemo(() => isForbiddenInstantly ? [] : extractBackendRows(payload), [payload, isForbiddenInstantly]);
+    const total = useMemo(() => isForbiddenInstantly ? 0 : extractBackendTotal(payload), [payload, isForbiddenInstantly]);
 
     return {
         payload,

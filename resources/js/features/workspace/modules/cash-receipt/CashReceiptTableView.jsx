@@ -61,6 +61,7 @@ export default function CashReceiptTableView({
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 {...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField)}
+                filters={null}
                 refreshButton={{
                     ...cashReceiptToolbarConfig(config, onCreate, keyword, setKeyword, filters, setFilters, SelectField).refreshButton,
                     label: config.table?.refreshLabel || 'Muat ulang',

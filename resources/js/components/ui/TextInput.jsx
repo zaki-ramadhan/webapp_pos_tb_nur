@@ -27,6 +27,7 @@ export default function TextInput({
     defaultValue,
     clearable = true,
     onClear = null,
+    loading,
     ...props
 }) {
     const state = useTextInputState({

@@ -94,8 +94,9 @@ export default function EmployeeView({
                     .filter((filter) => !(filter.id === 'department' && isWorkspacePageInactive('department'))),
                 pageValue: employeeResource.total.toLocaleString('id-ID'),
                 loading: employeeResource.loading,
+                error: employeeResource.error,
                 refreshLabel: page.table?.refreshLabel || 'Muat ulang',
-                emptyLabel: employeeResource.error || page.table?.emptyLabel || 'Tidak ada data',
+                emptyLabel: employeeResource.loading ? 'Memuat data...' : (employeeResource.error || page.table?.emptyLabel || 'Tidak ada data'),
                 onRefresh: employeeResource.reload,
                 pagination: {
                     page: employeeResource.page,

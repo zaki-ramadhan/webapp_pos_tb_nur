@@ -274,6 +274,21 @@ class InventoryInquiryQueryService
         $productFilter = filled($filters['product_id'] ?? null) ? (int) $filters['product_id'] : null;
         $stock = collect();
 
+        // 1. Initial Stock Batches
+        $batches = \Illuminate\Support\Facades\DB::table('inventory_batches')
+            ->whereDate('entry_date', '<=', $asOfDate->toDateString())
+            ->when($productFilter !== null, fn ($q) => $q->where('product_id', $productFilter))
+            ->when($warehouseFilter !== null, fn ($q) => $q->where('warehouse_id', $warehouseFilter))
+            ->get();
+
+        foreach ($batches as $batch) {
+            $productId = (int) $batch->product_id;
+            $warehouseId = (int) $batch->warehouse_id;
+            $key = sprintf('%d:%d', $productId, $warehouseId);
+            $stock[$key] = (float) ($stock[$key] ?? 0) + (float) $batch->qty_received;
+        }
+
+        // 2. Inventory Documents
         $inventoryDocuments = InventoryDocument::query()
             ->with(['lines'])
             ->whereDate('document_date', '<=', $asOfDate->toDateString())
@@ -299,10 +314,11 @@ class InventoryInquiryQueryService
             }
         }
 
+        // 3. Operation Documents (Purchases, Sales, Transfers, Adjustments, Returns)
         $operationDocuments = OperationDocument::query()
             ->with(['lines'])
             ->whereDate('entry_date', '<=', $asOfDate->toDateString())
-            ->whereIn('document_type', ['goods_receipt', 'sales_delivery', 'sales_return', 'purchase_return', 'inventory_adjustment'])
+            ->whereIn('document_type', ['goods_receipt', 'purchase_invoice', 'sales_delivery', 'sales_invoice', 'sales_return', 'purchase_return', 'inventory_adjustment', 'stock_transfer'])
             ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
             ->get();
 
@@ -311,17 +327,34 @@ class InventoryInquiryQueryService
                 $productId = $line->product_id ? (int) $line->product_id : null;
                 $warehouseId = $line->warehouse_id ? (int) $line->warehouse_id : ($document->warehouse_id ? (int) $document->warehouse_id : null);
 
-                if ($productId === null || $warehouseId === null) {
+                if ($productId === null) {
                     continue;
                 }
 
-                if (($productFilter !== null && $productId !== $productFilter) || ($warehouseFilter !== null && $warehouseId !== $warehouseFilter)) {
+                if ($productFilter !== null && $productId !== $productFilter) {
                     continue;
                 }
 
                 $quantity = (float) ($line->quantity ?? 0);
 
-                if ($document->document_type === 'sales_delivery' || $document->document_type === 'purchase_return') {
+                if ($document->document_type === 'stock_transfer') {
+                    $counterpartId = $document->counterpart_warehouse_id ? (int) $document->counterpart_warehouse_id : null;
+                    if ($warehouseId !== null && ($warehouseFilter === null || $warehouseId === $warehouseFilter)) {
+                        $key = sprintf('%d:%d', $productId, $warehouseId);
+                        $stock[$key] = (float) ($stock[$key] ?? 0) - $quantity;
+                    }
+                    if ($counterpartId !== null && ($warehouseFilter === null || $counterpartId === $warehouseFilter)) {
+                        $key = sprintf('%d:%d', $productId, $counterpartId);
+                        $stock[$key] = (float) ($stock[$key] ?? 0) + $quantity;
+                    }
+                    continue;
+                }
+
+                if ($warehouseId === null || ($warehouseFilter !== null && $warehouseId !== $warehouseFilter)) {
+                    continue;
+                }
+
+                if (in_array($document->document_type, ['sales_delivery', 'sales_invoice', 'purchase_return'], true)) {
                     $quantity *= -1;
                 }
 

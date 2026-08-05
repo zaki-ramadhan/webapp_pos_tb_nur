@@ -125,70 +125,78 @@ export default function InquiryWorkspaceView({
         });
     }, [config.table.columns, isAlternativeView]);
 
+    const isAccessRestricted = Boolean(
+        (error && String(error).toLowerCase().includes('hak akses'))
+    );
+
+    const restrictionText = 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.';
+
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
-                    {searchControl ? (
-                        <div className={searchControl.wrapperClassName ?? ''}>
-                            <InquiryControl control={searchControl} value={values[searchControl.id] ?? ''} onChange={handleChange} />
-                        </div>
-                    ) : null}
+            <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
+                        {searchControl ? (
+                            <div className={searchControl.wrapperClassName ?? ''}>
+                                <InquiryControl control={searchControl} value={values[searchControl.id] ?? ''} onChange={handleChange} />
+                            </div>
+                        ) : null}
 
-                    {dateControls.length ? (
-                        <div className="flex items-center gap-1 shrink-0">
-                            {dateControls.map((control, index) => (
-                                <div key={control.id ?? `control-date-${index}`} className={control.type === 'label' ? 'px-0.5 text-center text-sm text-text-darkest shrink-0' : 'w-[140px] sm:w-[155px] shrink-0'}>
-                                    <InquiryControl control={control} value={control.id ? values[control.id] ?? '' : ''} onChange={handleChange} />
-                                </div>
-                            ))}
-                        </div>
-                    ) : null}
+                        {dateControls.length ? (
+                            <div className="flex items-center gap-1 shrink-0">
+                                {dateControls.map((control, index) => (
+                                    <div key={control.id ?? `control-date-${index}`} className={control.type === 'label' ? 'px-0.5 text-center text-sm text-text-darkest shrink-0' : 'w-[140px] sm:w-[155px] shrink-0'}>
+                                        <InquiryControl control={control} value={control.id ? values[control.id] ?? '' : ''} onChange={handleChange} />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : null}
 
-                    {reloadAction ? (
-                        <RefreshButton
-                            label="Muat ulang"
-                            onClick={onRefresh}
-                            loading={loading}
-                        />
-                    ) : null}
+                        {reloadAction ? (
+                            <RefreshButton
+                                label="Muat ulang"
+                                onClick={onRefresh}
+                                loading={loading}
+                            />
+                        ) : null}
 
-                    {exportAction ? (
-                        <TransactionExportExcelButton
-                            columns={config.table.columns}
-                            rows={filteredRows}
-                            filename={config.label || 'histori-bank'}
-                            label={exportAction.label}
-                        />
-                    ) : null}
-                </div>
+                        {exportAction ? (
+                            <TransactionExportExcelButton
+                                columns={config.table.columns}
+                                rows={filteredRows}
+                                filename={config.label || 'histori-bank'}
+                                label={exportAction.label}
+                            />
+                        ) : null}
+                    </div>
 
-                {otherActions.length ? (
-                    <div className="flex items-center gap-2">
-                        {otherActions.map((action) => {
-                            if (action.id === 'switch-view') {
+                    {otherActions.length ? (
+                        <div className="flex items-center gap-2">
+                            {otherActions.map((action) => {
+                                if (action.id === 'switch-view') {
+                                    return (
+                                        <TransactionSwitchViewButton
+                                            key={action.id}
+                                            active={isAlternativeView}
+                                            onClick={() => setIsAlternativeView((prev) => !prev)}
+                                            label={action.label}
+                                        />
+                                    );
+                                }
                                 return (
-                                    <TransactionSwitchViewButton
+                                    <InquiryActionButton
                                         key={action.id}
-                                        active={isAlternativeView}
-                                        onClick={() => setIsAlternativeView((prev) => !prev)}
-                                        label={action.label}
+                                        action={action}
+                                        onClick={undefined}
                                     />
                                 );
-                            }
-                            return (
-                                <InquiryActionButton
-                                    key={action.id}
-                                    action={action}
-                                    onClick={undefined}
-                                />
-                            );
-                        })}
-                    </div>
-                ) : null}
-            </div>
+                            })}
+                        </div>
+                    ) : null}
+                </div>
+            </fieldset>
 
-            {error ? (
+            {error && !isAccessRestricted ? (
                 <div className="rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850 mt-3">
                     {error}
                 </div>
@@ -203,10 +211,10 @@ export default function InquiryWorkspaceView({
                     <div className="min-h-0 overflow-x-auto">
                         {activePageId === 'bank-history' || activePageId === 'account-history' ? (
                             <BankLedgerTable
-                                rows={rows ?? []}
+                                rows={isAccessRestricted ? [] : (rows ?? [])}
                                 loading={loading}
                                 startDate={values.startDate ?? ''}
-                                emptyLabel={config.table.emptyLabel}
+                                emptyLabel={isAccessRestricted ? restrictionText : config.table.emptyLabel}
                                 className={config.table.tableClassName ?? 'min-w-[1200px]'}
                             />
                         ) : (

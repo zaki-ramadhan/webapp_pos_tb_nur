@@ -1,6 +1,4 @@
-import { useMemo, useState } from 'react';
 import ModuleTableTemplate from '@/components/ui/ModuleTableTemplate';
-import SelectField from '@/components/ui/SelectField';
 
 const SALARY_COLUMNS = [
     { id: 'name', label: 'Nama', align: 'left' },
@@ -11,70 +9,21 @@ const SALARY_COLUMNS = [
 export default function SalaryAllowanceTableView({
     config,
     rows,
-    filters,
-    setFilters,
     onCreate,
     onOpenDetail,
 }) {
-    const filteredRows = useMemo(() => {
-        return rows.filter((row) => {
-            if (filters.type !== 'all') {
-                const typeCategory = row.type === 'Gaji Pokok / Upah' ? 'salary' : 'allowance';
-
-                if (typeCategory !== filters.type) {
-                     return false;
-                }
-            }
-
-            if (filters.active !== 'all') {
-                const activeValue = row.inactive ? 'inactive' : 'active';
-
-                if (activeValue !== filters.active) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-    }, [filters.inactive, filters.type, rows]);
-
     return (
         <ModuleTableTemplate
             table={{
                 ...config.table,
                 columns: SALARY_COLUMNS,
-                rows: filteredRows,
+                rows,
             }}
             resourceName="salary-allowances"
             exportFilename="gaji-tunjangan"
             exportTitle="Laporan Gaji dan Tunjangan"
             onCreate={onCreate}
             onOpenDetail={onOpenDetail}
-            customFiltersSlot={
-                <div className="flex flex-wrap items-center gap-3">
-                    {config.table.filterOptions.map((filter) => (
-                        <SelectField
-                            key={filter.id}
-                            value={filters[filter.id]}
-                            onChange={(event) =>
-                                setFilters((current) => ({
-                                    ...current,
-                                    [filter.id]: event.target.value,
-                                }))
-                            }
-                            containerClassName="w-auto"
-                            className="h-[34px] rounded-[4px] border-ui-border"
-                            selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
-                        >
-                            {filter.options.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </SelectField>
-                    ))}
-                </div>
-            }
         />
     );
 }

@@ -73,7 +73,7 @@ export default function CashPaymentTableView({
             <TableToolbar
                 size="compact"
                 className="space-y-3"
-                filters={config.table.filters?.length ? <PaymentTableFilterBar table={config.table} filters={filters} setFilters={setFilters} /> : null}
+                filters={null}
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,

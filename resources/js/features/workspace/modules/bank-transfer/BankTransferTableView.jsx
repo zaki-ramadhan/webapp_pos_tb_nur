@@ -79,7 +79,7 @@ export default function BankTransferTableView({ config, onCreate, onOpenDetail }
             <TableToolbar
                 size="compact"
                 className="space-y-3"
-                filters={config.table.filters?.length ? <TransferTableFilterBar table={config.table} filters={filters} setFilters={setFilters} /> : null}
+                filters={null}
                 createButton={{ label: config.table.createLabel, onClick: onCreate, icon: <PlusIcon className="h-6 w-6" /> }}
                 refreshButton={{ label: config.table.refreshLabel, icon: <RefreshIcon className="h-4.5 w-4.5" />, onClick: config.table.onRefresh, loading: config.table.loading }}
                 importButton={false}

@@ -41,8 +41,8 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
         return Object.values(mergedMap);
     }, [mappedBackendRows, optimisticRows]);
 
-    const [isNewTabOpen, setIsNewTabOpen] = useState(true);
-    const [activeInnerTabId, setActiveInnerTabId] = useState('new');
+    const [isNewTabOpen, setIsNewTabOpen] = useState(false);
+    const [activeInnerTabId, setActiveInnerTabId] = useState('view');
     const [openDetailTabIds, setOpenDetailTabIds] = useState([]);
     const [filters, setFilters] = useState(() =>
         config.table.filterOptions.reduce((result, filter) => {
@@ -110,7 +110,7 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
                 ...tableProps,
                 rows: resolvedRows,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
-                emptyLabel: error || 'Tidak ada data',
+                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
             },
         }),
         [config, error, tableProps, resolvedRows],
@@ -160,8 +160,6 @@ export default function SalaryAllowanceView({ page, activeLevel2Tab }) {
                     <SalaryAllowanceTableView
                         config={resolvedConfig}
                         rows={resolvedRows}
-                        filters={filters}
-                        setFilters={setFilters}
                         onCreate={handleOpenNewTab}
                         onOpenDetail={handleOpenDetail}
                         loading={loading}

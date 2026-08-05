@@ -52,34 +52,7 @@ function PayrollTableToolbar({ table, filters, setFilters, keyword, setKeyword, 
             className="space-y-3"
             importButton={false}
             exportConfig={false}
-            filters={
-                table.filters?.length ? (
-                    <div className="flex flex-wrap items-center gap-2">
-                        {table.filters.map((filter) => (
-                            <SelectField
-                                key={filter.id}
-                                value={filters[filter.id]}
-                                onChange={(event) =>
-                                    setFilters((current) => ({
-                                        ...current,
-                                        [filter.id]: event.target.value,
-                                    }))
-                                }
-                                containerClassName="w-auto"
-                                className="h-[34px] rounded-[4px] border-ui-border"
-                                selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
-                                iconClassName="mr-2 text-filter-icon"
-                            >
-                                {filter.options.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </SelectField>
-                        ))}
-                    </div>
-                ) : null
-            }
+            filters={null}
         />
     );
 }
@@ -140,7 +113,7 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
             <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
                 <PayrollTableToolbar
                     table={config.table}
-                    filters={filters}
+                    filters={null}
                     setFilters={setFilters}
                     keyword={keyword}
                     setKeyword={setKeyword}
@@ -151,7 +124,7 @@ export default function PayrollEntryTableView({ config, onCreate, onOpenDetail }
                     <TransactionDataTable
                         columns={config.table.columns}
                         rows={sortedRows}
-                        emptyLabel={config.table.emptyLabel}
+                        emptyLabel={config.table.loading ? 'Memuat data...' : (config.table.emptyLabel || 'Tidak ada data')}
                         minWidthClassName="min-w-[1180px]"
                         onRowClick={(row) =>
                             onOpenDetail?.({

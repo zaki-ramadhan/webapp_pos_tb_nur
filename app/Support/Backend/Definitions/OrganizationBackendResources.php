@@ -93,10 +93,9 @@ class OrganizationBackendResources
                 label: 'Employees',
                 searchColumns: ['employee_code', 'full_name', 'position', 'email', 'mobile_phone'],
                 modelClass: Employee::class,
-                with: ['branch', 'department', 'bankAccounts', 'user', 'attachments'],
+                with: ['branch', 'bankAccounts', 'user', 'attachments'],
                 storeRules: [
                     'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-                    'department_id' => ['nullable', 'integer', 'exists:departments,id'],
                     'employee_code' => ['required', 'string', 'max:50', 'unique:employees,employee_code'],
                     'employee_id_type' => ['nullable', 'string', 'max:50'],
                     'salutation' => ['nullable', 'string', 'max:20'],
@@ -141,7 +140,6 @@ class OrganizationBackendResources
                 ],
                 updateRules: fn (Model $record) => [
                     'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-                    'department_id' => ['nullable', 'integer', 'exists:departments,id'],
                     'employee_code' => ['required', 'string', 'max:50', Rule::unique('employees', 'employee_code')->ignore($record)],
                     'employee_id_type' => ['nullable', 'string', 'max:50'],
                     'salutation' => ['nullable', 'string', 'max:20'],

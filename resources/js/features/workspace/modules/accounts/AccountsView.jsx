@@ -50,6 +50,8 @@ export default function AccountsView({ page, mode, activeLevel2Tab, level2Tabs =
             table: {
                 ...baseConfig.table,
                 ...tableProps,
+                error,
+                emptyLabel: error || baseConfig.table?.emptyLabel || 'Tidak ada data',
                 rows: mappedRows,
                 filters: updatedFilters,
                 pageValue: tableProps.total.toLocaleString('id-ID'),

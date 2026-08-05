@@ -21,7 +21,6 @@ class OperationDocumentLine extends DomainModel
         'account_id',
         'unit_id',
         'warehouse_id',
-        'department_id',
         'customer_id',
         'supplier_id',
         'description',

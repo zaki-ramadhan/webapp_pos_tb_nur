@@ -480,7 +480,6 @@ final class PosBlueprint
             'sales-receipt',
             'sales-return',
             'inventory-adjustment',
-            'sales-checkin',
             'purchase-invoice',
             'purchase-payment',
             'purchase-return',

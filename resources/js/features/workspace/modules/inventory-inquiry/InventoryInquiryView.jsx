@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import {
     DataTable,
@@ -98,23 +99,49 @@ export default function InventoryInquiryView({ config, pageId }) {
     const [products, setProducts] = useState([]);
     const [loadingLookups, setLoadingLookups] = useState(false);
 
+    const pageProps = usePage()?.props ?? {};
+    const authUser = pageProps.auth?.user ?? null;
+    const isSuperAdmin = Boolean(authUser?.isSuperAdmin || authUser?.role === 'Super Admin' || authUser?.role === 'super_admin');
+    const resourceAbility = authUser?.abilities?.[resource] ?? null;
+
+    const isAccessRestricted = Boolean(
+        (error && String(error).toLowerCase().includes('hak akses')) ||
+        (!isSuperAdmin && (resourceAbility === null || resourceAbility?.view === false))
+    );
+
     useEffect(() => {
+        if (isAccessRestricted || !authUser || (!isSuperAdmin && (resourceAbility === null || resourceAbility?.view === false))) {
+            setLoadingLookups(false);
+            return undefined;
+        }
+
         let ignore = false;
         async function fetchLookups() {
             setLoadingLookups(true);
             try {
-                const [supplierData, warehouseData, productData] = await Promise.all([
-                    listBackendResource('suppliers', { per_page: 250 }),
-                    listBackendResource('warehouses', { per_page: 250 }),
-                    listBackendResource('products', { per_page: 250 }),
-                ]);
+                const supplierAbility = authUser?.abilities?.['suppliers']?.view !== false;
+                const warehouseAbility = authUser?.abilities?.['warehouses']?.view !== false;
+                const productAbility = authUser?.abilities?.['products']?.view !== false;
+
+                const lookupPromises = [];
+                if (isSuperAdmin || supplierAbility) lookupPromises.push(listBackendResource('suppliers', { per_page: 250 }).catch(() => null));
+                else lookupPromises.push(Promise.resolve(null));
+
+                if (isSuperAdmin || warehouseAbility) lookupPromises.push(listBackendResource('warehouses', { per_page: 250 }).catch(() => null));
+                else lookupPromises.push(Promise.resolve(null));
+
+                if (isSuperAdmin || productAbility) lookupPromises.push(listBackendResource('products', { per_page: 250 }).catch(() => null));
+                else lookupPromises.push(Promise.resolve(null));
+
+                const [supplierData, warehouseData, productData] = await Promise.all(lookupPromises);
+
                 if (!ignore) {
-                    setSuppliers(extractBackendRows(supplierData));
-                    setWarehouses(extractBackendRows(warehouseData));
-                    setProducts(extractBackendRows(productData));
+                    if (supplierData) setSuppliers(extractBackendRows(supplierData));
+                    if (warehouseData) setWarehouses(extractBackendRows(warehouseData));
+                    if (productData) setProducts(extractBackendRows(productData));
                 }
             } catch (err) {
-                console.error(err);
+                // Ignore lookup errors silently
             } finally {
                 if (!ignore) {
                     setLoadingLookups(false);
@@ -125,7 +152,7 @@ export default function InventoryInquiryView({ config, pageId }) {
         return () => {
             ignore = true;
         };
-    }, []);
+    }, [isAccessRestricted, authUser, isSuperAdmin, resource, resourceAbility]);
 
     const filteredRows = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLowerCase();
@@ -193,15 +220,17 @@ export default function InventoryInquiryView({ config, pageId }) {
         setFilters(buildInventoryFilters(pageId, nextValues));
     }
 
+
+
     useEffect(() => {
-        if (error) {
+        if (error && !isAccessRestricted) {
             showSystemErrorModal({
                 title: 'Terjadi Permasalahan pada Pemrosesan',
                 description: 'Silakan perbaiki permasalahan berikut ini:',
                 message: typeof error === 'string' ? error : (error.message || 'Terjadi kesalahan saat memuat data.'),
             });
         }
-    }, [error]);
+    }, [error, isAccessRestricted]);
 
     function handleButtonClick(controlId) {
         if (controlId === 'order' || controlId === 'request') {
@@ -312,49 +341,51 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     return (
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
-                    {resolvedControls.map((control) => (
-                        <div key={control.id} className={control.wrapperClassName ?? ''}>
-                            <InquiryControl
-                                control={control}
-                                value={values[control.id] ?? ''}
-                                onChange={handleChange}
-                                onRefresh={reload}
-                                exportConfig={{
-                                    rows: sortedRows,
-                                    columns: cleanedColumns,
-                                    filename: 'barang-per-gudang'
-                                }}
-                                suppliers={suppliers}
-                                warehouses={warehouses}
-                                products={products}
-                                onLookupSelect={handleLookupSelect}
-                                onLookupClear={handleLookupClear}
-                                searching={loadingLookups}
-                                loading={loading}
-                                onButtonClick={handleButtonClick}
+            <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+                        {resolvedControls.map((control) => (
+                            <div key={control.id} className={control.wrapperClassName ?? ''}>
+                                <InquiryControl
+                                    control={control}
+                                    value={values[control.id] ?? ''}
+                                    onChange={handleChange}
+                                    onRefresh={reload}
+                                    exportConfig={{
+                                        rows: sortedRows,
+                                        columns: cleanedColumns,
+                                        filename: 'barang-per-gudang'
+                                    }}
+                                    suppliers={suppliers}
+                                    warehouses={warehouses}
+                                    products={products}
+                                    onLookupSelect={handleLookupSelect}
+                                    onLookupClear={handleLookupClear}
+                                    searching={loadingLookups}
+                                    loading={loading}
+                                    onButtonClick={handleButtonClick}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    {config.search ? (
+                        <div className="w-full lg:w-auto">
+                            <TextInput
+                                value={keyword}
+                                onChange={(event) => setKeyword(event.target.value)}
+                                placeholder={config.search.placeholder}
+                                trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
+                                className={`h-[40px] rounded-[4px] border-ui-border ${config.search.className ?? ''}`.trim()}
+                                inputClassName="text-xs sm:text-sm text-brand-dark"
+                                trailingClassName="px-3"
                             />
                         </div>
-                    ))}
+                    ) : null}
                 </div>
+            </fieldset>
 
-                {config.search ? (
-                    <div className="w-full lg:w-auto">
-                        <TextInput
-                            value={keyword}
-                            onChange={(event) => setKeyword(event.target.value)}
-                            placeholder={config.search.placeholder}
-                            trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
-                            className={`h-[40px] rounded-[4px] border-ui-border ${config.search.className ?? ''}`.trim()}
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
-                            trailingClassName="px-3"
-                        />
-                    </div>
-                ) : null}
-            </div>
-
-            {error ? (
+            {error && !isAccessRestricted ? (
                 <div className="mt-3 rounded-[6px] border border-danger-border bg-surface px-3 py-2 text-sm text-red-850">
                     {error}
                 </div>
@@ -442,7 +473,7 @@ export default function InventoryInquiryView({ config, pageId }) {
                                     colSpan={dataColumns.length + 1}
                                     className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
                                 >
-                                    {loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
+                                    {loading ? 'Memuat data...' : (error || config.table.emptyLabel || 'Tidak ada data')}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

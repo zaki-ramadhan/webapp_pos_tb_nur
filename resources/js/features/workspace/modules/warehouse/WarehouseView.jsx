@@ -97,7 +97,8 @@ export default function WarehouseView({
             ...baseConfig,
             table: {
                 loading,
-
+                error,
+                emptyLabel: error || baseConfig.table?.emptyLabel || 'Tidak ada data',
                 ...baseConfig.table,
                 columns: (() => {
                     const baseCols = baseConfig.table?.columns ?? [];

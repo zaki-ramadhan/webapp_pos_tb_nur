@@ -119,7 +119,6 @@ class InventoryBackendResources
     {
         return [
             'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-            'department_id' => ['nullable', 'integer', 'exists:departments,id'],
             'warehouse_id' => ['required', 'integer', 'exists:warehouses,id'],
             'product_category_id' => ['nullable', 'integer', 'exists:product_categories,id'],
             'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
@@ -194,7 +193,6 @@ class InventoryBackendResources
             "{$prefix}.*.id" => ['sometimes', 'integer', 'exists:inventory_document_lines,id'],
             "{$prefix}.*.product_id" => ['nullable', 'integer', 'exists:products,id'],
             "{$prefix}.*.unit_id" => ['nullable', 'integer', 'exists:units,id'],
-            "{$prefix}.*.department_id" => ['nullable', 'integer', 'exists:departments,id'],
             "{$prefix}.*.item_name" => ['nullable', 'string', 'max:160'],
             "{$prefix}.*.item_code" => ['nullable', 'string', 'max:80'],
             "{$prefix}.*.quantity" => $allowQuantity ? ["required_with:{$prefix}", 'numeric', 'gt:0'] : ['prohibited'],

@@ -55,38 +55,7 @@ export default function AccountsTableView({ config, onCreate, onOpenDetail, load
         <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
             <TableToolbar
                 size="compact"
-                filters={
-                    config.table.filters?.length ? (
-                        <div className="flex flex-wrap items-center gap-2">
-                            {config.table.filters.map((filter) => (
-                                <SelectField
-                                    key={filter.id}
-                                    value={filters[filter.id]}
-                                    onChange={(event) =>
-                                        setFilters((current) => ({
-                                            ...current,
-                                            [filter.id]: event.target.value,
-                                        }))
-                                    }
-                                    containerClassName="w-auto shrink-0"
-                                    className="h-[34px] min-w-[128px] rounded-[4px] border-ui-border"
-                                    selectClassName="px-3 text-[11px] sm:text-xs text-filter-select-text"
-                                    iconClassName="mr-2 text-filter-icon"
-                                >
-                                    {filter.options.map((option, index) => {
-                                        const val = typeof option === 'object' && option !== null ? (option.value ?? option.id ?? '') : option;
-                                        const lbl = typeof option === 'object' && option !== null ? (option.label ?? option.name ?? val) : option;
-                                        return (
-                                            <option key={`${filter.id}-${val}-${index}`} value={val}>
-                                                {lbl}
-                                            </option>
-                                        );
-                                    })}
-                                </SelectField>
-                            ))}
-                        </div>
-                    ) : null
-                }
+                filters={null}
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,

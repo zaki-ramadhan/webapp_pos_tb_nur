@@ -15,15 +15,6 @@ class ProductCategory extends DomainModel
         'slug',
         'is_default',
         'is_active',
-        'inventory_account_id',
-        'expense_account_id',
-        'sales_account_id',
-        'sales_return_account_id',
-        'sales_discount_account_id',
-        'goods_in_transit_account_id',
-        'cost_of_goods_sold_account_id',
-        'purchase_return_account_id',
-        'unbilled_purchase_account_id',
     ];
 
     protected array $searchable = ['code', 'name', 'slug'];

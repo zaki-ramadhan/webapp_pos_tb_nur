@@ -60,7 +60,8 @@ export default function ItemsServicesView({
             ...baseConfig,
             table: {
                 loading,
-
+                error,
+                emptyLabel: error || baseConfig.table?.emptyLabel || 'Tidak ada data',
                 ...baseConfig.table,
                 rows: mapped,
                 filters: updatedFilters,

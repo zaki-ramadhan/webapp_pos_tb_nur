@@ -42,7 +42,7 @@ export default function PayrollEntryView({ page, mode, activeLevel2Tab, level2Ta
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
                 refreshLabel: tableConfig.refreshLabel || 'Muat ulang',
-                emptyLabel: error || tableConfig.emptyLabel || 'Tidak ada data',
+                emptyLabel: loading ? 'Memuat data...' : (error || tableConfig.emptyLabel || 'Tidak ada data'),
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

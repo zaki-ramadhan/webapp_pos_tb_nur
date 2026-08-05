@@ -70,8 +70,9 @@ export default function BankTransferView({
                 filters: buildBankTransferFilters(tableConfigBase.filters ?? [], mappedRows),
                 pageValue: total.toLocaleString('id-ID'),
                 loading,
+                error,
                 refreshLabel: tableConfigBase.refreshLabel || 'Muat ulang',
-                emptyLabel: error || tableConfigBase.emptyLabel || 'Tidak ada data',
+                emptyLabel: loading ? 'Memuat data...' : (error || tableConfigBase.emptyLabel || 'Tidak ada data'),
                 onRefresh: reload,
                 pagination: {
                     page: currentPage,

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 
 import TextInput from '@/components/ui/TextInput';
 import Tooltip from '@/components/ui/Tooltip';
@@ -270,88 +271,115 @@ export default function TableToolbar({
         ? <LoadingIcon className={`${sizeStyle.searchIcon} animate-spin`.trim()} />
         : (search?.trailing ?? <SearchIcon className={sizeStyle.searchIcon} />);
 
+    const inertiaPage = usePage();
+    const authUser = inertiaPage?.props?.auth?.user ?? null;
+    const isSuperAdmin = Boolean(authUser?.isSuperAdmin || authUser?.role === 'Super Admin' || authUser?.role === 'super_admin');
+    const targetResource = resolvedResourceName || resourceName;
+    const resourceAbility = targetResource ? (authUser?.abilities?.[targetResource] ?? null) : null;
+
+    const isViewForbidden = Boolean(
+        !isSuperAdmin &&
+        resourceAbility &&
+        resourceAbility.view === false
+    );
+
+    const isCreateForbidden = Boolean(
+        !isSuperAdmin &&
+        (
+            createButton?.disabled ||
+            (resourceAbility && (resourceAbility.create === false || resourceAbility.view === false))
+        )
+    );
+
     const cleanedRightControls = cleanRightControls(rightControls);
 
     return (
-        <div className={className}>
-            <div className={`flex flex-col justify-between gap-3 md:flex-row md:items-center ${bottomRowClassName}`.trim()}>
-                <div className="flex flex-wrap items-center gap-2">
-                    {createButton ? (
-                        <Tooltip content="Tambah" portal>
-                            <button
-                                type="button"
-                                onClick={createButton.onClick}
-                                title={createButton.label}
-                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-brand-blue-darker ${size === 'compact' ? 'h-[40px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
+        <fieldset disabled={isViewForbidden} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
+            <div className={className}>
+                <div className={`flex flex-col justify-between gap-3 md:flex-row md:items-center ${bottomRowClassName}`.trim()}>
+                    <div className="flex flex-wrap items-center gap-2">
+                        {createButton && !isCreateForbidden ? (
+                            <Tooltip content={createButton.label || "Tambah"} portal>
+                                <button
+                                    type="button"
+                                    onClick={createButton.onClick}
+                                    title={createButton.label}
+                                    className={`inline-flex shrink-0 items-center justify-center rounded-[4px] bg-brand-blue text-white shadow-sm transition hover:bg-brand-blue-darker ${size === 'compact' ? 'h-[40px] w-[86px]' : 'h-[40px] w-[100px]'}`.trim()}
+                                >
+                                    <PlusIcon className={sizeStyle.createIcon} />
+                                </button>
+                            </Tooltip>
+                        ) : null}
+
+                        {refreshButton ? (
+                            <RefreshButton
+                                label={refreshButton.label ?? 'Muat ulang'}
+                                onClick={isViewForbidden ? undefined : refreshButton.onClick}
+                                loading={Boolean(refreshButton.loading || searchLoading)}
+                                disabled={isViewForbidden}
+                                className={sizeStyle.utilityButton}
+                            />
+                        ) : null}
+
+                        {leftControls}
+                        {filters}
+                    </div>
+
+                    <div className={`flex flex-wrap items-center gap-2 md:justify-end ${rightControlsClassName}`.trim()}>
+                        {!isViewForbidden && resolvedImportButton ? (
+                            <ToolbarImportButton
+                                importConfig={resolvedImportButton}
+                                sizeStyle={sizeStyle}
+                                resource={resolvedResourceName}
+                                columns={resolvedColumns}
+                            />
+                        ) : null}
+
+                        {!isViewForbidden && resolvedExportConfig ? (
+                            <ToolbarExportSplitButton
+                                exportConfig={resolvedExportConfig}
+                                sizeStyle={sizeStyle}
+                                visibleColumnIds={columnSettings?.visibleIds ?? visibleColumnIds}
+                            />
+                        ) : null}
+
+                        {!isViewForbidden && resolvedPrintButton ? (
+                            <ToolbarIconButton
+                                label={resolvedRows.length === 0 ? 'Tidak ada data untuk dicetak' : (resolvedPrintButton.label ?? 'Cetak')}
+                                onClick={resolvedPrintButton.onClick}
+                                disabled={resolvedRows.length === 0}
+                                className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'} ${sizeStyle.utilityButton}`.trim()}
                             >
-                                <PlusIcon className={sizeStyle.createIcon} />
-                            </button>
-                        </Tooltip>
-                    ) : null}
+                                <PrintIcon className="h-4 w-4" />
+                            </ToolbarIconButton>
+                        ) : null}
 
-                    {refreshButton ? (
-                        <RefreshButton
-                            label={refreshButton.label ?? 'Muat ulang'}
-                            onClick={refreshButton.onClick}
-                            loading={searchLoading}
-                            className={sizeStyle.utilityButton}
-                        />
-                    ) : null}
+                        {!isViewForbidden && (resolvedColumnSettings || menuButton) ? (
+                            <ToolbarSettingsMenu
+                                columnSettings={resolvedColumnSettings}
+                                menuButton={menuButton}
+                                sizeStyle={sizeStyle}
+                            />
+                        ) : null}
 
-                    {leftControls}
-                </div>
+                        {!isViewForbidden && cleanedRightControls}
 
-                <div className={`flex flex-wrap items-center gap-2 md:justify-end ${rightControlsClassName}`.trim()}>
-                    {resolvedImportButton ? (
-                        <ToolbarImportButton
-                            importConfig={resolvedImportButton}
-                            sizeStyle={sizeStyle}
-                            resource={resolvedResourceName}
-                            columns={resolvedColumns}
-                        />
-                    ) : null}
-
-                    {resolvedExportConfig ? (
-                        <ToolbarExportSplitButton
-                            exportConfig={resolvedExportConfig}
-                            sizeStyle={sizeStyle}
-                            visibleColumnIds={columnSettings?.visibleIds ?? visibleColumnIds}
-                        />
-                    ) : null}
-
-                    {resolvedPrintButton ? (
-                        <ToolbarIconButton
-                            label={resolvedRows.length === 0 ? 'Tidak ada data untuk dicetak' : (resolvedPrintButton.label ?? 'Cetak')}
-                            onClick={resolvedPrintButton.onClick}
-                            disabled={resolvedRows.length === 0}
-                            className={`inline-flex shrink-0 items-center justify-center rounded-[4px] border border-brand-blue-border bg-white text-brand-blue transition ${resolvedRows.length === 0 ? 'opacity-50 cursor-not-allowed bg-tab-inactive-border-l border-gray-300 text-gray-400' : 'hover:bg-brand-blue-light'} ${sizeStyle.utilityButton}`.trim()}
-                        >
-                            <PrintIcon className="h-4 w-4" />
-                        </ToolbarIconButton>
-                    ) : null}
-
-                    {resolvedColumnSettings || menuButton ? (
-                        <ToolbarSettingsMenu
-                            columnSettings={resolvedColumnSettings}
-                            menuButton={menuButton}
-                            sizeStyle={sizeStyle}
-                        />
-                    ) : null}                    {cleanedRightControls}
-
-                    {search ? (
-                        <TextInput
-                            type="text"
-                            placeholder={searchPlaceholder}
-                            value={search.value}
-                            onChange={(event) => search.onChange?.(event)}
-                            onClear={() => search.onChange?.({ target: { value: '' } })}
-                            trailing={searchTrailing}
-                            containerClassName={search.widthClassName ?? 'w-full md:w-[220px] lg:w-[260px]'}
-                            className={sizeStyle.searchInput}
-                        />
-                    ) : null}
+                        {search ? (
+                            <TextInput
+                                type="text"
+                                placeholder={isViewForbidden ? 'Akses dibatasi' : searchPlaceholder}
+                                value={isViewForbidden ? '' : search.value}
+                                onChange={(event) => isViewForbidden ? undefined : search.onChange?.(event)}
+                                onClear={() => isViewForbidden ? undefined : search.onChange?.({ target: { value: '' } })}
+                                disabled={isViewForbidden}
+                                trailing={searchTrailing}
+                                containerClassName={search.widthClassName ?? 'w-full md:w-[220px] lg:w-[260px]'}
+                                className={sizeStyle.searchInput}
+                            />
+                        ) : null}
+                    </div>
                 </div>
             </div>
-        </div>
+        </fieldset>
     );
 }

@@ -92,35 +92,20 @@ export default function ModuleTableTemplate({
     }, [cleanedColumns, sortedRows, resourceName]);
 
     const filters = useMemo(() => {
-        if (customFiltersSlot) {
-            return customFiltersSlot;
-        }
-
-        if (table.filterOptions && table.filterOptions.length > 0) {
-            return (
-                <SelectField
-                    value={inactiveFilter}
-                    onChange={(event) => setInactiveFilter(event.target.value)}
-                    containerClassName="w-auto"
-                    className="h-[34px] min-w-[128px] rounded-sm border-ui-border"
-                    selectClassName="px-3 text-xs sm:text-sm text-filter-select-text"
-                    iconClassName="mr-2 text-filter-icon"
-                >
-                    {table.filterOptions.map((option, optionIndex) => {
-                        const val = typeof option === 'object' && option !== null ? (option.value ?? option.id ?? '') : option;
-                        const lbl = typeof option === 'object' && option !== null ? (option.label ?? option.name ?? val) : option;
-                        return (
-                            <option key={`${val}-${optionIndex}`} value={val}>
-                                {lbl}
-                            </option>
-                        );
-                    })}
-                </SelectField>
-            );
-        }
-
         return null;
-    }, [customFiltersSlot, table.filterOptions, inactiveFilter]);
+    }, []);
+
+    const isAccessRestricted = Boolean(
+        table.readOnly ||
+        (table.error && String(table.error).toLowerCase().includes('hak akses')) ||
+        (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses'))
+    );
+
+    const resolvedCreateButton = isAccessRestricted ? null : (onCreate ? {
+        label: table.createLabel,
+        onClick: onCreate,
+        icon: <PlusIcon className="h-6 w-6" />,
+    } : null);
 
     return (
         <div className="min-h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
@@ -128,11 +113,7 @@ export default function ModuleTableTemplate({
                 size="compact"
                 filters={filters}
                 leftControls={extraToolbarSlot}
-                createButton={onCreate ? {
-                    label: table.createLabel,
-                    onClick: onCreate,
-                    icon: <PlusIcon className="h-6 w-6" />,
-                } : null}
+                createButton={resolvedCreateButton}
                 refreshButton={disableRefresh ? null : {
                     label: table.refreshLabel,
                     onClick: table.onRefresh,
@@ -257,12 +238,15 @@ export default function ModuleTableTemplate({
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
                                         colSpan={visibleColumns.length + 1}
-                                        className="px-3 py-3 text-center text-base text-text-workspace-dark"
+                                        className="px-3 py-4 text-center text-base text-text-workspace-dark"
                                     >
-                                        {table.loading 
-                                            ? 'Memuat data...' 
-                                            : (table.error || table.emptyLabel || 'Tidak ada data')
-                                        }
+                                        {table.loading ? (
+                                            'Memuat data...'
+                                        ) : isAccessRestricted || (table.error && String(table.error).toLowerCase().includes('hak akses')) || (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses')) ? (
+                                            'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
+                                        ) : (
+                                            table.error || table.emptyLabel || 'Tidak ada data'
+                                        )}
                                     </DataTableCell>
                                 </DataTableRow>
                             )}

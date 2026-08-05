@@ -135,9 +135,10 @@ export function buildSalesReceiptRecord(record = {}, config) {
     const invoices = (record.lines ?? []).map((line, index) => {
         const amount = Number(line.total_amount ?? 0);
         const invoiceNumber = line.reference_code ?? line.description ?? `INV-${index + 1}`;
-        const invoiceDate = line.attributes?.invoice_date ?? formatIsoDate(line.line_date ?? record.entry_date);
+        const invoiceDate = line.attributes?.invoice_date ?? (record.related_document?.entry_date ? formatIsoDate(record.related_document.entry_date) : formatIsoDate(line.line_date ?? record.entry_date));
         
-        const outstandingAmount = line.attributes?.outstanding_amount ?? amount;
+        const totalAmount = record.related_document?.total_amount ? Number(record.related_document.total_amount) : amount;
+        const outstandingAmount = record.related_document?.outstanding_amount ? Number(record.related_document.outstanding_amount) : (line.attributes?.outstanding_amount ?? amount);
         const paidAmount = line.attributes?.paid_amount ?? amount;
         const discountAmount = Number(line.discount_amount ?? 0);
 
@@ -147,10 +148,10 @@ export function buildSalesReceiptRecord(record = {}, config) {
         return {
             id: String(line.id ?? `invoice-${index + 1}`),
             __lineId: line.id ?? null,
-            __relatedDocumentId: null,
+            __relatedDocumentId: record.related_document_id ?? null,
             invoiceNumber,
             invoiceDate,
-            invoiceTotal: formatCurrencyLabel(outstandingAmount),
+            invoiceTotal: formatCurrencyLabel(totalAmount),
             outstanding: formatCurrencyLabel(outstandingAmount),
             paid: formatCurrencyLabel(paidAmount),
             discount: formatCurrencyLabel(discountAmount),

@@ -125,7 +125,6 @@ class AssetBackendResources
             'asset_category_id' => ['nullable', 'integer', 'exists:asset_categories,id'],
             'asset_tax_category_id' => ['nullable', 'integer', 'exists:asset_tax_categories,id'],
             'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-            'department_id' => ['nullable', 'integer', 'exists:departments,id'],
             'asset_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'accumulated_depreciation_account_id' => ['nullable', 'integer', 'exists:accounts,id'],
             'depreciation_expense_account_id' => ['nullable', 'integer', 'exists:accounts,id'],

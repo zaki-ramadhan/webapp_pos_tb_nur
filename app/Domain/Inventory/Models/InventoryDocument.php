@@ -21,7 +21,6 @@ class InventoryDocument extends DomainModel
     protected $fillable = [
         'document_type',
         'branch_id',
-        'department_id',
         'warehouse_id',
         'counterpart_warehouse_id',
         'related_document_id',

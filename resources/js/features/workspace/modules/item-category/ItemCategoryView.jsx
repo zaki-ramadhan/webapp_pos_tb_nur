@@ -99,8 +99,8 @@ export default function ItemCategoryView({ page, mode, activeLevel2Tab, level2Ta
             detailRecords,
             table: {
                 loading,
-
-                ...baseConfig.table,
+                error,
+                emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data barang'),
                 columns: (() => {
                     const baseCols = baseConfig.table?.columns ?? [];
                     const extraCols = [

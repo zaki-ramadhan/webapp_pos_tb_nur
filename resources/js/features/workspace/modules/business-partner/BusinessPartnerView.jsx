@@ -278,6 +278,8 @@ export default function BusinessPartnerView({
         mappedRows,
         tableProps,
         reload,
+        error,
+        loading,
     } = useWorkspaceResource({
         resource: resourceName,
         initialPerPage: 25,
@@ -319,6 +321,8 @@ export default function BusinessPartnerView({
             table: {
                 ...baseConfig.table,
                 ...tableProps,
+                error,
+                emptyLabel: error || baseConfig.table?.emptyLabel || 'Tidak ada data',
                 rows: rowsWithFilters,
                 filters: updatedFilters,
                 pageValue: tableProps.total.toLocaleString('id-ID'),
@@ -326,7 +330,7 @@ export default function BusinessPartnerView({
                 onRefresh: reload,
             },
         };
-    }, [pageConfig, partnerType, mappedRows, tableProps, reload]);
+    }, [pageConfig, partnerType, mappedRows, tableProps, reload, error]);
 
         const [lastActiveFormTab, setLastActiveFormTab] = useState(null);
 

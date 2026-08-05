@@ -35,7 +35,7 @@ export default function SalesCheckinView({ page }) {
             pageValue: total.toLocaleString('id-ID'),
             loading,
             refreshLabel: page.table?.refreshLabel || 'Muat ulang',
-            emptyLabel: error || 'Tidak ada data',
+            emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
             onRefresh: reload,
             importButton: false,
             printButton: false,

@@ -115,7 +115,7 @@ export default function DepositTableView({
             <TableToolbar
                 size="compact"
                 className="space-y-3"
-                filters={config.table.filters?.length ? <DepositTableFilterBar table={config.table} filters={filters} setFilters={setFilters} /> : null}
+                filters={null}
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,

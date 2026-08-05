@@ -37,8 +37,9 @@ export default function GeneralJournalView({ page, mode, activeLevel2Tab, level2
                     ...(page.generalJournal.records ?? {}),
                 },
                 table: {
-                loading,
-
+                    loading,
+                    error,
+                    emptyLabel: loading ? 'Memuat data...' : (error || page.generalJournal.table?.emptyLabel || 'Tidak ada data'),
                     ...page.generalJournal.table,
                     rows: mappedRows,
                     filters: buildGeneralJournalFilters(page.generalJournal.table?.filters, mappedRows),

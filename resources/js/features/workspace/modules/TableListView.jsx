@@ -174,26 +174,20 @@ export default function TableListView({
         };
     }, [cleanedColumns, displayRows, table.resource]);
 
+    const isAccessRestricted = Boolean(
+        table.readOnly ||
+        (table.error && String(table.error).toLowerCase().includes('hak akses')) ||
+        (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses'))
+    );
+
+    const resolvedCreateButton = isAccessRestricted ? null : createButton;
+
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-2 py-2 shadow-card-light sm:px-3 sm:py-3">
+        <div className="min-h-full rounded-[6px] border border-ui-border bg-white p-3 shadow-panel-subtle">
             <TableToolbar
                 size="compact"
-                filters={
-                    table.filters?.length ? (
-                        <TableListFilters
-                            filters={table.filters}
-                            values={filters}
-                            onChange={(filterId, nextValue) =>
-                                setFilters((current) => ({
-                                    ...current,
-                                    [filterId]: nextValue,
-                                }))
-                            }
-                            filterButtonLabel={table.filterButtonLabel}
-                        />
-                    ) : null
-                }
-                createButton={createButton}
+                filters={null}
+                createButton={resolvedCreateButton}
                 refreshButton={
                     table.refreshLabel
                         ? {
@@ -268,8 +262,8 @@ export default function TableListView({
                             paginatedRows.map((row, index) => (
                                 <DataTableRow
                                     key={row.id}
-                                    className={`border-ui-border-row ${onRowClick ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''} ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
-                                    onClick={onRowClick ? () => onRowClick(row) : undefined}
+                                    className={`border-ui-border-row ${onRowClick && !isAccessRestricted ? 'cursor-pointer transition hover:bg-workspace-hover-bg' : ''} ${index % 2 === 1 ? 'bg-ui-bg-hover' : 'bg-white'}`.trim()}
+                                    onClick={onRowClick && !isAccessRestricted ? () => onRowClick(row) : undefined}
                                 >
                                     <DataTableCell
                                         className="w-[48px] min-w-[48px] max-w-[48px] px-2.5 text-center text-base text-table-row-number whitespace-nowrap"
@@ -308,13 +302,16 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-3 text-center text-base text-black">
-                                    {table.loading
-                                        ? 'Memuat data...'
-                                        : table.error
-                                        ? table.error
-                                        : (keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Tidak ada data'))
-                                    }
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-4 text-center text-base text-black">
+                                    {table.loading ? (
+                                        'Memuat data...'
+                                    ) : isAccessRestricted || (table.error && String(table.error).toLowerCase().includes('hak akses')) || (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses')) ? (
+                                        'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
+                                    ) : table.error ? (
+                                        table.error
+                                    ) : (
+                                        keyword.trim() ? 'Tidak ada hasil pencarian yang cocok' : (table.emptyLabel ?? 'Tidak ada data')
+                                    )}
                                 </DataTableCell>
                             </DataTableRow>
                         )}

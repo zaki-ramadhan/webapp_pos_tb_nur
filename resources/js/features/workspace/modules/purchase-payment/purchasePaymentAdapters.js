@@ -56,10 +56,8 @@ export function buildPurchasePaymentFilters(baseFilters = [], rows = []) {
 }
 
 export function buildPurchasePaymentRow(record) {
-    const primaryAccountLabel = record?.primary_account
-        ? buildLookupLabel(record.primary_account, 'code')
-        : '';
-    const bankLabel = record?.metadata?.bank_label ?? primaryAccountLabel;
+    const rawBank = record?.primary_account?.name ?? record?.metadata?.bank_label ?? record?.primary_account?.code ?? '';
+    const cleanBankName = String(rawBank).replace(/^\[.*?\]\s*/, '').trim();
     const paymentAmount = Number(record?.paid_amount ?? record?.total_amount ?? 0);
     const entryDate = formatIsoDate(record?.entry_date);
     const checkDate = formatIsoDate(record?.check_date);
@@ -72,7 +70,7 @@ export function buildPurchasePaymentRow(record) {
         checkNumber: record?.metadata?.check_number ?? '',
         checkDate,
         supplier: record?.supplier?.name ?? '',
-        bank: bankLabel,
+        bank: cleanBankName,
         notes: record?.notes ?? '',
         paymentAmount: formatCurrencyValue(paymentAmount),
         method: record?.payment_method ?? '',
@@ -80,7 +78,7 @@ export function buildPurchasePaymentRow(record) {
         dateFilter: entryDate,
         checkDateFilter: checkDate,
         methodFilter: record?.payment_method ?? '',
-        bankFilter: bankLabel,
+        bankFilter: cleanBankName,
         supplierFilter: record?.supplier?.name ?? '',
     };
 }

@@ -136,7 +136,7 @@ export default function InventoryAdjustmentView({
                     loading,
                     refreshLabel: baseConfig.table?.refreshLabel || 'Muat ulang',
                     createLabel: baseConfig.table.createLabel || 'Tambah Penyesuaian',
-                    emptyLabel: error || 'Tidak ada data',
+                    emptyLabel: loading ? 'Memuat data...' : (error || 'Tidak ada data'),
                     onRefresh: reload,
                     pagination: {
                         page: currentPage,

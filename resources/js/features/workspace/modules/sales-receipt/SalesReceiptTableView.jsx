@@ -92,7 +92,7 @@ export default function SalesReceiptTableView({
             <TableToolbar
                 size="compact"
                 className="space-y-3"
-                filters={config.table.filters?.length ? <SalesReceiptFilterBar config={config} filters={filters} setFilters={setFilters} /> : null}
+                filters={null}
                 createButton={{
                     label: config.table.createLabel,
                     onClick: onCreate,

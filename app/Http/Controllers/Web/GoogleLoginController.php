@@ -177,7 +177,24 @@ class GoogleLoginController extends Controller
             $attributes['email_verified_at'] = now();
         }
 
-        return User::query()->create($attributes);
+        $user = User::query()->create($attributes);
+
+        try {
+            $operatorRole = \App\Domain\Identity\Models\Role::where('code', 'operator')->first();
+            if ($operatorRole) {
+                $user->roles()->syncWithoutDetaching([$operatorRole->id]);
+            }
+
+            $kasirGroup = \App\Domain\Identity\Models\AccessGroup::where('code', 'KASIR')->first() 
+                ?? \App\Domain\Identity\Models\AccessGroup::where('code', 'ADMIN')->first();
+            if ($kasirGroup) {
+                $user->accessGroups()->syncWithoutDetaching([$kasirGroup->id]);
+            }
+        } catch (\Throwable $e) {
+            // Ignore if tables not yet seeded
+        }
+
+        return $user;
     }
 
     private function syncGoogleIdentity(User $user, OAuthUser $oauthUser): void

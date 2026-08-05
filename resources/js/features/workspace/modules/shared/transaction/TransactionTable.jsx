@@ -186,7 +186,11 @@ export function TransactionDataTable({
                                 colSpan={visibleColumns.length - (hasLeadingEmptyCell ? 1 : 0) + (activeShowNumbering ? 1 : 0)}
                                 className="px-3 py-3 text-center text-sm text-text-workspace-dark"
                             >
-                                {emptyLabel}
+                                {emptyLabel && String(emptyLabel).toLowerCase().includes('hak akses') ? (
+                                    'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
+                                ) : (
+                                    emptyLabel
+                                )}
                             </DataTableCell>
                         </DataTableRow>
                     )}

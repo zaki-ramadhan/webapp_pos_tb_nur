@@ -13,7 +13,6 @@ class InventoryDocumentLine extends DomainModel
     protected $fillable = [
         'product_id',
         'unit_id',
-        'department_id',
         'item_name',
         'item_code',
         'quantity',

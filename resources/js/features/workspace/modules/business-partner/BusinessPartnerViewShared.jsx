@@ -110,8 +110,12 @@ export function EmptyDataTable({ columns, emptyLabel }) {
 
             <DataTableBody>
                 <DataTableRow className="bg-white">
-                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-text-workspace-dark">
-                        {emptyLabel}
+                    <DataTableCell colSpan={columns.length} className="px-3 py-4 text-center text-base text-text-workspace-dark">
+                        {emptyLabel && String(emptyLabel).toLowerCase().includes('hak akses') ? (
+                            'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
+                        ) : (
+                            emptyLabel
+                        )}
                     </DataTableCell>
                 </DataTableRow>
             </DataTableBody>

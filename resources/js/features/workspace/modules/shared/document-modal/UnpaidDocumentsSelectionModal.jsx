@@ -13,7 +13,7 @@ export default function UnpaidDocumentsSelectionModal({
     open = false,
     onClose,
     onConfirm,
-    title = 'Daftar Faktur Belum Lunas',
+    title = 'Faktur Belum Lunas',
     resource = 'sales-invoices',
     partnerId = null,
     partnerQueryKey = 'customer_id',
@@ -53,6 +53,7 @@ export default function UnpaidDocumentsSelectionModal({
 
         const params = {
             status: 'Belum Lunas',
+            per_page: 1000,
         };
         if (partnerId) {
             params[partnerQueryKey] = partnerId;
@@ -82,27 +83,15 @@ export default function UnpaidDocumentsSelectionModal({
 
     const handleFilterTypeChange = (newType) => {
         setFilterType(newType);
-        const today = new Date();
-
-        if (newType === 'due_date') {
-            const pastDate = new Date(today);
-            pastDate.setDate(today.getDate() - 30);
-            const futureDate = new Date(today);
-            futureDate.setDate(today.getDate() + 30);
-
-            setStartDate(formatIsoDate(pastDate));
-            setEndDate(formatIsoDate(futureDate));
-        } else {
-            const pastDate = new Date(today);
-            pastDate.setDate(today.getDate() - 30);
-
-            setStartDate(formatIsoDate(pastDate));
-            setEndDate(formatIsoDate(today));
-        }
     };
 
     const filteredRecords = useMemo(() => {
         return records.filter((rec) => {
+            const st = String(rec.status ?? '').toLowerCase();
+            if (st === 'lunas' || st === 'paid' || st === 'batal' || st === 'void') {
+                return false;
+            }
+
             if (keyword.trim()) {
                 const q = keyword.trim().toLowerCase();
                 const num = String(rec.document_number ?? rec.number ?? '').toLowerCase();
@@ -112,15 +101,16 @@ export default function UnpaidDocumentsSelectionModal({
                 }
             }
 
-            const targetDateStr = filterType === 'due_date'
+            const targetDateRaw = filterType === 'due_date'
                 ? (rec.due_date ?? rec.date ?? '')
                 : (rec.entry_date ?? rec.date ?? '');
+            const targetDateStr = targetDateRaw ? String(targetDateRaw).slice(0, 10) : '';
 
             if (startDate && targetDateStr) {
-                if (new Date(targetDateStr) < new Date(startDate)) return false;
+                if (targetDateStr < startDate.slice(0, 10)) return false;
             }
             if (endDate && targetDateStr) {
-                if (new Date(targetDateStr) > new Date(endDate)) return false;
+                if (targetDateStr > endDate.slice(0, 10)) return false;
             }
 
             return true;
@@ -133,8 +123,8 @@ export default function UnpaidDocumentsSelectionModal({
             let valB = b[sortKey] ?? '';
 
             if (sortKey === 'total' || sortKey === 'outstanding') {
-                valA = parseNumericInput(valA);
-                valB = parseNumericInput(valB);
+                valA = parseNumericInput(a.outstanding_amount ?? a.outstanding ?? a.total_amount ?? a.total ?? 0);
+                valB = parseNumericInput(b.outstanding_amount ?? b.outstanding ?? b.total_amount ?? b.total ?? 0);
             }
 
             if (valA < valB) return sortDir === 'asc' ? -1 : 1;
@@ -142,6 +132,15 @@ export default function UnpaidDocumentsSelectionModal({
             return 0;
         });
     }, [filteredRecords, sortKey, sortDir]);
+
+    const totalSelectedAmount = useMemo(() => {
+        return records
+            .filter((rec) => selectedIds.has(rec.id))
+            .reduce((sum, rec) => {
+                const val = parseNumericInput(rec.outstanding_amount ?? rec.outstanding ?? rec.total_amount ?? rec.total ?? 0);
+                return sum + val;
+            }, 0);
+    }, [records, selectedIds]);
 
     const handleSort = (key) => {
         if (sortKey === key) {
@@ -185,77 +184,75 @@ export default function UnpaidDocumentsSelectionModal({
             open={open}
             onClose={onClose}
             title={title}
-            maxWidthClassName="max-w-[840px]"
-            contentClassName="p-0 bg-white"
+            maxWidthClassName="max-w-[780px]"
+            contentClassName="p-4 sm:p-5 bg-white"
             footer={
-                <div className="flex items-center justify-between w-full">
-                    <div className="text-xs text-zinc-500 font-normal">
-                        Terpilih: <span className="font-semibold text-zinc-800">{selectedIds.size}</span> faktur
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Button
-                            variant="outline"
-                            size="md"
-                            onClick={onClose}
-                            className="px-5 text-xs text-zinc-600"
-                        >
-                            Batal
-                        </Button>
-                        <Button
-                            variant="brand-blue"
-                            size="md"
-                            onClick={handleConfirmSelection}
-                            className="!bg-[#2353a0] hover:!bg-[#1f4f96] !border-transparent !text-white font-medium px-6 shadow-btn-blue-hover"
-                        >
-                            Lanjut
-                        </Button>
-                    </div>
+                <div className="flex items-center justify-end w-full gap-3">
+                    <span className="text-xs sm:text-sm text-zinc-700 font-normal">Total Terpilih :</span>
+                    <input
+                        type="text"
+                        readOnly
+                        value={formatCurrencyValue(totalSelectedAmount)}
+                        className="h-[36px] w-[140px] rounded-[4px] border border-gray-300 bg-slate-100 text-right px-3 text-xs sm:text-sm font-normal text-zinc-700 focus:outline-none"
+                    />
+                    <Button
+                        variant="brand-blue"
+                        size="md"
+                        onClick={handleConfirmSelection}
+                        className="!bg-[#2353a0] hover:!bg-[#1f4f96] !border-transparent !text-white font-medium px-6 shadow-btn-blue-hover"
+                    >
+                        Lanjut
+                    </Button>
                 </div>
             }
         >
-            <div className="flex flex-col gap-y-3 p-4 bg-slate-50/60 border-b border-gray-200">
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                    <div className="sm:col-span-4">
+            <div className="flex flex-col gap-y-3 pb-4 bg-white">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
+                    <div className="flex-1 min-w-[170px]">
                         <TextInput
                             value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
-                            placeholder="Cari nomor faktur..."
-                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                            inputClassName="text-xs text-brand-dark"
+                            placeholder="No Faktur / No Form"
+                            className="h-[36px] rounded-[4px] border-gray-300 bg-white"
+                            inputClassName="text-xs sm:text-sm text-brand-dark"
                         />
                     </div>
-                    <div className="sm:col-span-3">
+                    <div className="w-[155px]">
                         <SelectField
                             value={filterType}
                             onChange={(e) => handleFilterTypeChange(e.target.value)}
-                            className="h-[36px] rounded-[4px] border-ui-border bg-white"
-                            selectClassName="text-xs text-brand-dark"
+                            className="h-[36px] rounded-[4px] border-gray-300 bg-white"
+                            selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
-                            <option value="entry_date">Tanggal Faktur</option>
-                            <option value="due_date">Tanggal Jatuh Tempo</option>
+                            <option value="entry_date">Filter Tgl Faktur</option>
+                            <option value="due_date">Filter Tgl Jatuh Tempo</option>
                         </SelectField>
                     </div>
-                    <div className="sm:col-span-5 flex items-center gap-2">
-                        <TransactionDateInput
-                            value={normalizeDisplayDate(startDate)}
-                            onChange={(val) => setStartDate(formatIsoDate(val))}
-                            className="h-[36px] text-xs"
-                        />
-                        <span className="text-xs text-zinc-400">s/d</span>
-                        <TransactionDateInput
-                            value={normalizeDisplayDate(endDate)}
-                            onChange={(val) => setEndDate(formatIsoDate(val))}
-                            className="h-[36px] text-xs"
-                        />
+                    <div className="flex items-center gap-2">
+                        <div className="w-[145px] sm:w-[155px]">
+                            <TransactionDateInput
+                                value={normalizeDisplayDate(startDate)}
+                                onChange={(val) => setStartDate(formatIsoDate(val))}
+                                className="h-[36px] text-xs sm:text-sm"
+                            />
+                        </div>
+                        <span className="text-xs sm:text-sm text-zinc-500 font-normal">s/d</span>
+                        <div className="w-[145px] sm:w-[155px]">
+                            <TransactionDateInput
+                                value={normalizeDisplayDate(endDate)}
+                                onChange={(val) => setEndDate(formatIsoDate(val))}
+                                className="h-[36px] text-xs sm:text-sm"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="w-full overflow-x-auto max-h-[380px]">
+            <div className="w-full overflow-x-auto max-h-[380px] border border-gray-200 rounded-[2px]">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-[#5a738e] text-white text-xs font-semibold sticky top-0 z-10">
-                            <th className="py-2.5 px-3 w-[44px] text-center">
+                        <tr className="bg-[#5a738e] text-white text-xs sm:text-sm font-normal sticky top-0 z-10">
+                            <th className="py-2.5 px-3 w-[44px] text-center border-r border-slate-400/40">
                                 <input
                                     type="checkbox"
                                     checked={isAllSelected}
@@ -264,20 +261,23 @@ export default function UnpaidDocumentsSelectionModal({
                                 />
                             </th>
                             <SortableTableHeaderCell
-                                label="Nomor Faktur #"
+                                label="No. Faktur"
                                 sortKey="document_number"
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-semibold text-white cursor-pointer hover:bg-slate-600/50"
+                                className="py-2.5 px-3 font-normal text-white cursor-pointer hover:bg-slate-600/50 border-r border-slate-400/40"
                             />
+                            <th className="py-2.5 px-3 font-normal text-white text-center border-r border-slate-400/40 w-[110px]">
+                                Keterangan
+                            </th>
                             <SortableTableHeaderCell
-                                label="Tanggal"
+                                label="Tgl Faktur"
                                 sortKey="entry_date"
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-semibold text-white w-[110px] cursor-pointer hover:bg-slate-600/50"
+                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-slate-400/40"
                             />
                             <SortableTableHeaderCell
                                 label="Jatuh Tempo"
@@ -285,15 +285,7 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-semibold text-white w-[110px] cursor-pointer hover:bg-slate-600/50"
-                            />
-                            <SortableTableHeaderCell
-                                label="Total Faktur"
-                                sortKey="total"
-                                activeSortKey={sortKey}
-                                sortDir={sortDir}
-                                onSort={handleSort}
-                                className="py-2.5 px-3 font-semibold text-white w-[140px] text-right cursor-pointer hover:bg-slate-600/50"
+                                className="py-2.5 px-3 font-normal text-white w-[115px] text-center cursor-pointer hover:bg-slate-600/50 border-r border-slate-400/40"
                             />
                             <SortableTableHeaderCell
                                 label="Terhutang"
@@ -301,7 +293,7 @@ export default function UnpaidDocumentsSelectionModal({
                                 activeSortKey={sortKey}
                                 sortDir={sortDir}
                                 onSort={handleSort}
-                                className="py-2.5 px-3 font-semibold text-white w-[140px] text-right cursor-pointer hover:bg-slate-600/50"
+                                className="py-2.5 px-3 font-normal text-white w-[140px] text-right cursor-pointer hover:bg-slate-600/50"
                             />
                         </tr>
                     </thead>
@@ -323,17 +315,16 @@ export default function UnpaidDocumentsSelectionModal({
                                 const isChecked = selectedIds.has(rec.id);
                                 const docNum = rec.document_number ?? rec.number ?? '-';
                                 const entryDate = normalizeDisplayDate(rec.entry_date ?? rec.date);
-                                const dueDate = normalizeDisplayDate(rec.due_date ?? rec.date);
-                                const totalVal = parseNumericInput(rec.total_amount ?? rec.total);
-                                const outstandingVal = parseNumericInput(rec.outstanding_amount ?? rec.outstanding ?? totalVal);
+                                const dueDate = rec.due_date ? normalizeDisplayDate(rec.due_date) : '-';
+                                const outstandingVal = parseNumericInput(rec.outstanding_amount ?? rec.outstanding ?? rec.total_amount ?? rec.total ?? 0);
 
                                 return (
                                     <tr
                                         key={rec.id}
                                         onClick={() => handleToggleRow(rec.id)}
-                                        className={`cursor-pointer transition-colors hover:bg-slate-50 ${isChecked ? 'bg-blue-50/50' : ''}`}
+                                        className={`cursor-pointer transition-colors hover:bg-slate-50 ${isChecked ? 'bg-blue-50/40' : ''}`}
                                     >
-                                        <td className="py-3 px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                                        <td className="py-2.5 px-3 text-center border-r border-gray-100" onClick={(e) => e.stopPropagation()}>
                                             <input
                                                 type="checkbox"
                                                 checked={isChecked}
@@ -341,20 +332,20 @@ export default function UnpaidDocumentsSelectionModal({
                                                 className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary cursor-pointer accent-[#2353a0]"
                                             />
                                         </td>
-                                        <td className="py-3 px-3 font-medium text-zinc-800">
+                                        <td className="py-2.5 px-3 font-normal text-zinc-700 border-r border-gray-100">
                                             {docNum}
                                         </td>
-                                        <td className="py-3 px-3 font-normal text-zinc-600">
+                                        <td className="py-2.5 px-3 font-normal text-zinc-500 text-center border-r border-gray-100">
+                                            -
+                                        </td>
+                                        <td className="py-2.5 px-3 font-normal text-zinc-600 text-center border-r border-gray-100">
                                             {entryDate}
                                         </td>
-                                        <td className="py-3 px-3 font-normal text-zinc-600">
+                                        <td className="py-2.5 px-3 font-normal text-zinc-600 text-center border-r border-gray-100">
                                             {dueDate}
                                         </td>
-                                        <td className="py-3 px-3 text-right font-normal text-zinc-700">
-                                            Rp {formatCurrencyValue(totalVal)}
-                                        </td>
-                                        <td className="py-3 px-3 text-right font-semibold text-zinc-800">
-                                            Rp {formatCurrencyValue(outstandingVal)}
+                                        <td className="py-2.5 px-3 text-right font-normal text-zinc-700">
+                                            {formatCurrencyValue(outstandingVal)}
                                         </td>
                                     </tr>
                                 );

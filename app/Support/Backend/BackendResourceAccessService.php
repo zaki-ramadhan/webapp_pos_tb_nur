@@ -60,6 +60,36 @@ class BackendResourceAccessService
     }
 
     /**
+     * Peta hak akses instan per resourceKey untuk dikirim ke Inertia share props.
+     * @return array<string, array<string, bool>>
+     */
+    public function abilitiesMapFor(User $user): array
+    {
+        $map = [];
+        foreach (BackendResourceRegistry::all() as $key => $blueprint) {
+            $abilities = [
+                'view' => $this->can($user, $blueprint, 'view'),
+                'create' => $this->can($user, $blueprint, 'create'),
+                'update' => $this->can($user, $blueprint, 'update'),
+                'delete' => $this->can($user, $blueprint, 'delete'),
+            ];
+
+            $map[$key] = $abilities;
+            $map[$blueprint->key] = $abilities;
+        }
+
+        foreach ($this->permissionAliases as $matrixKey => $aliases) {
+            foreach ($aliases as $alias) {
+                if (isset($map[$matrixKey])) {
+                    $map[$alias] = $map[$matrixKey];
+                }
+            }
+        }
+
+        return $map;
+    }
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function visibleResourcesFor(User $user): array
@@ -98,7 +128,7 @@ class BackendResourceAccessService
         'accounts' => ['accounts', 'account-list'],
         'customers' => ['customers'],
         'sales-commissions' => ['sales-commissions', 'sales-commission'],
-        'sales-checkins' => ['sales-checkins', 'sales-checkin'],
+        'sales-checkins' => ['sales-checkins', 'sales-checkin', 'sales-deposits', 'sales-deposit'],
         'supplier-prices' => ['supplier-prices'],
         'suppliers' => ['suppliers'],
         'item-requests' => ['item-requests', 'item-request'],
@@ -107,8 +137,8 @@ class BackendResourceAccessService
         'units' => ['units', 'item-unit'],
         'brands' => ['brands', 'item-brand'],
         'product-categories' => ['product-categories', 'item-category'],
-        'item-location' => ['item-location'],
-        'minimum-stock' => ['minimum-stock'],
+        'item-location' => ['item-location', 'item-locations'],
+        'minimum-stock' => ['minimum-stock', 'minimum-stocks'],
         'sales-invoices' => ['sales-invoices', 'sales-invoice'],
         'sales-receipts' => ['sales-receipts', 'sales-receipt'],
         'sales-returns' => ['sales-returns', 'sales-return'],
@@ -130,10 +160,13 @@ class BackendResourceAccessService
     {
         $user->loadMissing('accessGroups.permissions');
 
-        $allowedKeys = array_merge(
-            $this->permissionAliases[$permissionKey] ?? [$permissionKey],
-            ['*']
-        );
+        $allowedKeys = [$permissionKey, '*'];
+        foreach ($this->permissionAliases as $matrixKey => $aliases) {
+            if ($matrixKey === $permissionKey || in_array($permissionKey, $aliases, true)) {
+                $allowedKeys = array_merge($allowedKeys, [$matrixKey], $aliases);
+            }
+        }
+        $allowedKeys = array_values(array_unique($allowedKeys));
 
         return $user->accessGroups
             ->filter(fn ($group) => (bool) $group->is_active && $this->isGroupWithinTimeLimits($group))

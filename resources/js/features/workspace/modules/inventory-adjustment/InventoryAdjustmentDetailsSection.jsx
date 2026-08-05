@@ -103,7 +103,7 @@ export default function InventoryAdjustmentDetailsSection({
                     />
                 ) : (
                     <AccountLookupTextInput
-                        resource="items-services"
+                        resource="products"
                         value={values.itemSearch || ''}
                         placeholder={config.detailSearchPlaceholder}
                         searchLabel="Cari barang dan jasa"

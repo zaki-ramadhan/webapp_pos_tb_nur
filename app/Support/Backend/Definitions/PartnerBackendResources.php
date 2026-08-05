@@ -64,24 +64,6 @@ class PartnerBackendResources
                     'is_active' => ['sometimes', 'boolean'],
                 ],
             ),
-            'sales-categories' => new BackendResourceBlueprint(
-                key: 'sales-categories',
-                label: 'Sales Categories',
-                searchColumns: ['code', 'name', 'description'],
-                modelClass: SalesCategory::class,
-                storeRules: [
-                    'code' => ['nullable', 'string', 'max:50', 'unique:sales_categories,code'],
-                    'name' => ['required', 'string', 'max:120'],
-                    'description' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-                updateRules: fn (Model $record) => [
-                    'code' => ['nullable', 'string', 'max:50', Rule::unique('sales_categories', 'code')->ignore($record)],
-                    'name' => ['required', 'string', 'max:120'],
-                    'description' => ['nullable', 'string'],
-                    'is_active' => ['sometimes', 'boolean'],
-                ],
-            ),
             'customers' => new BackendResourceBlueprint(
                 key: 'customers',
                 label: 'Customers',
