@@ -11,9 +11,9 @@ class SecuritySeeder extends Seeder
     public function run(): void
     {
         // Seed preference settings
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
         DB::table('preference_settings')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
 
         $settings = [
             ['group_key' => 'company_info', 'setting_key' => 'company-name', 'value' => 'UD. TB Nur', 'label' => 'Nama Toko'],
@@ -152,8 +152,8 @@ class SecuritySeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $cashierMenus = ['sales-invoices', 'sales-receipts', 'customers', 'products'];
-        foreach ($cashierMenus as $menu) {
+        $cashierFullAccessMenus = ['sales-invoices', 'sales-receipts', 'sales-returns', 'sales-checkins', 'sales-deposits'];
+        foreach ($cashierFullAccessMenus as $menu) {
             DB::table('access_group_permissions')->insert([
                 'access_group_id' => $cashierGroupId,
                 'menu_key' => $menu,
@@ -161,6 +161,21 @@ class SecuritySeeder extends Seeder
                 'can_view' => true,
                 'can_create' => true,
                 'can_update' => true,
+                'can_delete' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $cashierViewOnlyMenus = ['products', 'items-services', 'customers', 'item-location', 'item-locations', 'minimum-stock', 'minimum-stocks'];
+        foreach ($cashierViewOnlyMenus as $menu) {
+            DB::table('access_group_permissions')->insert([
+                'access_group_id' => $cashierGroupId,
+                'menu_key' => $menu,
+                'can_access' => true,
+                'can_view' => true,
+                'can_create' => false,
+                'can_update' => false,
                 'can_delete' => false,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -178,40 +193,40 @@ class SecuritySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Test User',
-                'email' => 'test@example.com',
+                'name' => 'Hj. Nurhayati',
+                'email' => 'nurhayati.tb@gmail.com',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'H. Nurhasan (Owner)',
-                'email' => 'owner@tbnur.com',
+                'name' => 'Ahmad Fauzi',
+                'email' => 'ahmad.fauzi.tb@gmail.com',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Siti Aminah (Kasir)',
-                'email' => 'siti@tbnur.com',
+                'name' => 'Bambang Suryono',
+                'email' => 'bambang.suryono88@gmail.com',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Andi Pratama',
-                'email' => 'andi@tbnur.com',
+                'name' => 'Siti Rahmawati',
+                'email' => 'siti.rahmawati.tb@gmail.com',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Rudi Hermawan',
-                'email' => 'rudi@tbnur.com',
+                'name' => 'Diki Dermawan',
+                'email' => 'diki.dermawan92@gmail.com',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -229,100 +244,99 @@ class SecuritySeeder extends Seeder
         DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $adminGroupId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['test@example.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $adminGroupId, 'user_id' => $usersMap['test@example.com']]);
+        DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['nurhayati.tb@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['nurhayati.tb@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['owner@tbnur.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['owner@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['ahmad.fauzi.tb@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['ahmad.fauzi.tb@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['siti@tbnur.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['bambang.suryono88@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['bambang.suryono88@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['andi@tbnur.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['andi@tbnur.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['siti.rahmawati.tb@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti.rahmawati.tb@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['rudi@tbnur.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['rudi@tbnur.com']]);
+        // Seed account_user pivot relationships (Akses Akun Kas & Bank Per Pengguna)
+        $accounts = DB::table('accounts')->whereIn('code', ['110101', '110102', '110103'])->pluck('id');
+        foreach ($usersMap as $userId) {
+            foreach ($accounts as $accId) {
+                DB::table('account_user')->insertOrIgnore([
+                    'account_id' => $accId,
+                    'user_id' => $userId,
+                ]);
+            }
+        }
 
         // Seed activity logs
-        $logs = [
-            [
-                'log_group' => 'general',
-                'resource_key' => 'preferences',
-                'resource_label' => 'Preferences',
-                'permission_key' => 'preference',
-                'action' => 'update',
-                'subject_type' => 'App\\Domain\\Support\\Models\\PreferenceSetting',
-                'subject_id' => 1,
-                'subject_label' => 'Nama Toko',
-                'document_number' => null,
-                'description' => 'Mengubah nama profil toko menjadi UD. TB Nur',
-                'actor_user_id' => $usersMap['piscokpiscok2610@gmail.com'],
-                'actor_name' => 'Zaki Ramadhan',
-                'actor_email' => 'piscokpiscok2610@gmail.com',
-                'ip_address' => '127.0.0.1',
-                'occurred_at' => now()->subHours(5),
-                'created_at' => now()->subHours(5),
-                'updated_at' => now()->subHours(5),
-            ],
-            [
-                'log_group' => 'general',
-                'resource_key' => 'products',
-                'resource_label' => 'Products',
-                'permission_key' => 'product',
-                'action' => 'create',
-                'subject_type' => 'App\\Domain\\Catalog\\Models\\Product',
-                'subject_id' => 1,
-                'subject_label' => 'Semen Portland 50 Kg',
-                'document_number' => null,
-                'description' => 'Membuat produk baru: Semen Portland 50 Kg',
-                'actor_user_id' => $usersMap['piscokpiscok2610@gmail.com'],
-                'actor_name' => 'Zaki Ramadhan',
-                'actor_email' => 'piscokpiscok2610@gmail.com',
-                'ip_address' => '127.0.0.1',
-                'occurred_at' => now()->subHours(4),
-                'created_at' => now()->subHours(4),
-                'updated_at' => now()->subHours(4),
-            ],
-            [
-                'log_group' => 'general',
-                'resource_key' => 'employees',
-                'resource_label' => 'Employees',
-                'permission_key' => 'employee',
-                'action' => 'create',
-                'subject_type' => 'App\\Domain\\Organization\\Models\\Employee',
-                'subject_id' => 1,
-                'subject_label' => 'Budi Santoso',
-                'document_number' => null,
-                'description' => 'Menambahkan data karyawan baru: Budi Santoso',
-                'actor_user_id' => $usersMap['owner@tbnur.com'],
-                'actor_name' => 'H. Nurhasan (Owner)',
-                'actor_email' => 'owner@tbnur.com',
-                'ip_address' => '192.168.1.10',
-                'occurred_at' => now()->subHours(3),
-                'created_at' => now()->subHours(3),
-                'updated_at' => now()->subHours(3),
-            ],
-            [
-                'log_group' => 'journal',
-                'resource_key' => 'general-journals',
-                'resource_label' => 'General Journals',
-                'permission_key' => 'general-journal',
-                'action' => 'create',
-                'subject_type' => 'App\\Domain\\Finance\\Models\\GeneralJournal',
-                'subject_id' => 1,
-                'subject_label' => 'Jurnal Penyesuaian Saldo Awal',
-                'document_number' => 'GJ.2026.00001',
-                'description' => 'Membuat entri jurnal umum GJ.2026.00001 untuk Saldo Awal',
-                'actor_user_id' => $usersMap['owner@tbnur.com'],
-                'actor_name' => 'H. Nurhasan (Owner)',
-                'actor_email' => 'owner@tbnur.com',
-                'ip_address' => '192.168.1.15',
-                'occurred_at' => now()->subHours(2),
-                'created_at' => now()->subHours(2),
-                'updated_at' => now()->subHours(2),
-            ],
+        $logs = [];
+        $logTemplates = [
+            ['group' => 'auth', 'res' => 'users', 'label' => 'Sistem Utama', 'perm' => 'login', 'action' => 'login', 'desc' => 'Pengguna berhasil masuk ke sistem POS UD. TB Nur', 'subj' => 'Sistem POS'],
+            ['group' => 'sales', 'res' => 'sales-invoices', 'label' => 'Faktur Penjualan', 'perm' => 'sales-invoice', 'action' => 'create', 'desc' => 'Membuat Faktur Penjualan POS Kasir', 'subj' => 'Faktur Penjualan POS'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penjualan Kasir', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penjualan Kasir POS', 'subj' => 'Jurnal Penjualan POS'],
+            ['group' => 'purchasing', 'res' => 'purchase-orders', 'label' => 'Pesanan Pembelian', 'perm' => 'purchase-order', 'action' => 'create', 'desc' => 'Membuat Pesanan Pembelian Stok', 'subj' => 'Pesanan Pembelian'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Pembelian Supplier', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Faktur Pembelian Supplier', 'subj' => 'Jurnal Pembelian'],
+            ['group' => 'inventory', 'res' => 'stock-opname', 'label' => 'Opname Persediaan', 'perm' => 'inventory-adjustment', 'action' => 'post', 'desc' => 'Memproses Penyesuaian Stok Gudang', 'subj' => 'Penyesuaian Stok'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Kas & Bank', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penerimaan Kas Kecil', 'subj' => 'Jurnal Penerimaan Kas'],
+            ['group' => 'finance', 'res' => 'cash-payments', 'label' => 'Pengeluaran Kas', 'perm' => 'cash-payment', 'action' => 'create', 'desc' => 'Mencatat Pengeluaran Kas Operasional Toko', 'subj' => 'Pengeluaran Kas Toko'],
+            ['group' => 'journal', 'res' => 'general-journals', 'label' => 'Jurnal Penyesuaian Operasional', 'perm' => 'general-journal', 'action' => 'post', 'desc' => 'Memposting Jurnal Penyesuaian Beban Perlengkapan', 'subj' => 'Jurnal Penyesuaian'],
+            ['group' => 'general', 'res' => 'products', 'label' => 'Master Barang', 'perm' => 'product', 'action' => 'update', 'desc' => 'Mengubah Master Harga Barang Bahan Bangunan', 'subj' => 'Master Barang'],
+            ['group' => 'finance', 'res' => 'sales-receipts', 'label' => 'Penerimaan Piutang', 'perm' => 'sales-receipt', 'action' => 'create', 'desc' => 'Mencatat Penerimaan Pelunasan Piutang', 'subj' => 'Penerimaan Piutang'],
         ];
+
+        $adminUser = ['id' => $usersMap['piscokpiscok2610@gmail.com'], 'name' => 'Zaki Ramadhan', 'email' => 'piscokpiscok2610@gmail.com'];
+        $actors = [
+            $adminUser,
+            ['id' => $usersMap['nurhayati.tb@gmail.com'], 'name' => 'Hj. Nurhayati', 'email' => 'nurhayati.tb@gmail.com'],
+            ['id' => $usersMap['ahmad.fauzi.tb@gmail.com'], 'name' => 'Ahmad Fauzi', 'email' => 'ahmad.fauzi.tb@gmail.com'],
+            ['id' => $usersMap['siti.rahmawati.tb@gmail.com'], 'name' => 'Siti Rahmawati', 'email' => 'siti.rahmawati.tb@gmail.com'],
+        ];
+
+        for ($i = 25; $i >= 0; $i--) {
+            $tpl = $logTemplates[$i % count($logTemplates)];
+            // Give admin user more frequent activity logs for clear dashboard timeline
+            $act = ($i % 2 === 0) ? $adminUser : $actors[$i % count($actors)];
+            $timeAgo = now()->subDays($i / 2)->subHours(rand(1, 4));
+            $docNum = 'DOC.2026.08.' . str_pad($i + 1, 5, '0', STR_PAD_LEFT);
+
+            $beforeData = ($tpl['action'] === 'update' || $tpl['action'] === 'delete') ? [
+                'document_number' => $docNum,
+                'status' => 'Draft',
+                'total_amount' => 1500000 + ($i * 100000),
+            ] : null;
+
+            $afterData = ($tpl['action'] === 'create' || $tpl['action'] === 'update' || $tpl['action'] === 'post') ? [
+                'document_number' => $docNum,
+                'status' => 'Posted',
+                'total_amount' => 1500000 + ($i * 100000),
+                'actor' => $act['name'],
+            ] : null;
+
+            $logs[] = [
+                'log_group' => $tpl['group'],
+                'resource_key' => $tpl['res'],
+                'resource_label' => $tpl['label'],
+                'permission_key' => $tpl['perm'],
+                'action' => $tpl['action'],
+                'subject_type' => 'App\\Domain\\Operation\\Models\\OperationDocument',
+                'subject_id' => $i + 1,
+                'subject_label' => $tpl['subj'] . " #" . ($i + 1),
+                'document_number' => $docNum,
+                'description' => $tpl['desc'] . ' #' . str_pad($i + 1, 2, '0', STR_PAD_LEFT),
+                'actor_user_id' => $act['id'],
+                'actor_name' => $act['name'],
+                'actor_email' => $act['email'],
+                'ip_address' => '192.168.1.' . (10 + ($i % 10)),
+                'occurred_at' => $timeAgo,
+                'before_payload' => $beforeData ? json_encode($beforeData) : null,
+                'after_payload' => $afterData ? json_encode($afterData) : null,
+                'metadata' => json_encode([
+                    'resource_model' => 'App\\Domain\\Operation\\Models\\OperationDocument',
+                    'transaction_date' => $timeAgo->format('Y-m-d'),
+                ]),
+                'created_at' => $timeAgo,
+                'updated_at' => $timeAgo,
+            ];
+        }
 
         DB::table('activity_logs')->insert($logs);
 

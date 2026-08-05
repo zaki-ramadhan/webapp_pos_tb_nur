@@ -14,37 +14,37 @@ const USER_FORM_TABS = [{ id: 'users-general', label: 'Pengguna' }];
 
 function AccessTypeField({ value, onChange }) {
     const descriptions = {
-        operator: 'Pengguna tipe Operator dapat melihat dan membuka database. Hak menunya ditentukan melalui Akses grup.',
-        administrator: 'Administrator dapat mengelola pengaturan dan akses pengguna lain pada database ini.',
+        kasir: 'Kasir memiliki akses terbatas hanya untuk modul Penjualan & Penerimaan Penjualan. Modul lainnya dibatasi otomatis.',
+        super_admin: 'Super Admin / Owner memiliki hak akses penuh tanpa batas ke seluruh modul dan pengaturan aplikasi.',
     };
 
     return (
         <div className="grid gap-3">
             <div className="flex items-center gap-16 pt-0.5">
                 <RadioField
-                    id="access-operator"
+                    id="access-kasir"
                     name="access-type"
-                    label="Operator"
-                    checked={value === 'operator'}
-                    onChange={() => onChange('operator')}
+                    label="Kasir"
+                    checked={value === 'kasir' || value === 'operator'}
+                    onChange={() => onChange('kasir')}
                     inputClassName="h-5 w-5"
                     containerClassName="w-auto inline-flex items-center"
                 />
                 <RadioField
-                    id="access-admin"
+                    id="access-super-admin"
                     name="access-type"
-                    label="Administrator"
-                    checked={value === 'administrator'}
-                    onChange={() => onChange('administrator')}
+                    label="Super Admin"
+                    checked={value === 'super_admin' || value === 'administrator' || value === 'owner'}
+                    onChange={() => onChange('super_admin')}
                     inputClassName="h-5 w-5"
                     containerClassName="w-auto inline-flex items-center"
                 />
             </div>
-            {descriptions[value] && (
+            {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' ? 'super_admin' : value)] && (
                 <div className="flex items-center gap-3 pt-0.5 mt-1">
                     <span className="block h-6 w-[5px] rounded-[2px] bg-bg-bullet-gray" aria-hidden="true" />
                     <p className="text-xs sm:text-sm italic leading-6 text-tab-active-border-t">
-                        {descriptions[value]}
+                        {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' ? 'super_admin' : value)]}
                     </p>
                 </div>
             )}

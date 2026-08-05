@@ -10,7 +10,7 @@ class RealisticDataSeeder extends Seeder
     public function run(): void
     {
         // Hapus data lama
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
         DB::table('operation_document_user')->truncate();
         DB::table('operation_document_lines')->truncate();
         DB::table('operation_documents')->truncate();
@@ -27,14 +27,12 @@ class RealisticDataSeeder extends Seeder
         DB::table('suppliers')->truncate();
         DB::table('customer_categories')->truncate();
         DB::table('supplier_categories')->truncate();
-        DB::table('sales_categories')->truncate();
         DB::table('salary_allowances')->truncate();
         DB::table('accounts')->truncate();
         DB::table('currencies')->truncate();
         DB::table('taxes')->truncate();
         DB::table('employee_bank_accounts')->truncate();
         DB::table('employees')->truncate();
-        DB::table('departments')->truncate();
         DB::table('warehouses')->truncate();
         DB::table('branches')->truncate();
         DB::table('role_user')->truncate();
@@ -45,7 +43,7 @@ class RealisticDataSeeder extends Seeder
         DB::table('activity_logs')->truncate();
         DB::table('users')->truncate();
         DB::table('report_catalogs')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
 
         // Panggil seeder modular secara berurutan
         $this->call([

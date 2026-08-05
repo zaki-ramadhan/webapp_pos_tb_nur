@@ -61,32 +61,5 @@ class CoreOrganizationSeeder extends Seeder
                 'updated_at' => now(),
             ]
         ]);
-
-        DB::table('departments')->insert([
-            [
-                'code' => 'OWN',
-                'name' => 'Pengelola / Owner',
-                'notes' => 'Pemilik dan pengelola bisnis',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'code' => 'TKO',
-                'name' => 'Staf Toko & Kasir',
-                'notes' => 'Staf pelayanan toko dan kasir',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'code' => 'GDG',
-                'name' => 'Staf Gudang & Sopir',
-                'notes' => 'Staf operasional gudang, pengiriman, dan armada',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
     }
 }
