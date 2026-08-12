@@ -20,7 +20,11 @@ function TopProductRow({ item, index }) {
                 <img
                     src={item.imageUrl || getProductImageUrl(item.name)}
                     alt={item.name}
-                    className="h-9 w-9 rounded-[4px] border border-ui-border-light object-cover"
+                    className="h-9 w-9 rounded-[4px] border border-ui-border-light object-cover bg-slate-100"
+                    onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = getProductImageUrl(item.name);
+                    }}
                 />
                 <span className="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-blue-hover text-[9px] font-semibold text-white shadow-sm">
                     {index + 1}
