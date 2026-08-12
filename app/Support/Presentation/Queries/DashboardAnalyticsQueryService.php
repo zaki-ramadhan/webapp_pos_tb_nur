@@ -108,10 +108,15 @@ class DashboardAnalyticsQueryService
                 $salesTrendData[] = (float) $totalSales;
             }
 
+            $jan1ThisYear = date('Y-01-01', strtotime($latestSalesInvoiceDate));
+            $jan1LastYear = date('Y-01-01', strtotime($latestSalesInvoiceDate . ' -1 year'));
+            $monthStart = date('Y-m-01', strtotime($latestSalesInvoiceDate));
+
             $totalSalesVal = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->whereYear('entry_date', $resolvedYear)
+                ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
 
             $totalHppVal = DB::table('operation_document_lines')
@@ -120,6 +125,7 @@ class DashboardAnalyticsQueryService
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->whereYear('operation_documents.entry_date', $resolvedYear)
+                ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
 
             $totalExpensesVal = DB::table('operation_documents')
@@ -133,6 +139,7 @@ class DashboardAnalyticsQueryService
                     });
                 })
                 ->whereYear('entry_date', $resolvedYear)
+                ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
  
             $netProfitVal = $totalSalesVal - $totalHppVal - $totalExpensesVal;
@@ -148,10 +155,13 @@ class DashboardAnalyticsQueryService
             $pctExp = $legendSum > 0 ? round(($totalExpensesVal / $legendSum) * 100) : 0;
 
             $prevYear = $resolvedYear - 1;
+            $prevSalesInvoiceDate = date('Y-m-d', strtotime($latestSalesInvoiceDate . ' -1 year'));
+
             $prevSalesVal = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->whereYear('entry_date', $prevYear)
+                ->where('entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum('total_amount');
             $prevHppVal = DB::table('operation_document_lines')
                 ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
@@ -159,6 +169,7 @@ class DashboardAnalyticsQueryService
                 ->where('operation_documents.document_type', 'sales_invoice')
                 ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
                 ->whereYear('operation_documents.entry_date', $prevYear)
+                ->where('operation_documents.entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum(DB::raw('operation_document_lines.quantity * products.default_purchase_price'));
             $prevExpensesVal = DB::table('operation_documents')
                 ->where(function ($q) {
@@ -171,6 +182,7 @@ class DashboardAnalyticsQueryService
                     });
                 })
                 ->whereYear('entry_date', $prevYear)
+                ->where('entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum('total_amount');
 
             $calcGrowth = function ($curr, $prev) {
@@ -240,11 +252,13 @@ class DashboardAnalyticsQueryService
                 ->where('document_type', 'payroll_entry')
                 ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar'])
                 ->whereYear('entry_date', $resolvedYear)
+                ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
             $totalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
                 ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas'])
                 ->whereYear('entry_date', $resolvedYear)
+                ->where('entry_date', '<=', $latestSalesInvoiceDate)
                 ->sum('total_amount');
             $totalExpense = $totalGaji + $totalOperasional;
             $pctGaji = $totalExpense > 0 ? round(($totalGaji / $totalExpense) * 100) : 0;
@@ -254,11 +268,13 @@ class DashboardAnalyticsQueryService
                 ->where('document_type', 'payroll_entry')
                 ->whereIn('status', ['Posted', 'Paid', 'Lunas', 'Terbayar'])
                 ->whereYear('entry_date', $prevYear)
+                ->where('entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum('total_amount');
             $prevTotalOperasional = DB::table('operation_documents')
                 ->where('document_type', 'expense_entry')
                 ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas'])
                 ->whereYear('entry_date', $prevYear)
+                ->where('entry_date', '<=', $prevSalesInvoiceDate)
                 ->sum('total_amount');
 
             $prevTotalExpense = $prevTotalGaji + $prevTotalOperasional;
@@ -277,7 +293,8 @@ class DashboardAnalyticsQueryService
             $salesInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'sales_invoice')
                 ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
-                ->whereYear('entry_date', $resolvedYear);
+                ->where('entry_date', '>=', $monthStart)
+                ->where('entry_date', '<=', $latestSalesInvoiceDate);
             $fakturLunasSales = (float) (clone $salesInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasSales = (float) (clone $salesInvoiceQuery)->sum('outstanding_amount');
             $belumJatuhTempoSales = (float) (clone $salesInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
@@ -287,7 +304,8 @@ class DashboardAnalyticsQueryService
             $purchaseInvoiceQuery = DB::table('operation_documents')
                 ->where('document_type', 'purchase_invoice')
                 ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
-                ->whereYear('entry_date', $resolvedYear);
+                ->where('entry_date', '>=', $monthStart)
+                ->where('entry_date', '<=', $latestSalesInvoiceDate);
             $fakturLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('paid_amount');
             $fakturBelumLunasPurchase = (float) (clone $purchaseInvoiceQuery)->sum('outstanding_amount');
             $belumJatuhTempoPurchase = (float) (clone $purchaseInvoiceQuery)->where('due_date', '>=', $latestSalesInvoiceDate)->sum('outstanding_amount');
@@ -300,6 +318,7 @@ class DashboardAnalyticsQueryService
                 ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
                 ->whereIn('operation_documents.document_type', ['sales_invoice', 'sales_delivery', 'cash_sale'])
                 ->whereNotIn('operation_documents.status', ['Void', 'Cancelled', 'void', 'cancelled'])
+                ->where('operation_documents.entry_date', '<=', $latestSalesInvoiceDate)
                 ->when($resolvedYear, fn ($q) => $q->whereYear('operation_documents.entry_date', $resolvedYear))
                 ->select(
                     'products.id as product_id',
