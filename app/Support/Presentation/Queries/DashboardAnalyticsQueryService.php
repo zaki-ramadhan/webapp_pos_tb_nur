@@ -576,24 +576,8 @@ class DashboardAnalyticsQueryService
             $belumJatuhTempoPurchase = 0.0;
             $lewatJatuhTempoPurchase = 0.0;
             $hariIniPurchase = 0.0;
-            $salesTeamRows = [
-                [
-                    'name' => 'Memuat data...',
-                    'role' => 'Sales Toko',
-                    'totalValue' => 'Rp -',
-                    'targetPercent' => '0%',
-                    'targetValue' => '-',
-                    'avatarUrl' => null,
-                ]
-            ];
-            $topProductsItems = [
-                [
-                    'name' => 'Memuat data...',
-                    'units' => '0 pcs',
-                    'share' => '0%',
-                    'revenue' => 'Rp -',
-                ]
-            ];
+            $salesTeamRows = [];
+            $topProductsItems = [];
             $cashAvailabilityLabels = [];
             $cashAvailabilitySeries = [];
             $totalSalesOrders = 0;
