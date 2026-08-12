@@ -4,6 +4,7 @@ import { Info, ExternalLink, RefreshCw, GripVertical } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Panel from '@/components/ui/Panel';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import WidgetLoadingOverlay from './components/WidgetLoadingOverlay';
 
 function WidgetHeaderAction({ label, onClick, disabled = false, children }) {
     return (
@@ -205,14 +206,7 @@ export default function DashboardWidgetCard({
                     </div>
                 </div>
                 <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-4">
-                    {isWidgetLoading && (
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/75 backdrop-blur-[2px] transition-all duration-200">
-                            <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 shadow-sm text-xs font-semibold text-slate-700">
-                                <RefreshCw className="h-3.5 w-3.5 animate-spin text-brand-blue" />
-                                <span>Memuat data...</span>
-                            </div>
-                        </div>
-                    )}
+                    <WidgetLoadingOverlay isVisible={isWidgetLoading} />
                     {children}
                 </div>
             </Panel>
