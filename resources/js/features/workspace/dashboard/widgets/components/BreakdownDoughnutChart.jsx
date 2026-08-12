@@ -64,7 +64,9 @@ export default function BreakdownDoughnutChart({ items = [], percentage = '0%' }
     };
 
     const primaryNonZeroItem = chartData.find((item) => item.value > 0);
-    const resolvedPercentage = (percentage === '0%' && primaryNonZeroItem && primaryNonZeroItem.percentText)
+    const rawPercentage = String(percentage || '');
+    const isNegative = rawPercentage.startsWith('-');
+    const resolvedPercentage = (isNegative || percentage === '0%') && primaryNonZeroItem && primaryNonZeroItem.percentText
         ? primaryNonZeroItem.percentText
         : percentage;
 

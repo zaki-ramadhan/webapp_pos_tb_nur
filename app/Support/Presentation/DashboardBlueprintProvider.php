@@ -154,7 +154,7 @@ class DashboardBlueprintProvider
                     'id' => 'profit-loss',
                     'title' => 'Laba/Rugi Tahun Ini',
                     'type' => 'ring-breakdown',
-                    'percentage' => $profitPercentage,
+                    'percentage' => $profitMargin > 0 ? $profitMargin . '%' : ($pctRev > 0 ? $pctRev . '%' : '0%'),
                     'totalLabel' => $netProfitVal < 0 ? 'Rugi' : 'Laba',
                     'totalValue' => 'Rp ' . number_format(abs($netProfitVal), 0, ',', '.'),
                     'period' => self::dateId($jan1ThisYear) . ' - ' . self::dateId($latestSalesInvoiceDate),
