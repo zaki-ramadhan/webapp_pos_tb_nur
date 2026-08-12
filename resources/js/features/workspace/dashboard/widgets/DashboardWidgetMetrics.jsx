@@ -37,6 +37,9 @@ export function WidgetPeriodNavigator({ periodText, asOfDate, widgetId, stepMode
         }
 
         setIsLoading(true);
+        if (widgetId) {
+            window.dispatchEvent(new CustomEvent('pos:widget-loading-state', { detail: { widgetId, isLoading: true } }));
+        }
 
         try {
             const url = widgetId
@@ -69,6 +72,9 @@ export function WidgetPeriodNavigator({ periodText, asOfDate, widgetId, stepMode
             // Handle error silently
         } finally {
             setIsLoading(false);
+            if (widgetId) {
+                window.dispatchEvent(new CustomEvent('pos:widget-loading-state', { detail: { widgetId, isLoading: false } }));
+            }
         }
     };
 

@@ -29,6 +29,20 @@ export default function DashboardWidgetCard({
     dragHandleProps = {},
 }) {
     const [sourceModalOpen, setSourceModalOpen] = useState(false);
+    const [isInternalLoading, setIsInternalLoading] = useState(false);
+
+    useEffect(() => {
+        const handleLoadingState = (e) => {
+            const { widgetId, isLoading } = e.detail || {};
+            if (widgetId === 'all' || widgetId === widget.id) {
+                setIsInternalLoading(Boolean(isLoading));
+            }
+        };
+        window.addEventListener('pos:widget-loading-state', handleLoadingState);
+        return () => window.removeEventListener('pos:widget-loading-state', handleLoadingState);
+    }, [widget.id]);
+
+    const isWidgetLoading = isRefreshing || isInternalLoading;
 
     const WIDGET_SOURCE_PAGES = {
         'integrated-analysis': {
@@ -190,7 +204,17 @@ export default function DashboardWidgetCard({
                         )}
                     </div>
                 </div>
-                <div className="flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-4">{children}</div>
+                <div className="relative flex min-h-0 flex-1 flex-col px-3 py-3 sm:px-4 sm:py-4">
+                    {isWidgetLoading && (
+                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/75 backdrop-blur-[1px] transition-all duration-200">
+                            <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 shadow-sm text-xs font-semibold text-slate-700">
+                                <RefreshCw className="h-3.5 w-3.5 animate-spin text-brand-blue" />
+                                <span>Memuat data...</span>
+                            </div>
+                        </div>
+                    )}
+                    {children}
+                </div>
             </Panel>
 
             {sourcePage?.sources && (
