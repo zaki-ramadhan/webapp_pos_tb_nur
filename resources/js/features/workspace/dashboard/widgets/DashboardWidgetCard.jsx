@@ -105,16 +105,18 @@ export default function DashboardWidgetCard({
     };
 
     const WIDGET_TOOLTIPS = {
-        'integrated-analysis': 'Rekomendasi pasangan barang yang paling sering dibeli bersamaan oleh pelanggan (Apriori 3 bulan terakhir) beserta kelompok omzetnya (ABC) untuk panduan membuat promo bundling dan menata letak rak toko.',
-        'sales-trend': 'Grafik pergerakan total uang penjualan toko dari hari ke hari selama 7 hari terakhir.',
-        'profit-loss': 'Perhitungan total omzet penjualan dikurangi harga modal barang (HPP) dan biaya operasional toko untuk melihat estimasi keuntungan bersih.',
-        'cash-flow': 'Perbandingan total uang kas masuk dari penjualan dengan uang kas keluar untuk operasional toko.',
-        'company-expense': 'Pembagian total pengeluaran toko ke dalam beban operasional rutin dan gaji karyawan.',
-        'top-products': 'Daftar barang yang paling banyak dibeli oleh pelanggan berdasarkan akumulasi jumlah unit yang terjual.',
-        'cash-availability': 'Estimasi jumlah saldo kas berjalan toko yang tersisa dari mutasi transaksi.',
-        'abc-analysis': 'Pengelompokan barang berdasarkan kontribusi omzet: Kategori A (Penyumbang 80% omzet utama), B (Omzet sedang 15%), dan C (Omzet kecil 5%).',
-        'apriori-analysis': 'Pola kombinasi produk yang paling sering dibeli secara bersamaan oleh pelanggan.',
-        'recent-activity': 'Catatan riwayat transaksi dan penginputan data terbaru yang dilakukan oleh kasir dan pengelola toko.',
+        'integrated-analysis': 'Rekomendasi pasangan produk sering dibeli bersamaan (Apriori) & prioritas omzet (ABC).',
+        'sales-trend': 'Grafik pergerakan omzet penjualan 7 hari terakhir.',
+        'profit-loss': 'Estimasi laba bersih dari omzet dikurangi modal HPP & operasional.',
+        'sales-summary': 'Ringkasan pendapatan penjualan MTD & status pelunasan faktur.',
+        'purchase-summary': 'Ringkasan pembelian barang MTD & status pelunasan hutang.',
+        'cash-flow': 'Perbandingan kas masuk penjualan vs kas keluar operasional.',
+        'company-expense': 'Rincian porsi pengeluaran operasional toko & gaji karyawan.',
+        'top-products': 'Daftar barang terlaris berdasarkan akumulasi unit terjual.',
+        'cash-availability': 'Estimasi saldo kas berjalan toko dari mutasi transaksi.',
+        'abc-analysis': 'Pengelompokan barang berdasarkan kontribusi omzet (A 80%, B 15%, C 5%).',
+        'apriori-analysis': 'Pola kombinasi produk yang paling sering dibeli bersamaan.',
+        'recent-activity': 'Riwayat aktivitas & penginputan transaksi terbaru.',
     };
 
     const widgetKey = widget.sourceWidgetId ?? widget.id;
@@ -160,7 +162,7 @@ export default function DashboardWidgetCard({
                                         aria-label="Informasi widget"
                                     >
                                         <Info className="h-4 w-4 text-slate-400 hover:text-brand-blue" />
-                                        <span className="pointer-events-none absolute left-0 top-full z-50 mt-1 hidden w-64 rounded-md border border-slate-700 bg-slate-900 p-2.5 text-xs text-white shadow-xl group-hover:block sm:w-72 leading-relaxed font-normal">
+                                        <span className="pointer-events-none absolute left-0 top-full z-50 mt-1 hidden w-56 rounded-md border border-slate-700 bg-slate-900 p-2 text-xs text-white shadow-xl group-hover:block sm:w-64 leading-snug font-normal">
                                             {tooltipText}
                                         </span>
                                     </span>
