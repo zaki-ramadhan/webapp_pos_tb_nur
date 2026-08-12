@@ -278,7 +278,7 @@ export function RingBreakdownMetric({ widget }) {
             <div className="grid gap-4 lg:grid-cols-[164px_minmax(0,1fr)] lg:items-center lg:gap-4 min-h-0 flex-1">
                 {/* Left: Chart */}
                 <div className="flex flex-col items-center justify-center">
-                    <BreakdownDoughnutChart items={legend} percentage={percentage} />
+                    <BreakdownDoughnutChart items={legend} percentage={percentage} centerLabel="Margin Laba" />
                 </div>
 
                 {/* Right: Legend */}
@@ -344,7 +344,7 @@ export function ExpenseBreakdownMetric({ widget }) {
             <div className="grid gap-4 lg:grid-cols-[164px_minmax(0,1fr)] lg:items-center lg:gap-4 min-h-0 flex-1">
                 {/* Left: Chart */}
                 <div className="flex flex-col items-center justify-center">
-                    <BreakdownDoughnutChart items={legend} percentage={percentage} />
+                    <BreakdownDoughnutChart items={legend} percentage={percentage} centerLabel="Porsi Utama" />
                 </div>
 
                 {/* Right: Legend */}
