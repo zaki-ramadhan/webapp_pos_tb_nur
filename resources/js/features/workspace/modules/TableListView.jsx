@@ -302,7 +302,7 @@ export default function TableListView({
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-4 text-center text-base text-black">
+                                <DataTableCell colSpan={visibleColumns.length + 1} className="px-2.5 py-2 text-center text-base text-black">
                                     {table.loading ? (
                                         'Memuat data...'
                                     ) : isAccessRestricted || (table.error && String(table.error).toLowerCase().includes('hak akses')) || (table.emptyLabel && String(table.emptyLabel).toLowerCase().includes('hak akses')) ? (

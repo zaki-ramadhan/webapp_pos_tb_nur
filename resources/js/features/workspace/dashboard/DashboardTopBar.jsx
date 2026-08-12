@@ -135,7 +135,7 @@ export default function DashboardTopBar({
                             <div className="hidden min-w-0 text-right leading-tight lg:block">
                                 <p className="truncate text-sm font-normal text-white md:text-sm">{user.name}</p>
                                 <p className="truncate text-xs font-light text-white md:text-xs">
-                                    {user.role || 'Kasir'}
+                                    {user.role === 'Super Admin' || user.role === 'super_admin' ? 'Owner' : (user.role || 'Kasir')}
                                 </p>
                             </div>
 
@@ -160,7 +160,9 @@ export default function DashboardTopBar({
                         >
                             <div className="border-b border-table-row-border px-3 py-2 text-left lg:hidden">
                                 <p className="truncate text-xs font-semibold text-brand-darker">{user.name}</p>
-                                <p className="truncate text-[10px] text-text-light">{user.role || 'Kasir'}</p>
+                                <p className="truncate text-[10px] text-text-light">
+                                    {user.role === 'Super Admin' || user.role === 'super_admin' ? 'Owner' : (user.role || 'Kasir')}
+                                </p>
                             </div>
                             <DropdownMenuItem
                                 onClick={handleLogout}

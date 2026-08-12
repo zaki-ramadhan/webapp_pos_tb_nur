@@ -30,7 +30,7 @@ const salesReceiptSectionTabs = [
 ];
 
 const salesReceiptListColumns = [
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[220px]', align: 'left' },
+    { id: 'number', label: 'Nomor', widthClassName: 'w-[220px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'checkNumber', label: 'No. Cek', widthClassName: 'w-[150px]', align: 'left' },
     { id: 'checkDate', label: 'Tanggal Cek', widthClassName: 'w-[130px]', align: 'left' },
@@ -99,7 +99,7 @@ export const defaultSalesReceiptConfig = {
         customer: 'Terima dari',
         bank: 'Bank',
         paymentAmount: 'Nilai Pembayaran',
-        documentNumber: 'No Bukti #',
+        documentNumber: 'No. Bukti',
         entryDate: 'Tgl Bayar',
         paymentMethod: 'Metode Bayar',
         checkDate: 'Tanggal Cek',
@@ -107,9 +107,8 @@ export const defaultSalesReceiptConfig = {
         branch: 'Cabang',
         notes: 'Keterangan',
         reconcileStatus: 'Terekonsiliasi',
-        printStatus: 'Dicetak/email',
     },
-    numberingOptions: ['Bank BCA IDR Jakarta (069-773-3993)'],
+    numberingOptions: ['Nomor Bukti Kas (Tunai)', 'Nomor Bukti Bank (Transfer)'],
     table: {
         createLabel: 'Tambah Penerimaan Penjualan',
         refreshLabel: 'Muat ulang',
@@ -121,7 +120,7 @@ export const defaultSalesReceiptConfig = {
         filters: [
             { id: 'date', rowKey: 'date', options: [{ value: 'all', label: 'Tanggal: Semua' }, { value: '10/02/2017', label: 'Tanggal: 10/02/2017' }] },
             { id: 'checkDate', rowKey: 'checkDate', options: [{ value: 'all', label: 'Tanggal Cek: Semua' }, { value: '24/02/2017', label: 'Tanggal Cek: 24/02/2017' }] },
-            { id: 'paymentMethod', rowKey: 'paymentMethod', options: [{ value: 'all', label: 'Metode Bayar: Semua' }, { value: 'Tunai', label: 'Metode Bayar: Tunai' }, { value: 'Cek/Giro', label: 'Metode Bayar: Cek/Giro' }] },
+            { id: 'paymentMethod', rowKey: 'paymentMethod', options: [{ value: 'all', label: 'Metode Bayar: Semua' }, { value: 'Tunai', label: 'Metode Bayar: Tunai' }, { value: 'Transfer Bank', label: 'Metode Bayar: Transfer Bank' }, { value: 'QRIS', label: 'Metode Bayar: QRIS' }, { value: 'Kartu Debit', label: 'Metode Bayar: Kartu Debit' }] },
             { id: 'bank', rowKey: 'bank', options: [{ value: 'all', label: 'Bank: Semua' }, { value: 'Bank BCA IDR Jakarta (069-773-3993)', label: 'Bank: Bank BCA IDR Jakarta (069-773-3993)' }] },
             { id: 'customer', rowKey: 'customer', options: [{ value: 'all', label: 'Terima dari: Semua' }, { value: 'Pelanggan Umum - Jakarta', label: 'Terima dari: Pelanggan Umum - Jakarta' }] },
         ],

@@ -222,7 +222,7 @@ export function buildGroupAccessDetailForm(baseForm = {}, record = null) {
         Array.isArray(record.users)
             ? record.users.map((user) => ({
                   id: user.id ?? null,
-                  label: user.name ?? user.email ?? `Pengguna #${user.id ?? ''}`,
+                  label: user.name ?? user.email ?? `Pengguna ${user.id ?? ''}`,
               }))
             : [],
     );
@@ -267,11 +267,11 @@ export function buildGroupAccessRow(record, baseForm = {}) {
         groupName: record.name ?? '',
         userList: users.length
             ? users
-                  .map((user) => user.name ?? user.email ?? `Pengguna #${user.id ?? ''}`)
+                  .map((user) => user.name ?? user.email ?? `Pengguna ${user.id ?? ''}`)
                   .filter(Boolean)
                   .join(', ')
             : 'Belum ada pengguna',
-        tabLabel: record.name ?? `Akses Grup #${record.id}`,
+        tabLabel: record.name ?? `Akses Grup ${record.id}`,
         detailForm: buildGroupAccessDetailForm(baseForm, record),
         __backendRecord: record,
     };
@@ -292,7 +292,7 @@ export function buildGroupAccessPermissionsPayload(categories = []) {
     );
 }
 
-export function buildGroupAccessPayload(generalValues, permissionCategories) {
+export function buildGroupAccessPayload(generalValues) {
     return {
         name: String(generalValues.groupName ?? '').trim(),
         description: null,
@@ -304,11 +304,11 @@ export function buildGroupAccessPayload(generalValues, permissionCategories) {
         user_ids: normalizeSelectedUsers(generalValues.selectedUsers)
             .map((user) => user.id)
             .filter((id) => id !== null && id !== undefined && id !== '' && Number.isInteger(Number(id))),
-        permissions: buildGroupAccessPermissionsPayload(permissionCategories),
+        permissions: [],
     };
 }
 
-export function buildGroupAccessComparableState(generalValues, permissionCategories) {
+export function buildGroupAccessComparableState(generalValues) {
     return {
         groupName: String(generalValues.groupName ?? '').trim(),
         accessLimitationId: String(generalValues.accessLimitationId ?? '').trim(),
@@ -319,6 +319,5 @@ export function buildGroupAccessComparableState(generalValues, permissionCategor
             id: user.id ?? null,
             label: user.label,
         })),
-        permissions: buildGroupAccessPermissionsPayload(permissionCategories),
     };
 }

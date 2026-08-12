@@ -127,7 +127,7 @@ class DepartmentPage
                     'columns' => [
                         [
                             'id' => 'code',
-                            'label' => 'Kode #',
+                            'label' => 'Kode Barang',
                             'widthClassName' => 'w-[33%]',
                         ],
                         [

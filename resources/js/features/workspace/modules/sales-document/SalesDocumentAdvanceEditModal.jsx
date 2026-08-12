@@ -141,7 +141,7 @@ export default function SalesDocumentAdvanceEditModal({
         >
             <div className="grid gap-y-3 sm:grid-cols-[140px_minmax(0,1fr)] sm:gap-x-4 sm:items-center px-6">
                 {/* No Faktur # */}
-                <TransactionFieldLabel label="No Faktur #" />
+                <TransactionFieldLabel label="No. Faktur" />
                 <button
                     type="button"
                     onClick={handleOpenSource}

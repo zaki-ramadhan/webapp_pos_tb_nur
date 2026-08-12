@@ -125,24 +125,33 @@ export default function GeneralJournalHeader({ config, values, setValues, active
                     </div>
                 </div>
 
-                {values.transactionTypeValue && values.transactionTypeValue !== 'general-journal' && (
+                {activeRecordId ? (
                     <div className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-x-4">
                         <TransactionFieldLabel label="No. Trans" />
-                        <button
-                            type="button"
-                            onClick={openSourceTransaction}
-                            disabled={lookupLoading}
-                            title="Klik untuk membuka transaksi asal"
-                            className={`flex items-center px-3 py-2 border rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-normal h-[40px] ${
-                                lookupLoading
-                                    ? 'cursor-wait opacity-70 bg-emerald-50 border-emerald-400 text-emerald-600'
-                                    : 'cursor-pointer bg-emerald-50 border-emerald-600 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-700'
-                            }`}
-                        >
-                            <span className="truncate">{values.transactionNumber || values.documentNumber}</span>
-                        </button>
+                        {values.transactionTypeValue && values.transactionTypeValue !== 'general-journal' && values.transactionNumber ? (
+                            <button
+                                type="button"
+                                onClick={openSourceTransaction}
+                                disabled={lookupLoading}
+                                title="Klik untuk membuka transaksi asal"
+                                className={`flex items-center px-3 py-2 border rounded-[4px] w-full text-left transition duration-150 ease-in-out text-xs sm:text-sm font-normal h-[40px] ${
+                                    lookupLoading
+                                        ? 'cursor-wait opacity-70 bg-emerald-50 border-emerald-400 text-emerald-600'
+                                        : 'cursor-pointer bg-emerald-50 border-emerald-600 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-700'
+                                }`}
+                            >
+                                <span className="truncate">{values.transactionNumber}</span>
+                            </button>
+                        ) : (
+                            <TextInput
+                                value="-"
+                                readOnly
+                                className="h-[40px] rounded-[4px] border-ui-border"
+                                inputClassName="text-xs sm:text-sm text-text-workspace-muted font-normal"
+                            />
+                        )}
                     </div>
-                )}
+                ) : null}
             </div>
         </div>
     );

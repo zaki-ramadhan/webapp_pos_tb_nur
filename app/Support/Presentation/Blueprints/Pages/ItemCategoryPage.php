@@ -26,7 +26,6 @@ class ItemCategoryPage
                 ],
                 'tabs' => [
                     ['id' => 'item-category-general', 'label' => 'Kategori Barang'],
-                    ['id' => 'item-category-accounts', 'label' => 'Akun'],
                 ],
                 'labels' => [
                     'name' => 'Nama',

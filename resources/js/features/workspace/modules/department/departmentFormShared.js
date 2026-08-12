@@ -15,7 +15,7 @@ export function buildDefaultValues(form, detailRow = null) {
         userScopeBranchId: null,
         userScopeBranchLabel: '',
         selectedUserIds: detailUsers.map((user) => user.id),
-        selectedUserLabels: detailUsers.map((user) => user.name ?? user.email ?? `User #${user.id}`),
+        selectedUserLabels: detailUsers.map((user) => user.name ?? user.email ?? `User ${user.id}`),
         __backendRecordId: detailRow?.id ?? null,
         __code: detailRow?.code ?? '',
     };

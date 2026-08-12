@@ -32,7 +32,6 @@ class BackendResourceRegistry
             PartnerBackendResources::definitions(),
             CatalogBackendResources::definitions(),
             InventoryBackendResources::definitions(),
-            AssetBackendResources::definitions(),
             OperationBackendResources::definitions(),
             WorkspaceBackendResources::definitions(),
         );

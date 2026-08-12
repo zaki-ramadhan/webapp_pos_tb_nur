@@ -26,18 +26,14 @@ class GeneralJournalPage
                 ],
                 'labels' => [
                     'entryDate' => 'Tanggal',
-                    'documentNumber' => 'Nomor #',
-                    'transactionNumber' => 'No. Tx #',
+                    'documentNumber' => 'Nomor',
+                    'transactionNumber' => 'No. Trans',
                     'transactionType' => 'Tipe Transaksi',
                     'branch' => 'Cabang',
                     'notes' => 'Keterangan',
                 ],
                 'numberingOptions' => [
                     'Jurnal Umum',
-                    'Nomor Bukti Kas/Bank',
-                    'Kas & Bank',
-                    'Kas Kecil',
-                    'Bank',
                 ],
                 'takeButtonLabel' => 'Ambil',
                 'branchPlaceholder' => 'Cari/Pilih...',
@@ -160,7 +156,7 @@ class GeneralJournalPage
                     'columns' => [
                         [
                             'id' => 'accountCode',
-                            'label' => 'Kode #',
+                            'label' => 'Kode Barang',
                             'widthClassName' => 'w-[30%]',
                             'align' => 'left',
                         ],
@@ -222,8 +218,8 @@ class GeneralJournalPage
                         ['id' => 'export-journal', 'label' => 'Ekspor jurnal umum'],
                     ],
                     'columns' => [
-                        ['id' => 'documentNumber', 'label' => 'Nomor #', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
-                        ['id' => 'transactionNumber', 'label' => 'No. Trans #', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
+                        ['id' => 'documentNumber', 'label' => 'Nomor', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
+                        ['id' => 'transactionNumber', 'label' => 'No. Trans', 'widthClassName' => 'w-[20%]', 'align' => 'left'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[12%]', 'align' => 'left'],
                         ['id' => 'description', 'label' => 'Keterangan', 'widthClassName' => 'w-[30%]', 'align' => 'left'],
                         ['id' => 'total', 'label' => 'Total', 'widthClassName' => 'w-[18%]', 'align' => 'right'],

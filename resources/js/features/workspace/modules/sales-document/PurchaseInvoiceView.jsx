@@ -13,7 +13,7 @@ export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, level
                 ...baseConfig,
                 labels: {
                     ...baseConfig.labels,
-                    documentNumber: 'Nomor #',
+                    documentNumber: 'Nomor',
                 },
                 showPurchaseOrderNumber: false,
                 numberingOptions: ['Pesanan Pembelian'],
@@ -33,7 +33,7 @@ export default function PurchaseInvoiceView({ page, mode, activeLevel2Tab, level
                     resourceName: 'purchase-orders',
                     createLabel: 'Tambah Pesanan Pembelian',
                     columns: [
-                        { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
+                        { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left' },
                         { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
                         { id: 'customerShort', label: 'Pemasok', widthClassName: 'w-[220px]', align: 'left' },
                         { id: 'notes', label: 'Keterangan', widthClassName: 'w-[40%]', align: 'left' },

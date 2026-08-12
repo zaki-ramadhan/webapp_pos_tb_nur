@@ -178,9 +178,10 @@ export function normalizeTrendSeries(series = [], accent = 'var(--color-blue-280
         .filter((item) => Array.isArray(item?.data) && item.data.length)
         .map((item, index) => {
             const color = item.color ?? item.borderColor ?? (index === 0 ? accent : 'var(--color-tab-view-active-text)');
+            const defaultLabel = index === 0 ? 'Saldo Kas' : index === 1 ? 'Kas Keluar' : `Seri ${index + 1}`;
 
             return {
-                label: item.label ?? `Seri ${index + 1}`,
+                label: item.label ?? item.name ?? defaultLabel,
                 data: item.data.map((value) => Number(value) || 0),
                 borderColor: color,
                 backgroundColor: item.fillColor ?? toRgba(color, index === 0 ? 0.16 : 0.1) ?? fallbackFill,

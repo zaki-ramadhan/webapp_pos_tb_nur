@@ -42,20 +42,20 @@ export default function EmployeeView({
             form: {
                 ...page.form,
                 branchOptions: branchResource.rows.length
-                    ? branchResource.rows.map((record) => record.name ?? record.code ?? `Cabang #${record.id}`)
+                    ? branchResource.rows.map((record) => record.name ?? record.code ?? `Cabang ${record.id}`)
                     : (page.form?.branchOptions ?? []),
                 departmentOptions: departmentResource.rows.length
-                    ? departmentResource.rows.map((record) => record.name ?? record.code ?? `Departemen #${record.id}`)
+                    ? departmentResource.rows.map((record) => record.name ?? record.code ?? `Departemen ${record.id}`)
                     : (page.form?.departmentOptions ?? []),
                 lookupOptions: {
                     branches: branchResource.rows.map((record) => ({
                         id: record.id,
-                        label: record.name ?? record.code ?? `Cabang #${record.id}`,
+                        label: record.name ?? record.code ?? `Cabang ${record.id}`,
                         code: record.code ?? '',
                     })),
                     departments: departmentResource.rows.map((record) => ({
                         id: record.id,
-                        label: record.name ?? record.code ?? `Departemen #${record.id}`,
+                        label: record.name ?? record.code ?? `Departemen ${record.id}`,
                         code: record.code ?? '',
                     })),
                     users: userResource.rows.map((record) => ({

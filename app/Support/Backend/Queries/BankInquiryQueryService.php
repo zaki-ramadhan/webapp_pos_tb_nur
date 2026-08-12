@@ -294,16 +294,10 @@ class BankInquiryQueryService
         return OperationDocument::query()
             ->with(['primaryAccount', 'secondaryAccount', 'lines.account'])
             ->when($startDate, function ($query, CarbonInterface $date): void {
-                $query->where(function ($q) use ($date): void {
-                    $q->whereDate('entry_date', '>=', $date->toDateString())
-                        ->orWhereDate('effective_date', '>=', $date->toDateString());
-                });
+                $query->whereDate('entry_date', '>=', $date->toDateString());
             })
             ->when($endDate, function ($query, CarbonInterface $date): void {
-                $query->where(function ($q) use ($date): void {
-                    $q->whereDate('entry_date', '<=', $date->toDateString())
-                        ->orWhereDate('effective_date', '<=', $date->toDateString());
-                });
+                $query->whereDate('entry_date', '<=', $date->toDateString());
             })
             ->orderBy('entry_date')
             ->orderBy('id')

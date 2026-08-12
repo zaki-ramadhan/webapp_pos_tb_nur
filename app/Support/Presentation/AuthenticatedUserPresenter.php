@@ -48,7 +48,7 @@ final class AuthenticatedUserPresenter
     {
         try {
             if ($user->hasAnyRoleCodes(['super_admin']) || str_contains(strtolower($user->email), 'nurhayati') || str_contains(strtolower($user->email), 'piscok')) {
-                return 'Super Admin';
+                return 'Owner';
             }
 
             $groupName = $user->accessGroups->first()?->name;

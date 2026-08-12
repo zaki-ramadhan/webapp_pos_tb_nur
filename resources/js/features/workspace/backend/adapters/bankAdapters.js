@@ -44,7 +44,7 @@ export function openSourceDocument(row) {
 
     const pageId = docTypeToPageId[documentType] || String(documentType).replace(/_/g, '-');
     const targetRecordId = String(documentId);
-    const label = row.sourceNumber || row.documentNumber || row.document_number || `Dokumen #${targetRecordId}`;
+    const label = row.sourceNumber || row.documentNumber || row.document_number || `Dokumen ${targetRecordId}`;
 
     window.dispatchEvent(
         new CustomEvent('workspace:open-page', {

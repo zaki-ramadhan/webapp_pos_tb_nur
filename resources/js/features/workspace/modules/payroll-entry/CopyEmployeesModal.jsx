@@ -195,13 +195,13 @@ export default function CopyEmployeesModal({ open, onClose, onConfirm }) {
                         <DataTableBody>
                             {loading ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="text-center py-2.5 text-slate-500">
+                                    <DataTableCell colSpan={3} className="text-center py-2 text-black">
                                         Memuat data karyawan...
                                     </DataTableCell>
                                 </DataTableRow>
                             ) : filteredEmployees.length === 0 ? (
                                 <DataTableRow>
-                                    <DataTableCell colSpan={3} className="text-center py-2.5 text-slate-500">
+                                    <DataTableCell colSpan={3} className="text-center py-2 text-black">
                                         Tidak ada data Karyawan
                                     </DataTableCell>
                                 </DataTableRow>

@@ -177,7 +177,25 @@ class BackendResourceAccessService
             ->values();
     }
 
-    protected function isGroupWithinTimeLimits($group): bool
+    public function isUserTimeRestricted(User $user): bool
+    {
+        if ($user->hasAnyRoleCodes(['super_admin'])) {
+            return false;
+        }
+
+        $user->loadMissing('accessGroups');
+        foreach ($user->accessGroups as $group) {
+            if ((bool) $group->is_active && $group->access_limit_type === 'limited-time') {
+                if (! $this->isGroupWithinTimeLimits($group)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function isGroupWithinTimeLimits($group): bool
     {
         if ($group->access_limit_type !== 'limited-time') {
             return true;
@@ -245,7 +263,6 @@ class BackendResourceAccessService
     protected function supportsPermissionTables(): bool
     {
         return Schema::hasTable('roles')
-            && Schema::hasTable('access_group_permissions')
             && Schema::hasTable('access_group_user')
             && Schema::hasTable('role_user');
     }

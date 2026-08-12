@@ -45,7 +45,7 @@ export const salesInvoiceSectionTabs = [
 
 const salesOrderListColumns = [
     { id: 'statusIcon', label: '#', widthClassName: 'w-[38px]', align: 'center' },
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[180px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[52%]', align: 'left' },
@@ -55,7 +55,7 @@ const salesOrderListColumns = [
 
 const salesOrderItemColumns = [
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[54%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[115px]', align: 'center' },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[115px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[92px]', align: 'right' },
     { id: 'unit', label: 'Satuan', widthClassName: 'w-[84px]', align: 'center' },
     { id: 'price', label: '@Harga', widthClassName: 'w-[118px]', align: 'right' },
@@ -65,18 +65,18 @@ const salesOrderItemColumns = [
 
 const salesOrderCostColumns = [
     { id: 'name', label: 'Nama Biaya', widthClassName: 'w-[70%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[130px]', align: 'center' },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'amount', label: 'Jumlah', widthClassName: 'w-[150px]', align: 'right' },
 ];
 
 export const salesInvoiceAdvanceColumns = [
-    { id: 'number', label: 'No Faktur #', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'number', label: 'No. Faktur', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'amount', label: 'Uang Muka', widthClassName: 'w-[180px]', align: 'right' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[58%]', align: 'left' },
 ];
 
 export const salesInvoiceListColumns = [
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[190px]', align: 'left' },
+    { id: 'number', label: 'Nomor', widthClassName: 'w-[190px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[190px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[48%]', align: 'left' },
@@ -130,7 +130,7 @@ const defaultSalesOrderConfig = {
     labels: {
         customer: 'Dipesan oleh',
         entryDate: 'Tanggal',
-        documentNumber: 'No Pesanan #',
+        documentNumber: 'No. Pesanan',
         purchaseOrderNumber: 'No. PO',
         address: 'Alamat',
         notes: 'Keterangan',
@@ -229,7 +229,7 @@ export const defaultSalesInvoiceConfig = {
     labels: {
         ...defaultSalesOrderConfig.labels,
         customer: 'Pelanggan',
-        documentNumber: 'No Faktur #',
+        documentNumber: 'No. Faktur',
         preInvoice: 'Faktur Dimuka',
         contact: 'Kontak',
     },

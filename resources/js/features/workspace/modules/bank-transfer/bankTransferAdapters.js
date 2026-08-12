@@ -58,7 +58,7 @@ export function buildBankTransferRow(record) {
         toBankLabel: secondaryAccountLabel,
         fromBranch: fromBranchLabel,
         toBranch: toBranchLabel,
-        tabLabel: record.document_number ?? `Transfer #${record.id}`,
+        tabLabel: record.document_number ?? `Transfer ${record.id}`,
     };
 }
 

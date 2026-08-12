@@ -101,20 +101,52 @@ export function InventoryAdjustmentFormView({
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
 
-    async function handleCreateItem() {
-        await applyInventoryPromptItemUpdate(null, setValues, setStatus);
+    function handleCreateItem() {
+        setSelectedItem({
+            id: `draft-item-${Date.now()}`,
+            __productId: null,
+            name: '',
+            code: '',
+            adjustmentType: 'Penambahan',
+            quantity: '1',
+            unit: 'PCS',
+            unitLookup: ['PCS'],
+            unitCost: '0',
+            totalCost: '0',
+            warehouse: [],
+            department: [],
+            notes: '',
+        });
     }
 
-    async function handleEditItem(item) {
-        await applyInventoryPromptItemUpdate(item, setValues, setStatus);
+    function handleEditItem(item) {
+        setSelectedItem(item);
     }
 
     function handleSelectItem(product) {
         if (!product) return;
         const nextItem = buildItemFromProduct(product, pageId);
-        setValues((current) =>
-            buildTotals(current, [...(current.items ?? []), nextItem])
-        );
+        setSelectedItem(nextItem);
+    }
+
+    function handleItemModalSave(savedItem) {
+        setValues((current) => {
+            const items = current.items ?? [];
+            const exists = items.some((entry) => entry.id === savedItem.id);
+            const nextItems = exists
+                ? items.map((entry) => (entry.id === savedItem.id ? savedItem : entry))
+                : [...items, savedItem];
+            return buildTotals(current, nextItems);
+        });
+        setSelectedItem(null);
+    }
+
+    function handleItemModalDelete(deletedItem) {
+        setValues((current) => {
+            const nextItems = (current.items ?? []).filter((entry) => entry.id !== deletedItem.id);
+            return buildTotals(current, nextItems);
+        });
+        setSelectedItem(null);
     }
 
     async function onSaveClick() {
@@ -225,10 +257,9 @@ export function InventoryAdjustmentFormView({
                         config={config}
                         values={values}
                         setValues={setValues}
-                        isDetail={isDetail}
-                        onOpenItem={isDetail ? setSelectedItem : handleEditItem}
+                        onOpenItem={handleEditItem}
                         onCreateItem={handleCreateItem}
-                        onSelectItem={isDetail ? undefined : handleSelectItem}
+                        onSelectItem={handleSelectItem}
                     />
                 )}
             </TransactionFormLayout>
@@ -237,10 +268,18 @@ export function InventoryAdjustmentFormView({
                 open={Boolean(selectedItem)}
                 onClose={() => setSelectedItem(null)}
                 modal={{
-                    ...(values.itemModal ?? {}),
-                    adjustmentTypeOptions: config.adjustmentTypeOptions,
+                    title: 'Rincian Barang',
+                    deleteLabel: 'Hapus',
+                    submitLabel: 'Lanjut',
+                    tabs: [
+                        { id: 'details', label: 'Rincian' },
+                        { id: 'info', label: 'Info Lainnya' },
+                    ],
+                    adjustmentTypeOptions: config.adjustmentTypeOptions ?? ['Penambahan', 'Pengurangan'],
                 }}
                 item={selectedItem}
+                onSave={handleItemModalSave}
+                onDelete={handleItemModalDelete}
             />
             <ConfirmationModal
                 open={deleteConfirmationOpen}

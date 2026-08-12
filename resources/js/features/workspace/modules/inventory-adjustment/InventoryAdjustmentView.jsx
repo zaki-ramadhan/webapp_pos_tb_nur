@@ -50,7 +50,7 @@ export default function InventoryAdjustmentView({
             baseConfig.labels = {
                 ...(baseConfig.labels ?? {}),
                 date: baseConfig.labels?.date || 'Tanggal',
-                documentNumber: isPriceAdjustment ? (baseConfig.labels?.documentNumber || 'Nomor #') : 'No Penyesuaian #',
+                documentNumber: isPriceAdjustment ? (baseConfig.labels?.documentNumber || 'Nomor') : 'No. Penyesuaian',
             };
 
             if (!backendConfig) {

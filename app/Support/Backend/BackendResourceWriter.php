@@ -658,25 +658,27 @@ class BackendResourceWriter
     public function generateNextSequentialNumber(string $resourceKey, ?string $entryDate = null): string
     {
         $prefixes = [
-            'sales-quotes' => 'SQ',
-            'sales-orders' => 'SO',
-            'sales-deliveries' => 'SD',
-            'sales-invoices' => 'SI',
-            'sales-returns' => 'SRT',
-            'purchase-orders' => 'PO',
-            'goods-receipts' => 'GR',
-            'purchase-invoices' => 'PI',
-            'purchase-returns' => 'PRT',
-            'payroll-entries' => 'EPY',
-            'expense-entries' => 'EXP',
-            'general-journals' => 'JV',
-            'cash-payments' => 'CP',
-            'cash-receipts' => 'CR',
-            'bank-transfers' => 'BT',
-            'sales-deposits' => 'DP',
-            'purchase-payments' => 'PP',
-            'sales-receipts' => 'RCT',
-            'item-requests' => 'IR',
+            'sales-quotes' => 'PN',        // Penawaran Penjualan
+            'sales-orders' => 'SO',        // Pesanan Penjualan
+            'sales-deliveries' => 'SJ',    // Surat Jalan
+            'sales-invoices' => 'FP',      // Faktur Penjualan
+            'sales-returns' => 'RJ',       // Retur Penjualan
+            'purchase-orders' => 'PO',     // Pesanan Pembelian
+            'goods-receipts' => 'PB',      // Penerimaan Barang Supplier
+            'purchase-invoices' => 'FB',   // Faktur Pembelian
+            'purchase-returns' => 'RB',    // Retur Pembelian
+            'payroll-entries' => 'GJ',     // Penggajian / Gaji
+            'expense-entries' => 'BB',     // Beban Operasional
+            'general-journals' => 'JU',    // Jurnal Umum
+            'cash-payments' => 'KK',       // Kas Keluar
+            'cash-receipts' => 'KM',       // Kas Masuk
+            'bank-transfers' => 'TB',      // Transfer Bank
+            'stock-transfers' => 'TP',     // Transfer Persediaan
+            'sales-deposits' => 'UM',      // Uang Muka Penjualan
+            'purchase-payments' => 'BYB',   // Bayar Pembelian Supplier
+            'sales-receipts' => 'KW',      // Kuitansi / Terima Penjualan
+            'item-requests' => 'PBG',      // Permintaan Barang
+            'inventory-adjustments' => 'PS', // Penyesuaian Stok
         ];
 
         $prefix = $prefixes[$resourceKey] ?? 'DOC';
@@ -695,9 +697,9 @@ class BackendResourceWriter
             ->orderBy('id', 'desc')
             ->get()
             ->first(function ($doc) {
-                // Hanya ambil yang berformat PREFIX.YYYY.MM.00001 (4 bagian)
+                // Hanya ambil yang berformat PREFIX.YYYY.MM.0001 (4 bagian)
                 $parts = explode('.', $doc->document_number);
-                return count($parts) === 4 && is_numeric(end($parts)) && strlen(end($parts)) === 5;
+                return count($parts) === 4 && is_numeric(end($parts));
             });
 
         $nextSeq = 1;
@@ -710,7 +712,7 @@ class BackendResourceWriter
         }
 
         do {
-            $seqString = str_pad($nextSeq, 5, '0', STR_PAD_LEFT);
+            $seqString = str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
             $candidateNumber = "{$prefix}.{$year}.{$month}.{$seqString}";
             $exists = DB::table($targetTable)->where('document_number', $candidateNumber)->exists();
             if ($exists) {
@@ -759,7 +761,20 @@ class BackendResourceWriter
             return;
         }
 
-        $postableTypes = ['expense_entry', 'payroll_entry', 'cash_payment', 'cash_receipt', 'bank_transfer', 'sales_invoice', 'purchase_invoice'];
+        $postableTypes = [
+            'expense_entry',
+            'payroll_entry',
+            'cash_payment',
+            'cash_receipt',
+            'bank_transfer',
+            'sales_invoice',
+            'purchase_invoice',
+            'sales_receipt',
+            'purchase_payment',
+            'sales_return',
+            'purchase_return',
+            'sales_deposit',
+        ];
         if (!in_array($record->document_type, $postableTypes)) {
             return;
         }
@@ -774,24 +789,19 @@ class BackendResourceWriter
             $journal->related_document_id = $record->id;
         }
 
-        $prefixes = [
-            'expense_entry'    => 'JV-EXP-',
-            'payroll_entry'    => 'JV-EPY-',
-            'cash_payment'     => 'JV-CP-',
-            'cash_receipt'     => 'JV-CR-',
-            'bank_transfer'    => 'JV-BT-',
-            'sales_invoice'    => 'JV-SI-',
-            'purchase_invoice' => 'JV-PI-',
-        ];
-
         $transactionLabels = [
             'expense_entry'    => 'Pencatatan Beban',
-            'payroll_entry'    => 'Pencatatan Gaji',
+            'payroll_entry'    => 'Penggajian Karyawan',
             'cash_payment'     => 'Pembayaran Kas',
             'cash_receipt'     => 'Penerimaan Kas',
             'bank_transfer'    => 'Transfer Bank',
             'sales_invoice'    => 'Faktur Penjualan',
             'purchase_invoice' => 'Faktur Pembelian',
+            'sales_receipt'    => 'Kuitansi Penjualan',
+            'purchase_payment' => 'Bayar Pembelian',
+            'sales_return'     => 'Retur Penjualan',
+            'purchase_return'  => 'Retur Pembelian',
+            'sales_deposit'    => 'Uang Muka Penjualan',
         ];
 
         $transactionValues = [
@@ -802,6 +812,11 @@ class BackendResourceWriter
             'bank_transfer'    => 'bank-transfer',
             'sales_invoice'    => 'sales-invoice',
             'purchase_invoice' => 'purchase-invoice',
+            'sales_receipt'    => 'sales-receipt',
+            'purchase_payment' => 'purchase-payment',
+            'sales_return'     => 'sales-return',
+            'purchase_return'  => 'purchase-return',
+            'sales_deposit'    => 'sales-deposit',
         ];
 
         $cleanNotes = trim((string) $record->notes);
@@ -812,7 +827,7 @@ class BackendResourceWriter
         }
 
         $journal->branch_id       = $record->branch_id;
-        $journal->document_number = ($prefixes[$record->document_type] ?? 'JV-') . $record->document_number;
+        $journal->document_number = $this->generateNextSequentialNumber('general-journals', $record->entry_date);
         $journal->entry_date      = $record->entry_date;
         $journal->status          = 'Posted';
         $journal->notes           = $cleanNotes;

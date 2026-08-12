@@ -26,9 +26,9 @@ export function AccountLookupField({
     message = '',
     value = '',
     values = null,
-    placeholder = 'Cari/Pilih Akun Perkiraan...',
-    searchLabel = 'Cari akun perkiraan',
-    dialogTitle = 'Pilih Akun Perkiraan',
+    placeholder,
+    searchLabel,
+    dialogTitle,
     disabled = false,
     className = '',
     contentClassName = '',
@@ -40,6 +40,11 @@ export function AccountLookupField({
     showType = false,
     resource = 'accounts',
 }) {
+    const isProducts = resource === 'products';
+    const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
+    const resolvedSearchLabel = searchLabel ?? (isProducts ? 'Cari barang dan jasa' : 'Cari akun perkiraan');
+    const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang/Jasa' : 'Pilih Akun Perkiraan');
+
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
@@ -56,8 +61,8 @@ export function AccountLookupField({
                     id={id}
                     value={value}
                     values={values}
-                    placeholder={placeholder}
-                    searchLabel={searchLabel}
+                    placeholder={resolvedPlaceholder}
+                    searchLabel={resolvedSearchLabel}
                     onRemove={(val) => {
                         onRemove?.(val);
                         clearError(contextKey);
@@ -131,9 +136,9 @@ export function AccountLookupTextInput({
     error = '',
     message = '',
     value = '',
-    placeholder = 'Cari/Pilih Akun Perkiraan...',
-    searchLabel = 'Cari akun perkiraan',
-    dialogTitle = 'Pilih Akun Perkiraan',
+    placeholder,
+    searchLabel,
+    dialogTitle,
     disabled = false,
     className = 'h-[40px] rounded-[4px] border-slate-400',
     inputClassName = 'text-xs sm:text-sm text-brand-dark',
@@ -144,6 +149,11 @@ export function AccountLookupTextInput({
     showType = false,
     resource = 'accounts',
 }) {
+    const isProducts = resource === 'products';
+    const resolvedPlaceholder = placeholder ?? (isProducts ? 'Cari/Pilih Barang...' : 'Cari/Pilih Akun Perkiraan...');
+    const resolvedSearchLabel = searchLabel ?? (isProducts ? 'Cari barang dan jasa' : 'Cari akun perkiraan');
+    const resolvedDialogTitle = dialogTitle ?? (isProducts ? 'Pilih Barang/Jasa' : 'Pilih Akun Perkiraan');
+
     const { errorMessage: contextErrorMessage, contextKey, clearError } = useFormError(error, name, id);
     const resolvedError = contextErrorMessage || (typeof error === 'boolean' ? error : '');
     const feedbackMessage = contextErrorMessage || (typeof error === 'string' ? (error || message) : message);
@@ -158,8 +168,8 @@ export function AccountLookupTextInput({
                 id={id}
                 value={normalizeInputValue(controller.draftValue)}
                 selectedValue={controller.selectedValue}
-                placeholder={placeholder}
-                searchLabel={searchLabel}
+                placeholder={resolvedPlaceholder}
+                searchLabel={resolvedSearchLabel}
                 disabled={disabled}
                 className={`${resolvedError ? 'border-danger focus-within:border-danger focus-within:shadow-input-error-focus' : ''} ${className}`.trim()}
                 inputClassName={inputClassName}

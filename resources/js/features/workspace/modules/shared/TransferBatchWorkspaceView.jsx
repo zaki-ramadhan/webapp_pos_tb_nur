@@ -186,10 +186,10 @@ export default function TransferBatchWorkspaceView({ config }) {
                                 ))
                             ) : (
                                 <DataTableRow className="bg-white">
-                                    {firstColumnIsCheckbox ? <DataTableCell className="px-2.5" /> : null}
+                                    {firstColumnIsCheckbox ? <DataTableCell className="px-2.5 py-2 text-black" /> : null}
                                     <DataTableCell
                                         colSpan={config.table.columns.length - (firstColumnIsCheckbox ? 1 : 0) + 1}
-                                        className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
+                                        className="px-2.5 py-2 text-center text-base text-black"
                                     >
                                         {config.table.loading ? 'Memuat data...' : (config.table.emptyLabel ?? 'Tidak ada data')}
                                     </DataTableCell>

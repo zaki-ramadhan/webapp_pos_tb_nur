@@ -150,7 +150,7 @@ export default function BankLedgerTable({
             <DataTableHeader className="bg-[#476278]">
                 <DataTableRow className="border-b-0">
                     <DataTableHead className="text-center w-[110px] whitespace-nowrap text-white">Tanggal</DataTableHead>
-                    <DataTableHead className="w-[160px] text-white">No. Sumber #</DataTableHead>
+                    <DataTableHead className="w-[160px] text-white">No. Sumber</DataTableHead>
                     {hasCheckNumberColumn && (
                         <DataTableHead className="w-[130px] text-white">No Cek #</DataTableHead>
                     )}
@@ -165,13 +165,13 @@ export default function BankLedgerTable({
             <DataTableBody>
                 {loading ? (
                     <DataTableRow className="bg-white">
-                        <DataTableCell colSpan={totalHeadColSpan} className="py-6 text-center text-sm text-text-workspace-dark">
+                        <DataTableCell colSpan={totalHeadColSpan} className="py-2 text-center text-sm text-black">
                             Memuat data...
                         </DataTableCell>
                     </DataTableRow>
                 ) : !hasData ? (
                     <DataTableRow className="bg-white">
-                        <DataTableCell colSpan={totalHeadColSpan} className="py-6 text-center text-sm text-text-workspace-dark">
+                        <DataTableCell colSpan={totalHeadColSpan} className="py-2 text-center text-sm text-black">
                             {emptyLabel}
                         </DataTableCell>
                     </DataTableRow>
@@ -244,7 +244,7 @@ export default function BankLedgerTable({
 
                         {/* Baris Total (Dengan merge colSpan & Saldo Akhir) */}
                         <DataTableRow className="hover:bg-slate-50 transition-colors select-none font-medium border-t-2 border-slate-300 bg-white">
-                            <DataTableCell colSpan={totalColSpan} className="text-text-workspace-dark font-normal">
+                            <DataTableCell colSpan={totalColSpan} className="text-black font-normal">
                                 Total
                             </DataTableCell>
                             <DataTableCell className={`text-right ${totalMutation.isCredit ? 'text-red-600' : 'text-slate-700'}`}>

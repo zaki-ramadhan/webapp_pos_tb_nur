@@ -75,7 +75,7 @@ function DepartmentOpeningBalanceTable({ openingBalance, keyword }) {
                             <DataTableRow className="bg-white">
                                 <DataTableCell
                                     colSpan={openingBalance.columns.length}
-                                    className="px-3 py-3 text-center text-base text-text-workspace-dark"
+                                    className="px-3 py-2 text-center text-base text-black"
                                 >
                                     {openingBalance.emptyLabel}
                                 </DataTableCell>

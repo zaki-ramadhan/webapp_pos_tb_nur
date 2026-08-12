@@ -55,7 +55,7 @@ export function useColumnVisibility(schemaKey, initialColumns = []) {
 
 export function getTableSchemaKey(columns = []) {
     return columns
-        .map(c => c?.id || c)
+        .map(c => `${c?.id || c}${c?.defaultHidden ? ':h' : ''}`)
         .filter(Boolean)
         .sort()
         .join('|');

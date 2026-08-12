@@ -30,7 +30,7 @@ class PayrollEntryPage
                     'paymentType' => 'Tipe Pembayaran',
                     'branch' => 'Cabang',
                     'periodMonth' => 'Bulan',
-                    'numbering' => 'Nomor #',
+                    'numbering' => 'Nomor',
                     'entryDate' => 'Tanggal',
                     'dueDate' => 'Jatuh Tempo',
                 ],

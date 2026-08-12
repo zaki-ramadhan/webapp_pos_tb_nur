@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePage } from '@inertiajs/react';
+import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
 
 import {
     DataTable,
@@ -101,7 +102,7 @@ export default function InventoryInquiryView({ config, pageId }) {
 
     const pageProps = usePage()?.props ?? {};
     const authUser = pageProps.auth?.user ?? null;
-    const isSuperAdmin = Boolean(authUser?.isSuperAdmin || authUser?.role === 'Super Admin' || authUser?.role === 'super_admin');
+    const isSuperAdmin = isOwnerUser(authUser);
     const resourceAbility = authUser?.abilities?.[resource] ?? null;
 
     const isAccessRestricted = Boolean(
@@ -468,10 +469,10 @@ export default function InventoryInquiryView({ config, pageId }) {
                             ))
                         ) : (
                             <DataTableRow className="bg-white">
-                                {firstColumnIsCheckbox ? <DataTableCell className="px-2.5" /> : null}
+                                {firstColumnIsCheckbox ? <DataTableCell className="px-2.5 py-2 text-black" /> : null}
                                 <DataTableCell
                                     colSpan={dataColumns.length + 1}
-                                    className="px-2.5 py-3 text-center text-base text-text-workspace-dark"
+                                    className="px-2.5 py-2 text-center text-base text-black"
                                 >
                                     {loading ? 'Memuat data...' : (error || config.table.emptyLabel || 'Tidak ada data')}
                                 </DataTableCell>

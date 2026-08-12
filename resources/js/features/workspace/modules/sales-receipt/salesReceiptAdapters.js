@@ -103,7 +103,10 @@ export function buildSalesReceiptInvoiceFromRecord(record) {
     const totalAmount = Number(record?.total_amount ?? 0);
     const outstandingAmount = Number(record?.outstanding_amount ?? totalAmount);
     const paidAmount = outstandingAmount;
-    const invoiceNumber = record?.reference_number ?? record?.document_number ?? '';
+    const invoiceNumber =
+        (record?.document_number && String(record.document_number).trim()) ||
+        (record?.reference_number && String(record.reference_number).trim()) ||
+        '';
     const invoiceDate = formatIsoDate(record?.entry_date);
 
     return {

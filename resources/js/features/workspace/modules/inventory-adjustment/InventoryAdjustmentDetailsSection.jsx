@@ -6,8 +6,6 @@ import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
 import { SearchIcon, ViewModeIcon } from '@/features/workspace/shared/Icons';
 import { buildTotals } from './inventoryAdjustmentShared';
-import InventoryAdjustmentImportModal from './InventoryAdjustmentImportModal';
-
 import { AccountLookupTextInput } from '@/features/workspace/shared/AccountLookupControls';
 
 export default function InventoryAdjustmentDetailsSection({
@@ -20,7 +18,6 @@ export default function InventoryAdjustmentDetailsSection({
     onCreateItem,
     onSelectItem,
 }) {
-    const [showImportModal, setShowImportModal] = useState(false);
     const [isColumnsToggled, setIsColumnsToggled] = useState(false);
     const isPriceAdjustment = pageId === 'price-adjustment';
     const isDiscountMode = isPriceAdjustment && values.adjustmentType === 'Diskon (%)';
@@ -45,12 +42,11 @@ export default function InventoryAdjustmentDetailsSection({
     }, [values.salesCategory]);
 
     const mappedItems = useMemo(() => {
-        if (!isPriceAdjustment) return filteredItems;
-
         return filteredItems.map((item, index) => ({
             ...item,
+            __rawItem: item,
             no: index + 1,
-            salesCategory: docSalesCategory || item.salesCategory || 'Umum',
+            salesCategory: isPriceAdjustment ? (docSalesCategory || item.salesCategory || 'Umum') : undefined,
             oldDiscount: item.oldDiscount ?? '0',
             minQty: item.minQty ?? '0',
             newDiscount: item.newDiscount ?? '0',
@@ -87,57 +83,21 @@ export default function InventoryAdjustmentDetailsSection({
     const customSearchInput = (
         <div className="flex gap-2 w-full items-center">
             <div className="min-w-0 flex-1 w-full sm:max-w-[320px] md:max-w-[380px]">
-                {isDetail ? (
-                    <TextInput
-                        value={values.itemSearch || ''}
-                        onChange={(event) =>
-                            setValues((current) => ({
-                                ...current,
-                                itemSearch: event.target.value,
-                            }))
+                <AccountLookupTextInput
+                    resource="products"
+                    value={values.itemSearch || ''}
+                    placeholder={config?.detailSearchPlaceholder || 'Cari/Pilih Barang...'}
+                    searchLabel="Cari barang dan jasa"
+                    dialogTitle="Pilih Barang/Jasa"
+                    onSelectAccount={(productRecord) => {
+                        if (productRecord) {
+                            onSelectItem?.(productRecord);
                         }
-                        placeholder={config?.detailSearchPlaceholder || 'Cari/Pilih Rincian Barang'}
-                        trailing={<SearchIcon className="h-5 w-5 text-brand-dark" />}
-                        className="h-[40px] w-full rounded-[4px] border-ui-border"
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                    />
-                ) : (
-                    <AccountLookupTextInput
-                        resource="products"
-                        value={values.itemSearch || ''}
-                        placeholder={config.detailSearchPlaceholder}
-                        searchLabel="Cari barang dan jasa"
-                        dialogTitle="Pilih Barang/Jasa"
-                        disabled={isDetail}
-                        onSelectAccount={(productRecord) => {
-                            if (productRecord) {
-                                onSelectItem?.(productRecord);
-                            }
-                        }}
-                        className="h-[40px] w-full rounded-[4px] border-ui-border"
-                        inputClassName="text-xs sm:text-sm text-brand-dark"
-                    />
-                )}
+                    }}
+                    className="h-[40px] w-full rounded-[4px] border-ui-border"
+                    inputClassName="text-xs sm:text-sm text-brand-dark"
+                />
             </div>
-            <SelectField
-                value={values.detailMode}
-                onChange={(event) => {
-                    if (event.target.value === 'Impor barang') {
-                        setShowImportModal(true);
-                        return;
-                    }
-                    setValues((current) => ({
-                        ...current,
-                        detailMode: event.target.value,
-                    }));
-                }}
-                className="h-[34px] min-w-[120px] rounded-[4px] border-brand-blue-border"
-                selectClassName="text-xs sm:text-sm text-brand-blue-accent"
-                containerClassName="w-auto shrink-0"
-            >
-                <option value="Rincian">Rincian</option>
-                <option value="Impor barang">Impor barang</option>
-            </SelectField>
 
             {isPriceAdjustment && (
                 <button
@@ -161,33 +121,21 @@ export default function InventoryAdjustmentDetailsSection({
         : config.itemTable.minWidthClassName;
 
     return (
-        <>
-            <TransactionLineItemsSection
-                searchValue={values.itemSearch}
-                onSearchChange={(e) =>
-                    setValues((current) => ({ ...current, itemSearch: e.target.value }))
-                }
-                searchPlaceholder={config.detailSearchPlaceholder}
-                title={values.itemCountLabel ?? config.itemSectionTitle}
-                columns={columns}
-                rows={mappedItems}
-                emptyLabel={config.itemTable.emptyLabel}
-                minWidthClassName={minWidth}
-                onRowClick={isDetail ? onOpenItem : undefined}
-                getRowClassName={() => (isDetail ? 'cursor-pointer hover:bg-workspace-hover-bg' : '')}
-                searchInput={customSearchInput}
-                searchWrapperClassName="w-full sm:max-w-none flex-1"
-            />
-
-            <InventoryAdjustmentImportModal
-                open={showImportModal}
-                onClose={() => setShowImportModal(false)}
-                onImport={(importedItems) => {
-                    setValues((current) =>
-                        buildTotals(current, [...(current.items ?? []), ...importedItems])
-                    );
-                }}
-            />
-        </>
+        <TransactionLineItemsSection
+            searchValue={values.itemSearch}
+            onSearchChange={(e) =>
+                setValues((current) => ({ ...current, itemSearch: e.target.value }))
+            }
+            searchPlaceholder={config.detailSearchPlaceholder}
+            title={values.itemCountLabel ?? config.itemSectionTitle}
+            columns={columns}
+            rows={mappedItems}
+            emptyLabel={config.itemTable.emptyLabel}
+            minWidthClassName={minWidth}
+            onRowClick={onOpenItem ? (row) => onOpenItem(row.__rawItem || row) : undefined}
+            getRowClassName={() => (onOpenItem ? 'cursor-pointer hover:bg-workspace-hover-bg' : '')}
+            searchInput={customSearchInput}
+            searchWrapperClassName="w-full sm:max-w-none flex-1"
+        />
     );
 }

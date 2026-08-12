@@ -155,7 +155,7 @@ export function validateInventoryAdjustmentValues(values, config, isDetail) {
             : (values.autoNumber
                 ? [{ label: 'Tipe penomoran', value: values.numberingType }]
                 : [{ label: config.labels.documentNumber, value: values.documentNumber }])),
-        { label: config.itemSectionTitle, value: values.items, type: 'array' },
+        { label: config?.itemSectionTitle || config?.detailTable?.title || 'Rincian Barang', value: values.items, type: 'array' },
     ]);
 
     if (requiredMessage) {
@@ -261,6 +261,20 @@ export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 
 
     if (!result) return null;
 
+    const unitName = product.base_unit?.name 
+        ?? product.baseUnit?.name 
+        ?? product.unit?.name 
+        ?? product.sales_unit?.name 
+        ?? product.purchase_unit?.name 
+        ?? (typeof product.unit === 'string' ? product.unit : null) 
+        ?? item?.unit 
+        ?? 'PCS';
+    const unitId = product.base_unit?.id 
+        ?? product.baseUnit?.id 
+        ?? product.unit?.id 
+        ?? item?.__unitId 
+        ?? null;
+
     if (isPrice) {
         const oldDiscount = String(result.oldDiscount ?? '0');
         const minQty = String(result.minQty ?? '0');
@@ -269,11 +283,11 @@ export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 
             ...item,
             id: item?.id ?? `draft-item-${Date.now()}`,
             __productId: product.id,
-            __unitId: product.base_unit?.id ?? item?.__unitId ?? null,
+            __unitId: unitId,
             name: product.name ?? '',
             code: product.code ?? '',
-            unit: product.base_unit?.name ?? item?.unit ?? 'PCS',
-            unitLookup: [product.base_unit?.name ?? item?.unit ?? 'PCS'],
+            unit: unitName,
+            unitLookup: [unitName],
             oldDiscount,
             minQty,
             newDiscount,
@@ -289,7 +303,6 @@ export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 
     const adjustmentType = result.adjustmentType ?? 'Penambahan';
     const quantity = result.quantity ?? '1';
     const unitCost = result.unitCost ?? '0';
-    const unitName = product.base_unit?.name ?? item?.unit ?? 'PCS';
 
     const quantityAmount = parseNumericInput(quantity);
     const unitCostAmount = parseNumericInput(unitCost);
@@ -298,6 +311,7 @@ export async function promptInventoryAdjustmentItemEditor(item = null, pageId = 
         ...item,
         id: item?.id ?? `draft-item-${Date.now()}`,
         __productId: product.id,
+        __unitId: unitId,
         name: product.name ?? '',
         code: product.code ?? '',
         adjustmentType: adjustmentType.trim() || 'Penambahan',
@@ -344,10 +358,26 @@ export function resolveInventoryDirtyState(values, initialSnapshot) {
 }
 
 export function buildItemFromProduct(product, pageId = 'inventory-adjustment') {
-    const unitName = product.base_unit?.name ?? 'PCS';
-    const unitId = product.base_unit?.id ?? null;
+    const unitName = product.base_unit?.name 
+        ?? product.baseUnit?.name 
+        ?? product.unit?.name 
+        ?? product.sales_unit?.name 
+        ?? product.purchase_unit?.name 
+        ?? (typeof product.unit === 'string' && product.unit ? product.unit : null) 
+        ?? 'PCS';
+        
+    const unitId = product.base_unit?.id 
+        ?? product.baseUnit?.id 
+        ?? product.unit?.id 
+        ?? product.sales_unit?.id 
+        ?? product.purchase_unit?.id 
+        ?? product.unit_id 
+        ?? product.base_unit_id 
+        ?? null;
+
     const isPrice = pageId === 'price-adjustment';
-    const price = Number(product.price ?? 0);
+    const price = Number(product.default_purchase_price ?? product.cost ?? product.buy_price ?? product.price ?? product.default_sale_price ?? 0);
+    
     return {
         id: `draft-item-${Date.now()}`,
         __productId: product.id,
@@ -357,13 +387,14 @@ export function buildItemFromProduct(product, pageId = 'inventory-adjustment') {
         adjustmentType: 'Penambahan',
         quantity: isPrice ? '0' : '1',
         unit: unitName,
-        unitLookup: [unitName],
+        unitLookup: unitName ? [unitName] : ['PCS'],
         unitCost: formatCurrencyValue(price),
         totalCost: formatCurrencyValue(isPrice ? 0 : price),
         oldDiscount: '0',
         minQty: '0',
         newDiscount: '0',
-        warehouse: [],
+        warehouse: product.warehouse?.name ? [product.warehouse.name] : (product.warehouse ? [product.warehouse] : []),
+        __warehouseId: product.warehouse_id ?? product.warehouse?.id ?? null,
         department: [],
         notes: '',
     };

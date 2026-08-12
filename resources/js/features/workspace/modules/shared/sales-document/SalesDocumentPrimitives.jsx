@@ -216,7 +216,7 @@ export function SearchableTableSection({
                                 })
                             ) : (
                                 <DataTableRow className="bg-white">
-                                    <DataTableCell colSpan={columns.length} className="px-3 py-3 text-center text-base text-text-workspace-dark">
+                                    <DataTableCell colSpan={columns.length} className="px-3 py-2 text-center text-base text-black">
                                         {emptyLabel}
                                     </DataTableCell>
                                 </DataTableRow>

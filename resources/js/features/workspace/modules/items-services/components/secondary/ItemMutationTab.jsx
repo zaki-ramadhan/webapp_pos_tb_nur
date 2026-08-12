@@ -98,7 +98,7 @@ export default function ItemMutationTab({ productId }) {
                 <DataTableHeader className="bg-[#466986] text-white font-light">
                     <DataTableRow>
                         <DataTableHead className="text-left text-white font-light px-3 py-2">Tanggal</DataTableHead>
-                        <DataTableHead className="text-left text-white font-light px-3 py-2">No. Sumber #</DataTableHead>
+                        <DataTableHead className="text-left text-white font-light px-3 py-2">No. Sumber</DataTableHead>
                         <DataTableHead className="text-left text-white font-light px-3 py-2">Tipe Transaksi</DataTableHead>
                         <DataTableHead className="text-left text-white font-light px-3 py-2">Keterangan</DataTableHead>
                         <DataTableHead className="text-left text-white font-light px-3 py-2">Gudang</DataTableHead>
@@ -111,7 +111,7 @@ export default function ItemMutationTab({ productId }) {
                 <DataTableBody>
                     {loading ? (
                         <DataTableRow className="border-ui-border-row bg-white">
-                            <DataTableCell colSpan={9} className="px-3 py-4 text-center text-sm text-text-workspace-dark">
+                            <DataTableCell colSpan={9} className="px-3 py-2 text-center text-sm text-black">
                                 Memuat data...
                             </DataTableCell>
                         </DataTableRow>
@@ -131,7 +131,7 @@ export default function ItemMutationTab({ productId }) {
                         ))
                     ) : (
                         <DataTableRow className="border-ui-border-row bg-white">
-                            <DataTableCell colSpan={9} className="px-3 py-4 text-center text-sm text-text-workspace-dark">
+                            <DataTableCell colSpan={9} className="px-3 py-2 text-center text-sm text-black">
                                 Tidak ada data
                             </DataTableCell>
                         </DataTableRow>

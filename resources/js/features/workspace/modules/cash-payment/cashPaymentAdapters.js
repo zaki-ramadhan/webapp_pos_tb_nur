@@ -121,7 +121,7 @@ export function buildDetailRecordFromRow(row = {}, config) {
         bankAccounts: bank ? [bank] : [],
         entryDate: row.date ?? '',
         autoNumber: false,
-        numberingType: config.numberingOptions?.[0] ?? '',
+        numberingType: config.numberingOptions?.[0] ?? 'Nomor Bukti Kas (Tunai)',
         documentNumber: row.number ?? '',
         checkNumber: row.checkNumber ?? '',
         recipient: row.recipient ?? '',

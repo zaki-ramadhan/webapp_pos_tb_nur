@@ -60,7 +60,7 @@ function CostDetailTab({ form, onChange, errors = {} }) {
     return (
         <div className="grid gap-y-2.5 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-x-4 sm:items-center">
             {/* Kode # */}
-            <TransactionFieldLabel label="Kode #" />
+            <TransactionFieldLabel label="Kode Barang" />
             <div className="flex items-center h-[34px]">
                 <span className="text-xs sm:text-sm font-medium text-document-code">{code || '-'}</span>
             </div>

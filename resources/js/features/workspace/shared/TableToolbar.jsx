@@ -3,6 +3,7 @@ import { usePage } from '@inertiajs/react';
 
 import TextInput from '@/components/ui/TextInput';
 import Tooltip from '@/components/ui/Tooltip';
+import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
 import RefreshButton from '@/features/workspace/shared/RefreshButton';
 import {
     PlusIcon,
@@ -273,7 +274,7 @@ export default function TableToolbar({
 
     const inertiaPage = usePage();
     const authUser = inertiaPage?.props?.auth?.user ?? null;
-    const isSuperAdmin = Boolean(authUser?.isSuperAdmin || authUser?.role === 'Super Admin' || authUser?.role === 'super_admin');
+    const isSuperAdmin = isOwnerUser(authUser);
     const targetResource = resolvedResourceName || resourceName;
     const resourceAbility = targetResource ? (authUser?.abilities?.[targetResource] ?? null) : null;
 

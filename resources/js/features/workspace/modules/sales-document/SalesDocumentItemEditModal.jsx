@@ -106,7 +106,7 @@ function ItemDetailEditTab({ form, onChange, errors = {} }) {
     return (
         <div className="grid gap-y-2.5 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-x-4 sm:items-center">
             {/* Kode # */}
-            <TransactionFieldLabel label="Kode #" />
+            <TransactionFieldLabel label="Kode Barang" />
             <div className="flex items-center justify-between h-[34px]">
                 <span className="text-xs sm:text-sm font-medium text-document-code">{code ?? ''}</span>
             </div>
@@ -235,22 +235,46 @@ function ItemInfoEditTab({ form, onChange }) {
 
 // ─── Modal Entry ─────────────────────────────────────────────────────────────
 
-function resolvePriceFromProduct(product) {
+function resolvePriceFromProduct(product, isPurchase = false) {
     const prices = product.prices ?? [];
     if (prices.length > 0) {
-        const salesPrice = prices.find(
-            (p) => p.price_type?.toLowerCase().includes('jual') || p.price_type?.toLowerCase().includes('sales')
+        const preferredPrice = prices.find(
+            (p) => isPurchase
+                ? p.price_type?.toLowerCase().includes('beli') || p.price_type?.toLowerCase().includes('purchase')
+                : p.price_type?.toLowerCase().includes('jual') || p.price_type?.toLowerCase().includes('sales')
         ) ?? prices[0];
+        const unitName = preferredPrice.unit?.name 
+            ?? (isPurchase ? product.purchase_unit?.name ?? product.purchaseUnit?.name : product.sales_unit?.name ?? product.salesUnit?.name)
+            ?? product.base_unit?.name 
+            ?? product.baseUnit?.name 
+            ?? product.unit?.name 
+            ?? (typeof product.unit === 'string' ? product.unit : null) 
+            ?? 'PCS';
+        const unitId = preferredPrice.unit_id 
+            ?? (isPurchase ? product.purchase_unit_id ?? product.purchase_unit?.id : product.sales_unit_id ?? product.sales_unit?.id)
+            ?? product.base_unit_id 
+            ?? product.base_unit?.id 
+            ?? null;
         return {
-            amount: Number(salesPrice.price ?? 0),
-            unitName: salesPrice.unit?.name ?? product.sales_unit?.name ?? product.base_unit?.name ?? 'PCS',
-            unitId: salesPrice.unit_id ?? product.sales_unit_id ?? product.base_unit_id ?? null,
+            amount: Number(preferredPrice.price ?? 0),
+            unitName,
+            unitId,
         };
     }
+    const defaultUnitName = (isPurchase ? product.purchase_unit?.name ?? product.purchaseUnit?.name : product.sales_unit?.name ?? product.salesUnit?.name)
+        ?? product.base_unit?.name 
+        ?? product.baseUnit?.name 
+        ?? product.unit?.name 
+        ?? (typeof product.unit === 'string' ? product.unit : null) 
+        ?? 'PCS';
+    const defaultUnitId = (isPurchase ? product.purchase_unit_id ?? product.purchase_unit?.id : product.sales_unit_id ?? product.sales_unit?.id)
+        ?? product.base_unit_id 
+        ?? product.base_unit?.id 
+        ?? null;
     return {
-        amount: Number(product.default_sale_price ?? 0),
-        unitName: product.sales_unit?.name ?? product.base_unit?.name ?? 'PCS',
-        unitId: product.sales_unit_id ?? product.base_unit_id ?? null,
+        amount: Number(isPurchase ? (product.default_purchase_price ?? 0) : (product.default_sale_price ?? 0)),
+        unitName: defaultUnitName,
+        unitId: defaultUnitId,
     };
 }
 

@@ -8,8 +8,8 @@ export default function BackendLookupField({
     values = [],
     placeholder = 'Cari/Pilih...',
     searchLabel = 'Cari data',
-    getOptionLabel = (option) => option?.label ?? option?.name ?? '',
-    getOptionSearchText = (option) => getOptionLabel(option),
+    getOptionLabel = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
+    getOptionSearchText = (option) => (typeof option === 'string' ? option : (option?.label ?? option?.name ?? '')),
     renderOption = null,
     queryParams = {},
     onSelect,
@@ -60,7 +60,7 @@ export default function BackendLookupField({
             className="w-full"
         >
             <ReferenceLookupInput
-                values={values.map(getOptionLabel)}
+                values={(values || []).map((val) => (typeof val === 'string' ? val : getOptionLabel(val)))}
                 placeholder={placeholder}
                 searchLabel={searchLabel}
                 items={items}
@@ -70,8 +70,9 @@ export default function BackendLookupField({
                 renderOption={renderOption}
                 onSelect={onSelect}
                 onRemove={(label) => {
-                    const item = values.find((val) => getOptionLabel(val) === label);
-                    if (item) onRemove(item);
+                    const item = (values || []).find((val) => (typeof val === 'string' ? val : getOptionLabel(val)) === label);
+                    if (item) onRemove?.(item);
+                    else onRemove?.(label);
                 }}
                 emptyTitle={emptyTitle}
                 emptyDescription={emptyDescription}

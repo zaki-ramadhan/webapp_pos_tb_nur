@@ -8,7 +8,7 @@ import { DocumentModalCurrencyReadonlyField } from '../DocumentModalFields';
 export default function ItemDetailTab({ detail }) {
     return (
         <div className="grid gap-y-4 sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-x-4">
-            <TransactionFieldLabel label="Kode #" />
+            <TransactionFieldLabel label="Kode Barang" />
             <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-document-code">{detail.code ?? ''}</div>
 
             <TransactionFieldLabel label="Nama Barang" required />

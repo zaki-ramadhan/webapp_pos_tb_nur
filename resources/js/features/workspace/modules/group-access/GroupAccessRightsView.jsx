@@ -125,7 +125,7 @@ function PermissionMatrix({
                             <tr className="border-t border-table-row-border bg-white">
                                 <td
                                     colSpan={columns.length + 1}
-                                    className="px-6 py-10 text-center text-sm text-text-muted"
+                                    className="px-6 py-2 text-center text-sm text-black"
                                 >
                                     Tidak ada hak akses yang cocok dengan kata kunci pencarian.
                                 </td>

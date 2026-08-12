@@ -1,4 +1,5 @@
 import { emptyStringToNull } from './dateHelpers';
+import { formatStatusActiveText } from './generalAdapters';
 
 export const SIMPLE_MASTER_BACKEND_CONFIG = {
     'item-brand': {
@@ -9,7 +10,7 @@ export const SIMPLE_MASTER_BACKEND_CONFIG = {
                 id: record.id,
                 name: record.name ?? '',
                 tabLabel: record.name ?? '',
-                isActiveText: record.is_active !== false ? 'Tidak' : 'Ya',
+                isActiveText: formatStatusActiveText(record.is_active, true),
             };
         },
         toForm(record) {

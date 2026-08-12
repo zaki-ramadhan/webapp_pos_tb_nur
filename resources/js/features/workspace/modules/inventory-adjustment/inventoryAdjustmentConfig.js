@@ -16,14 +16,14 @@ const inventoryAdjustmentSectionTabs = [
 ];
 
 const inventoryAdjustmentListColumns = [
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left', noWrap: true },
+    { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left', noWrap: true },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left', noWrap: true },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[58%]', align: 'left' },
 ];
 
 const inventoryAdjustmentDetailColumns = [
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[60%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[130px]', align: 'center' },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'adjustmentType', label: 'Tipe', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[100px]', align: 'right' },
     { id: 'unit', label: 'Satuan', widthClassName: 'w-[90px]', align: 'left' },
@@ -54,7 +54,6 @@ const draftRecord = {
     copyItems: [{ id: 'copy-lines', label: 'Salin rincian barang' }],
     items: [],
     itemCountLabel: 'Rincian Barang',
-    adjustmentAccount: [],
     notes: '',
     branches: [],
     totalValue: 'Rp 0',
@@ -66,11 +65,10 @@ const baseInventoryAdjustmentConfig = {
     additionalInfoTitle: 'Informasi Tambahan',
     labels: {
         date: 'Tanggal',
-        documentNumber: 'No Penyesuaian #',
+        documentNumber: 'No. Penyesuaian',
         salesCategory: 'Kategori Penjualan',
         adjustmentType: 'Tipe Penyesuaian',
         effectiveDate: 'Tanggal Efektif',
-        adjustmentAccount: 'Akun Penyesuaian',
         notes: 'Keterangan',
     },
     numberingOptions: ['Penyesuaian Persediaan', 'Manual'],
@@ -81,10 +79,11 @@ const baseInventoryAdjustmentConfig = {
     },
     detailTable: {
         title: 'Rincian Barang',
-        emptyLabel: 'Belum ada rincian barang yang ditambahkan.',
+        emptyLabel: 'Belum ada data',
         columns: inventoryAdjustmentDetailColumns,
     },
     itemTable: {
+        emptyLabel: 'Belum ada data',
         columns: inventoryAdjustmentDetailColumns,
     },
     dockActions: {

@@ -19,7 +19,7 @@ export default function ItemSerialTab({ detail }) {
     return (
         <div className="space-y-3">
             <div className="grid gap-y-4 sm:grid-cols-[120px_minmax(0,1fr)] sm:items-center sm:gap-x-4">
-                <TransactionFieldLabel label={detail.serialFieldLabel ?? 'Nomor #'} />
+                <TransactionFieldLabel label={detail.serialFieldLabel ?? 'Nomor'} />
                 <div className="grid grid-cols-[minmax(0,1fr)_48px] gap-3">
                     <TextInput
                         value={detail.serialInput ?? ''}
@@ -42,7 +42,7 @@ export default function ItemSerialTab({ detail }) {
                 <div className="grid grid-cols-[42px_minmax(0,1fr)] bg-table-header-bg text-white">
                     <div className="border-r border-white/20" />
                     <div className="px-4 py-2 text-center text-base font-medium">
-                        {detail.serialColumnLabel ?? 'Nomor #'}
+                        {detail.serialColumnLabel ?? 'Nomor'}
                     </div>
                 </div>
                 <div className="max-h-[280px] overflow-y-auto bg-white">

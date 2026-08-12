@@ -32,8 +32,16 @@ const MegaphoneIcon = ({ className = "h-4 w-4" }) => (
 
 
 
-export default function IntegratedAnalysisWidget({ widget, expanded = false, onToggle }) {
-    const [chartExpanded, setChartExpanded] = useState(false);
+export default function IntegratedAnalysisWidget({
+    widget,
+    expanded = false,
+    onToggle,
+    chartExpanded: propChartExpanded,
+    onToggleChart,
+}) {
+    const [localChartExpanded, setLocalChartExpanded] = useState(false);
+    const isChartExpanded = propChartExpanded !== undefined ? propChartExpanded : localChartExpanded;
+    const handleToggleChart = onToggleChart ?? (() => setLocalChartExpanded((prev) => !prev));
 
     if (!widget.metrics || widget.metrics.length === 0) {
         return (
@@ -146,8 +154,8 @@ export default function IntegratedAnalysisWidget({ widget, expanded = false, onT
                     title="Peta Hubungan Belanja & Prioritas Stok"
                     caption="Grafik interaktif menunjukkan seberapa kuat kecenderungan produk dibeli bersamaan (Confidence) dikombinasikan dengan prioritas omzet produk tersebut."
                     collapsible={true}
-                    expanded={chartExpanded}
-                    onToggle={() => setChartExpanded(!chartExpanded)}
+                    expanded={isChartExpanded}
+                    onToggle={handleToggleChart}
                 >
                     {widget.rules && widget.rules.length > 0 ? (
                         <IntegratedMatrixChart rules={widget.rules ?? []} />

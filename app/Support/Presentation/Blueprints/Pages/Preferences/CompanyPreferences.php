@@ -8,9 +8,8 @@ class CompanyPreferences
     {
         return [
             ['id' => 'company-name', 'label' => 'Nama', 'type' => 'text', 'value' => 'UD. TB Nur', 'clearable' => true],
-            ['id' => 'phone', 'label' => 'Telepon', 'type' => 'text', 'value' => '021-56693463', 'clearable' => true],
-            ['id' => 'fax', 'label' => 'Faksimili', 'type' => 'text', 'value' => '021-56693463', 'clearable' => true],
-            ['id' => 'email', 'label' => 'Email', 'type' => 'text', 'value' => 'admin@tbnur.com', 'clearable' => true],
+            ['id' => 'phone', 'label' => 'Telepon', 'type' => 'text', 'value' => '0812-8273-6188', 'clearable' => true],
+            ['id' => 'email', 'label' => 'Email', 'type' => 'text', 'value' => 'tb.nur.utama@gmail.com', 'clearable' => true],
         ];
     }
 
@@ -21,13 +20,13 @@ class CompanyPreferences
             'street' => [
                 'id' => 'street',
                 'label' => 'Jalan',
-                'value' => 'Jl. Tomang raya nomor. 35',
+                'value' => 'Jl. Tomang Raya No. 35',
             ],
             'tokens' => [],
             'fields' => [
-                ['id' => 'city', 'label' => 'Kota', 'value' => 'Kota Denpasar', 'clearable' => true],
-                ['id' => 'province', 'label' => 'Provinsi', 'value' => 'Bali', 'clearable' => true],
-                ['id' => 'postal-code', 'label' => 'K.Pos', 'value' => '12345', 'clearable' => true],
+                ['id' => 'city', 'label' => 'Kota', 'value' => 'Jakarta Barat', 'clearable' => true],
+                ['id' => 'province', 'label' => 'Provinsi', 'value' => 'DKI Jakarta', 'clearable' => true],
+                ['id' => 'postal-code', 'label' => 'K.Pos', 'value' => '11440', 'clearable' => true],
                 ['id' => 'country', 'label' => 'Negara', 'value' => 'Indonesia', 'clearable' => true],
             ],
         ];

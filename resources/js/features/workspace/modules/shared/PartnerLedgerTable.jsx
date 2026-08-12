@@ -36,7 +36,7 @@ export default function PartnerLedgerTable({
                 <DataTableHeader className="bg-[#476278]">
                     <DataTableRow>
                         <DataTableHead className="w-[120px] px-3 text-left text-base font-light text-white">Tanggal</DataTableHead>
-                        <DataTableHead className="w-[200px] px-3 text-left text-base font-light text-white">No. Sumber #</DataTableHead>
+                        <DataTableHead className="w-[200px] px-3 text-left text-base font-light text-white">No. Sumber</DataTableHead>
                         <DataTableHead className="w-[200px] px-3 text-left text-base font-light text-white">Tipe Transaksi</DataTableHead>
                         <DataTableHead className="px-3 text-left text-base font-light text-white">Keterangan</DataTableHead>
                         <DataTableHead className="w-[150px] px-3 text-right text-base font-light text-white">Nilai</DataTableHead>
@@ -46,13 +46,13 @@ export default function PartnerLedgerTable({
                 <DataTableBody>
                     {loading ? (
                         <DataTableRow className="bg-white">
-                            <DataTableCell colSpan={6} className="px-2.5 py-3 text-center text-base text-black">
+                            <DataTableCell colSpan={6} className="px-2.5 py-2 text-center text-base text-black">
                                 Memuat data...
                             </DataTableCell>
                         </DataTableRow>
                     ) : rows.length === 0 ? (
                         <DataTableRow className="bg-white">
-                            <DataTableCell colSpan={6} className="px-2.5 py-3 text-center text-base text-black">
+                            <DataTableCell colSpan={6} className="px-2.5 py-2 text-center text-base text-black">
                                 {emptyLabel}
                             </DataTableCell>
                         </DataTableRow>

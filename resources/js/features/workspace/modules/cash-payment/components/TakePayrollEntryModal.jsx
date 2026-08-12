@@ -152,7 +152,7 @@ export default function TakePayrollEntryModal({ open, onClose, onApply }) {
 
     const columns = useMemo(() => [
         { id: 'checkbox', label: '', widthClassName: 'w-px', align: 'center' },
-        { id: 'document_number', label: 'No. Beban #' },
+        { id: 'document_number', label: 'No. Beban' },
         { id: 'parsedPeriod', label: 'Periode', widthClassName: 'w-[160px]' },
         { id: 'due_date', label: 'Jatuh Tempo', widthClassName: 'w-[120px]' },
         { id: 'total_amount', label: 'Total', widthClassName: 'w-[140px]', align: 'right' },

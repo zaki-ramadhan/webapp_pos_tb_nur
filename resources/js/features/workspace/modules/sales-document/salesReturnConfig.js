@@ -20,7 +20,7 @@ const salesReturnSectionTabs = [
 ];
 
 const salesReturnListColumns = [
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[54%]', align: 'left' },
@@ -29,7 +29,7 @@ const salesReturnListColumns = [
 
 const salesReturnItemColumns = [
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[56%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[118px]', align: 'center' },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[118px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[96px]', align: 'right' },
     { id: 'unit', label: 'Satuan', widthClassName: 'w-[86px]', align: 'center' },
     { id: 'price', label: '@Harga', widthClassName: 'w-[112px]', align: 'right' },
@@ -39,7 +39,7 @@ const salesReturnItemColumns = [
 
 const salesReturnCostColumns = [
     { id: 'name', label: 'Nama Biaya', widthClassName: 'w-[72%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[130px]', align: 'center' },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[130px]', align: 'center' },
     { id: 'amount', label: 'Jumlah', widthClassName: 'w-[150px]', align: 'right' },
 ];
 
@@ -108,7 +108,7 @@ const defaultSalesReturnConfig = {
     labels: {
         customer: 'Pelanggan',
         entryDate: 'Tanggal',
-        documentNumber: 'No Retur #',
+        documentNumber: 'No. Retur',
         address: 'Dari Alamat',
         branch: 'Cabang',
         notes: 'Keterangan',

@@ -8,6 +8,25 @@ import {
     buildSelectOptions,
 } from './dateHelpers';
 
+export function isOwnerUser(user) {
+    if (!user) return false;
+    return Boolean(
+        user.isSuperAdmin ||
+        user.is_super_admin ||
+        user.role === 'Super Admin' ||
+        user.role === 'super_admin' ||
+        user.role === 'Owner' ||
+        (Array.isArray(user.roles) && user.roles.some((r) => r.code === 'super_admin' || r.code === 'admin'))
+    );
+}
+
+export function formatStatusActiveText(isActive, isNonActiveFlag = false) {
+    if (isNonActiveFlag) {
+        return isActive !== false ? 'Tidak' : 'Ya';
+    }
+    return isActive !== false ? 'Aktif' : 'Nonaktif';
+}
+
 const RESOURCE_LABEL_TRANSLATIONS = {
     'budget': 'Anggaran',
     'general-journal': 'Jurnal Umum',
@@ -41,8 +60,32 @@ const RESOURCE_LABEL_TRANSLATIONS = {
     'currencies': 'Mata Uang',
     'department': 'Departemen',
     'departments': 'Departemen',
-    'group-access': 'Hak Akses',
-    'group-accesses': 'Hak Akses',
+    'group-access': 'Grup Hak Akses',
+    'group-accesses': 'Grup Hak Akses',
+    'access-groups': 'Grup Hak Akses',
+    'access-group': 'Grup Hak Akses',
+    'access groups': 'Grup Hak Akses',
+    'access group': 'Grup Hak Akses',
+    'sales-invoices': 'Faktur Penjualan',
+    'sales-invoice': 'Faktur Penjualan',
+    'sales invoices': 'Faktur Penjualan',
+    'sales invoice': 'Faktur Penjualan',
+    'purchase-invoices': 'Faktur Pembelian',
+    'purchase-invoice': 'Faktur Pembelian',
+    'purchase invoices': 'Faktur Pembelian',
+    'purchase invoice': 'Faktur Pembelian',
+    'purchase-payments': 'Pembayaran Pembelian',
+    'purchase-payment': 'Pembayaran Pembelian',
+    'purchase payments': 'Pembayaran Pembelian',
+    'purchase payment': 'Pembayaran Pembelian',
+    'purchase-returns': 'Retur Pembelian',
+    'purchase-return': 'Retur Pembelian',
+    'purchase returns': 'Retur Pembelian',
+    'purchase return': 'Retur Pembelian',
+    'sales-returns': 'Retur Penjualan',
+    'sales-return': 'Retur Penjualan',
+    'sales returns': 'Retur Penjualan',
+    'sales return': 'Retur Penjualan',
     'inventory-adjustment': 'Penyesuaian Persediaan',
     'inventory-adjustments': 'Penyesuaian Persediaan',
     'item-category': 'Kategori Barang & Jasa',
@@ -142,7 +185,29 @@ function translateDescription(desc) {
     };
     for (const [eng, ind] of Object.entries(prefixes)) {
         if (result.startsWith(eng)) {
-            return ind + result.substring(eng.length);
+            result = ind + result.substring(eng.length);
+            break;
+        }
+    }
+    const phraseMap = {
+        'Sales Invoices': 'Faktur Penjualan',
+        'Sales Invoice': 'Faktur Penjualan',
+        'Access Groups': 'Grup Hak Akses',
+        'Access Group': 'Grup Hak Akses',
+        'Group Access': 'Grup Hak Akses',
+        'Cash Payments': 'Pembayaran Kas & Bank',
+        'Cash Receipts': 'Penerimaan Kas & Bank',
+        'Sales Receipts': 'Penerimaan Penjualan',
+        'Purchase Invoices': 'Faktur Pembelian',
+        'Purchase Payments': 'Pembayaran Pembelian',
+        'Users': 'Pengguna',
+        'Employees': 'Karyawan',
+        'Customers': 'Pelanggan',
+        'Suppliers': 'Pemasok',
+    };
+    for (const [eng, ind] of Object.entries(phraseMap)) {
+        if (result.includes(eng)) {
+            result = result.replace(new RegExp(eng, 'g'), ind);
         }
     }
     return result;
@@ -304,13 +369,26 @@ export function buildReportListConfig(records, fallbackConfig) {
 
 export function mapUserRow(record) {
     const roles = (record.roles ?? [])
-        .map((role) => role.name)
+        .map((role) => {
+            const name = String(role.name ?? '');
+            if (name.toLowerCase().includes('super') || name.toLowerCase().includes('admin') || role.code === 'admin') {
+                return 'Owner';
+            }
+            if (name.toLowerCase().includes('operator') || role.code === 'operator' || name.toLowerCase().includes('kasir')) {
+                return 'Kasir';
+            }
+            return name;
+        })
         .filter(Boolean)
         .join(', ');
+
     const accessGroups = (record.accessGroups ?? [])
         .map((group) => group.name)
         .filter(Boolean)
         .join(', ');
+
+    const primaryRole = roles || (record.is_super_admin ? 'Owner' : 'Kasir');
+    const displayAccessType = accessGroups ? `${primaryRole} (${accessGroups})` : primaryRole;
 
     return {
         id: record.id,
@@ -318,7 +396,7 @@ export function mapUserRow(record) {
         phone: record.phone ?? '',
         email: record.email ?? '',
         twoFactor: Boolean(record.two_factor_enabled || record.twoFactor),
-        accessType: accessGroups || roles || 'Tanpa Grup',
+        accessType: displayAccessType,
         isActive: record.is_active !== false,
         tabLabel: record.name ?? '',
         roleIds: (record.roles ?? []).map((role) => role.id),

@@ -1,7 +1,6 @@
 import { forwardRef, useImperativeHandle, useMemo } from 'react';
 
-import Button from '@/components/ui/Button';
-import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
+import SystemErrorModal from '@/components/ui/SystemErrorModal';
 import DashboardActivePageContent from '@/features/workspace/dashboard/DashboardActivePageContent';
 import DashboardSidebar from '@/features/workspace/dashboard/DashboardSidebar';
 import { WorkspaceDraftStateProvider } from '@/features/workspace/dashboard/WorkspaceDraftState';
@@ -127,27 +126,19 @@ const DashboardView = forwardRef(function DashboardView(
             </section>
 
             {Boolean(pendingCloseRequest) && (
-                <WorkspaceDialog
+                <SystemErrorModal
                     open={Boolean(pendingCloseRequest)}
                     onClose={() => setPendingCloseRequest(null)}
-                    title="Tutup Halaman?"
-                    closeLabel="Tutup dialog konfirmasi"
-                    maxWidthClassName="max-w-[440px]"
-                    footer={
-                        <div className="flex justify-end gap-2">
-                            <Button variant="secondary" size="md" onClick={() => setPendingCloseRequest(null)}>
-                                Batal
-                            </Button>
-                            <Button variant="danger" size="md" onClick={handleConfirmPendingClose}>
-                                Tutup Halaman
-                            </Button>
-                        </div>
-                    }
-                >
-                    <p className="text-sm text-slate-600">
-                        Ada perubahan yang belum disimpan di halaman ini. Apakah Anda yakin ingin menutupnya?
-                    </p>
-                </WorkspaceDialog>
+                    onConfirm={handleConfirmPendingClose}
+                    onCancel={() => setPendingCloseRequest(null)}
+                    title="Konfirmasi"
+                    description=""
+                    message="Perubahan yang Anda lakukan akan dibatalkan, lanjutkan?"
+                    confirmLabel="Ya"
+                    cancelLabel="Batal"
+                    showCloseButton={false}
+                    maxWidthClassName="max-w-[460px]"
+                />
             )}
         </WorkspaceDraftStateProvider>
     );

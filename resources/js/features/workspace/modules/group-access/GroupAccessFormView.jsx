@@ -15,50 +15,39 @@ import {
     buildGroupAccessComparableState,
     buildGroupAccessPayload,
     buildGeneralState,
-    buildInitialPermissionCategories,
     normalizeSelectedUsers,
     resolveDeleteConfirmationMessage,
 } from './groupAccessUtils';
-import GroupAccessRightsView from '@/features/workspace/modules/group-access/GroupAccessRightsView';
 import { GroupAccessGeneralSection } from '@/features/workspace/modules/group-access/groupAccessViewShared';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
 
 export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onOpenDetail, onCloseDetail, onRefresh }) {
-    const [activeTabId, setActiveTabId] = useState(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
+    const [activeTabId, setActiveTabId] = useState('general');
     const [generalValues, setGeneralValues] = useState(() => buildGeneralState(form.general));
-    const [permissionCategories, setPermissionCategories] = useState(() =>
-        buildInitialPermissionCategories(form.permissions, form.permissionPreset),
-    );
     const [isDuplicated, setIsDuplicated] = useState(false);
 
     const recordId = activeLevel2Tab?.tabType === 'detail' && !isDuplicated ? activeLevel2Tab.recordId : null;
     const isDetail = Boolean(recordId);
     const initialGeneralSnapshot = useMemo(() => buildGeneralState(form.general), [form.general]);
-    const initialPermissionSnapshot = useMemo(
-        () => buildInitialPermissionCategories(form.permissions, form.permissionPreset),
-        [form.permissionPreset, form.permissions],
-    );
 
     const formGeneralSerialized = JSON.stringify(form.general);
-    const formPermissionsSerialized = JSON.stringify(form.permissions);
 
     useEffect(() => {
         setIsDuplicated(false);
-        setActiveTabId(form.defaultTabId ?? form.tabs[0]?.id ?? 'general');
+        setActiveTabId('general');
         setGeneralValues(buildGeneralState(form.general));
-        setPermissionCategories(buildInitialPermissionCategories(form.permissions, form.permissionPreset));
         setStatus({ tone: '', message: '' });
         setIsDeleteConfirmationOpen(false);
-    }, [recordId, formGeneralSerialized, formPermissionsSerialized, form.defaultTabId, form.permissionPreset]);
+    }, [recordId, formGeneralSerialized]);
 
     const isDirty = useMemo(
         () =>
             isDuplicated ||
-            JSON.stringify(buildGroupAccessComparableState(generalValues, permissionCategories)) !==
-            JSON.stringify(buildGroupAccessComparableState(initialGeneralSnapshot, initialPermissionSnapshot)),
-        [generalValues, initialGeneralSnapshot, initialPermissionSnapshot, permissionCategories],
+            JSON.stringify(buildGroupAccessComparableState(generalValues)) !==
+            JSON.stringify(buildGroupAccessComparableState(initialGeneralSnapshot)),
+        [generalValues, initialGeneralSnapshot, isDuplicated],
     );
     const validationMessage = useMemo(() => {
         if (!String(generalValues.groupName ?? '').trim()) {
@@ -84,11 +73,6 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         dirty: isDirty,
         enabled: Boolean(pageId && activeLevel2Tab?.id),
     });
-    const deleteConfirmation = form.deleteConfirmation ?? {};
-    const deleteConfirmationMessage = resolveDeleteConfirmationMessage(
-        deleteConfirmation.messageTemplate,
-        generalValues.groupName,
-    );
 
     async function handleSave() {
         if (validationMessage) {
@@ -108,7 +92,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
             setStatus,
             getErrorMessage: (error) => getBackendErrorMessage(error, 'Akses grup gagal disimpan.'),
             execute: async () => {
-                const payload = buildGroupAccessPayload(generalValues, permissionCategories);
+                const payload = buildGroupAccessPayload(generalValues);
                 const response = isDetail
                     ? await updateBackendResource('access-groups', recordId, payload)
                     : await createBackendResource('access-groups', payload);
@@ -125,7 +109,6 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
                         tabLabel: record.name ?? generalValues.groupName,
                     });
                     setGeneralValues(buildGeneralState(form.general));
-                    setPermissionCategories(buildInitialPermissionCategories(form.permissions, form.permissionPreset));
                 } else if (isDetail && record?.name && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
@@ -192,73 +175,65 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
             }
         >
             <div className="flex-1 min-h-0">
-                {activeTabId === 'general' ? (
-                    <GroupAccessGeneralSection
-                        general={form.general}
-                        values={generalValues}
-                        onChangeName={(nextValue) =>
-                            setGeneralValues((currentValues) => ({
-                                ...currentValues,
-                                groupName: nextValue,
-                            }))
-                        }
-                        onChangeAccessLimitation={(nextValue) =>
-                            setGeneralValues((currentValues) => ({
-                                ...currentValues,
-                                accessLimitationId: nextValue,
-                            }))
-                        }
-                        onChangeAccessLimitDays={(nextValue) =>
-                            setGeneralValues((currentValues) => ({
-                                ...currentValues,
-                                accessLimitDays: nextValue,
-                            }))
-                        }
-                        onChangeAccessLimitStartHour={(nextValue) =>
-                            setGeneralValues((currentValues) => ({
-                                ...currentValues,
-                                accessLimitStartHour: nextValue,
-                            }))
-                        }
-                        onChangeAccessLimitEndHour={(nextValue) =>
-                            setGeneralValues((currentValues) => ({
-                                ...currentValues,
-                                accessLimitEndHour: nextValue,
-                            }))
-                        }
-                        onAddUser={(nextUser) =>
-                            setGeneralValues((currentValues) => {
-                                const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
+                <GroupAccessGeneralSection
+                    general={form.general}
+                    values={generalValues}
+                    onChangeName={(nextValue) =>
+                        setGeneralValues((currentValues) => ({
+                            ...currentValues,
+                            groupName: nextValue,
+                        }))
+                    }
+                    onChangeAccessLimitation={(nextValue) =>
+                        setGeneralValues((currentValues) => ({
+                            ...currentValues,
+                            accessLimitationId: nextValue,
+                        }))
+                    }
+                    onChangeAccessLimitDays={(nextValue) =>
+                        setGeneralValues((currentValues) => ({
+                            ...currentValues,
+                            accessLimitDays: nextValue,
+                        }))
+                    }
+                    onChangeAccessLimitStartHour={(nextValue) =>
+                        setGeneralValues((currentValues) => ({
+                            ...currentValues,
+                            accessLimitStartHour: nextValue,
+                        }))
+                    }
+                    onChangeAccessLimitEndHour={(nextValue) =>
+                        setGeneralValues((currentValues) => ({
+                            ...currentValues,
+                            accessLimitEndHour: nextValue,
+                        }))
+                    }
+                    onAddUser={(nextUser) =>
+                        setGeneralValues((currentValues) => {
+                            const currentUsers = normalizeSelectedUsers(currentValues.selectedUsers);
 
-                                if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
-                                    return currentValues;
-                                }
+                            if (currentUsers.some((user) => String(user.id ?? '') === String(nextUser.id ?? ''))) {
+                                return currentValues;
+                            }
 
-                                return {
-                                    ...currentValues,
-                                    selectedUsers: [...currentUsers, nextUser],
-                                };
-                            })
-                        }
-                        onRemoveUser={(selectedUser) =>
-                            setGeneralValues((currentValues) => ({
+                            return {
                                 ...currentValues,
-                                selectedUsers: normalizeSelectedUsers(currentValues.selectedUsers).filter((item) =>
-                                    selectedUser?.id != null
-                                        ? String(item.id ?? '') !== String(selectedUser.id)
-                                        : item.label !== selectedUser?.label,
-                                ),
-                            }))
-                        }
-                        textInput={TextInput}
-                    />
-                ) : (
-                    <GroupAccessRightsView
-                        permissions={form.permissions}
-                        categories={permissionCategories}
-                        onUpdateCategories={setPermissionCategories}
-                    />
-                )}
+                                selectedUsers: [...currentUsers, nextUser],
+                            };
+                        })
+                    }
+                    onRemoveUser={(selectedUser) =>
+                        setGeneralValues((currentValues) => ({
+                            ...currentValues,
+                            selectedUsers: normalizeSelectedUsers(currentValues.selectedUsers).filter((item) =>
+                                selectedUser?.id != null
+                                    ? String(item.id ?? '') !== String(selectedUser.id)
+                                    : item.label !== selectedUser?.label,
+                            ),
+                        }))
+                    }
+                    textInput={TextInput}
+                />
             </div>
 
             <ConfirmationModal

@@ -113,24 +113,21 @@ export function buildGeneralJournalRow(record) {
         || record?.related_document?.document_number 
         || record?.reference_number;
 
-    if (!txNum && docNum) {
-        if (docNum.startsWith('JV-EXP-')) txNum = docNum.substring(7);
-        else if (docNum.startsWith('JV-EPY-')) txNum = docNum.substring(7);
-        else if (docNum.startsWith('JV-CP-')) txNum = docNum.substring(6);
-        else if (docNum.startsWith('JV-CR-')) txNum = docNum.substring(6);
-        else if (docNum.startsWith('JV-BT-')) txNum = docNum.substring(6);
-        else if (docNum.startsWith('JV-SI-')) txNum = docNum.substring(6);
-        else if (docNum.startsWith('JV-PI-')) txNum = docNum.substring(6);
-        else txNum = docNum;
+    if (txNum === docNum) {
+        txNum = '';
     }
 
-    const cleanNotes = (record?.notes ?? '').replace(/^Posting otomatis dari\s*/i, '');
+    const rawNotes = record?.notes ?? '';
+    let cleanNotes = rawNotes.replace(/^Posting otomatis dari\s*/i, '').trim();
+    if (!cleanNotes || cleanNotes === '-') {
+        cleanNotes = txNum ? `${transactionTypeLabel} ${txNum}` : transactionTypeLabel;
+    }
 
     return {
         id: String(record?.id ?? ''),
         __backendRecord: record,
         documentNumber: docNum,
-        transactionNumber: txNum || docNum,
+        transactionNumber: txNum || '-',
         date: entryDate,
         description: cleanNotes,
         total: formatCurrencyValue(totalAmount),

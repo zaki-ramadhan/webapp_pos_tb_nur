@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import DashboardWidgetBody from '@/features/workspace/dashboard/widgets/DashboardWidgetBody';
 import DashboardWidgetCard from '@/features/workspace/dashboard/widgets/DashboardWidgetCard';
@@ -16,15 +16,50 @@ export default function DashboardWidgetGrid({
     isLoading = false,
 }) {
     const [analyticsDetailsExpanded, setAnalyticsDetailsExpanded] = useState(false);
+    const [chartExpanded, setChartExpanded] = useState(false);
     const [refreshingByWidgetId, setRefreshingByWidgetId] = useState({});
     const [refreshErrorByWidgetId, setRefreshErrorByWidgetId] = useState({});
 
+    const [displayWidgets, setDisplayWidgets] = useState([]);
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
     const [draggableWidgetId, setDraggableWidgetId] = useState(null);
 
+    useEffect(() => {
+        if (Array.isArray(widgets) && widgets.length > 0) {
+            try {
+                const savedOrderJson = localStorage.getItem('pos_tb_nur_widget_order');
+                if (savedOrderJson) {
+                    const savedOrder = JSON.parse(savedOrderJson);
+                    if (Array.isArray(savedOrder) && savedOrder.length > 0) {
+                        const map = new Map(widgets.map((w) => [w.id, w]));
+                        const ordered = [];
+                        for (const id of savedOrder) {
+                            if (map.has(id)) {
+                                ordered.push(map.get(id));
+                                map.delete(id);
+                            }
+                        }
+                        for (const remaining of map.values()) {
+                            ordered.push(remaining);
+                        }
+                        setDisplayWidgets(ordered);
+                        return;
+                    }
+                }
+            } catch (e) {
+                // Ignore parsing errors and fallback to props
+            }
+            setDisplayWidgets(widgets);
+        }
+    }, [widgets]);
+
     const handleToggleAnalyticsDetails = useCallback(() => {
         setAnalyticsDetailsExpanded((currentValue) => !currentValue);
+    }, []);
+
+    const handleToggleChart = useCallback(() => {
+        setChartExpanded((currentValue) => !currentValue);
     }, []);
 
     const handleRefreshWidget = useCallback(
@@ -65,15 +100,41 @@ export default function DashboardWidgetGrid({
         [onRefreshWidget, refreshingByWidgetId],
     );
 
+    const handleReorder = useCallback(
+        (fromIndex, toIndex) => {
+            setDisplayWidgets((current) => {
+                if (fromIndex < 0 || fromIndex >= current.length || toIndex < 0 || toIndex >= current.length) {
+                    return current;
+                }
+                const next = [...current];
+                const [movedItem] = next.splice(fromIndex, 1);
+                next.splice(toIndex, 0, movedItem);
+
+                try {
+                    const orderIds = next.map((w) => w.id);
+                    localStorage.setItem('pos_tb_nur_widget_order', JSON.stringify(orderIds));
+                } catch (e) {
+                    // Ignore quota errors
+                }
+
+                return next;
+            });
+
+            onReorderWidgets?.(fromIndex, toIndex);
+        },
+        [onReorderWidgets],
+    );
+
     const renderWidgetCard = useCallback(
         (widget, index) => {
             const isWide = widget.id === 'integrated-analysis' || widget.type === 'integrated-analysis';
             const isDragged = draggedIndex === index;
             const isDragOver = dragOverIndex === index && draggedIndex !== index;
+            const isDraggable = draggableWidgetId === widget.id || isDragged;
 
             const spanClass = isWide ? 'min-w-0 md:col-span-2 xl:col-span-2' : 'min-w-0 flex-1';
             const dragClass = isDragged
-                ? 'opacity-40 scale-[0.98] transition-all duration-200'
+                ? 'opacity-40 scale-[0.98] transition-all duration-200 cursor-grabbing'
                 : isDragOver
                 ? 'ring-2 ring-brand-blue ring-offset-1 scale-[1.01] transition-all duration-200'
                 : 'transition-all duration-200';
@@ -82,10 +143,15 @@ export default function DashboardWidgetGrid({
                 <div
                     key={widget.id}
                     className={`${spanClass} ${dragClass} flex flex-col`.trim()}
-                    draggable={draggableWidgetId === widget.id}
+                    draggable={isDraggable}
                     onDragStart={(e) => {
                         setDraggedIndex(index);
                         e.dataTransfer.effectAllowed = 'move';
+                        try {
+                            e.dataTransfer.setData('text/plain', String(index));
+                        } catch (err) {
+                            // Safari fallback
+                        }
                     }}
                     onDragEnd={() => {
                         setDraggedIndex(null);
@@ -94,14 +160,19 @@ export default function DashboardWidgetGrid({
                     }}
                     onDragOver={(e) => {
                         e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
                         if (dragOverIndex !== index) {
                             setDragOverIndex(index);
                         }
                     }}
-                    onDrop={() => {
+                    onDrop={(e) => {
+                        e.preventDefault();
                         if (draggedIndex !== null && draggedIndex !== index) {
-                            onReorderWidgets?.(draggedIndex, index);
+                            handleReorder(draggedIndex, index);
                         }
+                        setDraggedIndex(null);
+                        setDragOverIndex(null);
+                        setDraggableWidgetId(null);
                     }}
                 >
                     <DashboardWidgetCard
@@ -110,14 +181,22 @@ export default function DashboardWidgetGrid({
                         isRefreshing={Boolean(refreshingByWidgetId[widget.id])}
                         refreshError={refreshErrorByWidgetId[widget.id] ?? null}
                         dragHandleProps={{
+                            onMouseDown: () => setDraggableWidgetId(widget.id),
+                            onTouchStart: () => setDraggableWidgetId(widget.id),
                             onMouseEnter: () => setDraggableWidgetId(widget.id),
-                            onMouseLeave: () => setDraggableWidgetId(null),
+                            onMouseLeave: () => {
+                                if (draggedIndex === null) {
+                                    setDraggableWidgetId(null);
+                                }
+                            },
                         }}
                     >
                         <DashboardWidgetBody
                             widget={widget}
                             analyticsDetailsExpanded={analyticsDetailsExpanded}
                             onToggleAnalyticsDetails={handleToggleAnalyticsDetails}
+                            chartExpanded={chartExpanded}
+                            onToggleChart={handleToggleChart}
                             isLoading={isLoading}
                         />
                     </DashboardWidgetCard>
@@ -126,49 +205,86 @@ export default function DashboardWidgetGrid({
         },
         [
             analyticsDetailsExpanded,
+            chartExpanded,
             dragOverIndex,
             draggedIndex,
             draggableWidgetId,
             handleRefreshWidget,
+            handleReorder,
             handleToggleAnalyticsDetails,
+            handleToggleChart,
             isLoading,
-            onReorderWidgets,
             refreshErrorByWidgetId,
             refreshingByWidgetId,
         ],
     );
 
+    const activeWidgets = displayWidgets.length > 0 ? displayWidgets : widgets;
+
     const renderGridItems = useCallback(() => {
         const items = [];
         let i = 0;
 
-        while (i < widgets.length) {
-            const widget = widgets[i];
+        while (i < activeWidgets.length) {
+            const widget = activeWidgets[i];
 
             if (widget.id === 'integrated-analysis' || widget.type === 'integrated-analysis') {
-                const reg1Index = i + 1;
-                const reg2Index = i + 2;
+                const openCount = (chartExpanded ? 1 : 0) + (analyticsDetailsExpanded ? 1 : 0);
 
-                if (
-                    reg2Index < widgets.length &&
-                    !(widgets[reg1Index].id === 'integrated-analysis' || widgets[reg1Index].type === 'integrated-analysis') &&
-                    !(widgets[reg2Index].id === 'integrated-analysis' || widgets[reg2Index].type === 'integrated-analysis')
-                ) {
-                    const reg1Widget = widgets[reg1Index];
-                    const reg2Widget = widgets[reg2Index];
+                if (openCount === 1) {
+                    const reg1Index = i + 1;
+                    const reg2Index = i + 2;
 
-                    items.push(
-                        <div key={`stacked-group-${widget.id}`} className="contents">
-                            {renderWidgetCard(widget, i)}
-                            <div className="md:contents xl:flex xl:flex-col xl:gap-2 xl:h-full xl:justify-between min-w-0 flex-1">
-                                {renderWidgetCard(reg1Widget, reg1Index)}
-                                {renderWidgetCard(reg2Widget, reg2Index)}
-                            </div>
-                        </div>
-                    );
+                    if (
+                        reg2Index < activeWidgets.length &&
+                        !(activeWidgets[reg1Index].id === 'integrated-analysis' || activeWidgets[reg1Index].type === 'integrated-analysis') &&
+                        !(activeWidgets[reg2Index].id === 'integrated-analysis' || activeWidgets[reg2Index].type === 'integrated-analysis')
+                    ) {
+                        const reg1Widget = activeWidgets[reg1Index];
+                        const reg2Widget = activeWidgets[reg2Index];
 
-                    i += 3;
-                    continue;
+                        items.push(
+                            <div key={`stacked-group-2-${widget.id}`} className="contents">
+                                {renderWidgetCard(widget, i)}
+                                <div className="md:contents xl:flex xl:flex-col xl:gap-2 xl:h-full xl:justify-between min-w-0 flex-1">
+                                    {renderWidgetCard(reg1Widget, reg1Index)}
+                                    {renderWidgetCard(reg2Widget, reg2Index)}
+                                </div>
+                            </div>,
+                        );
+
+                        i += 3;
+                        continue;
+                    }
+                } else if (openCount === 2) {
+                    const reg1Index = i + 1;
+                    const reg2Index = i + 2;
+                    const reg3Index = i + 3;
+
+                    if (
+                        reg3Index < activeWidgets.length &&
+                        !(activeWidgets[reg1Index].id === 'integrated-analysis' || activeWidgets[reg1Index].type === 'integrated-analysis') &&
+                        !(activeWidgets[reg2Index].id === 'integrated-analysis' || activeWidgets[reg2Index].type === 'integrated-analysis') &&
+                        !(activeWidgets[reg3Index].id === 'integrated-analysis' || activeWidgets[reg3Index].type === 'integrated-analysis')
+                    ) {
+                        const reg1Widget = activeWidgets[reg1Index];
+                        const reg2Widget = activeWidgets[reg2Index];
+                        const reg3Widget = activeWidgets[reg3Index];
+
+                        items.push(
+                            <div key={`stacked-group-3-${widget.id}`} className="contents">
+                                {renderWidgetCard(widget, i)}
+                                <div className="md:contents xl:flex xl:flex-col xl:gap-2 xl:h-full xl:justify-between min-w-0 flex-1">
+                                    {renderWidgetCard(reg1Widget, reg1Index)}
+                                    {renderWidgetCard(reg2Widget, reg2Index)}
+                                    {renderWidgetCard(reg3Widget, reg3Index)}
+                                </div>
+                            </div>,
+                        );
+
+                        i += 4;
+                        continue;
+                    }
                 }
             }
 
@@ -177,7 +293,7 @@ export default function DashboardWidgetGrid({
         }
 
         return items;
-    }, [renderWidgetCard, widgets]);
+    }, [activeWidgets, analyticsDetailsExpanded, chartExpanded, renderWidgetCard]);
 
     return (
         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:gap-2.5 xl:grid-cols-3">

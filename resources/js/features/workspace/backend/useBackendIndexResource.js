@@ -7,6 +7,7 @@ import {
     getBackendErrorMessage,
     listBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
+import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
 
 function sanitizeFilters(filters = {}) {
     return Object.fromEntries(
@@ -83,7 +84,7 @@ export default function useBackendIndexResource({
 }) {
     const inertiaPage = usePage();
     const authUser = inertiaPage?.props?.auth?.user ?? null;
-    const isSuperAdmin = Boolean(authUser?.isSuperAdmin || authUser?.role === 'Super Admin' || authUser?.role === 'super_admin');
+    const isSuperAdmin = isOwnerUser(authUser);
 
     const resourceAbility = authUser?.abilities?.[resource] ?? null;
     const isForbiddenInstantly = Boolean(

@@ -178,18 +178,18 @@ export function TransactionDataTable({
                     ) : (
                         <DataTableRow className="bg-white">
                             {hasLeadingEmptyCell ? (
-                                <DataTableCell className="px-3 text-center text-text-workspace-inactive">
+                                <DataTableCell className="px-3 py-2 text-center text-black">
                                     {emptyLeadingCellContent}
                                 </DataTableCell>
                             ) : null}
                             <DataTableCell
                                 colSpan={visibleColumns.length - (hasLeadingEmptyCell ? 1 : 0) + (activeShowNumbering ? 1 : 0)}
-                                className="px-3 py-3 text-center text-sm text-text-workspace-dark"
+                                className="px-3 py-2 text-center text-sm font-normal text-black"
                             >
                                 {emptyLabel && String(emptyLabel).toLowerCase().includes('hak akses') ? (
                                     'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.'
                                 ) : (
-                                    emptyLabel
+                                    emptyLabel || 'Belum ada data'
                                 )}
                             </DataTableCell>
                         </DataTableRow>
@@ -215,7 +215,7 @@ export function TransactionLineItemsSection({
     searchInput = null,
     spacerHeaderContent = 'No.',
     spacerCellContent = ({ index }) => <span className="text-center text-sm text-table-row-number block w-full">{index + 1}</span>,
-    emptyLeadingCellContent = <span className="text-center text-sm text-text-workspace-inactive block w-full">-</span>,
+    emptyLeadingCellContent = <span className="text-center text-sm text-black block w-full">-</span>,
     onRowClick = null,
     getRowClassName = null,
     cellClassName = '',

@@ -15,7 +15,7 @@ const USER_FORM_TABS = [{ id: 'users-general', label: 'Pengguna' }];
 function AccessTypeField({ value, onChange }) {
     const descriptions = {
         kasir: 'Kasir memiliki akses terbatas hanya untuk modul Penjualan & Penerimaan Penjualan. Modul lainnya dibatasi otomatis.',
-        super_admin: 'Super Admin / Owner memiliki hak akses penuh tanpa batas ke seluruh modul dan pengaturan aplikasi.',
+        super_admin: 'Owner Memiliki hak akses penuh tanpa batas ke seluruh modul dan pengaturan aplikasi.',
     };
 
     return (
@@ -33,18 +33,18 @@ function AccessTypeField({ value, onChange }) {
                 <RadioField
                     id="access-super-admin"
                     name="access-type"
-                    label="Super Admin"
+                    label="Owner"
                     checked={value === 'super_admin' || value === 'administrator' || value === 'owner'}
                     onChange={() => onChange('super_admin')}
                     inputClassName="h-5 w-5"
                     containerClassName="w-auto inline-flex items-center"
                 />
             </div>
-            {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' ? 'super_admin' : value)] && (
+            {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' || value === 'owner' ? 'super_admin' : value)] && (
                 <div className="flex items-center gap-3 pt-0.5 mt-1">
                     <span className="block h-6 w-[5px] rounded-[2px] bg-bg-bullet-gray" aria-hidden="true" />
                     <p className="text-xs sm:text-sm italic leading-6 text-tab-active-border-t">
-                        {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' ? 'super_admin' : value)]}
+                        {descriptions[value === 'operator' ? 'kasir' : (value === 'administrator' || value === 'owner' ? 'super_admin' : value)]}
                     </p>
                 </div>
             )}
@@ -53,6 +53,11 @@ function AccessTypeField({ value, onChange }) {
 }
 
 function buildInitialValues(detailRow) {
+    const roleIds = detailRow?.roleIds ?? [];
+    const isSuperAdmin = roleIds.includes(1) ||
+        detailRow?.accessType?.toLowerCase()?.includes('admin') ||
+        detailRow?.accessType?.toLowerCase()?.includes('owner');
+
     return {
         name: detailRow?.name ?? '',
         email: detailRow?.email ?? '',
@@ -60,23 +65,21 @@ function buildInitialValues(detailRow) {
         password: '',
         isActive: detailRow?.isActive ?? true,
         accessGroupIds: detailRow?.accessGroupIds ?? [],
-        accessType: (
-            detailRow?.roleIds?.includes(1) ||
-            detailRow?.roleIds?.includes(2) ||
-            detailRow?.accessType?.toLowerCase()?.includes('admin')
-        ) ? 'administrator' : 'operator',
+        accessType: isSuperAdmin ? 'super_admin' : 'kasir',
     };
 }
 
-function buildPayloadFromInput(inputVal, values, lookupData, isDetail) {
+function buildPayloadFromInput(inputVal, values, lookupData, isDetail, detailRow) {
     const isEmailInput = inputVal.includes('@');
-    let name = '', email = '', phone = '';
+    let name = detailRow?.name || values.name || '', email = detailRow?.email || '', phone = detailRow?.phone || '';
 
     if (isEmailInput) {
         email = inputVal;
-        const match = lookupData.employees?.find((e) => e.email?.toLowerCase() === inputVal.toLowerCase());
-        name = match ? match.full_name : `User ${inputVal.split('@')[0]}`;
-        phone = match ? (match.mobile_phone || match.whatsapp_phone || match.office_phone || '') : '';
+        if (!name || !isDetail) {
+            const match = lookupData.employees?.find((e) => e.email?.toLowerCase() === inputVal.toLowerCase());
+            name = match ? match.full_name : `User ${inputVal.split('@')[0]}`;
+        }
+        phone = phone || (lookupData.employees?.find((e) => e.email?.toLowerCase() === inputVal.toLowerCase())?.mobile_phone ?? '');
     } else {
         phone = inputVal;
         const normalized = inputVal.replace(/[^0-9]/g, '');
@@ -84,18 +87,21 @@ function buildPayloadFromInput(inputVal, values, lookupData, isDetail) {
             const ep = (e.mobile_phone || e.whatsapp_phone || e.office_phone || '').replace(/[^0-9]/g, '');
             return ep && ep === normalized;
         });
-        name = match ? match.full_name : `User ${inputVal}`;
-        email = match ? (match.email || `${normalized || 'user'}@example.com`) : `${normalized || 'user'}@example.com`;
+        if (!name || !isDetail) {
+            name = match ? match.full_name : `User ${inputVal}`;
+        }
+        email = email || (match ? (match.email || `${normalized || 'user'}@example.com`) : `${normalized || 'user'}@example.com`);
     }
 
-    const adminRole = lookupData.roles?.find((r) => r.code === 'admin' || r.name?.toLowerCase()?.includes('admin'));
-    const operatorRole = lookupData.roles?.find((r) => r.code === 'operator' || r.name?.toLowerCase()?.includes('operator'));
-    const roleIds = values.accessType === 'administrator'
-        ? [adminRole?.id ?? 2]
-        : (operatorRole ? [operatorRole.id] : [3]);
+    const adminRole = lookupData.roles?.find((r) => r.code === 'super_admin' || r.code === 'admin' || r.name?.toLowerCase()?.includes('admin') || r.name?.toLowerCase()?.includes('super'));
+    const kasirRole = lookupData.roles?.find((r) => r.code === 'kasir' || r.code === 'operator' || r.name?.toLowerCase()?.includes('kasir') || r.name?.toLowerCase()?.includes('operator'));
 
+    const isOwner = values.accessType === 'super_admin' || values.accessType === 'administrator' || values.accessType === 'owner';
+    const roleIds = isOwner
+        ? [adminRole?.id ?? 1]
+        : [kasirRole?.id ?? 2];
 
-    return toUserPayload({ ...values, name, email, phone, password: values.password || (isDetail ? undefined : 'password'), roleIds });
+    return toUserPayload({ ...values, name: name || values.name || inputVal, email, phone, password: values.password || (isDetail ? undefined : 'password'), roleIds });
 }
 
 export default function UserFormView({ form, activeLevel2Tab, tableRows = [], onRefresh, onOpenDetail, lookupData }) {
@@ -159,7 +165,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
             }
         }
 
-        const payload = buildPayloadFromInput(inputVal, values, lookupData, isDetail);
+        const payload = buildPayloadFromInput(inputVal, values, lookupData, isDetail, detailRow);
 
         await executeCrudFormAction({
             loadingMessage: isDetail ? 'Sedang memperbarui pengguna.' : 'Sedang menyimpan pengguna baru.',
@@ -224,18 +230,25 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
                         onChange={(v) => setValues({ ...values, accessType: v })}
                     />
 
-                    <label className="pt-2 text-xs sm:text-sm text-section-tab-accent-text font-normal">Akses Grup</label>
-                    <div className="max-w-[420px] w-full">
-                        <ReferenceLookupInput
-                            value={lookupData.groups?.find((g) => g.id === values.accessGroupIds[0])?.name ?? ''}
-                            items={lookupData.groups ?? []}
-                            placeholder="Cari/Pilih..."
-                            searchLabel="Cari grup akses"
-                            getOptionLabel={(option) => option.name ?? ''}
-                            getOptionSearchText={(option) => option.name ?? ''}
-                            onSelect={(group) => setValues({ ...values, accessGroupIds: [group.id] })}
-                            onClear={() => setValues({ ...values, accessGroupIds: [] })}
-                            className="w-full"
+                    <label className="pt-1.5 text-xs sm:text-sm text-section-tab-accent-text font-normal">Status</label>
+                    <div className="flex items-center gap-8 pt-0.5">
+                        <RadioField
+                            id="status-active"
+                            name="user-status"
+                            label="Aktif"
+                            checked={values.isActive === true}
+                            onChange={() => setValues({ ...values, isActive: true })}
+                            inputClassName="h-5 w-5"
+                            containerClassName="w-auto inline-flex items-center"
+                        />
+                        <RadioField
+                            id="status-inactive"
+                            name="user-status"
+                            label="Nonaktif"
+                            checked={values.isActive === false}
+                            onChange={() => setValues({ ...values, isActive: false })}
+                            inputClassName="h-5 w-5"
+                            containerClassName="w-auto inline-flex items-center"
                         />
                     </div>
                 </div>

@@ -50,7 +50,7 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, level2Tabs
         const mappedRows = departmentResource.mappedRows;
         const userOptions = userResource.rows.map((row) => ({
             id: row.id,
-            label: row.name ?? row.email ?? `User #${row.id}`,
+            label: row.name ?? row.email ?? `User ${row.id}`,
             email: row.email ?? '',
             branchIds: (row.branches ?? []).map((branch) => branch.id).filter(Boolean),
             branchLabels: (row.branches ?? []).map((branch) => branch.name).filter(Boolean),
@@ -58,7 +58,7 @@ export default function DepartmentView({ page, mode, activeLevel2Tab, level2Tabs
         }));
         const branchOptions = branchResource.rows.map((row) => ({
             id: row.id,
-            label: row.name ?? row.code ?? `Cabang #${row.id}`,
+            label: row.name ?? row.code ?? `Cabang ${row.id}`,
             code: row.code ?? '',
             searchText: [row.name, row.code, row.city, row.province].filter(Boolean).join(' '),
         }));

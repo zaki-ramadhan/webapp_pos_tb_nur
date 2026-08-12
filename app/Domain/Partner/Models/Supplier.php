@@ -13,24 +13,17 @@ class Supplier extends DomainModel
 {
     protected $fillable = [
         'category_id',
-        'currency_id',
         'code',
         'name',
-        'business_phone',
         'mobile_phone',
-        'whatsapp_phone',
         'email',
-        'fax',
-        'website',
         'billing_address',
         'credit_limit',
-        'tax_number',
         'notes',
-        'extended_details',
         'is_active',
     ];
 
-    protected array $searchable = ['code', 'name', 'business_phone', 'mobile_phone', 'email'];
+    protected array $searchable = ['code', 'name', 'mobile_phone', 'email'];
 
     protected $appends = ['balance'];
 

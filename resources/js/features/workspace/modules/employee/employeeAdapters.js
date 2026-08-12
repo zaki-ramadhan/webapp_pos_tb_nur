@@ -39,7 +39,11 @@ export function buildEmployeeFormValues(form, detailRow = null) {
         country: detailRow?.country ?? defaults.country ?? '',
         subjectToIncomeTax: detailRow?.subjectToIncomeTax ?? defaults.subjectToIncomeTax ?? true,
         taxNumber: detailRow?.taxNumber ?? defaults.taxNumber ?? '',
-        employmentStatus: detailRow?.employmentStatus ?? defaults.employmentStatus ?? '',
+        employmentStatus: (() => {
+            const raw = detailRow?.employmentStatus ?? detailRow?.employment_status ?? defaults.employmentStatus ?? 'Pegawai Tetap';
+            if (String(raw).toLowerCase().includes('kontrak') || String(raw).toLowerCase() === 'contract') return 'Pegawai Kontrak';
+            return 'Pegawai Tetap';
+        })(),
         taxAllowanceApplies: detailRow?.taxAllowanceApplies ?? defaults.taxAllowanceApplies ?? '',
         taxAllowanceStatus: detailRow?.taxAllowanceStatus ?? defaults.taxAllowanceStatus ?? '',
         taxStartMonth: detailRow?.taxStartMonth ?? defaults.taxStartMonth ?? '',
@@ -48,7 +52,7 @@ export function buildEmployeeFormValues(form, detailRow = null) {
         previousTax: detailRow?.previousTax ?? defaults.previousTax ?? '',
         bankName: primaryBankAccount?.bank_name ?? primaryBankAccount?.bankName ?? detailRow?.bankName ?? defaults.bankName ?? '',
         bankAccountNumber: primaryBankAccount?.account_number ?? primaryBankAccount?.accountNumber ?? detailRow?.bankAccountNumber ?? defaults.bankAccountNumber ?? '',
-        bankAccountHolder: primaryBankAccount?.account_name ?? primaryBankAccount?.accountName ?? detailRow?.bankAccountHolder ?? defaults.bankAccountHolder ?? '',
+        bankAccountHolder: primaryBankAccount?.account_name ?? primaryBankAccount?.accountName ?? detailRow?.bankAccountHolder ?? detailRow?.fullName ?? defaults.bankAccountHolder ?? '',
         __bankAccountId: primaryBankAccount?.id ?? null,
         attachments: detailRow?.attachments ?? defaults.attachments ?? [],
     };
@@ -97,7 +101,11 @@ export function buildEmployeeRow(record) {
         country: record.country ?? '',
         subjectToIncomeTax: record.subject_to_income_tax !== false,
         taxNumber: record.tax_number ?? '',
-        employmentStatus: record.employment_status ?? '',
+        employmentStatus: (() => {
+            const raw = record.employment_status ?? '';
+            if (String(raw).toLowerCase().includes('kontrak') || String(raw).toLowerCase() === 'contract') return 'Pegawai Kontrak';
+            return 'Pegawai Tetap';
+        })(),
         taxAllowanceApplies: record.tax_allowance_applies ?? (record.subject_to_income_tax !== false ? 'Ya' : 'Tidak'),
         taxAllowanceStatus: taxStatus,
         taxStatus,
@@ -123,7 +131,7 @@ export function buildEmployeeRow(record) {
 
         subjectToIncomeTaxText: record.subject_to_income_tax !== false ? 'Ya' : 'Tidak',
         isSalespersonText: record.is_salesperson ? 'Ya' : 'Tidak',
-        tabLabel: record.full_name ?? record.employee_code ?? `Karyawan #${record.id}`,
+        tabLabel: record.full_name ?? record.employee_code ?? `Karyawan ${record.id}`,
     };
 }
 

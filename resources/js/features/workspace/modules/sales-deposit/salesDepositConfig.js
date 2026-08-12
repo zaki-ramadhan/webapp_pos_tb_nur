@@ -29,7 +29,7 @@ const salesDepositSectionTabs = [
 ];
 
 const salesDepositListColumns = [
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[190px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[45%]', align: 'left' },
@@ -77,7 +77,7 @@ export const defaultSalesDepositConfig = {
     labels: {
         customer: 'Pelanggan',
         entryDate: 'Tanggal',
-        documentNumber: 'No Faktur #',
+        documentNumber: 'No. Faktur',
         depositAmount: 'Uang Muka',
         purchaseOrderNumber: 'No. PO',
         tax: 'Pajak',
@@ -169,8 +169,8 @@ export function buildSalesDepositRecord(row = {}) {
             ['Dicetak/email', 'Belum cetak/email'],
         ],
         approvalStamp: 'DISETUJUI',
-        statusStamp: (row.status ?? '').toUpperCase(),
-        statusTone: row.status === 'Lunas' ? 'green' : 'gray',
+        statusStamp: row.status === 'Lunas' ? 'LUNAS' : 'BELUM LUNAS',
+        statusTone: row.status === 'Lunas' ? 'green' : 'red',
         processButtonLabel: 'Proses',
         dockActions: sharedDetailDockActions,
         subtotal: `Rp ${row.total ?? '0'}`,

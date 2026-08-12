@@ -133,7 +133,11 @@ class DashboardAnalyticsQueryService
                 ->sum('total_amount');
  
             $netProfitVal = $totalSalesVal - $totalHppVal - $totalExpensesVal;
-            $profitMargin = $totalSalesVal > 0 ? (int) (($netProfitVal / $totalSalesVal) * 100) : 0;
+            if ($totalSalesVal > 0) {
+                $profitMargin = (int) round(($netProfitVal / $totalSalesVal) * 100);
+            } else {
+                $profitMargin = $netProfitVal < 0 ? -100 : ($netProfitVal > 0 ? 100 : 0);
+            }
             $profitPercentage = $profitMargin . '%';
             $legendSum = $totalSalesVal + $totalHppVal + $totalExpensesVal;
             $pctRev = $legendSum > 0 ? round(($totalSalesVal / $legendSum) * 100) : 0;
@@ -168,10 +172,10 @@ class DashboardAnalyticsQueryService
 
             $calcGrowth = function ($curr, $prev) {
                 if ($prev == 0) {
-                    return $curr > 0 ? '+100%' : '0%';
+                    return $curr > 0 ? '+100%' : ($curr < 0 ? '-100%' : '0%');
                 }
                 $diff = $curr - $prev;
-                $pct = round(($diff / $prev) * 100, 1);
+                $pct = round(($diff / abs($prev)) * 100, 1);
                 $pctStr = (string) $pct;
                 if (str_contains($pctStr, '.')) {
                     $pctStr = rtrim(rtrim($pctStr, '0'), '.');
@@ -411,7 +415,7 @@ class DashboardAnalyticsQueryService
             foreach ($dbUpcomingSO as $so) {
                 $upcomingActivityItems[] = [
                     'id' => 'so-' . $so->id,
-                    'title' => "Pengiriman Pesanan #{$so->document_number}" . ($so->contact_name ? " ({$so->contact_name})" : ''),
+                    'title' => "Pengiriman Pesanan {$so->document_number}" . ($so->contact_name ? " ({$so->contact_name})" : ''),
                     'subtitle' => 'Target Pengiriman Penjualan',
                     'date' => Carbon::parse($so->entry_date)->format('d/m/Y'),
                     'badge' => 'Pesanan Sales',
@@ -432,7 +436,7 @@ class DashboardAnalyticsQueryService
             foreach ($dbUpcomingPO as $po) {
                 $upcomingActivityItems[] = [
                     'id' => 'po-' . $po->id,
-                    'title' => "Penerimaan PO #{$po->document_number}" . ($po->contact_name ? " ({$po->contact_name})" : ''),
+                    'title' => "Penerimaan PO {$po->document_number}" . ($po->contact_name ? " ({$po->contact_name})" : ''),
                     'subtitle' => 'Jadwal Datang Pasokan Supplier',
                     'date' => Carbon::parse($po->entry_date)->format('d/m/Y'),
                     'badge' => 'Pembelian PO',
@@ -458,7 +462,7 @@ class DashboardAnalyticsQueryService
                 $days = Carbon::parse($inv->due_date)->diffInDays(now());
                 $overdueActivityItems[] = [
                     'id' => 'sinv-' . $inv->id,
-                    'title' => "Piutang Faktur #" . $inv->document_number . ($inv->contact_name ? " ({$inv->contact_name})" : ''),
+                    'title' => "Piutang Faktur " . $inv->document_number . ($inv->contact_name ? " ({$inv->contact_name})" : ''),
                     'subtitle' => 'Sisa Rp ' . number_format($inv->outstanding_amount, 0, ',', '.') . ' • Due: ' . Carbon::parse($inv->due_date)->format('d/m/Y'),
                     'date' => Carbon::parse($inv->due_date)->format('d/m/Y'),
                     'badge' => 'Terlewat ' . $days . ' Hari',
@@ -481,7 +485,7 @@ class DashboardAnalyticsQueryService
                 $days = Carbon::parse($inv->due_date)->diffInDays(now());
                 $overdueActivityItems[] = [
                     'id' => 'pinv-' . $inv->id,
-                    'title' => "Hutang Supplier #" . $inv->document_number . ($inv->contact_name ? " ({$inv->contact_name})" : ''),
+                    'title' => "Hutang Supplier " . $inv->document_number . ($inv->contact_name ? " ({$inv->contact_name})" : ''),
                     'subtitle' => 'Hutang: Rp ' . number_format($inv->outstanding_amount, 0, ',', '.') . ' • Due: ' . Carbon::parse($inv->due_date)->format('d/m/Y'),
                     'date' => Carbon::parse($inv->due_date)->format('d/m/Y'),
                     'badge' => 'Hutang ' . $days . ' Hari',
@@ -503,7 +507,7 @@ class DashboardAnalyticsQueryService
                 $days = Carbon::parse($pay->due_date)->diffInDays(now());
                 $overdueActivityItems[] = [
                     'id' => 'pay-' . $pay->id,
-                    'title' => "Gaji Karyawan #" . $pay->document_number,
+                    'title' => "Gaji Karyawan " . $pay->document_number,
                     'subtitle' => 'Utang Gaji: Rp ' . number_format($pay->outstanding_amount, 0, ',', '.') . ' • Due: ' . Carbon::parse($pay->due_date)->format('d/m/Y'),
                     'date' => Carbon::parse($pay->due_date)->format('d/m/Y'),
                     'badge' => 'Terlewat ' . $days . ' Hari',

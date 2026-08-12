@@ -159,7 +159,7 @@ export function SalesReceiptInvoicesSection({ config, values, setValues, isDetai
                             <DataTableRow className="border-ui-border-row bg-white">
                                 <DataTableCell
                                     colSpan={config.invoiceTable.columns.length}
-                                    className="px-2.5 py-6 text-center text-base text-text-placeholder bg-white"
+                                    className="px-2.5 py-2 text-center text-base text-black bg-white"
                                 >
                                     {config.invoiceTable.emptyLabel}
                                 </DataTableCell>
@@ -194,7 +194,7 @@ export function SalesReceiptAdditionalInfoSection({ config, values, setValues, i
                             className="h-[40px] rounded-[4px] border-ui-border"
                             selectClassName="text-xs sm:text-sm text-brand-dark"
                         >
-                            {['Tunai', 'Cek/Giro', 'Transfer Bank', 'Kartu Debit', 'Kartu Kredit', 'QRIS', 'Dompet Digital', 'Non Tunai Lainnya'].map((option) => (
+                            {['Tunai', 'Transfer Bank', 'QRIS', 'Kartu Debit'].map((option) => (
                                 <option key={option} value={option}>
                                     {option}
                                 </option>

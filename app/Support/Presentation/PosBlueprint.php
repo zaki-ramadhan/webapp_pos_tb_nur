@@ -51,7 +51,7 @@ final class PosBlueprint
                 'subtitle' => 'Lengkapi data berikut untuk melanjutkan.',
                 'nameLabel' => 'Nama Lengkap',
                 'namePrefix' => 'Bpk',
-                'namePlaceholder' => 'John Doe',
+                'namePlaceholder' => 'Masukkan nama Anda',
                 'emailLabel' => 'Email',
                 'emailPlaceholder' => 'Masukkan email Anda',
                 'phoneLabel' => 'No Handphone',

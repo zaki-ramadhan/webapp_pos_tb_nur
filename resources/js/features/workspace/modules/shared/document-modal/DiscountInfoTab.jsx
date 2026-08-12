@@ -167,7 +167,7 @@ export default function DiscountInfoTab({ values, setValues }) {
                                         <TableActionIcon className="h-4 w-4" />
                                     </span>
                                 </DataTableCell>
-                                <DataTableCell colSpan={2} className="px-2.5 py-6 text-center text-base text-text-workspace-dark">
+                                <DataTableCell colSpan={2} className="px-2.5 py-2 text-center text-base text-black">
                                     Tidak ada data
                                 </DataTableCell>
                             </DataTableRow>

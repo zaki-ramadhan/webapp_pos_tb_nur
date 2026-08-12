@@ -26,7 +26,7 @@ class BankTransferPage
                 ],
                 'labels' => [
                     'entryDate' => 'Tanggal',
-                    'documentNumber' => 'Nomor #',
+                    'documentNumber' => 'Nomor',
                     'fromBank' => 'Dari Kas/Bank',
                     'fromBranch' => 'Cabang',
                     'exchangeRate' => 'Kurs',
@@ -178,7 +178,7 @@ class BankTransferPage
                         ],
                     ],
                     'columns' => [
-                        ['id' => 'number', 'label' => 'Nomor #', 'widthClassName' => 'w-[190px]'],
+                        ['id' => 'number', 'label' => 'Nomor', 'widthClassName' => 'w-[190px]'],
                         ['id' => 'date', 'label' => 'Tanggal', 'widthClassName' => 'w-[120px]'],
                         ['id' => 'fromBank', 'label' => 'Bank (Keluar)', 'widthClassName' => 'w-[180px]'],
                         ['id' => 'toBank', 'label' => 'Bank (Masuk)', 'widthClassName' => 'w-[180px]'],

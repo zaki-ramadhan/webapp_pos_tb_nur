@@ -300,13 +300,13 @@ export default function UnpaidDocumentsSelectionModal({
                     <tbody className="divide-y divide-gray-200 text-xs sm:text-sm text-zinc-700">
                         {loading ? (
                             <tr>
-                                <td colSpan={6} className="py-10 text-center text-zinc-400 italic">
+                                <td colSpan={6} className="py-2 text-center text-black italic">
                                     Memuat daftar faktur belum lunas...
                                 </td>
                             </tr>
                         ) : sortedRecords.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="py-12 text-center text-zinc-500 font-normal">
+                                <td colSpan={6} className="py-2 text-center text-black font-normal">
                                     Tidak ada faktur belum lunas yang ditemukan
                                 </td>
                             </tr>

@@ -14,11 +14,10 @@ class Unit extends DomainModel
         'code',
         'name',
         'precision',
-        'tax_reference_code',
         'is_active',
     ];
 
-    protected array $searchable = ['code', 'name', 'tax_reference_code'];
+    protected array $searchable = ['code', 'name'];
 
     protected function casts(): array
     {

@@ -579,7 +579,7 @@ export default function SalesDocumentCopyModal({
                                                 containerClassName="flex justify-center"
                                             />
                                         </DataTableHead>
-                                        <DataTableHead className="w-[160px] text-white">Kode #</DataTableHead>
+                                        <DataTableHead className="w-[160px] text-white">Kode Barang</DataTableHead>
                                         <DataTableHead className="text-white">Nama Barang</DataTableHead>
                                         {mode === 'products_by_supplier' ? null : (
                                             <>
@@ -593,7 +593,7 @@ export default function SalesDocumentCopyModal({
                                 <DataTableBody>
                                     {isLoading ? (
                                         <DataTableRow className="bg-white">
-                                            <DataTableCell colSpan={mode === 'products_by_supplier' ? 4 : 6} className="px-3 py-2.5 text-center text-sm text-text-workspace-dark bg-white">
+                                            <DataTableCell colSpan={mode === 'products_by_supplier' ? 4 : 6} className="px-3 py-2 text-center text-sm text-black bg-white">
                                                 Memuat data...
                                             </DataTableCell>
                                         </DataTableRow>
@@ -657,7 +657,7 @@ export default function SalesDocumentCopyModal({
                                         })
                                     ) : (
                                         <DataTableRow className="bg-white">
-                                            <DataTableCell colSpan={mode === 'products_by_supplier' ? 4 : 6} className="px-3 py-2.5 text-center text-sm text-text-workspace-dark bg-white">
+                                            <DataTableCell colSpan={mode === 'products_by_supplier' ? 4 : 6} className="px-3 py-2 text-center text-sm text-black bg-white">
                                                 Tidak ada data
                                             </DataTableCell>
                                         </DataTableRow>
@@ -683,7 +683,7 @@ export default function SalesDocumentCopyModal({
                                             containerClassName="flex justify-center"
                                         />
                                     </DataTableHead>
-                                    <DataTableHead className="w-[140px] text-white">Kode #</DataTableHead>
+                                    <DataTableHead className="w-[140px] text-white">Kode Barang</DataTableHead>
                                     <DataTableHead className="text-white">Nama Biaya</DataTableHead>
                                     <DataTableHead className="w-[140px] text-right text-white">Jumlah</DataTableHead>
                                 </DataTableRow>
@@ -691,7 +691,7 @@ export default function SalesDocumentCopyModal({
                             <DataTableBody>
                                 {isLoading ? (
                                     <DataTableRow className="bg-white">
-                                        <DataTableCell colSpan={4} className="px-3 py-6 text-center text-sm text-text-workspace-dark bg-white">
+                                        <DataTableCell colSpan={4} className="px-3 py-2 text-center text-sm text-black bg-white">
                                             Memuat data...
                                         </DataTableCell>
                                     </DataTableRow>
@@ -729,7 +729,7 @@ export default function SalesDocumentCopyModal({
                                     })
                                 ) : (
                                     <DataTableRow className="bg-white">
-                                        <DataTableCell colSpan={4} className="px-3 py-2.5 text-center text-sm text-text-workspace-dark bg-white">
+                                        <DataTableCell colSpan={4} className="px-3 py-2 text-center text-sm text-black bg-white">
                                             Tidak ada data biaya lainnya.
                                         </DataTableCell>
                                     </DataTableRow>
@@ -754,7 +754,7 @@ export default function SalesDocumentCopyModal({
                                             containerClassName="flex justify-center"
                                         />
                                     </DataTableHead>
-                                    <DataTableHead className="w-[180px] text-white">No Faktur #</DataTableHead>
+                                    <DataTableHead className="w-[180px] text-white">No. Faktur</DataTableHead>
                                     <DataTableHead className="text-white">Tanggal</DataTableHead>
                                     <DataTableHead className="w-[140px] text-right text-white">Uang Muka</DataTableHead>
                                 </DataTableRow>
@@ -762,7 +762,7 @@ export default function SalesDocumentCopyModal({
                             <DataTableBody>
                                 {isLoading ? (
                                     <DataTableRow className="bg-white">
-                                        <DataTableCell colSpan={4} className="px-3 py-2.5 text-center text-sm text-text-workspace-dark bg-white">
+                                        <DataTableCell colSpan={4} className="px-3 py-2 text-center text-sm text-black bg-white">
                                             Memuat data...
                                         </DataTableCell>
                                     </DataTableRow>
@@ -800,7 +800,7 @@ export default function SalesDocumentCopyModal({
                                     })
                                 ) : (
                                     <DataTableRow className="bg-white">
-                                        <DataTableCell colSpan={4} className="px-3 py-2.5 text-center text-sm text-text-workspace-dark bg-white">
+                                        <DataTableCell colSpan={4} className="px-3 py-2 text-center text-sm text-black bg-white">
                                             Tidak ada data uang muka.
                                         </DataTableCell>
                                     </DataTableRow>

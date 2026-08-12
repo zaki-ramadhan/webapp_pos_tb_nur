@@ -7,10 +7,12 @@ import usePreferencesState from './hooks/usePreferencesState';
 import usePreferencesSave from './hooks/usePreferencesSave';
 import PreferencesSidebarContent from './PreferencesSidebarContent';
 
+import { isOwnerUser } from '@/features/workspace/backend/adapters/generalAdapters';
+
 export default function PreferencesView({ page }) {
     const inertiaPage = usePage();
     const authUser = inertiaPage?.props?.auth?.user ?? null;
-    const isSuperAdmin = Boolean(authUser?.isSuperAdmin || authUser?.role === 'Super Admin' || authUser?.role === 'super_admin');
+    const isSuperAdmin = isOwnerUser(authUser);
 
     const workspace = page.workspace;
     const { rows: backendRows, reload } = useBackendIndexResource({

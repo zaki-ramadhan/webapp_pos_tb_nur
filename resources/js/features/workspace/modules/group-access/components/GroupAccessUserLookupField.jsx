@@ -28,7 +28,7 @@ export default function GroupAccessUserLookupField({ field, selectedUsers, onAdd
                 onSelect={(user) => {
                     onAddUser({
                         id: user.id,
-                        label: user.name ?? user.email ?? `Pengguna #${user.id}`,
+                        label: user.name ?? user.email ?? `Pengguna ${user.id}`,
                     });
                 }}
                 onRemove={onRemoveUser}

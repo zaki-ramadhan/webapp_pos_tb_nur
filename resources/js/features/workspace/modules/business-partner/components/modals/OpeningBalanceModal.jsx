@@ -109,7 +109,7 @@ export function OpeningBalanceModal({
 
                     <div className="grid gap-2 sm:grid-cols-[130px_minmax(0,1fr)] sm:items-center">
                         <label className="text-sm font-normal text-slate-700">
-                            Nomor # <span className="text-red-500">*</span>
+                            Nomor <span className="text-red-500">*</span>
                         </label>
                         <TextInput
                             value={docNumber}

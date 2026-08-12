@@ -1,4 +1,5 @@
 import CheckboxField from '@/components/ui/CheckboxField';
+import { formatNpwpInput } from '@/features/workspace/shared/formValidation';
 import {
     AddressStack,
     FormFieldRow,
@@ -45,7 +46,7 @@ export default function TaxTab({ config, values, onChange }) {
                             id="taxNumber"
                             name="taxNumber"
                             value={values.taxNumber || ''}
-                            onChange={(event) => onChange('taxNumber', event.target.value.replace(/[^0-9]/g, ''))}
+                            onChange={(event) => onChange('taxNumber', formatNpwpInput(event.target.value))}
                             className="h-[40px] rounded-[4px] border-ui-border"
                             inputClassName="text-xs sm:text-sm text-brand-dark"
                         />

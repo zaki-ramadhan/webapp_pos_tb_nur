@@ -26,7 +26,7 @@ class ExpenseEntryPage
                 ],
                 'labels' => [
                     'liabilityAccount' => 'Hutang Beban',
-                    'documentNumber' => 'No Beban #',
+                    'documentNumber' => 'No. Beban',
                     'entryDate' => 'Tanggal',
                     'dueDate' => 'Jatuh Tempo',
                     'branch' => 'Cabang',

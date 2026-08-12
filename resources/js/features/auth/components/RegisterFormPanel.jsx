@@ -1,12 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 
 import Button from '@/components/ui/Button';
 import FormField from '@/components/ui/FormField';
-import TextInput from '@/components/ui/TextInput';
-import DropdownMenu from '@/components/ui/DropdownMenu';
-import DropdownMenuItem from '@/components/ui/DropdownMenuItem';
-import { ChevronDown } from 'lucide-react';
 import { dismissToast, showErrorToast, showLoadingToast } from '@/components/feedback/toast';
 import { applyClientErrors, getAuthFormMessage, getFirstInlineError, validateRegisterForm } from '@/features/auth/authFormFeedback';
 import AuthFooterPrompt from '@/features/auth/components/AuthFooterPrompt';
@@ -14,55 +10,7 @@ import AuthHeading from '@/features/auth/components/AuthHeading';
 import AuthInput from '@/features/auth/components/AuthInput';
 import PasswordField from '@/features/auth/components/PasswordField';
 
-function NameField({ salutation, onSalutationChange, prefixClassName, label, value, onChange, error, placeholder, required = false }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const buttonRef = useRef(null);
-
-    return (
-        <FormField label={label} required={required}>
-            <TextInput
-                className="!overflow-visible max-w-none"
-                containerClassName="w-full"
-                prefix={
-                    <div className="relative flex h-full w-full items-stretch">
-                        <button
-                            ref={buttonRef}
-                            type="button"
-                            onClick={() => setIsOpen(!isOpen)}
-                            className="flex w-full items-center justify-center gap-1.5 text-input-focus text-xs sm:text-sm font-semibold outline-none cursor-pointer focus:outline-none px-3 h-full"
-                        >
-                            <span>{salutation}</span>
-                            <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />
-                        </button>
-                        <DropdownMenu
-                            open={isOpen}
-                            onClose={() => setIsOpen(false)}
-                            anchorRef={buttonRef}
-                            align="end"
-                            side="bottom"
-                            widthClassName="w-[85px]"
-                        >
-                            <DropdownMenuItem onClick={() => { onSalutationChange('Bpk'); setIsOpen(false); }}>
-                                Bpk
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { onSalutationChange('Ibu'); setIsOpen(false); }}>
-                                Ibu
-                            </DropdownMenuItem>
-                        </DropdownMenu>
-                    </div>
-                }
-                prefixClassName={prefixClassName}
-                value={value}
-                onChange={onChange}
-                error={error}
-                placeholder={placeholder}
-            />
-        </FormField>
-    );
-}
-
 export default function RegisterFormPanel({ register }) {
-    const [salutation, setSalutation] = useState('Bpk');
     const form = useForm({
         name: '',
         email: '',
@@ -77,8 +25,7 @@ export default function RegisterFormPanel({ register }) {
         const cleanedEmail = form.data.email.trim();
         const cleanedPhone = form.data.phone.trim();
 
-      // Perbarui input form
-
+        // Perbarui input form
         form.setData(prev => ({
             ...prev,
             name: cleanedName,
@@ -97,7 +44,6 @@ export default function RegisterFormPanel({ register }) {
 
         if (Object.keys(clientErrors).length > 0) {
             applyClientErrors(form, clientErrors);
-
             return;
         }
 
@@ -105,7 +51,7 @@ export default function RegisterFormPanel({ register }) {
 
         form.transform((data) => ({
             ...data,
-            name: `${salutation}. ${cleanedName}`,
+            name: cleanedName,
             email: cleanedEmail,
             phone: cleanedPhone,
         }));
@@ -120,20 +66,18 @@ export default function RegisterFormPanel({ register }) {
                     message: 'Sedang menyiapkan akun baru Anda.',
                 });
             },
-            onError: (errors) => {
+            onError: (err) => {
                 requestFailed = true;
-
-                if (loadingToastId) {
-                    dismissToast(loadingToastId);
+                if (loadingToastId) dismissToast(loadingToastId);
+                const message = getAuthFormMessage(err, 'Pendaftaran gagal. Silakan periksa kembali data Anda.');
+                const inlineError = getFirstInlineError(err);
+                if (inlineError) {
+                    form.setError(inlineError.field, inlineError.message);
                 }
-
-                showErrorToast({
-                    title: 'Pendaftaran gagal',
-                    message: getAuthFormMessage(errors) || getFirstInlineError(errors, ['name', 'email', 'phone', 'password']) || 'Periksa kembali data pendaftaran Anda.',
-                });
+                showErrorToast({ title: 'Gagal', message });
             },
             onFinish: () => {
-                if (loadingToastId && !requestFailed) {
+                if (requestFailed && loadingToastId) {
                     dismissToast(loadingToastId);
                 }
             },
@@ -146,10 +90,10 @@ export default function RegisterFormPanel({ register }) {
                 <AuthHeading title={register.title} subtitle={register.subtitle} />
 
                 <form className="mt-6 space-y-3 sm:mt-8" onSubmit={submit}>
-                    <NameField
-                        salutation={salutation}
-                        onSalutationChange={setSalutation}
-                        prefixClassName="!px-0 flex items-stretch"
+                    <AuthInput
+                        id="register-name"
+                        name="name"
+                        type="text"
                         label={register.nameLabel}
                         placeholder={register.namePlaceholder}
                         value={form.data.name}

@@ -63,36 +63,12 @@ export default function GeneralTab({ config, values, isDetail, onChange }) {
                         </FormFieldRow>
                     )}
 
-                    <FormFieldRow label={config.labels.businessPhone}>
-                        <TextInput
-                            id="businessPhone"
-                            name="businessPhone"
-                            value={values.businessPhone}
-                            onChange={(event) => onChange('businessPhone', event.target.value)}
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
-                            trailing={isDetail && values.businessPhone ? <CloseIcon className="h-4 w-4 text-text-darkest" /> : null}
-                            trailingClassName="px-3"
-                        />
-                    </FormFieldRow>
-
                     <FormFieldRow label={config.labels.mobilePhone}>
                         <TextInput
                             id="mobilePhone"
                             name="mobilePhone"
                             value={values.mobilePhone}
                             onChange={(event) => onChange('mobilePhone', event.target.value)}
-                            className="h-[40px] rounded-[4px] border-ui-border"
-                            inputClassName="text-xs sm:text-sm text-brand-dark"
-                        />
-                    </FormFieldRow>
-
-                    <FormFieldRow label={config.labels.whatsapp}>
-                        <TextInput
-                            id="whatsapp"
-                            name="whatsapp"
-                            value={values.whatsapp}
-                            onChange={(event) => onChange('whatsapp', event.target.value)}
                             className="h-[40px] rounded-[4px] border-ui-border"
                             inputClassName="text-xs sm:text-sm text-brand-dark"
                         />

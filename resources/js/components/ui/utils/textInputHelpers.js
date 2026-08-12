@@ -65,12 +65,37 @@ export function sanitizeInput(val, type, id = '', name = '', placeholder = '', p
         prefixStr === 'rp'
     );
 
+    const isNpwp = options.isNpwp ?? (
+        searchStr.includes('npwp') ||
+        searchStr.includes('tax_number') ||
+        searchStr.includes('taxnumber')
+    );
+
+    const isBankAccount = options.isBankAccount ?? (
+        searchStr.includes('account_number') ||
+        searchStr.includes('accountnumber') ||
+        searchStr.includes('rekening') ||
+        searchStr.includes('norek') ||
+        searchStr.includes('no_rek') ||
+        searchStr.includes('no.rek') ||
+        searchStr.includes('bank_account') ||
+        searchStr.includes('bankaccount')
+    );
+
     if (isCurrency) {
         return formatAmountInput(val, {
             allowDecimal: options.allowDecimal ?? true,
             allowNegative: options.allowNegative ?? false,
             isInput: true
         });
+    }
+
+    if (isBankAccount) {
+        return val.replace(/[^0-9]/g, '').slice(0, 30);
+    }
+
+    if (isNpwp) {
+        return val.replace(/[^0-9.-]/g, '').slice(0, 20);
     }
 
     if (isPostal) {

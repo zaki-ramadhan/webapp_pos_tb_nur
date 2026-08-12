@@ -62,18 +62,6 @@ export function PurchasePaymentAdditionalInfoSection({ config, values, setValues
 
                     <TransactionFieldLabel label={config.labels.notes} />
                     <TransactionReadonlyTextarea value={values.notes} rows={4} className="min-h-[70px]" />
-
-                    {isDetail ? (
-                        <>
-                            <TransactionFieldLabel label={config.labels.printStatus} />
-                            <TextInput
-                                value={values.printStatus}
-                                readOnly
-                                className="h-[34px] max-w-[262px] rounded-[4px] border-ui-border"
-                                inputClassName="text-xs sm:text-sm text-text-workspace-muted"
-                            />
-                        </>
-                    ) : null}
                 </div>
             </div>
         </div>

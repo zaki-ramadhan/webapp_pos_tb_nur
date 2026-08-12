@@ -14,8 +14,6 @@ class Product extends DomainModel
         'category_id',
         'brand_id',
         'base_unit_id',
-        'purchase_unit_id',
-        'sales_unit_id',
         'code',
         'barcode',
         'name',
@@ -25,8 +23,6 @@ class Product extends DomainModel
         'default_sale_price',
         'notes',
         'is_active',
-        'print_group_details',
-        'allow_edit_group_quantity',
     ];
 
     protected array $searchable = ['code', 'barcode', 'name', 'product_type'];

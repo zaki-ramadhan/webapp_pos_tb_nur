@@ -18,7 +18,7 @@ export default function WorkOrderDetailTab({ values, setValues, errors = {} }) {
 
     return (
         <div className="space-y-3">
-            <ModalFieldRow label="Kode #">
+            <ModalFieldRow label="Kode Barang">
                 <div className="flex h-[36px] items-center text-xs sm:text-sm font-medium text-document-code">{values.code}</div>
             </ModalFieldRow>
 

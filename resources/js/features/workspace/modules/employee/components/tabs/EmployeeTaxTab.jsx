@@ -1,6 +1,7 @@
 import CheckboxField from '@/components/ui/CheckboxField';
 import SelectField from '@/components/ui/SelectField';
 import TextInput from '@/components/ui/TextInput';
+import { formatNpwpInput } from '@/features/workspace/shared/formValidation';
 import { EmployeeFieldRow } from '@/features/workspace/modules/employee/employeeViewShared';
 
 export default function EmployeeTaxTab({ form, values, onChange }) {
@@ -11,7 +12,7 @@ export default function EmployeeTaxTab({ form, values, onChange }) {
             </EmployeeFieldRow>
             {values.subjectToIncomeTax && (
                 <>
-                    <EmployeeFieldRow label="No. NPWP"><TextInput name="tax_number" value={values.taxNumber} onChange={(event) => onChange('taxNumber', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[320px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
+                    <EmployeeFieldRow label="No. NPWP"><TextInput name="tax_number" value={values.taxNumber} onChange={(event) => onChange('taxNumber', formatNpwpInput(event.target.value))} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[320px]" inputClassName="text-xs sm:text-sm text-brand-dark" /></EmployeeFieldRow>
                     <EmployeeFieldRow label="Status Pekerja">
                         <SelectField name="employment_status" value={values.employmentStatus} onChange={(event) => onChange('employmentStatus', event.target.value)} containerClassName="w-full md:max-w-[430px]" className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
                             {form.employmentStatusOptions.map((option) => <option key={option} value={option}>{option}</option>)}
@@ -23,29 +24,6 @@ export default function EmployeeTaxTab({ form, values, onChange }) {
                             {form.taxAllowanceStatusOptions.map((option) => <option key={option} value={option}>{option}</option>)}
                         </SelectField>
                     </EmployeeFieldRow>
-                    <div className="pt-1"><h3 className="text-2xl font-medium text-text-darkest">Perhitungan PPh</h3></div>
-                    <EmployeeFieldRow label="PPh mulai dihitung">
-                        <div className="flex flex-wrap items-center gap-4">
-                            <SelectField name="tax_start_month" value={values.taxStartMonth} onChange={(event) => onChange('taxStartMonth', event.target.value)} containerClassName="w-full md:max-w-[200px]" className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
-                                {form.taxStartMonthOptions.map((option) => <option key={option} value={option}>{option}</option>)}
-                            </SelectField>
-                            <SelectField name="tax_start_year" value={values.taxStartYear} onChange={(event) => onChange('taxStartYear', event.target.value)} containerClassName="w-full md:max-w-[120px]" className="h-[40px] rounded-[4px] border-ui-border" selectClassName="text-xs sm:text-sm text-brand-dark">
-                                {form.taxStartYearOptions.map((option) => <option key={option} value={option}>{option}</option>)}
-                            </SelectField>
-                        </div>
-                    </EmployeeFieldRow>
-                    <EmployeeFieldRow label="Penghasilan Sebelumnya">
-                        <TextInput type="number" name="previous_income" value={values.previousIncome} onChange={(event) => onChange('previousIncome', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[280px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
-                    </EmployeeFieldRow>
-                    <EmployeeFieldRow label="PPh Sebelumnya">
-                        <TextInput type="number" name="previous_tax" value={values.previousTax} onChange={(event) => onChange('previousTax', event.target.value)} className="h-[40px] rounded-[4px] border-ui-border md:max-w-[280px]" inputClassName="text-xs sm:text-sm text-brand-dark" />
-                    </EmployeeFieldRow>
-                    <div className="grid gap-2.5 lg:grid-cols-[160px_minmax(0,1fr)]">
-                        <div className="hidden lg:block" />
-                        <div className="max-w-[860px] border-l-[4px] border-text-light pl-3 text-sm italic leading-6 text-illustration-danger-bg">
-                            {form.taxCalculationNote}
-                        </div>
-                    </div>
                 </>
             )}
         </div>

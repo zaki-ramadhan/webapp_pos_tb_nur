@@ -27,10 +27,21 @@ class InventoryInquiryQueryService
         $products = $this->queryProducts($filters)->keyBy('id');
         $rows = collect();
 
+        $docDates = InventoryDocumentLine::query()
+            ->join('inventory_documents', 'inventory_documents.id', '=', 'inventory_document_lines.inventory_document_id')
+            ->selectRaw('inventory_document_lines.product_id, inventory_documents.warehouse_id, MAX(inventory_documents.document_date) as max_date')
+            ->groupBy('inventory_document_lines.product_id', 'inventory_documents.warehouse_id')
+            ->get()
+            ->keyBy(fn ($item) => sprintf('%d:%d', $item->product_id, $item->warehouse_id));
+
         foreach ($products as $product) {
             foreach ($warehouses as $warehouse) {
                 $compositeKey = sprintf('%d:%d', $product->id, $warehouse->id);
                 $quantity = (float) ($stockMap[$compositeKey] ?? 0);
+                $docDate = $docDates->get($compositeKey)?->max_date;
+                $formattedDate = $docDate
+                    ? Carbon::parse($docDate)->format('d/m/Y')
+                    : ($product->created_at ? Carbon::parse($product->created_at)->format('d/m/Y') : Carbon::now()->format('d/m/Y'));
 
                 $rows->push([
                     'id' => $compositeKey,
@@ -42,6 +53,7 @@ class InventoryInquiryQueryService
                     'multi_unit_quantity' => sprintf('%s %s', $this->formatNumber($quantity), $product->baseUnit?->name ?? ''),
                     'saleable_stock' => $this->formatNumber($quantity),
                     'address' => $this->resolveWarehouseAddress($warehouse),
+                    'date' => $formattedDate,
                 ]);
             }
         }

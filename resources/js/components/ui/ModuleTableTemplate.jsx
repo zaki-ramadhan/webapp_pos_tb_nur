@@ -238,7 +238,7 @@ export default function ModuleTableTemplate({
                                 <DataTableRow className="bg-white">
                                     <DataTableCell
                                         colSpan={visibleColumns.length + 1}
-                                        className="px-3 py-4 text-center text-base text-text-workspace-dark"
+                                        className="px-3 py-2 text-center text-base text-black"
                                     >
                                         {table.loading ? (
                                             'Memuat data...'

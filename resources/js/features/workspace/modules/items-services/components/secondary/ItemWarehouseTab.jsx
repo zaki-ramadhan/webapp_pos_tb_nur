@@ -70,7 +70,7 @@ export default function ItemWarehouseTab({ productId }) {
                 <DataTableBody>
                     {loading ? (
                         <DataTableRow className="border-ui-border-row bg-white">
-                            <DataTableCell colSpan={2} className="px-3 py-4 text-center text-sm text-text-workspace-dark">
+                            <DataTableCell colSpan={2} className="px-3 py-2 text-center text-sm text-black">
                                 Memuat data...
                             </DataTableCell>
                         </DataTableRow>
@@ -83,7 +83,7 @@ export default function ItemWarehouseTab({ productId }) {
                         ))
                     ) : (
                         <DataTableRow className="border-ui-border-row bg-white">
-                            <DataTableCell colSpan={2} className="px-3 py-4 text-center text-sm text-text-workspace-dark">
+                            <DataTableCell colSpan={2} className="px-3 py-2 text-center text-sm text-black">
                                 Tidak ada data
                             </DataTableCell>
                         </DataTableRow>

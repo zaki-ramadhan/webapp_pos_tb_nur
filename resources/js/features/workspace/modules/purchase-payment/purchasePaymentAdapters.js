@@ -149,7 +149,10 @@ export function buildPurchasePaymentInvoiceFromRecord(record) {
         id: String(record?.id ?? ''),
         __lineId: null,
         __relatedDocumentId: record?.id ?? null,
-        number: record?.reference_number ?? record?.document_number ?? '',
+        number:
+            (record?.document_number && String(record.document_number).trim()) ||
+            (record?.reference_number && String(record.reference_number).trim()) ||
+            '',
         formNumber: record?.document_number ?? '',
         date: formatIsoDate(record?.entry_date),
         total: totalLabel,

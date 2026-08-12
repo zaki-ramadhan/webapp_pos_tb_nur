@@ -177,8 +177,8 @@ class AprioriAnalysisService
             if ($confidence1 >= $minConfidence) {
                 $rules[] = [
                     'id' => 'rule-' . $ruleId++,
-                    'antecedent' => $productNames[$pid1] ?? "Product #{$pid1}",
-                    'consequent' => $productNames[$pid2] ?? "Product #{$pid2}",
+                    'antecedent' => $productNames[$pid1] ?? "Produk {$pid1}",
+                    'consequent' => $productNames[$pid2] ?? "Produk {$pid2}",
                     'antecedentAbc' => $abcMap[$pid1]['category'] ?? 'C',
                     'antecedentColor' => $abcMap[$pid1]['color'] ?? '#f4a62a',
                     'consequentAbc' => $abcMap[$pid2]['category'] ?? 'C',
@@ -199,8 +199,8 @@ class AprioriAnalysisService
             if ($confidence2 >= $minConfidence) {
                 $rules[] = [
                     'id' => 'rule-' . $ruleId++,
-                    'antecedent' => $productNames[$pid2] ?? "Product #{$pid2}",
-                    'consequent' => $productNames[$pid1] ?? "Product #{$pid1}",
+                    'antecedent' => $productNames[$pid2] ?? "Produk {$pid2}",
+                    'consequent' => $productNames[$pid1] ?? "Produk {$pid1}",
                     'antecedentAbc' => $abcMap[$pid2]['category'] ?? 'C',
                     'antecedentColor' => $abcMap[$pid2]['color'] ?? '#f4a62a',
                     'consequentAbc' => $abcMap[$pid1]['category'] ?? 'C',
@@ -220,8 +220,7 @@ class AprioriAnalysisService
             return $b['confidenceValue'] <=> $a['confidenceValue'];
         });
 
-      // Ambil 7 aturan teratasHey, Cortana. Stop by the moment. Find my glove makes you saw and Sandman to let strange apartments for Christmas. I see. Besides, man I Love make some songs and send a man to let strangers bark for a few months. I. Hey, Cortana. Stop. Because. I. Hey, Cortana. I guess we'll never know. Hey, Cortana. Characteristic. Einstein. Like. Science. Implementer informacy. Characteristic. Like. Hey, Cortana. Play. Hello. Hey, Cortana. Does the sheep. The seat to a new super tower. Start Padmavathi. Owaisi. Shashank Ajit Anirudh. Yadav. What? Is. The. Hey, Cortana. Open Settings. Show Nakshatra movie. KRNDTS former. Do I love Patagonia to get a thing? MV Department of. Ajay Devgn. Doctor Shane. Tune into. Pratas. Kins. The Sunil comedy and. About Madhuri Dixit. Hey, Cortana. What are you drinking? Sohail Bhattacharjee. Uttar Pradesh. Pakistan. Pakistan. Speeches. Hey, Cortana. Ajmer movie to work on. Cortana. Hey, Cortana. Cortana. Sara Kalam says. Play. Hey, Cortana. HSBC. No. Please. It is. Begin. Hey, Cortana. Whatever. Hey, Cortana. Hey, Cortana. Pakistan. Hey, Cortana. What comes next? World War Two? US. USAA disrupts A. Hey, Cortana. World war is always. Pakistan. Hey, Cortana. Open. Hey, Cortana. Hello. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Cortana. Hello. What's up? Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hello. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hey, Cortana. Hello. Hello. Hey, Cortana. Hey, Cortana. Update. Hello. Cortana. Hey, Cortana. What's the weather? Hey, Cortana. Play. Hey,Hey, Cortana. Akhilesh Yadav. 2018. Connect to my. CSL by Leading PCI. How are you? Hey, Cortana. kueku Cortana. Hey, Cortana. Right. Hey, Cortana.
-
+        
         $rules = array_slice($rules, 0, 7);
 
         $metrics = [

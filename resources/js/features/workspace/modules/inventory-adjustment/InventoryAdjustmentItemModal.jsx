@@ -7,20 +7,31 @@ import DocumentModalLayout, {
 import InventoryAdjustmentDetailTab from './components/InventoryAdjustmentDetailTab';
 import InventoryAdjustmentInfoTab from './components/InventoryAdjustmentInfoTab';
 
+import { formatAmountInput } from '@/features/workspace/shared/amountFormatting';
+
 function cloneList(values) {
     return Array.isArray(values) ? [...values] : values ? [values] : [];
 }
 
 function buildInitialValues(item = {}) {
     const source = item ?? {};
+    const defaultUnit = source.unit 
+        || source.base_unit?.name 
+        || source.baseUnit?.name 
+        || (source.unitLookup && source.unitLookup[0]) 
+        || 'PCS';
 
     return {
         __productId: source.__productId ?? null,
+        __warehouseId: source.__warehouseId ?? null,
+        __departmentId: source.__departmentId ?? null,
+        __unitId: source.__unitId ?? null,
         code: source.code ?? '',
         name: source.name ?? '',
         adjustmentType: source.adjustmentType ?? 'Penambahan',
-        quantity: source.quantity ?? '',
-        unitLookup: cloneList(source.unitLookup),
+        quantity: formatAmountInput(source.quantity || '1', { allowDecimal: false }),
+        unit: defaultUnit,
+        unitLookup: cloneList(source.unitLookup?.length ? source.unitLookup : (defaultUnit ? [defaultUnit] : [])),
         unitCost: source.unitCost ?? '',
         totalCost: source.totalCost ?? '',
         warehouse: cloneList(source.warehouse),
@@ -29,21 +40,42 @@ function buildInitialValues(item = {}) {
     };
 }
 
-export default function InventoryAdjustmentItemModal({ open, onClose, modal, item }) {
+export function recalculateItemTotalCost(current) {
+    if (current.adjustmentType !== 'Penambahan') {
+        return {
+            ...current,
+            unitCost: '0',
+            totalCost: '0',
+        };
+    }
+    const qtyNum = parseFloat(String(current.quantity ?? '0').replace(/\./g, '').replace(/,/g, '.')) || 0;
+    const unitCostNum = parseFloat(String(current.unitCost ?? '0').replace(/\./g, '').replace(/,/g, '.')) || 0;
+    const total = qtyNum * unitCostNum;
+    return {
+        ...current,
+        totalCost: total ? total.toLocaleString('id-ID') : '0',
+    };
+}
+
+export default function InventoryAdjustmentItemModal({ open, onClose, modal, item, onSave, onDelete }) {
     const tabs = modal?.tabs ?? [];
     const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? 'details');
-    const [values, setValues] = useState(() => buildInitialValues(item));
+    const [values, setValues] = useState(() => recalculateItemTotalCost(buildInitialValues(item)));
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
         setActiveTabId(tabs[0]?.id ?? 'details');
-        setValues(buildInitialValues(item));
+        setValues(recalculateItemTotalCost(buildInitialValues(item)));
         setErrors({});
     }, [item, tabs]);
 
     const handleValuesChange = useCallback((updater) => {
-        setValues(updater);
+        setValues((current) => (typeof updater === 'function' ? updater(current) : updater));
         setErrors({});
+    }, []);
+
+    const handleRecalculateTotal = useCallback(() => {
+        setValues((current) => recalculateItemTotalCost(current));
     }, []);
 
     if (!modal || !item) {
@@ -61,9 +93,6 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         if (!qty || qty <= 0) {
             newErrors.quantity = 'Kuantitas harus lebih besar dari 0.';
         }
-        if (!values.warehouse?.length) {
-            newErrors.warehouse = 'Gudang harus diisi.';
-        }
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -72,6 +101,27 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             return;
         }
 
+        const isAddition = values.adjustmentType === 'Penambahan';
+        const unitCostNum = isAddition ? (parseFloat(String(values.unitCost ?? '0').replace(/\./g, '').replace(/,/g, '.')) || 0) : 0;
+        const totalCostNum = isAddition ? (qty * unitCostNum) : 0;
+        const unitName = values.unitLookup?.[0] || item.unit || 'PCS';
+
+        const updatedItem = {
+            ...item,
+            ...values,
+            quantity: String(qty),
+            unit: unitName,
+            unitLookup: values.unitLookup?.length ? values.unitLookup : [unitName],
+            unitCost: isAddition ? (unitCostNum ? unitCostNum.toLocaleString('id-ID') : '0') : '0',
+            totalCost: isAddition ? (totalCostNum ? totalCostNum.toLocaleString('id-ID') : '0') : '0',
+        };
+
+        onSave?.(updatedItem);
+        onClose();
+    }
+
+    function handleDelete() {
+        onDelete?.(item);
         onClose();
     }
 
@@ -79,7 +129,7 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
         <DocumentModalLayout
             open={open}
             onClose={onClose}
-            title={modal.title}
+            title={modal.title ?? 'Rincian Barang'}
             tabs={tabs}
             activeTabId={activeTabIdSafe}
             onTabChange={setActiveTabId}
@@ -88,9 +138,9 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             bodyClassName="min-h-[360px] py-4"
             footer={
                 <DocumentModalFooter
-                    deleteLabel={modal.deleteLabel}
-                    submitLabel={modal.submitLabel}
-                    onDelete={onClose}
+                    deleteLabel={modal.deleteLabel ?? 'Hapus'}
+                    submitLabel={modal.submitLabel ?? 'Lanjut'}
+                    onDelete={handleDelete}
                     onSubmit={handleSubmit}
                 />
             }
@@ -98,7 +148,13 @@ export default function InventoryAdjustmentItemModal({ open, onClose, modal, ite
             {activeTabIdSafe === 'info' ? (
                 <InventoryAdjustmentInfoTab values={values} setValues={handleValuesChange} />
             ) : (
-                <InventoryAdjustmentDetailTab values={values} setValues={handleValuesChange} modal={modal} errors={errors} />
+                <InventoryAdjustmentDetailTab
+                    values={values}
+                    setValues={handleValuesChange}
+                    onRecalculateTotal={handleRecalculateTotal}
+                    modal={modal}
+                    errors={errors}
+                />
             )}
         </DocumentModalLayout>
     );

@@ -42,15 +42,27 @@ class LoginController extends Controller
 
         $user = $userQuery->first();
 
-        if (
-            $user === null
-            || ($this->supportsUserActivation() && ! (bool) $user->is_active)
-            || ! Hash::check($credentials['password'], $user->password)
-        ) {
+        if ($user === null || ! Hash::check($credentials['password'], $user->password)) {
             RateLimiter::hit($this->throttleKey($request));
 
             throw ValidationException::withMessages([
                 'auth' => $this->invalidCredentialsMessage(),
+            ]);
+        }
+
+        if ($this->supportsUserActivation() && ! (bool) $user->is_active) {
+            RateLimiter::hit($this->throttleKey($request));
+
+            throw ValidationException::withMessages([
+                'auth' => 'Akun Anda telah dinonaktifkan oleh Owner. Silakan hubungi pemilik toko.',
+            ]);
+        }
+
+        if (app(\App\Support\Backend\BackendResourceAccessService::class)->isUserTimeRestricted($user)) {
+            RateLimiter::hit($this->throttleKey($request));
+
+            throw ValidationException::withMessages([
+                'auth' => 'Akses login dibatasi. Akun Anda tidak diperbolehkan masuk di luar jam kerja grup akses.',
             ]);
         }
 

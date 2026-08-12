@@ -66,7 +66,7 @@ export default function BalanceTab({ config, values, onChange }) {
                             <DataTableHead className="w-[120px] px-3 text-left text-base font-light text-white">Tanggal</DataTableHead>
                             <DataTableHead className="w-[150px] px-3 text-right text-base font-light text-white">Jumlah</DataTableHead>
                             <DataTableHead className="w-[160px] px-3 text-left text-base font-light text-white">Mata Uang</DataTableHead>
-                            <DataTableHead className="w-[180px] px-3 text-left text-base font-light text-white">Nomor #</DataTableHead>
+                            <DataTableHead className="w-[180px] px-3 text-left text-base font-light text-white">Nomor</DataTableHead>
                             <DataTableHead className="px-3 text-left text-base font-light text-white">Keterangan</DataTableHead>
                             <DataTableHead className="w-[60px] px-3 text-center text-base font-light text-white">Aksi</DataTableHead>
                         </DataTableRow>
@@ -74,7 +74,7 @@ export default function BalanceTab({ config, values, onChange }) {
                     <DataTableBody>
                         {rows.length === 0 ? (
                             <DataTableRow className="bg-white">
-                                <DataTableCell colSpan={7} className="px-3 py-6 text-center text-base text-black">
+                                <DataTableCell colSpan={7} className="px-3 py-2 text-center text-base text-black">
                                     Tidak ada data
                                 </DataTableCell>
                             </DataTableRow>

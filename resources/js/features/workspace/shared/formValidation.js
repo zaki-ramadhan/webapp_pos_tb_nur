@@ -134,3 +134,7 @@ export function resolveSaveDisabledState({
         saveDisabled: Boolean(saving || validationMessage || !isDirty),
     };
 }
+
+export function formatNpwpInput(value) {
+    return String(value ?? '').replace(/[^0-9.-]/g, '').slice(0, 20);
+}

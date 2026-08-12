@@ -142,7 +142,7 @@ function AccountDetailModalContainer({
             {activeTab === 'detail' && (
                 <div className="space-y-4 pt-5 pb-5 flex-1">
                     <div className="grid grid-cols-[130px_minmax(0,1fr)] items-center gap-4">
-                        <span className="text-sm text-slate-700 font-normal">Kode #</span>
+                        <span className="text-sm text-slate-700 font-normal">Kode Barang</span>
                         <span className="text-sm text-slate-700 font-semibold">{accountCode}</span>
                     </div>
 

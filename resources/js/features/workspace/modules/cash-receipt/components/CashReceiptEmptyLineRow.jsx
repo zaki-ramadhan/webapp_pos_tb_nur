@@ -8,7 +8,7 @@ export function CashReceiptEmptyLineRow({ colSpan, emptyLabel }) {
             </td>
             <td
                 colSpan={colSpan - 1}
-                className="px-3 py-3 text-center text-base text-text-workspace-dark"
+                className="px-3 py-2 text-center text-base text-black"
             >
                 {emptyLabel}
             </td>

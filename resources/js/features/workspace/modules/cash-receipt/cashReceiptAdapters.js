@@ -121,7 +121,7 @@ export function buildCashReceiptDetailRecordFromRow(row = {}, config) {
         bankAccounts: row.cashBankFull ? [row.cashBankFull] : [],
         entryDate: row.date ?? '',
         autoNumber: false,
-        numberingType: config.numberingOptions?.[0] ?? '',
+        numberingType: config.numberingOptions?.[0] ?? 'Nomor Bukti Kas (Tunai)',
         documentNumber: row.number ?? '',
         checkNumber: row.checkNumber ?? '',
         payer: row.payer ?? '',

@@ -69,7 +69,7 @@ export function mapStockOpnameOrderRow(record) {
         notes: record.notes ?? '',
         dateFilter: normalizeDisplayDate(record.document_date),
         statusFilter: record.status ?? 'Draft',
-        tabLabel: record.document_number ?? `Opname #${record.id}`,
+        tabLabel: record.document_number ?? `Opname ${record.id}`,
     };
 }
 

@@ -97,7 +97,7 @@ export default function ItemStockTab({ config, values, onChange }) {
                             <DataTableRow className="border-ui-border-row bg-white">
                                 <DataTableCell
                                     colSpan={config.openingStockTable.columns.length}
-                                    className="px-3 py-3 text-center text-[15px] text-text-workspace-dark"
+                                    className="px-3 py-2 text-center text-[15px] text-black"
                                 >
                                     {config.openingStockTable.emptyLabel}
                                 </DataTableCell>

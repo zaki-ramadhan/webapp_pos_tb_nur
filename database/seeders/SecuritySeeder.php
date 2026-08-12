@@ -187,6 +187,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Zaki Ramadhan',
                 'email' => 'piscokpiscok2610@gmail.com',
+                'phone' => '0812-8273-6188',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -194,7 +195,8 @@ class SecuritySeeder extends Seeder
             ],
             [
                 'name' => 'Hj. Nurhayati',
-                'email' => 'nurhayati.tb@gmail.com',
+                'email' => 'nurhayati.karya@gmail.com',
+                'phone' => '0812-9876-5432',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -202,7 +204,8 @@ class SecuritySeeder extends Seeder
             ],
             [
                 'name' => 'Ahmad Fauzi',
-                'email' => 'ahmad.fauzi.tb@gmail.com',
+                'email' => 'ahmad.fauzi87@gmail.com',
+                'phone' => '0812-8976-5431',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -211,6 +214,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Bambang Suryono',
                 'email' => 'bambang.suryono88@gmail.com',
+                'phone' => '0857-1234-5678',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -218,7 +222,8 @@ class SecuritySeeder extends Seeder
             ],
             [
                 'name' => 'Siti Rahmawati',
-                'email' => 'siti.rahmawati.tb@gmail.com',
+                'email' => 'siti.rahmawati95@gmail.com',
+                'phone' => '0813-7654-3210',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -227,6 +232,7 @@ class SecuritySeeder extends Seeder
             [
                 'name' => 'Diki Dermawan',
                 'email' => 'diki.dermawan92@gmail.com',
+                'phone' => '0821-9876-1234',
                 'password' => Hash::make('password'),
                 'is_active' => true,
                 'created_at' => now(),
@@ -244,17 +250,17 @@ class SecuritySeeder extends Seeder
         DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $adminGroupId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['nurhayati.tb@gmail.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['nurhayati.tb@gmail.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['ahmad.fauzi.tb@gmail.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['ahmad.fauzi.tb@gmail.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['ahmad.fauzi87@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['ahmad.fauzi87@gmail.com']]);
 
         DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['bambang.suryono88@gmail.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['bambang.suryono88@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['siti.rahmawati.tb@gmail.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti.rahmawati.tb@gmail.com']]);
+        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['siti.rahmawati95@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['siti.rahmawati95@gmail.com']]);
 
         // Seed account_user pivot relationships (Akses Akun Kas & Bank Per Pengguna)
         $accounts = DB::table('accounts')->whereIn('code', ['110101', '110102', '110103'])->pluck('id');
@@ -286,9 +292,9 @@ class SecuritySeeder extends Seeder
         $adminUser = ['id' => $usersMap['piscokpiscok2610@gmail.com'], 'name' => 'Zaki Ramadhan', 'email' => 'piscokpiscok2610@gmail.com'];
         $actors = [
             $adminUser,
-            ['id' => $usersMap['nurhayati.tb@gmail.com'], 'name' => 'Hj. Nurhayati', 'email' => 'nurhayati.tb@gmail.com'],
-            ['id' => $usersMap['ahmad.fauzi.tb@gmail.com'], 'name' => 'Ahmad Fauzi', 'email' => 'ahmad.fauzi.tb@gmail.com'],
-            ['id' => $usersMap['siti.rahmawati.tb@gmail.com'], 'name' => 'Siti Rahmawati', 'email' => 'siti.rahmawati.tb@gmail.com'],
+            ['id' => $usersMap['nurhayati.karya@gmail.com'], 'name' => 'Hj. Nurhayati', 'email' => 'nurhayati.karya@gmail.com'],
+            ['id' => $usersMap['ahmad.fauzi87@gmail.com'], 'name' => 'Ahmad Fauzi', 'email' => 'ahmad.fauzi87@gmail.com'],
+            ['id' => $usersMap['siti.rahmawati95@gmail.com'], 'name' => 'Siti Rahmawati', 'email' => 'siti.rahmawati95@gmail.com'],
         ];
 
         for ($i = 25; $i >= 0; $i--) {
@@ -319,9 +325,9 @@ class SecuritySeeder extends Seeder
                 'action' => $tpl['action'],
                 'subject_type' => 'App\\Domain\\Operation\\Models\\OperationDocument',
                 'subject_id' => $i + 1,
-                'subject_label' => $tpl['subj'] . " #" . ($i + 1),
+                'subject_label' => $tpl['subj'],
                 'document_number' => $docNum,
-                'description' => $tpl['desc'] . ' #' . str_pad($i + 1, 2, '0', STR_PAD_LEFT),
+                'description' => $tpl['desc'],
                 'actor_user_id' => $act['id'],
                 'actor_name' => $act['name'],
                 'actor_email' => $act['email'],

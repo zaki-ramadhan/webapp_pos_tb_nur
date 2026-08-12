@@ -58,7 +58,7 @@ export const bankInquiryPageConfigs = {
         table: {
             columns: [
                 { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                { id: 'sourceNumber', label: 'No. Sumber #', widthClassName: 'w-[180px]', align: 'left' },
+                { id: 'sourceNumber', label: 'No. Sumber', widthClassName: 'w-[180px]', align: 'left' },
                 { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[170px]', align: 'left' },
                 { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[720px]', align: 'left' },
                 { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[150px]', align: 'right' },
@@ -108,8 +108,8 @@ export const bankInquiryPageConfigs = {
         table: {
             columns: [
                 { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                { id: 'sourceNumber', label: 'No. Sumber #', widthClassName: 'w-[160px]', align: 'left' },
-                { id: 'checkNumber', label: 'No Cek #', widthClassName: 'w-[130px]', align: 'left' },
+                { id: 'sourceNumber', label: 'No. Sumber', widthClassName: 'w-[160px]', align: 'left' },
+                { id: 'checkNumber', label: 'No. Cek', widthClassName: 'w-[130px]', align: 'left' },
                 { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[180px]', align: 'left' },
                 { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[700px]', align: 'left' },
                 { id: 'mutation', label: 'Mutasi', widthClassName: 'w-[140px]', align: 'right' },
@@ -136,7 +136,7 @@ export const bankInquiryPageConfigs = {
         table: {
             columns: [
                 { id: 'date', label: 'Tanggal', widthClassName: 'w-[110px]', align: 'center' },
-                { id: 'documentNumber', label: 'No. Bukti #', widthClassName: 'w-[180px]', align: 'left' },
+                { id: 'documentNumber', label: 'No. Bukti', widthClassName: 'w-[180px]', align: 'left' },
                 { id: 'transactionType', label: 'Tipe Transaksi', widthClassName: 'w-[180px]', align: 'left' },
                 { id: 'description', label: 'Keterangan', widthClassName: 'min-w-[560px]', align: 'left' },
                 { id: 'debit', label: 'Debit', widthClassName: 'w-[140px]', align: 'right' },

@@ -94,6 +94,7 @@ class EmployeesPage
                                 'id' => 'employeeId',
                                 'label' => 'ID Karyawan',
                                 'widthClassName' => 'w-[150px]',
+                                'defaultHidden' => true,
                             ],
                             [
                                 'id' => 'taxStatus',

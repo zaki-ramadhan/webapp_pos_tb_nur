@@ -63,18 +63,6 @@ export function ItemPurchaseTaxSection({ config, values, onChange, isLoading }) 
                     />
                 </FormRow>
 
-                <FormRow label="Minimum Pembelian">
-                    <SimpleTextField
-                        value={values.minimumPurchase}
-                        onChange={(event) => onChange('minimumPurchase', event.target.value)}
-                        className="max-w-[420px]"
-                        formatAsAmount
-                        allowDecimal={false}
-                        maxLength={11}
-                        isLoading={isLoading}
-                    />
-                </FormRow>
-
                 {values.kind !== 'Non Persediaan' && (
                     <FormRow label="Batas Minimum Stok">
                         <SimpleTextField

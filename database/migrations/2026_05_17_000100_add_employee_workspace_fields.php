@@ -65,24 +65,8 @@ return new class extends Migration
                 $table->string('tax_allowance_status', 120)->nullable()->after('tax_allowance_applies');
             }
 
-            if (! Schema::hasColumn('employees', 'tax_start_month')) {
-                $table->string('tax_start_month', 20)->nullable()->after('tax_allowance_status');
-            }
-
-            if (! Schema::hasColumn('employees', 'tax_start_year')) {
-                $table->string('tax_start_year', 10)->nullable()->after('tax_start_month');
-            }
-
-            if (! Schema::hasColumn('employees', 'previous_income')) {
-                $table->decimal('previous_income', 18, 2)->nullable()->after('tax_start_year');
-            }
-
-            if (! Schema::hasColumn('employees', 'previous_tax')) {
-                $table->decimal('previous_tax', 18, 2)->nullable()->after('previous_income');
-            }
-
             if (! Schema::hasColumn('employees', 'is_salesperson')) {
-                $table->boolean('is_salesperson')->default(false)->after('previous_tax');
+                $table->boolean('is_salesperson')->default(false)->after('tax_allowance_status');
             }
         });
     }
@@ -108,10 +92,6 @@ return new class extends Migration
                 'tax_number',
                 'tax_allowance_applies',
                 'tax_allowance_status',
-                'tax_start_month',
-                'tax_start_year',
-                'previous_income',
-                'previous_tax',
                 'is_salesperson',
             ];
 

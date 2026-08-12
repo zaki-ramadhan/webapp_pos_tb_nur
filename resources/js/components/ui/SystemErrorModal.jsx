@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import Button from '@/components/ui/Button';
 import ModalBase from '@/components/ui/ModalBase';
 import ErrorIllustration from '@/components/ui/ErrorIllustration';
-import { AlertTriangleIcon, CloseIcon } from '@/features/workspace/shared/Icons';
+import { AlertTriangleIcon, CloseIcon, InfoIcon } from '@/features/workspace/shared/Icons';
 
 function normalizeMessages(messages = [], message = '') {
     if (messages.length) {
@@ -26,17 +26,19 @@ export default function SystemErrorModal({
     messages = [],
     copyLabel = 'Salin',
     confirmLabel = 'OK',
+    cancelLabel = null,
     copiedLabel = 'Tersalin',
     closeLabel = 'Tutup modal error',
+    showCloseButton = true,
     onClose,
     onConfirm,
+    onCancel,
     onCopy,
     dismissible = true,
     maxWidthClassName = 'max-w-[520px]',
 }) {
     const [copyState, setCopyState] = useState('idle');
     const normalizedMessages = useMemo(() => normalizeMessages(messages, message), [message, messages]);
-    const joinedMessage = normalizedMessages.join('\n');
 
     useEffect(() => {
         if (!open || !dismissible) {
@@ -62,25 +64,6 @@ export default function SystemErrorModal({
         }
     }, [open]);
 
-    async function handleCopy() {
-        if (!joinedMessage) {
-            onCopy?.('');
-            return;
-        }
-
-        try {
-            if (navigator?.clipboard?.writeText) {
-                await navigator.clipboard.writeText(joinedMessage);
-            }
-
-            setCopyState('copied');
-            onCopy?.(joinedMessage);
-        } catch {
-            setCopyState('copied');
-            onCopy?.(joinedMessage);
-        }
-    }
-
     function handleConfirm(event) {
         if (event) {
             event.stopPropagation();
@@ -99,15 +82,29 @@ export default function SystemErrorModal({
         onClose?.();
     }
 
-    const finalDescription = (normalizedMessages.length === 0 && description !== 'Silakan perbaiki permasalahan berikut ini:')
-        ? 'Silakan perbaiki permasalahan berikut ini:'
-        : description;
+    function handleCancel(event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        if (onCancel) {
+            onCancel();
+        } else {
+            onClose?.();
+        }
+    }
+
+    const finalDescription = (description === '' || description === null)
+        ? ''
+        : ((normalizedMessages.length === 0 && description !== 'Silakan perbaiki permasalahan berikut ini:')
+            ? 'Silakan perbaiki permasalahan berikut ini:'
+            : description);
 
     const finalMessages = (normalizedMessages.length === 0 && description !== 'Silakan perbaiki permasalahan berikut ini:')
-        ? [description]
+        ? (description ? [description] : [])
         : normalizedMessages;
 
     const hasMessages = finalMessages.length > 0;
+    const isConfirmationTitle = title === 'Konfirmasi';
 
     return (
         <ModalBase
@@ -116,14 +113,18 @@ export default function SystemErrorModal({
             className="bg-modal-overlay-bg px-3 py-4 sm:px-4 sm:py-6"
             panelClassName={`${maxWidthClassName} overflow-hidden rounded-[8px] px-0 py-0 shadow-dialog-large`.trim()}
         >
-            <div className="border-b border-[#081f3b] bg-[#0A2A55] px-4 py-2.5 text-white sm:px-5">
+            <div className="border-b border-[#081f3b] bg-[#0A2A55] px-4 py-2 text-white sm:px-5">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-2">
-                        <AlertTriangleIcon className="h-5 w-5 text-white shrink-0" strokeWidth={2.4} />
+                        {isConfirmationTitle ? (
+                            <InfoIcon className="h-5 w-5 text-white shrink-0" strokeWidth={2.4} />
+                        ) : (
+                            <AlertTriangleIcon className="h-5 w-5 text-white shrink-0" strokeWidth={2.4} />
+                        )}
                         <h2 className="truncate text-sm font-normal">{title}</h2>
                     </div>
 
-                    {dismissible ? (
+                    {dismissible && showCloseButton ? (
                         <button
                             type="button"
                             onClick={handleClose}
@@ -136,17 +137,19 @@ export default function SystemErrorModal({
                 </div>
             </div>
 
-            <div className="bg-white px-4 pt-5 pb-3 sm:px-5 sm:pt-6 sm:pb-3">
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-                    <div className="flex justify-center sm:justify-start">
+            <div className="bg-white px-4 pt-5 pb-4 sm:px-5 sm:pt-6 sm:pb-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
+                    <div className="flex justify-center sm:justify-start shrink-0">
                         <ErrorIllustration />
                     </div>
 
-                    <div className={`min-w-0 flex-1 flex flex-col min-h-[56px] ${hasMessages ? 'justify-between py-0.5' : 'justify-center'}`}>
-                        <p className="text-sm sm:text-[15px] font-normal leading-5 text-brand-dark">{finalDescription}</p>
+                    <div className={`min-w-0 flex-1 flex flex-col ${hasMessages && finalDescription ? 'justify-between py-0.5' : 'justify-center'}`}>
+                        {finalDescription ? (
+                            <p className="text-sm sm:text-[15px] font-normal leading-5 text-brand-dark">{finalDescription}</p>
+                        ) : null}
 
                         {hasMessages && (
-                            <div className="mt-2.5">
+                            <div className={finalDescription ? 'mt-2.5' : ''}>
                                 {finalMessages.length === 1 ? (
                                     <p className="text-sm sm:text-[15px] font-normal leading-5 text-[#991b1b]">
                                         {finalMessages[0]}
@@ -165,14 +168,26 @@ export default function SystemErrorModal({
                     </div>
                 </div>
 
-                <div className="mt-4 flex justify-end">
+                <div className="mt-5 flex justify-end gap-2">
                     <Button
+                        type="button"
                         size="md"
                         onClick={handleConfirm}
-                        className="min-w-[80px] rounded-[6px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover cursor-pointer"
+                        className="min-w-[64px] rounded-[4px] bg-brand-blue text-white shadow-none hover:bg-brand-blue-hover px-4 py-1.5 text-sm font-normal cursor-pointer"
                     >
                         {confirmLabel}
                     </Button>
+                    {cancelLabel ? (
+                        <Button
+                            type="button"
+                            size="md"
+                            variant="secondary"
+                            onClick={handleCancel}
+                            className="min-w-[64px] rounded-[4px] border border-brand-blue text-brand-blue bg-white shadow-none hover:bg-blue-50 px-4 py-1.5 text-sm font-normal cursor-pointer"
+                        >
+                            {cancelLabel}
+                        </Button>
+                    ) : null}
                 </div>
             </div>
         </ModalBase>

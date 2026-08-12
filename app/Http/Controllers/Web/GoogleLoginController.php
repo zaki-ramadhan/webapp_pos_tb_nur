@@ -114,12 +114,12 @@ class GoogleLoginController extends Controller
 
         if ($this->supportsUserActivation() && ! (bool) $user->is_active) {
             if ($usePopup) {
-                return $this->respondWithPopupError('Akun ini tidak aktif. Hubungi administrator.');
+                return $this->respondWithPopupError('Akun Anda telah dinonaktifkan oleh Owner. Silakan hubungi pemilik toko.');
             }
             return redirect()
                 ->route('home')
                 ->withErrors([
-                    'auth' => 'Akun ini tidak aktif. Hubungi administrator.',
+                    'auth' => 'Akun Anda telah dinonaktifkan oleh Owner. Silakan hubungi pemilik toko.',
                 ]);
         }
 

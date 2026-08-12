@@ -105,11 +105,11 @@ export default function JournalActivityLogDetailView({ config, activeLevel2Tab }
                     {/* Right Side */}
                     <div className="space-y-2.5">
                         <div className="grid grid-cols-[140px_1fr] items-center text-sm sm:text-base text-text-darkest font-normal">
-                            <span>Nomor #</span>
+                            <span>Nomor</span>
                             <span>{detail.documentNumber}</span>
                         </div>
                         <div className="grid grid-cols-[140px_1fr] items-center text-sm sm:text-base text-text-darkest font-normal">
-                            <span>No. Trans #</span>
+                            <span>No. Trans</span>
                             <span>{detail.transactionNumber}</span>
                         </div>
                     </div>

@@ -106,6 +106,8 @@ export default function DashboardWidgetBody({
     widget,
     analyticsDetailsExpanded,
     onToggleAnalyticsDetails,
+    chartExpanded,
+    onToggleChart,
     isLoading = false,
 }) {
     if (isLoading) {
@@ -166,7 +168,15 @@ export default function DashboardWidgetBody({
     }
 
     if (widget.type === 'integrated-analysis') {
-        return <IntegratedAnalysisWidget widget={widget} expanded={analyticsDetailsExpanded} onToggle={onToggleAnalyticsDetails} />;
+        return (
+            <IntegratedAnalysisWidget
+                widget={widget}
+                expanded={analyticsDetailsExpanded}
+                onToggle={onToggleAnalyticsDetails}
+                chartExpanded={chartExpanded}
+                onToggleChart={onToggleChart}
+            />
+        );
     }
 
     return null;

@@ -41,6 +41,19 @@ export default function useTextInputState({
                     searchStr.includes('kontak') ||
                     searchStr.includes('contact');
 
+    const isNpwp = searchStr.includes('npwp') ||
+                   searchStr.includes('tax_number') ||
+                   searchStr.includes('taxnumber');
+
+    const isBankAccount = searchStr.includes('account_number') ||
+                          searchStr.includes('accountnumber') ||
+                          searchStr.includes('rekening') ||
+                          searchStr.includes('norek') ||
+                          searchStr.includes('no_rek') ||
+                          searchStr.includes('no.rek') ||
+                          searchStr.includes('bank_account') ||
+                          searchStr.includes('bankaccount');
+
     const isCurrency = isCurrencyProp ?? (
                        searchStr.includes('price') ||
                        searchStr.includes('amount') ||
@@ -128,7 +141,7 @@ export default function useTextInputState({
         }
         const name = props.name ?? '';
         const prefixVal = typeof prefix === 'string' ? prefix : '';
-        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly, { isCurrency, isPhone, isPostal, allowDecimal, allowNegative });
+        const sanitizedValue = sanitizeInput(originalValue, type, id, name, placeholder, prefixVal, props.lettersOnly, { isCurrency, isPhone, isPostal, isNpwp, isBankAccount, allowDecimal, allowNegative });
 
         setLocalValue(sanitizedValue);
         clearError(contextKey);

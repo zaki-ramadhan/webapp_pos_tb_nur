@@ -263,7 +263,7 @@ export default function BankTransferFormView({
                     updateValues((current) => ({
                         ...current,
                         __fromBranchId: record.id,
-                        fromBranches: [record.name ?? record.code ?? `Cabang #${record.id}`],
+                        fromBranches: [record.name ?? record.code ?? `Cabang ${record.id}`],
                     })),
                 ),
             onRemoveFromBranch: (value) =>
@@ -277,7 +277,7 @@ export default function BankTransferFormView({
                     updateValues((current) => ({
                         ...current,
                         __toBranchId: record.id,
-                        toBranches: [record.name ?? record.code ?? `Cabang #${record.id}`],
+                        toBranches: [record.name ?? record.code ?? `Cabang ${record.id}`],
                     })),
                 ),
             onRemoveToBranch: (value) =>

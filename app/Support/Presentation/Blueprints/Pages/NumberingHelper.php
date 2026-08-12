@@ -13,11 +13,8 @@ class NumberingHelper
     public static function getCashBankNumberingOptions(): array
     {
         return [
-            'Nomor Bukti Kas/Bank',
-            'Kas & Bank',
-            'Kas Kecil',
-            'Bank',
-            'Transfer Bank',
+            'Nomor Bukti Kas (Tunai)',
+            'Nomor Bukti Bank (Transfer)',
         ];
     }
 }

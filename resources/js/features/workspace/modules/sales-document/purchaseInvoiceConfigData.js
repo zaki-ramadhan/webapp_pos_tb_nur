@@ -16,8 +16,8 @@ export const purchaseInvoiceSectionTabs = [
 ];
 
 const purchaseInvoiceListColumns = [
-    { id: 'number', label: 'Nomor #', widthClassName: 'w-[200px]', align: 'left' },
-    { id: 'billNumber', label: 'No Faktur #', widthClassName: 'w-[150px]', align: 'left' },
+    { id: 'number', label: 'Nomor', widthClassName: 'w-[200px]', align: 'left' },
+    { id: 'billNumber', label: 'No. Faktur', widthClassName: 'w-[150px]', align: 'left' },
     { id: 'date', label: 'Tanggal', widthClassName: 'w-[120px]', align: 'left' },
     { id: 'customerShort', label: 'Pemasok', widthClassName: 'w-[200px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[48%]', align: 'left' },
@@ -28,7 +28,7 @@ const purchaseInvoiceListColumns = [
 
 const purchaseInvoiceItemColumns = [
     { id: 'name', label: 'Nama Barang', widthClassName: 'w-[56%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[120px]', align: 'center' },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[120px]', align: 'center' },
     { id: 'quantity', label: 'Kuantitas', widthClassName: 'w-[92px]', align: 'right' },
     { id: 'unit', label: 'Satuan', widthClassName: 'w-[82px]', align: 'center' },
     { id: 'price', label: '@Harga', widthClassName: 'w-[108px]', align: 'right' },
@@ -38,7 +38,7 @@ const purchaseInvoiceItemColumns = [
 
 const purchaseInvoiceCostColumns = [
     { id: 'name', label: 'Nama Biaya', widthClassName: 'w-[58%]', align: 'left' },
-    { id: 'code', label: 'Kode #', widthClassName: 'w-[120px]', align: 'center' },
+    { id: 'code', label: 'Kode Barang', widthClassName: 'w-[120px]', align: 'center' },
     { id: 'amount', label: 'Jumlah', widthClassName: 'w-[120px]', align: 'right' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[22%]', align: 'left' },
 ];
@@ -136,9 +136,9 @@ export const defaultPurchaseInvoiceConfig = {
     labels: {
         customer: 'Pemasok',
         entryDate: 'Tanggal',
-        documentNumber: 'Nomor #',
+        documentNumber: 'Nomor',
         preInvoice: 'Tagihan Dimuka',
-        purchaseOrderNumber: 'No Faktur #',
+        purchaseOrderNumber: 'No. Faktur',
         address: 'Alamat',
         branch: 'Cabang',
         notes: 'Keterangan',

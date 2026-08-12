@@ -116,15 +116,6 @@ export default function ItemCategoryFormView({
                     parent_id: values.isSubCategory ? (values.parentId || null) : null,
                     is_default: values.isDefault,
                     is_active: true,
-                    inventory_account_id: values.accountIds?.inventoryAccount ? parseInt(values.accountIds.inventoryAccount) : null,
-                    expense_account_id: values.accountIds?.expenseAccount ? parseInt(values.accountIds.expenseAccount) : null,
-                    sales_account_id: values.accountIds?.salesAccount ? parseInt(values.accountIds.salesAccount) : null,
-                    sales_return_account_id: values.accountIds?.salesReturnAccount ? parseInt(values.accountIds.salesReturnAccount) : null,
-                    sales_discount_account_id: values.accountIds?.salesDiscountAccount ? parseInt(values.accountIds.salesDiscountAccount) : null,
-                    goods_in_transit_account_id: values.accountIds?.goodsInTransitAccount ? parseInt(values.accountIds.goodsInTransitAccount) : null,
-                    cost_of_goods_sold_account_id: values.accountIds?.costOfGoodsSoldAccount ? parseInt(values.accountIds.costOfGoodsSoldAccount) : null,
-                    purchase_return_account_id: values.accountIds?.purchaseReturnAccount ? parseInt(values.accountIds.purchaseReturnAccount) : null,
-                    unbilled_purchase_account_id: values.accountIds?.unbilledPurchaseAccount ? parseInt(values.accountIds.unbilledPurchaseAccount) : null,
                 };
 
                 const response = isDetail && detailRow?.id
@@ -219,11 +210,7 @@ export default function ItemCategoryFormView({
                 ) : null
             }
         >
-            {activeTabId === 'item-category-accounts' ? (
-                <ItemCategoryAccountsTab config={config} values={values} onAccountChange={handleAccountChange} />
-            ) : (
-                <ItemCategoryGeneralTab config={config} values={values} onChange={handleChange} parentCategoryOptions={parentCategoryOptions} />
-            )}
+            <ItemCategoryGeneralTab config={config} values={values} onChange={handleChange} parentCategoryOptions={parentCategoryOptions} />
 
             <ConfirmationModal
                 open={deleteConfirmationOpen}
