@@ -32,6 +32,8 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::middleware('auth')->group(function (): void {
+    Route::get('/api/workspace/dashboard/widgets-data', [DashboardController::class, 'getWidgetsData'])->name('dashboard.widgets-data');
+    Route::get('/api/workspace/dashboard/widget-data', [DashboardController::class, 'getSingleWidgetData'])->name('dashboard.widget-data');
     Route::get('/dashboard/{sample?}', DashboardController::class)->name('dashboard');
     Route::post('/logout', LogoutController::class)->name('logout');
     Route::get('/{sample}', DashboardController::class)
