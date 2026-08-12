@@ -9,19 +9,24 @@ class AbcAnalysisService
     /**
      * Jalankan Analisis ABC.
      *
+     * @param int|null $months
      * @return array
      */
-    public function calculate(): array
+    public function calculate(?int $months = 3): array
     {
-      // Query total penjualan per produk
-
-        $salesData = DB::table('operation_document_lines')
+      // Query total penjualan per produk dengan filter rentang waktu
+        $query = DB::table('operation_document_lines')
             ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
             ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
             ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
             ->where('operation_documents.document_type', 'sales_invoice')
-            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
-            ->select(
+            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas']);
+
+        if ($months !== null && $months > 0) {
+            $query->where('operation_documents.entry_date', '>=', now()->subMonths($months)->startOfDay()->toDateTimeString());
+        }
+
+        $salesData = $query->select(
                 'products.id as product_id',
                 'products.name as product_name',
                 'products.code as product_code',

@@ -11,7 +11,7 @@ use Throwable;
 
 class DashboardBlueprintProvider
 {
-    public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true): array
+    public static function get(?array $abc = null, ?array $apriori = null, bool $loadData = true, ?string $asOfDate = null): array
     {
         $attachmentsNotice = [
             'parts' => [
@@ -21,8 +21,12 @@ class DashboardBlueprintProvider
             ],
         ];
 
-        $analytics = \App\Support\Presentation\Queries\DashboardAnalyticsQueryService::getAnalytics($loadData);
+        $analytics = \App\Support\Presentation\Queries\DashboardAnalyticsQueryService::getAnalytics($loadData, $asOfDate);
         extract($analytics);
+
+        $jan1ThisYear = date('Y-01-01', strtotime($latestSalesInvoiceDate));
+        $jan1LastYear = date('Y-01-01', strtotime($latestSalesInvoiceDate . ' -1 year'));
+        $monthStartThisYear = date('Y-m-01', strtotime($latestSalesInvoiceDate));
 
         $navigationModules = PosBlueprint::navigationModules();
         $navigationPages = PosBlueprint::buildNavigationPages($navigationModules);
@@ -134,6 +138,8 @@ class DashboardBlueprintProvider
                     'id' => 'sales-trend',
                     'title' => 'Tren Penjualan',
                     'type' => 'line',
+                    'period' => self::dateId(date('Y-m-d', strtotime($latestSalesInvoiceDate . ' -6 days'))) . ' - ' . self::dateId($latestSalesInvoiceDate),
+                    'asOfDate' => $latestSalesInvoiceDate,
                     'labels' => $salesTrendLabels,
                     'series' => [
                         [
@@ -151,8 +157,9 @@ class DashboardBlueprintProvider
                     'percentage' => $profitPercentage,
                     'totalLabel' => $netProfitVal < 0 ? 'Rugi' : 'Laba',
                     'totalValue' => 'Rp ' . number_format(abs($netProfitVal), 0, ',', '.'),
-                    'period' => '1 Jan - ' . self::dateId($latestSalesInvoiceDate),
-                    'compare' => 'Dibanding 1 Jan - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
+                    'period' => self::dateId($jan1ThisYear) . ' - ' . self::dateId($latestSalesInvoiceDate),
+                    'asOfDate' => $latestSalesInvoiceDate,
+                    'compare' => 'Dibanding ' . self::dateId($jan1LastYear) . ' - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
                     'trend' => $profitTrend,
                     'growth' => $profitGrowth,
                     'legend' => [
@@ -190,6 +197,8 @@ class DashboardBlueprintProvider
                     'id' => 'cash-flow',
                     'title' => 'Arus Kas',
                     'type' => 'line',
+                    'period' => self::dateId(date('Y-m-d', strtotime($latestSalesInvoiceDate . ' -6 days'))) . ' - ' . self::dateId($latestSalesInvoiceDate),
+                    'asOfDate' => $latestSalesInvoiceDate,
                     'labels' => $cashFlowLabels,
                     'series' => [
                         [
@@ -212,8 +221,9 @@ class DashboardBlueprintProvider
                     'type' => 'expense',
                     'totalValue' => 'Rp ' . number_format($totalExpense, 0, ',', '.'),
                     'percentage' => ($totalExpense > 0 ? ($pctGaji > 0 ? $pctGaji : $pctOpr) : 0) . '%',
-                    'period' => '1 Jan - ' . self::dateId($latestSalesInvoiceDate),
-                    'compare' => 'Dibanding 1 Jan - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
+                    'period' => self::dateId($jan1ThisYear) . ' - ' . self::dateId($latestSalesInvoiceDate),
+                    'asOfDate' => $latestSalesInvoiceDate,
+                    'compare' => 'Dibanding ' . self::dateId($jan1LastYear) . ' - ' . self::dateId($latestSalesInvoiceDate . ' -1 year'),
                     'trend' => $expenseTrend,
                     'growth' => $expenseGrowth,
                     'legend' => [
@@ -242,7 +252,8 @@ class DashboardBlueprintProvider
                     'id' => 'sales-summary',
                     'title' => 'Penjualan',
                     'type' => 'summary',
-                    'period' => '1 Jul - ' . self::dateId($latestSalesInvoiceDate),
+                    'period' => self::dateId($monthStartThisYear) . ' - ' . self::dateId($latestSalesInvoiceDate),
+                    'asOfDate' => $latestSalesInvoiceDate,
                     'sections' => [
                         [
                             'title' => 'Status Piutang',
@@ -271,7 +282,8 @@ class DashboardBlueprintProvider
                     'id' => 'purchase-summary',
                     'title' => 'Pembelian',
                     'type' => 'summary',
-                    'period' => '1 Jul - ' . self::dateId($latestSalesInvoiceDate),
+                    'period' => self::dateId($monthStartThisYear) . ' - ' . self::dateId($latestSalesInvoiceDate),
+                    'asOfDate' => $latestSalesInvoiceDate,
                     'sections' => [
                         [
                             'title' => 'Status Hutang',
@@ -307,6 +319,8 @@ class DashboardBlueprintProvider
                     'id' => 'cash-availability',
                     'title' => 'Ketersediaan Kas',
                     'type' => 'cash-availability',
+                    'period' => self::dateId(date('Y-m-d', strtotime($latestSalesInvoiceDate . ' -6 days'))) . ' - ' . self::dateId($latestSalesInvoiceDate),
+                    'asOfDate' => $latestSalesInvoiceDate,
                     'balanceLabel' => 'Estimasi Saldo Kas Berjalan',
                     'balanceValue' => $cashAvailabilitySeries !== [] ? 'Rp ' . number_format(end($cashAvailabilitySeries), 0, ',', '.') : 'Rp -',
                     'labels' => $cashAvailabilityLabels,
@@ -413,8 +427,12 @@ class DashboardBlueprintProvider
             9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
         ];
         $ts = strtotime($dateStr);
+        if (!$ts) {
+            return $dateStr;
+        }
         $day = (int) date('j', $ts);
-        $month = $months[(int) date('n', $ts)] ?? date('M', $ts);
+        $mNum = (int) date('n', $ts);
+        $month = $months[$mNum] ?? 'Jan';
         $year = date('Y', $ts);
         return $withYear ? "{$day} {$month} {$year}" : "{$day} {$month}";
     }

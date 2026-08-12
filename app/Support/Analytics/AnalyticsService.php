@@ -21,11 +21,12 @@ class AnalyticsService
     /**
      * Jalankan Analisis ABC.
      *
+     * @param int|null $months
      * @return array
      */
-    public function getAbcAnalysis(): array
+    public function getAbcAnalysis(?int $months = 3): array
     {
-        return $this->abcService->calculate();
+        return $this->abcService->calculate($months);
     }
 
     /**
@@ -33,10 +34,11 @@ class AnalyticsService
      *
      * @param float $minSupport
      * @param float $minConfidence
+     * @param int|null $months
      * @return array
      */
-    public function getAprioriAnalysis(float $minSupport = 0.05, float $minConfidence = 0.4): array
+    public function getAprioriAnalysis(float $minSupport = 0.05, float $minConfidence = 0.4, ?int $months = 3): array
     {
-        return $this->aprioriService->calculate($minSupport, $minConfidence);
+        return $this->aprioriService->calculate($minSupport, $minConfidence, $months);
     }
 }

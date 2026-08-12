@@ -13,10 +13,16 @@ class DashboardAnalyticsQueryService
      * Get aggregated metrics and analytics for the main dashboard widgets.
      *
      * @param bool $loadData
+     * @param string|null $asOfDate
      * @return array
      */
-    public static function getAnalytics(bool $loadData): array
+    public static function getAnalytics(bool $loadData, ?string $asOfDate = null): array
     {
+        $today = date('Y-m-d');
+        if ($asOfDate && $asOfDate > $today) {
+            $asOfDate = $today;
+        }
+
         $nowMonths = [1=>'Jan',2=>'Feb',3=>'Mar',4=>'Apr',5=>'Mei',6=>'Jun',7=>'Jul',8=>'Ags',9=>'Sep',10=>'Okt',11=>'Nov',12=>'Des'];
         $upcomingNote = '15 ' . ($nowMonths[(int) date('n')] ?? date('M')) . ' ' . date('Y') . ' — Batas Akhir Pelaporan SPT PPh 21';
         $overdueNote = 'Belum ada kegiatan yang terlewat.';
@@ -78,23 +84,20 @@ class DashboardAnalyticsQueryService
             $user = auth()->user() ?? request()->user();
             $userActivities = \App\Support\Presentation\Queries\DashboardActivityQueryService::getRecentActivities($user);
 
-            $latestSalesInvoiceDate = date('Y-m-d');
-            $resolvedYear = (int) date('Y');
+            $latestSalesInvoiceDate = $asOfDate ?? date('Y-m-d');
+            $resolvedYear = (int) date('Y', strtotime($latestSalesInvoiceDate));
+            $isTodayAnchor = ($latestSalesInvoiceDate === date('Y-m-d'));
 
             $salesTrendLabels = [];
             $salesTrendData = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
-                if ($i === 0) {
+                if ($isTodayAnchor && $i === 0) {
                     $dayLabel = 'Hari ini';
-                } elseif ($i === 1) {
+                } elseif ($isTodayAnchor && $i === 1) {
                     $dayLabel = 'Kemarin';
                 } else {
-                    $dayName = date('D', strtotime($date));
-                    $dayLabel = [
-                        'Sun' => 'Min', 'Mon' => 'Sen', 'Tue' => 'Sel', 'Wed' => 'Rab',
-                        'Thu' => 'Kam', 'Fri' => 'Jum', 'Sat' => 'Sab'
-                    ][$dayName] ?? $dayName;
+                    $dayLabel = self::dateId($date, false);
                 }
                 $salesTrendLabels[] = $dayLabel;
                 $totalSales = DB::table('operation_documents')
@@ -204,9 +207,9 @@ class DashboardAnalyticsQueryService
             $cashOutSeries = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('Y-m-d', strtotime($latestSalesInvoiceDate . " - $i days"));
-                if ($i === 0) {
+                if ($isTodayAnchor && $i === 0) {
                     $formattedDate = 'Hari ini';
-                } elseif ($i === 1) {
+                } elseif ($isTodayAnchor && $i === 1) {
                     $formattedDate = 'Kemarin';
                 } else {
                     $formattedDate = self::dateId($date, false);
@@ -525,7 +528,7 @@ class DashboardAnalyticsQueryService
                 $overdueNote = "Belum ada kegiatan pembayaran yang terlewat.";
             }
         } else {
-            $latestSalesInvoiceDate = date('Y-m-d');
+            $latestSalesInvoiceDate = $asOfDate ?? date('Y-m-d');
             $salesTrendLabels = [];
             $salesTrendData = [];
             $totalSalesVal = 0.0;
@@ -670,8 +673,12 @@ class DashboardAnalyticsQueryService
             9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
         ];
         $ts = strtotime($dateStr);
+        if (!$ts) {
+            return $dateStr;
+        }
         $day = (int) date('j', $ts);
-        $month = $months[(int) date('n', $ts)] ?? date('M', $ts);
+        $mNum = (int) date('n', $ts);
+        $month = $months[$mNum] ?? 'Jan';
         $year = date('Y', $ts);
         return $withYear ? "{$day} {$month} {$year}" : "{$day} {$month}";
     }

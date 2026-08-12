@@ -11,30 +11,35 @@ class AprioriAnalysisService
      *
      * @param float $minSupport
      * @param float $minConfidence
+     * @param int|null $months
      * @return array
      */
-    public function calculate(float $minSupport = 0.05, float $minConfidence = 0.4): array
+    public function calculate(float $minSupport = 0.05, float $minConfidence = 0.4, ?int $months = 3): array
     {
-      // Ambil invoice penjualan
-
-        $transactions = DB::table('operation_documents')
+      // Ambil invoice penjualan dengan filter rentang waktu
+        $query = DB::table('operation_documents')
             ->where('document_type', 'sales_invoice')
-            ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
-            ->select('id')
-            ->get();
+            ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas']);
+
+        if ($months !== null && $months > 0) {
+            $query->where('entry_date', '>=', now()->subMonths($months)->startOfDay()->toDateTimeString());
+        }
+
+        $transactions = $query->select('id')->get();
 
         $n = $transactions->count();
+        $periodLabel = ($months !== null && $months > 0) ? "{$months} Bulan Terakhir" : 'Semua Transaksi';
 
         if ($n <= 0) {
             return [
                 'metrics' => [
-                    ['label' => 'Transaksi', 'value' => '0', 'helper' => 'Periode Aktif', 'tone' => 'blue'],
+                    ['label' => 'Transaksi', 'value' => '0', 'helper' => $periodLabel, 'tone' => 'blue'],
                     ['label' => 'Min Support', 'value' => number_format($minSupport * 100, 0) . '%', 'helper' => 'Batas rule yang diproses', 'tone' => 'green'],
                     ['label' => 'Min Confidence', 'value' => number_format($minConfidence * 100, 0) . '%', 'helper' => 'Rule valid untuk dashboard', 'tone' => 'amber'],
                     ['label' => 'Rule Valid', 'value' => '0', 'helper' => 'Siap dipakai sebagai insight', 'tone' => 'rose'],
                 ],
                 'rules' => [],
-                'insight' => 'Belum ada transaksi penjualan yang terdaftar.',
+                'insight' => 'Belum ada transaksi penjualan yang terdaftar pada periode ini.',
             ];
         }
 
@@ -226,8 +231,8 @@ class AprioriAnalysisService
         $metrics = [
             [
                 'label' => 'Transaksi',
-                'value' => number_format($n, 0, ',', '.'),
-                'helper' => 'Periode Aktif',
+                'value' => (string) $n,
+                'helper' => $periodLabel,
                 'tone' => 'blue',
             ],
             [
