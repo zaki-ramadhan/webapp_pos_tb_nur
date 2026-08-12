@@ -14,6 +14,8 @@ export default function DashboardWidgetGrid({
     onRefreshWidget = null,
     onReorderWidgets = null,
     isLoading = false,
+    asOfDate = null,
+    dashboard = null,
 }) {
     const [analyticsDetailsExpanded, setAnalyticsDetailsExpanded] = useState(false);
     const [chartExpanded, setChartExpanded] = useState(false);
@@ -27,6 +29,8 @@ export default function DashboardWidgetGrid({
 
     useEffect(() => {
         if (Array.isArray(widgets) && widgets.length > 0) {
+            let currentList = widgets;
+
             try {
                 const savedOrderJson = localStorage.getItem('pos_tb_nur_widget_order');
                 if (savedOrderJson) {
@@ -43,16 +47,92 @@ export default function DashboardWidgetGrid({
                         for (const remaining of map.values()) {
                             ordered.push(remaining);
                         }
-                        setDisplayWidgets(ordered);
-                        return;
+                        currentList = ordered;
                     }
                 }
             } catch (e) {
-                // Ignore parsing errors and fallback to props
+                // Ignore parsing errors
             }
-            setDisplayWidgets(widgets);
+
+            setDisplayWidgets(currentList);
+
+            // Restore saved dates per widget across page refreshes
+            try {
+                const savedDatesJson = localStorage.getItem('pos_tb_nur_widget_dates');
+                if (savedDatesJson) {
+                    const datesMap = JSON.parse(savedDatesJson);
+                    if (datesMap && typeof datesMap === 'object') {
+                        Object.entries(datesMap).forEach(([wId, savedDate]) => {
+                            if (savedDate) {
+                                fetch(`/api/workspace/dashboard/widget-data?widget_id=${wId}&as_of_date=${savedDate}`, {
+                                    headers: {
+                                        'Accept': 'application/json',
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                    },
+                                })
+                                    .then((res) => (res.ok ? res.json() : null))
+                                    .then((data) => {
+                                        if (data?.widget && data?.widgetId) {
+                                            window.dispatchEvent(new CustomEvent('pos:update-single-widget', { detail: data }));
+                                        }
+                                    })
+                                    .catch(() => {});
+                            }
+                        });
+                    }
+                }
+            } catch (e) {}
         }
     }, [widgets]);
+
+    useEffect(() => {
+        const handleWidgetsUpdate = (event) => {
+            const updatedWidgets = event.detail?.widgets;
+            if (Array.isArray(updatedWidgets) && updatedWidgets.length > 0) {
+                try {
+                    const savedOrderJson = localStorage.getItem('pos_tb_nur_widget_order');
+                    if (savedOrderJson) {
+                        const savedOrder = JSON.parse(savedOrderJson);
+                        if (Array.isArray(savedOrder) && savedOrder.length > 0) {
+                            const map = new Map(updatedWidgets.map((w) => [w.id, w]));
+                            const ordered = [];
+                            for (const id of savedOrder) {
+                                if (map.has(id)) {
+                                    ordered.push(map.get(id));
+                                    map.delete(id);
+                                }
+                            }
+                            for (const remaining of map.values()) {
+                                ordered.push(remaining);
+                            }
+                            setDisplayWidgets(ordered);
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    // Ignore parsing errors and fallback
+                }
+                setDisplayWidgets(updatedWidgets);
+            }
+        };
+
+        window.addEventListener('pos:update-dashboard-widgets', handleWidgetsUpdate);
+        return () => window.removeEventListener('pos:update-dashboard-widgets', handleWidgetsUpdate);
+    }, []);
+
+    useEffect(() => {
+        const handleSingleWidgetUpdate = (event) => {
+            const { widgetId, widget: updatedWidget } = event.detail || {};
+            if (widgetId && updatedWidget) {
+                setDisplayWidgets((prevWidgets) =>
+                    prevWidgets.map((w) => (w.id === widgetId ? updatedWidget : w))
+                );
+            }
+        };
+
+        window.addEventListener('pos:update-single-widget', handleSingleWidgetUpdate);
+        return () => window.removeEventListener('pos:update-single-widget', handleSingleWidgetUpdate);
+    }, []);
 
     const handleToggleAnalyticsDetails = useCallback(() => {
         setAnalyticsDetailsExpanded((currentValue) => !currentValue);
@@ -64,57 +144,40 @@ export default function DashboardWidgetGrid({
 
     const handleRefreshWidget = useCallback(
         async (widget) => {
-            if (!widget?.id || refreshingByWidgetId[widget.id]) {
-                return;
-            }
-
-            setRefreshErrorByWidgetId((currentValue) => ({
-                ...currentValue,
-                [widget.id]: null,
-            }));
-            setRefreshingByWidgetId((currentValue) => ({
-                ...currentValue,
-                [widget.id]: true,
-            }));
+            const widgetId = widget.id;
+            setRefreshingByWidgetId((prev) => ({ ...prev, [widgetId]: true }));
+            setRefreshErrorByWidgetId((prev) => ({ ...prev, [widgetId]: null }));
 
             try {
-                const refreshHandler = typeof widget.onRefresh === 'function' ? widget.onRefresh : onRefreshWidget;
-
-                if (typeof refreshHandler === 'function') {
-                    await refreshHandler(widget);
+                if (onRefreshWidget) {
+                    await onRefreshWidget(widget);
                 } else {
                     await wait(500);
                 }
-            } catch (error) {
-                setRefreshErrorByWidgetId((currentValue) => ({
-                    ...currentValue,
-                    [widget.id]: error?.message ?? 'Widget belum berhasil diperbarui. Coba lagi.',
+            } catch (err) {
+                setRefreshErrorByWidgetId((prev) => ({
+                    ...prev,
+                    [widgetId]: 'Gagal memuat ulang data. Silahkan coba lagi.',
                 }));
             } finally {
-                setRefreshingByWidgetId((currentValue) => ({
-                    ...currentValue,
-                    [widget.id]: false,
-                }));
+                setRefreshingByWidgetId((prev) => ({ ...prev, [widgetId]: false }));
             }
         },
-        [onRefreshWidget, refreshingByWidgetId],
+        [onRefreshWidget],
     );
 
     const handleReorder = useCallback(
         (fromIndex, toIndex) => {
-            setDisplayWidgets((current) => {
-                if (fromIndex < 0 || fromIndex >= current.length || toIndex < 0 || toIndex >= current.length) {
-                    return current;
-                }
-                const next = [...current];
-                const [movedItem] = next.splice(fromIndex, 1);
-                next.splice(toIndex, 0, movedItem);
+            setDisplayWidgets((prevWidgets) => {
+                const next = [...prevWidgets];
+                const [moved] = next.splice(fromIndex, 1);
+                next.splice(toIndex, 0, moved);
 
                 try {
-                    const orderIds = next.map((w) => w.id);
-                    localStorage.setItem('pos_tb_nur_widget_order', JSON.stringify(orderIds));
+                    const newOrderIds = next.map((w) => w.id);
+                    localStorage.setItem('pos_tb_nur_widget_order', JSON.stringify(newOrderIds));
                 } catch (e) {
-                    // Ignore quota errors
+                    // Ignore storage quota errors
                 }
 
                 return next;
@@ -160,9 +223,13 @@ export default function DashboardWidgetGrid({
                     }}
                     onDragOver={(e) => {
                         e.preventDefault();
-                        e.dataTransfer.dropEffect = 'move';
-                        if (dragOverIndex !== index) {
+                        if (draggedIndex !== null && draggedIndex !== index) {
                             setDragOverIndex(index);
+                        }
+                    }}
+                    onDragLeave={() => {
+                        if (dragOverIndex === index) {
+                            setDragOverIndex(null);
                         }
                     }}
                     onDrop={(e) => {
@@ -179,16 +246,11 @@ export default function DashboardWidgetGrid({
                         widget={widget}
                         onRefresh={handleRefreshWidget}
                         isRefreshing={Boolean(refreshingByWidgetId[widget.id])}
-                        refreshError={refreshErrorByWidgetId[widget.id] ?? null}
+                        refreshError={refreshErrorByWidgetId[widget.id]}
+                        showRefresh={true}
                         dragHandleProps={{
                             onMouseDown: () => setDraggableWidgetId(widget.id),
-                            onTouchStart: () => setDraggableWidgetId(widget.id),
-                            onMouseEnter: () => setDraggableWidgetId(widget.id),
-                            onMouseLeave: () => {
-                                if (draggedIndex === null) {
-                                    setDraggableWidgetId(null);
-                                }
-                            },
+                            onMouseUp: () => setDraggableWidgetId(null),
                         }}
                     >
                         <DashboardWidgetBody
@@ -206,6 +268,7 @@ export default function DashboardWidgetGrid({
         [
             analyticsDetailsExpanded,
             chartExpanded,
+            displayWidgets,
             dragOverIndex,
             draggedIndex,
             draggableWidgetId,
@@ -216,6 +279,7 @@ export default function DashboardWidgetGrid({
             isLoading,
             refreshErrorByWidgetId,
             refreshingByWidgetId,
+            widgets,
         ],
     );
 
@@ -256,7 +320,7 @@ export default function DashboardWidgetGrid({
                         i += 3;
                         continue;
                     }
-                } else if (openCount === 2) {
+                } else if (openCount === 0) {
                     const reg1Index = i + 1;
                     const reg2Index = i + 2;
                     const reg3Index = i + 3;

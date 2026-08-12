@@ -1,34 +1,7 @@
 import { useState } from 'react';
+import { MapPin, MessageSquare, Megaphone, Lightbulb } from 'lucide-react';
 import { getMetric, WidgetSection, getProductImageUrl } from '@/features/workspace/dashboard/analytics/AnalyticsShared';
 import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/AnalyticsCharts';
-
-const LightbulbIcon = ({ className = "h-4 w-4" }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
-        <path d="M9 18h6" />
-        <path d="M10 22h4" />
-    </svg>
-);
-
-const PinIcon = ({ className = "h-4 w-4" }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-        <circle cx="12" cy="10" r="3" />
-    </svg>
-);
-
-const ChatIcon = ({ className = "h-4 w-4" }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-);
-
-const MegaphoneIcon = ({ className = "h-4 w-4" }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="m3 11 18-5v12L3 13v-2Z" />
-        <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
-    </svg>
-);
 
 
 
@@ -88,13 +61,31 @@ export default function IntegratedAnalysisWidget({
         },
     ];
 
-    const getStrategyTactic = (antecedentAbc, consequentAbc) => {
+    const getStoreLocationRecommendation = (itemA = '', itemB = '') => {
+        const text = (itemA + ' ' + itemB).toLowerCase();
+        
+        if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi/i.test(text)) {
+            return `🚚 Area Pelataran Depan / Loading Dock: Posisikan tumpukan ${itemA} di pelataran depan yang berdekatan dengan area muat ${itemB} untuk mempercepat armada bongkar-muat kargo.`;
+        }
+        if (/pipa|kayu|seng|baja|plumbing|atap|triplek|hollow|alunium/i.test(text)) {
+            return `📏 Lorong Rak Panjang / Rak Horizontal: Gantungkan/taruh ${itemB} pada keranjang aksesoris di dekat lorong rak penyimpanan horizontal ${itemA}.`;
+        }
+        if (/cat|kuas|thinner|paku|lem|kran|listrik|baut|alat|kunci/i.test(text)) {
+            return `🎨 Rak Display Indoor / Samping Etalase Kasir: Tempatkan ${itemB} pada rak gantung persis di samping etalase display ${itemA} di area indoor toko.`;
+        }
+        
+        return `📦 Rak Display Utama Toko: Posisikan ${itemA} dan ${itemB} berdekatan pada tinggi pandangan mata (eye-level) di rak display utama toko.`;
+    };
+
+    const getStrategyTactic = (antecedentAbc, consequentAbc, antecedentName = '', consequentName = '') => {
+        const customLocation = getStoreLocationRecommendation(antecedentName, consequentName);
+
         if (antecedentAbc === 'A' && consequentAbc === 'C') {
             return {
                 title: 'Taktik Jual Silang (Utama → Tambahan)',
                 desc: 'Tempatkan aksesoris di dekat produk inti atau tawarkan langsung sebagai pelengkap saat transaksi untuk memicu pembelian impulsif.',
-                actionDisplay: 'Pajang produk aksesoris (Kategori C) ini di rak khusus tepat di sebelah produk utama (Kategori A).',
-                actionCashier: 'Latih kasir untuk menawarkan produk aksesoris ini sebagai pelengkap opsional saat pelanggan membayar produk utama.',
+                actionDisplay: customLocation,
+                actionCashier: `Latih kasir untuk menawarkan ${consequentName} ini sebagai pelengkap opsional saat pelanggan membayar ${antecedentName}.`,
                 tone: 'blue',
                 bg: 'bg-blue-50 border-blue-200 text-blue-800',
                 badgeBg: 'var(--color-badge-group-a)',
@@ -105,8 +96,8 @@ export default function IntegratedAnalysisWidget({
             return {
                 title: 'Taktik Paket Bundling (Utama → Utama)',
                 desc: 'Tawarkan paket bundling dengan potongan harga tipis untuk meningkatkan kuantitas pembelian dalam jumlah besar.',
-                actionDisplay: 'Buat area display khusus paket bundling "Paket Komplit" yang memajang kedua produk utama ini dalam satu kemasan.',
-                actionCashier: 'Berikan penawaran diskon potongan langsung Rp 5.000 jika kedua barang ini dibeli secara bersamaan.',
+                actionDisplay: customLocation,
+                actionCashier: `Berikan penawaran diskon potongan langsung jika ${antecedentName} dan ${consequentName} dibeli secara bersamaan.`,
                 tone: 'blue',
                 bg: 'bg-indigo-50 border-indigo-200 text-indigo-800',
                 badgeBg: 'var(--color-badge-group-a-65)',
@@ -117,8 +108,8 @@ export default function IntegratedAnalysisWidget({
             return {
                 title: 'Taktik Paket Produk (Stabil → Stabil)',
                 desc: 'Buat paket bundling harian di area kasir untuk mempercepat perputaran produk pelengkap yang stabil.',
-                actionDisplay: 'Kelompokkan produk penunjang ini di rak tengah agar mudah dijangkau pelanggan yang sedang mencari kebutuhan rutin.',
-                actionCashier: 'Ingatkan pelanggan mengenai ketersediaan paket belanja hemat untuk kedua produk rutin ini.',
+                actionDisplay: customLocation,
+                actionCashier: `Ingatkan pelanggan mengenai ketersediaan paket belanja hemat untuk ${antecedentName} dan ${consequentName}.`,
                 tone: 'blue',
                 bg: 'bg-sky-50 border-sky-200 text-sky-800',
                 badgeBg: 'var(--color-badge-group-a-40)',
@@ -128,8 +119,8 @@ export default function IntegratedAnalysisWidget({
         return {
             title: 'Taktik Penataan Rak Display',
             desc: 'Posisikan kedua barang ini berdekatan di rak display agar pelanggan dapat dengan mudah menemukannya bersama.',
-            actionDisplay: 'Posisikan kedua produk ini sejajar pada tinggi pandangan mata (eye-level) di lorong rak yang sama.',
-            actionCashier: 'Gunakan gantungan promosi (shelf talker) bertuliskan "Sering Dibeli Bersama" di bawah label harga rak.',
+            actionDisplay: customLocation,
+            actionCashier: `Gunakan gantungan promosi (shelf talker) bertuliskan "Sering Dibeli Bersama" di bawah label harga rak ${antecedentName}.`,
             tone: 'slate',
             bg: 'bg-slate-50 border-slate-200 text-slate-700',
             badgeBg: 'var(--color-badge-group-a-18)',
@@ -209,7 +200,7 @@ export default function IntegratedAnalysisWidget({
                     {widget.rules && widget.rules.length > 0 ? (
                         <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
                             {(widget.rules ?? []).map((rule, idx) => {
-                                const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc);
+                                const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc, rule.antecedent, rule.consequent);
                                 return (
                                     <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-badge-group-a-glow transition-all duration-150">
                                         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -256,26 +247,26 @@ export default function IntegratedAnalysisWidget({
                                                     {tactic.title}
                                                 </span>
 
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50/50 border border-blue-100 px-2 py-1 text-sm font-medium text-blue-570 shrink-0">
-                                                    Peluang: {rule.confidence}
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50/50 border border-blue-100 px-2 py-1 text-sm font-medium text-blue-570 shrink-0" title="Tingkat Kepastian (Confidence)">
+                                                    Confidence: {rule.confidence}
                                                 </span>
 
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-slate-50 border border-slate-100 px-2 py-1 text-sm font-normal text-slate-500 shrink-0" title="Hubungan Pola (Lift Ratio)">
-                                                    Kekuatan: {rule.lift}
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-sm font-semibold text-emerald-800 shrink-0" title="Kekuatan Hubungan (Lift Ratio)">
+                                                    Lift Ratio: {rule.lift} ({tactic.strengthText})
                                                 </span>
                                             </div>
                                         </div>
 
                                         <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-600 bg-emerald-50/10 rounded-md p-2.5 border border-emerald-100/30">
                                             <div className="flex items-start gap-2">
-                                                <PinIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                                <MapPin className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
                                                     <span className="font-semibold text-emerald-950">Penataan di Rak:</span>{" "}
                                                     <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
                                                 </div>
                                             </div>
                                             <div className="flex items-start gap-2 border-t border-emerald-100/30 pt-2">
-                                                <ChatIcon className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                                                <MessageSquare className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
                                                     <span className="font-semibold text-emerald-950">Tawaran di Kasir:</span>{" "}
                                                     <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
@@ -295,7 +286,7 @@ export default function IntegratedAnalysisWidget({
 
                 {widget.insight && (
                     <div className="rounded-[8px] border border-blue-200 bg-blue-50/40 p-3 text-sm text-blue-800 leading-6 flex items-start gap-2.5">
-                        <MegaphoneIcon className="h-5 w-5 text-input-brand shrink-0 mt-0.5" />
+                        <Megaphone className="h-5 w-5 text-input-brand shrink-0 mt-0.5" />
                         <div>
                             <span className="font-medium text-blue-950">Rangkuman Insight Terintegrasi:</span> {widget.insight}
                         </div>

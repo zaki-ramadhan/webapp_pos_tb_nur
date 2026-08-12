@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { Info, ExternalLink, RefreshCw, GripVertical } from 'lucide-react';
 
 import Button from '@/components/ui/Button';
 import Panel from '@/components/ui/Panel';
 import WorkspaceDialog from '@/components/ui/WorkspaceDialog';
-import { RefreshIcon } from '@/features/workspace/shared/Icons';
 
 function WidgetHeaderAction({ label, onClick, disabled = false, children }) {
     return (
@@ -89,8 +89,22 @@ export default function DashboardWidgetCard({
         },
     };
 
+    const WIDGET_TOOLTIPS = {
+        'integrated-analysis': 'Rekomendasi pasangan barang yang paling sering dibeli bersamaan oleh pelanggan (Apriori 3 bulan terakhir) beserta kelompok omzetnya (ABC) untuk panduan membuat promo bundling dan menata letak rak toko.',
+        'sales-trend': 'Grafik pergerakan total uang penjualan toko dari hari ke hari selama 7 hari terakhir.',
+        'profit-loss': 'Perhitungan total omzet penjualan dikurangi harga modal barang (HPP) dan biaya operasional toko untuk melihat estimasi keuntungan bersih.',
+        'cash-flow': 'Perbandingan total uang kas masuk dari penjualan dengan uang kas keluar untuk operasional toko.',
+        'company-expense': 'Pembagian total pengeluaran toko ke dalam beban operasional rutin dan gaji karyawan.',
+        'top-products': 'Daftar barang yang paling banyak dibeli oleh pelanggan berdasarkan akumulasi jumlah unit yang terjual.',
+        'cash-availability': 'Estimasi jumlah saldo kas berjalan toko yang tersisa dari mutasi transaksi.',
+        'abc-analysis': 'Pengelompokan barang berdasarkan kontribusi omzet: Kategori A (Penyumbang 80% omzet utama), B (Omzet sedang 15%), dan C (Omzet kecil 5%).',
+        'apriori-analysis': 'Pola kombinasi produk yang paling sering dibeli secara bersamaan oleh pelanggan.',
+        'recent-activity': 'Catatan riwayat transaksi dan penginputan data terbaru yang dilakukan oleh kasir dan pengelola toko.',
+    };
+
     const widgetKey = widget.sourceWidgetId ?? widget.id;
     const sourcePage = WIDGET_SOURCE_PAGES[widgetKey] ?? WIDGET_SOURCE_PAGES[widget.type];
+    const tooltipText = WIDGET_TOOLTIPS[widgetKey] ?? WIDGET_TOOLTIPS[widget.id] ?? WIDGET_TOOLTIPS[widget.type];
 
     const isEmptyData =
         (widget.type === 'abc-analysis' && (!widget.topItems || widget.topItems.length === 0)) ||
@@ -118,14 +132,25 @@ export default function DashboardWidgetCard({
                             className="mr-2 flex shrink-0 cursor-grab items-center text-tab-active-text opacity-45 hover:opacity-100 active:cursor-grabbing py-1 px-0.5"
                             title="Seret untuk mengubah urutan widget"
                         >
-                            <svg viewBox="0 0 24 24" className="h-5 w-4 fill-current">
-                                <path d="M9 5a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6-16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
-                            </svg>
+                            <GripVertical className="h-4 w-4 fill-current text-slate-500" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <h3 className="break-words text-sm lg:text-base font-medium text-tab-active-text">
-                                {widget.title === 'Beban Perusahaan' ? 'Beban Toko' : widget.title}
-                            </h3>
+                            <div className="flex items-center gap-1.5 min-w-0">
+                                <h3 className="break-words text-sm lg:text-base font-medium text-tab-active-text">
+                                    {widget.title === 'Beban Perusahaan' ? 'Beban Toko' : widget.title}
+                                </h3>
+                                {tooltipText && (
+                                    <span
+                                        className="group relative inline-flex shrink-0 cursor-pointer items-center text-slate-400 hover:text-brand-blue"
+                                        aria-label="Informasi widget"
+                                    >
+                                        <Info className="h-4 w-4 text-slate-400 hover:text-brand-blue" />
+                                        <span className="pointer-events-none absolute left-0 top-full z-50 mt-1 hidden w-64 rounded-md border border-slate-700 bg-slate-900 p-2.5 text-xs text-white shadow-xl group-hover:block sm:w-72 leading-relaxed font-normal">
+                                            {tooltipText}
+                                        </span>
+                                    </span>
+                                )}
+                            </div>
                             {widget.subtitle ? (
                                 <p className={`mt-1 break-words text-sm ${widgetKey === 'sales-summary' || widgetKey === 'purchase-summary' || widget.type === 'summary' ? 'text-text-light' : 'text-black'}`}>{widget.subtitle}</p>
                             ) : null}
@@ -139,7 +164,7 @@ export default function DashboardWidgetCard({
                                 onClick={() => onRefresh?.(widget)}
                                 disabled={isRefreshing}
                             >
-                                <RefreshIcon className={`h-5 w-5 ${isRefreshing ? 'animate-spin text-brand-blue' : ''}`} />
+                                <RefreshCw className={`h-4 w-4 text-slate-500 ${isRefreshing ? 'animate-spin text-brand-blue' : ''}`} />
                             </WidgetHeaderAction>
                         )}
                         {sourcePage && (
@@ -160,9 +185,7 @@ export default function DashboardWidgetCard({
                                     }
                                 }}
                             >
-                                <svg viewBox="0 0 24 24" className="h-4 w-4 text-slate-500 hover:text-brand-blue" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3" />
-                                </svg>
+                                <ExternalLink className="h-4 w-4 text-slate-500 hover:text-brand-blue" />
                             </WidgetHeaderAction>
                         )}
                     </div>

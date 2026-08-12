@@ -114,17 +114,7 @@ export default function TrendLineChart({
         },
         plugins: {
             legend: {
-                display: normalizedSeries.length > 1,
-                position: 'top',
-                align: 'start',
-                labels: {
-                    boxWidth: 10,
-                    boxHeight: 10,
-                    color: 'var(--color-tab-view-active-text)',
-                    font: {
-                        size: 14,
-                    },
-                },
+                display: false,
             },
             tooltip: {
                 ...tooltipBaseOptions,

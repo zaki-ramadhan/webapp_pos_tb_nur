@@ -28,6 +28,7 @@ export default function DashboardActivePageContent({
                         onRefreshWidget={handleRefreshWidget}
                         onReorderWidgets={handleReorderWidgets}
                         isLoading={isLoading}
+                        dashboard={dashboard}
                     />
                 </div>
             </div>

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { router } from '@inertiajs/react';
 import { Bar } from 'react-chartjs-2';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { resolveChartObject } from '@/features/workspace/dashboard/widgets/dashboardChartUtils';
 import {
     BreakdownDoughnutChart,
@@ -8,14 +9,121 @@ import {
     TrendLineChart,
 } from '@/features/workspace/dashboard/widgets/DashboardWidgetCharts';
 
+export function WidgetPeriodNavigator({ periodText, asOfDate, widgetId, stepMode = 'day' }) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const [activeDate, setActiveDate] = useState(asOfDate || todayStr);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (asOfDate) {
+            setActiveDate(asOfDate);
+        }
+    }, [asOfDate]);
+
+    const isAtToday = activeDate >= todayStr;
+
+    const navigatePeriod = async (direction) => {
+        if (isLoading) return;
+        const d = new Date(activeDate);
+        if (stepMode === 'year') {
+            d.setFullYear(d.getFullYear() + direction);
+        } else {
+            d.setDate(d.getDate() + direction * 7);
+        }
+
+        let nextStr = d.toISOString().split('T')[0];
+        if (nextStr > todayStr) {
+            nextStr = todayStr;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const url = widgetId
+                ? `/api/workspace/dashboard/widget-data?widget_id=${widgetId}&as_of_date=${nextStr}`
+                : `/api/workspace/dashboard/widgets-data?as_of_date=${nextStr}`;
+
+            const res = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setActiveDate(nextStr);
+                if (data?.widget && data?.widgetId) {
+                    try {
+                        const savedJson = localStorage.getItem('pos_tb_nur_widget_dates');
+                        const datesMap = savedJson ? JSON.parse(savedJson) : {};
+                        datesMap[data.widgetId] = nextStr;
+                        localStorage.setItem('pos_tb_nur_widget_dates', JSON.stringify(datesMap));
+                    } catch (e) {}
+
+                    window.dispatchEvent(new CustomEvent('pos:update-single-widget', { detail: data }));
+                } else if (data?.widgets) {
+                    window.dispatchEvent(new CustomEvent('pos:update-dashboard-widgets', { detail: data }));
+                }
+            }
+        } catch (e) {
+            // Handle error silently
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-end gap-1 text-xs font-medium text-slate-600 select-none">
+            <button
+                type="button"
+                onClick={() => navigatePeriod(-1)}
+                disabled={isLoading}
+                className="inline-flex h-5 w-5 items-center justify-center rounded border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 transition cursor-pointer"
+            >
+                <ChevronLeft className="h-3.5 w-3.5 text-slate-600" />
+            </button>
+            <span className="px-1 text-[11px] sm:text-xs text-slate-700 font-medium whitespace-nowrap">
+                {periodText}
+            </span>
+            <button
+                type="button"
+                onClick={() => navigatePeriod(1)}
+                disabled={isLoading || isAtToday}
+                className="inline-flex h-5 w-5 items-center justify-center rounded border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 transition disabled:cursor-not-allowed cursor-pointer"
+            >
+                <ChevronRight className="h-3.5 w-3.5 text-slate-600" />
+            </button>
+        </div>
+    );
+}
+
 export function TrendIndicator({ trend, growth, tone = null, className = '' }) {
-    if (!trend) {
+    if (!trend || !growth) {
+        return null;
+    }
+
+    const cleanGrowth = String(growth).trim();
+    if (
+        cleanGrowth === '0%' ||
+        cleanGrowth === '0' ||
+        cleanGrowth === '0.0%' ||
+        cleanGrowth === '+0%' ||
+        cleanGrowth === '-0%' ||
+        trend === 'flat' ||
+        trend === 'neutral' ||
+        trend === 'same'
+    ) {
         return null;
     }
 
     const isUp = trend === 'up' || trend === 'rising' || trend === 'positive';
     const arrow = isUp ? '▲' : '▼';
-    const isSuccess = tone ? tone === 'success' : isUp;
+
+    // Logika Finansial: Untuk Beban Toko (tone === 'expense'), NAIK = BURUK (Merah), TURUN = HEMAT (Hijau)
+    const isSuccess = tone === 'expense'
+        ? !isUp
+        : (tone ? tone === 'success' : isUp);
+
     const textClass = isSuccess ? 'text-emerald-600' : 'text-rose-600';
     const bgClass = isSuccess ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100';
 
@@ -24,7 +132,7 @@ export function TrendIndicator({ trend, growth, tone = null, className = '' }) {
             className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none ${textClass} ${bgClass} ${className}`}
         >
             <span>{arrow}</span>
-            <span>{growth}</span>
+            <span>{cleanGrowth}</span>
         </span>
     );
 }
@@ -38,7 +146,25 @@ function CompareText({ text }) {
 }
 
 function MetricLegendItem({ item }) {
-    const { label = '', value = '0', percent = '', color = '#000' } = item;
+    const { label = '', value = '0', percent = '', color = '#000', trend, growth, tone } = item;
+
+    const isZeroGrowth =
+        !growth ||
+        growth === '0%' ||
+        growth === '0' ||
+        growth === '0.0%' ||
+        growth === '+0%' ||
+        growth === '-0%' ||
+        trend === 'flat' ||
+        trend === 'neutral' ||
+        trend === 'same';
+
+    let textClass = 'text-tab-active-text';
+    if (!isZeroGrowth && trend) {
+        const isUp = trend === 'up' || trend === 'rising' || trend === 'positive';
+        const isSuccess = tone === 'expense' ? !isUp : (tone ? tone === 'success' : isUp);
+        textClass = isSuccess ? 'text-emerald-600' : 'text-rose-600';
+    }
 
     return (
         <div className="flex items-center justify-between text-xs sm:text-sm">
@@ -46,9 +172,10 @@ function MetricLegendItem({ item }) {
                 <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
                 <span className="truncate text-black">{label}</span>
             </div>
-            <div className="flex shrink-0 items-center gap-1 font-semibold text-tab-active-text">
-                <span>{value}</span>
+            <div className="flex shrink-0 items-center gap-1.5 font-semibold">
+                <span className={textClass}>{value}</span>
                 {percent && <span className="text-[10px] sm:text-xs font-normal text-black">({percent})</span>}
+                <TrendIndicator trend={trend} growth={growth} tone={tone} />
             </div>
         </div>
     );
@@ -63,13 +190,35 @@ function MetricLegendList({ items = [] }) {
 }
 
 export function LineTrendMetric({ widget }) {
+    const hasLegend = Array.isArray(widget.series) && widget.series.length > 1;
+
     return (
         <div className="flex flex-1 flex-col h-full min-h-0 justify-between gap-3">
-            {widget.period && (
-                <div className="flex justify-end text-xs font-normal items-center select-none text-black">
-                    {widget.period}
-                </div>
-            )}
+            <div className="flex flex-wrap items-center justify-between gap-2 shrink-0">
+                {/* Left side: Legend items (e.g. Kas Masuk & Kas Keluar) */}
+                {hasLegend ? (
+                    <div className="flex items-center gap-3 text-xs font-medium">
+                        {widget.series.map((s) => (
+                            <div key={s.name} className="flex items-center gap-1.5">
+                                <span
+                                    className="h-3 w-3 rounded-[2px] border-2 shrink-0"
+                                    style={{
+                                        borderColor: s.color || '#3b82f6',
+                                        backgroundColor: 'transparent',
+                                    }}
+                                />
+                                <span className="text-slate-700 text-xs font-medium">{s.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                ) : <div />}
+
+                {/* Right side: Period Navigator */}
+                {widget.period && (
+                    <WidgetPeriodNavigator periodText={widget.period} asOfDate={widget.asOfDate} widgetId={widget.id} stepMode={widget.stepMode ?? 'day'} />
+                )}
+            </div>
+
             <div className="flex-1 min-h-0 flex flex-col">
                 <TrendLineChart
                     labels={widget.labels ?? []}
@@ -95,17 +244,28 @@ export function RingBreakdownMetric({ widget }) {
         period,
     } = widget;
 
+    const isZeroTotal = !totalValue || totalValue === 'Rp 0' || totalValue === '0' || totalValue === 'Rp 0,00';
+    const isZeroGrowth =
+        !growth ||
+        growth === '0%' ||
+        growth === '0' ||
+        growth === '0.0%' ||
+        growth === '+0%' ||
+        growth === '-0%' ||
+        trend === 'flat' ||
+        trend === 'neutral';
+
     const isLoss = totalLabel.toLowerCase().includes('rugi');
-    const valueColorClass = isLoss ? 'text-rose-600' : 'text-emerald-600';
+    const valueColorClass = (isZeroTotal || isZeroGrowth)
+        ? 'text-brand-darker'
+        : (isLoss ? 'text-rose-600' : 'text-emerald-600');
     const valueClass = `text-base font-semibold leading-none ${valueColorClass} sm:text-lg md:text-lg lg:text-xl xl:text-xl 2xl:text-xl`;
 
     return (
         <div className="flex flex-col h-full min-h-0 justify-between gap-3 flex-1">
-            {/* Header: Period */}
+            {/* Header: Period Navigator (Yearly mode) */}
             {period && (
-                <div className="flex justify-end text-xs font-normal items-center select-none text-black">
-                    {period}
-                </div>
+                <WidgetPeriodNavigator periodText={period} asOfDate={widget.asOfDate} widgetId={widget.id} stepMode="year" />
             )}
 
             {/* Middle Section: Chart and Legend aligned center */}
@@ -150,13 +310,28 @@ export function ExpenseBreakdownMetric({ widget }) {
         period,
     } = widget;
 
+    const isZeroExpense = !totalValue || totalValue === 'Rp 0' || totalValue === '0' || totalValue === 'Rp 0,00';
+    const isZeroGrowth =
+        !growth ||
+        growth === '0%' ||
+        growth === '0' ||
+        growth === '0.0%' ||
+        growth === '+0%' ||
+        growth === '-0%' ||
+        trend === 'flat' ||
+        trend === 'neutral';
+
+    const isExpenseUp = trend === 'up' || trend === 'rising';
+    const expenseValueColorClass = (isZeroExpense || isZeroGrowth)
+        ? 'text-brand-darker'
+        : (isExpenseUp ? 'text-rose-600' : 'text-emerald-600');
+    const valueClass = `text-base font-semibold leading-none ${expenseValueColorClass} sm:text-lg md:text-lg lg:text-xl xl:text-xl 2xl:text-xl`;
+
     return (
         <div className="flex flex-col h-full min-h-0 justify-between gap-3 flex-1">
-            {/* Header: Period */}
+            {/* Header: Period Navigator (Yearly mode) */}
             {period && (
-                <div className="flex justify-end text-xs font-normal items-center select-none text-black">
-                    {period}
-                </div>
+                <WidgetPeriodNavigator periodText={period} asOfDate={widget.asOfDate} widgetId={widget.id} stepMode="year" />
             )}
 
             {/* Middle Section: Chart and Legend aligned center */}
@@ -176,13 +351,13 @@ export function ExpenseBreakdownMetric({ widget }) {
             <div className="border-t border-chart-grid-light pt-2.5 text-brand-dark flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 flex-wrap">
                     <CompareText text={compare} />
-                    <TrendIndicator trend={trend} growth={growth} />
+                    <TrendIndicator trend={trend} growth={growth} tone="expense" />
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-brand-darker">Beban</span>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-base font-semibold leading-none text-brand-darker sm:text-lg md:text-lg lg:text-xl xl:text-xl 2xl:text-xl">{totalValue}</span>
-                        <TrendIndicator trend={trend} growth={growth} />
+                        <span className={valueClass}>{totalValue}</span>
+                        <TrendIndicator trend={trend} growth={growth} tone="expense" />
                     </div>
                 </div>
             </div>
@@ -336,12 +511,10 @@ export function SummaryMetric({ widget }) {
             <div className="grid grid-cols-2 gap-x-3 sm:gap-x-6 min-h-0 flex-1">
                 {/* Left Column: Pendapatan/Pembelian */}
                 <div className="flex flex-col h-full min-w-0">
-                    {/* Header: Date Range */}
+                    {/* Header: Date Range Navigator */}
                     <div className="flex justify-end h-5 items-center shrink-0">
                         {period && (
-                            <div className="text-[11px] sm:text-xs text-black font-normal select-none">
-                                {period}
-                            </div>
+                            <WidgetPeriodNavigator periodText={period} asOfDate={widget.asOfDate} widgetId={widget.id} />
                         )}
                     </div>
 
