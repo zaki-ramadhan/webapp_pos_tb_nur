@@ -180,15 +180,18 @@ class GoogleLoginController extends Controller
         $user = User::query()->create($attributes);
 
         try {
-            $operatorRole = \App\Domain\Identity\Models\Role::where('code', 'operator')->first();
-            if ($operatorRole) {
-                $user->roles()->syncWithoutDetaching([$operatorRole->id]);
+            $isOwner = in_array(strtolower($email), ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
+            $roleCode = $isOwner ? 'super_admin' : 'operator';
+            $role = \App\Domain\Identity\Models\Role::where('code', $roleCode)->first();
+            if ($role) {
+                $user->roles()->syncWithoutDetaching([$role->id]);
             }
 
-            $kasirGroup = \App\Domain\Identity\Models\AccessGroup::where('code', 'KASIR')->first() 
-                ?? \App\Domain\Identity\Models\AccessGroup::where('code', 'ADMIN')->first();
-            if ($kasirGroup) {
-                $user->accessGroups()->syncWithoutDetaching([$kasirGroup->id]);
+            $groupCode = $isOwner ? 'OWNER' : 'KASIR';
+            $targetGroup = \App\Domain\Identity\Models\AccessGroup::where('code', $groupCode)->first()
+                ?? \App\Domain\Identity\Models\AccessGroup::where('code', 'OWNER')->first();
+            if ($targetGroup) {
+                $user->accessGroups()->syncWithoutDetaching([$targetGroup->id]);
             }
         } catch (\Throwable $e) {
             // Ignore if tables not yet seeded

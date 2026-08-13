@@ -1,0 +1,4868 @@
+{
+  "last_updated": "2026-07-20T20:02:46.478046",
+  "files": {
+    "app/Domain/Asset/Models/AssetCategory.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\AssetCategory",
+      "methods": [
+        "accumulatedDepreciationAccount",
+        "assetAccount",
+        "depreciationExpenseAccount",
+        "fixedAssets"
+      ]
+    },
+    "app/Domain/Asset/Models/AssetChange.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\AssetChange",
+      "methods": []
+    },
+    "app/Domain/Asset/Models/AssetDisposal.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\AssetDisposal",
+      "methods": []
+    },
+    "app/Domain/Asset/Models/AssetMove.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\AssetMove",
+      "methods": []
+    },
+    "app/Domain/Asset/Models/AssetTaxCategory.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\AssetTaxCategory",
+      "methods": [
+        "fixedAssets"
+      ]
+    },
+    "app/Domain/Asset/Models/FixedAsset.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\FixedAsset",
+      "methods": [
+        "accumulatedDepreciationAccount",
+        "assetAccount",
+        "branch",
+        "category",
+        "department",
+        "depreciationExpenseAccount",
+        "expenses",
+        "locations",
+        "taxCategory"
+      ]
+    },
+    "app/Domain/Asset/Models/FixedAssetExpense.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\FixedAssetExpense",
+      "methods": [
+        "account",
+        "fixedAsset"
+      ]
+    },
+    "app/Domain/Asset/Models/FixedAssetLocation.php": {
+      "type": "php",
+      "class": "App\\Domain\\Asset\\Models\\FixedAssetLocation",
+      "methods": [
+        "fixedAsset"
+      ]
+    },
+    "app/Domain/Catalog/Models/Brand.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\Brand",
+      "methods": [
+        "products"
+      ]
+    },
+    "app/Domain/Catalog/Models/Product.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\Product",
+      "methods": [
+        "baseUnit",
+        "brand",
+        "category",
+        "cogsAccount",
+        "deliveredGoodsAccount",
+        "inventoryAccount",
+        "prices",
+        "purchaseReturnAccount",
+        "purchaseUnit",
+        "salesAccount",
+        "salesDiscountAccount",
+        "salesReturnAccount",
+        "salesUnit",
+        "supplierPrices",
+        "uninvoicedPurchaseAccount",
+        "unitConversions"
+      ]
+    },
+    "app/Domain/Catalog/Models/ProductCategory.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\ProductCategory",
+      "methods": [
+        "children",
+        "costOfGoodsSoldAccount",
+        "expenseAccount",
+        "goodsInTransitAccount",
+        "inventoryAccount",
+        "parent",
+        "products",
+        "purchaseReturnAccount",
+        "salesAccount",
+        "salesDiscountAccount",
+        "salesReturnAccount",
+        "unbilledPurchaseAccount"
+      ]
+    },
+    "app/Domain/Catalog/Models/ProductPrice.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\ProductPrice",
+      "methods": [
+        "product",
+        "unit"
+      ]
+    },
+    "app/Domain/Catalog/Models/ProductUnitConversion.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\ProductUnitConversion",
+      "methods": [
+        "product",
+        "unit"
+      ]
+    },
+    "app/Domain/Catalog/Models/SupplierPrice.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\SupplierPrice",
+      "methods": [
+        "product",
+        "supplier",
+        "unit"
+      ]
+    },
+    "app/Domain/Catalog/Models/Unit.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\Unit",
+      "methods": [
+        "products",
+        "tax"
+      ]
+    },
+    "app/Domain/Catalog/Models/Warehouse.php": {
+      "type": "php",
+      "class": "App\\Domain\\Catalog\\Models\\Warehouse",
+      "methods": [
+        "branch"
+      ]
+    },
+    "app/Domain/Finance/Models/Account.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\Account",
+      "methods": [
+        "branches",
+        "children",
+        "currency",
+        "parent",
+        "users"
+      ]
+    },
+    "app/Domain/Finance/Models/BankTransfer.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\BankTransfer",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/Budget.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\Budget",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/BudgetTransfer.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\BudgetTransfer",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/CashPayment.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\CashPayment",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/CashReceipt.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\CashReceipt",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/Currency.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\Currency",
+      "methods": [
+        "accounts",
+        "accountsPayableAccount",
+        "accountsReceivableAccount",
+        "customers",
+        "purchaseAdvanceAccount",
+        "realizedGainLossAccount",
+        "salesAdvanceAccount",
+        "salesDiscountAccount",
+        "suppliers",
+        "unrealizedGainLossAccount"
+      ]
+    },
+    "app/Domain/Finance/Models/ExpenseEntry.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\ExpenseEntry",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/GeneralJournal.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\GeneralJournal",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/PaymentOrder.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\PaymentOrder",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/PaymentTerm.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\PaymentTerm",
+      "methods": [
+        "customers",
+        "suppliers"
+      ]
+    },
+    "app/Domain/Finance/Models/PayrollEntry.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\PayrollEntry",
+      "methods": []
+    },
+    "app/Domain/Finance/Models/PeriodEnd.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\PeriodEnd",
+      "methods": [
+        "getDateAttribute",
+        "getDocumentDateAttribute",
+        "getMonthAttribute",
+        "getMonthValueAttribute",
+        "getRatesAttribute",
+        "getYearAttribute",
+        "getYearValueAttribute"
+      ]
+    },
+    "app/Domain/Finance/Models/SalaryAllowance.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\SalaryAllowance",
+      "methods": [
+        "account"
+      ]
+    },
+    "app/Domain/Finance/Models/Tax.php": {
+      "type": "php",
+      "class": "App\\Domain\\Finance\\Models\\Tax",
+      "methods": [
+        "inputAccount",
+        "outputAccount"
+      ]
+    },
+    "app/Domain/Identity/Models/AccessGroup.php": {
+      "type": "php",
+      "class": "App\\Domain\\Identity\\Models\\AccessGroup",
+      "methods": [
+        "permissions",
+        "users"
+      ]
+    },
+    "app/Domain/Identity/Models/AccessGroupPermission.php": {
+      "type": "php",
+      "class": "App\\Domain\\Identity\\Models\\AccessGroupPermission",
+      "methods": [
+        "accessGroup"
+      ]
+    },
+    "app/Domain/Identity/Models/NumberingSequence.php": {
+      "type": "php",
+      "class": "App\\Domain\\Identity\\Models\\NumberingSequence",
+      "methods": [
+        "components",
+        "users"
+      ]
+    },
+    "app/Domain/Identity/Models/NumberingSequenceComponent.php": {
+      "type": "php",
+      "class": "App\\Domain\\Identity\\Models\\NumberingSequenceComponent",
+      "methods": [
+        "sequence"
+      ]
+    },
+    "app/Domain/Identity/Models/Role.php": {
+      "type": "php",
+      "class": "App\\Domain\\Identity\\Models\\Role",
+      "methods": [
+        "approvalSteps",
+        "users"
+      ]
+    },
+    "app/Domain/Identity/Models/TransactionApprovalRule.php": {
+      "type": "php",
+      "class": "App\\Domain\\Identity\\Models\\TransactionApprovalRule",
+      "methods": [
+        "branch",
+        "steps"
+      ]
+    },
+    "app/Domain/Identity/Models/TransactionApprovalRuleStep.php": {
+      "type": "php",
+      "class": "App\\Domain\\Identity\\Models\\TransactionApprovalRuleStep",
+      "methods": [
+        "approverRole",
+        "approverUser",
+        "rule"
+      ]
+    },
+    "app/Domain/Inventory/Models/AbstractInventoryDocument.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\AbstractInventoryDocument",
+      "methods": []
+    },
+    "app/Domain/Inventory/Models/InventoryAdjustment.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\InventoryAdjustment",
+      "methods": []
+    },
+    "app/Domain/Inventory/Models/InventoryBatch.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\InventoryBatch",
+      "methods": [
+        "product",
+        "warehouse"
+      ]
+    },
+    "app/Domain/Inventory/Models/InventoryDocument.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\InventoryDocument",
+      "methods": [
+        "branch",
+        "brand",
+        "counterpartWarehouse",
+        "department",
+        "lines",
+        "productCategory",
+        "relatedDocument",
+        "responsibleUser",
+        "supplier",
+        "warehouse",
+        "workers"
+      ]
+    },
+    "app/Domain/Inventory/Models/InventoryDocumentLine.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\InventoryDocumentLine",
+      "methods": [
+        "department",
+        "document",
+        "product",
+        "unit"
+      ]
+    },
+    "app/Domain/Inventory/Models/ItemRequest.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\ItemRequest",
+      "methods": []
+    },
+    "app/Domain/Inventory/Models/MaterialAddition.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\MaterialAddition",
+      "methods": []
+    },
+    "app/Domain/Inventory/Models/StockOpnameOrder.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\StockOpnameOrder",
+      "methods": []
+    },
+    "app/Domain/Inventory/Models/StockOpnameResult.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\StockOpnameResult",
+      "methods": [
+        "opnameOrder"
+      ]
+    },
+    "app/Domain/Inventory/Models/StockTransfer.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\StockTransfer",
+      "methods": []
+    },
+    "app/Domain/Inventory/Models/WorkCompletion.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\WorkCompletion",
+      "methods": []
+    },
+    "app/Domain/Inventory/Models/WorkOrder.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Models\\WorkOrder",
+      "methods": []
+    },
+    "app/Domain/Inventory/Services/InventoryCostingService.php": {
+      "type": "php",
+      "class": "App\\Domain\\Inventory\\Services\\InventoryCostingService",
+      "methods": [
+        "consumeStock",
+        "recordStockEntry",
+        "revertStockConsumption",
+        "revertStockEntry"
+      ]
+    },
+    "app/Domain/Organization/Models/Branch.php": {
+      "type": "php",
+      "class": "App\\Domain\\Organization\\Models\\Branch",
+      "methods": [
+        "accounts",
+        "customers",
+        "employees",
+        "suppliers",
+        "transactionApprovalRules",
+        "users",
+        "warehouses"
+      ]
+    },
+    "app/Domain/Organization/Models/Department.php": {
+      "type": "php",
+      "class": "App\\Domain\\Organization\\Models\\Department",
+      "methods": [
+        "childDepartments",
+        "employees",
+        "parentDepartment",
+        "users"
+      ]
+    },
+    "app/Domain/Organization/Models/Employee.php": {
+      "type": "php",
+      "class": "App\\Domain\\Organization\\Models\\Employee",
+      "methods": [
+        "attachments",
+        "bankAccounts",
+        "branch",
+        "department",
+        "user"
+      ]
+    },
+    "app/Domain/Organization/Models/EmployeeBankAccount.php": {
+      "type": "php",
+      "class": "App\\Domain\\Organization\\Models\\EmployeeBankAccount",
+      "methods": [
+        "employee"
+      ]
+    },
+    "app/Domain/Organization/Models/FobTerm.php": {
+      "type": "php",
+      "class": "App\\Domain\\Organization\\Models\\FobTerm",
+      "methods": []
+    },
+    "app/Domain/Organization/Models/ShippingMethod.php": {
+      "type": "php",
+      "class": "App\\Domain\\Organization\\Models\\ShippingMethod",
+      "methods": []
+    },
+    "app/Domain/Partner/Models/Customer.php": {
+      "type": "php",
+      "class": "App\\Domain\\Partner\\Models\\Customer",
+      "methods": [
+        "branches",
+        "category",
+        "currency"
+      ]
+    },
+    "app/Domain/Partner/Models/CustomerCategory.php": {
+      "type": "php",
+      "class": "App\\Domain\\Partner\\Models\\CustomerCategory",
+      "methods": [
+        "children",
+        "customers",
+        "parent"
+      ]
+    },
+    "app/Domain/Partner/Models/SalesCategory.php": {
+      "type": "php",
+      "class": "App\\Domain\\Partner\\Models\\SalesCategory",
+      "methods": []
+    },
+    "app/Domain/Partner/Models/Supplier.php": {
+      "type": "php",
+      "class": "App\\Domain\\Partner\\Models\\Supplier",
+      "methods": [
+        "branches",
+        "category",
+        "currency",
+        "prices"
+      ]
+    },
+    "app/Domain/Partner/Models/SupplierCategory.php": {
+      "type": "php",
+      "class": "App\\Domain\\Partner\\Models\\SupplierCategory",
+      "methods": [
+        "children",
+        "parent",
+        "suppliers"
+      ]
+    },
+    "app/Domain/Purchasing/Models/GoodsReceipt.php": {
+      "type": "php",
+      "class": "App\\Domain\\Purchasing\\Models\\GoodsReceipt",
+      "methods": []
+    },
+    "app/Domain/Purchasing/Models/PurchaseDeposit.php": {
+      "type": "php",
+      "class": "App\\Domain\\Purchasing\\Models\\PurchaseDeposit",
+      "methods": []
+    },
+    "app/Domain/Purchasing/Models/PurchaseInvoice.php": {
+      "type": "php",
+      "class": "App\\Domain\\Purchasing\\Models\\PurchaseInvoice",
+      "methods": []
+    },
+    "app/Domain/Purchasing/Models/PurchaseOrder.php": {
+      "type": "php",
+      "class": "App\\Domain\\Purchasing\\Models\\PurchaseOrder",
+      "methods": []
+    },
+    "app/Domain/Purchasing/Models/PurchasePayment.php": {
+      "type": "php",
+      "class": "App\\Domain\\Purchasing\\Models\\PurchasePayment",
+      "methods": []
+    },
+    "app/Domain/Purchasing/Models/PurchaseReturn.php": {
+      "type": "php",
+      "class": "App\\Domain\\Purchasing\\Models\\PurchaseReturn",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/DeliveryOrder.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\DeliveryOrder",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/PriceAdjustment.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\PriceAdjustment",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesCheckin.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesCheckin",
+      "methods": [
+        "branch",
+        "customer",
+        "department",
+        "relatedDocument",
+        "salesUser"
+      ]
+    },
+    "app/Domain/Sales/Models/SalesCommission.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesCommission",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesDelivery.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesDelivery",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesDeposit.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesDeposit",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesInvoice.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesInvoice",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesOrder.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesOrder",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesQuote.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesQuote",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesReceipt.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesReceipt",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesReturn.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesReturn",
+      "methods": []
+    },
+    "app/Domain/Sales/Models/SalesTarget.php": {
+      "type": "php",
+      "class": "App\\Domain\\Sales\\Models\\SalesTarget",
+      "methods": []
+    },
+    "app/Domain/Support/Models/ActivityLog.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\ActivityLog",
+      "methods": [
+        "actorUser"
+      ]
+    },
+    "app/Domain/Support/Models/Attachment.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\Attachment",
+      "methods": [
+        "attachable",
+        "getUrlAttribute"
+      ]
+    },
+    "app/Domain/Support/Models/DomainModel.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\DomainModel",
+      "methods": [
+        "scopeSearch"
+      ]
+    },
+    "app/Domain/Support/Models/OperationDocument.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\OperationDocument",
+      "methods": [
+        "branch",
+        "counterpartWarehouse",
+        "currency",
+        "customer",
+        "department",
+        "lines",
+        "primaryAccount",
+        "relatedDocument",
+        "responsibleUser",
+        "secondaryAccount",
+        "supplier",
+        "tax",
+        "users",
+        "warehouse"
+      ]
+    },
+    "app/Domain/Support/Models/OperationDocumentLine.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\OperationDocumentLine",
+      "methods": [
+        "account",
+        "customer",
+        "department",
+        "document",
+        "fixedAsset",
+        "product",
+        "supplier",
+        "unit",
+        "warehouse"
+      ]
+    },
+    "app/Domain/Support/Models/PreferenceSetting.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\PreferenceSetting",
+      "methods": []
+    },
+    "app/Domain/Support/Models/ReportCatalog.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\ReportCatalog",
+      "methods": []
+    },
+    "app/Domain/Support/Models/ScopedOperationDocument.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Models\\ScopedOperationDocument",
+      "methods": []
+    },
+    "app/Domain/Support/Traits/HasAttachments.php": {
+      "type": "php",
+      "class": "App\\Domain\\Support\\Traits\\HasAttachments",
+      "methods": [
+        "attachments"
+      ]
+    },
+    "app/Http/Controllers/Controller.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Controller",
+      "methods": []
+    },
+    "app/Http/Controllers/Api/AttachmentUploadController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Api\\AttachmentUploadController",
+      "methods": [
+        "upload"
+      ]
+    },
+    "app/Http/Controllers/Api/BackendResourceController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Api\\BackendResourceController",
+      "methods": [
+        "__construct",
+        "destroy",
+        "import",
+        "index",
+        "reconcileDocuments",
+        "resources",
+        "show",
+        "store",
+        "syncCurrencies",
+        "update"
+      ]
+    },
+    "app/Http/Controllers/Web/DashboardController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\DashboardController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/ForgotPasswordLinkController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\ForgotPasswordLinkController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/GoogleLoginController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\GoogleLoginController",
+      "methods": [
+        "callback",
+        "redirect"
+      ]
+    },
+    "app/Http/Controllers/Web/HomeController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\HomeController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/LoginController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\LoginController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/LogoutController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\LogoutController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/RegisterController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\RegisterController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/RegisterUserController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\RegisterUserController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/ResetPasswordController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\ResetPasswordController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Controllers/Web/UpdatePasswordController.php": {
+      "type": "php",
+      "class": "App\\Http\\Controllers\\Web\\UpdatePasswordController",
+      "methods": [
+        "__invoke"
+      ]
+    },
+    "app/Http/Middleware/HandleInertiaRequests.php": {
+      "type": "php",
+      "class": "App\\Http\\Middleware\\HandleInertiaRequests",
+      "methods": [
+        "share",
+        "version"
+      ]
+    },
+    "app/Http/Middleware/SecureHeaders.php": {
+      "type": "php",
+      "class": "App\\Http\\Middleware\\SecureHeaders",
+      "methods": [
+        "handle"
+      ]
+    },
+    "app/Http/Requests/Api/Backend/BackendResourceIndexRequest.php": {
+      "type": "php",
+      "class": "App\\Http\\Requests\\Api\\Backend\\BackendResourceIndexRequest",
+      "methods": [
+        "rules"
+      ]
+    },
+    "app/Http/Requests/Api/Backend/BackendResourceRequest.php": {
+      "type": "php",
+      "class": "App\\Http\\Requests\\Api\\Backend\\BackendResourceRequest",
+      "methods": [
+        "authorize",
+        "blueprint",
+        "record"
+      ]
+    },
+    "app/Http/Requests/Api/Backend/BackendResourceStoreRequest.php": {
+      "type": "php",
+      "class": "App\\Http\\Requests\\Api\\Backend\\BackendResourceStoreRequest",
+      "methods": [
+        "rules"
+      ]
+    },
+    "app/Http/Requests/Api/Backend/BackendResourceUpdateRequest.php": {
+      "type": "php",
+      "class": "App\\Http\\Requests\\Api\\Backend\\BackendResourceUpdateRequest",
+      "methods": [
+        "rules"
+      ]
+    },
+    "app/Models/User.php": {
+      "type": "php",
+      "class": "App\\Models\\User",
+      "methods": [
+        "accessGroups",
+        "approvalRuleSteps",
+        "branches",
+        "departments",
+        "hasAnyRoleCodes",
+        "numberingSequences",
+        "roles",
+        "sendPasswordResetNotification"
+      ]
+    },
+    "app/Notifications/CustomResetPasswordNotification.php": {
+      "type": "php",
+      "class": "App\\Notifications\\CustomResetPasswordNotification",
+      "methods": [
+        "toMail"
+      ]
+    },
+    "app/Providers/AppServiceProvider.php": {
+      "type": "php",
+      "class": "App\\Providers\\AppServiceProvider",
+      "methods": [
+        "boot",
+        "register"
+      ]
+    },
+    "app/Support/Analytics/AbcAnalysisService.php": {
+      "type": "php",
+      "class": "App\\Support\\Analytics\\AbcAnalysisService",
+      "methods": [
+        "calculate"
+      ]
+    },
+    "app/Support/Analytics/AnalyticsService.php": {
+      "type": "php",
+      "class": "App\\Support\\Analytics\\AnalyticsService",
+      "methods": [
+        "__construct",
+        "getAbcAnalysis",
+        "getAprioriAnalysis"
+      ]
+    },
+    "app/Support/Analytics/AprioriAnalysisService.php": {
+      "type": "php",
+      "class": "App\\Support\\Analytics\\AprioriAnalysisService",
+      "methods": [
+        "calculate"
+      ]
+    },
+    "app/Support/Auth/AuthFeatureFlags.php": {
+      "type": "php",
+      "class": "App\\Support\\Auth\\AuthFeatureFlags",
+      "methods": []
+    },
+    "app/Support/Auth/PhoneNumber.php": {
+      "type": "php",
+      "class": "App\\Support\\Auth\\PhoneNumber",
+      "methods": []
+    },
+    "app/Support/Backend/BackendActivityLogger.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendActivityLogger",
+      "methods": [
+        "logMutation",
+        "snapshot"
+      ]
+    },
+    "app/Support/Backend/BackendRelationSync.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendRelationSync",
+      "methods": []
+    },
+    "app/Support/Backend/BackendResourceAccessService.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendResourceAccessService",
+      "methods": [
+        "authorize",
+        "can",
+        "canAccessRecord",
+        "visibleResourcesFor"
+      ]
+    },
+    "app/Support/Backend/BackendResourceBlueprint.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendResourceBlueprint",
+      "methods": [
+        "__construct",
+        "canMutate",
+        "indexRules",
+        "modelClass",
+        "permissionKey",
+        "runIndex",
+        "runShow",
+        "storeRules",
+        "sync",
+        "updateRules"
+      ]
+    },
+    "app/Support/Backend/BackendResourceIndexQuery.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendResourceIndexQuery",
+      "methods": [
+        "paginate"
+      ]
+    },
+    "app/Support/Backend/BackendResourcePayloadSanitizer.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendResourcePayloadSanitizer",
+      "methods": [
+        "sanitize"
+      ]
+    },
+    "app/Support/Backend/BackendResourceRegistry.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendResourceRegistry",
+      "methods": []
+    },
+    "app/Support/Backend/BackendResourceSecurityValidator.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendResourceSecurityValidator",
+      "methods": [
+        "__construct",
+        "validateBranchAssignment",
+        "validatePrivilegeEscalation"
+      ]
+    },
+    "app/Support/Backend/BackendResourceWriter.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\BackendResourceWriter",
+      "methods": [
+        "__construct",
+        "create",
+        "delete",
+        "update"
+      ]
+    },
+    "app/Support/Backend/Definitions/AssetBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\AssetBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/CatalogBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\CatalogBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/FinanceBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\FinanceBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/IdentityBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\IdentityBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/InventoryBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\InventoryBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/OperationBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\OperationBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/OrganizationBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\OrganizationBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/PartnerBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\PartnerBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Definitions/WorkspaceBackendResources.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Definitions\\WorkspaceBackendResources",
+      "methods": []
+    },
+    "app/Support/Backend/Queries/ArrayPaginatorFactory.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Queries\\ArrayPaginatorFactory",
+      "methods": []
+    },
+    "app/Support/Backend/Queries/BankInquiryQueryService.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Queries\\BankInquiryQueryService",
+      "methods": [
+        "paginateHistory",
+        "paginateReconciliation",
+        "paginateStatement"
+      ]
+    },
+    "app/Support/Backend/Queries/InventoryInquiryQueryService.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Queries\\InventoryInquiryQueryService",
+      "methods": [
+        "paginateItemLocations",
+        "paginateMinimumStocks"
+      ]
+    },
+    "app/Support/Backend/Queries/Concerns/HasQueryHelpers.php": {
+      "type": "php",
+      "class": "App\\Support\\Backend\\Queries\\Concerns\\HasQueryHelpers",
+      "methods": []
+    },
+    "app/Support/Presentation/AuthenticatedUserPresenter.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\AuthenticatedUserPresenter",
+      "methods": []
+    },
+    "app/Support/Presentation/DashboardBlueprintProvider.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\DashboardBlueprintProvider",
+      "methods": []
+    },
+    "app/Support/Presentation/PosBlueprint.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\PosBlueprint",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/PageBlueprintRegistry.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\PageBlueprintRegistry",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/AccountsPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\AccountsPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ActivityLogPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ActivityLogPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ActivityLogTable.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ActivityLogTable",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/BankTransferPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\BankTransferPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/CashPaymentPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\CashPaymentPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/CashReceiptPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\CashReceiptPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/CurrencyMasterPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\CurrencyMasterPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/CustomersPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\CustomersPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/DepartmentPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\DepartmentPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/EmployeesPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\EmployeesPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/EmployeesTable.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\EmployeesTable",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ExpenseEntryPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ExpenseEntryPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/GeneralJournalPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\GeneralJournalPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/GroupAccessPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\GroupAccessPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/InventoryAdjustmentPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\InventoryAdjustmentPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ItemBrandPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ItemBrandPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ItemCategoryPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ItemCategoryPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ItemLocationPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ItemLocationPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ItemRequestPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ItemRequestPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ItemsServicesPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ItemsServicesPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/ItemUnitPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\ItemUnitPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/JournalActivityLogPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\JournalActivityLogPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/MinimumStockPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\MinimumStockPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/NumberingHelper.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\NumberingHelper",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/PayrollEntryPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\PayrollEntryPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/PreferencesPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\PreferencesPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/PriceAdjustmentPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\PriceAdjustmentPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/PurchaseInvoicePage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\PurchaseInvoicePage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/PurchasePaymentPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\PurchasePaymentPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/PurchaseReturnPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\PurchaseReturnPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SalaryAllowancePage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SalaryAllowancePage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SalesCheckinPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SalesCheckinPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SalesCommissionPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SalesCommissionPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SalesDepositPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SalesDepositPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SalesInvoicePage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SalesInvoicePage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SalesReceiptPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SalesReceiptPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SupplierPricePage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SupplierPricePage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/SuppliersPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\SuppliersPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/TransactionApprovalPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\TransactionApprovalPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/UsersPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\UsersPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/WarehouseMasterPage.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\WarehouseMasterPage",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/Preferences/CompanyPreferences.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\Preferences\\CompanyPreferences",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/Preferences/FeaturePreferences.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\Preferences\\FeaturePreferences",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/Preferences/SalesPurchasePreferences.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\Preferences\\SalesPurchasePreferences",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/Preferences/TaxPreferences.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\Preferences\\TaxPreferences",
+      "methods": []
+    },
+    "app/Support/Presentation/Blueprints/Pages/Preferences/WorkflowPreferences.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Blueprints\\Pages\\Preferences\\WorkflowPreferences",
+      "methods": []
+    },
+    "app/Support/Presentation/Queries/DashboardActivityQueryService.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Queries\\DashboardActivityQueryService",
+      "methods": []
+    },
+    "app/Support/Presentation/Queries/DashboardAnalyticsQueryService.php": {
+      "type": "php",
+      "class": "App\\Support\\Presentation\\Queries\\DashboardAnalyticsQueryService",
+      "methods": []
+    },
+    "resources/js/app/App.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/app/bootstrap.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/app/Ssr.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/components/error/AppErrorBoundary.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/components/feedback/FlashToastBridge.jsx": {
+      "type": "js",
+      "exports": [
+        "FlashToastBridge (default)"
+      ]
+    },
+    "resources/js/components/feedback/toast.jsx": {
+      "type": "js",
+      "exports": [
+        "dismissToast",
+        "showErrorToast",
+        "showInfoToast",
+        "showLoadingToast",
+        "showSuccessToast",
+        "showWarningToast",
+        "updateToastToError",
+        "updateToastToSuccess"
+      ]
+    },
+    "resources/js/components/shared/FlagIcon.jsx": {
+      "type": "js",
+      "exports": [
+        "FlagIcon (default)"
+      ]
+    },
+    "resources/js/components/shared/GlobalBackgroundArt.jsx": {
+      "type": "js",
+      "exports": [
+        "GlobalBackgroundArt (default)"
+      ]
+    },
+    "resources/js/components/shared/SectionCardGrid.jsx": {
+      "type": "js",
+      "exports": [
+        "SectionCardGrid"
+      ]
+    },
+    "resources/js/components/ui/AccountDetailModal.jsx": {
+      "type": "js",
+      "exports": [
+        "showAccountDetailModal"
+      ]
+    },
+    "resources/js/components/ui/Button.jsx": {
+      "type": "js",
+      "exports": [
+        "Button (default)"
+      ]
+    },
+    "resources/js/components/ui/Card.jsx": {
+      "type": "js",
+      "exports": [
+        "Card (default)"
+      ]
+    },
+    "resources/js/components/ui/CheckboxField.jsx": {
+      "type": "js",
+      "exports": [
+        "CheckboxField (default)"
+      ]
+    },
+    "resources/js/components/ui/ConfirmationModal.jsx": {
+      "type": "js",
+      "exports": [
+        "ConfirmationModal (default)"
+      ]
+    },
+    "resources/js/components/ui/DataTable.jsx": {
+      "type": "js",
+      "exports": [
+        "DataTable",
+        "DataTableBody",
+        "DataTableCell",
+        "DataTableHead",
+        "DataTableHeader",
+        "DataTableRow"
+      ]
+    },
+    "resources/js/components/ui/Divider.jsx": {
+      "type": "js",
+      "exports": [
+        "Divider (default)"
+      ]
+    },
+    "resources/js/components/ui/DocumentStamp.jsx": {
+      "type": "js",
+      "exports": [
+        "DocumentStamp (default)"
+      ]
+    },
+    "resources/js/components/ui/DropdownMenu.jsx": {
+      "type": "js",
+      "exports": [
+        "DropdownMenu (default)"
+      ]
+    },
+    "resources/js/components/ui/DropdownMenuItem.jsx": {
+      "type": "js",
+      "exports": [
+        "DropdownMenuItem (default)"
+      ]
+    },
+    "resources/js/components/ui/EmptyState.jsx": {
+      "type": "js",
+      "exports": [
+        "EmptyState (default)"
+      ]
+    },
+    "resources/js/components/ui/ErrorIllustration.jsx": {
+      "type": "js",
+      "exports": [
+        "ErrorIllustration (default)"
+      ]
+    },
+    "resources/js/components/ui/FormErrorContext.jsx": {
+      "type": "js",
+      "exports": [
+        "FormErrorProvider",
+        "useFormError",
+        "useToggleFieldError"
+      ]
+    },
+    "resources/js/components/ui/FormField.jsx": {
+      "type": "js",
+      "exports": [
+        "FormField (default)"
+      ]
+    },
+    "resources/js/components/ui/LoadingState.jsx": {
+      "type": "js",
+      "exports": [
+        "LoadingState (default)"
+      ]
+    },
+    "resources/js/components/ui/ModalBase.jsx": {
+      "type": "js",
+      "exports": [
+        "ModalBase (default)"
+      ]
+    },
+    "resources/js/components/ui/ModuleFormTemplate.jsx": {
+      "type": "js",
+      "exports": [
+        "ModuleFormTemplate (default)"
+      ]
+    },
+    "resources/js/components/ui/ModuleTableTemplate.jsx": {
+      "type": "js",
+      "exports": [
+        "ModuleTableTemplate (default)"
+      ]
+    },
+    "resources/js/components/ui/Notice.jsx": {
+      "type": "js",
+      "exports": [
+        "Notice (default)"
+      ]
+    },
+    "resources/js/components/ui/Pagination.jsx": {
+      "type": "js",
+      "exports": [
+        "Pagination (default)"
+      ]
+    },
+    "resources/js/components/ui/Panel.jsx": {
+      "type": "js",
+      "exports": [
+        "Panel (default)"
+      ]
+    },
+    "resources/js/components/ui/PortalDropdown.jsx": {
+      "type": "js",
+      "exports": [
+        "PortalDropdown (default)"
+      ]
+    },
+    "resources/js/components/ui/promptModal.jsx": {
+      "type": "js",
+      "exports": [
+        "showPromptModal"
+      ]
+    },
+    "resources/js/components/ui/RadioField.jsx": {
+      "type": "js",
+      "exports": [
+        "RadioField (default)"
+      ]
+    },
+    "resources/js/components/ui/SectionHeading.jsx": {
+      "type": "js",
+      "exports": [
+        "SectionHeading (default)"
+      ]
+    },
+    "resources/js/components/ui/SelectField.jsx": {
+      "type": "js",
+      "exports": [
+        "SelectField (default)"
+      ]
+    },
+    "resources/js/components/ui/SessionExpiredModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SessionExpiredModal (default)",
+        "showSessionExpiredModal"
+      ]
+    },
+    "resources/js/components/ui/Spinner.jsx": {
+      "type": "js",
+      "exports": [
+        "Spinner (default)"
+      ]
+    },
+    "resources/js/components/ui/SystemErrorModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SystemErrorModal (default)",
+        "showSystemErrorModal"
+      ]
+    },
+    "resources/js/components/ui/TextareaField.jsx": {
+      "type": "js",
+      "exports": [
+        "TextareaField (default)"
+      ]
+    },
+    "resources/js/components/ui/TextInput.jsx": {
+      "type": "js",
+      "exports": [
+        "TextInput (default)"
+      ]
+    },
+    "resources/js/components/ui/Tooltip.jsx": {
+      "type": "js",
+      "exports": [
+        "Tooltip (default)"
+      ]
+    },
+    "resources/js/components/ui/WorkspaceDialog.jsx": {
+      "type": "js",
+      "exports": [
+        "WorkspaceDialog (default)"
+      ]
+    },
+    "resources/js/features/auth/authFormFeedback.js": {
+      "type": "js",
+      "exports": [
+        "applyClientErrors",
+        "getAuthFormMessage",
+        "getFirstInlineError",
+        "validateForgotPasswordForm",
+        "validateLoginForm",
+        "validateRegisterForm",
+        "validateResetPasswordForm"
+      ]
+    },
+    "resources/js/features/auth/components/AuthCarouselPanel.jsx": {
+      "type": "js",
+      "exports": [
+        "AuthCarouselPanel (default)"
+      ]
+    },
+    "resources/js/features/auth/components/AuthFooterPrompt.jsx": {
+      "type": "js",
+      "exports": [
+        "AuthFooterPrompt (default)"
+      ]
+    },
+    "resources/js/features/auth/components/AuthHeading.jsx": {
+      "type": "js",
+      "exports": [
+        "AuthHeading (default)"
+      ]
+    },
+    "resources/js/features/auth/components/AuthInput.jsx": {
+      "type": "js",
+      "exports": [
+        "AuthInput (default)"
+      ]
+    },
+    "resources/js/features/auth/components/AuthPanelShell.jsx": {
+      "type": "js",
+      "exports": [
+        "AuthPanelShell (default)"
+      ]
+    },
+    "resources/js/features/auth/components/BrandMark.jsx": {
+      "type": "js",
+      "exports": [
+        "BrandMark (default)"
+      ]
+    },
+    "resources/js/features/auth/components/CarouselProgressDots.jsx": {
+      "type": "js",
+      "exports": [
+        "CarouselProgressDots (default)"
+      ]
+    },
+    "resources/js/features/auth/components/CarouselSlideFrame.jsx": {
+      "type": "js",
+      "exports": [
+        "CarouselSlideFrame (default)"
+      ]
+    },
+    "resources/js/features/auth/components/ForgotPasswordModal.jsx": {
+      "type": "js",
+      "exports": [
+        "ForgotPasswordModal (default)"
+      ]
+    },
+    "resources/js/features/auth/components/LocaleSwitcher.jsx": {
+      "type": "js",
+      "exports": [
+        "LocaleSwitcher (default)"
+      ]
+    },
+    "resources/js/features/auth/components/LoginFormPanel.jsx": {
+      "type": "js",
+      "exports": [
+        "LoginFormPanel (default)"
+      ]
+    },
+    "resources/js/features/auth/components/PasswordField.jsx": {
+      "type": "js",
+      "exports": [
+        "PasswordField (default)"
+      ]
+    },
+    "resources/js/features/auth/components/RegisterFormPanel.jsx": {
+      "type": "js",
+      "exports": [
+        "RegisterFormPanel (default)"
+      ]
+    },
+    "resources/js/features/auth/components/ResetPasswordFormPanel.jsx": {
+      "type": "js",
+      "exports": [
+        "ResetPasswordFormPanel (default)"
+      ]
+    },
+    "resources/js/features/auth/components/SocialButton.jsx": {
+      "type": "js",
+      "exports": [
+        "SocialButton (default)"
+      ]
+    },
+    "resources/js/features/auth/hooks/use-auto-carousel.js": {
+      "type": "js",
+      "exports": [
+        "useAutoCarousel"
+      ]
+    },
+    "resources/js/features/auth/lib/auth-ui.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/error/ErrorExperience.jsx": {
+      "type": "js",
+      "exports": [
+        "ErrorExperience (default)",
+        "buildErrorActions"
+      ]
+    },
+    "resources/js/features/workspace/backend/inventoryAdjustmentBackend.js": {
+      "type": "js",
+      "exports": [
+        "buildInventoryAdjustmentPayload",
+        "buildInventoryAdjustmentRecord",
+        "buildInventoryAdjustmentTableRows"
+      ]
+    },
+    "resources/js/features/workspace/backend/operationDocumentBackend.js": {
+      "type": "js",
+      "exports": [
+        "buildGeneratedDocumentNumber",
+        "buildOperationDocumentFilters",
+        "buildOperationDocumentPayload",
+        "buildOperationDocumentRecord",
+        "buildOperationDocumentTableRows",
+        "mapDocumentStatus",
+        "parseNumericInput"
+      ]
+    },
+    "resources/js/features/workspace/backend/useBackendIndexResource.js": {
+      "type": "js",
+      "exports": [
+        "useBackendIndexResource (default)"
+      ]
+    },
+    "resources/js/features/workspace/backend/useBackendResource.js": {
+      "type": "js",
+      "exports": [
+        "useBackendResource (default)"
+      ]
+    },
+    "resources/js/features/workspace/backend/useWorkspaceResource.js": {
+      "type": "js",
+      "exports": [
+        "useWorkspaceResource (default)"
+      ]
+    },
+    "resources/js/features/workspace/backend/workspaceBackendAdapters.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/backend/workspaceBackendApi.js": {
+      "type": "js",
+      "exports": [
+        "extractBackendRows",
+        "extractBackendTotal",
+        "getBackendErrorMessage"
+      ]
+    },
+    "resources/js/features/workspace/backend/adapters/bankAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildBankFilters",
+        "mapBankRows"
+      ]
+    },
+    "resources/js/features/workspace/backend/adapters/dateHelpers.js": {
+      "type": "js",
+      "exports": [
+        "buildSelectOptions",
+        "emptyStringToNull",
+        "formatDateTime",
+        "formatDateTimeVerbose",
+        "formatIsoDate",
+        "normalizeDisplayDate",
+        "titleizeKey"
+      ]
+    },
+    "resources/js/features/workspace/backend/adapters/generalAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildActivityLogFilters",
+        "buildFixedAssetsFilters",
+        "buildReportListConfig",
+        "mapActivityLogRows",
+        "mapApprovalRuleRow",
+        "mapFixedAssetRows",
+        "mapJournalActivityRows",
+        "mapUserRow",
+        "toFixedAssetPayload",
+        "toUserPayload"
+      ]
+    },
+    "resources/js/features/workspace/backend/adapters/inventoryAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildInventoryFilters",
+        "mapInventoryRows",
+        "mapStockOpnameOrderRow",
+        "mapWarehouseRow"
+      ]
+    },
+    "resources/js/features/workspace/backend/adapters/masterAdapters.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/backend/adapters/salesAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildSalesCheckinFilters",
+        "mapPartnerRow",
+        "mapProductRow",
+        "mapSalesCheckinRows",
+        "toPartnerPayload"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/buildWorkspaceSearchItems.js": {
+      "type": "js",
+      "exports": [
+        "buildWorkspaceSearchItems (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardActivePageContent.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardActivePageContent (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardAnalyticsWidgets.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/dashboard/DashboardFormModal.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardFormModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/dashboardLevel2Tabs.js": {
+      "type": "js",
+      "exports": [
+        "buildDefaultLevel2ContentTabs",
+        "buildDetailContentTab",
+        "getDefaultLevel2TabId",
+        "resolvePageLevel2Actions"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/dashboardPageState.js": {
+      "type": "js",
+      "exports": [
+        "buildInitialLevel2ContentTabsState",
+        "buildInitialLevel2TabsState",
+        "buildTabItems",
+        "createDetailTabOpener",
+        "createDetailTabOpeners",
+        "resolveActivePage",
+        "resolveActivePageContentTabs",
+        "resolveLevel2State"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardPageTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardPageTabs (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/dashboardPersistence.js": {
+      "type": "js",
+      "exports": [
+        "buildWidgetTemplateMap",
+        "clearDashboardPreferences",
+        "clonePlainData",
+        "createDefaultDashboardPreferences",
+        "createWidgetFromLibraryItem",
+        "loadDashboardPreferences",
+        "saveDashboardPreferences"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardSidebar.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardSidebar (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardToolbar.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardToolbar (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardTopBar.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardTopBar (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardView.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardView (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardViewModals.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardViewModals (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/DashboardWidgetGrid.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardWidgetGrid (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/mergeWorkspacePageConfigs.js": {
+      "type": "js",
+      "exports": [
+        "mergeWorkspacePageConfigs (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/renderWorkspaceActivePage.jsx": {
+      "type": "js",
+      "exports": [
+        "renderWorkspaceActivePage (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/useDashboardPreferencesState.js": {
+      "type": "js",
+      "exports": [
+        "useDashboardPreferencesState (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/WidgetLibraryModal.jsx": {
+      "type": "js",
+      "exports": [
+        "WidgetLibraryModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/workspaceClientState.js": {
+      "type": "js",
+      "exports": [
+        "clearWorkspaceClientState"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/WorkspaceDraftState.jsx": {
+      "type": "js",
+      "exports": [
+        "WorkspaceDraftStateProvider",
+        "hasAnyDirtyTabs",
+        "hasDirtyTabsForPage",
+        "isWorkspaceTabDirty",
+        "renderTabLabel",
+        "stripDirtyPrefix",
+        "useWorkspaceDirtyRegistration",
+        "useWorkspaceDraftState",
+        "withDirtyLabel"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/workspacePagePersistence.js": {
+      "type": "js",
+      "exports": [
+        "clearWorkspacePageState",
+        "loadWorkspacePageState",
+        "saveWorkspacePageState"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/workspacePageRegistry.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/dashboard/WorkspaceSearchModal.jsx": {
+      "type": "js",
+      "exports": [
+        "WorkspaceSearchModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/workspaceUrls.js": {
+      "type": "js",
+      "exports": [
+        "getPagePath",
+        "resolvePageIdFromPath"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/AnalyticsCharts.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/dashboard/analytics/AnalyticsShared.jsx": {
+      "type": "js",
+      "exports": [
+        "ActionList",
+        "InsightCallout",
+        "SummaryStrip",
+        "WidgetSection"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/analyticsUtils.js": {
+      "type": "js",
+      "exports": [
+        "formatCompactLabel",
+        "getMetric",
+        "getProductImageUrl",
+        "parsePercentValue"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/AnalyticsWidgetLayout.jsx": {
+      "type": "js",
+      "exports": [
+        "AnalyticsWidgetLayout"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/AnalyticsWidgetRows.jsx": {
+      "type": "js",
+      "exports": [
+        "AbcTopItemRow",
+        "RuleSummaryRow"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/chartSetup.js": {
+      "type": "js",
+      "exports": [
+        "ensureDashboardChartsRegistered"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/components/AbcContributionChart.jsx": {
+      "type": "js",
+      "exports": [
+        "AbcContributionChart (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/components/AprioriRuleChart.jsx": {
+      "type": "js",
+      "exports": [
+        "AprioriRuleChart (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/components/IntegratedMatrixChart.jsx": {
+      "type": "js",
+      "exports": [
+        "IntegratedMatrixChart (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/analytics/components/usePersistentTooltip.js": {
+      "type": "js",
+      "exports": [
+        "usePersistentTooltip"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/hooks/useWorkspaceDirtyState.js": {
+      "type": "js",
+      "exports": [
+        "useWorkspaceDirtyState (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/hooks/useWorkspacePageState.js": {
+      "type": "js",
+      "exports": [
+        "useWorkspacePageState (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/hooks/useWorkspaceTabs.js": {
+      "type": "js",
+      "exports": [
+        "useWorkspaceTabs (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/hooks/useWorkspaceURLSync.js": {
+      "type": "js",
+      "exports": [
+        "useWorkspaceURLSync (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/AbcAnalysisWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "AbcAnalysisWidget (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/AprioriAnalysisWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "AprioriAnalysisWidget (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/DashboardChartShell.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardChartShell (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/dashboardChartUtils.js": {
+      "type": "js",
+      "exports": [
+        "buildEmphasisColors",
+        "buildRankedHuePalette",
+        "buildSingleHueEmphasisPalette",
+        "formatChartValue",
+        "hasNonZeroValue",
+        "normalizeBreakdownItems",
+        "normalizeSummarySections",
+        "normalizeTrendSeries",
+        "parseDisplayNumber",
+        "resolveChartObject",
+        "resolveCssVar",
+        "toRgba"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/DashboardSupplementaryWidgets.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/dashboard/widgets/DashboardWidgetBody.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardWidgetBody (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/DashboardWidgetCard.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardWidgetCard (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/DashboardWidgetCharts.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/dashboard/widgets/DashboardWidgetEmptyState.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardWidgetEmptyState (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/DashboardWidgetMetrics.jsx": {
+      "type": "js",
+      "exports": [
+        "ExpenseBreakdownMetric",
+        "LineTrendMetric",
+        "RingBreakdownMetric",
+        "SummaryMetric",
+        "TrendIndicator"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/IntegratedAnalysisWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "IntegratedAnalysisWidget (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/BreakdownDoughnutChart.jsx": {
+      "type": "js",
+      "exports": [
+        "BreakdownDoughnutChart (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/CashAvailabilityWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "CashAvailabilityWidget"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/OrderStatusStackChart.jsx": {
+      "type": "js",
+      "exports": [
+        "OrderStatusStackChart (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/OrderStatusWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "OrderStatusWidget"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/RecentActivityWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "RecentActivityWidget"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/SalesTeamWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesTeamWidget"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/SummarySectionChart.jsx": {
+      "type": "js",
+      "exports": [
+        "SummarySectionChart (default)"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/TopProductsWidget.jsx": {
+      "type": "js",
+      "exports": [
+        "TopProductsWidget"
+      ]
+    },
+    "resources/js/features/workspace/dashboard/widgets/components/TrendLineChart.jsx": {
+      "type": "js",
+      "exports": [
+        "TrendLineChart (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/ModulePageView.jsx": {
+      "type": "js",
+      "exports": [
+        "ModulePageView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/SimpleMasterView.jsx": {
+      "type": "js",
+      "exports": [
+        "SimpleMasterView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/TableListView.jsx": {
+      "type": "js",
+      "exports": [
+        "TableListView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/accounts/accountsConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildAccountDetailRecord",
+        "buildAccountsConfig"
+      ]
+    },
+    "resources/js/features/workspace/modules/accounts/AccountsFormSections.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountsChildrenTab",
+        "AccountsGeneralTab",
+        "AccountsOpeningBalanceTab",
+        "AccountsOthersTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/accounts/AccountsFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountsFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/accounts/accountsShared.js": {
+      "type": "js",
+      "exports": [
+        "buildAccountPayload",
+        "buildAccountSourceRecord",
+        "buildComparableFormValues",
+        "buildFormState",
+        "formatBalanceLabel",
+        "formatDisplayDate",
+        "mapAccountRow",
+        "mapDbToUiType",
+        "mapUiToDbType",
+        "normalizeDateForPayload",
+        "normalizeNumericValue",
+        "openingBalanceLabel",
+        "sanitizeNumericInput"
+      ]
+    },
+    "resources/js/features/workspace/modules/accounts/AccountsTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountsTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/accounts/AccountsView.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountsView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/accounts/accountsViewShared.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountsDockActions",
+        "AccountsFieldLabel",
+        "AccountsFormFieldRow",
+        "AccountsReadonlyTrailingIcon"
+      ]
+    },
+    "resources/js/features/workspace/modules/activity-log/ActivityLogView.jsx": {
+      "type": "js",
+      "exports": [
+        "ActivityLogView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-inquiry/bankInquiryConfig.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/bank-inquiry/BankInquiryView.jsx": {
+      "type": "js",
+      "exports": [
+        "BankInquiryView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-inquiry/BankReconciliationWorkspace.jsx": {
+      "type": "js",
+      "exports": [
+        "BankReconciliationWorkspace (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-inquiry/reconciliationColumns.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/bank-inquiry/reconciliationExcelParser.js": {
+      "type": "js",
+      "exports": [
+        "parseAmount",
+        "parseExcelRows",
+        "runReconciliationMatching"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/bankTransferAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildBankTransferFilters",
+        "buildBankTransferRecord",
+        "buildBankTransferRow",
+        "buildBankTransferSnapshot",
+        "buildDetailRecordFromRow",
+        "buildFormState"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/bankTransferCalculations.js": {
+      "type": "js",
+      "exports": [
+        "applyBankTransferComputedValues",
+        "buildTotals",
+        "deriveTransferAmounts",
+        "extractCleanAccountName",
+        "truncateText"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/BankTransferFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "BankTransferFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/bankTransferPayload.js": {
+      "type": "js",
+      "exports": [
+        "buildBankTransferPayload",
+        "buildGeneratedBankTransferNumber"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/BankTransferSections.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/bank-transfer/bankTransferShared.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/bank-transfer/BankTransferTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "BankTransferTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/bankTransferValidation.js": {
+      "type": "js",
+      "exports": [
+        "validateBankTransferValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/BankTransferView.jsx": {
+      "type": "js",
+      "exports": [
+        "BankTransferView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/components/BankTransferHeader.jsx": {
+      "type": "js",
+      "exports": [
+        "BankTransferHeader (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/components/TransferFeeSection.jsx": {
+      "type": "js",
+      "exports": [
+        "TransferFeeSection (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/components/TransferInfoSection.jsx": {
+      "type": "js",
+      "exports": [
+        "TransferInfoSection (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/components/TransferMoneySection.jsx": {
+      "type": "js",
+      "exports": [
+        "TransferMoneySection (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/components/TransferSummaryCards.jsx": {
+      "type": "js",
+      "exports": [
+        "TransferSummaryCards (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/components/TransferTableFilterBar.jsx": {
+      "type": "js",
+      "exports": [
+        "TransferTableFilterBar (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/bank-transfer/components/TransferValueInput.jsx": {
+      "type": "js",
+      "exports": [
+        "TransferValueInput (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/businessPartnerConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildBusinessPartnerConfig",
+        "buildBusinessPartnerRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/businessPartnerConfigCore.js": {
+      "type": "js",
+      "exports": [
+        "cloneArray",
+        "cloneFormValues",
+        "createTableConfig",
+        "createTemplate",
+        "mergeBusinessPartnerConfig",
+        "resolveBusinessPartnerConfig",
+        "resolveBusinessPartnerRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/BusinessPartnerFormSections.jsx": {
+      "type": "js",
+      "exports": [
+        "renderPartnerTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/BusinessPartnerProfileSections.jsx": {
+      "type": "js",
+      "exports": [
+        "ContactsTab",
+        "GeneralTab",
+        "ShippingTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/BusinessPartnerTransactionSections.jsx": {
+      "type": "js",
+      "exports": [
+        "BalanceTab",
+        "SalesTab",
+        "TaxTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/BusinessPartnerView.jsx": {
+      "type": "js",
+      "exports": [
+        "BusinessPartnerView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/BusinessPartnerViewShared.jsx": {
+      "type": "js",
+      "exports": [
+        "BusinessPartnerTableView",
+        "DockIcon",
+        "EmptyDataTable",
+        "FieldLabel",
+        "FormFieldRow",
+        "SectionHeading",
+        "ToolbarIconAction",
+        "buildFormState"
+      ]
+    },
+    "resources/js/features/workspace/modules/business-partner/customerBusinessPartnerConfig.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/business-partner/supplierBusinessPartnerConfig.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/cash-payment/cashPaymentAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildCashPaymentFilters",
+        "buildCashPaymentRecord",
+        "buildCashPaymentRow",
+        "buildDetailRecordFromRow",
+        "buildFormState"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/CashPaymentAttachmentModal.jsx": {
+      "type": "js",
+      "exports": [
+        "CashPaymentAttachmentModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/cashPaymentCalculations.js": {
+      "type": "js",
+      "exports": [
+        "applyCashPaymentLineItems",
+        "buildPaymentTotalAmount",
+        "formatCurrencyLabel"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/CashPaymentFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "CashPaymentFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/CashPaymentLineItemModal.jsx": {
+      "type": "js",
+      "exports": [
+        "CashPaymentLineItemModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/cashPaymentPayload.js": {
+      "type": "js",
+      "exports": [
+        "buildCashPaymentPayload",
+        "buildGeneratedCashPaymentNumber"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/CashPaymentSections.jsx": {
+      "type": "js",
+      "exports": [
+        "CashPaymentHeader",
+        "PaymentInfoSection",
+        "PaymentLineItemsSection",
+        "PaymentTableFilterBar"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/cashPaymentShared.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/cash-payment/CashPaymentTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "CashPaymentTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/cashPaymentValidation.js": {
+      "type": "js",
+      "exports": [
+        "validateCashPaymentValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/CashPaymentView.jsx": {
+      "type": "js",
+      "exports": [
+        "CashPaymentView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/components/TakeExpenseEntryModal.jsx": {
+      "type": "js",
+      "exports": [
+        "TakeExpenseEntryModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-payment/components/TakePayrollEntryModal.jsx": {
+      "type": "js",
+      "exports": [
+        "TakePayrollEntryModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/cashReceiptAdapters.js": {
+      "type": "js",
+      "exports": [
+        "applyCashReceiptLineItems",
+        "buildCashReceiptDetailRecordFromRow",
+        "buildCashReceiptFilters",
+        "buildCashReceiptFormState",
+        "buildCashReceiptRecord",
+        "buildCashReceiptRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/cashReceiptComponents.jsx": {
+      "type": "js",
+      "exports": [
+        "CashReceiptEmptyLineRow",
+        "CashReceiptSortHeader",
+        "ReceiptFilterBar"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/CashReceiptFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "CashReceiptFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/cashReceiptPayload.js": {
+      "type": "js",
+      "exports": [
+        "buildCashReceiptPayload",
+        "buildGeneratedCashReceiptNumber"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/CashReceiptTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "CashReceiptTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/cashReceiptToolbar.jsx": {
+      "type": "js",
+      "exports": [
+        "cashReceiptToolbarConfig",
+        "cashReceiptToolbarRightControls"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/cashReceiptValidation.js": {
+      "type": "js",
+      "exports": [
+        "validateCashReceiptValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/CashReceiptView.jsx": {
+      "type": "js",
+      "exports": [
+        "CashReceiptView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/cash-receipt/cashReceiptViewShared.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/cash-receipt/components/CashReceiptFormSections.jsx": {
+      "type": "js",
+      "exports": [
+        "CashReceiptHeader",
+        "ReceiptInfoSection",
+        "ReceiptLineItemsSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/currency/CurrencyFormSections.jsx": {
+      "type": "js",
+      "exports": [
+        "CurrencyDefaultAccountsSection",
+        "CurrencyGeneralSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/currency/CurrencyFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "CurrencyFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/currency/currencyShared.js": {
+      "type": "js",
+      "exports": [
+        "buildCurrencySnapshot",
+        "buildCurrencyValuesFromRecord",
+        "findCurrencyDetailRow",
+        "mapCurrencyRow",
+        "validateCurrencyValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/currency/CurrencyTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "CurrencyTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/currency/CurrencyView.jsx": {
+      "type": "js",
+      "exports": [
+        "CurrencyView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/department/DepartmentFormContent.jsx": {
+      "type": "js",
+      "exports": [
+        "DepartmentFormContent (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/department/DepartmentFormSections.jsx": {
+      "type": "js",
+      "exports": [
+        "DepartmentGeneralTab",
+        "DepartmentOpeningBalanceTab",
+        "DepartmentUsersTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/department/departmentFormShared.js": {
+      "type": "js",
+      "exports": [
+        "applyDepartmentFormChange",
+        "buildDefaultValues",
+        "buildDepartmentCode",
+        "buildDepartmentSnapshot",
+        "validateDepartmentValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/department/DepartmentFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "DepartmentFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/department/DepartmentTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "DepartmentTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/department/DepartmentView.jsx": {
+      "type": "js",
+      "exports": [
+        "DepartmentView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/employeeAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildEmployeeFilters",
+        "buildEmployeeFormValues",
+        "buildEmployeeRow",
+        "buildEmployeeSnapshot",
+        "matchesEmployeeFilter"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeAttachmentModal.jsx": {
+      "type": "js",
+      "exports": [
+        "EmployeeAttachmentModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeComponents.jsx": {
+      "type": "js",
+      "exports": [
+        "EmployeeFieldRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/employeeControls.jsx": {
+      "type": "js",
+      "exports": [
+        "AttachmentSelectButton",
+        "PrefixedInput",
+        "PrefixedTextArea",
+        "SuggestionTextInput",
+        "TableActionMenu",
+        "ToggleSwitch",
+        "ToolbarSquareButton"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeFinancialSections.jsx": {
+      "type": "js",
+      "exports": [
+        "EmployeeBankTab",
+        "EmployeeTaxTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "EmployeeFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/employeeHelpers.js": {
+      "type": "js",
+      "exports": [
+        "buildEmployeeCode",
+        "emptyStringToNull",
+        "parseCurrencyInput",
+        "parseNullableCurrencyInput",
+        "validateEmployeeWebsite"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeIdentitySections.jsx": {
+      "type": "js",
+      "exports": [
+        "EmployeeAddressTab",
+        "EmployeeGeneralTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/employeePayload.js": {
+      "type": "js",
+      "exports": [
+        "buildEmployeePayload"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeSections.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "EmployeeTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/employeeValidation.js": {
+      "type": "js",
+      "exports": [
+        "validateEmployeeFields",
+        "validateEmployeeValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/EmployeeView.jsx": {
+      "type": "js",
+      "exports": [
+        "EmployeeView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/employee/employeeViewShared.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/expense-entry/ExpenseEntryFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "ExpenseEntryFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/expense-entry/ExpenseEntryLineItemModal.jsx": {
+      "type": "js",
+      "exports": [
+        "ExpenseEntryLineItemModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/expense-entry/ExpenseEntrySections.jsx": {
+      "type": "js",
+      "exports": [
+        "ExpenseAdditionalInfoSection",
+        "ExpenseEntryHeader",
+        "ExpenseLineItemsSection",
+        "ExpenseSummarySection",
+        "ExpenseTableFilters"
+      ]
+    },
+    "resources/js/features/workspace/modules/expense-entry/expenseEntryShared.js": {
+      "type": "js",
+      "exports": [
+        "applyExpenseLineItems",
+        "buildExpenseEntryFilters",
+        "buildExpenseEntryPayload",
+        "buildExpenseEntryRecord",
+        "buildExpenseEntryRow",
+        "buildFormState",
+        "buildGeneratedExpenseEntryNumber",
+        "buildLookupLabel",
+        "formatCurrencyValue",
+        "parseNumericInput",
+        "validateExpenseEntryValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/expense-entry/ExpenseEntryTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "ExpenseEntryTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/expense-entry/ExpenseEntryView.jsx": {
+      "type": "js",
+      "exports": [
+        "ExpenseEntryView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/general-journal/generalJournalAdapters.js": {
+      "type": "js",
+      "exports": [
+        "applyJournalLineItems",
+        "buildDerivedJournalLines",
+        "buildFormState",
+        "buildGeneralJournalFilters",
+        "buildGeneralJournalRow",
+        "buildJournalRecordFromBackend",
+        "buildJournalTotals",
+        "buildRecordFromTableRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/general-journal/generalJournalConstants.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/general-journal/GeneralJournalFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "GeneralJournalFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/general-journal/generalJournalPayload.js": {
+      "type": "js",
+      "exports": [
+        "buildGeneralJournalPayload",
+        "buildGeneratedJournalNumber",
+        "validateJournalValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/general-journal/GeneralJournalSections.jsx": {
+      "type": "js",
+      "exports": [
+        "GeneralJournalHeader",
+        "JournalAdditionalInfoSection",
+        "JournalLinesSection",
+        "JournalTableFilters"
+      ]
+    },
+    "resources/js/features/workspace/modules/general-journal/generalJournalShared.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/general-journal/GeneralJournalTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "GeneralJournalTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/general-journal/GeneralJournalView.jsx": {
+      "type": "js",
+      "exports": [
+        "GeneralJournalView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessActionDock.jsx": {
+      "type": "js",
+      "exports": [
+        "GroupAccessActionButton",
+        "GroupAccessActionDock",
+        "resolveActionToneClass"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessControls.jsx": {
+      "type": "js",
+      "exports": [
+        "CopyPermissionsButton",
+        "GroupAccessCategoryList",
+        "GroupAccessUserLookupField",
+        "PermissionCell",
+        "resolveSelectedUserKey",
+        "resolveSelectedUserLabel"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "GroupAccessFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessGeneralSection.jsx": {
+      "type": "js",
+      "exports": [
+        "GroupAccessAccessOption",
+        "GroupAccessGeneralSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessRightsView.jsx": {
+      "type": "js",
+      "exports": [
+        "GroupAccessRightsView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "GroupAccessTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/groupAccessUtils.js": {
+      "type": "js",
+      "exports": [
+        "applyBackendPermissions",
+        "applyPermissionPreset",
+        "buildGeneralState",
+        "buildGroupAccessComparableState",
+        "buildGroupAccessDetailForm",
+        "buildGroupAccessPayload",
+        "buildGroupAccessPermissionsPayload",
+        "buildGroupAccessRow",
+        "buildInitialPermissionCategories",
+        "buildPresetProfile",
+        "clonePermissionCategories",
+        "filterSections",
+        "mergeGroupAccessForm",
+        "normalizeSelectedUsers",
+        "resolveDeleteConfirmationMessage"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessView.jsx": {
+      "type": "js",
+      "exports": [
+        "GroupAccessView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/group-access/GroupAccessViews.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/group-access/groupAccessViewShared.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentDetailsSection.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryAdjustmentDetailsSection (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentHeaderSection.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryAdjustmentHeader (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentImportModal.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryAdjustmentImportModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentInfoSection.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryAdjustmentInfoSection (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentItemModal.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryAdjustmentItemModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentSections.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/inventoryAdjustmentShared.js": {
+      "type": "js",
+      "exports": [
+        "buildFormValues",
+        "buildInventoryComparableSnapshot",
+        "buildInventoryDocumentNumber",
+        "buildItemFromProduct",
+        "buildTotals",
+        "cloneItems",
+        "cloneList",
+        "formatCurrencyValue",
+        "parseNumericInput",
+        "resolveCellAlignClassName",
+        "resolveInventoryDirtyState",
+        "validateInventoryAdjustmentValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentView.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryAdjustmentView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-adjustment/InventoryAdjustmentWorkspace.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryAdjustmentFormView",
+        "InventoryAdjustmentTableView"
+      ]
+    },
+    "resources/js/features/workspace/modules/inventory-inquiry/InventoryInquiryView.jsx": {
+      "type": "js",
+      "exports": [
+        "InventoryInquiryView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-category/ItemCategoryFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemCategoryFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-category/ItemCategorySections.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemCategoryAccountsTab",
+        "ItemCategoryGeneralTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-category/itemCategoryShared.js": {
+      "type": "js",
+      "exports": [
+        "buildFormValues",
+        "resolveRowAlignClassName"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-category/ItemCategoryTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemCategoryTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-category/ItemCategoryView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemCategoryView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-request/itemRequestConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildItemRequestConfig",
+        "buildItemRequestRecord",
+        "mergeItemRequestConfig"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-request/ItemRequestFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemRequestFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-request/ItemRequestItemModal.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemRequestItemModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-request/ItemRequestSections.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemRequestAdditionalInfoSection",
+        "ItemRequestDetailsSection",
+        "ItemRequestFormHeader"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-request/itemRequestShared.js": {
+      "type": "js",
+      "exports": [
+        "applyItemRequestItems",
+        "buildFormValues",
+        "buildGeneratedItemRequestNumber",
+        "buildItemRequestFilters",
+        "buildItemRequestPayload",
+        "buildItemRequestRecord",
+        "buildItemRequestRow",
+        "buildLookupLabel",
+        "cloneItems",
+        "cloneList",
+        "validateItemRequestValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-request/ItemRequestTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemRequestTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/item-request/ItemRequestView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemRequestView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/ItemGeneralSections.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemGeneralInfoSection",
+        "ItemMoreInfoSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/ItemSalesPurchaseSections.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemPurchaseTaxSection",
+        "ItemSalesInfoSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/itemsServicesConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildItemsServicesConfig",
+        "buildItemsServicesRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/ItemsServicesFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemsServicesFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/ItemsServicesPrimaryTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemGeneralTab",
+        "ItemSalesPurchaseTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/ItemsServicesSecondaryTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemAccountsTab",
+        "ItemImagesTab",
+        "ItemOtherTab",
+        "ItemStockTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/ItemsServicesTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemsServicesTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/ItemsServicesView.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemsServicesView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/itemsServicesViewShared.jsx": {
+      "type": "js",
+      "exports": [
+        "ClearableTextInput",
+        "CodeFieldRow",
+        "FormRow",
+        "LookupField",
+        "SectionHeading",
+        "SimpleTextField",
+        "buildItemsServicesFormValues",
+        "renderItemsServicesDockIcon"
+      ]
+    },
+    "resources/js/features/workspace/modules/items-services/OpeningStockModal.jsx": {
+      "type": "js",
+      "exports": [
+        "OpeningStockModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/journal-activity-log/JournalActivityLogView.jsx": {
+      "type": "js",
+      "exports": [
+        "JournalActivityLogView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/journal-activity-log/components/JournalActivityLogDetailView.jsx": {
+      "type": "js",
+      "exports": [
+        "JournalActivityLogDetailView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/journal-activity-log/components/JournalActivityLogTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "JournalActivityLogTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/payroll-entry/CopyEmployeesModal.jsx": {
+      "type": "js",
+      "exports": [
+        "CopyEmployeesModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/payroll-entry/PayrollEntryEmployeeModal.jsx": {
+      "type": "js",
+      "exports": [
+        "PayrollEntryEmployeeModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/payroll-entry/PayrollEntryFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "PayrollEntryFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/payroll-entry/PayrollEntrySections.jsx": {
+      "type": "js",
+      "exports": [
+        "PayrollAdditionalInfoSection",
+        "PayrollEmployeeSection",
+        "PayrollHeader"
+      ]
+    },
+    "resources/js/features/workspace/modules/payroll-entry/payrollEntryShared.js": {
+      "type": "js",
+      "exports": [
+        "buildDefaultValues",
+        "buildGeneratedPayrollEntryNumber",
+        "buildPayrollEntryRecord",
+        "mapPayrollEntryRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/payroll-entry/PayrollEntryTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "PayrollEntryTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/payroll-entry/PayrollEntryView.jsx": {
+      "type": "js",
+      "exports": [
+        "PayrollEntryView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/price-adjustment/priceAdjustmentConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildInventoryAdjustmentConfig",
+        "buildInventoryAdjustmentRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/price-adjustment/PriceAdjustmentView.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/purchase-payment/purchasePaymentAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildFormState",
+        "buildPurchasePaymentFilters",
+        "buildPurchasePaymentInvoiceFromRecord",
+        "buildPurchasePaymentRecordFromBackend",
+        "buildPurchasePaymentRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/purchasePaymentCalculations.js": {
+      "type": "js",
+      "exports": [
+        "applyPurchasePaymentInvoices",
+        "buildPurchasePaymentTotal",
+        "formatCurrencyLabel"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/purchasePaymentConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildPurchasePaymentConfig",
+        "buildPurchasePaymentRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/purchasePaymentConfigData.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentContentSections.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchasePaymentAdditionalInfoSection",
+        "PurchasePaymentDetailsSection",
+        "PurchasePaymentInfoSection",
+        "PurchasePaymentTableFilterBar"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchasePaymentFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentHeaderSections.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchasePaymentAmountField",
+        "PurchasePaymentHeader",
+        "PurchasePaymentHeaderIconButton"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentInvoiceModal.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchasePaymentInvoiceModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/purchasePaymentPayload.js": {
+      "type": "js",
+      "exports": [
+        "buildGeneratedPurchasePaymentNumber",
+        "buildPurchasePaymentPayload"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentSections.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/purchase-payment/purchasePaymentShared.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchasePaymentTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/purchasePaymentValidation.js": {
+      "type": "js",
+      "exports": [
+        "validatePurchasePaymentValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/purchase-payment/PurchasePaymentView.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchasePaymentView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/report-list/reportListConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildReportListConfig"
+      ]
+    },
+    "resources/js/features/workspace/modules/report-list/ReportListView.jsx": {
+      "type": "js",
+      "exports": [
+        "ReportListView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/report-list/components/ReportCard.jsx": {
+      "type": "js",
+      "exports": [
+        "ReportCard (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/report-list/components/ReportParameterFields.jsx": {
+      "type": "js",
+      "exports": [
+        "ReportBranchField",
+        "ReportCheckboxList",
+        "ReportDateField",
+        "ReportFormRow",
+        "ReportSectionHeading",
+        "buildYearOptions",
+        "getFirstDayOfMonthString",
+        "getTodayString"
+      ]
+    },
+    "resources/js/features/workspace/modules/report-list/components/ReportParameterModal.jsx": {
+      "type": "js",
+      "exports": [
+        "ReportParameterModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/report-list/components/SidebarCategoryButton.jsx": {
+      "type": "js",
+      "exports": [
+        "SidebarCategoryButton (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/report-list/utils/reportHelpers.js": {
+      "type": "js",
+      "exports": [
+        "buildReportContentState",
+        "buildResolvedReportConfig",
+        "buildVisibleSections",
+        "getIconStyles",
+        "resolveReportColumns",
+        "resolveReportParams"
+      ]
+    },
+    "resources/js/features/workspace/modules/salary-allowance/SalaryAllowanceFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalaryAllowanceFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/salary-allowance/salaryAllowanceShared.js": {
+      "type": "js",
+      "exports": [
+        "buildSalaryAllowanceEntry",
+        "buildSalaryAllowancePayload",
+        "buildSalaryAllowanceRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/salary-allowance/SalaryAllowanceTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalaryAllowanceTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/salary-allowance/SalaryAllowanceView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalaryAllowanceView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-checkin/SalesCheckinView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesCheckinView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-commission/SalesCommissionFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesCommissionFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-commission/SalesCommissionSections.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesCommissionCommissionTab",
+        "SalesCommissionOtherTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-commission/salesCommissionShared.js": {
+      "type": "js",
+      "exports": [
+        "buildCommissionFormValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-commission/SalesCommissionTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesCommissionTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-commission/SalesCommissionView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesCommissionView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-deposit/salesDepositConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildSalesDepositConfig",
+        "buildSalesDepositRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-deposit/SalesDepositFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDepositFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-deposit/SalesDepositInfoSections.jsx": {
+      "type": "js",
+      "exports": [
+        "DepositFooter",
+        "DepositInfoSection",
+        "DepositSmartlinkSection",
+        "DepositSummarySection",
+        "SalesDepositHeader",
+        "SalesDepositSettingsIcon"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-deposit/SalesDepositSections.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/sales-deposit/salesDepositShared.js": {
+      "type": "js",
+      "exports": [
+        "buildGeneratedSalesDepositNumber",
+        "buildLookupLabel",
+        "buildSalesDepositFilters",
+        "buildSalesDepositFormState",
+        "buildSalesDepositPayload",
+        "buildSalesDepositRecord",
+        "buildSalesDepositRow",
+        "parseNumericInput",
+        "validateSalesDepositValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-deposit/SalesDepositTableParts.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDepositFilterBar",
+        "SalesDepositTableCell",
+        "SalesDepositTableHeaderCell"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-deposit/SalesDepositView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDepositView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/purchaseInvoiceConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildPurchaseInvoiceConfig",
+        "buildPurchaseInvoiceRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/purchaseInvoiceConfigData.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/sales-document/PurchaseInvoiceView.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchaseInvoiceView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/purchaseReturnConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildPurchaseReturnConfig",
+        "buildPurchaseReturnRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/PurchaseReturnView.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchaseReturnView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentAdvanceEditModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentAdvanceEditModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/salesDocumentConfigCore.js": {
+      "type": "js",
+      "exports": [
+        "buildSalesDocumentRecord",
+        "buildTodayDisplayDate",
+        "mergeSalesDocumentConfigWithPage"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentCopyModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentCopyModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentCostEditModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentCostEditModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentFormHeader.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentFormHeader (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/salesDocumentFormShared.js": {
+      "type": "js",
+      "exports": [
+        "applyComputedTotals",
+        "buildDocumentComparableSnapshot",
+        "buildLookupLabel",
+        "formatCurrencyLabel",
+        "formatCurrencyValue",
+        "resolveSalesDocumentDirty",
+        "validateSalesDocumentFields",
+        "validateSalesDocumentValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentItemEditModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentItemEditModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentItemModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentItemModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesDocumentView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/salesDocumentViewShared.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentFilterBar",
+        "SalesDocumentHeaderButtons",
+        "SalesDocumentSortHeader",
+        "SalesDocumentStatusCell",
+        "buildSalesDocumentRightControls",
+        "buildSectionProps",
+        "resolveInitialSectionId",
+        "resolveSectionComponent",
+        "salesDocumentToolbarConfig"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/salesInvoiceModuleConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildSalesInvoiceConfig",
+        "buildSalesInvoiceRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesInvoiceView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesInvoiceView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/salesReturnConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildSalesReturnConfig",
+        "buildSalesReturnRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-document/SalesReturnView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesReturnView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/salesReceiptAdapters.js": {
+      "type": "js",
+      "exports": [
+        "buildSalesReceiptFilters",
+        "buildSalesReceiptFormState",
+        "buildSalesReceiptInvoiceFromRecord",
+        "buildSalesReceiptRecord",
+        "buildSalesReceiptRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/salesReceiptCalculations.js": {
+      "type": "js",
+      "exports": [
+        "applySalesReceiptInvoices",
+        "buildInvoiceSectionTitle",
+        "buildSalesReceiptSummaryValue",
+        "buildSalesReceiptTotal",
+        "buildSalesReceiptTotalOutstanding",
+        "formatCurrencyLabel",
+        "formatCurrencyValue"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/SalesReceiptComponents.jsx": {
+      "type": "js",
+      "exports": [
+        "ReadonlyTextarea",
+        "ReceiptAmountActionButton",
+        "ReceiptAmountInput",
+        "ReceiptSummaryFooter"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/salesReceiptConfig.js": {
+      "type": "js",
+      "exports": [
+        "buildSalesReceiptConfig",
+        "buildSalesReceiptRecord"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/SalesReceiptFormSections.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesReceiptAdditionalInfoSection",
+        "SalesReceiptInvoicesSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/SalesReceiptFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesReceiptFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/SalesReceiptInvoiceModal.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesReceiptInvoiceModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/salesReceiptPayload.js": {
+      "type": "js",
+      "exports": [
+        "buildGeneratedSalesReceiptNumber",
+        "buildSalesReceiptPayload"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/SalesReceiptTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesReceiptTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/salesReceiptValidation.js": {
+      "type": "js",
+      "exports": [
+        "validateSalesReceiptValues"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/SalesReceiptView.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesReceiptView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/sales-receipt/salesReceiptViewShared.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/sales-receipt/hooks/useSalesReceiptForm.js": {
+      "type": "js",
+      "exports": [
+        "useSalesReceiptForm (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/configCloneUtils.js": {
+      "type": "js",
+      "exports": [
+        "buildItemCountLabel",
+        "cloneList",
+        "toNumericValue"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/DepositWorkspaceShared.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/shared/InquiryWorkspaceView.jsx": {
+      "type": "js",
+      "exports": [
+        "InquiryWorkspaceView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/SalesDocumentSections.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/shared/TransactionWorkspaceShared.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/shared/TransferBatchWorkspaceView.jsx": {
+      "type": "js",
+      "exports": [
+        "TransferBatchWorkspaceView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/WorkOrderItemModal.jsx": {
+      "type": "js",
+      "exports": [
+        "WorkOrderItemModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/workspaceDockActions.js": {
+      "type": "js",
+      "exports": [
+        "createAttachmentDockAction",
+        "createDeleteDockAction",
+        "createDocumentDockAction",
+        "createMoreDockAction",
+        "createSaveDockAction",
+        "mapDockActions"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/deposit-workspace/DepositWorkspacePrimitives.jsx": {
+      "type": "js",
+      "exports": [
+        "DepositAmountField",
+        "DepositFooterSummary",
+        "DepositLinkedRowsSection",
+        "DepositStamp",
+        "DepositStatusPill",
+        "ReadonlyTransactionTextarea",
+        "buildDepositFormState"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/deposit-workspace/DepositWorkspaceTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "DepositTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/document-modal/DiscountInfoTab.jsx": {
+      "type": "js",
+      "exports": [
+        "DiscountInfoTab (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/document-modal/DocumentModalFields.jsx": {
+      "type": "js",
+      "exports": [
+        "DocumentModalCurrencyField",
+        "DocumentModalCurrencyReadonlyField",
+        "ReadonlyDocumentTextarea"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/document-modal/DocumentModalLayout.jsx": {
+      "type": "js",
+      "exports": [
+        "DocumentModalFooter",
+        "DocumentModalLayout (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/document-modal/PurchasePaymentInvoiceTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchasePaymentInvoiceTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/document-modal/SalesDocumentItemModalTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "ItemDetailTab",
+        "ItemInfoTab",
+        "ItemSerialTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/document-modal/SalesReceiptInvoiceTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesReceiptInvoiceTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentAdditionalInfoColumn.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentAdditionalInfoColumn (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentContentSections.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentInfoSections.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentAdditionalInfoSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentItemsSection.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentItemsSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentPrimitives.jsx": {
+      "type": "js",
+      "exports": [
+        "DocumentStamp",
+        "ReadonlyDocumentTextarea",
+        "SearchableTableSection",
+        "buildSalesDocumentFormState"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentSectionsContent.jsx": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentStatusSections.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentFooter",
+        "SalesDocumentSmartlinkSection",
+        "SalesDocumentSummarySection"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentSupplementarySections.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentAdditionalCostSection",
+        "SalesDocumentAdvancePaymentsSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/sales-document/SalesDocumentTaxShippingColumn.jsx": {
+      "type": "js",
+      "exports": [
+        "SalesDocumentTaxShippingColumn (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/TransactionDateInput.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionDateInput (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/TransactionDock.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionDock"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/TransactionFormLayout.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionFormLayout (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/TransactionPrimitives.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionFieldLabel",
+        "TransactionHeaderButton",
+        "TransactionReadonlyTextarea",
+        "TransactionSectionHeading",
+        "TransactionSectionRail",
+        "TransactionSwitch",
+        "buildCurrencyValue"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/transactionStyles.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/modules/shared/transaction/TransactionTable.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionDataTable",
+        "TransactionLineItemsSection",
+        "resolveTransactionAlignClassName"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/TransactionToolbar.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionExportExcelButton",
+        "TransactionSwitchViewButton",
+        "TransactionToolbarIconButton",
+        "TransactionToolbarSettingsButton",
+        "TransactionToolbarSplitButton"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/components/TransactionDockButton.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionDockButton"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/components/TransactionDockIcon.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionDockIcon"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/components/TransactionDualTotalCard.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionDualTotalCard"
+      ]
+    },
+    "resources/js/features/workspace/modules/shared/transaction/components/TransactionTotalCard.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionTotalCard"
+      ]
+    },
+    "resources/js/features/workspace/modules/simple-master/SimpleMasterFormFields.jsx": {
+      "type": "js",
+      "exports": [
+        "FieldLabel",
+        "MasterFieldRow",
+        "StandaloneCheckboxField"
+      ]
+    },
+    "resources/js/features/workspace/modules/simple-master/SimpleMasterFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "SimpleMasterFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/simple-master/simpleMasterShared.jsx": {
+      "type": "js",
+      "exports": [
+        "buildSimpleMasterDockActions",
+        "buildSimpleMasterFormValues",
+        "findSimpleMasterDetailRow",
+        "renderSimpleMasterCellValue",
+        "renderSimpleMasterDockIcon"
+      ]
+    },
+    "resources/js/features/workspace/modules/simple-master/SimpleMasterTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "SimpleMasterTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/supplier-price/SupplierPriceFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "SupplierPriceFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/supplier-price/SupplierPriceSections.jsx": {
+      "type": "js",
+      "exports": [
+        "SupplierPriceDetailsSection",
+        "SupplierPriceHeader",
+        "SupplierPriceInfoSection"
+      ]
+    },
+    "resources/js/features/workspace/modules/supplier-price/supplierPriceShared.js": {
+      "type": "js",
+      "exports": [
+        "buildFormValues",
+        "buildRecord",
+        "buildSupplierPricePayload",
+        "validateSupplierPrice"
+      ]
+    },
+    "resources/js/features/workspace/modules/supplier-price/SupplierPriceTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "SupplierPriceTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/supplier-price/SupplierPriceView.jsx": {
+      "type": "js",
+      "exports": [
+        "SupplierPriceView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/transaction-approval/TransactionApprovalFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionApprovalFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/transaction-approval/TransactionApprovalTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionApprovalTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/transaction-approval/TransactionApprovalView.jsx": {
+      "type": "js",
+      "exports": [
+        "TransactionApprovalView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/users-management/UserFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "UserFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/users-management/UsersManagementView.jsx": {
+      "type": "js",
+      "exports": [
+        "UsersManagementView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/users-management/UserTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "UserTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/warehouse/WarehouseFormView.jsx": {
+      "type": "js",
+      "exports": [
+        "WarehouseFormView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/warehouse/WarehouseSections.jsx": {
+      "type": "js",
+      "exports": [
+        "ClearableTextInput",
+        "PrefixedInput",
+        "PrefixedTextArea",
+        "WarehouseAddressTab",
+        "WarehouseFieldRow",
+        "WarehouseGeneralTab",
+        "WarehouseUsersTab"
+      ]
+    },
+    "resources/js/features/workspace/modules/warehouse/warehouseShared.js": {
+      "type": "js",
+      "exports": [
+        "buildFormValues",
+        "buildWarehouseEntry",
+        "cloneList",
+        "mapWarehouseTableRow"
+      ]
+    },
+    "resources/js/features/workspace/modules/warehouse/WarehouseTableView.jsx": {
+      "type": "js",
+      "exports": [
+        "WarehouseTableView (default)"
+      ]
+    },
+    "resources/js/features/workspace/modules/warehouse/WarehouseView.jsx": {
+      "type": "js",
+      "exports": [
+        "WarehouseView (default)"
+      ]
+    },
+    "resources/js/features/workspace/navigation/NavigationIcon.jsx": {
+      "type": "js",
+      "exports": [
+        "NavigationIcon (default)"
+      ]
+    },
+    "resources/js/features/workspace/navigation/NavigationTile.jsx": {
+      "type": "js",
+      "exports": [
+        "NavigationTile (default)"
+      ]
+    },
+    "resources/js/features/workspace/navigation/SidebarFlyout.jsx": {
+      "type": "js",
+      "exports": [
+        "SidebarFlyout (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/extractPreferences.js": {
+      "type": "js",
+      "exports": [
+        "extractPreferencesFromTabs"
+      ]
+    },
+    "resources/js/features/workspace/preferences/mergePreferences.js": {
+      "type": "js",
+      "exports": [
+        "mergeValuesIntoTabs"
+      ]
+    },
+    "resources/js/features/workspace/preferences/preferenceMapping.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/preferences/PreferencesApprovalView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesApprovalView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesAttachmentsView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesAttachmentsView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesChecklistView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesChecklistView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesContentPanel.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesContentPanel (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesFeatureView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesFeatureView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesLimitationsView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesLimitationsView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesLookupField.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesLookupField (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesOthersView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesOthersView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesPurchaseView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesPurchaseView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesSalesView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesSalesView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesSectionHeading.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesSectionHeading (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesSidebarContent.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesSidebarContent (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesTabPanel.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesTabPanel (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesTabs (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesTaxView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesTaxView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/PreferencesView.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferencesView (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/usePreferencesTabsState.js": {
+      "type": "js",
+      "exports": [
+        "usePreferencesTabsState (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/LimitationsComponents.jsx": {
+      "type": "js",
+      "exports": [
+        "LimitationsSection"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/LimitationsRadioGroup.jsx": {
+      "type": "js",
+      "exports": [
+        "LimitationsAdvancedRadioGroup",
+        "LimitationsCheckboxList",
+        "LimitationsSimpleRadioGroup"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/LimitationsTimingBlock.jsx": {
+      "type": "js",
+      "exports": [
+        "LimitationsNestedRadioBlock",
+        "LimitationsSearchBlock",
+        "LimitationsTimingRule"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/PreferenceAddressTextField.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferenceAddressTextField (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/PreferenceAddressTokenField.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferenceAddressTokenField (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/PreferenceCityAutocomplete.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferenceCityAutocomplete (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/PreferenceCompanyAddress.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferenceCompanyAddress (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/PreferenceField.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferenceField (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/PreferenceLookupAutocomplete.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferenceLookupAutocomplete (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/components/PreferenceSideItem.jsx": {
+      "type": "js",
+      "exports": [
+        "PreferenceSideItem (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/hooks/usePreferencesSave.js": {
+      "type": "js",
+      "exports": [
+        "usePreferencesSave (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/hooks/usePreferencesSectionHandlers.js": {
+      "type": "js",
+      "exports": [
+        "usePreferencesSectionHandlers (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/hooks/usePreferencesState.js": {
+      "type": "js",
+      "exports": [
+        "usePreferencesState (default)"
+      ]
+    },
+    "resources/js/features/workspace/preferences/purchase/PurchasePreferenceComponents.jsx": {
+      "type": "js",
+      "exports": [
+        "PurchaseDescriptionRow",
+        "PurchaseFieldControl",
+        "PurchaseGridFieldRow",
+        "PurchaseInlineCheckboxRow",
+        "PurchaseRadioGroupRow",
+        "PurchaseSection",
+        "PurchaseStandaloneLookupRow"
+      ]
+    },
+    "resources/js/features/workspace/preferences/purchase/purchasePreferenceConstants.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/preferences/purchase/purchasePreferenceHelpers.js": {
+      "type": "js",
+      "exports": [
+        "getPurchaseInfo"
+      ]
+    },
+    "resources/js/features/workspace/shared/AccountLookupControls.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountLookupField",
+        "AccountLookupTextInput"
+      ]
+    },
+    "resources/js/features/workspace/shared/amountFormatting.js": {
+      "type": "js",
+      "exports": [
+        "formatAmountInput",
+        "parseAmountInput",
+        "sanitizeAmountInput"
+      ]
+    },
+    "resources/js/features/workspace/shared/AttachmentDockButton.jsx": {
+      "type": "js",
+      "exports": [
+        "AttachmentDockButton (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/AttachmentUploadField.jsx": {
+      "type": "js",
+      "exports": [
+        "AttachmentUploadField (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/BackendLookupField.jsx": {
+      "type": "js",
+      "exports": [
+        "BackendLookupField (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/BackendLookupTextInput.jsx": {
+      "type": "js",
+      "exports": [
+        "BackendLookupTextInput (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/ChipLookupField.jsx": {
+      "type": "js",
+      "exports": [
+        "ChipLookupField (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/CityAutocompleteInput.jsx": {
+      "type": "js",
+      "exports": [
+        "CityAutocompleteInput (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/columnVisibility.js": {
+      "type": "js",
+      "exports": [
+        "cleanHeaderLabel",
+        "getColumnMinWidth",
+        "getTableSchemaKey",
+        "useColumnVisibility"
+      ]
+    },
+    "resources/js/features/workspace/shared/crudFeedback.js": {
+      "type": "js",
+      "exports": [
+        "dismissCrudLoadingToast",
+        "finishCrudLoadingToast",
+        "showCrudErrorToast",
+        "showCrudLoadingToast",
+        "showCrudSuccessToast",
+        "showCrudValidationToast"
+      ]
+    },
+    "resources/js/features/workspace/shared/crudFormActions.js": {
+      "type": "js",
+      "exports": [
+        "rejectCrudFormAction"
+      ]
+    },
+    "resources/js/features/workspace/shared/CrudStatusMessage.jsx": {
+      "type": "js",
+      "exports": [
+        "CrudStatusMessage (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/dateDefaults.js": {
+      "type": "js",
+      "exports": [
+        "buildTodayDisplayDate",
+        "formatDisplayDate"
+      ]
+    },
+    "resources/js/features/workspace/shared/DockActionButton.jsx": {
+      "type": "js",
+      "exports": [
+        "DockActionButton (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/DockSaveButton.jsx": {
+      "type": "js",
+      "exports": [
+        "DockSaveButton (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/documentNumberUtils.js": {
+      "type": "js",
+      "exports": [
+        "buildGeneratedDocNumber"
+      ]
+    },
+    "resources/js/features/workspace/shared/exportMapper.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/shared/exportUtils.js": {
+      "type": "js",
+      "exports": [
+        "exportToCSV",
+        "exportToExcelXML",
+        "getFriendlyTitle",
+        "importFromFile",
+        "printTable"
+      ]
+    },
+    "resources/js/features/workspace/shared/formatTableTextValue.js": {
+      "type": "js",
+      "exports": [
+        "formatTableTextValue (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/FormattedAmountInput.jsx": {
+      "type": "js",
+      "exports": [
+        "FormattedAmountInput (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/formValidation.js": {
+      "type": "js",
+      "exports": [
+        "areComparableValuesEqual",
+        "normalizeComparableValue",
+        "resolveDocumentRequirementValue",
+        "resolveSaveDisabledState",
+        "validateRequiredChecks"
+      ]
+    },
+    "resources/js/features/workspace/shared/Icons.jsx": {
+      "type": "js",
+      "exports": [
+        "AlertTriangleIcon",
+        "ArrowRightLeftIcon",
+        "BellIcon",
+        "CalcIcon",
+        "CalculatorIcon",
+        "CalendarIcon",
+        "ChevronDownIcon",
+        "CircleCheckIcon",
+        "CloseIcon",
+        "CogIcon",
+        "ColumnsIcon",
+        "CrossStatusIcon",
+        "DownloadIcon",
+        "ExternalLinkIcon",
+        "FileIcon",
+        "FunnelIcon",
+        "IdeaIcon",
+        "InfoIcon",
+        "KebabIcon",
+        "LinkIcon",
+        "LoadingIcon",
+        "LogoutIcon",
+        "PaperclipIcon",
+        "PencilIcon",
+        "PinIcon",
+        "PlusIcon",
+        "PrintIcon",
+        "RefreshIcon",
+        "SaveIcon",
+        "SearchIcon",
+        "ShareIcon",
+        "ShieldIcon",
+        "SortIcon",
+        "TableActionIcon",
+        "TrashIcon",
+        "UploadIcon",
+        "ViewModeIcon"
+      ]
+    },
+    "resources/js/features/workspace/shared/implementedWorkspacePageIds.js": {
+      "type": "js",
+      "exports": [
+        "implementedWorkspacePageIds (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/ImportColumnMappingSelect.jsx": {
+      "type": "js",
+      "exports": [
+        "ImportColumnMappingSelect (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/ImportItemsModal.jsx": {
+      "type": "js",
+      "exports": [
+        "ImportItemsModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/importMappingConstants.js": {
+      "type": "js",
+      "exports": [
+        "autoDetectMapping"
+      ]
+    },
+    "resources/js/features/workspace/shared/importMergeUtils.js": {
+      "type": "js",
+      "exports": [
+        "mergeImportedItems"
+      ]
+    },
+    "resources/js/features/workspace/shared/indonesianCities.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/shared/LoadingOverlay.jsx": {
+      "type": "js",
+      "exports": [
+        "LoadingOverlay (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/LookupPrimitives.jsx": {
+      "type": "js",
+      "exports": [
+        "LookupDropdownSurface",
+        "LookupEmptyState"
+      ]
+    },
+    "resources/js/features/workspace/shared/MoneyMovementLineItemModal.jsx": {
+      "type": "js",
+      "exports": [
+        "MoneyMovementLineItemModal (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/PanelActions.jsx": {
+      "type": "js",
+      "exports": [
+        "PanelActions (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/promptLookupSelection.jsx": {
+      "type": "js",
+      "exports": [
+        "promptSelectBackendRecord"
+      ]
+    },
+    "resources/js/features/workspace/shared/referenceLookupData.js": {
+      "type": "js",
+      "exports": []
+    },
+    "resources/js/features/workspace/shared/ReferenceLookupInput.jsx": {
+      "type": "js",
+      "exports": [
+        "ReferenceLookupInput (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/SecondaryTabs.jsx": {
+      "type": "js",
+      "exports": [
+        "SecondaryTab",
+        "SecondaryTabs (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/SectionTab.jsx": {
+      "type": "js",
+      "exports": [
+        "SectionTab (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/SortableTableHeaderCell.jsx": {
+      "type": "js",
+      "exports": [
+        "SortableTableHeaderCell (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/TableToolbar.jsx": {
+      "type": "js",
+      "exports": [
+        "TableToolbar (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/transactionFormatters.js": {
+      "type": "js",
+      "exports": [
+        "buildFilterOptions",
+        "buildLookupLabel",
+        "formatCurrencyValue",
+        "formatFileSize",
+        "parseNumericInput"
+      ]
+    },
+    "resources/js/features/workspace/shared/useColumnResize.js": {
+      "type": "js",
+      "exports": [
+        "useColumnResize"
+      ]
+    },
+    "resources/js/features/workspace/shared/UserAvatar.jsx": {
+      "type": "js",
+      "exports": [
+        "UserAvatar (default)",
+        "getUserInitials"
+      ]
+    },
+    "resources/js/features/workspace/shared/useTableSort.js": {
+      "type": "js",
+      "exports": [
+        "useTableSort (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/workspaceAvailability.js": {
+      "type": "js",
+      "exports": [
+        "isPreferenceChecklistItemInactive",
+        "isReportCategoryInactive",
+        "isWorkspaceControlInactive",
+        "isWorkspacePageInactive"
+      ]
+    },
+    "resources/js/features/workspace/shared/components/AccountLookupSearchInput.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountLookupSearchInput (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/components/AccountLookupSuggestions.jsx": {
+      "type": "js",
+      "exports": [
+        "AccountLookupSuggestions (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/components/AddressStack.jsx": {
+      "type": "js",
+      "exports": [
+        "AddressStack (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/hooks/useAccountLookupController.js": {
+      "type": "js",
+      "exports": [
+        "buildAccountLookupLabel",
+        "buildAccountLookupMeta",
+        "normalizeSelectedLabels",
+        "translateAccountType",
+        "useAccountLookupController (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/hooks/useFormDraftState.js": {
+      "type": "js",
+      "exports": [
+        "useFormDraftState"
+      ]
+    },
+    "resources/js/features/workspace/shared/hooks/useFormLineItems.js": {
+      "type": "js",
+      "exports": [
+        "useFormLineItems"
+      ]
+    },
+    "resources/js/features/workspace/shared/hooks/useFormValuesSync.js": {
+      "type": "js",
+      "exports": [
+        "useFormValuesSync"
+      ]
+    },
+    "resources/js/features/workspace/shared/hooks/useTransactionDetailLoader.js": {
+      "type": "js",
+      "exports": [
+        "useTransactionDetailLoader"
+      ]
+    },
+    "resources/js/features/workspace/shared/hooks/useTransactionForm.js": {
+      "type": "js",
+      "exports": [
+        "buildWorkspaceDockActions",
+        "useTransactionForm"
+      ]
+    },
+    "resources/js/features/workspace/shared/toolbar/toolbarConstants.js": {
+      "type": "js",
+      "exports": [
+        "cleanRightControls",
+        "hasFunnelButton",
+        "mapImportRow"
+      ]
+    },
+    "resources/js/features/workspace/shared/toolbar/ToolbarExportSplitButton.jsx": {
+      "type": "js",
+      "exports": [
+        "ToolbarExportSplitButton (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/toolbar/ToolbarIconButton.jsx": {
+      "type": "js",
+      "exports": [
+        "ToolbarIconButton (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/toolbar/ToolbarImportButton.jsx": {
+      "type": "js",
+      "exports": [
+        "ToolbarImportButton (default)"
+      ]
+    },
+    "resources/js/features/workspace/shared/toolbar/ToolbarSettingsMenu.jsx": {
+      "type": "js",
+      "exports": [
+        "ToolbarSettingsMenu (default)"
+      ]
+    },
+    "resources/js/layouts/AppLayout.jsx": {
+      "type": "js",
+      "exports": [
+        "AppLayout (default)"
+      ]
+    },
+    "resources/js/layouts/AuthLayout.jsx": {
+      "type": "js",
+      "exports": [
+        "AuthLayout (default)"
+      ]
+    },
+    "resources/js/layouts/WorkspaceLayout.jsx": {
+      "type": "js",
+      "exports": [
+        "WorkspaceLayout (default)"
+      ]
+    },
+    "resources/js/pages/DashboardPage.jsx": {
+      "type": "js",
+      "exports": [
+        "DashboardPage (default)"
+      ]
+    },
+    "resources/js/pages/ErrorPage.jsx": {
+      "type": "js",
+      "exports": [
+        "ErrorPage (default)"
+      ]
+    },
+    "resources/js/pages/HomePage.jsx": {
+      "type": "js",
+      "exports": [
+        "HomePage (default)"
+      ]
+    },
+    "resources/js/pages/RegisterPage.jsx": {
+      "type": "js",
+      "exports": [
+        "RegisterPage (default)"
+      ]
+    },
+    "resources/js/pages/ResetPasswordPage.jsx": {
+      "type": "js",
+      "exports": [
+        "ResetPasswordPage (default)"
+      ]
+    },
+    "routes/api.php": {
+      "type": "php",
+      "class": "",
+      "methods": []
+    },
+    "routes/console.php": {
+      "type": "php",
+      "class": "",
+      "methods": []
+    },
+    "routes/web.php": {
+      "type": "php",
+      "class": "",
+      "methods": []
+    }
+  }
+}

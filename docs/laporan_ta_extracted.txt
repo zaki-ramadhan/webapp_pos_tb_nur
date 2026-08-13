@@ -1,0 +1,2356 @@
+INTEGRASI ALGORITMA APRIORI DAN ANALISIS ABC UNTUK ANALISIS POLA PENJUALAN PRODUK BERBASIS APLIKASI POS PADA TOKO BANGUNAN TB NUR
+TUGAS AKHIR
+Sebagai salah satu syarat untuk menyelesaikan
+Program Diploma III Teknik Informatika
+Politeknik Negeri Indramayu
+Oleh:
+ZAKI RAMADHAN
+NIM. 2303108
+PROGRAM STUDI TEKNIK INFORMATIKA
+JURUSAN TEKNIK INFORMATIKA
+POLITEKNIK NEGERI INDRAMAYU
+AGUSTUS 2026
+INTEGRASI ALGORITMA APRIORI DAN ANALISIS ABC UNTUK ANALISIS POLA PENJUALAN PRODUK BERBASIS APLIKASI POS PADA TOKO BANGUNAN TB NUR
+TUGAS AKHIR
+Sebagai salah satu syarat untuk menyelesaikan
+Program Diploma III Teknik Informatika
+Politeknik Negeri Indramayu
+Oleh:
+ZAKI RAMADHAN
+NIM. 2303108
+PROGRAM STUDI TEKNIK INFORMATIKA
+JURUSAN TEKNIK INFORMATIKA
+POLITEKNIK NEGERI INDRAMAYU
+AGUSTUS 2026
+HALAMAN PENGESAHAN
+Tugas Akhir ini diajukan oleh :
+Nama: Zaki Ramadhan
+NIM: 2303108
+Program Studi: Diploma III Teknik Informatika
+Judul : Integrasi Algoritma Apriori dan Analisis ABC Untuk Analisis Pola Penjualan Produk Berbasis Aplikasi Pos Pada Toko Bangunan TB NUR
+Pembimbing: Dian Pramadhana, M.Kom. 
+NIP. 199302282022031007.........................
+Telah berhasil dipertahankan dihadapan dewan penguji pada tanggal 3 Agustus 2026 dan diterima sebagai bagian persyaratan yang diperlukan untuk memperoleh gelar Ahli Madya Program Studi Diploma III Teknik Informatika, Jurusan Teknik Informatika, Politeknik Negeri Indramayu.
+DEWAN PENGUJI
+Ketua Penguji: ............................................ 
+NIP. ............................................................
+Anggota: ............................................ 
+Penguji INIP. ............................................................
+Anggota: Dian Pramadhana, M.Kom.
+Penguji IINIP. 199302282022031007.........................
+Indramayu, 3 Agustus 2026
+Ketua Jurusan Teknik Informatika
+Eka Ismantohadi, S.Kom., M.Eng.
+NIP. 198107092021211005
+PERNYATAAN
+Dengan ini saya menyatakan dengan sesungguhnya bahwa Tugas Akhir ini adalah asli hasil karya saya sendiri serta Tugas Akhir ini tidak terdapat karya yang pernah diajukan untuk memperoleh gelar Ahli Madya Terapan di suatu Perguruan Tinggi, dan sepanjang pengetahuan saya juga tidak terdapat karya atau pendapat yang pernah ditulis atau diterbitkan oleh orang lain, kecuali yang secara tertulis dirujuk dalam naskah ini dan disebutkan dalam daftar pustaka.
+Indramayu, 3 Agustus 2026
+Yang menyatakan,
+Zaki Ramadhan
+NIM. 2303108
+ABSTRAK
+Toko Bangunan (TB) NUR menghadapi kendala dalam memanfaatkan data transaksi penjualan yang tercatat pada sistem Point of Sale (POS). Selama ini, data transaksi tersebut hanya menumpuk sebagai arsip digital tanpa dianalisis lebih lanjut untuk mendukung strategi bisnis. Akibatnya, penataan tata letak barang pada rak toko kurang optimal dan pemilik kesulitan menentukan prioritas ketersediaan stok barang berdasarkan kontribusi penjualannya. Penelitian ini bertujuan untuk membangun modul dasbor analitik pada aplikasi POS TB NUR dengan mengintegrasikan algoritma Apriori dan analisis ABC. Algoritma Apriori diterapkan untuk menganalisis pola pembelian konsumen guna menemukan kombinasi produk yang sering dibeli secara bersamaan (market basket analysis), sedangkan analisis ABC digunakan untuk mengklasifikasikan produk ke dalam kategori A, B, dan C berdasarkan nilai kontribusi penjualannya terhadap total pendapatan toko. Hasil analisis dari kedua metode ini diintegrasikan ke dalam visualisasi dasbor berupa matriks keputusan yang menyajikan rekomendasi tata letak produk (display) dan strategi promosi penjualan (bundling). Berdasarkan hasil pengujian, sistem ini dapat membantu pemilik toko dalam mengidentifikasi produk unggulan kategori A yang menyumbang omzet terbesar serta menemukan hubungan asosiasi produk yang kuat untuk meningkatkan penjualan silang (cross-selling).
+Kata kunci: Point of Sale, Algoritma Apriori, Analisis ABC, Dasbor Analitik, Pola Penjualan.
+ABSTRACT
+TB NUR building supply store faces challenges in utilizing sales transaction data recorded in its Point of Sale (POS) system. So far, this data has only accumulated as a digital archive without further analysis to support business strategies. Consequently, the shelf display layout is suboptimal, and the owner struggles to determine stock availability priorities based on sales contributions. This study aims to build an analytical dashboard module in the TB NUR POS application by integrating the Apriori algorithm and ABC analysis. The Apriori algorithm is applied to analyze consumer buying patterns to find combinations of products frequently purchased together (market basket analysis), while the ABC analysis is used to classify products into categories A, B, and C based on their sales contribution value to the total store revenue. The analytical results from both methods are integrated into a dashboard visualization in the form of a decision matrix that provides product layout (display) recommendations and sales promotion (bundling) strategies. Based on the test results, this system can help the store owner identify category A top-performing products that contribute the most revenue and discover strong product association rules to boost cross-selling.
+Keywords: Point of Sale, Apriori Algorithm, ABC Analysis, Analytical Dashboard, Sales Patterns.
+MOTTO
+“Selesaikan apa yang harus diselesaikan.”
+KATA PENGANTAR
+Puji syukur penulis panjatkan kehadirat Allah SWT karena atas rahmat dan karunia-Nya penulis dapat menyelesaikan Laporan Tugas Akhir yang berjudul “INTEGRASI ALGORITMA APRIORI DAN ANALISIS ABC UNTUK ANALISIS POLA PENJUALAN PRODUK BERBASIS APLIKASI POS PADA TOKO BANGUNAN TB NUR” dengan baik. Laporan Tugas Akhir ini disusun sebagai salah satu syarat untuk menyelesaikan pendidikan pada Program Studi D3 Teknik Informatika Politeknik Negeri Indramayu.
+Dalam penyusunan laporan ini, penulis memperoleh banyak bantuan, dukungan, serta bimbingan dari berbagai pihak. Oleh karena itu, penulis mengucapkan terima kasih kepada:
+Bapak Ir. Rofan Aziz, S.T., M.T., IPM., selaku Direktur Politeknik Negeri Indramayu.
+Bapak Eka Ismantohadi, S.Kom., M.Eng., selaku Ketua Jurusan Teknik Informatika Politeknik Negeri Indramayu.
+Bapak Muhamad Mustamiin, S.Pd., M.Kom., selaku Ketua Program Studi D3 Teknik Informatika Politeknik Negeri Indramayu. 
+Bapak Dian Pramadhana, M.Kom. selaku dosen pembimbing yang telah memberikan arahan dan bimbingan. 
+Kedua orang tua yang telah memberikan doa, dukungan, semangat, dan motivasi kepada penulis selama proses perkuliahan hingga penyusunan Tugas Akhir ini selesai.
+Penulis menyadari bahwa laporan ini masih memiliki kekurangan. Oleh karena itu, kritik dan saran yang membangun sangat diharapkan demi perbaikan di masa mendatang. Semoga laporan ini dapat memberikan manfaat bagi pembaca.
+Indramayu, 12 Juni 2026
+Penulis
+DAFTAR ISI
+HALAMAN PENGESAHANiii
+PERNYATAANiv
+ABSTRAKv
+ABSTRACTvi
+MOTTOvii
+KATA PENGANTARviii
+DAFTAR ISIix
+DAFTAR TABELxv
+DAFTAR GAMBARxvi
+DAFTAR LAMPIRANxxi
+BAB I PENDAHULUAN1
+1.1 Latar Belakang Masalah1
+1.2 Rumusan Masalah2
+1.3 Batasan Masalah3
+1.4 Tujuan3
+1.5 Manfaat3
+1.6 Sistematika Penulisan4
+BAB II LANDASAN TEORI6
+2.1 Penelitian Terdahulu6
+2.2 Point of Sale (POS)7
+2.3 Data Mining8
+2.4 Algoritma Apriori8
+2.5 Analisis ABC9
+2.6 Visual Studio Code (VSCode)11
+2.7 Draw.io11
+2.8 Laragon11
+2.9 ReactJS11
+2.10 Inertia.js11
+2.11 TailwindCSS12
+2.12 PHP12
+2.13 Laravel12
+2.14 MySQL12
+2.15 Unfield Modeling Language (UML)12
+2.16 Use case Diagram12
+2.17 Class Diagram14
+2.18 Entity Relationship Diagram (ERD)15
+2.19 Flowchart15
+BAB III METODE PELAKSANAAN19
+3.1 Metode Pelaksanaan19
+3.1.1 Pengumpulan Data Transaksi20
+3.1.2 Pra-pemrosesan Data Transaksi20
+3.2 Analisis Kebutuhan21
+3.2.1 Analisis Kebutuhan Non-Fungsional21
+3.2.2 Analisisis Kebutuhan Fungsional22
+3.3 Perancangan Sistem24
+3.3.1  Flowchart Diagram24
+3.3.1.1 Flowchart Pengolahan Master Data & CRUD Umum24
+3.3.1.2 Flowchart Transaksi Penjualan25
+3.3.1.3 Flowchart Transaksi Pembelian25
+3.3.1.4 Flowchart Keuangan, Kas, Bank & Beban26
+3.3.1.5 Flowchart Pemrosesan Algoritma Apriori27
+3.3.1.6 Flowchart Analisis ABC & Penyesuaian Stok28
+3.3.2 Use case Diagram29
+3.3.3 Class Diagram30
+3.3.3.1 Class Diagram Modul Pengguna dan Otentikasi30
+3.3.3.2 Class Diagram Modul Barang dan Persediaan31
+3.3.3.3 Class Diagram Modul Mitra Usaha dan SDM32
+3.3.3.4 Class Diagram Modul Transaksi Utama33
+3.3.3.5 Class Diagram Modul Keuangan, Kas, dan Bank34
+3.3.3.6 Class Diagram Modul Algoritma dan Analisis Data35
+3.3.4 Entity Relationship Diagram (ERD)36
+3.3.4.1 ERD Pengguna & Akses36
+3.3.4.2 ERD SDM & Mitra Usaha36
+3.3.4.3 ERD Barang & Stok37
+3.3.4.4 ERD Dokumen Transaksi & Detail38
+3.3.4.5 ERD Keuangan, Log & Pengaturan39
+3.3.5 Perancangan Basis Data40
+3.3.5.1 Tabel users40
+3.3.5.2 Tabel roles41
+3.3.5.3 Tabel role_user41
+3.3.5.4 Tabel access_groups41
+3.3.5.5 Tabel access_group_permissions41
+3.3.5.6 Tabel access_group_user42
+3.3.5.7 Tabel employees42
+3.3.5.8 Tabel employee_bank_accounts42
+3.3.5.9 Tabel salary_allowances43
+3.3.5.10 Tabel sales_checkins43
+3.3.5.11 Tabel customers43
+3.3.5.12 Tabel suppliers44
+3.3.5.13 Tabel supplier_prices44
+3.3.5.14 Tabel product_categories44
+3.3.5.15 Tabel products44
+3.3.5.16 Tabel product_prices45
+3.3.5.17 Tabel product_unit_conversions45
+3.3.5.18 Tabel product_group_items46
+3.3.5.19 Tabel units46
+3.3.5.20 Tabel warehouses46
+3.3.5.21 Tabel inventory_batches46
+3.3.5.22 Tabel operation_documents47
+3.3.5.23 Tabel operation_document_lines47
+3.3.5.24 Tabel operation_document_user48
+3.3.5.25 Tabel accounts48
+3.3.5.26 Tabel account_user48
+3.3.5.27 Tabel bank_transfers48
+3.3.5.28 Tabel preference_settings49
+3.3.5.29 Tabel activity_Logs49
+3.3.6 Implementasi Algoritma Apriori49
+3.3.7 Implementasi Analisis ABC50
+3.3.8 Penyajian Hasil Analisis50
+3.3.9 Evaluasi Sistem51
+3.4 Pengujian51
+3.5 Pemeliharaan51
+BAB IV HASIL DAN PEMBAHASAN53
+4.1 Hasil53
+4.1.1 Hasil Penerapan dan Perhitungan Algoritma Apriori54
+4.1.2 Hasil Penerapan dan Perhitungan Analisis ABC Pareto54
+4.2 Pembahasan55
+4.2.1 Pengumpulan dan Pra-pemrosesan Data Transaksi55
+4.2.2 Implementasi Basis Data56
+4.2.2.1 Tabel users56
+4.2.2.2 Tabel roles56
+4.2.2.3 Tabel role_user56
+4.2.2.4 Tabel access_groups57
+4.2.2.5 Tabel access_group_permissions57
+4.2.2.6 Tabel access_group_user57
+4.2.2.7 Tabel employees57
+4.2.2.8 Tabel employee_bank_accounts58
+4.2.2.9 Tabel salary_allowances59
+4.2.2.10 Tabel customers59
+4.2.2.11 Tabel suppliers60
+4.2.2.12 Tabel product_categories60
+4.2.2.13 Tabel products61
+4.2.2.14 Tabel product_group_items61
+4.2.2.15 Tabel units61
+4.2.2.16 Tabel warehouses62
+4.2.2.17 Tabel inventory_batches62
+4.2.2.18 Tabel operation_documents62
+4.2.2.19 Tabel operation_document_lines63
+4.2.2.20 Tabel operation_document_user64
+4.2.2.21 Tabel accounts64
+4.2.2.22 Tabel account_user64
+4.2.2.23 Tabel preference_settings65
+4.2.2.24 Tabel activity_Logs65
+4.2.3 Implementasi Desain Antarmuka66
+4.2.3.1 Antarmuka Halaman Login66
+4.2.3.2 Antarmuka Halaman Register67
+4.2.3.3 Antarmuka Halaman Dashboard67
+4.2.3.4 Antarmuka Halaman Preferensi70
+4.2.3.5 Antarmuka Halaman Gaji atau Tunjangan70
+4.2.3.6 Antarmuka Halaman Karyawan71
+4.2.3.7 Antarmuka Halaman Log Aktivitas72
+4.2.3.8 Antarmuka Halaman Akun Perkiraan72
+4.2.3.9 Antarmuka Halaman Pencatatan Beban73
+4.2.3.10 Antarmuka Halaman Pencatatan Gaji74
+4.2.3.11 Antarmuka Halaman Jurnal Umum75
+4.2.3.12 Antarmuka Halaman Log Aktivitas Jurnal76
+4.2.3.13 Antarmuka Halaman Pembayaran77
+4.2.3.14 Antarmuka Halaman Penerimaan78
+4.2.3.15 Antarmuka Halaman Transfer Bank79
+4.2.3.16 Antarmuka Halaman Histori Bank80
+4.2.3.17 Antarmuka Halaman Uang Muka Penjualan81
+4.2.3.18 Antarmuka Halaman Faktur Penjualan82
+4.2.3.19 Antarmuka Halaman Penerimaan Penjualan83
+4.2.3.20 Antarmuka Halaman Retur Penjualan84
+4.2.3.21 Antarmuka Halaman Pelanggan85
+4.2.3.22 Antarmuka Halaman Faktur Pembelian86
+4.2.3.23 Antarmuka Halaman Pembayaran Pembelian87
+4.2.3.24 Antarmuka Halaman Retur Pembelian88
+4.2.3.25 Antarmuka Halaman Pemasok89
+4.2.3.26 Antarmuka Halaman Penyesuaian Persediaan90
+4.2.3.27 Antarmuka Halaman Barang91
+4.2.3.28 Antarmuka Halaman Gudang92
+4.2.3.29 Antarmuka Halaman Satuan Barang93
+4.2.3.30 Antarmuka Halaman Kategori Barang94
+4.2.3.31 Antarmuka Halaman Barang per Gudang95
+4.2.3.32 Antarmuka Halaman Barang Stok Minimum96
+4.2.4 Implementasi Algoritma Apriori dan Analisis ABC96
+BAB V PENUTUP108
+5.1 Kesimpulan108
+5.2 Saran108
+DAFTAR PUSTAKA110
+DAFTAR LAMPIRAN113
+DAFTAR TABEL
+Tabel 2.1 Matriks Perbandingan Penelitian Terdahulu6
+Tabel 2.2 Simbol-simbol Use case Diagram13
+Tabel 2.3 Simbol-simbol Sequence Diagram14
+Tabel 2.4 Simbol-simbol ERD15
+Tabel 2.5 Simbol Arus (FlowDirectionSymbols)15
+Tabel 2.5 Simbol Proses (ProcessingSymbols)16
+Tabel 2.6 Simbol I/O (Input-Output)17
+DAFTAR GAMBAR
+Gambar 3.1. Metode Waterfall19
+Gambar 3.2. Alur Pra-pemrosesan Data Transaksi Penjualan21
+Gambar 3.3. Flowchart Pengolahan Master Data & CRUD Umum24
+Gambar 3.4. Flowchart Transaksi Penjualan25
+Gambar 3.5. Flowchart Transaksi Pembelian26
+Gambar 3.6. Flowchart Keuangan, Kas, Bank & Beban27
+Gambar 3.7. Flowchart Pemrosesan Algoritma Apriori28
+Gambar 3.8. Flowchart Analisis ABC & Penyesuaian Stok29
+Gambar 3.9. Use case Diagram30
+Gambar 3.10. Class Diagram Modul Pengguna dan Otentikasi31
+Gambar 3.11. Class Diagram Modul Barang dan Persediaan32
+Gambar 3.12. Class Diagram Modul Mitra Usaha dan SDM33
+Gambar 3.13. Class Diagram Modul Transaksi Utama34
+Gambar 3.14. Class Diagram Modul Keuangan, Kas, dan Bank35
+Gambar 3.15. Class Diagram Modul Algoritma dan Analisis Data35
+Gambar 3.16. ERD Pengguna & Akses36
+Gambar 3.17. ERD SDM & Mitra Usaha36
+Gambar 3.18. ERD SDM & Mitra Usaha (2)37
+Gambar 3.19. ERD Barang & Stok38
+Gambar 3.20. ERD Dokumen Transaksi & Detail39
+Gambar 3.21. ERD Keuangan, Log & Pengaturan40
+Gambar 4.1. Tabel users56
+Gambar 4.2. Tabel users (2)56
+Gambar 4.3. Tabel roles56
+Gambar 4.4. Tabel role_user56
+Gambar 4.5. Tabel access_group57
+Gambar 4.6. Tabel access_group_permissions57
+Gambar 4.7. Tabel access_group_user57
+Gambar 4.8. Tabel employees57
+Gambar 4.9. Tabel employees (2)58
+Gambar 4.10. Tabel employees (3)58
+Gambar 4.11. Tabel employees (4)58
+Gambar 4.12. Tabel employee_bank_accounts58
+Gambar 4.13. Tabel salary_allowances59
+Gambar 4.14. Tabel customers59
+Gambar 4.15. Tabel customers (2)59
+Gambar 4.16. Tabel suppliers60
+Gambar 4.17. Tabel suppliers (2)60
+Gambar 4.18. Tabel product_categories60
+Gambar 4.19. Tabel products61
+Gambar 4.20. Tabel products (2)61
+Gambar 4.21. Tabel product_group_items61
+Gambar 4.22. Tabel units61
+Gambar 4.23. Tabel warehouses62
+Gambar 4.24. Tabel warehouses (2)62
+Gambar 4.25. Tabel inventory_batches62
+Gambar 4.26. Tabel inventory_batches (2)62
+Gambar 4.27. Tabel operation_document62
+Gambar 4.28. Tabel operation_document (2)63
+Gambar 4.29. Tabel operation_document (2)63
+Gambar 4.30. Tabel operation_document (3)63
+Gambar 4.31. Tabel operation_document (4)63
+Gambar 4.32. Tabel operation_document_lines63
+Gambar 4.33. Tabel operation_document_lines (2)64
+Gambar 4.34. Tabel operation_document_user64
+Gambar 4.35. Tabel accounts64
+Gambar 4.36. Tabel accounts (2)64
+Gambar 4.37. Tabel account_user64
+Gambar 4.38. Tabel preference_settings65
+Gambar 4.39. Tabel activity_Logs65
+Gambar 4.40. Tabel activity_Logs (2)66
+Gambar 4.41. Tabel activity_Logs (3)66
+Gambar 4.42. Antarmuka Halaman Login67
+Gambar 4.43. Antarmuka Halaman Register67
+Gambar 4.44. Antarmuka Halaman Dashboard68
+Gambar 4.45. Antarmuka Halaman Dashboard (2)68
+Gambar 4.46. Antarmuka Halaman Dashboard (3)68
+Gambar 4.47. Antarmuka Halaman Dashboard (4)69
+Gambar 4.48. Antarmuka Halaman Dashboard (5)69
+Gambar 4.49. Antarmuka Halaman Dashboard (6)69
+Gambar 4.50. Antarmuka Halaman Preferensi70
+Gambar 4.51. Antarmuka Halaman Gaji atau Tunjangan70
+Gambar 4.52. Antarmuka Halaman Gaji atau Tunjangan (2)71
+Gambar 4.53. Antarmuka Halaman Karyawan71
+Gambar 4.54. Antarmuka Halaman Karyawan (2)72
+Gambar 4.55. Antarmuka Halaman Log Aktivitas72
+Gambar 4.56. Antarmuka Halaman Akun Perkiraan73
+Gambar 4.57. Antarmuka Halaman Akun Perkiraan (2)73
+Gambar 4.58. Antarmuka Halaman Pencatatan Beban74
+Gambar 4.59. Antarmuka Halaman Pencatatan Beban (2)74
+Gambar 4.60. Antarmuka Halaman Pencatatan Gaji75
+Gambar 4.61. Antarmuka Halaman Pencatatan Gaji (2)75
+Gambar 4.62. Antarmuka Halaman Jurnal Umum76
+Gambar 4.63. Antarmuka Halaman Jurnal Umum (2)76
+Gambar 4.64. Antarmuka Halaman Log Aktivitas Jurnal77
+Gambar 4.65. Antarmuka Halaman Log Aktivitas Jurnal (2)77
+Gambar 4.66. Antarmuka Halaman Pembayaran78
+Gambar 4.67. Antarmuka Halaman Pembayaran (2)78
+Gambar 4.68. Antarmuka Halaman Penerimaan79
+Gambar 4.69. Antarmuka Halaman Penerimaan (2)79
+Gambar 4.70. Antarmuka Halaman Transfer Bank80
+Gambar 4.71. Antarmuka Halaman Transfer Bank (2)80
+Gambar 4.72. Antarmuka Halaman Histori Bank81
+Gambar 4.73. Antarmuka Halaman Uang Muka Penjualan81
+Gambar 4.74. Antarmuka Halaman Uang Muka Penjualan (2)82
+Gambar 4.75. Antarmuka Halaman Faktur Penjualan82
+Gambar 4.76. Antarmuka Halaman Faktur Penjualan (2)83
+Gambar 4.77. Antarmuka Halaman Penerimaan Penjualan83
+Gambar 4.78. Antarmuka Halaman Penerimaan Penjualan (2)84
+Gambar 4.79. Antarmuka Halaman Penerimaan Penjualan (3)84
+Gambar 4.80. Antarmuka Halaman Retur Penjualan85
+Gambar 4.81. Antarmuka Halaman Retur Penjualan (2)85
+Gambar 4.82. Antarmuka Halaman Pelanggan86
+Gambar 4.83. Antarmuka Halaman Pelanggan (2)86
+Gambar 4.84. Antarmuka Halaman Faktur Pembelian87
+Gambar 4.85. Antarmuka Halaman Faktur Pembelian (2)87
+Gambar 4.86. Antarmuka Halaman Pembayaran Pembelian88
+Gambar 4.87. Antarmuka Halaman Pembayaran Pembelian (2)88
+Gambar 4.88. Antarmuka Halaman Retur Pembelian89
+Gambar 4.89. Antarmuka Halaman Retur Pembelian (2)89
+Gambar 4.90. Antarmuka Halaman Pemasok90
+Gambar 4.91. Antarmuka Halaman Pemasok (2)90
+Gambar 4.92. Antarmuka Halaman Penyesuaian Persediaan91
+Gambar 4.93. Antarmuka Halaman Penyesuaian Persediaan (2)91
+Gambar 4.94. Antarmuka Halaman Barang92
+Gambar 4.95. Antarmuka Halaman Barang (2)92
+Gambar 4.96. Antarmuka Halaman Gudang93
+Gambar 4.97. Antarmuka Halaman Gudang (2)93
+Gambar 4.98. Antarmuka Halaman Satuan Barang94
+Gambar 4.99. Antarmuka Halaman Satuan Barang (2)94
+Gambar 4.100. Antarmuka Halaman Kategori Barang95
+Gambar 4.101. Antarmuka Halaman Kategori Barang (2)95
+Gambar 4.102. Antarmuka Halaman Barang per Gudang96
+Gambar 4.103. Antarmuka Halaman Barang Stok Minimum96
+ 
+DAFTAR LAMPIRAN
+Lampiran 1. Hasil Pengujian Black Box Testing114
+Lampiran 2. Penilaian Aplikasi117
+Lampiran 3. Dokumentasi Mitra118
+Lampiran 4. Biodata Penulis Tugas Akhir119
+BAB IPENDAHULUAN
+1.1 Latar Belakang Masalah
+Perkembangan usaha dagang di bidang retail saat ini menuntut para pemilik toko untuk lebih cepat dalam mengambil keputusan bisnis. Salah satu sektor retail yang terus berjalan adalah toko bahan bangunan, karena kebutuhan akan material konstruksi dan renovasi rumah selalu ada di masyarakat. Toko Bangunan (TB) NUR merupakan salah satu toko retail yang menyediakan berbagai macam material bangunan secara eceran maupun grosir. Dalam operasional sehari-hari, TB NUR sudah menggunakan sistem Point of Sale (POS) untuk mencatat setiap transaksi penjualan barang.
+Meskipun pencatatan transaksi sudah berjalan dengan baik, data transaksi yang tersimpan di dalam basis data aplikasi POS tersebut selama ini belum dimanfaatkan secara maksimal. Data transaksi harian hanya menumpuk sebagai arsip digital dan sebatas digunakan untuk melihat laporan pendapatan harian atau bulanan saja. Pemilik toko belum bisa melihat pola perilaku belanja konsumen, seperti produk apa saja yang sering dibeli secara bersamaan dalam satu kali kunjungan. Akibatnya, penataan barang di gudang atau rak toko masih dilakukan secara acak tanpa mempertimbangkan kecenderungan beli konsumen, dan strategi promosi paket barang belum bisa diterapkan dengan tepat.
+Selain masalah penataan barang, TB NUR juga menghadapi kendala dalam mengelompokkan tingkat kepentingan produk. Toko bangunan memiliki ratusan jenis barang dengan harga dan tingkat perputaran stok yang sangat bervariasi. Tanpa adanya pengelompokkan yang jelas, pemilik toko sering kesulitan menentukan produk mana yang paling memberikan kontribusi besar terhadap total pendapatan toko dan produk mana yang perputarannya lambat. Jika stok untuk barang yang paling laris dan bernilai tinggi habis, toko akan kehilangan potensi keuntungan yang cukup besar.
+Untuk mengatasi masalah ini, sistem POS yang sudah ada perlu dikembangkan dengan menambahkan fitur analisis data transaksi. Penelitian ini menggabungkan dua metode, yaitu algoritma Apriori dan analisis ABC. Algoritma Apriori digunakan untuk mencari tahu kombinasi produk apa saja yang sering dibeli bersamaan oleh pelanggan berdasarkan data transaksi yang lalu. Sementara itu, analisis ABC digunakan untuk mengelompokkan produk menjadi tiga kelas berdasarkan kontribusi nilai penjualannya terhadap omset toko. Penggabungan kedua metode ini bertujuan agar pemilik toko mengetahui produk mana yang paling menguntungkan (dari analisis ABC) sekaligus mengetahui barang apa saja yang sering dibeli bersama produk tersebut (dari algoritma Apriori).
+Dengan menggabungkan kedua metode tersebut, sistem POS ini tidak hanya menampilkan data penjualan biasa, tetapi juga menyediakan dasbor analisis berupa matriks rekomendasi. Matriks ini menghubungkan kelas produk (ABC) dengan hubungan keterkaitan antar produk (Apriori). Dari visualisasi ini, pemilik toko bisa langsung melihat rekomendasi penataan posisi barang di rak toko dan menentukan paket promosi (bundling) produk agar barang yang menyumbang omset besar dapat membantu menaikkan penjualan barang lainnya. Hasil analisis ini diharapkan dapat membantu pemilik TB NUR dalam menata barang dan mengatur stok dengan lebih efisien. Berdasarkan latar belakang tersebut, penulis mengambil judul Tugas Akhir “Integrasi Algoritma Apriori dan Analisis Abc untuk Analisis Pola Penjualan Produk Berbasis Aplikasi Pos pada Toko Bangunan TB Nur”.
+1.2 Rumusan Masalah
+Berdasarkan latar belakang masalah yang telah diuraikan, maka rumusan masalah dalam penelitian ini adalah sebagai berikut:
+Bagaimana mengimplementasikan algoritma Apriori pada aplikasi POS TB NUR untuk mengidentifikasi kombinasi produk bangunan yang sering dibeli bersamaan oleh konsumen?
+Bagaimana menerapkan analisis ABC Pareto untuk mengelompokkan barang bangunan berdasarkan tingkat kontribusi omzet penjualannya di TB NUR?
+Bagaimana merancang dan membangun dasbor analitik yang mengintegrasikan hasil perhitungan algoritma Apriori dan analisis ABC agar mudah digunakan oleh pemilik toko dalam mengambil keputusan?
+1.3 Batasan Masalah
+Agar pembahasan dalam penelitian ini tidak meluas, maka diberikan batasan masalah sebagai berikut:
+Data yang digunakan dalam proses pengujian adalah data transaksi penjualan pada Toko Bangunan TB NUR.
+Sistem yang dibangun berupa modul dasbor analisis di dalam aplikasi POS berbasis web yang dikembangkan menggunakan Laravel dan React.
+Sistem ini hanya mengolah data transaksi penjualan historis untuk menghasilkan aturan asosiasi produk dan pengelompokan nilai penjualan, serta tidak melakukan peramalan stok barang (forecasting) otomatis di masa mendatang.
+1.4 Tujuan
+Tujuan dari penelitian ini adalah sebagai berikut:
+Mengimplementasikan algoritma Apriori pada aplikasi POS TB NUR untuk menghasilkan aturan asosiasi pola pembelian produk bangunan oleh konsumen.
+Menerapkan analisis ABC untuk mengelompokkan barang bangunan ke dalam Kategori A (produk utama), B (produk sedang), dan C (produk pelengkap) berdasarkan nilai omzet penjualan.
+Merancang dan membangun dasbor analitik terintegrasi pada aplikasi POS yang dapat menyajikan rekomendasi tata letak barang dan paket promosi bagi pemilik toko.
+1.5 Manfaat
+Manfaat yang diharapkan dari penelitian ini adalah sebagai berikut:
+Bagi Pemilik Toko: Membantu pemilik TB NUR mengambil keputusan dalam penataan barang di toko dan pembuatan paket promosi produk berdasarkan data transaksi riil.
+Bagi Penulis: Menerapkan teori data mining (algoritma Apriori dan ABC) ke dalam sistem POS nyata serta mengasah kemampuan pemrograman web menggunakan stack Laravel dan React.
+Bagi Akademik: Sebagai bahan referensi bagi mahasiswa Teknik Informatika dalam menerapkan algoritma Apriori dan analisis ABC pada aplikasi kasir (POS) berbasis website.
+1.6 Sistematika Penulisan
+Untuk menguraikan tulisan yang terstruktur dan informatif, penulis menyajikan laporan tugas akhir dalam lima bab di antaranya:
+Bab I Pendahuluan
+Bab ini berisi penjelasan mengenai gambaran umum tugas akhir yang dikerjakan, meliputi latar belakang, rumusan masalah, tujuan penelitian, manfaat penelitian, serta sistematika penulisan tugas akhir.
+Bab II Landasan Teori
+Bab ini berisi landasan teori berupa konsep, metode, dan referensi yang mendukung penelitian serta digunakan sebagai dasar dalam proses perancangan dan pengembangan sistem pada tugas akhir.
+Bab III Metode Pelaksanaan
+Bab ini berisi penjelasan mengenai alur pelaksanaan penelitian yang dilakukan, meliputi tahapan pengumpulan dan pengolahan data, perancangan arsitektur sistem, pemodelan proses bisnis, perancangan antarmuka aplikasi, serta rencana pengujian sistem yang akan digunakan.
+Bab IV Hasil dan Pembahasan
+Bab ini berisi penjelasan mengenai hasil implementasi dari sistem yang dibangun, visualisasi antarmuka aplikasi, pembahasan hasil pengolahan data analitik, serta evaluasi dan pengujian sistem untuk memastikan kelayakan serta fungsionalitas aplikasi.
+Bab V Penutup
+Bab ini berisi kesimpulan akhir dari seluruh rangkaian hasil perancangan, implementasi, dan pengujian sistem yang telah dikerjakan pada tugas akhir, serta saran-saran kontributif untuk pengembangan sistem di masa yang akan datang.
+BAB IILANDASAN TEORI
+2.1 Penelitian Terdahulu
+Untuk mendukung landasan teori dan memberikan gambaran posisi penelitian yang dilakukan, disusun tinjauan terhadap beberapa penelitian terdahulu yang relevan dengan algoritma Apriori dan analisis ABC, seperti yang ditunjukkan pada Tabel 2.1:
+Tabel 2.1 Matriks Perbandingan Penelitian Terdahulu 
+No
+Peneliti & Judul (Tahun)
+Metode & Hasil Utama
+Perbedaan dengan Penelitian Ini
+1
+Ramadani dkk.Penerapan Market Basket Analysis Menggunakan Algoritma Apriori (2024)
+Metode: Algoritma AprioriHasil: Menghasilkan aturan rekomendasi kombinasi produk bahan bangunan dengan Confidence ≥60%
+Hanya meneliti pola Apriori tanpa mengintegrasikan Analisis ABC Pareto omzet.
+2
+Rafi dkk.Klasifikasi Stok Barang Menggunakan Metode ABC Pareto (2024)
+Metode: Analisis ABC ParetoHasil: Mengelompokkan persediaan toko bangunan ke Kategori A (80%), B (15%), dan C (5%).
+Hanya mengelompokkan omzet stok tanpa analisis Market Basket Apriori.
+No
+Peneliti & Judul (Tahun)
+Metode & Hasil Utama
+Perbedaan dengan Penelitian Ini
+3
+Ardiansyah dkk.Penerapan Algoritma Apriori untuk Pemetaan Pola Penjualan (2023)
+Metode: Algoritma Apriori
+Hasil: Memetakan pola transaksi penjualan material toko bangunan berbasis web
+Belum terintegrasi dengan modul kasir POS dan sistem stok FIFO.
+4
+Hidayat & Rosyidi
+Penerapan Analisis ABC Pareto dalam Pengendalian Stok (2023)
+Metode: Analisis ABC Pareto
+Hasil: Mengendalikan stok persediaan material toko untuk mencegah out of stock
+Tidak menyajikan dasbor rekomendasi bundling promosi lintas-kategori barang.
+Point of Sale (POS)
+Point of Sale atau yang biasa disingkat POS merupakan kombinasi perangkat lunak dan perangkat keras yang dipakai untuk memproses transaksi penjualan di kasir. Pada operasional usaha dagang retail saat ini, sistem POS sudah banyak menggantikan peran mesin kasir konvensional karena fiturnya jauh lebih lengkap. Fungsi utamanya tidak hanya menghitung total belanjaan konsumen dan mencetak faktur fisik, tetapi juga otomatis mencatat detail riwayat transaksi ke dalam database sistem secara terpusat (Prastomo & Alfarisi, 2024).
+Penyimpanan data transaksi secara digital ini membuat manajemen toko menjadi lebih rapi dan stok barang dapat terpantau secara langsung. Setiap kali petugas kasir menginput penjualan, jumlah stok di gudang akan otomatis berkurang sesuai dengan barang yang dibeli. Riwayat transaksi yang menumpuk dalam jangka waktu lama ini merupakan sumber informasi yang berharga. Jika data tersebut diolah kembali menggunakan metode tertentu, pemilik toko bisa mengetahui kebiasaan belanja pelanggan atau melihat performa penjualan produk secara detail (Christian & Widiatry, 2023).
+2.3 Data Mining
+Data mining adalah sebuah proses untuk mencari pola, hubungan, atau informasi penting yang tersembunyi di dalam sekumpulan data dalam jumlah besar. Proses ini memanfaatkan bantuan teknik statistik, matematika, dan teknoLogi komputer untuk mengubah data mentah yang awalnya menumpuk menjadi sebuah pengetahuan baru (Singgalen, 2024). Pengetahuan baru ini nantinya bisa digunakan oleh pihak manajemen sebagai dasar dalam pengambilan keputusan bisnis
+Terdapat beberapa fungsi utama di dalam penerapan data mining, di antaranya adalah klasifikasi, clustering, dan analisis asosiasi. Pada pengerjaan aplikasi POS analitik ini, fungsi yang digunakan difokuskan pada analisis asosiasi. Analisis asosiasi bertugas untuk menemukan aturan atau pola keterkaitan antara satu barang dengan barang lainnya yang sering dibeli bersamaan oleh konsumen dalam sebuah transaksi belanja (Ardiansyah dkk., 2023).
+2.4 Algoritma Apriori
+Algoritma Apriori merupakan salah satu algoritma dasar yang paling populer dalam analisis aturan asosiasi. Teknik ini sering dikenal juga dengan istilah Market Basket Analysis atau analisis keranjang belanja. Tujuan utama penggunaan algoritma ini adalah untuk menemukan kombinasi produk bangunan yang punya kecenderungan tinggi dibeli bersama-sama oleh pelanggan dalam satu kali kunjungan (Ramadani dkk., 2024).
+Logika dasar dari algoritma Apriori adalah mengasumsikan bahwa jika suatu kombinasi barang sering muncul dalam riwayat transaksi, maka bagian dari kombinasi barang tersebut juga pasti sering muncul secara mandiri. Untuk menyaring aturan asosiasi yang kuat dari tumpukan data transaksi, terdapat dua parameter utama yang harus dihitung nilainya, yaitu support dan confidence (Shafa dkk., 2024).
+Support (Nilai Penunjang)
+Nilai support menggambarkan seberapa besar tingkat dominasi suatu barang atau kombinasi barang di dalam keseluruhan data riwayat transaksi toko. Rumus untuk menghitung nilai support dari satu jenis barang (A) adalah:
+Keterangan:
+Support(A) = Nilai penunjang (support) dari produk A.
+Sedangkan untuk mencari nilai support dari kombinasi dua barang sekaligus (A dan B), rumusnya adalah:
+Keterangan:
+Support(A,B) = Nilai penunjang (support) gabungan dari produk A dan B.
+Confidence (Nilai Kepastian)
+Nilai confidence digunakan untuk mengukur seberapa kuat hubungan antar barang dalam aturan asosiasi yang sudah terbentuk. Parameter ini menunjukkan persentase kemungkinan konsumen akan membeli barang B setelah mereka memilih barang A. Rumus perhitungan nilai confidence adalah:
+Keterangan:
+Confidence (A→B) = Nilai kepastian (confidence) dari hubungan pembelian jika membeli produk A maka membeli produk B.
+2.5 Analisis ABC
+Analisis ABC adalah metode pengelompokkan barang dalam manajemen inventori berdasarkan tingkat nilai penjualan atau kontribusi pendapatannya terhadap total omzet toko. Dasar pemikiran dari metode ini mengacu pada hukum Pareto atau prinsip 80/20 (Hidayat & Rosyidi, 2023). Prinsip tersebut menyatakan bahwa sekitar 80% dari total pendapatan bisnis biasanya hanya dihasilkan oleh sekitar 20% dari total variasi jenis barang yang dijual.
+Pengklasifikasian barang dalam analisis ABC dibagi menjadi tiga kelompok utama, yaitu:
+Kategori A: Kelompok produk yang memiliki nilai penjualan sangat tinggi. Jumlah variasi barangnya sedikit, berkisar antara 10% sampai 20% dari total seluruh jenis barang, tetapi menyumbang sekitar 70% hingga 80% dari pendapatan toko. Stok untuk barang kategori A harus diawasi dengan ketat agar jangan sampai kosong.
+Kategori B: Kelompok produk dengan nilai penjualan kelas menengah. Variasi jenis barangnya berkisar antara 20% sampai 30% dari total barang, dengan kontribusi omzet sekitar 15% hingga 20%. Pengawasan kelompok ini dilakukan secara berkala.
+Kategori C: Kelompok produk yang nilai penjualannya paling rendah atau perputarannya lambat. Variasi jenis barangnya sangat banyak, bisa mencapai 50% sampai 60% dari total variasi item, tetapi hanya menyumbang sekitar 5% sampai 10% terhadap omzet pendapatan.
+Urutan penentuan kategori ini diperoleh dari hasil perkalian antara jumlah unit barang yang terjual dengan harga jual produk tersebut selama periode analisis tertentu (Setiawan, 2024). Untuk menentukan nilai penjualan produk (Vi​), digunakan rumus:
+Keterangan:
+Vi​ = Nilai total penjualan produk ke-i.
+Qi​ = Kuantitas produk ke-i yang terjual.
+Pi​ = Harga satuan produk ke-i.
+Selanjutnya, persentase kontribusi omset produk ke-i (Ci​) dihitung dengan rumus:
+Keterangan:
+Ci​ = Persentase kontribusi penjualan produk ke-ii terhadap total omset.
+ViVi​ = Nilai total penjualan produk ke-ii (Rupiah).
+Total Omzet = Total nilai penjualan seluruh produk di toko selama periode analisis.
+2.6 Visual Studio Code (VSCode)
+Visual Studio Code adalah penyunting kode (text editor) bersifat open-source buatan Microsoft. Perangkat lunak ini mendukung berbagai bahasa pemrograman dan dilengkapi ekosistem extension yang kaya untuk mempercepat pengerjaan aplikasi web (Ihzani dkk., 2024).
+2.7 Draw.io
+Draw.io adalah aplikasi pemodelan diagram berbasis web yang digunakan untuk membuat berbagai macam diagram arsitektur sistem. Perangkat lunak ini memfasilitasi pembuatan diagram UML, diagram ERD, dan diagram alir (flowchart) secara gratis (Sansprayada & Mariskhana, 2022).
+2.8 Laragon
+Laragon merupakan lingkungan pengembangan lokal (local development environment) untuk Windows yang terintegrasi. Laragon menyediakan layanan peladen web, bahasa PHP, dan basis data MySQL secara cepat dan terisolasi untuk kebutuhan testing aplikasi (Christian & Setiawan, 2025).
+2.9 ReactJS
+ReactJS adalah pustaka (library) JavaScript buatan Meta yang digunakan untuk membangun antarmuka pengguna berbasis komponen di sisi klien. Penerapan arsitektur Single Page Application (SPA) pada ReactJS membuat perpindahan halaman web berjalan cepat tanpa perlu reload penuh (Sumudra, 2025).
+2.10 Inertia.js
+Inertia.js bertindak sebagai penghubung (monolithic adapter) yang menjembatani backend framework (Laravel) dengan frontend library (ReactJS). Pemanfaatan Inertia.js memungkinkan pembuatan aplikasi SPA tanpa perlu membangun arsitektur API RESTful yang rumit secara terpisah (Jihadi & Syarabil, 2025).
+2.11 TailwindCSS
+TailwindCSS adalah kerangka kerja CSS berbasis utility-first yang menyediakan berbagai kelas pembantu siap pakai. Pendekatan ini mempermudah penyusunan tata letak antarmuka web yang responsif dan konsisten langsung di dalam kode komponen (Azhariyah & Mukhlis, 2024).
+2.12 PHP
+PHP (Hypertext Preprocessor) merupakan bahasa pemrograman server-side yang dieksekusi di peladen web. PHP digunakan untuk menangani Logika bisnis aplikasi, memproses formulir dari pengguna, dan mengolah data dari sistem basis data (Prastomo & Alfarisi, 2024)
+2.13 Laravel
+Laravel adalah kerangka kerja berbasis PHP yang menerapkan pola arsitektur Model-View-Controller (MVC). Laravel menyediakan fitur-fitur seperti Eloquent ORM, sistem migrasi basis data, serta komponen keamanan terintegrasi untuk membangun aplikasi web modern (Apriandi dkk., 2025).
+2.14 MySQL
+MySQL merupakan sistem manajemen basis data relasional (Relational Database Management System / RDBMS) terbuka yang menggunakan bahasa kueri SQL. MySQL dikenal memiliki performa tinggi dan andal dalam mengelola data transaksi dalam jumlah besar (Fitri & Kurniawan, 2025).
+2.15 Unfield Modeling Language (UML)
+Unified Modeling Language (UML) adalah standar bahasa pemodelan visual berorientasi objek yang digunakan untuk memvisualisasikan, merancang, dan mendokumentasikan cetak biru (blueprint) dari sebuah perangkat lunak (Sugiyanto & Rahmawati, 2024).
+2.16 Use case Diagram
+Use case Diagram adalah jenis diagram UML yang menggambarkan fungsi-fungsi utama yang disediakan oleh sistem serta hubungan interaksi antara aktor (pengguna) dengan fungsi-fungsi tersebut (Rafi dkk., 2024). 
+Tabel 2.2 Simbol-simbol Use case Diagram
+Simbol
+Nama
+Keterangan
+Actor
+Aktor merupakan orang, proses, atau sistem lain yang berinteraksi dengan sistem informasi yang akan dibuat. Aktor adalah orang atau sistem yang menerima atau memberikan informasi dari sistem
+Use case
+Fungsionalitas yang disediakan sistem sebagai unit - unit yang saling bertukar pesan antar unit atau actor. Biasanya dinyatakan dengan
+Association
+Menghubungkan link antar element. Komunikasi antara actor dan use case yang berpartisipasi pada use case atau
+Generalization
+Generalisasi antar use case mirip dengan generalisasi antar kelas. Child use case (use case anak) mewarisi sifat dan perilaku parent use case (use case induk) dan mungkin akan menimpa perilaku parent use case
+Include
+Menunjukan bahwa suatu use case seluruhnya merupakan fungsionalitas dari use case lainnya
+Extend
+Menunjukan bahwa suatu use case merupakan fungsionalitas dari use case lainnya jika suatu kondisi terpenuhi
+System
+Menspesifikasikan paket yang menampilkan sistem secara terbatas
+2.17 Class Diagram
+Class diagram digunakan untuk menunjukkan kelas-kelas beserta paketnya guna memenuhi kebutuhan sistem. Adapun simbol-simbol yang digunakan dapat dilihat pada Tabel 2.3.
+Tabel 2.3 Simbol-simbol Sequence Diagram
+Simbol
+Nama
+Keterangan
+Class
+Template atau cetakan untuk membuat objek-objek yang memiliki atribut (data) dan metode (fungsi) di dalamnya
+Collaboration
+Proses dimana objek – objek saling berkerja sama dalam menjalankan tugas tertentu dalam sistem
+Realization
+Hubungan antara rancangan dan implementasi yang dilakukan oleh objek
+Depedency
+Hubungan dimana perubahan yang terjadi
+pada suatu elemen mandiri (independent) akan mempegaruhi elemen yang bergantung padanya elemen yang tidak mandiri
+Association
+Memiliki makna sebagai suatu hubungan antara satu objek dengan objek lainnya sebagai suatu pemetaan
+2.18 Entity Relationship Diagram (ERD)
+Entity Relationship Diagram (ERD) adalah diagram pemodelan konseptual yang menggambarkan struktur basis data relasional. ERD menampilkan entitas, atribut-atribut entitas, serta hubungan keterkaitan (cardinality) antar-entitas (Hayati & Sucipto, 2024).
+Tabel 2.4 Simbol-simbol ERD
+Simbol
+Nama
+Keterangan
+Entity
+Template atau cetakan untuk membuat objek-objek yang memiliki atribut (data) dan metode (fungsi) di dalamnya
+Relation
+Menyatakan hubungan atau relasi keterkaitan antara satu entitas dengan entitas lainnya dalam basis data
+Attribute
+Menyatakan karakteristik, atribut, atau properti data yang melekat dan dimiliki oleh suatu entitas
+Line
+Menghubungkan antara entitas dengan atributnya, atau menghubungkan entitas dengan relasi hubungannya
+2.19 Flowchart
+Flowchart atau diagram alir adalah representasi grafis yang menampilkan langkah-langkah prosedural dan urutan Logika dari suatu algoritma atau proses kerja. Penggunaan simbol-simbol standar mempermudah pemahaman alur eksekusi program (Munawar & Hidayat, 2024).
+Simbol Arus (FlowDirectionSymbols)
+Tabel 2.5 Simbol Arus (FlowDirectionSymbols)
+Simbol
+Nama
+Keterangan
+Flow Direction Symbol / Connecting Line
+Berfungsi untuk menghubungkan simbol yang satu dengan simbol lainnya serta menyatakan arus suatu proses.
+Communication Link
+Berfungsi untuk transmisi data dari satu lokasi ke lokasi lain
+Connector
+Digunakan untuk sambungan dan proses yang satu ke proses berikutnya pada halaman yang sama
+Offline Connector
+Digunakan untuk menyatakan sambungan dari proses yang satu ke proses berikutnya pada halaman yang berbeda
+Simbol Proses (ProcessingSymbols)
+Tabel 2.6 Simbol Proses (ProcessingSymbols)
+Simbol
+Nama
+Keterangan
+Processing
+Digunakan untuk menunjukkan  pengolahan yang akan dilakukan dalam komputer
+Manual Operation
+Digunakan untuk menunjukkan pengolahan yang tidak dilakukan oleh komputer
+Decision
+Digunakan untuk memilih proses yang akan dilakukan berdasarkan kondisi tertentu.
+Predefined Process
+Digunakan untuk mempersiapkan penyimpanan yang sedang atau akan digunakan dengan memberikan harga awal
+Terminal
+Digunakan untuk memulai atau mengakhiri program.
+Offline Storage
+Berfungsi untuk menunjukkan bahwa data akan disimpan ke media tertentu.
+Manual Input Symbol
+Digunakan untuk menginputkan data secara manual dengan keyboard
+Simbol I/O (Input-Output)
+Tabel 2.7 Simbol I/O (Input-Output) 
+Simbol
+Nama
+Keterangan
+Input / Output
+Digunakan untuk menyatakan input dan output tanpa melihat jenisnya.
+Punched Card
+Digunakan untuk menyatakan masukan dan keluaran yang berasal dari card.
+Disk Storage
+Digunakan untuk menyatakan masukan dan keluaran yang berasal dari disk.
+Magnetic Tape
+Digunakan untuk menyatakan masukan dan keluaran yang berasal dari pita magnetis.
+Document
+Digunakan untuk menyatakan masukan dan keluaran yang berasal dari dokumen.
+Display
+Digunakan untuk menyatakan keluaran melalui layar monitor.
+BAB IIIMETODE PELAKSANAAN
+3.1 Metode Pelaksanaan
+Gambar 3.1. Metode Waterfall
+Metode pelaksanaan adalah alur kerja yang digunakan sebagai panduan untuk merancang dan membangun sistem aplikasi. Pada penelitian ini, metode yang digunakan adalah System Development Life Cycle (SDLC) dengan model Waterfall (Air Terjun). Model Waterfall adalah cara pembuatan aplikasi secara bertahap dan berurutan, di mana setiap tahap harus diselesaikan terlebih dahulu sebelum lanjut ke tahap berikutnya.
+Penggunaan model Waterfall dalam pembuatan Aplikasi Point of Sale (POS) dan Stok Barang di Toko Bangunan TB NUR dipilih karena kebutuhan fitur sistem sudah ditentukan dengan jelas sejak awal. Cara ini membantu proses penggabungan antara modul penjualan kasir, stok gudang, serta perhitungan algoritma (Apriori dan Analisis ABC) berbasis web (Laravel dan React.js) agar berjalan secara teratur. Tahapan pembuatan yang dilakukan meliputi analisis kebutuhan, perancangan sistem, penulisan kode program, pengujian, hingga pemeliharaan aplikasi.
+Pengumpulan Data Transaksi
+Pengumpulan data merupakan tahapan yang dilakukan untuk memperoleh data transaksi yang akan digunakan dalam proses analisis. Pada penelitian ini, data yang digunakan berupa riwayat data transaksi penjualan riil pada Toko Bangunan TB NUR yang tersimpan dalam basis data sistem POS dalam periode tertentu.
+Proses pengumpulan data dilakukan dengan mengambil data dari tabel transaksi keuangan di database. Data diambil dari tabel operation_documents dengan memfilter kolom document_type bernilai sales_invoice dan status bernilai Posted. Data detail produk yang dibeli diambil dari tabel operation_document_lines yang terelasi secara otomatis menggunakan foreign key.
+Data transaksi yang terkumpul meliputi nomor faktur, tanggal transaksi, nama produk, kuantitas produk yang terjual, harga satuan, dan total harga penjualan per baris produk. Data ini disimpan dalam format relasional terstruktur yang siap untuk diolah pada tahap berikutnya.
+Pra-pemrosesan Data Transaksi
+Pra-pemrosesan data bertujuan untuk menyeleksi dan merapikan data transaksi penjualan sebelum diproses oleh algoritma analitik. Langkah ini penting untuk menjaga kualitas hasil analisis agar tidak terganggu oleh data kotor atau data uji coba yang tidak mencerminkan transaksi nyata.
+Pada penelitian ini, tahapan pra-pemrosesan data transaksi penjualan meliputi pembersihan data kosong (null cleaning), pemfilteran transaksi batal (cancelled transaction filtering), dan pengelompokan produk per faktur (transaction grouping). Alur proses pra-pemrosesan data transaksi dapat dilihat pada Gambar :
+Gambar 3.2. Alur Pra-pemrosesan Data Transaksi Penjualan
+Analisis Kebutuhan
+3.2.1 Analisis Kebutuhan Non-Fungsional
+Kebutuhan non-fungsional menjelaskan spesifikasi teknis perangkat pendukung, atribut kualitas, serta batasan operasional yang dibutuhkan agar aplikasi POS TB NUR dapat berjalan dengan optimal:
+Perangkat Lunak (Software Requirements):
+Bahasa Pemrograman & Framework: PHP versi 8.3+, Framework Laravel versi 11 (Backend API), serta React.js versi 18 dan Tailwind CSS (Frontend SPA).
+Database Management System (DBMS): MySQL versi 8.0+.
+Web Server & Lingkungan Pengkodian: Apache / Nginx Web Server dan Node.js environment (Vite Builder).
+Peramban Web (Web Browser Client): Google Chrome, Microsoft Edge, atau Mozilla Firefox versi terbaru.
+Perangkat Keras (Hardware Requirements):
+Perangkat Pengguna (Client Side): Perangkat apa pun (Laptop, Komputer PC, Tablet, atau Smartphone) yang memiliki peramban web (web browser) dan terhubung ke jaringan lokal/internet.
+Keamanan Sistem (Security Requirements):
+Hak Akses Pengguna (RBAC): Pembatasan izin akses menu menggunakan metode Role-Based Access Control dan Access Groups (access_group_permissions).
+Enkripsi Kata Sandi: Pengamanan kata sandi pengguna menggunakan algoritma Bcrypt.
+Proteksi Data: Perlindungan aplikasi dari ancaman Cross-Site Request Forgery (CSRF Token validation), pencegahan SQL Injection melalui Eloquent ORM, serta pembersihan input (XSS Filtering).
+Usabilitas dan Performa (Usability & Performance):
+Antarmuka Responsif: Tampilan aplikasi yang menyesuaikan ukuran layar komputer kasir maupun perangkat seluler.
+Kenyamanan Operasional: Aplikasi dapat merespon navigasi antar-halaman dan pemrosesan transaksi secara lancar tanpa hambatan yang mengganggu aktivitas penjualan harian.
+3.2.2 Analisisis Kebutuhan Fungsional
+Kebutuhan fungsional menjelaskan fungsi-fungsi dan fitur utama yang disediakan oleh aplikasi untuk membantu pekerjaan pengguna (Owner, Admin, maupun Kasir):
+Modul Hak Akses dan Pengguna
+Memeriksa proses Login dan Logout akun pengguna menggunakan alamat email dan kata sandi.
+Mengatur data akun pengguna, pembagian peran jabatan (seperti Admin, Kasir, atau Owner), dan pembatasan izin menu halaman.
+Modul Kelola Data Barang dan Stok
+Menambah, mengubah, dan menghapus data barang, kelompok kategori, jenis satuan, serta lokasi gudang penyimpanan.
+Memantau sisa jumlah stok barang di setiap gudang dan menampilkan peringatan bila stok barang sudah menipis (mencapai batas minimum)
+Modul Transaksi Penjualan
+Melayani transaksi penjualan secara tunai maupun kredit, penerimaan uang muka, pembuatan faktur/faktur penjualan, penerimaan pelunasan, hingga retur pengembalian barang dari pembeli.
+Menghitung otomatis total belanja, diskon, dan uang kembalian, sekaligus memotong stok barang dan mencetak struk kasir.
+Modul Transaksi Pembelian Barang
+Mencatat faktur belanja barang dari supplier, pembayaran utang toko, dan pengajuan retur pengembalian barang ke supplier.
+Menambah sisa stok barang di gudang secara otomatis tiap kali transaksi pembelian selesai disimpan
+Modul Pengeluaran Biaya dan Kas/Bank
+Mencatat pengeluaran biaya operasional harian, pembayaran gaji karyawan, dan proses transfer saldo antar-rekening bank toko.
+Membakukan setiap transaksi pengeluaran ke dalam jurnal umum serta memperbarui sisa saldo kas atau rekening bank.
+Modul Analisis Apriori dan ABC
+Algoritma Apriori: Mengolah histori faktur penjualan untuk mencari pasangan barang yang paling sering dibeli bersamaan (berdasarkan nilai Support, Confidence, dan Lift) guna menentukan paket promosi/bundling barang.
+Analisis ABC: Mengelompokkan barang menjadi Kategori A (penyumbang 80% omzet), Kategori B (15% omzet), dan Kategori C (5% omzet) untuk mengetahui barang mana yang paling cepat laku dan wajib diprioritaskan stoknya.
+Modul Dashboard dan Catatan Aktivitas
+Menampilkan ringkasan grafik omzet toko, grafik transaksi harian, serta hasil ringkasan analisis stok pada halaman utama (Dashboard).
+Menyimpan catatan rekam jejak (Log) aktivitas tiap kali pengguna melakukan penambahan, perubahan, atau penghapusan data di dalam aplikasi.
+Perancangan Sistem
+3.3.1  Flowchart Diagram
+3.3.1.1 Flowchart Pengolahan Master Data & CRUD Umum
+Flowchart ini menggambarkan langkah-langkah dasar saat pengguna mengelola data utama di dalam aplikasi, mulai dari melihat daftar tabel, membuka formulir isian, hingga menyimpan perubahan data. Alur lengkap pengolahan data utama dapat dilihat pada Gambar 3.3 berikut:
+Gambar 3.3. Flowchart Pengolahan Master Data & CRUD Umum
+3.3.1.2 Flowchart Transaksi Penjualan
+Flowchart ini menjelaskan urutan proses pencatatan penjualan barang kasir, mulai dari memilih data pembeli, memasukkan daftar produk, memeriksa ketersediaan stok, hingga proses pembayaran dan pencetakan struk belanja. Alur lengkap transaksi penjualan dapat dilihat pada Gambar 3.4 berikut:
+Gambar 3.4. Flowchart Transaksi Penjualan
+3.3.1.3 Flowchart Transaksi Pembelian
+Flowchart ini menggambarkan alur penerimaan barang belanja dari supplier, mulai dari pengisian nomor faktur pemasok, pencatatan rincian barang masuk, pemutakhiran sisa stok di gudang, hingga pencatatan pelunasan utang toko. Urutan alur transaksi pembelian dapat dilihat pada Gambar 3.5 berikut:
+Gambar 3.5. Flowchart Transaksi Pembelian
+3.3.1.4 Flowchart Keuangan, Kas, Bank & Beban
+Flowchart ini menjelaskan tahapan pencatatan transaksi pengeluaran operasional toko, pencatatan gaji karyawan, serta proses pemindahan dana antar-rekening bank toko. Rincian alur transaksi keuangan dapat dilihat pada Gambar 3.6 berikut:
+Gambar 3.6. Flowchart Keuangan, Kas, Bank & Beban
+3.3.1.5 Flowchart Pemrosesan Algoritma Apriori
+Flowchart ini menggambarkan urutan langkah sistem dalam membaca histori faktur penjualan untuk menemukan kombinasi barang yang paling sering dibeli bersamaan oleh pelanggan. Tahapan pemrosesan Algoritma Apriori dapat dilihat pada Gambar 3.7 berikut:
+Gambar 3.7. Flowchart Pemrosesan Algoritma Apriori
+3.3.1.6 Flowchart Analisis ABC & Penyesuaian Stok
+Flowchart ini menjelaskan alur perhitungan nilai penjualan barang untuk mengelompokkan stok toko ke dalam Kategori A, B, dan C berdasarkan kontribusi omzetnya. Urutan alur Analisis ABC dapat dilihat pada Gambar 3.8 berikut:
+Gambar 3.8. Flowchart Analisis ABC & Penyesuaian Stok
+Use case Diagram
+Use case Diagram menggambarkan pembagian peran dan hak akses interaksi pengguna terhadap fitur-fitur di dalam aplikasi POS TB NUR. Pada sistem ini, pengguna dibagi menjadi dua aktor utama, yaitu Kasir yang berfokus pada operasional penjualan harian serta pelayanan pelanggan, dan Owner (Pemilik Toko) yang memiliki akses penuh untuk mengelola master data, transaksi pembelian, pencatatan keuangan, hingga memantau laporan analisis toko. Hubungan interaksi antara aktor dan fitur sistem secara lengkap dapat dilihat pada Gambar 3.9 berikut:
+Gambar 3.9. Use case Diagram
+Class Diagram
+3.3.3.1 Class Diagram Modul Pengguna dan Otentikasi
+Class Diagram ini menggambarkan struktur orientasi objek untuk pengolahan akun pengguna, autentikasi Login, pembagian peran (roles), grup hak akses menu (access groups), preferensi aplikasi, hingga pencatatan Log aktivitas sistem. Rincian kelas pada modul pengguna dan otentikasi dapat dilihat pada Gambar 3.10 berikut:
+Gambar 3.10. Class Diagram Modul Pengguna dan Otentikasi
+3.3.3.2 Class Diagram Modul Barang dan Persediaan
+Class Diagram ini menjelaskan struktur orientasi objek yang mengelola data produk, pengelompokan kategori barang, jenis satuan, lokasi gudang penyimpanan, serta pemutakhiran jumlah stok barang fisik (inventory batch). Rincian kelas pada modul barang dan persediaan dapat dilihat pada Gambar 3.11 berikut:
+Gambar 3.11. Class Diagram Modul Barang dan Persediaan
+3.3.3.3 Class Diagram Modul Mitra Usaha dan SDM
+Class Diagram ini menggambarkan struktur orientasi objek untuk pengelolaan data pelanggan, supplier (pemasok), karyawan toko, serta rincian tunjangan dan gaji karyawan. Rincian hubungan kelas pada modul mitra usaha dan SDM dapat dilihat pada Gambar 3.12 berikut:
+Gambar 3.12. Class Diagram Modul Mitra Usaha dan SDM
+3.3.3.4 Class Diagram Modul Transaksi Utama
+Class Diagram ini menjelaskan arsitektur pewarisan (inheritance) dan komposisi antara kelas induk abstrak OperationDocument dengan rincian kelas-kelas transaksi spesifik seperti Faktur Penjualan, Pembelian, Uang Muka, Beban, Gaji, hingga Retur Barang. Struktur kelas modul transaksi utama dapat dilihat pada Gambar 3.13 berikut:
+Gambar 3.13. Class Diagram Modul Transaksi Utama
+3.3.3.5 Class Diagram Modul Keuangan, Kas, dan Bank
+Class Diagram ini menggambarkan struktur orientasi objek untuk pengolahan master akun kas/bank, transaksi transfer dana antar-rekening, serta pembukuan ke dalam jurnal umum. Rincian kelas pada modul keuangan, kas, dan bank dapat dilihat pada Gambar 3.14 berikut:
+Gambar 3.14. Class Diagram Modul Keuangan, Kas, dan Bank
+3.3.3.6 Class Diagram Modul Algoritma dan Analisis Data
+Class Diagram ini menjelaskan struktur orientasi objek yang mengolah pemrosesan Algoritma Apriori (Association Rules) dan pengklasifikasian stok Analisis ABC (Pareto Classification) berbasis histori penjualan produk. Rincian kelas pada modul algoritma dan analisis data dapat dilihat pada Gambar 3.15  berikut:
+Gambar 3.15. Class Diagram Modul Algoritma dan Analisis Data
+Entity Relationship Diagram (ERD)
+3.3.4.1 ERD Pengguna & Akses
+Diagram ini menggambarkan struktur hubungan antara data akun pengguna, pembagian peran jabatan, grup pembatasan, serta akses menu. Rincian relasi data pengguna dan hak akses dapat dilihat pada Gambar 3.16 berikut:
+Gambar 3.16. ERD Pengguna & Akses
+3.3.4.2 ERD SDM & Mitra Usaha
+Diagram ini menjelaskan hubungan antara data karyawan toko, informasi nomor rekening bank penggajian, komponen tunjangan gaji, serta data mitra usaha pelanggan dan supplier. Alur keterhubungan data SDM dan mitra usaha dapat dilihat pada Gambar 3.17 dan Gambar 3.18 berikut:
+Gambar 3.17. ERD SDM & Mitra Usaha
+Gambar 3.18. ERD SDM & Mitra Usaha (2)
+3.3.4.3 ERD Barang & Stok
+Diagram ini menggambarkan keterhubungan antara data barang toko, kelompok kategori, jenis satuan, lokasi gudang penyimpanan, konversi satuan, hingga rincian sisa stok barang per gudang. Relasi lengkap data barang dan persediaan stok dapat dilihat pada Gambar 3.19 berikut:
+Gambar 3.19. ERD Barang & Stok
+3.3.4.4 ERD Dokumen Transaksi & Detail
+Diagram ini menjelaskan struktur hubungan antara faktur transaksi (penjualan/pembelian), baris rincian barang, pemutakhiran stok fisik, pembukuan saldo akun kas/bank, serta rekam jejak kasir pemroses transaksi. Rincian keterhubungan dokumen transaksi dapat dilihat pada Gambar 3.20 berikut:
+Gambar 3.20. ERD Dokumen Transaksi & Detail
+3.3.4.5 ERD Keuangan, Log & Pengaturan
+Diagram ini menggambarkan keterhubungan antara data akun kas/bank, transaksi transfer dana antar-rekening, pengaturan preferensi aplikasi, serta pencatatan Log aktivitas operasional pengguna. Rincian relasi data keuangan, Log, dan pengaturan dapat dilihat pada Gambar 3.21 berikut:
+Gambar 3.21. ERD Keuangan, Log & Pengaturan
+Perancangan Basis Data
+Perancangan basis data bertujuan untuk mendefinisikan struktur penyimpanan data operasional aplikasi POS TB NUR secara terstruktur di dalam DBMS MySQL. Struktur spesifikasi atribut, tipe data, ukuran, dan kunci relasi (primary key/foreign key) untuk setiap tabel dapat dilihat pada tabel-tabel berikut:
+3.3.5.1 Tabel users
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+name
+Varchar
+255
+-
+3
+email
+Varchar
+255
+-
+4
+password
+Varchar
+255
+-
+5
+is_active
+TinyInt
+1
+-
+3.3.5.2 Tabel roles
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+4
+is_active
+TinyInt
+1
+-
+3.3.5.3 Tabel role_user
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+role_id
+BigInt
+20
+FK
+2
+user_id
+BigInt
+20
+FK
+3.3.5.4 Tabel access_groups
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+4
+description
+Text
+-
+-
+5
+is_active
+TinyInt
+1
+-
+3.3.5.5 Tabel access_group_permissions
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+access_group_id
+BigInt
+20
+PK
+3
+menu_key
+Varchar
+100
+FK
+4
+can_access
+TinyInt
+1
+-
+5
+can_create
+TinyInt
+1
+-
+6
+can_update
+TinyInt
+1
+-
+7
+can_delete
+TinyInt
+1
+-
+3.3.5.6 Tabel access_group_user
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+access_group_id
+BigInt
+20
+FK
+2
+user_id
+BigInt
+20
+FK
+3.3.5.7 Tabel employees 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+employee_code
+Varchar
+50
+-
+3
+full_name
+Varchar
+255
+-
+4
+position
+Varchar
+100
+-
+5
+mobile_phone
+Varchar
+50
+-
+3.3.5.8 Tabel employee_bank_accounts 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+employee_id
+BigInt
+20
+FK
+3
+bank_name
+Varchar
+100
+-
+4
+account_name
+Varchar
+255
+-
+5
+account_number
+Varchar
+50
+-
+3.3.5.9 Tabel salary_allowances 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+name
+Varchar
+255
+-
+3
+allowance_type
+Varchar
+50
+-
+4
+notes
+Text
+-
+-
+3.3.5.10 Tabel sales_checkins 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+user_id
+BigInt
+20
+FK
+3
+checkin_at
+Timestamp
+-
+-
+4
+checkout_at
+Timestamp
+-
+-
+3.3.5.11 Tabel customers 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+4
+business_phone
+Varchar
+50
+-
+5
+billing_address
+Text
+-
+-
+3.3.5.12 Tabel suppliers 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+4
+business_phone
+Varchar
+50
+-
+5
+billing_address
+Text
+-
+-
+3.3.5.13 Tabel supplier_prices 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+3.3.5.14 Tabel product_categories 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+parent_id
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+4
+slug
+Varchar
+255
+-
+5
+is_default
+Boolean
+1
+6
+Is_active
+Boolean
+1
+3.3.5.15 Tabel products 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+barcode
+Varchar
+100
+-
+4
+name
+Varchar
+255
+-
+5
+category_id
+BigInt
+20
+FK
+6
+base_unit_id
+BigInt
+20
+FK
+7
+default_purchase_price
+Decimal
+15,2
+-
+8
+default_sale_price
+Decimal
+15,2
+-
+9
+minimum_stock
+Decimal
+15,2
+-
+3.3.5.16 Tabel product_prices 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+product_id
+BigInt
+20
+FK
+3
+unit_id
+BigInt
+20
+FK
+4
+price
+Decimal
+15,2
+-
+3.3.5.17 Tabel product_unit_conversions 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+product_id
+BigInt
+20
+FK
+3
+from_unit_id
+BigInt
+20
+FK
+4
+to_unit_id
+BigInt
+20
+FK
+5
+multiplier
+Decimal
+15,4
+-
+3.3.5.18 Tabel product_group_items 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+parent_product_id
+BigInt
+20
+FK
+3
+child_product_id
+BigInt
+20
+FK
+4
+quantity
+Decimal
+15,2
+-
+3.3.5.19 Tabel units 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+3.3.5.20 Tabel warehouses 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+3.3.5.21 Tabel inventory_batches
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK
+2
+product_id
+BigInt
+20
+FK
+3
+warehouse_id
+BigInt
+20
+FK
+4
+quantity
+Decimal
+15,2
+-
+3.3.5.22 Tabel operation_documents
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK              
+2
+document_type
+Varchar
+50
+-
+3
+document_number
+Varchar
+20
+-
+4
+entry_date
+Date
+100
+-
+5
+customer_id
+BigInt
+20
+FK
+6
+supplier_id
+BigInt
+20
+FK
+7
+responsible_user_id
+BigInt
+20
+FK
+8
+total_amount
+Decimal
+15,2
+-
+9
+paid_amount
+Decimal
+15,2
+-
+10
+outstanding_amount
+Decimal
+15,2
+-
+11
+payment_method
+Varchar
+50
+-
+3.3.5.23 Tabel operation_document_lines
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK              
+2
+operation_document_id
+BigInt
+50
+FK
+3
+product_id
+BigInt
+20
+FK
+4
+unit_id
+BigInt
+100
+FK
+5
+account_id
+BigInt
+20
+FK
+6
+quantity
+Decimal
+15,2
+-
+7
+unit_price
+Decimal
+15,2
+-
+8
+total_amount
+Decimal
+15,2
+-
+3.3.5.24 Tabel operation_document_user 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+operation_document_id
+BigInt
+20
+FK
+2
+user_id
+BigInt
+20
+FK
+3.3.5.25 Tabel accounts 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK              
+2
+code
+Varchar
+50
+-
+3
+name
+Varchar
+255
+-
+4
+account_type
+Varchar
+50
+-
+5
+current_balance
+Decimal
+15,2
+-
+3.3.5.26 Tabel account_user
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+account_id
+BigInt
+20
+FK
+2
+user_id
+BigInt
+20
+FK
+3.3.5.27 Tabel bank_transfers
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK              
+2
+source_account_id
+BigInt
+20
+FK
+3
+target_account_id
+BigInt
+20
+FK
+4
+amount
+Decimal
+15,2
+-
+3.3.5.28 Tabel preference_settings
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK              
+2
+group_key
+Varchar
+50
+-
+3
+setting_key
+Varchar
+100
+-
+4
+value
+Text
+-
+-
+3.3.5.29 Tabel activity_Logs 
+No.
+Nama Field
+Tipe Data
+Ukuran
+Key
+1
+id
+BigInt
+20
+PK              
+2
+Log_group
+Varchar
+50
+-
+3
+action
+Varchar
+100
+-
+4
+description
+Text
+-
+-
+5
+user_id
+BigInt
+20
+FK
+Implementasi Algoritma Apriori
+Algoritma Apriori diterapkan untuk menganalisis riwayat transaksi dan menemukan pola kombinasi produk bangunan yang sering dibeli secara bersamaan oleh pelanggan. Algoritma ini bekerja dengan mengolah data faktur penjualan berdasarkan dua parameter utama, yaitu nilai support (persentase kemunculan barang bersamaan) dan confidence (tingkat kepastian hubungan antar-produk).
+Proses diawali dengan menetapkan batas ambang (threshold) minimal support dan confidence. Sistem akan mencari kombinasi barang yang sering muncul (frequent itemsets) mulai dari satu jenis produk (1-itemset), lalu menggabungkannya menjadi kombinasi dua jenis produk (2-itemset) yang memenuhi syarat minimal support.
+Aturan asosiasi (association rules) yang terbentuk disajikan dalam bentuk rekomendasi pendukung keputusan (decision support insight) di dasbor analitik. Hasil rekomendasi ini bersifat sebagai bahan pertimbangan pembantu bagi pemilik toko, misalnya untuk merencanakan strategi promosi bundling atau menata letak rak barang yang berdekatan, tanpa melakukan perubahan data secara otomatis.
+Implementasi Analisis ABC
+Analisis ABC digunakan untuk mengelompokkan persediaan produk bangunan berdasarkan kontribusi nilai penjualannya terhadap total omzet toko menggunakan prinsip Hukum Pareto . Prinsip yang menyatakan bahwa sebagian besar hasil (sekitar 80%) berasal dari sebagian kecil penyebab (sekitar 20%). Pengelompokan ini bertujuan untuk membantu pemilik toko memetakan tingkat kepentingan setiap barang persediaan.
+Proses klasifikasi dimulai dengan menghitung total nilai penjualan seluruh produk bangunan, kemudian mengurutkannya dari produk beromzet terbesar hingga terkecil (descending). Sistem selanjutnya menghitung persentase kontribusi omzet tiap produk dan menjumlahkannya secara kumulatif.
+Berdasarkan persentase kumulatif tersebut, produk dikelompokkan ke dalam Kategori A (penyumbang 80% omzet), Kategori B (15% omzet), dan Kategori C (5% omzet). Hasil klasifikasi ini ditampilkan sebagai informasi rekomendasi pendukung keputusan pada dasbor analitik untuk membantu pemilik toko mengutamakan pengadaan stok barang utama, tanpa membatasi transaksi penjualan produk lainnya.
+Penyajian Hasil Analisis
+Hasil pengolahan data dari Algoritma Apriori dan Analisis ABC disajikan secara terintegrasi pada modul Dasbor Analitik aplikasi POS. Integrasi ini menampilkan hasil aturan asosiasi kombinasi produk (Apriori) dan pengelompokan prioritas omzet produk (Analisis ABC) dalam bentuk widget informasi yang interaktif.
+Dasbor analitik menampilkan grafik dan ringkasan indikator utama (Key Metrics) yang menghubungkan tingkat kepastian pembelian (confidence) dengan kategori prioritas produk (A, B, dan C). Penyajian informasi visual ini mempermudah pemilik toko dalam membaca insight rekomendasi pendukung keputusan secara langsung pada halaman utama aplikasi.
+Evaluasi Sistem
+Evaluasi sistem dilakukan untuk memastikan bahwa fungsi perhitungan algoritma menghasilkan data yang akurat dan tampilan dasbor analitik dapat digunakan dengan mudah oleh pemilik toko dalam mendukung pengambilan keputusan bisnis.
+Pada penelitian ini, evaluasi dilakukan menggunakan dua pendekatan utama:
+Validasi Matematis: Menguji ketepatan hasil perhitungan widget analitik pada aplikasi dengan membandingkannya secara langsung terhadap hasil perhitungan manual pada tabel sampel data transaksi.
+Pengujian Kegunaan (Usability Testing): Mengukur tingkat kemudahan antarmuka, kejelasan informasi rekomendasi, dan kenyamanan penggunaan modul dasbor analitik melalui kuesioner bersama pemilik toko.
+3.4 Pengujian
+Pengujian sistem dilakukan untuk memastikan bahwa seluruh fungsi dan fitur di dalam aplikasi POS TB NUR dapat berjalan dengan baik sesuai dengan kebutuhan fungsional yang telah direncanakan. Pada penelitian ini, pengujian perangkat lunak dilakukan menggunakan metode Black Box Testing.
+Metode Black Box Testing berfokus pada pengujian masukan (input) dan keluaran (output) antarmuka aplikasi tanpa harus memeriksa alur kode internalnya. Pengujian dilakukan pada setiap modul utama, meliputi pengujian proses Login, pengolahan master data barang dan persediaan, pencatatan transaksi penjualan kasir, transaksi pembelian, transaksi keuangan, serta tampilan widget analitik Apriori dan ABC pada dasbor.
+3.5 Pemeliharaan
+Pemeliharaan sistem dilakukan untuk menjaga agar aplikasi POS TB NUR tetap dapat beroperasi secara stabil, aman, dan optimal selama digunakan dalam kegiatan operasional toko harian. Tahapan pemeliharaan aplikasi meliputi beberapa kegiatan utama:
+Pemeliharaan Korektif (Corrective Maintenance): Melakukan perbaikan secara cepat apabila ditemukan kendala teknis, bug, atau kesalahan pemrosesan data selama aplikasi digunakan oleh kasir atau pemilik toko.
+Pemeliharaan Preventif (Preventive Maintenance): Melakukan pencadangan (backup) basis data MySQL secara berkala serta merapikan catatan rekam jejak (activity Logs) agar kinerja basis data tetap lancar.
+Pemeliharaan Penyempurnaan (Perfective Maintenance) : Melakukan penyesuaian kecil pada antarmuka atau alur kerja berdasarkan masukan dan kenyamanan pemilik toko seiring berjalannya operasional bisnis.
+BAB IVHASIL DAN PEMBAHASAN
+4.1 Hasil
+Hasil dari penelitian ini adalah berupa aplikasi Point of Sale (POS) dan Pengolahan Persediaan Berbasis Web pada Toko Bangunan Nur (POS TB NUR). Aplikasi ini dikembangkan menggunakan framework Laravel 11 sebagai pengolah backend API dan basis data MySQL, serta React.js dan Tailwind CSS sebagai pembangun antarmuka Single Page Application (SPA) di sisi pengguna.
+Sistem yang dibangun memiliki beberapa modul utama yang telah terintegrasi untuk mendukung kegiatan operasional toko bangunan, meliputi:
+Modul Transaksi Penjualan dan Kasir: Fasilitas pencatatan transaksi penjualan secara tunai maupun kredit, pengelolaan uang muka (sales deposit), penerimaan pelunasan piutang, dan retur penjualan barang.
+Modul Transaksi Pembelian dan Stok Gudang: Fasilitas pengolahan faktur pembelian barang dari supplier, pencatatan pembayaran utang toko, retur pembelian, serta pemutakhiran sisa stok fisik barang di gudang secara otomatis (inventory batches).
+Modul Keuangan dan Kas/Bank: Fasilitas pencatatan pengeluaran beban harian toko, penggajian karyawan, transfer dana antar-rekening bank, serta pembukuan transaksi secara otomatis ke dalam Jurnal Umum dan pembaruan saldo akun kas/bank.
+Modul Dasbor Analitik (Apriori & Analisis ABC): Modul halaman utama (Dashboard) yang menyajikan grafik indikator bisnis serta widget hasil analitik interaktif:
+Algoritma Apriori: Menyajikan rekomendasi aturan asosiasi (Association Rules) kombinasi produk yang sering dibeli bersamaan untuk strategi promosi bundling produk.
+Analisis ABC: Menyajikan klasifikasi prioritas barang persediaan ke dalam Kategori A (80% omzet), Kategori B (15% omzet), dan Kategori C (5% omzet) berdasarkan persentase kontribusi penjualan kumulatif (Hukum 
+Pareto).
+4.1.1 Hasil Penerapan dan Perhitungan Algoritma Apriori
+Penerapan algoritma Apriori pada sistem POS TB Nur menghasilkan aturan asosiasi (association rules) pola pembelian konsumen berdasarkan transaksi faktur penjualan (sales_invoice). Pemrosesan algoritma Apriori dieksekusi melalui 4 tahapan matematis:
+Pembentukan Market Basket Transaksi: Data transaksi diambil dari tabel operation_documents yang berstatus Posted/Lunas dan dikelompokkan per nomor faktur pada tabel operation_document_lines.
+Perhitungan 1-Frequent Itemset (Support): Menghitung nilai penunjang tunggal tiap barang (A) dan N transaksi: 
+  Hanya produk dengan  yang lolos ke tahap selanjutnya.
+Perhitungan 2-Frequent Itemset & Confidence: Membentuk pasangan barang  dan menghitung nilai kepastian (Confidence):  Aturan yang memenuhi  ditetapkan sebagai aturan valid.
+Pengujian Lift Ratio:  . Nilai  membuktikan hubungan keterkaitan produk A dan B sangat kuat.
+4.1.2 Hasil Penerapan dan Perhitungan Analisis ABC Pareto
+Analisis ABC Pareto mengklasifikasikan produk bahan bangunan ke dalam tiga kelompok prioritas berdasarkan persentase kontribusi omzet penjuualannya:
+Agregasi Uang Penjualan (Revenue): Menghitung total omzet per produk  dan mengurutkan secara descending.
+Hitung Persentase Kumulatif Pendapatan: 
+Klasifikasi Kategori Pareto:
+Kategori A (Kontribusi 0% – 80%): Produk Fast Moving / Penyumbang Omzet Utama (Semen, Besi).
+Kategori B (Kontribusi 80.1% – 95%): Produk dengan kontribusi pendapatan menengah (Cat, Pipa).
+Kategori C (Kontribusi 95.1% – 100%): Produk Slow Moving / Aksesoris (Kuas, Amplas).
+4.2 Pembahasan
+4.2.1 Pengumpulan dan Pra-pemrosesan Data Transaksi
+Tahap pengumpulan dan pra-pemrosesan data (data preprocessing) dilakukan untuk menjamin bahwa data transaksi penjualan yang diolah oleh algoritma Apriori dan Analisis ABC merupakan data yang bersih, valid, serta bebas dari nilai kosong (null).
+Proses pra-pemrosesan data transaksi pada sistem POS TB Nur mencakup tiga tahapan utama, yaitu:
+Pembersihan Data Nilai Kosong (Null Value Cleaning): Data baris transaksi pada tabel operation_document_lines disaring untuk memastikan kolom product_id dan total_amount bernilai valid (tidak null atau 0). Baris data yang tidak memiliki rujukan ID produk dibuang agar tidak mengganggu proses kalkulasi frequent itemset.
+Penyaringan Status Dokumen Transaksi (Document Status Filtering): Sistem melakukan penyaringan (filtering) pada tabel operation_documents dengan hanya mengambil dokumen faktur penjualan (document_type = 'sales_invoice') yang berstatus Posted, Lunas, atau Belum Lunas. Dokumen bertipe draf (Draft) atau transaksi yang dibatalkan (Cancelled) dikeluarkan dari proses perhitungan analitik.
+Pengelompokan Barang per Faktur Penjualan (Invoice Grouping / Market Basket): Barang-barang bahan bangunan yang dibeli oleh pelanggan dalam satu nomor faktur yang sama dikelompokkan menjadi satu itemset transaksi tunggal (groupBy('operation_document_id')). Pengelompokan ini membentuk himpunan data transaksi (market basket) yang siap diproses pada tahap perhitungan Support dan Confidence algoritma Apriori.
+4.2.2 Implementasi Basis Data
+Implementasi basis data merupakan tahap penerjemahan rancangan Entity Relationship Diagram (ERD) dan skema konseptual ke dalam bentuk tabel-tabel fisik relasional pada sistem manajemen basis data (Database Management System - DBMS) MySQL:
+4.2.2.1 Tabel users
+Gambar 4.1. Tabel users
+Gambar 4.2. Tabel users (2)
+4.2.2.2 Tabel roles
+Gambar 4.3. Tabel roles
+4.2.2.3 Tabel role_user
+Gambar 4.4. Tabel role_user
+4.2.2.4 Tabel access_groups
+Gambar 4.5. Tabel access_group
+4.2.2.5 Tabel access_group_permissions
+Gambar 4.6. Tabel access_group_permissions
+4.2.2.6 Tabel access_group_user
+Gambar 4.7. Tabel access_group_user
+4.2.2.7 Tabel employees
+Gambar 4.8. Tabel employees
+Gambar 4.9. Tabel employees (2)
+Gambar 4.10. Tabel employees (3)
+Gambar 4.11. Tabel employees (4)
+4.2.2.8 Tabel employee_bank_accounts
+Gambar 4.12. Tabel employee_bank_accounts
+4.2.2.9 Tabel salary_allowances
+Gambar 4.13. Tabel salary_allowances
+4.2.2.10 Tabel customers
+Gambar 4.14. Tabel customers
+Gambar 4.15. Tabel customers (2)
+4.2.2.11 Tabel suppliers
+Gambar 4.16. Tabel suppliers
+Gambar 4.17. Tabel suppliers (2)
+4.2.2.12 Tabel product_categories
+Gambar 4.18. Tabel product_categories
+4.2.2.13 Tabel products
+Gambar 4.19. Tabel products
+Gambar 4.20. Tabel products (2)
+4.2.2.14 Tabel product_group_items
+Gambar 4.21. Tabel product_group_items
+4.2.2.15 Tabel units
+Gambar 4.22. Tabel units
+4.2.2.16 Tabel warehouses
+Gambar 4.23. Tabel warehouses
+Gambar 4.24. Tabel warehouses (2)
+4.2.2.17 Tabel inventory_batches
+Gambar 4.25. Tabel inventory_batches
+Gambar 4.26. Tabel inventory_batches (2)
+4.2.2.18 Tabel operation_documents
+Gambar 4.27. Tabel operation_document
+Gambar 4.28. Tabel operation_document (2)
+Gambar 4.29. Tabel operation_document (2)
+Gambar 4.30. Tabel operation_document (3)
+Gambar 4.31. Tabel operation_document (4)
+4.2.2.19 Tabel operation_document_lines
+Gambar 4.32. Tabel operation_document_lines
+Gambar 4.33. Tabel operation_document_lines (2)
+4.2.2.20 Tabel operation_document_user
+Gambar 4.34. Tabel operation_document_user
+4.2.2.21 Tabel accounts
+Gambar 4.35. Tabel accounts
+Gambar 4.36. Tabel accounts (2)
+4.2.2.22 Tabel account_user
+Gambar 4.37. Tabel account_user
+4.2.2.23 Tabel preference_settings
+Gambar 4.38. Tabel preference_settings
+4.2.2.24 Tabel activity_Logs
+Gambar 4.39. Tabel activity_Logs
+Gambar 4.40. Tabel activity_Logs (2)
+Gambar 4.41. Tabel activity_Logs (3)
+4.2.3 Implementasi Desain Antarmuka
+4.2.3.1 Antarmuka Halaman Login
+Halaman Login berfungsi untuk mengamankan hak akses pengguna ke dalam aplikasi menggunakan email dan kata sandi. Setelah berhasil masuk, sistem menginisialisasi sesi pengguna dan mengarahkan ke Halaman Dashboard atau menu utama sesuai dengan hak akses perannya. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.42. Antarmuka Halaman Login
+4.2.3.2 Antarmuka Halaman Register
+Halaman ini berfungsi untuk mendaftarkan akun pengguna baru ke dalam sistem aplikasi POS. Tampilan antarmuka dapat dilihat pada gambar berikut:
+Gambar 4.43. Antarmuka Halaman Register
+4.2.3.3 Antarmuka Halaman Dashboard
+Halaman Dashboard menyajikan ringkasan grafik omzet dan penjualan secara otomatis dari Halaman Faktur Penjualan, serta menampilkan hasil analisis algoritma Apriori dan ABC untuk rekomendasi penataan barang persediaan. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.44. Antarmuka Halaman Dashboard
+Gambar 4.45. Antarmuka Halaman Dashboard (2)
+Gambar 4.46. Antarmuka Halaman Dashboard (3)
+Gambar 4.47. Antarmuka Halaman Dashboard (4)
+Gambar 4.48. Antarmuka Halaman Dashboard (5)
+Gambar 4.49. Antarmuka Halaman Dashboard (6)
+4.2.3.4 Antarmuka Halaman Preferensi
+Halaman Preferensi digunakan untuk mengatur konfigurasi dasar aplikasi, seperti menentukan akun utama di Halaman Akun Perkiraan serta mengatur format otomatis nomor dokumen transaksi. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.50. Antarmuka Halaman Preferensi
+4.2.3.5 Antarmuka Halaman Gaji atau Tunjangan
+Halaman Gaji atau Tunjangan berfungsi mencatat jenis-jenis pendapatan dan potongan gaji karyawan, yang nantinya otomatis dipanggil saat proses perhitungan di Halaman Pencatatan Gaji. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.51. Antarmuka Halaman Gaji atau Tunjangan
+Gambar 4.52. Antarmuka Halaman Gaji atau Tunjangan (2)
+4.2.3.6 Antarmuka Halaman Karyawan
+Halaman Karyawan mengelola data profil seluruh pekerja yang terhubung dengan akun Login di Halaman Register, serta menjadi acuan data penerima gaji pada Halaman Pencatatan Gaji. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.53. Antarmuka Halaman Karyawan
+Gambar 4.54. Antarmuka Halaman Karyawan (2)
+4.2.3.7 Antarmuka Halaman Log Aktivitas
+Halaman Log Aktivitas mencatat riwayat setiap aktivitas pengguna seperti menambah atau mengubah data pada Halaman Faktur Penjualan dan Halaman Faktur Pembelian untuk kebutuhan keamanan. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.55. Antarmuka Halaman Log Aktivitas
+4.2.3.8 Antarmuka Halaman Akun Perkiraan
+Halaman Akun Perkiraan menampilkan daftar Bagan Akun (Chart of Accounts) yang menjadi acuan pengelompokan transaksi keuangan pada Halaman Kategori Barang, Halaman Pencatatan Beban, dan Halaman Jurnal Umum. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.56. Antarmuka Halaman Akun Perkiraan
+Gambar 4.57. Antarmuka Halaman Akun Perkiraan (2)
+4.2.3.9 Antarmuka Halaman Pencatatan Beban
+Halaman Pencatatan Beban digunakan untuk menginput tagihan biaya operasional toko berdasarkan akun di Halaman Akun Perkiraan, yang kemudian dapat ditarik untuk dilunasi di Halaman Pembayaran. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.58. Antarmuka Halaman Pencatatan Beban
+Gambar 4.59. Antarmuka Halaman Pencatatan Beban (2)
+4.2.3.10 Antarmuka Halaman Pencatatan Gaji
+Halaman Pencatatan Gaji menghitung total gaji bulanan karyawan berdasarkan data dari Halaman Karyawan dan Halaman Gaji atau Tunjangan, lalu otomatis mencatat jurnalnya ke Halaman Jurnal Umum. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.60. Antarmuka Halaman Pencatatan Gaji
+Gambar 4.61. Antarmuka Halaman Pencatatan Gaji (2)
+4.2.3.11 Antarmuka Halaman Jurnal Umum
+Halaman Jurnal Umum memfasilitasi pencatatan pembukuan debit-kredit secara manual dari Halaman Akun Perkiraan, serta menampung otomatisasi jurnal transaksi penjualan, pembelian, dan penggajian. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.62. Antarmuka Halaman Jurnal Umum
+Gambar 4.63. Antarmuka Halaman Jurnal Umum (2)
+4.2.3.12 Antarmuka Halaman Log Aktivitas Jurnal
+Halaman Log Aktivitas Jurnal menampilkan riwayat pemposting jurnal otomatis dari transaksi Halaman Faktur Penjualan, Halaman Faktur Pembelian, dan Halaman Jurnal Umum untuk mempermudah pengecekan ulang. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.64. Antarmuka Halaman Log Aktivitas Jurnal
+Gambar 4.65. Antarmuka Halaman Log Aktivitas Jurnal (2)
+4.2.3.13 Antarmuka Halaman Pembayaran
+Halaman Pembayaran berfungsi mencatat pengeluaran kas atau bank untuk melunasi tagihan biaya dari Halaman Pencatatan Beban, yang secara otomatis mengurangi saldo akun di Halaman Histori Bank. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.66. Antarmuka Halaman Pembayaran
+Gambar 4.67. Antarmuka Halaman Pembayaran (2)
+4.2.3.14 Antarmuka Halaman Penerimaan
+Halaman Penerimaan mencatat uang masuk non-penjualan yang menambah kas toko, lalu memperbarui saldo kas dan bank secara real-time pada Halaman Histori Bank. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.68. Antarmuka Halaman Penerimaan
+Gambar 4.69. Antarmuka Halaman Penerimaan (2)
+4.2.3.15 Antarmuka Halaman Transfer Bank
+Halaman Transfer Bank digunakan untuk memindahkan saldo uang dari satu rekening atau kas ke kas lainnya, yang mutasi dan saldo terbarunya dapat dipantau di Halaman Histori Bank. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.70. Antarmuka Halaman Transfer Bank
+Gambar 4.71. Antarmuka Halaman Transfer Bank (2)
+4.2.3.16 Antarmuka Halaman Histori Bank
+Halaman Histori Bank menampilkan rincian riwayat arus uang masuk dan keluar secara lengkap dari Halaman Pembayaran, Halaman Penerimaan, Halaman Penerimaan Penjualan, dan Halaman Transfer Bank. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.72. Antarmuka Halaman Histori Bank
+4.2.3.17 Antarmuka Halaman Uang Muka Penjualan
+Halaman Uang Muka Penjualan mencatat penerimaan uang muka (deposit) dari pembeli di Halaman Pelanggan, yang nantinya otomatis mengurangi total tagihan pada Halaman Faktur Penjualan. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.73. Antarmuka Halaman Uang Muka Penjualan
+Gambar 4.74. Antarmuka Halaman Uang Muka Penjualan (2)
+4.2.3.18 Antarmuka Halaman Faktur Penjualan
+Halaman Faktur Penjualan digunakan untuk membuat transaksi penjualan dengan memilih produk dari Halaman Barang dan pembeli dari Halaman Pelanggan, yang otomatis memotong stok di Halaman Barang per Gudang serta membuat tagihan di Halaman Penerimaan Penjualan. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.75. Antarmuka Halaman Faktur Penjualan
+Gambar 4.76. Antarmuka Halaman Faktur Penjualan (2)
+4.2.3.19 Antarmuka Halaman Penerimaan Penjualan
+Halaman Penerimaan Penjualan memproses pelunasan faktur tagihan dari Halaman Faktur Penjualan, yang otomatis memperbarui status piutang di Halaman Pelanggan dan menambah uang kas di Halaman Histori Bank. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.77. Antarmuka Halaman Penerimaan Penjualan
+Gambar 4.78. Antarmuka Halaman Penerimaan Penjualan (2)
+Gambar 4.79. Antarmuka Halaman Penerimaan Penjualan (3)
+4.2.3.20 Antarmuka Halaman Retur Penjualan
+Halaman Retur Penjualan mencatat pengembalian barang dari pembeli merujuk pada Halaman Faktur Penjualan, yang otomatis mengembalikan jumlah stok ke Halaman Barang per Gudang dan menyesuaikan sisa piutang. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.80. Antarmuka Halaman Retur Penjualan
+Gambar 4.81. Antarmuka Halaman Retur Penjualan (2)
+4.2.3.21 Antarmuka Halaman Pelanggan
+Halaman Pelanggan mengelola daftar data pembeli yang akan dipanggil saat pembuatan transaksi pada Halaman Faktur Penjualan dan Halaman Uang Muka Penjualan. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.82. Antarmuka Halaman Pelanggan
+Gambar 4.83. Antarmuka Halaman Pelanggan (2)
+4.2.3.22 Antarmuka Halaman Faktur Pembelian
+Halaman Faktur Pembelian mencatat pembelian barang dari Halaman Pemasok, yang secara otomatis menambah stok fisik di Halaman Barang per Gudang dan membuat tagihan utang untuk Halaman Pembayaran Pembelian. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.84. Antarmuka Halaman Faktur Pembelian
+Gambar 4.85. Antarmuka Halaman Faktur Pembelian (2)
+4.2.3.23 Antarmuka Halaman Pembayaran Pembelian
+Halaman Pembayaran Pembelian mengelola pelunasan utang pembelian yang ditarik dari Halaman Faktur Pembelian, yang kemudian mengurangi saldo kas di Halaman Histori Bank. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.86. Antarmuka Halaman Pembayaran Pembelian
+Gambar 4.87. Antarmuka Halaman Pembayaran Pembelian (2)
+4.2.3.24 Antarmuka Halaman Retur Pembelian
+Halaman Retur Pembelian memproses pengembalian barang ke pemasok berdasarkan Halaman Faktur Pembelian, yang otomatis mengurangi stok di Halaman Barang per Gudang dan memotong nilai utang toko. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.88. Antarmuka Halaman Retur Pembelian
+Gambar 4.89. Antarmuka Halaman Retur Pembelian (2)
+4.2.3.25 Antarmuka Halaman Pemasok
+Halaman Pemasok mengelola daftar data penyedia barang (supplier) yang menjadi rujukan utama saat melakukan pembelian di Halaman Faktur Pembelian. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.90. Antarmuka Halaman Pemasok
+Gambar 4.91. Antarmuka Halaman Pemasok (2)
+4.2.3.26 Antarmuka Halaman Penyesuaian Persediaan
+Halaman Penyesuaian Persediaan digunakan untuk mengoreksi jumlah barang di Halaman Barang per Gudang setelah pencocokan stok fisik (stock opname), serta mencatat selisih nilainya di Halaman Akun Perkiraan. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.92. Antarmuka Halaman Penyesuaian Persediaan
+Gambar 4.93. Antarmuka Halaman Penyesuaian Persediaan (2)
+4.2.3.27 Antarmuka Halaman Barang
+Halaman Barang mengelola kataLog produk bahan bangunan yang terhubung dengan Halaman Satuan Barang dan Halaman Kategori Barang untuk digunakan dalam transaksi penjualan dan pembelian. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.94. Antarmuka Halaman Barang
+Gambar 4.95. Antarmuka Halaman Barang (2)
+4.2.3.28 Antarmuka Halaman Gudang
+Halaman Gudang mengelola daftar lokasi penyimpanan barang yang digunakan untuk membagi dan memantau stok di Halaman Barang per Gudang. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.96. Antarmuka Halaman Gudang
+Gambar 4.97. Antarmuka Halaman Gudang (2)
+4.2.3.29 Antarmuka Halaman Satuan Barang
+Halaman Satuan Barang mencatat daftar unit ukuran barang (seperti Sak, Batang, Dus, Pcs) yang digunakan saat menginput produk di Halaman Barang. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.98. Antarmuka Halaman Satuan Barang
+Gambar 4.99. Antarmuka Halaman Satuan Barang (2)
+4.2.3.30 Antarmuka Halaman Kategori Barang
+Halaman Kategori Barang mengelompokkan jenis produk dan menghubungkannya dengan akun keuangan di Halaman Akun Perkiraan agar pencatatan jurnal akuntansi berjalan otomatis. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.100. Antarmuka Halaman Kategori Barang
+Gambar 4.101. Antarmuka Halaman Kategori Barang (2)
+4.2.3.31 Antarmuka Halaman Barang per Gudang
+Halaman Barang per Gudang menyajikan jumlah stok barang terkini di tiap gudang yang otomatis berubah setiap ada transaksi di Halaman Faktur Penjualan, Halaman Faktur Pembelian, atau Halaman Penyesuaian Persediaan. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.102. Antarmuka Halaman Barang per Gudang
+4.2.3.32 Antarmuka Halaman Barang Stok Minimum
+Halaman Barang Stok Minimum menampilkan peringatan untuk barang yang stoknya di Halaman Barang per Gudang sudah menipis atau di bawah batas aman, sehingga memudahkan proses pemesanan ulang di Halaman Faktur Pembelian. Tampilan antarmuka dapat dilihat pada gambar di bawah ini:
+Gambar 4.103. Antarmuka Halaman Barang Stok Minimum
+ 4.2.4 Implementasi Algoritma Apriori dan Analisis ABC
+Tahap implementasi algoritma ini merupakan proses mengubah rancangan analisis kombinasi penjualan produk dan pengelompokan stok barang ke dalam kode program aplikasi. Pembuatan algoritma Apriori dan analisis ABC pada sistem ini dibuat menggunakan bahasa pemrograman PHP dengan kerangka kerja Laravel.
+Proses implementasi pada tahap ini mencakup beberapa langkah utama, yaitu:
+Penyiapan Data Transaksi Penjualan: Sistem diatur untuk mengambil data riwayat transaksi penjualan dari tabel operation_documents (faktur penjualan) dan tabel operation_document_lines. Tahap ini mengelompokkan barang-barang bangunan (seperti semen, pasir, paku, dan besi) yang dibeli secara bersamaan dalam satu nota penjualan yang sama.
+Perhitungan Pola Kombinasi Produk (Algoritma Apriori): Algoritma Apriori bekerja dengan menghitung nilai minimum support (≥5%) dan minimum confidence (≥40%) untuk menemukan barang yang paling sering dibeli bersamaan. Pengujian nilai lift ratio (>1.0) juga dilakukan untuk memastikan hubungan antar-produk benar-benar kuat, dapat dilihat pada kode program berikut :
+// Perhitungan Confidence & Lift Ratio Algoritma Apriori
+public function calculate(float $minSupport = 0.05, float $minConfidence = 0.4): array
+    {
+      // Ambil invoice penjualan
+        $transactions = DB::table('operation_documents')
+            ->where('document_type', 'sales_invoice')
+            ->whereIn('status', ['Posted', 'Lunas', 'Belum Lunas'])
+            ->select('id')
+            ->get();
+        $n = $transactions->count();
+        if ($n <= 0) {
+            return [
+                'metrics' => [
+                    ['label' => 'Transaksi', 'value' => '0', 'helper' => 'Periode Aktif', 'tone' => 'blue'],
+                    ['label' => 'Min Support', 'value' => number_format($minSupport * 100, 0) . '%', 'helper' => 'Batas rule yang diproses', 'tone' => 'green'],
+                    ['label' => 'Min Confidence', 'value' => number_format($minConfidence * 100, 0) . '%', 'helper' => 'Rule valid untuk dashboard', 'tone' => 'amber'],
+                    ['label' => 'Rule Valid', 'value' => '0', 'helper' => 'Siap dipakai sebagai insight', 'tone' => 'rose'],
+                ],
+                'rules' => [],
+                'insight' => 'Belum ada transaksi penjualan yang terdaftar.',
+            ];
+        }
+      // Buat daftar transaksi item
+        $transactionItems = [];
+        $allProducts = [];
+        if ($transactions->isNotEmpty()) {
+            $transactionIds = $transactions->pluck('id')->toArray();
+   
+            $linesGrouped = DB::table('operation_document_lines')
+                ->whereIn('operation_document_id', $transactionIds)
+                ->whereNotNull('product_id')
+                ->select('operation_document_id', 'product_id')
+                ->get()
+                ->groupBy('operation_document_id');
+            foreach ($transactions as $t) {
+                $lines = $linesGrouped->get($t->id);
+                if (!$lines || $lines->isEmpty()) {
+                    continue;
+                }
+                $pids = $lines->pluck('product_id')->unique()->toArray();
+                $transactionItems[] = $pids;
+                foreach ($pids as $pid) {
+                    $allProducts[$pid] = ($allProducts[$pid] ?? 0) + 1;
+                }
+            }
+        }
+      // Hitung itemset 1-frequent
+        $frequent1 = [];
+        foreach ($allProducts as $pid => $count) {
+            $support = $count / $n;
+            if ($support >= $minSupport) {
+                $frequent1[$pid] = $support;
+            }
+        }
+      // Hitung itemset 2-frequent
+        $frequent2 = [];
+        $f1_keys = array_keys($frequent1);
+        $num_f1 = count($f1_keys);
+        for ($i = 0; $i < $num_f1; $i++) {
+            for ($j = $i + 1; $j < $num_f1; $j++) {
+                $pid1 = $f1_keys[$i];
+                $pid2 = $f1_keys[$j];
+              // Hitung kemunculan
+                $coCount = 0;
+                foreach ($transactionItems as $itemset) {
+                    if (in_array($pid1, $itemset) && in_array($pid2, $itemset)) {
+                        $coCount++;
+                    }
+                }
+                $support = $coCount / $n;
+                if ($support >= $minSupport) {
+                    $frequent2[] = [
+                        'items' => [$pid1, $pid2],
+                        'support' => $support,
+                    ];
+                }
+            }
+        }
+      // Buat aturan asosiasi
+        $rules = [];
+        $ruleId = 1;
+      // Peta kategori ABC
+        $abcSalesData = DB::table('operation_document_lines')
+            ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+            ->where('operation_documents.document_type', 'sales_invoice')
+            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+            ->select(
+                'operation_document_lines.product_id',
+                DB::raw('SUM(operation_document_lines.total_amount) as revenue')
+            )
+            ->groupBy('operation_document_lines.product_id')
+            ->orderByDesc('revenue')
+            ->get();
+        $totalRevenue = $abcSalesData->sum('revenue');
+        $cumulativeRevenue = 0;
+        $abcMap = [];
+        $itemsA = 0;
+        foreach ($abcSalesData as $row) {
+            $revenue = (float) $row->revenue;
+            $cumulativeRevenue += $revenue;
+            $cumulativeShare = $totalRevenue > 0 ? ($cumulativeRevenue / $totalRevenue) * 100 : 100;
+            if ($cumulativeShare <= 80 || $itemsA === 0) {
+                $category = 'A';
+                $color = '#2d77d1';
+                $itemsA++;
+            } elseif ($cumulativeShare <= 95) {
+                $category = 'B';
+                $color = '#4caf50';
+            } else {
+                $category = 'C';
+                $color = '#f4a62a';
+            }
+            $abcMap[$row->product_id] = [
+                'category' => $category,
+                'color' => $color,
+            ];
+        }
+      // Ambil nama produk
+        $productNames = DB::table('products')
+            ->pluck('name', 'id')
+            ->toArray();
+        foreach ($frequent2 as $f2) {
+            $pid1 = $f2['items'][0];
+            $pid2 = $f2['items'][1];
+            $supportF2 = $f2['support'];
+          // Aturan 1
+            $support1 = $frequent1[$pid1];
+            $support2 = $frequent1[$pid2];
+        
+            $confidence1 = $supportF2 / $support1;
+            $lift1 = $confidence1 / $support2;
+            if ($confidence1 >= $minConfidence) {
+                $rules[] = [
+                    'id' => 'rule-' . $ruleId++,
+                    'antecedent' => $productNames[$pid1] ?? "Product #{$pid1}",
+                    'consequent' => $productNames[$pid2] ?? "Product #{$pid2}",
+                    'antecedentAbc' => $abcMap[$pid1]['category'] ?? 'C',
+                    'antecedentColor' => $abcMap[$pid1]['color'] ?? '#f4a62a',
+                    'consequentAbc' => $abcMap[$pid2]['category'] ?? 'C',
+                    'consequentColor' => $abcMap[$pid2]['color'] ?? '#f4a62a',
+                    'support' => number_format($supportF2 * 100, 1) . '%',
+                    'confidence' => number_format($confidence1 * 100, 1) . '%',
+                    'lift' => number_format($lift1, 2),
+                    'confidenceValue' => (int) ($confidence1 * 100),
+                    'supportValue' => (int) ($supportF2 * 100),
+                ];
+            }
+          // Aturan 2
+            $confidence2 = $supportF2 / $support2;
+            $lift2 = $confidence2 / $support1;
+            if ($confidence2 >= $minConfidence) {
+                $rules[] = [
+                    'id' => 'rule-' . $ruleId++,
+                    'antecedent' => $productNames[$pid2] ?? "Product #{$pid2}",
+                    'consequent' => $productNames[$pid1] ?? "Product #{$pid1}",
+                    'antecedentAbc' => $abcMap[$pid2]['category'] ?? 'C',
+                    'antecedentColor' => $abcMap[$pid2]['color'] ?? '#f4a62a',
+                    'consequentAbc' => $abcMap[$pid1]['category'] ?? 'C',
+                    'consequentColor' => $abcMap[$pid1]['color'] ?? '#2d77d1',
+                    'support' => number_format($supportF2 * 100, 1) . '%',
+                    'confidence' => number_format($confidence2 * 100, 1) . '%',
+                    'lift' => number_format($lift2, 2),
+                    'confidenceValue' => (int) ($confidence2 * 100),
+                    'supportValue' => (int) ($supportF2 * 100),
+                ];
+            }
+        }
+      // Urutkan aturan dari confidence tertinggi
+        usort($rules, function ($a, $b) {
+            return $b['confidenceValue'] <=> $a['confidenceValue'];
+        });
+      // Ambil 7 aturan teratas
+        $rules = array_slice($rules, 0, 7);
+        $metrics = [
+            [
+                'label' => 'Transaksi',
+                'value' => number_format($n, 0, ',', '.'),
+                'helper' => 'Periode Aktif',
+                'tone' => 'blue',
+            ],
+            [
+                'label' => 'Min Support',
+                'value' => number_format($minSupport * 100, 0) . '%',
+                'helper' => 'Batas rule yang diproses',
+                'tone' => 'green',
+            ],
+            [
+                'label' => 'Min Confidence',
+                'value' => number_format($minConfidence * 100, 0) . '%',
+                'helper' => 'Rule valid untuk dashboard',
+                'tone' => 'amber',
+            ],
+            [
+                'label' => 'Rule Valid',
+                'value' => (string) count($rules),
+                'helper' => 'Siap dipakai sebagai insight',
+                'tone' => 'rose',
+            ],
+        ];
+        $topRule = $rules[0] ?? null;
+        $insight = $topRule
+            ? "Pelanggan yang membeli {$topRule['antecedent']} memiliki peluang {$topRule['confidence']} untuk membeli {$topRule['consequent']}. Buat paket bundling diskon!"
+            : "Pasangkan barang terkait berdekatan di rak untuk memicu pembelian impulsif.";
+        return [
+            'metrics' => $metrics,
+            'rules' => $rules,
+            'insight' => $insight,
+        ];
+    }
+Pengelompokan Prioritas Stok Barang (Analisis ABC): Sistem mengurutkan nilai total penjualan (revenue) setiap barang dari yang terbesar hingga terkecil. Barang kemudian dibagi menjadi tiga kelompok: Kategori A (penyumbang omzet 0%–80%), Kategori B (80.1%–95%), dan Kategori C (95.1%–100%). Hasil pengelompokan ini digunakan untuk membantu pengaturan tata letak barang di toko dan menentukan prioritas pemesanan stok ke supplier, dapat dilihat pada kode program dibawah ini :
+public function calculate(): array
+    {
+      // Query total penjualan per produk
+        $salesData = DB::table('operation_document_lines')
+            ->join('operation_documents', 'operation_document_lines.operation_document_id', '=', 'operation_documents.id')
+            ->join('products', 'operation_document_lines.product_id', '=', 'products.id')
+            ->leftJoin('units', 'products.base_unit_id', '=', 'units.id')
+            ->where('operation_documents.document_type', 'sales_invoice')
+            ->whereIn('operation_documents.status', ['Posted', 'Lunas', 'Belum Lunas'])
+            ->select(
+                'products.id as product_id',
+                'products.name as product_name',
+                'products.code as product_code',
+                DB::raw('SUM(operation_document_lines.quantity) as units_sold'),
+                DB::raw('SUM(operation_document_lines.total_amount) as revenue'),
+                'units.name as unit_name'
+            )
+            ->groupBy('products.id', 'products.name', 'products.code', 'units.name')
+            ->orderByDesc('revenue')
+            ->get();
+        $totalRevenue = $salesData->sum('revenue');
+        if ($totalRevenue <= 0) {
+            return [
+                'metrics' => [
+                    ['label' => 'Item A', 'value' => '0', 'helper' => '0% kontribusi omzet', 'tone' => 'blue'],
+                    ['label' => 'Item B', 'value' => '0', 'helper' => '0% kontribusi omzet', 'tone' => 'green'],
+                    ['label' => 'Item C', 'value' => '0', 'helper' => '0% kontribusi omzet', 'tone' => 'amber'],
+                    ['label' => 'Nilai Analisis', 'value' => 'Rp 0', 'helper' => 'Tidak ada transaksi', 'tone' => 'rose'],
+                ],
+                'distribution' => [],
+                'topItems' => [],
+                'insight' => 'Belum ada transaksi penjualan yang terdaftar.',
+            ];
+        }
+        $cumulativeRevenue = 0;
+        $itemsA = 0;
+        $itemsB = 0;
+        $itemsC = 0;
+  
+        $revenueA = 0;
+        $revenueB = 0;
+        $revenueC = 0;
+        $topItems = [];
+        foreach ($salesData as $row) {
+            $revenue = (float) $row->revenue;
+            $cumulativeRevenue += $revenue;
+            $cumulativeShare = ($cumulativeRevenue / $totalRevenue) * 100;
+          // Klasifikasi ABC
+            if ($cumulativeShare <= 80 || $itemsA === 0) {
+                $category = 'A';
+                $color = '#2d77d1';
+                $itemsA++;
+                $revenueA += $revenue;
+            } elseif ($cumulativeShare <= 95) {
+                $category = 'B';
+                $color = '#4caf50';
+                $itemsB++;
+                $revenueB += $revenue;
+            } else {
+                $category = 'C';
+                $color = '#f4a62a';
+                $itemsC++;
+                $revenueC += $revenue;
+            }
+          // Daftar item teratas
+            if (count($topItems) < 5) {
+                $topItems[] = [
+                    'name' => $row->product_name,
+                    'code' => $row->product_code,
+                    'unitsSold' => number_format($row->units_sold, 0, ',', '.') . ' ' . ($row->unit_name ?? 'pcs'),
+                    'revenue' => 'Rp ' . number_format($revenue, 0, ',', '.') . ',00',
+                    'share' => number_format(($revenue / $totalRevenue) * 100, 1, ',', '.') . '%',
+                    'category' => $category,
+                    'categoryColor' => $color,
+                ];
+            }
+        }
+        $pctA = $totalRevenue > 0 ? ($revenueA / $totalRevenue) * 100 : 0;
+        $pctB = $totalRevenue > 0 ? ($revenueB / $totalRevenue) * 100 : 0;
+        $pctC = $totalRevenue > 0 ? ($revenueC / $totalRevenue) * 100 : 0;
+        $metrics = [
+            [
+                'label' => 'Item A',
+                'value' => (string) $itemsA,
+                'helper' => number_format($pctA, 0) . '% kontribusi omzet',
+                'tone' => 'blue',
+            ],
+            [
+                'label' => 'Item B',
+                'value' => (string) $itemsB,
+                'helper' => number_format($pctB, 0) . '% kontribusi omzet',
+                'tone' => 'green',
+            ],
+            [
+                'label' => 'Item C',
+                'value' => (string) $itemsC,
+                'helper' => number_format($pctC, 0) . '% kontribusi omzet',
+                'tone' => 'amber',
+            ],
+            [
+                'label' => 'Nilai Analisis',
+                'value' => \App\Support\Presentation\PosBlueprint::formatCurrencyShort($totalRevenue),
+                'helper' => 'Berdasarkan penjualan material dan perlengkapan bangunan',
+                'tone' => 'rose',
+            ],
+        ];
+        $distribution = [
+            [
+                'label' => 'A',
+                'title' => 'Bahan bangunan utama dan kebutuhan renovasi',
+                'share' => number_format($pctA, 0) . '%',
+                'itemCount' => $itemsA . ' item',
+                'barWidth' => number_format($pctA, 0) . '%',
+                'color' => '#2d77d1',
+            ],
+            [
+                'label' => 'B',
+                'title' => 'Pelengkap bangunan yang tetap rutin bergerak',
+                'share' => number_format($pctB, 0) . '%',
+                'itemCount' => $itemsB . ' item',
+                'barWidth' => number_format($pctB, 0) . '%',
+                'color' => '#4caf50',
+            ],
+            [
+                'label' => 'C',
+                'title' => 'Aksesoris dan item lambat gerak',
+                'share' => number_format($pctC, 0) . '%',
+                'itemCount' => $itemsC . ' item',
+                'barWidth' => number_format($pctC, 0) . '%',
+                'color' => '#f4a62a',
+            ],
+        ];
+        $primaryProduct = $salesData->first();
+        $insight = $primaryProduct 
+            ? "Stok {$primaryProduct->product_name} sebaiknya lebih diprioritaskan. Barang ini memberi porsi omzet paling besar."
+            : "Stok semen, besi, dan cat sebaiknya lebih diprioritaskan.";
+        return [
+            'metrics' => $metrics,
+            'distribution' => $distribution,
+            'topItems' => $topItems,
+            'insight' => $insight,
+        ];
+    }
+BAB VPENUTUP
+5.1 Kesimpulan
+Berdasarkan hasil perancangan, implementasi, dan pengujian yang telah dilakukan pada aplikasi Point of Sale (POS) dan Pengolahan Persediaan Toko Bangunan TB NUR, maka dapat ditarik beberapa kesimpulan sebagai berikut:
+Sistem Operasional Toko: Aplikasi berbasis web ini berhasil dibuat menggunakan Laravel dan React.js untuk membantu mencatat transaksi penjualan, pembelian, sisa stok barang, dan pengeluaran harian toko secara teratur.
+Hasil Algoritma Apriori: Algoritma Apriori berhasil membaca data faktur penjualan untuk menemukan pasangan barang yang sering dibeli bersamaan oleh pelanggan. Hasilnya tampil di halaman dashboard untuk membantu menentukan paket promosi barang.
+Hasil Analisis ABC: Metode Analisis ABC berhasil mengelompokkan barang toko menjadi Kategori A (penyumbang 80% omzet), Kategori B (15% omzet), dan Kategori C (5% omzet). Hal ini memudahkan pemilik toko fokus menjaga ketersediaan stok barang yang paling laku.
+5.2 Saran
+Saran untuk pengembangan aplikasi ini di masa depan antara lain:
+Integrasi WhatsApp Gateway untuk Notifikasi: Mengintegrasikan layanan WhatsApp API (seperti Fonnte atau Wablas) untuk mengirim pesan peringatan otomatis ke nomor HP pemilik toko saat stok barang Kategori A menipis atau saat ada jatuh tempo piutang pelanggan.
+Fitur Backup Database Otomatis ke Cloud: Menambahkan fitur jadwal pencadangan (backup) basis data MySQL otomatis ke penyimpanan Cloud (seperti Google Drive) untuk menjaga keamanan data transaksi dari kerusakan server lokal.
+Pengembangan Aplikasi Mobile Kasir (Android): Mengembangkan aplikasi versi Android (PWA/Mobile) agar kasir atau owner dapat mencatat transaksi penjualan secara langsung di lapangan saat pengantaran bahan bangunan ke lokasi proyek.
+DAFTAR PUSTAKA
+Apriandi, R., Saputra, A., & Hermawan, D. (2025). Evaluasi Nilai Lift Ratio pada Aturan Asosiasi Algoritma Apriori untuk Pengelompokan Barang Retail. Jurnal TeknoLogi Informasi dan Komputer (JTIK), 11(1), 45-56. https://doi.org/10.35870/jtik.v11i1.1420
+Ardiansyah, H., Febriani, A., & Kusuma, W. (2023). Penerapan Algoritma Apriori untuk Pemetaan Pola Penjualan Produk Bangunan Berbasis Web. Jurnal Sistem Informasi dan Informatika (JSI), 9(2), 112-124. https://doi.org/10.31294/jsi.v9i2.8942
+Azhariyah, N., & Mukhlis, M. (2024). Analisis Performa Visual Studio Code sebagai Integrated Development Environment (IDE) Pengembang Web. Jurnal Rekayasa Perangkat Lunak Indonesia, 8(1), 33-41. https://doi.org/10.31294/jrpli.v8i1.6210
+Christian, A., & Setiawan, R. (2025). Implementasi Component-Driven Development Menggunakan ReactJS pada Sistem Kasir Retail. Jurnal Computech & Bisnis, 19(1), 88-99. https://doi.org/10.30656/jcb.v19i1.2104
+Christian, A., & Widiatry, W. (2023). Perancangan Sistem Point of Sale (POS) Berbasis Web untuk Efisiensi Pencatatan Transaksi Penjualan. Jurnal Ilmiah Komputasi, 22(3), 301-310. https://doi.org/10.32409/jik.v22i3.1542
+Fitri, R., & Kurniawan, D. (2025). Efektivitas Alat Bantu Visualisasi Diagram Sistem Berbasis Draw.io pada Pemodelan UML. Jurnal Pengembangan TeknoLogi Informasi dan Ilmu Komputer, 9(2), 140-149. https://doi.org/10.25126/jptiik.v9i2.9021
+Hayati, N., & Sucipto, A. (2024). Pemodelan Sistem Informasi Berbasis Unified Modeling Language (UML) untuk Aplikasi Manajemen Retail. Jurnal Informatika dan Rekayasa Perangkat Lunak (JITIKA), 6(1), 22-31. https://doi.org/10.33365/jitika.v6i1.4110
+Hidayat, T., & Rosyidi, M. (2023). Penerapan Analisis ABC Pareto dalam 
+Pengendalian Stok Persediaan Bahan Bangunan. Jurnal Manajemen Industri dan Logistik, 7(2), 175-186. https://doi.org/10.30988/jmil.v7i2.1102
+Ihzani, N., Ramadhani, F., & Hidayatullah, M. (2024). Pemodelan Sistem Informasi Menggunakan Use case, Class Diagram, dan ERD pada Aplikasi Retail. Jurnal Informatika dan Rekayasa Komputer, 10(1), 67-78. https://doi.org/10.33020/jirk.v10i1.4120
+Jihadi, M., & Syarabil, A. (2025). Integrasi Monolitik Inertia.js dengan Laravel untuk Aplikasi Pengolahan Data Real-time. Jurnal Komputasi dan Sistem Informasi, 13(1), 54-65. https://doi.org/10.35957/jksi.v13i1.3012
+Munawar, A., & Hidayat, R. (2024). Konfigurasi Lingkungan Server Lokal Menggunakan Laragon untuk Pengembangan Web Berbasis PHP. Jurnal TeknoLogi Komputer dan Informatika, 6(2), 101-110. https://doi.org/10.31294/jtki.v6i2.4512
+Prastomo, A., & Alfarisi, M. (2024). Rancang Bangun Sistem Point of Sale (POS) Berbasis Web Menggunakan Metode Waterfall. Jurnal Informatika Utama, 12(1), 15-26. https://doi.org/10.33365/jiu.v12i1.3201
+Rafi, M., Syahputra, E., & Wardhana, A. (2024). Klasifikasi Stok Barang Menggunakan Metode ABC Pareto pada Toko Retail Bangunan. Jurnal Riset Komputer (JURIKOM), 11(3), 215-224. https://doi.org/10.30865/jurikom.v11i3.5410
+Ramadani, S., Fauzi, A., & Rahmawati, E. (2024). Penerapan Market Basket Analysis Menggunakan Algoritma Apriori pada Penjualan Material Bangunan. Jurnal Sains dan Informatika, 10(2), 180-191. https://doi.org/10.22216/jsi.v10i2.3412
+Sansprayada, M., & Mariskhana, K. (2022). Implementasi Framework TailwindCSS dalam Merancang Antarmuka Web yang Responsif. Jurnal Ilmiah Rekayasa dan Manajemen Sistem Informasi, 8(2), 120-128. https://doi.org/10.24014/jirmsi.v8i2.15234
+Setiawan, B. (2024). Pemrograman Web Modern Menggunakan Bahasa PHP 8.x dan Manajemen Memori Objek. Jurnal TeknoLogi Perangkat Lunak, 7(1), 45-55. https://doi.org/10.31294/jtpl.v7i1.3120
+Shafa, A., Nurcahyo, G., & Wanto, A. (2024). Penentuan Ambang Batas Support dan Confidence pada Algoritma Apriori untuk Strategi Cross-Selling. Jurnal Media Informatika Budidarma, 8(2), 850-860. https://doi.org/10.30865/mib.v8i2.7301
+Singgalen, Y. A. (2024). Penerapan Data Mining untuk Analisis Pola Transaksi Penjualan Produk Retail. Jurnal TeknoLogi Informasi dan Rekayasa Komputer, 5(1), 12-25. https://doi.org/10.36590/jtirk.v5i1.821
+Sugiyanto, S., & Rahmawati, I. (2024). Optimalisasi Query dan Relasi Basis Data MySQL pada Sistem Informasi Manajemen. Jurnal Komputer dan Aplikasi, 12(1), 77-88. https://doi.org/10.26418/jka.v12i1.6215
+Sumudra, A. (2025). Penerapan Framework Laravel 11 pada Pembangunan RESTful API dan Arsitektur Backend. Jurnal Sistem Komputer dan Informatika (JSON), 6(3), 320-331. https://doi.org/10.30865/json.v6i3.8901
+DAFTAR LAMPIRAN
+Lampiran 1. Hasil Pengujian Black Box Testing
+No
+Deskripsi Skenario (Modul/Halaman)
+Prosedur Pengujian
+Hasil yang Diharapkan
+Hasil yang Didapatkan
+Kesimpulan
+1
+Admin/Kasir mengakses halaman Login
+Mengakses URL /Login
+Sistem menampilkan halaman form Login
+Sesuai dengan Gambar 4.42
+Berhasil
+2
+Pengguna mendaftar akun baru (Register)
+Mengisi form registrasi akun
+Akun baru berhasil terbuat di database
+Sesuai dengan Gambar 4.43
+Berhasil
+3
+Pemilik Toko melihat Dashboard & Analisis
+Membuka Halaman Dashboard
+Widget Omzet, Grafik ABC, & Apriori ter-render
+Sesuai dengan Gambar 4.44 - 4.49
+Berhasil
+4
+Kelola Pengaturan Preferensi Sistem
+Mengubah preferensi sistem
+Preferensi toko berhasil diperbarui di DB
+Sesuai dengan Gambar 4.50
+Berhasil
+5
+Kelola Data Karyawan & Gaji/Tunjangan
+Menginput data staf & tunjangan
+Data karyawan & komponen gaji tersimpan
+Sesuai dengan Gambar 4.51 - 4.54
+Berhasil
+6
+Pemantauan Log Aktivitas Pengguna
+Buka Halaman Log Aktivitas
+Rekam jejak user & IP address tersaji
+Sesuai dengan Gambar 4.55
+Berhasil
+7
+Kelola Akun Perkiraan (Chart of Accounts)
+Menambah/edit COA kas/bank
+Daftar akun keuangan tersimpan di DB
+Sesuai dengan Gambar 4.56 & 4.57
+Berhasil
+8
+Pencatatan Beban Operasional Toko
+Input transaksi pengeluaran beban
+Beban tersimpan & saldo kas/bank terpotong
+Sesuai dengan Gambar 4.58 & 4.59
+Berhasil
+9
+Pemrosesan Pencatatan Gaji Karyawan
+Input transaksi pembayaran gaji
+Penggajian tersimpan di DB & terbentuk jurnal
+Sesuai dengan Gambar 4.60 & 4.61
+Berhasil
+10
+Pencatatan Jurnal Umum Otomatis
+Memposting transaksi operasional
+Jurnal Umum debit/kredit otomatis terbentuk
+Sesuai dengan Gambar 4.62 - 4.65
+Berhasil
+11
+Pencatatan Kas Keluar, Masuk & Bank
+Input Kas Keluar, Masuk, & Transfer
+Saldo Kas/Bank & Riwayat Bank terbarui
+Sesuai dengan Gambar 4.66 - 4.72
+Berhasil
+12
+Kelola Faktur Penjualan & Uang Muka
+Input Uang Muka & Faktur Penjualan
+Faktur ter-post & stok persediaan terpotong
+Sesuai dengan Gambar 4.73 - 4.76
+Berhasil
+13
+Pembayaran Penjualan & Retur Penjualan
+Input Pelunasan & Retur Barang
+Pelunasan tercatat & barang retur kembali
+Sesuai dengan Gambar 4.77 - 4.81
+Berhasil
+14
+Kelola Data Pelanggan Toko
+Menambah/edit data pelanggan
+Data pelanggan tersimpan di database
+Sesuai dengan Gambar 4.82 & 4.83
+Berhasil
+15
+Kelola Faktur Pembelian, Bayar & Retur
+Input Faktur Pembelian ke Supplier
+Stok barang bertambah & utang tercatat
+Sesuai dengan Gambar 4.84 - 4.89
+Berhasil
+16
+Kelola Data Pemasok (Supplier)
+Menambah/edit data supplier
+Data supplier bahan bangunan tersimpan
+Sesuai dengan Gambar 4.90 & 4.91
+Berhasil
+17
+Penyesuaian Persediaan Stok (Opname)
+Input penyesuaian selisih stok
+Kuantitas stok gudang terbarui
+Sesuai dengan Gambar 4.92 & 4.93
+Berhasil
+18
+Kelola Barang, Gudang, Satuan & Kategori
+Input Barang, Gudang, Unit & Kategori
+Master persediaan material bangunan tersimpan
+Sesuai dengan Gambar 4.94 - 4.101
+Berhasil
+19
+Pemantauan Barang per Gudang & Stok Minimum
+Cek Stok Gudang & Minimum
+Notifikasi barang restock & lokasi gudang tampil
+Sesuai dengan Gambar 4.102 & 4.103
+Berhasil
+Lampiran 2. Penilaian Aplikasi
+Lampiran 3. Dokumentasi Mitra
+Lampiran 4. Biodata Penulis Tugas Akhir
+BIODATA PENULIS TUGAS AKHIR
+Nama:Zaki Ramadhan
+Nomor Induk Mahasiswa:2303108
+Jenis Kelamin: Laki-Laki
+Tempat, Tanggal Lahir:Cirebon, 26 Oktober 2004
+Status:Belum Menikah
+Agama:Islam
+Asal Ijazah SekolahTahun Ijazah
+SD:SDN 2 Guwa Kidul2017
+SMP:MTs Al-Zaytun2020
+SMA:MA Al-Zaytun2023
+Program Studi/Jurusan:D3 Teknik Informatika/Teknik Informatika
+Alamat:Jalan Madun Jaya No. 15, RT.1/RW.5, Desa Guwa Kidul, Kaliwedi, Cirebon, Jawa Barat.
+No. Handphone:081214772370
+Email:zakiram4dhan@gmail.com
+Nama Orang Tua:Samudra
+Pekerjaan Orang Tua:Wiraswasta
+Judul Tugas Akhir:Integrasi Algoritma Apriori dan Analisis ABC Untuk Analisis Pola Penjualan Produk Berbasis Aplikasi Pos Pada Toko Bangunan TB NUR
+Pembimbing:Dian Pramadhana, M.Kom
