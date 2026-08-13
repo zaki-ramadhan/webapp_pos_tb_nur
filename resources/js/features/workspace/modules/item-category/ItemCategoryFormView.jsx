@@ -3,13 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import { useFormValuesSync } from '@/features/workspace/shared/hooks/useFormValuesSync';
+import { useWorkspaceFormDraftState } from '@/features/workspace/shared/hooks/useWorkspaceFormDraftState';
 import {
     createBackendResource,
     deleteBackendResource,
     getBackendErrorMessage,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
 import { TrashIcon } from '@/features/workspace/shared/Icons';
@@ -35,16 +35,20 @@ export default function ItemCategoryFormView({
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'item-category-general');
     const initialValues = useMemo(() => buildFormValues(config, detailRow), [config, detailRow]);
-    const [savedSnapshot, setSavedSnapshot] = useState(() => initialValues);
-    const [values, setValues] = useState(() => initialValues);
+    const {
+        values,
+        setValues,
+        isDirty,
+        markClean,
+    } = useWorkspaceFormDraftState({
+        initialValues,
+        recordId: detailRow?.id ?? null,
+        pageId: page?.id ?? 'item-category',
+        tabId: activeLevel2Tab?.id,
+    });
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(savedSnapshot, values),
-        [savedSnapshot, values]
-    );
 
     const parentCategoryOptions = useMemo(() => {
         const rows = config.table?.rows ?? [];
@@ -58,19 +62,9 @@ export default function ItemCategoryFormView({
 
     useEffect(() => {
         setActiveTabId(config.tabs?.[0]?.id ?? 'item-category-general');
-        setSavedSnapshot(initialValues);
-        setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId, detailRow?.id]);
-
-    useFormValuesSync({
-        initialValues,
-        recordId: detailRow?.id ?? null,
-        values,
-        isDirty,
-        setValues,
-    });
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -129,7 +123,7 @@ export default function ItemCategoryFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
                 await onRefresh?.();
-                setSavedSnapshot(values);
+                markClean();
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
