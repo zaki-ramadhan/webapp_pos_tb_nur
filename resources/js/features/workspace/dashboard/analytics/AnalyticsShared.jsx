@@ -1,4 +1,112 @@
-export { parsePercentValue, formatCompactLabel, getMetric, getProductImageUrl } from './analyticsUtils';
+export { parsePercentValue, formatCompactLabel, getMetric, getProductImageUrl, getBuildingStoreLayoutRecommendation } from './analyticsUtils';
+
+export function HighlightProductText({ text, itemA, itemAId, itemB, itemBId }) {
+    if (!text) return null;
+    if (!itemA && !itemB) return <span>{text}</span>;
+
+    const handleOpenProduct = (e, productId, productName) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+                new CustomEvent('workspace:open-page', {
+                    detail: {
+                        pageId: 'items-services',
+                        recordId: productId ?? undefined,
+                        label: productName,
+                        tabLabel: productName,
+                        openForm: Boolean(productId),
+                    },
+                })
+            );
+        }
+    };
+
+    const escapeRegex = (str) => (str ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '');
+    const patterns = [itemA, itemB].filter(Boolean).map(escapeRegex);
+    if (!patterns.length) return <span>{text}</span>;
+
+    const regex = new RegExp(`(${patterns.join('|')})`, 'gi');
+    const parts = text.split(regex);
+
+    return (
+        <span>
+            {parts.map((part, index) => {
+                const lowerPart = part.toLowerCase();
+                const isItemA = itemA && lowerPart === itemA.toLowerCase();
+                const isItemB = itemB && lowerPart === itemB.toLowerCase();
+
+                if (isItemA) {
+                    return (
+                        <button
+                            key={index}
+                            type="button"
+                            onClick={(e) => handleOpenProduct(e, itemAId, itemA)}
+                            className="font-bold underline text-blue-700 hover:text-blue-900 cursor-pointer decoration-2 underline-offset-2 transition-colors mx-0.5 inline-baseline focus:outline-none focus:ring-1 focus:ring-blue-400 rounded-sm"
+                            title={`Klik untuk membuka halaman & detail data ${itemA}`}
+                        >
+                            {part}
+                        </button>
+                    );
+                }
+
+                if (isItemB) {
+                    return (
+                        <button
+                            key={index}
+                            type="button"
+                            onClick={(e) => handleOpenProduct(e, itemBId, itemB)}
+                            className="font-bold underline text-blue-700 hover:text-blue-900 cursor-pointer decoration-2 underline-offset-2 transition-colors mx-0.5 inline-baseline focus:outline-none focus:ring-1 focus:ring-blue-400 rounded-sm"
+                            title={`Klik untuk membuka halaman & detail data ${itemB}`}
+                        >
+                            {part}
+                        </button>
+                    );
+                }
+
+                return <span key={index}>{part}</span>;
+            })}
+        </span>
+    );
+}
+
+export function AbcCategoryLegend() {
+    return (
+        <div className="mb-3 rounded-lg border border-blue-100 bg-blue-50/20 p-3 shadow-widget-tiny select-none">
+            <h5 className="text-sm font-semibold text-blue-900 mb-2">Petunjuk Kategori Prioritas Barang (Analisis ABC):</h5>
+            <div className="grid gap-2 sm:grid-cols-3">
+                <div className="rounded-md border border-tab-active-border-x bg-white p-2.5 shadow-widget-small">
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-badge-group-a">
+                            Kat. A
+                        </span>
+                        <span className="text-xs font-semibold text-brand-darker">(Utama)</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">80% omzet</span> toko. Prioritas utama, stok wajib dijaga ketat.</p>
+                </div>
+                <div className="rounded-md border border-emerald-100 bg-white p-2.5 shadow-widget-small">
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-green-410">
+                            Kat. B
+                        </span>
+                        <span className="text-xs font-semibold text-brand-darker">(Stabil)</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">15% omzet</span> toko. Penjualan stabil untuk kebutuhan rutin.</p>
+                </div>
+                <div className="rounded-md border border-amber-100 bg-white p-2.5 shadow-widget-small">
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold text-white shrink-0 bg-warning">
+                            Kat. C
+                        </span>
+                        <span className="text-xs font-semibold text-brand-darker">(Tambahan)</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed">Menyumbang <span className="font-semibold text-slate-700">5% omzet</span> toko. Produk pelengkap/aksesoris penunjang.</p>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export function WidgetSection({ title, caption = null, collapsible = false, expanded = true, onToggle = null, children }) {
     return (

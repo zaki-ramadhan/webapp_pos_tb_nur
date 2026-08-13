@@ -187,7 +187,9 @@ class AprioriAnalysisService
                 $rules[] = [
                     'id' => 'rule-' . $ruleId++,
                     'antecedent' => $productNames[$pid1] ?? "Produk {$pid1}",
+                    'antecedentId' => $pid1,
                     'consequent' => $productNames[$pid2] ?? "Produk {$pid2}",
+                    'consequentId' => $pid2,
                     'antecedentAbc' => $abcMap[$pid1]['category'] ?? 'C',
                     'antecedentColor' => $abcMap[$pid1]['color'] ?? '#f4a62a',
                     'consequentAbc' => $abcMap[$pid2]['category'] ?? 'C',
@@ -209,7 +211,9 @@ class AprioriAnalysisService
                 $rules[] = [
                     'id' => 'rule-' . $ruleId++,
                     'antecedent' => $productNames[$pid2] ?? "Produk {$pid2}",
+                    'antecedentId' => $pid2,
                     'consequent' => $productNames[$pid1] ?? "Produk {$pid1}",
+                    'consequentId' => $pid1,
                     'antecedentAbc' => $abcMap[$pid2]['category'] ?? 'C',
                     'antecedentColor' => $abcMap[$pid2]['color'] ?? '#f4a62a',
                     'consequentAbc' => $abcMap[$pid1]['category'] ?? 'C',
