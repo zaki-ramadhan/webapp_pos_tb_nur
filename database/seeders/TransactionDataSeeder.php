@@ -69,7 +69,7 @@ class TransactionDataSeeder extends Seeder
                 'product_id' => $p->id,
                 'warehouse_id' => $warehouseId,
                 'entry_date' => '2025-01-02 08:00:00',
-                'qty_received' => 1500,
+                'qty_received' => 1000,
                 'qty_remaining' => $remaining,
                 'unit_cost' => $p->default_purchase_price,
                 'source_type' => 'opening_balance',
@@ -127,8 +127,8 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'sales_quote', $pSemen, 20, 78000, $dt);
-                $t2 = $insertLine($docId, 'sales_quote', $pPasir, 2, 450000, $dt);
+                $t1 = $insertLine($docId, 'sales_quote', $pSemen, 10, 78000, $dt);
+                $t2 = $insertLine($docId, 'sales_quote', $pPasir, 1, 450000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1 + $t2, 'total_amount' => $t1 + $t2]);
             }
         }
@@ -158,8 +158,8 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'sales_order', $pCat, 5 + ($m % 3), 142000, $dt);
-                $t2 = $insertLine($docId, 'sales_order', $pKuas, 5 + ($m % 3), 18000, $dt);
+                $t1 = $insertLine($docId, 'sales_order', $pCat, 3, 142000, $dt);
+                $t2 = $insertLine($docId, 'sales_order', $pKuas, 3, 18000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1 + $t2, 'total_amount' => $t1 + $t2]);
             }
         }
@@ -188,38 +188,39 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'sales_delivery', $pPipa, 15, 175000, $dt);
+                $t1 = $insertLine($docId, 'sales_delivery', $pPipa, 8, 175000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1, 'total_amount' => $t1]);
             }
         }
 
-        // 5. Sales Invoices (FULL 2025 & 2026 DATA - 75+ Correlated Invoices for YoY & Apriori/ABC)
+        // 5. Sales Invoices (Calibrated for ~Rp 250M / year in 2025 & steady growth in 2026)
+        // Average invoice: ~Rp 2.5 - 4.5 Million (realistic village store orders)
         $salesPatterns = [
-            [$pSemen => 25, $pPasir => 3, $pPaku => 5, $pBesi => 15, $pKuas => 2],
-            [$pSemen => 40, $pPasir => 5, $pPaku => 8, $pBesi => 20, $pKuas => 3],
-            [$pSemen => 15, $pPasir => 2, $pPaku => 3, $pThn => 2],
-            [$pSemen => 30, $pPasir => 4, $pPaku => 6, $pThn => 3],
-            [$pSemen => 50, $pPasir => 6, $pPaku => 10, $pBesi => 25],
-            [$pSemen => 20, $pPasir => 2],
-            [$pSemen => 35, $pPasir => 4],
-            [$pSemen => 10, $pPasir => 1],
-            [$pSemen => 45, $pPasir => 5, $pBesi => 18],
-            [$pSemen => 28, $pPasir => 3],
-            [$pPasir => 4, $pPipa => 10, $pBesi => 8],
-            [$pPasir => 2, $pPipa => 14, $pBesi => 10],
-            [$pSemen => 22, $pPipa => 8],
-            [$pPaku => 5, $pBesi => 10],
-            [$pPaku => 3, $pBesi => 12],
-            [$pPipa => 12, $pLem => 4, $pKran => 3],
-            [$pPipa => 20, $pLem => 6, $pKran => 5],
-            [$pPipa => 8,  $pLem => 2, $pKran => 2],
-            [$pPipa => 15, $pLem => 5, $pKran => 4],
-            [$pLem => 3],
-            [$pKran => 3],
-            [$pCat => 6, $pKuas => 5, $pThn => 3],
-            [$pCat => 4, $pKuas => 4, $pThn => 2],
-            [$pCat => 8, $pKuas => 6, $pThn => 4],
-            [$pCat => 7, $pKuas => 3, $pThn => 2],
+            [$pSemen => 12, $pPasir => 1, $pPaku => 2, $pBesi => 6,  $pKuas => 1], // ~Rp 2.1M
+            [$pSemen => 20, $pPasir => 2, $pPaku => 3, $pBesi => 10, $pKuas => 2], // ~Rp 3.8M
+            [$pSemen => 8,  $pPasir => 1, $pPaku => 1, $pThn => 1],               // ~Rp 1.2M
+            [$pSemen => 15, $pPasir => 2, $pPaku => 3, $pThn => 2],               // ~Rp 2.3M
+            [$pSemen => 25, $pPasir => 3, $pPaku => 4, $pBesi => 12],              // ~Rp 4.8M
+            [$pSemen => 10, $pPasir => 1],                                        // ~Rp 1.2M
+            [$pSemen => 18, $pPasir => 2],                                        // ~Rp 2.3M
+            [$pSemen => 6,  $pPasir => 1],                                        // ~Rp 900k
+            [$pSemen => 22, $pPasir => 2, $pBesi => 8],                           // ~Rp 3.6M
+            [$pSemen => 14, $pPasir => 1],                                        // ~Rp 1.5M
+            [$pPasir => 2,  $pPipa => 5,  $pBesi => 4],                           // ~Rp 2.2M
+            [$pPasir => 1,  $pPipa => 8,  $pBesi => 5],                           // ~Rp 2.4M
+            [$pSemen => 12, $pPipa => 4],                                         // ~Rp 1.6M
+            [$pPaku => 2,   $pBesi => 6],                                         // ~Rp 800k
+            [$pPaku => 2,   $pBesi => 8],                                         // ~Rp 1.0M
+            [$pPipa => 6,   $pLem => 2,   $pKran => 2],                           // ~Rp 1.3M
+            [$pPipa => 10,  $pLem => 3,   $pKran => 3],                           // ~Rp 2.1M
+            [$pPipa => 4,   $pLem => 1,   $pKran => 1],                           // ~Rp 800k
+            [$pPipa => 8,   $pLem => 2,   $pKran => 2],                           // ~Rp 1.6M
+            [$pLem => 2],                                                         // ~Rp 90k
+            [$pKran => 2],                                                        // ~Rp 90k
+            [$pCat => 3,    $pKuas => 2,  $pThn => 1],                           // ~Rp 500k
+            [$pCat => 2,    $pKuas => 2,  $pThn => 1],                           // ~Rp 350k
+            [$pCat => 4,    $pKuas => 3,  $pThn => 2],                           // ~Rp 700k
+            [$pCat => 3,    $pKuas => 2,  $pThn => 1],                           // ~Rp 500k
         ];
 
         $siIds = [];
@@ -229,11 +230,11 @@ class TransactionDataSeeder extends Seeder
             $maxMonth = ($year === 2026) ? 8 : 12;
 
             for ($m = 1; $m <= $maxMonth; $m++) {
-                // Generate 3-5 invoices per month for steady trend & YoY analytics
-                $invoicesThisMonth = 4;
+                // Generate 6 invoices per month -> 72 invoices/year @ avg ~Rp 3.5M = ~Rp 250M/year!
+                $invoicesThisMonth = 6;
                 for ($k = 1; $k <= $invoicesThisMonth; $k++) {
                     $invoiceSeq++;
-                    $day = min(28, 4 * $k + ($invoiceSeq % 3));
+                    $day = min(28, 4 * $k + ($invoiceSeq % 2));
                     $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $day);
                     $dt = Carbon::parse($entryDate);
 
@@ -345,8 +346,8 @@ class TransactionDataSeeder extends Seeder
                     'document_number' => sprintf('SD.%04d.%02d.%05d', $year, $m, $sdCount),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
-                    'subtotal' => 2500000,
-                    'total_amount' => 2500000,
+                    'subtotal' => 1500000,
+                    'total_amount' => 1500000,
                     'notes' => 'Uang Muka Proyek Toko',
                     'is_closed' => true,
                     'created_at' => $dt,
@@ -363,7 +364,7 @@ class TransactionDataSeeder extends Seeder
                 $receiptSeq++;
                 $entryDate = sprintf('%04d-%02d-22', $year, $m);
                 $dt = Carbon::parse($entryDate);
-                $payAmount = 1850000 + ($receiptSeq * 50000);
+                $payAmount = 1250000;
                 $refDocNo = sprintf('SI.%04d.%02d.%05d', $year, $m, $receiptSeq);
                 $refSiId = $siIds[$receiptSeq] ?? null;
 
@@ -426,7 +427,7 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'purchase_order', $pSemen, 100, 68000, $dt);
+                $t1 = $insertLine($docId, 'purchase_order', $pSemen, 60, 68000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1, 'total_amount' => $t1]);
             }
         }
@@ -455,12 +456,12 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'goods_receipt', $pSemen, 100, 68000, $dt);
+                $t1 = $insertLine($docId, 'goods_receipt', $pSemen, 60, 68000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1, 'total_amount' => $t1]);
             }
         }
 
-        // 11. Purchase Invoices (2025 & 2026 - Monthly Supplies)
+        // 11. Purchase Invoices (2025 & 2026 - Calibrated for ~Rp 190M HPP per year)
         $piIds = [];
         $piSeq = 0;
         for ($year = 2025; $year <= 2026; $year++) {
@@ -494,8 +495,8 @@ class TransactionDataSeeder extends Seeder
                 ]);
                 $piIds[] = $docId;
 
-                $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 100 + ($m * 5), 75000, $dt);
-                $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 2000 + ($m * 100), 800, $dt);
+                $t1 = $insertLine($docId, 'purchase_invoice', $pSemen, 80 + ($m * 3), 75000, $dt);
+                $t2 = $insertLine($docId, 'purchase_invoice', $pBata, 1200 + ($m * 50), 800, $dt);
                 $subtotal = $t1 + $t2;
 
                 DB::table('operation_documents')->where('id', $docId)->update([
@@ -533,7 +534,7 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'purchase_return', $pSemen, 5, 68000, $dt);
+                $t1 = $insertLine($docId, 'purchase_return', $pSemen, 3, 68000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1, 'total_amount' => $t1]);
             }
         }
@@ -546,7 +547,7 @@ class TransactionDataSeeder extends Seeder
                 $pySeq++;
                 $entryDate = sprintf('%04d-%02d-28', $year, $m);
                 $dt = Carbon::parse($entryDate);
-                $payAmount = 6800000 + ($pySeq * 100000);
+                $payAmount = 4500000;
                 $refDocNo = sprintf('PI.%04d.%02d.%05d', $year, $m, $pySeq);
                 $refPiId = $piIds[$pySeq - 1] ?? null;
 
@@ -606,7 +607,7 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'item_request', $pPaku, 20, 22000, $dt);
+                $t1 = $insertLine($docId, 'item_request', $pPaku, 10, 22000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1, 'total_amount' => $t1]);
             }
         }
@@ -627,8 +628,8 @@ class TransactionDataSeeder extends Seeder
                     'document_number' => sprintf('IA.%04d.%02d.%05d', $year, $m, $iaSeq),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
-                    'subtotal' => 1500000,
-                    'total_amount' => 1500000,
+                    'subtotal' => 750000,
+                    'total_amount' => 750000,
                     'notes' => 'Penyesuaian stok opname fisik berkala toko',
                     'is_closed' => true,
                     'created_at' => $dt,
@@ -674,7 +675,7 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'stock_transfer', $pSemen, 25, 78000, $dt);
+                $t1 = $insertLine($docId, 'stock_transfer', $pSemen, 15, 78000, $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1, 'total_amount' => $t1]);
             }
         }
@@ -696,8 +697,8 @@ class TransactionDataSeeder extends Seeder
                     'document_number' => sprintf('CP.%04d.%02d.%05d', $year, $m, $cpSeq),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
-                    'subtotal' => 350000,
-                    'total_amount' => 350000,
+                    'subtotal' => 200000,
+                    'total_amount' => 200000,
                     'notes' => 'Pembelian perlengkapan toko',
                     'is_closed' => true,
                     'created_at' => $dt,
@@ -711,8 +712,8 @@ class TransactionDataSeeder extends Seeder
                     'description' => 'Pembelian perlengkapan toko',
                     'reference_code' => '120101',
                     'quantity' => 1,
-                    'unit_price' => 350000,
-                    'total_amount' => 350000,
+                    'unit_price' => 200000,
+                    'total_amount' => 200000,
                     'sort_order' => 1,
                     'created_at' => $dt,
                     'updated_at' => $dt,
@@ -737,8 +738,8 @@ class TransactionDataSeeder extends Seeder
                     'document_number' => sprintf('CR-IN.%04d.%02d.%05d', $year, $m, $crSeq),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
-                    'subtotal' => 500000,
-                    'total_amount' => 500000,
+                    'subtotal' => 300000,
+                    'total_amount' => 300000,
                     'notes' => 'Penerimaan kas pendapatan lain-lain toko',
                     'is_closed' => true,
                     'created_at' => $dt,
@@ -752,8 +753,8 @@ class TransactionDataSeeder extends Seeder
                     'description' => 'Pendapatan Jasa Pengiriman / Lain-Lain',
                     'reference_code' => '410102',
                     'quantity' => 1,
-                    'unit_price' => 500000,
-                    'total_amount' => 500000,
+                    'unit_price' => 300000,
+                    'total_amount' => 300000,
                     'sort_order' => 1,
                     'created_at' => $dt,
                     'updated_at' => $dt,
@@ -778,8 +779,8 @@ class TransactionDataSeeder extends Seeder
                     'document_number' => sprintf('BT.%04d.%02d.%05d', $year, $m, $btSeq),
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
-                    'subtotal' => 5000000,
-                    'total_amount' => 5000000,
+                    'subtotal' => 3000000,
+                    'total_amount' => 3000000,
                     'notes' => 'Transfer dari Bank BCA ke Bank Mandiri toko',
                     'is_closed' => true,
                     'created_at' => $dt,
@@ -805,8 +806,8 @@ class TransactionDataSeeder extends Seeder
                     'reference_number' => 'REF-OPS-' . $gjSeq,
                     'status' => 'Posted',
                     'entry_date' => $entryDate,
-                    'subtotal' => 1250000,
-                    'total_amount' => 1250000,
+                    'subtotal' => 500000,
+                    'total_amount' => 500000,
                     'notes' => 'Jurnal penyesuaian operasional toko',
                     'is_closed' => true,
                     'created_at' => $dt,
@@ -819,9 +820,9 @@ class TransactionDataSeeder extends Seeder
                     'account_id' => $accPerlengkapan,
                     'description' => 'Debet Perlengkapan Toko',
                     'reference_code' => '120101',
-                    'debit_amount' => 1250000,
+                    'debit_amount' => 500000,
                     'credit_amount' => 0,
-                    'total_amount' => 1250000,
+                    'total_amount' => 500000,
                     'sort_order' => 1,
                     'created_at' => $dt,
                     'updated_at' => $dt,
@@ -833,8 +834,8 @@ class TransactionDataSeeder extends Seeder
                     'description' => 'Kredit Kas Kecil Toko',
                     'reference_code' => '110101',
                     'debit_amount' => 0,
-                    'credit_amount' => 1250000,
-                    'total_amount' => 1250000,
+                    'credit_amount' => 500000,
+                    'total_amount' => 500000,
                     'sort_order' => 2,
                     'created_at' => $dt,
                     'updated_at' => $dt,
@@ -842,16 +843,15 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 21. Expense Entries (FULL 2025 & 2026 Monthly Expenses)
+        // 21. Expense Entries (FULL 2025 & 2026 Monthly Expenses - Calibrated for ~Rp 25M / year)
         $accUtangBeban = DB::table('accounts')->where('code', '210202')->value('id') ?? 35;
         $accBebanGaji = DB::table('accounts')->where('code', '610101')->value('id') ?? 54;
         $accBebanListrik = DB::table('accounts')->where('code', '610201')->value('id') ?? 66;
 
         $expenseTemplates = [
-            ['desc' => 'Beban Listrik, Air & Telepon Toko Utama', 'amount' => 1750000, 'acc' => $accBebanListrik, 'code' => '610201'],
-            ['desc' => 'Beban Pemeliharaan & Servis Kendaraan Toko', 'amount' => 2400000, 'acc' => $accBebanListrik, 'code' => '610201'],
-            ['desc' => 'Beban Biaya Sewa Gudang Tambahan', 'amount' => 3500000, 'acc' => $accBebanListrik, 'code' => '610201'],
-            ['desc' => 'Beban Administrasi Kantor & Internet Wi-Fi', 'amount' => 1200000, 'acc' => $accBebanListrik, 'code' => '610201'],
+            ['desc' => 'Beban Listrik, Air & Telepon Toko Utama', 'amount' => 750000, 'acc' => $accBebanListrik, 'code' => '610201'],
+            ['desc' => 'Beban Pemeliharaan & Servis Kendaraan Toko', 'amount' => 850000, 'acc' => $accBebanListrik, 'code' => '610201'],
+            ['desc' => 'Beban Administrasi Kantor & Internet Wi-Fi', 'amount' => 450000, 'acc' => $accBebanListrik, 'code' => '610201'],
         ];
 
         $expSeq = 0;
@@ -908,7 +908,7 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 22. Payroll Entries (FULL 2025 & 2026 Monthly Payroll for Employees)
+        // 22. Payroll Entries (FULL 2025 & 2026 Monthly Payroll - Calibrated for ~Rp 3.5M / month)
         $employeesList = DB::table('employees')->get();
         $monthsList = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -952,8 +952,8 @@ class TransactionDataSeeder extends Seeder
                 ]);
 
                 foreach ($employeesList as $empIdx => $emp) {
-                    $baseSal = 3500000 + ($empIdx * 500000);
-                    $taxVal = 150000;
+                    $baseSal = 1800000 + ($empIdx * 300000);
+                    $taxVal = 50000;
                     $netPaid = $baseSal - $taxVal;
                     $totalDocAmount += $netPaid;
 
@@ -972,9 +972,9 @@ class TransactionDataSeeder extends Seeder
                             'employee_name' => $emp->full_name,
                             'basicSalary' => $baseSal,
                             'taxAllowance' => 0,
-                            'positionAllowance' => 250000,
-                            'mealAllowance' => 150000,
-                            'transportAllowance' => 100000,
+                            'positionAllowance' => 150000,
+                            'mealAllowance' => 100000,
+                            'transportAllowance' => 50000,
                             'grossIncomeRaw' => $baseSal,
                             'incomeTaxRaw' => $taxVal,
                             'paidSalaryRaw' => $netPaid,
