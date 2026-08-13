@@ -54,8 +54,8 @@ class GoogleLoginController extends Controller
 
     public function callback(Request $request): \Symfony\Component\HttpFoundation\Response
     {
-        $rawState = (string) $request->query('state');
-        $usePopup = str_contains($rawState, 'popup') || $request->query('popup') === '1' || $request->session()->pull('auth_use_popup', false);
+        $state = $request->query('state');
+        $usePopup = $state === 'popup' || $request->session()->pull('auth_use_popup', false);
 
         if (Auth::check()) {
             if ($usePopup) {
@@ -83,19 +83,17 @@ class GoogleLoginController extends Controller
         } catch (Throwable $exception) {
             report($exception);
 
-            $errorMsg = 'Autentikasi Google gagal: ' . $exception->getMessage();
-
             if ($usePopup) {
-                return $this->respondWithPopupError($errorMsg);
+                return $this->respondWithPopupError('Autentikasi Google gagal diproses. Silakan coba lagi.');
             }
             return redirect()
                 ->route('home')
                 ->withErrors([
-                    'auth' => $errorMsg,
+                    'auth' => 'Autentikasi Google gagal diproses. Silakan coba lagi.',
                 ]);
         }
 
-        $email = strtolower(trim((string) $oauthUser->getEmail()));
+        $email = Str::lower(trim((string) $oauthUser->getEmail()));
 
         if ($email === '') {
             if ($usePopup) {
@@ -182,7 +180,7 @@ class GoogleLoginController extends Controller
         $user = User::query()->create($attributes);
 
         try {
-            $isOwner = in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
+            $isOwner = in_array(strtolower($email), ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
             $roleCode = $isOwner ? 'super_admin' : 'operator';
             $role = \App\Domain\Identity\Models\Role::where('code', $roleCode)->first();
             if ($role) {
@@ -278,7 +276,6 @@ class GoogleLoginController extends Controller
 
     private function respondWithPopupSuccess(string $message): \Illuminate\Http\Response
     {
-        $dashboardUrl = route('dashboard');
         $html = sprintf('
             <!DOCTYPE html>
             <html>
@@ -294,37 +291,31 @@ class GoogleLoginController extends Controller
                 <div class="loader"></div>
                 <p>Autentikasi berhasil, mengalihkan...</p>
                 <script>
-                    var targetUrl = %s;
-                    try {
-                        if (window.opener && !window.opener.closed) {
-                            try {
-                                window.opener.postMessage({
-                                    status: "success",
-                                    message: %s
-                                }, "*");
-                            } catch (err) {
-                                window.opener.location.href = targetUrl;
-                            }
-                            setTimeout(function() {
-                                try { window.close(); } catch (e) {}
-                            }, 100);
-                        } else {
-                            window.location.href = targetUrl;
+                    if (window.opener) {
+                        try {
+                            window.opener.postMessage({
+                                status: "success",
+                                message: %s
+                            }, "*");
+                        } catch (e) {
+                            console.error("Popup communication error:", e);
                         }
-                    } catch (e) {
-                        window.location.href = targetUrl;
+                        setTimeout(function() {
+                            window.close();
+                        }, 150);
+                    } else {
+                        window.location.href = %s;
                     }
                 </script>
             </body>
             </html>
-        ', json_encode($dashboardUrl), json_encode($message));
+        ', json_encode($message), json_encode(route('dashboard')));
 
         return response($html)->header('Content-Type', 'text/html');
     }
 
     private function respondWithPopupError(string $message): \Illuminate\Http\Response
     {
-        $homeUrl = route('home');
         $html = sprintf('
             <!DOCTYPE html>
             <html>
@@ -340,30 +331,25 @@ class GoogleLoginController extends Controller
                 <div class="loader"></div>
                 <p>Autentikasi gagal: %s. Menutup...</p>
                 <script>
-                    var targetUrl = %s;
-                    try {
-                        if (window.opener && !window.opener.closed) {
-                            try {
-                                window.opener.postMessage({
-                                    status: "error",
-                                    message: %s
-                                }, "*");
-                            } catch (err) {
-                                window.opener.location.href = targetUrl;
-                            }
-                            setTimeout(function() {
-                                try { window.close(); } catch (e) {}
-                            }, 100);
-                        } else {
-                            window.location.href = targetUrl;
+                    if (window.opener) {
+                        try {
+                            window.opener.postMessage({
+                                status: "error",
+                                message: %s
+                            }, "*");
+                        } catch (e) {
+                            console.error("Popup communication error:", e);
                         }
-                    } catch (e) {
-                        window.location.href = targetUrl;
+                        setTimeout(function() {
+                            window.close();
+                        }, 150);
+                    } else {
+                        window.location.href = "/?error=" + encodeURIComponent(%s);
                     }
                 </script>
             </body>
             </html>
-        ', htmlspecialchars($message, ENT_QUOTES, 'UTF-8'), json_encode($homeUrl), json_encode($message));
+        ', htmlspecialchars($message), json_encode($message), json_encode($message));
 
         return response($html)->header('Content-Type', 'text/html');
     }
