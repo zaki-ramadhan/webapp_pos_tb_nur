@@ -83,13 +83,15 @@ class GoogleLoginController extends Controller
         } catch (Throwable $exception) {
             report($exception);
 
+            $errorMsg = 'Autentikasi Google gagal: ' . $exception->getMessage();
+
             if ($usePopup) {
-                return $this->respondWithPopupError('Autentikasi Google gagal diproses. Silakan coba lagi.');
+                return $this->respondWithPopupError($errorMsg);
             }
             return redirect()
                 ->route('home')
                 ->withErrors([
-                    'auth' => 'Autentikasi Google gagal diproses. Silakan coba lagi.',
+                    'auth' => $errorMsg,
                 ]);
         }
 
