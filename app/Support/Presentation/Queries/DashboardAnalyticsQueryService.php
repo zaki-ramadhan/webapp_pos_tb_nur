@@ -357,6 +357,7 @@ class DashboardAnalyticsQueryService
                     : rtrim(rtrim(number_format($unitsSold, 2, ',', '.'), '0'), ',')) . ' ' . ($tp->unit_name ?? 'pcs');
 
                 $topProductsItems[] = [
+                    'id' => $tp->product_id,
                     'name' => $tp->name,
                     'units' => $formattedUnits,
                     'share' => number_format($pctShare, 1, ',', '.') . '%',

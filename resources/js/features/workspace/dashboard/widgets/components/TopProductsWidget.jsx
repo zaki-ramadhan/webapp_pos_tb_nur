@@ -14,12 +14,32 @@ function WidgetPeriod({ value, align = 'right' }) {
 }
 
 function TopProductRow({ item, index }) {
+    const handleOpenProduct = () => {
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+                new CustomEvent('workspace:open-page', {
+                    detail: {
+                        pageId: 'items-services',
+                        recordId: item.id ?? item.productId ?? undefined,
+                        label: item.name,
+                        tabLabel: item.name,
+                        openForm: Boolean(item.id ?? item.productId),
+                    },
+                })
+            );
+        }
+    };
+
     return (
-        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[6px] border border-chart-grid-light bg-ui-bg-hover px-2.5 py-1.5">
+        <button
+            type="button"
+            onClick={handleOpenProduct}
+            className="group w-full grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[6px] border border-chart-grid-light bg-ui-bg-hover px-2.5 py-1.5 transition-all duration-150 cursor-pointer hover:bg-blue-50/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
+        >
             <div className="relative h-9 w-9 shrink-0">
                 <img
                     src={item.imageUrl || getProductImageUrl(item.name)}
-                    alt={item.name}
+                    alt=""
                     className="h-9 w-9 rounded-[4px] border border-ui-border-light object-cover bg-slate-100"
                     onError={(e) => {
                         e.currentTarget.onerror = null;
@@ -31,7 +51,7 @@ function TopProductRow({ item, index }) {
                 </span>
             </div>
             <div className="min-w-0">
-                <p className="truncate text-xs sm:text-sm font-medium text-brand-darker">{item.name}</p>
+                <p className="truncate text-xs sm:text-sm font-medium text-brand-darker group-hover:text-blue-900 transition-colors">{item.name}</p>
                 <p className="mt-0.5 text-[11px] sm:text-xs text-black">
                     {item.units} • {item.share}
                 </p>
@@ -39,7 +59,7 @@ function TopProductRow({ item, index }) {
             <p className="text-right text-xs sm:text-sm font-semibold text-brand-darker">
                 {item.revenue}
             </p>
-        </div>
+        </button>
     );
 }
 

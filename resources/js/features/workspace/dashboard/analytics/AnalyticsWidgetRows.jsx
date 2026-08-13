@@ -57,7 +57,6 @@ export function RuleSummaryRow({ rule }) {
                             }
                         }}
                         className="group inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-blue-100/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
-                        title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
                     >
                         <span className="font-semibold text-blue-950 group-hover:text-blue-900">{rule.antecedent}</span>
                         {rule.antecedentAbc && (
@@ -85,7 +84,6 @@ export function RuleSummaryRow({ rule }) {
                             }
                         }}
                         className="group inline-flex items-center gap-1.5 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-emerald-100/80 hover:border-emerald-300 focus:outline-none focus:ring-1 focus:ring-emerald-400 text-left"
-                        title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
                     >
                         <span className="font-semibold text-emerald-950 group-hover:text-emerald-900">{rule.consequent}</span>
                         {rule.consequentAbc && (

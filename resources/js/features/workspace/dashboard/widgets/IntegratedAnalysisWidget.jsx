@@ -182,7 +182,6 @@ export default function IntegratedAnalysisWidget({
                                                         }
                                                     }}
                                                     className="group inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200/80 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-blue-50/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
-                                                    title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
                                                 >
                                                     <img
                                                         src={getProductImageUrl(rule.antecedent)}
@@ -219,7 +218,6 @@ export default function IntegratedAnalysisWidget({
                                                         }
                                                     }}
                                                     className="group inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200/80 px-2 py-1 transition-all duration-150 cursor-pointer hover:bg-blue-50/80 hover:border-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-400 text-left"
-                                                    title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
                                                 >
                                                     <img
                                                         src={getProductImageUrl(rule.consequent)}
