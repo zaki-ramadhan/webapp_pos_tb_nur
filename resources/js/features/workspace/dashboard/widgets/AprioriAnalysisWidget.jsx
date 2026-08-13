@@ -21,12 +21,12 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
     }
 
     const transactionMetric = getMetric(widget.metrics, 'Transaksi');
-    const supportMetric = getMetric(widget.metrics, 'Min Support');
-    const confidenceMetric = getMetric(widget.metrics, 'Min Confidence');
-    const validRulesMetric = getMetric(widget.metrics, 'Rule Valid');
+    const supportMetric = getMetric(widget.metrics, 'Min. Frekuensi Pembelian') || getMetric(widget.metrics, 'Min Support');
+    const confidenceMetric = getMetric(widget.metrics, 'Min. Tingkat Kepastian') || getMetric(widget.metrics, 'Min Confidence');
+    const validRulesMetric = getMetric(widget.metrics, 'Pasangan Laris Valid') || getMetric(widget.metrics, 'Rule Valid');
     const actionItems = (widget.rules ?? []).slice(0, 2).map((rule) => ({
-        title: `Pasangkan ${rule.consequent} saat pelanggan membeli ${rule.antecedent}`,
-        detail: `Confidence ${rule.confidence}, support ${rule.support}, lift ${rule.lift}. Cocok untuk bundling atau penempatan rak yang berdekatan.`,
+        title: `Tawarkan ${rule.consequent} saat pelanggan membeli ${rule.antecedent}`,
+        detail: `Tingkat kepastian ${rule.confidence}, frekuensi ${rule.support}, daya dorong ${rule.lift}x. Sangat direkomendasikan untuk penataan rak berdekatan & paket hemat kasir.`,
     }));
 
     return (
@@ -39,14 +39,14 @@ export default function AprioriAnalysisWidget({ widget, expanded = false, onTogg
                     helper: transactionMetric?.helper ?? 'Jumlah transaksi yang dianalisis.',
                 },
                 {
-                    label: 'Rule siap pakai',
+                    label: 'Pasangan Laris',
                     value: validRulesMetric?.value ?? '0',
-                    helper: validRulesMetric?.helper ?? 'Rule yang sudah cukup kuat untuk dipakai sebagai insight.',
+                    helper: validRulesMetric?.helper ?? 'Kombinasi produk yang memiliki hubungan kuat.',
                 },
                 {
-                    label: 'Ambang analisis',
+                    label: 'Ambang Analisis',
                     value: `${supportMetric?.value ?? '0'} / ${confidenceMetric?.value ?? '0'}`,
-                    helper: 'Support / confidence minimum yang dipakai dalam analisis.',
+                    helper: 'Min. Frekuensi / Min. Kepastian dalam analisis.',
                 },
             ]}
             chartTitle="Pola belanja pelanggan"

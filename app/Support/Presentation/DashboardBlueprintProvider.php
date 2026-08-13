@@ -344,7 +344,10 @@ class DashboardBlueprintProvider
                 $combinedMetrics = [];
                 if ($apriori !== null && isset($apriori['metrics'])) {
                     foreach ($apriori['metrics'] as $m) {
-                        if ($m['label'] === 'Transaksi' || $m['label'] === 'Rule Valid') {
+                        if ($m['label'] === 'Transaksi' || $m['label'] === 'Pasangan Laris Valid' || $m['label'] === 'Rule Valid') {
+                            if ($m['label'] === 'Rule Valid') {
+                                $m['label'] = 'Pasangan Laris Valid';
+                            }
                             $combinedMetrics[] = $m;
                         }
                     }
@@ -374,8 +377,8 @@ class DashboardBlueprintProvider
                     foreach ($apriori['rules'] as $rule) {
                         $formattedRules[] = [
                             'id' => $rule['id'],
-                            'segment' => 'Top Rule',
-                            'transactionBase' => 'Rule Valid',
+                            'segment' => 'Pasangan Terlaris',
+                            'transactionBase' => 'Pasangan Laris Valid',
                             'antecedent' => $rule['antecedent'],
                             'consequent' => $rule['consequent'],
                             'antecedentAbc' => $rule['antecedentAbc'] ?? null,
@@ -394,7 +397,7 @@ class DashboardBlueprintProvider
                 if ($abc !== null && $apriori !== null && !empty($apriori['rules']) && !empty($abc['topItems'])) {
                     $topRule = $apriori['rules'][0];
                     $topItem = $abc['topItems'][0];
-                    $w['insight'] = "Rekomendasi Utama: Pelanggan yang membeli {$topRule['antecedent']} [Kat {$topRule['antecedentAbc']}] memiliki peluang {$topRule['confidence']} untuk membeli {$topRule['consequent']} [Kat {$topRule['consequentAbc']}]. Kombinasikan dengan prioritas stok {$topItem['name']} [Kat A] yang menyumbang {$topItem['share']} omzet toko.";
+                    $w['insight'] = "Rekomendasi Utama: Pelanggan yang membeli {$topRule['antecedent']} [Kat {$topRule['antecedentAbc']}] memiliki tingkat kepastian {$topRule['confidence']} untuk turut membeli {$topRule['consequent']} [Kat {$topRule['consequentAbc']}]. Kombinasikan dengan prioritas stok {$topItem['name']} [Kat A] yang menyumbang {$topItem['share']} omzet toko.";
                 } else if ($apriori !== null && !empty($apriori['rules'])) {
                     $w['insight'] = $apriori['insight'];
                 } else if ($abc !== null) {
