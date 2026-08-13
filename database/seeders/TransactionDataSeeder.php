@@ -155,6 +155,23 @@ class TransactionDataSeeder extends Seeder
 
         // 3. Sales Orders (Pesanan Penjualan - 2025 & 2026)
         $orderCount = 0;
+        $soItemPool = [
+            [$pSemen, 15, 78000],
+            [$pPipa, 10, 175000],
+            [$pBesi, 8, 95000],
+            [$pTpl, 5, 82000],
+            [$pCat, 3, 142000],
+            [$pKuas, 10, 18000],
+            [$pSng, 6, 68000],
+            [$pPaku, 4, 24000],
+            [$pKran, 2, 45000],
+            [$pKabel, 3, 210000],
+            [$pLem, 5, 12000],
+            [$pThn, 4, 35000],
+            [$pKrm, 8, 72000],
+            [$pMortar, 5, 98000],
+        ];
+
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
@@ -178,8 +195,12 @@ class TransactionDataSeeder extends Seeder
                     'created_at' => $dt,
                     'updated_at' => $dt,
                 ]);
-                $t1 = $insertLine($docId, 'sales_order', $pCat, 3, 142000, $dt);
-                $t2 = $insertLine($docId, 'sales_order', $pKuas, 3, 18000, $dt);
+
+                $item1 = $soItemPool[($orderCount * 2) % count($soItemPool)];
+                $item2 = $soItemPool[($orderCount * 2 + 1) % count($soItemPool)];
+
+                $t1 = $insertLine($docId, 'sales_order', $item1[0], $item1[1], $item1[2], $dt);
+                $t2 = $insertLine($docId, 'sales_order', $item2[0], $item2[1], $item2[2], $dt);
                 DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1 + $t2, 'total_amount' => $t1 + $t2]);
             }
         }
