@@ -10,6 +10,13 @@ class TransactionDataSeeder extends Seeder
 {
     public function run(): void
     {
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        DB::table('operation_document_user')->truncate();
+        DB::table('operation_document_lines')->truncate();
+        DB::table('operation_documents')->truncate();
+        DB::table('inventory_batches')->truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
         $branchId = DB::table('branches')->first()->id ?? 1;
         $warehouseId = DB::table('warehouses')->first()->id ?? 1;
         $currencyId = DB::table('currencies')->where('code', 'IDR')->value('id') ?? 1;
