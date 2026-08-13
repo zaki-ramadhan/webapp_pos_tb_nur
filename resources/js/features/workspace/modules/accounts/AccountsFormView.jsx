@@ -116,24 +116,26 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     const [saving, setSaving] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const initialValues = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
-    const [savedSnapshot, setSavedSnapshot] = useState(() => initialValues);
-    const hasChanges = useMemo(
-        () => !areComparableValuesEqual(buildComparableFormValues(savedSnapshot), buildComparableFormValues(values)),
-        [savedSnapshot, values],
-    );
+    const {
+        values,
+        setValues,
+        isDirty: hasChanges,
+        markClean,
+    } = useWorkspaceFormDraftState({
+        initialValues,
+        recordId: sourceRecord?.id ?? null,
+        pageId: 'accounts',
+        tabId: activeLevel2Tab?.id,
+    });
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
         setActiveTabId('general');
-        setSavedSnapshot(initialValues);
-        setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteModalOpen(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTabInstanceId, sourceRecord?.id]);
-
-    const [lastSavedAt, setLastSavedAt] = useState(null);
 
     const allTabs = useMemo(() => [...leftTabs, ...rightTabs], [leftTabs, rightTabs]);
 
@@ -142,19 +144,6 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             setActiveTabId('general');
         }
     }, [allTabs, activeTabId]);
-
-    const prevHasRecordRef = useRef(Boolean(backendRecord));
-
-    useEffect(() => {
-        const hasRecordChanged = Boolean(backendRecord) !== prevHasRecordRef.current;
-        if (!hasChanges || lastSavedAt || hasRecordChanged) {
-            setValues(initialValues);
-            if (lastSavedAt) {
-                setLastSavedAt(null);
-            }
-            prevHasRecordRef.current = Boolean(backendRecord);
-        }
-    }, [initialValues, hasChanges, lastSavedAt, backendRecord]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -184,13 +173,6 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         values.autoCode,
     ]);
     const saveDisabled = saving || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1'))) || !hasChanges;
-
-    useWorkspaceDirtyRegistration({
-        pageId: 'accounts',
-        tabId: activeLevel2Tab?.id,
-        dirty: hasChanges,
-        enabled: Boolean(activeLevel2Tab?.id),
-    });
 
     async function handleSave() {
         if (validationMessage) {
@@ -226,7 +208,7 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                     window.__clearBackendCache('accounts');
                 }
                 await onReload?.();
-                setSavedSnapshot(values);
+                markClean();
                 if (isDetail && savedRecord && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {

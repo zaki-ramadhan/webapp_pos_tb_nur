@@ -27,8 +27,7 @@ import {
     listBackendResource,
     updateBackendResource,
 } from '@/features/workspace/backend/workspaceBackendApi';
-import { areComparableValuesEqual } from '@/features/workspace/shared/formValidation';
-import { useWorkspaceDirtyRegistration } from '@/features/workspace/dashboard/WorkspaceDraftState';
+import { useWorkspaceFormDraftState } from '@/features/workspace/shared/hooks/useWorkspaceFormDraftState';
 import { executeCrudFormAction, rejectCrudFormAction } from '@/features/workspace/shared/crudFormActions';
 import ModuleFormTemplate from '@/components/ui/ModuleFormTemplate';
 import DockActionButton from '@/features/workspace/shared/DockActionButton';
@@ -57,23 +56,27 @@ export default function ItemsServicesFormView({
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'general');
     const initialValues = useMemo(() => buildItemsServicesFormValues(config, detailRow), [detailRow, config]);
-    const [savedSnapshot, setSavedSnapshot] = useState(() => initialValues);
-    const [values, setValues] = useState(() => initialValues);
+    const {
+        values,
+        setValues,
+        isDirty,
+        markClean,
+        updateDbBaseline,
+    } = useWorkspaceFormDraftState({
+        initialValues,
+        recordId: detailRow?.id ?? null,
+        pageId,
+        tabId: activeLevel2Tab?.id,
+    });
+
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(savedSnapshot, values),
-        [savedSnapshot, values]
-    );
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
         setActiveTabId(config.tabs?.[0]?.id ?? 'general');
-        setSavedSnapshot(initialValues);
-        setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
     }, [activeTabInstanceId, detailRow?.id]);
@@ -105,7 +108,7 @@ export default function ItemsServicesFormView({
                     })
                     .filter((r) => r.quantity !== 0);
 
-                setValues((prev) => {
+                updateDbBaseline((prev) => {
                     const hasUserRows = (prev.openingStockRows ?? []).some((r) => !r.__fromDb);
                     if (hasUserRows) return prev;
                     return { ...prev, openingStockRows: stockRows };
@@ -114,15 +117,7 @@ export default function ItemsServicesFormView({
             .catch(() => {});
 
         return () => { active = false; };
-    }, [detailRow?.id]);
-
-    useFormValuesSync({
-        initialValues,
-        recordId: detailRow?.id ?? null,
-        values,
-        isDirty,
-        setValues,
-    });
+    }, [detailRow?.id, updateDbBaseline]);
 
     function handleChange(field, nextValue) {
         setValues((currentValues) => ({
@@ -250,7 +245,7 @@ export default function ItemsServicesFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
                 await onRefresh?.();
-                setSavedSnapshot(values);
+                markClean();
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
