@@ -38,7 +38,7 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URI') ?: (function_exists('url') ? url('/auth/google/callback') : '/auth/google/callback'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', 'https://tb-nur.shop/auth/google/callback'),
     ],
 
 ];
