@@ -54,8 +54,8 @@ class GoogleLoginController extends Controller
 
     public function callback(Request $request): \Symfony\Component\HttpFoundation\Response
     {
-        $state = $request->query('state');
-        $usePopup = $state === 'popup' || $request->session()->pull('auth_use_popup', false);
+        $rawState = (string) $request->query('state');
+        $usePopup = str_contains($rawState, 'popup') || $request->query('popup') === '1' || $request->session()->pull('auth_use_popup', false);
 
         if (Auth::check()) {
             if ($usePopup) {
@@ -93,7 +93,7 @@ class GoogleLoginController extends Controller
                 ]);
         }
 
-        $email = Str::lower(trim((string) $oauthUser->getEmail()));
+        $email = strtolower(trim((string) $oauthUser->getEmail()));
 
         if ($email === '') {
             if ($usePopup) {
@@ -180,7 +180,7 @@ class GoogleLoginController extends Controller
         $user = User::query()->create($attributes);
 
         try {
-            $isOwner = in_array(strtolower($email), ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
+            $isOwner = in_array($email, ['piscokpiscok2610@gmail.com', 'nurhayati.karya@gmail.com', 'zakiram4dhan@gmail.com'], true);
             $roleCode = $isOwner ? 'super_admin' : 'operator';
             $role = \App\Domain\Identity\Models\Role::where('code', $roleCode)->first();
             if ($role) {
@@ -295,13 +295,17 @@ class GoogleLoginController extends Controller
                     var targetUrl = %s;
                     try {
                         if (window.opener && !window.opener.closed) {
-                            window.opener.postMessage({
-                                status: "success",
-                                message: %s
-                            }, "*");
+                            try {
+                                window.opener.postMessage({
+                                    status: "success",
+                                    message: %s
+                                }, "*");
+                            } catch (err) {
+                                window.opener.location.href = targetUrl;
+                            }
                             setTimeout(function() {
-                                window.close();
-                            }, 150);
+                                try { window.close(); } catch (e) {}
+                            }, 100);
                         } else {
                             window.location.href = targetUrl;
                         }
@@ -337,13 +341,17 @@ class GoogleLoginController extends Controller
                     var targetUrl = %s;
                     try {
                         if (window.opener && !window.opener.closed) {
-                            window.opener.postMessage({
-                                status: "error",
-                                message: %s
-                            }, "*");
+                            try {
+                                window.opener.postMessage({
+                                    status: "error",
+                                    message: %s
+                                }, "*");
+                            } catch (err) {
+                                window.opener.location.href = targetUrl;
+                            }
                             setTimeout(function() {
-                                window.close();
-                            }, 150);
+                                try { window.close(); } catch (e) {}
+                            }, 100);
                         } else {
                             window.location.href = targetUrl;
                         }
