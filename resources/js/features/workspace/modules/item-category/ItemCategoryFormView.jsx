@@ -35,14 +35,15 @@ export default function ItemCategoryFormView({
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'item-category-general');
     const initialValues = useMemo(() => buildFormValues(config, detailRow), [config, detailRow]);
+    const [savedSnapshot, setSavedSnapshot] = useState(() => initialValues);
     const [values, setValues] = useState(() => initialValues);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const isDirty = useMemo(
-        () => JSON.stringify(values) !== JSON.stringify(initialValues),
-        [initialValues, values]
+        () => !areComparableValuesEqual(savedSnapshot, values),
+        [savedSnapshot, values]
     );
 
     const parentCategoryOptions = useMemo(() => {
@@ -57,10 +58,11 @@ export default function ItemCategoryFormView({
 
     useEffect(() => {
         setActiveTabId(config.tabs?.[0]?.id ?? 'item-category-general');
+        setSavedSnapshot(initialValues);
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [activeTabInstanceId]);
+    }, [activeTabInstanceId, detailRow?.id]);
 
     useFormValuesSync({
         initialValues,
@@ -127,10 +129,7 @@ export default function ItemCategoryFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
                 await onRefresh?.();
-                if (record) {
-                    const freshValues = buildItemCategoryFormValues(config, record);
-                    setValues(freshValues);
-                }
+                setSavedSnapshot(values);
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {

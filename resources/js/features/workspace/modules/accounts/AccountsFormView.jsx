@@ -116,20 +116,22 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
     const [saving, setSaving] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const initialValues = useMemo(() => buildFormState(sourceRecord), [sourceRecord]);
+    const [savedSnapshot, setSavedSnapshot] = useState(() => initialValues);
     const hasChanges = useMemo(
-        () => !areComparableValuesEqual(buildComparableFormValues(initialValues), buildComparableFormValues(values)),
-        [initialValues, values],
+        () => !areComparableValuesEqual(buildComparableFormValues(savedSnapshot), buildComparableFormValues(values)),
+        [savedSnapshot, values],
     );
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
         setActiveTabId('general');
+        setSavedSnapshot(initialValues);
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteModalOpen(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeTabInstanceId]);
+    }, [activeTabInstanceId, sourceRecord?.id]);
 
     const [lastSavedAt, setLastSavedAt] = useState(null);
 
@@ -224,6 +226,7 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
                     window.__clearBackendCache('accounts');
                 }
                 await onReload?.();
+                setSavedSnapshot(values);
                 if (isDetail && savedRecord && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
