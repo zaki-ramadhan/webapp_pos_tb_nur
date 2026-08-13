@@ -240,28 +240,28 @@ class AprioriAnalysisService
                 'tone' => 'blue',
             ],
             [
-                'label' => 'Min Support',
+                'label' => 'Min. Frekuensi Pembelian',
                 'value' => number_format($minSupport * 100, 0) . '%',
-                'helper' => 'Batas rule yang diproses',
+                'helper' => 'Batas minimal persentase pembelian bersama',
                 'tone' => 'green',
             ],
             [
-                'label' => 'Min Confidence',
+                'label' => 'Min. Tingkat Kepastian',
                 'value' => number_format($minConfidence * 100, 0) . '%',
-                'helper' => 'Rule valid untuk dashboard',
+                'helper' => 'Batas kepastian hubungan produk',
                 'tone' => 'amber',
             ],
             [
-                'label' => 'Rule Valid',
+                'label' => 'Pasangan Laris Valid',
                 'value' => (string) count($rules),
-                'helper' => 'Siap dipakai sebagai insight',
+                'helper' => 'Kombinasi siap pakai untuk panduan display',
                 'tone' => 'rose',
             ],
         ];
 
         $topRule = $rules[0] ?? null;
         $insight = $topRule
-            ? "Pelanggan yang membeli {$topRule['antecedent']} memiliki peluang {$topRule['confidence']} untuk membeli {$topRule['consequent']}. Buat paket bundling diskon!"
+            ? "Pelanggan yang membeli {$topRule['antecedent']} memiliki tingkat kepastian {$topRule['confidence']} untuk turut membeli {$topRule['consequent']}. Sangat disarankan untuk ditata berdekatan atau ditawarkan di kasir!"
             : "Pasangkan barang terkait berdekatan di rak untuk memicu pembelian impulsif.";
 
         return [

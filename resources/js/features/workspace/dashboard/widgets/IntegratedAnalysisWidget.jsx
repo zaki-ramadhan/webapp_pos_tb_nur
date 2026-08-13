@@ -5,6 +5,52 @@ import { IntegratedMatrixChart } from '@/features/workspace/dashboard/analytics/
 
 
 
+function HighlightProductText({ text, itemA, itemB }) {
+    if (!text) return null;
+    if (!itemA && !itemB) return <span>{text}</span>;
+
+    const escapeRegex = (str) => (str ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '');
+    const patterns = [itemA, itemB].filter(Boolean).map(escapeRegex);
+    if (!patterns.length) return <span>{text}</span>;
+
+    const regex = new RegExp(`(${patterns.join('|')})`, 'gi');
+    const parts = text.split(regex);
+
+    return (
+        <span>
+            {parts.map((part, index) => {
+                const lowerPart = part.toLowerCase();
+                const isItemA = itemA && lowerPart === itemA.toLowerCase();
+                const isItemB = itemB && lowerPart === itemB.toLowerCase();
+
+                if (isItemA) {
+                    return (
+                        <span
+                            key={index}
+                            className="inline-flex items-center rounded px-1.5 py-0.5 font-bold text-xs bg-blue-100 text-blue-950 border border-blue-300 shadow-sm mx-0.5"
+                        >
+                            {part}
+                        </span>
+                    );
+                }
+
+                if (isItemB) {
+                    return (
+                        <span
+                            key={index}
+                            className="inline-flex items-center rounded px-1.5 py-0.5 font-bold text-xs bg-emerald-100 text-emerald-950 border border-emerald-300 shadow-sm mx-0.5"
+                        >
+                            {part}
+                        </span>
+                    );
+                }
+
+                return <span key={index}>{part}</span>;
+            })}
+        </span>
+    );
+}
+
 export default function IntegratedAnalysisWidget({
     widget,
     expanded = false,
@@ -34,7 +80,7 @@ export default function IntegratedAnalysisWidget({
     }
 
     const transactionMetric = getMetric(widget.metrics, 'Transaksi');
-    const validRulesMetric = getMetric(widget.metrics, 'Rule Valid');
+    const validRulesMetric = getMetric(widget.metrics, 'Pasangan Laris Valid') || getMetric(widget.metrics, 'Rule Valid');
     const itemAMetric = getMetric(widget.metrics, 'Fokus Stok (Kat A)') || getMetric(widget.metrics, 'Item A');
     const totalMetric = getMetric(widget.metrics, 'Nilai Analisis');
 
@@ -45,9 +91,9 @@ export default function IntegratedAnalysisWidget({
             helper: transactionMetric?.helper ?? 'Total transaksi dianalisis.',
         },
         {
-            label: 'Rule Terintegrasi',
+            label: 'Pasangan Laris',
             value: validRulesMetric?.value ?? '0',
-            helper: 'Pola asosiasi yang kuat.',
+            helper: 'Pola pasangan produk kuat.',
         },
         {
             label: 'Fokus Stok (Kat A)',
@@ -64,17 +110,26 @@ export default function IntegratedAnalysisWidget({
     const getStoreLocationRecommendation = (itemA = '', itemB = '') => {
         const text = (itemA + ' ' + itemB).toLowerCase();
         
-        if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi/i.test(text)) {
-            return `🚚 Area Pelataran Depan / Loading Dock: Posisikan tumpukan ${itemA} di pelataran depan yang berdekatan dengan area muat ${itemB} untuk mempercepat armada bongkar-muat kargo.`;
+        if (/semen|pasir|besi|batu|bata|cor|beton|material|pondasi|mortar/i.test(text)) {
+            return `📍 Area Pelataran Utama / Loading Dock Depan: Posisikan tumpukan ${itemA} di atas palet lantai area depan, bersebelahan dengan ${itemB} agar armada truk & kuli toko langsung sekali muat saat bongkar-pasang kargo.`;
         }
-        if (/pipa|kayu|seng|baja|plumbing|atap|triplek|hollow|alunium/i.test(text)) {
-            return `📏 Lorong Rak Panjang / Rak Horizontal: Gantungkan/taruh ${itemB} pada keranjang aksesoris di dekat lorong rak penyimpanan horizontal ${itemA}.`;
+        if (/pipa|kayu|seng|baja|plumbing|atap|triplek|hollow|alumunium/i.test(text)) {
+            return `📍 Lorong Rak Horizontal Panjang: Taruh ${itemA} pada rak besi bertingkat horizontal khusus barang panjang, dan pasang keranjang gantung aksesoris ${itemB} persis di seberang/ujung lorong rak tersebut.`;
         }
-        if (/cat|kuas|thinner|paku|lem|kran|listrik|baut|alat|kunci/i.test(text)) {
-            return `🎨 Rak Display Indoor / Samping Etalase Kasir: Tempatkan ${itemB} pada rak gantung persis di samping etalase display ${itemA} di area indoor toko.`;
+        if (/cat|kuas|thinner|amplas|lakban|rol|compound/i.test(text)) {
+            return `🎨 Zone Cat & Mix Colour / Display Eye-Level Kasir: Tempatkan kaleng ${itemA} di rak display Zone Cat, dan gantungkan ${itemB} pada hook pegboard setinggi pandangan mata (eye-level) tepat di samping kaleng cat.`;
+        }
+        if (/kran|lem|fitting|stop|seal/i.test(text)) {
+            return `🚰 Etalase Fast-Moving Plumbing (Depan Kasir): Taruh ${itemA} di etalase berpetak plumbing, dan sandingkan wadah display aksesoris ${itemB} di rak bawah kasir untuk memicu pembelian otomatis.`;
+        }
+        if (/sekop|cangkul|kawat|paku|engsel|tang|palu|gergaji/i.test(text)) {
+            return `🛠️ Rak Gantung Perkakas Pertukangan (Pegboard): Gantungkan ${itemA} pada wall-display pegboard pertukangan, dan posisikan keranjang ${itemB} di bawahnya agar pembeli alat langsung mengambil pelengkapnya.`;
+        }
+        if (/listrik|kabel|saklar|isolatip|stop kontak/i.test(text)) {
+            return `⚡ Etalase Kaca Depan Kasir (Hardware & Kelistrikan): Pajang ${itemA} di dalam etalase kaca kasir, dan posisikan ${itemB} di rak display gantung impulsif tepat di atas etalase.`;
         }
         
-        return `📦 Rak Display Utama Toko: Posisikan ${itemA} dan ${itemB} berdekatan pada tinggi pandangan mata (eye-level) di rak display utama toko.`;
+        return `📦 Rak Display Utama Toko (Eye-Level): Posisikan ${itemA} dan ${itemB} bersebelahan pada ketinggian pandangan mata (eye-level) di rak display utama toko.`;
     };
 
     const getStrategyTactic = (antecedentAbc, consequentAbc, antecedentName = '', consequentName = '') => {
@@ -143,7 +198,7 @@ export default function IntegratedAnalysisWidget({
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
                 <WidgetSection
                     title="Peta Hubungan Belanja & Prioritas Stok"
-                    caption="Grafik interaktif menunjukkan seberapa kuat kecenderungan produk dibeli bersamaan (Confidence) dikombinasikan dengan prioritas omzet produk tersebut."
+                    caption="Grafik interaktif menunjukkan seberapa kuat kecenderungan produk dibeli bersamaan (Tingkat Kepastian) dikombinasikan dengan prioritas omzet produk tersebut."
                     collapsible={true}
                     expanded={isChartExpanded}
                     onToggle={handleToggleChart}
@@ -159,7 +214,7 @@ export default function IntegratedAnalysisWidget({
 
                 <WidgetSection
                     title="Rekomendasi Taktik Penjualan & Pajangan Toko"
-                    caption="Daftar rekomendasi taktis kombinasi produk, rencana display rak, dan panduan penawaran kasir berdasarkan Apriori & ABC."
+                    caption="Daftar rekomendasi taktis kombinasi produk, rencana display rak, dan panduan penawaran kasir berdasarkan analisis belanja & omzet."
                     collapsible={true}
                     expanded={expanded}
                     onToggle={onToggle}
@@ -219,7 +274,7 @@ export default function IntegratedAnalysisWidget({
                                                         alt=""
                                                         className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
                                                     />
-                                                    <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.antecedent}>
+                                                    <span className="text-sm font-semibold text-slate-900 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.antecedent}>
                                                         {rule.antecedent}
                                                     </span>
                                                     {rule.antecedentAbc && (
@@ -237,7 +292,7 @@ export default function IntegratedAnalysisWidget({
                                                         alt=""
                                                         className="h-6 w-6 rounded-[3px] border border-slate-200 object-cover shrink-0"
                                                     />
-                                                    <span className="text-sm font-normal text-slate-800 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.consequent}>
+                                                    <span className="text-sm font-semibold text-slate-900 truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px]" title={rule.consequent}>
                                                         {rule.consequent}
                                                     </span>
                                                     {rule.consequentAbc && (
@@ -254,29 +309,33 @@ export default function IntegratedAnalysisWidget({
                                                     {tactic.title}
                                                 </span>
 
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-800 shrink-0" title="Tingkat Kepastian (Confidence)">
-                                                    Confidence: {rule.confidence}
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-800 shrink-0" title="Tingkat Kepastian Hubungan Pasangan Produk">
+                                                    Tingkat Kepastian: {rule.confidence}
                                                 </span>
 
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-800 shrink-0" title="Kekuatan Hubungan (Lift Ratio)">
-                                                    Lift Ratio: {rule.lift} ({strengthText})
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-800 shrink-0" title="Daya Dorong Penjualan (Lift Ratio)">
+                                                    Daya Dorong: {rule.lift}x ({strengthText})
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-600 bg-emerald-50/10 rounded-md p-2.5 border border-emerald-100/30">
+                                        <div className="mt-2.5 border-t border-slate-100 pt-2.5 flex flex-col gap-2.5 text-sm text-slate-700 bg-emerald-50/15 rounded-md p-2.5 border border-emerald-100/50">
                                             <div className="flex items-start gap-2">
                                                 <MapPin className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
-                                                    <span className="font-semibold text-emerald-950">Penataan di Rak:</span>{" "}
-                                                    <span className="leading-relaxed block sm:inline">{tactic.actionDisplay}</span>
+                                                    <span className="font-bold text-emerald-950">Penataan di Rak:</span>{" "}
+                                                    <span className="leading-relaxed block sm:inline">
+                                                        <HighlightProductText text={tactic.actionDisplay} itemA={rule.antecedent} itemB={rule.consequent} />
+                                                    </span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-2 border-t border-emerald-100/30 pt-2">
+                                            <div className="flex items-start gap-2 border-t border-emerald-100/40 pt-2">
                                                 <MessageSquare className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                                                 <div className="min-w-0 flex-1">
-                                                    <span className="font-semibold text-emerald-950">Tawaran di Kasir:</span>{" "}
-                                                    <span className="leading-relaxed block sm:inline">{tactic.actionCashier}</span>
+                                                    <span className="font-bold text-emerald-950">Tawaran di Kasir:</span>{" "}
+                                                    <span className="leading-relaxed block sm:inline">
+                                                        <HighlightProductText text={tactic.actionCashier} itemA={rule.antecedent} itemB={rule.consequent} />
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>

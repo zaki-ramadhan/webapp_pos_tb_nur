@@ -26,32 +26,32 @@ export function RuleSummaryRow({ rule }) {
         <div className="rounded-[7px] border border-abc-card-border bg-white px-3 py-2.5 shadow-abc-card">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ui-bg-panel pb-2 text-sm text-text-muted">
                 <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-ui-border-light bg-ui-bg-hover px-2 py-1">{rule.segment}</span>
-                    <span>{rule.transactionBase}</span>
+                    <span className="rounded-full border border-ui-border-light bg-ui-bg-hover px-2 py-1">{rule.segment || 'Pasangan Terlaris'}</span>
+                    <span>{rule.transactionBase || 'Pasangan Laris Valid'}</span>
                 </div>
                 {rule.lift && (
-                    <span className="text-sm font-medium text-blue-620 bg-brand-blue-light px-2 py-0.5 rounded-full">
-                        Lift: {rule.lift}
+                    <span className="text-sm font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                        Daya Dorong: {rule.lift}x
                     </span>
                 )}
             </div>
 
             <div className="mt-2.5 text-sm leading-6 font-medium text-brand-darker">
                 <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:flex-wrap">
-                    <span className="text-slate-500">Jika membeli:</span>
-                    <span className="inline-flex items-center gap-1.5 rounded-[4px] bg-slate-50 border border-slate-100 px-2 py-1">
-                        <span className="font-semibold text-slate-800">{rule.antecedent}</span>
+                    <span className="text-slate-500 font-medium">Jika membeli:</span>
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2 py-1">
+                        <span className="font-bold text-blue-950">{rule.antecedent}</span>
                         {rule.antecedentAbc && (
-                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.antecedentColor}18`, color: rule.antecedentColor }}>
+                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.antecedentColor}18`, color: rule.antecedentColor }}>
                                 Kat {rule.antecedentAbc}
                             </span>
                         )}
                     </span>
-                    <span className="text-slate-400 sm:mx-1">&rarr; Maka tawarkan:</span>
-                    <span className="inline-flex items-center gap-1.5 rounded-[4px] bg-slate-50 border border-slate-100 px-2 py-1">
-                        <span className="font-semibold text-slate-800">{rule.consequent}</span>
+                    <span className="text-slate-400 sm:mx-1 font-medium">&rarr; Maka tawarkan:</span>
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1">
+                        <span className="font-bold text-emerald-950">{rule.consequent}</span>
                         {rule.consequentAbc && (
-                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-sm font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.consequentColor}18`, color: rule.consequentColor }}>
+                            <span className="inline-flex h-5 items-center justify-center rounded px-1.5 text-xs font-semibold uppercase tracking-wider" style={{ backgroundColor: `${rule.consequentColor}18`, color: rule.consequentColor }}>
                                 Kat {rule.consequentAbc}
                             </span>
                         )}
@@ -62,11 +62,11 @@ export function RuleSummaryRow({ rule }) {
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-muted">
                 <span className="flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-google-blue"></span>
-                    Confidence: <span className="font-semibold text-slate-700">{rule.confidence}</span>
+                    Tingkat Kepastian: <span className="font-semibold text-slate-800">{rule.confidence}</span>
                 </span>
                 <span className="flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-green-770"></span>
-                    Support: <span className="font-semibold text-slate-700">{rule.support}</span>
+                    Frekuensi Pembelian: <span className="font-semibold text-slate-800">{rule.support}</span>
                 </span>
             </div>
         </div>
