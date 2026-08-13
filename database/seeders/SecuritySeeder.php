@@ -100,28 +100,7 @@ class SecuritySeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Seed access groups & permissions
-        $adminGroupId = DB::table('access_groups')->insertGetId([
-            'code' => 'ADMIN',
-            'name' => 'Admin Karyawan',
-            'description' => 'Akses penuh operasional untuk staf administrasi',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('access_group_permissions')->insert([
-            'access_group_id' => $adminGroupId,
-            'menu_key' => '*',
-            'can_access' => true,
-            'can_view' => true,
-            'can_create' => true,
-            'can_update' => true,
-            'can_delete' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
+        // Seed access groups & permissions (Only Owner and Kasir)
         $ownerGroupId = DB::table('access_groups')->insertGetId([
             'code' => 'OWNER',
             'name' => 'Owner',
@@ -248,10 +227,10 @@ class SecuritySeeder extends Seeder
 
         // Link roles & groups to users
         DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $adminGroupId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['piscokpiscok2610@gmail.com']]);
 
-        DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
-        DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
+        DB::table('role_user')->insert(['role_id' => $superAdminRoleId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
+        DB::table('access_group_user')->insert(['access_group_id' => $ownerGroupId, 'user_id' => $usersMap['nurhayati.karya@gmail.com']]);
 
         DB::table('role_user')->insert(['role_id' => $operatorRoleId, 'user_id' => $usersMap['ahmad.fauzi87@gmail.com']]);
         DB::table('access_group_user')->insert(['access_group_id' => $cashierGroupId, 'user_id' => $usersMap['ahmad.fauzi87@gmail.com']]);
