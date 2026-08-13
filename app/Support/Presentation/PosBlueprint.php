@@ -153,7 +153,7 @@ final class PosBlueprint
                 'eyebrow' => 'TB Nur POS',
                 'title' => 'Satu workspace operasional untuk transaksi, stok, dan administrasi TB Nur.',
                 'caption' => 'Dirancang untuk membantu operasional harian toko berjalan lebih rapi, cepat, dan terkontrol.',
-                'imageSrc' => '/auth_bg.png',
+                'imageSrc' => '/auth_bg.webp',
                 'imageAlt' => 'Foto Toko TB Nur.',
             ],
         ];

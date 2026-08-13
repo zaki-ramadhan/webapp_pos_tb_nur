@@ -15,11 +15,11 @@ const BrandMark = memo(function BrandMark({
     const gapClass = variant === 'decorative' ? 'gap-2' : 'gap-3';
 
     const [logoSrc, setLogoSrc] = useState(() => {
-        if (typeof window === 'undefined') return '/logo_icon.png';
+        if (typeof window === 'undefined') return '/logo_icon.webp';
         try {
-            return localStorage.getItem('logo_cache') || '/logo_icon.png';
+            return localStorage.getItem('logo_cache') || '/logo_icon.webp';
         } catch {
-            return '/logo_icon.png';
+            return '/logo_icon.webp';
         }
     });
 
@@ -34,7 +34,7 @@ const BrandMark = memo(function BrandMark({
         } catch {}
 
         const img = new Image();
-        img.src = '/logo_icon.png';
+        img.src = '/logo_icon.webp';
         img.onload = () => {
             try {
                 const canvas = document.createElement('canvas');

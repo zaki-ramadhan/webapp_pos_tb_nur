@@ -1,5 +1,5 @@
 export default function GlobalBackgroundArt({ mode = 'auth' }) {
-    const bgUrl = mode === 'workspace' ? '/bg_home.png' : '/bg_login.png';
+    const bgUrl = mode === 'workspace' ? '/bg_home.webp' : '/bg_login.webp';
     return (
         <div
             aria-hidden="true"
