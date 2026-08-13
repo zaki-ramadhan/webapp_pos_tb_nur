@@ -44,7 +44,7 @@ TI_D_2303108_SOFTCOPY_PROPOSAL.docx
 *.docx
 *.stackdump
 scratch/
-*.png
+# *.png
 /docs/
 /.agents/
 /tools/
