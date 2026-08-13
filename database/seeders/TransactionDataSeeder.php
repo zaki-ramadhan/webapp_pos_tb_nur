@@ -43,11 +43,20 @@ class TransactionDataSeeder extends Seeder
         $s5 = $suppliersMap['SUPP-005'] ?? 1;
 
         $pSemen  = $productsMap['SMN-050'] ?? 1;
+        $pSemen3 = $productsMap['SMN-040'] ?? $pSemen;
         $pPipa   = $productsMap['PIP-003'] ?? 2;
+        $pPipa12 = $productsMap['PIP-001'] ?? $pPipa;
+        $pPipa4  = $productsMap['PIP-004'] ?? $pPipa;
         $pCat    = $productsMap['CAT-005'] ?? 3;
+        $pDulux  = $productsMap['CAT-DLX'] ?? $pCat;
+        $pAqua   = $productsMap['AQP-004'] ?? $pCat;
         $pBesi   = $productsMap['BES-010'] ?? 4;
+        $pBes8   = $productsMap['BES-008'] ?? $pBesi;
+        $pBes12  = $productsMap['BES-012'] ?? $pBesi;
+        $pBaja   = $productsMap['BJA-075'] ?? 5;
         $pTpl    = $productsMap['TPL-009'] ?? 5;
         $pSng    = $productsMap['SNG-020'] ?? 6;
+        $pSpnd   = $productsMap['SPD-030'] ?? $pSng;
         $pPaku   = $productsMap['PAK-050'] ?? 7;
         $pKran   = $productsMap['KRN-001'] ?? 8;
         $pKuas   = $productsMap['KUS-003'] ?? 9;
@@ -56,7 +65,11 @@ class TransactionDataSeeder extends Seeder
         $pKawat  = $productsMap['KWT-001'] ?? 12;
         $pBata   = $productsMap['BTA-001'] ?? 13;
         $pPasir  = $productsMap['PSR-001'] ?? 14;
+        $pPasirC = $productsMap['PSR-002'] ?? $pPasir;
         $pThn    = $productsMap['THN-001'] ?? 15;
+        $pSekop  = $productsMap['SKP-001'] ?? 15;
+        $pMortar = $productsMap['MTR-300'] ?? 13;
+        $pKrm    = $productsMap['KRM-404'] ?? 13;
 
         $userAdminId = $usersMap['piscokpiscok2610@gmail.com'] ?? 1;
         $userKasirId = $usersMap['ahmad.fauzi.tb@gmail.com'] ?? $userAdminId;
@@ -200,49 +213,48 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 5. Sales Invoices (Calibrated for ~Rp 250M / year in 2025 & steady growth in 2026)
-        // Average invoice: ~Rp 2.5 - 4.5 Million (realistic village store orders)
+        // 5. Sales Invoices (Rich Catalog & 18.5% YoY Growth in 2026)
         $salesPatterns = [
-            // Semen, Pasir, Besi, Paku combinations
+            // Semen, Pasir, Besi, Mortar, Keramik
             [$pSemen => 12, $pPasir => 1, $pPaku => 2, $pBesi => 6,  $pKuas => 1],
-            [$pSemen => 20, $pPasir => 2, $pPaku => 3, $pBesi => 10, $pKuas => 2],
+            [$pSemen3 => 15, $pPasirC => 2, $pBes8 => 8, $pMortar => 4],
             [$pSemen => 8,  $pPasir => 1, $pPaku => 1, $pThn => 1],
-            [$pSemen => 15, $pPasir => 2, $pPaku => 3, $pThn => 2],
-            [$pSemen => 25, $pPasir => 3, $pPaku => 4, $pBesi => 12],
+            [$pSemen => 15, $pPasir => 2, $pPaku => 3, $pBaja => 10],
+            [$pSemen => 25, $pPasir => 3, $pBes12 => 10, $pKrm => 5],
             [$pSemen => 10, $pPasir => 1],
-            [$pSemen => 18, $pPasir => 2],
+            [$pSemen3 => 18, $pPasirC => 2],
             [$pSemen => 6,  $pPasir => 1],
             [$pSemen => 22, $pPasir => 2, $pBesi => 8],
             [$pSemen => 14, $pPasir => 1],
-            [$pSemen => 16], // Semen berdiri sendiri (varies Semen->Pasir confidence to ~88%)
-            [$pSemen => 10, $pBata => 500], // Semen + Bata (tanpa pasir)
+            [$pSemen => 16],
+            [$pSemen => 10, $pBata => 500],
 
-            // Pipa, Kran, Lem combinations
+            // Pipa, Kran, Lem, Toren Air
             [$pPipa => 6,   $pLem => 2,   $pKran => 2],
-            [$pPipa => 10,  $pLem => 3,   $pKran => 3],
-            [$pPipa => 4,   $pLem => 1,   $pKran => 1],
+            [$pPipa12 => 10,$pLem => 3,   $pKran => 3],
+            [$pPipa4 => 4,  $pLem => 1,   $pKran => 1],
             [$pPipa => 8,   $pLem => 2,   $pKran => 2],
-            [$pPipa => 5,   $pKran => 2], // Pipa + Kran (tanpa lem)
-            [$pKran => 3], // Kran saja (varies Kran->Pipa confidence to ~87%)
-            [$pKran => 2,   $pKabel => 3], // Kran + Kabel (tanpa pipa/lem)
+            [$pPipa => 5,   $pKran => 2],
+            [$pKran => 3],
+            [$pKran => 2,   $pKabel => 3],
             [$pLem => 2],
             [$pPasir => 2,  $pPipa => 5,  $pBesi => 4],
             [$pPasir => 1,  $pPipa => 8,  $pBesi => 5],
             [$pSemen => 12, $pPipa => 4],
 
-            // Cat, Kuas, Thinner combinations
+            // Cat Dulux, Avitex, Aquaproof, Kuas, Thinner
             [$pCat => 3,    $pKuas => 2,  $pThn => 1],
-            [$pCat => 2,    $pKuas => 2,  $pThn => 1],
-            [$pCat => 4,    $pKuas => 3,  $pThn => 2],
+            [$pDulux => 2,  $pKuas => 2,  $pThn => 1],
+            [$pAqua => 4,   $pKuas => 3,  $pThn => 2],
             [$pCat => 3,    $pKuas => 2,  $pThn => 1],
-            [$pCat => 2,    $pKuas => 1], // Cat + Kuas (tanpa thinner) -> varies Thinner confidence to ~83%
-            [$pCat => 5], // Cat saja (varies Cat->Kuas confidence to ~91%)
-            [$pCat => 3,    $pThn => 1], // Cat + Thinner (tanpa kuas)
-            [$pCat => 2,    $pSemen => 5], // Cat + Semen
+            [$pCat => 2,    $pKuas => 1],
+            [$pCat => 5],
+            [$pDulux => 3,  $pThn => 1],
+            [$pCat => 2,    $pSemen => 5],
 
-            // Miscellaneous hardware
-            [$pPaku => 2,   $pBesi => 6],
-            [$pPaku => 2,   $pBesi => 8],
+            // Atap, Spandek, Sekop, Meteran
+            [$pSpnd => 5,   $pBaja => 8,  $pPaku => 2],
+            [$pPaku => 2,   $pBesi => 6,  $pSekop => 1],
             [$pKabel => 5,  $pKran => 1],
         ];
 
@@ -251,9 +263,9 @@ class TransactionDataSeeder extends Seeder
 
         for ($year = 2025; $year <= 2026; $year++) {
             $maxMonth = ($year === 2026) ? 8 : 12;
+            $growthMultiplier = ($year === 2026) ? 1.18 : 1.00;
 
             for ($m = 1; $m <= $maxMonth; $m++) {
-                // Generate 6 invoices per month -> 72 invoices/year @ avg ~Rp 3.5M = ~Rp 250M/year!
                 $invoicesThisMonth = 6;
                 for ($k = 1; $k <= $invoicesThisMonth; $k++) {
                     $invoiceSeq++;
@@ -287,9 +299,10 @@ class TransactionDataSeeder extends Seeder
 
                     $totalAmount = 0;
                     foreach ($pattern as $productId => $qty) {
+                        $adjustedQty = (int) max(1, round($qty * $growthMultiplier));
                         $product = DB::table('products')->where('id', $productId)->first();
                         $price = $product->default_sale_price ?? 50000;
-                        $lineTotal = $price * $qty;
+                        $lineTotal = $price * $adjustedQty;
                         $totalAmount += $lineTotal;
 
                         DB::table('operation_document_lines')->insert([
@@ -299,7 +312,7 @@ class TransactionDataSeeder extends Seeder
                             'unit_id' => $product->base_unit_id ?? 1,
                             'warehouse_id' => $warehouseId,
                             'description' => $product->name,
-                            'quantity' => $qty,
+                            'quantity' => $adjustedQty,
                             'unit_price' => $price,
                             'total_amount' => $lineTotal,
                             'sort_order' => $productId,
