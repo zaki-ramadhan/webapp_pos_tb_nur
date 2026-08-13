@@ -302,25 +302,37 @@ class GoogleLoginController extends Controller
                 <div class="loader"></div>
                 <p>Autentikasi berhasil, mengalihkan...</p>
                 <script>
-                    if (window.opener) {
+                    (function() {
+                        var sent = false;
+                        // BroadcastChannel: COOP-safe, same-origin
                         try {
-                            window.opener.postMessage({
-                                status: "success",
-                                message: %s
-                            }, "*");
-                        } catch (e) {
-                            console.error("Popup communication error:", e);
+                            var bc = new BroadcastChannel("google_auth");
+                            bc.postMessage({ status: "success", message: %s });
+                            bc.close();
+                            sent = true;
+                        } catch(e) {}
+
+                        // Fallback: postMessage via window.opener
+                        if (!sent && window.opener && !window.opener.closed) {
+                            try {
+                                window.opener.postMessage({ status: "success", message: %s }, window.location.origin);
+                                sent = true;
+                            } catch(e) {}
                         }
+
+                        // Last resort: redirect this popup to dashboard
                         setTimeout(function() {
-                            window.close();
-                        }, 150);
-                    } else {
-                        window.location.href = %s;
-                    }
+                            if (window.opener && !window.opener.closed) {
+                                window.close();
+                            } else {
+                                window.location.href = %s;
+                            }
+                        }, 300);
+                    })();
                 </script>
             </body>
             </html>
-        ', json_encode($message), json_encode(route('dashboard')));
+        ', json_encode($message), json_encode($message), json_encode(route('dashboard')));
 
         return response($html)->header('Content-Type', 'text/html');
     }
@@ -342,25 +354,31 @@ class GoogleLoginController extends Controller
                 <div class="loader"></div>
                 <p>Autentikasi gagal: %s. Menutup...</p>
                 <script>
-                    if (window.opener) {
+                    (function() {
                         try {
-                            window.opener.postMessage({
-                                status: "error",
-                                message: %s
-                            }, "*");
-                        } catch (e) {
-                            console.error("Popup communication error:", e);
+                            var bc = new BroadcastChannel("google_auth");
+                            bc.postMessage({ status: "error", message: %s });
+                            bc.close();
+                        } catch(e) {}
+
+                        if (window.opener && !window.opener.closed) {
+                            try {
+                                window.opener.postMessage({ status: "error", message: %s }, window.location.origin);
+                            } catch(e) {}
                         }
+
                         setTimeout(function() {
-                            window.close();
-                        }, 150);
-                    } else {
-                        window.location.href = "/?error=" + encodeURIComponent(%s);
-                    }
+                            if (window.opener && !window.opener.closed) {
+                                window.close();
+                            } else {
+                                window.location.href = "/?error=" + encodeURIComponent(%s);
+                            }
+                        }, 2000);
+                    })();
                 </script>
             </body>
             </html>
-        ', htmlspecialchars($message), json_encode($message), json_encode($message));
+        ', htmlspecialchars($message), json_encode($message), json_encode($message), json_encode($message));
 
         return response($html)->header('Content-Type', 'text/html');
     }
