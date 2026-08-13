@@ -127,6 +127,10 @@ export default function ItemCategoryFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
                 await onRefresh?.();
+                if (record) {
+                    const freshValues = buildItemCategoryFormValues(config, record);
+                    setValues(freshValues);
+                }
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
