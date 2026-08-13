@@ -63,7 +63,6 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
             : config.createValues),
         [backendRecord, config, isDetail, recordId],
     );
-    const [values, setValues] = useState(() => buildFormState(sourceRecord));
     
     const { leftTabs, rightTabs } = useMemo(() => {
         const isSub = isDetail
