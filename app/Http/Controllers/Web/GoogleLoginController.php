@@ -76,20 +76,31 @@ class GoogleLoginController extends Controller
         }
 
         try {
+            /** @var \Laravel\Socialite\Two\GoogleProvider $driver */
+            $driver = Socialite::driver('google');
+            $driver->stateless();
+
+            $guzzleClient = new \GuzzleHttp\Client([
+                'verify' => false,
+                'timeout' => 15,
+                'connect_timeout' => 10,
+            ]);
+            $driver->setHttpClient($guzzleClient);
+
             /** @var OAuthUser $oauthUser */
-            $oauthUser = Socialite::driver('google')
-                ->stateless()
-                ->user();
+            $oauthUser = $driver->user();
         } catch (Throwable $exception) {
             report($exception);
 
+            $errorMsg = 'Autentikasi Google gagal: ' . $exception->getMessage();
+
             if ($usePopup) {
-                return $this->respondWithPopupError('Autentikasi Google gagal diproses. Silakan coba lagi.');
+                return $this->respondWithPopupError($errorMsg);
             }
             return redirect()
                 ->route('home')
                 ->withErrors([
-                    'auth' => 'Autentikasi Google gagal diproses. Silakan coba lagi.',
+                    'auth' => $errorMsg,
                 ]);
         }
 
