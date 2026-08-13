@@ -213,49 +213,39 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 5. Sales Invoices (Rich Catalog & 18.5% YoY Growth in 2026)
+        // 5. Sales Invoices (Rich Catalog, Varied Tactics & 18.5% YoY Growth in 2026)
         $salesPatterns = [
-            // Semen, Pasir, Besi, Mortar, Keramik
-            [$pSemen => 12, $pPasir => 1, $pPaku => 2, $pBesi => 6,  $pKuas => 1],
-            [$pSemen3 => 15, $pPasirC => 2, $pBes8 => 8, $pMortar => 4],
-            [$pSemen => 8,  $pPasir => 1, $pPaku => 1, $pThn => 1],
-            [$pSemen => 15, $pPasir => 2, $pPaku => 3, $pBaja => 10],
-            [$pSemen => 25, $pPasir => 3, $pBes12 => 10, $pKrm => 5],
-            [$pSemen => 10, $pPasir => 1],
+            // A ↔ C Jual Silang (Utama + Aksesoris) -> Blue bars
+            [$pSemen => 15, $pKuas => 2,  $pThn => 1],
+            [$pSemen => 20, $pLem => 3,   $pKran => 2],
+            [$pPasir => 2,  $pKuas => 2],
+            [$pSemen => 12, $pPasir => 1, $pKuas => 1],
+            [$pBesi => 10,  $pLem => 2],
+
+            // A → A Paket Bundling (Utama + Utama) -> Green bars
+            [$pSemen => 15, $pPasir => 2],
             [$pSemen3 => 18, $pPasirC => 2],
-            [$pSemen => 6,  $pPasir => 1],
-            [$pSemen => 22, $pPasir => 2, $pBesi => 8],
-            [$pSemen => 14, $pPasir => 1],
-            [$pSemen => 16],
+            [$pSemen => 22, $pPasir => 2, $pBes12 => 6],
+            [$pSemen => 10, $pPasir => 1, $pBes8 => 8],
+            [$pSemen => 14, $pPasir => 2],
+
+            // B → B Paket Pelengkap (Stabil + Stabil) -> Orange bars
+            [$pPipa => 8,   $pKran => 3],
+            [$pPipa12 => 10,$pKran => 2],
+            [$pPipa4 => 6,  $pKran => 2],
+            [$pCat => 4,    $pDulux => 2],
+            [$pSpnd => 6,   $pBaja => 8],
+
+            // C → C Display Rak Rakit (Aksesoris + Aksesoris) -> Purple bars
+            [$pKuas => 3,   $pThn => 2],
+            [$pLem => 4,    $pKuas => 2],
+            [$pSekop => 2,  $pKawat => 3],
+            [$pPaku => 4,   $pKabel => 2],
+
+            // General mixed orders
             [$pSemen => 10, $pBata => 500],
-
-            // Pipa, Kran, Lem, Toren Air
-            [$pPipa => 6,   $pLem => 2,   $pKran => 2],
-            [$pPipa12 => 10,$pLem => 3,   $pKran => 3],
-            [$pPipa4 => 4,  $pLem => 1,   $pKran => 1],
-            [$pPipa => 8,   $pLem => 2,   $pKran => 2],
-            [$pPipa => 5,   $pKran => 2],
-            [$pKran => 3],
-            [$pKran => 2,   $pKabel => 3],
-            [$pLem => 2],
-            [$pPasir => 2,  $pPipa => 5,  $pBesi => 4],
-            [$pPasir => 1,  $pPipa => 8,  $pBesi => 5],
-            [$pSemen => 12, $pPipa => 4],
-
-            // Cat Dulux, Avitex, Aquaproof, Kuas, Thinner
-            [$pCat => 3,    $pKuas => 2,  $pThn => 1],
-            [$pDulux => 2,  $pKuas => 2,  $pThn => 1],
-            [$pAqua => 4,   $pKuas => 3,  $pThn => 2],
-            [$pCat => 3,    $pKuas => 2,  $pThn => 1],
-            [$pCat => 2,    $pKuas => 1],
-            [$pCat => 5],
-            [$pDulux => 3,  $pThn => 1],
-            [$pCat => 2,    $pSemen => 5],
-
-            // Atap, Spandek, Sekop, Meteran
-            [$pSpnd => 5,   $pBaja => 8,  $pPaku => 2],
-            [$pPaku => 2,   $pBesi => 6,  $pSekop => 1],
-            [$pKabel => 5,  $pKran => 1],
+            [$pAqua => 3,   $pKuas => 2],
+            [$pCat => 3,    $pThn => 1],
         ];
 
         $siIds = [];
