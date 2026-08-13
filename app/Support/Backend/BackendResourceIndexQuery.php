@@ -118,9 +118,9 @@ class BackendResourceIndexQuery
                     ->buildStockTotalsByProduct($productIds);
 
                 foreach ($items as $product) {
-                    $qty = (float) ($totals[$product->id] ?? 0.0);
-                    $product->setAttribute('stock_on_hand', $qty);
-                    $product->setAttribute('stock_available', $qty);
+                    $stockData = $totals[$product->id] ?? ['stock_on_hand' => 0.0, 'stock_available' => 0.0];
+                    $product->setAttribute('stock_on_hand', $stockData['stock_on_hand']);
+                    $product->setAttribute('stock_available', $stockData['stock_available']);
                 }
             }
         }

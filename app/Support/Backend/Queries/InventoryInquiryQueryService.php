@@ -19,7 +19,7 @@ class InventoryInquiryQueryService
     use HasQueryHelpers;
     /**
      * @param  array<int, int>  $productIds
-     * @return array<int, float>
+     * @return array<int, array{stock_on_hand: float, stock_available: float}>
      */
     public function buildStockTotalsByProduct(array $productIds = []): array
     {
@@ -29,16 +29,38 @@ class InventoryInquiryQueryService
         }
         $compositeStockMap = $this->buildStockMap($filters);
         
-        $totals = [];
+        $onHandTotals = [];
         foreach ($compositeStockMap as $compositeKey => $qty) {
             $parts = explode(':', $compositeKey);
             $pid = (int) ($parts[0] ?? 0);
             if ($pid > 0 && (empty($productIds) || in_array($pid, $productIds, true))) {
-                $totals[$pid] = (float) ($totals[$pid] ?? 0.0) + (float) $qty;
+                $onHandTotals[$pid] = (float) ($onHandTotals[$pid] ?? 0.0) + (float) $qty;
             }
         }
 
-        return $totals;
+        $reservedTotals = OperationDocument::query()
+            ->with('lines')
+            ->where('document_type', 'sales_order')
+            ->where('is_closed', false)
+            ->whereNotIn('status', ['Void', 'Cancelled', 'void', 'cancelled'])
+            ->get()
+            ->flatMap(fn ($doc) => $doc->lines)
+            ->groupBy('product_id')
+            ->map(fn ($lines) => $lines->sum('quantity'));
+
+        $results = [];
+        $targetIds = !empty($productIds) ? $productIds : array_keys($onHandTotals);
+
+        foreach ($targetIds as $pid) {
+            $onHand = (float) ($onHandTotals[$pid] ?? 0.0);
+            $reserved = (float) ($reservedTotals->get($pid) ?? 0.0);
+            $results[$pid] = [
+                'stock_on_hand' => $onHand,
+                'stock_available' => max(0.0, $onHand - $reserved),
+            ];
+        }
+
+        return $results;
     }
 
     /**
