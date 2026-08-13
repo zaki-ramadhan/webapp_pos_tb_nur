@@ -158,12 +158,7 @@ export default function ItemsServicesFormView({
 
     const saveDisabled = saving || !values.name?.trim() || (isDetail && !values.code?.trim());
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     async function handleSave() {
         if (!values.name?.trim()) {

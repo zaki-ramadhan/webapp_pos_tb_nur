@@ -137,7 +137,6 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
         onSync: () => setStatus({ tone: '', message: '' }),
     });
 
-    useWorkspaceDirtyRegistration({ pageId: 'users', tabId: activeLevel2Tab?.id, dirty: isDirty, enabled: Boolean(activeLevel2Tab?.id) });
 
     const { store, update } = useBackendResource({ resource: 'users' });
 

@@ -94,12 +94,7 @@ export function InventoryAdjustmentFormView({
 
     const saveDisabled = saving || Boolean(validationMessage);
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     function handleCreateItem() {
         setSelectedItem({

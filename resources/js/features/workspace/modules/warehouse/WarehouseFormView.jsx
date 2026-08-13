@@ -105,12 +105,7 @@ export default function WarehouseFormView({
         [values, initialValues, hasSaved],
     );
 
-    useWorkspaceDirtyRegistration({
-        pageId: 'warehouse-master',
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(activeLevel2Tab?.id),
-    });
+
 
     function handleChange(field, nextValue) {
         setHasSaved(false);

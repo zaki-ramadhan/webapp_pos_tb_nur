@@ -52,12 +52,7 @@ export function useFormDraftState({
         }
     }, [buildFormState, sourceRecord, config, onSync]);
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeTabId,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeTabId),
-    });
+
 
     return [values, setValues, isDirty, resetForm];
 }

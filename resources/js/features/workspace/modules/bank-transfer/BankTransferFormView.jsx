@@ -203,12 +203,7 @@ export default function BankTransferFormView({
         [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete, validationMessage]
     );
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     const handlers = useMemo(
         () => ({

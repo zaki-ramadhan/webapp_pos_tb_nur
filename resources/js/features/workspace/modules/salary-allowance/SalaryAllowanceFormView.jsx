@@ -80,12 +80,7 @@ export default function SalaryAllowanceFormView({
     const isDirty = !areComparableValuesEqual(initialComparable, currentComparable);
     const resolvedSaveDisabled = Boolean(validationMessage) || saving;
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     async function handleSave() {
         if (validationMessage) {

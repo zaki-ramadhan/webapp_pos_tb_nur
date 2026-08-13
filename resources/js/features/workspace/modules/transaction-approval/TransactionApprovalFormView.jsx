@@ -113,12 +113,7 @@ export default function TransactionApprovalFormView({
         values.approvalRule !== initialValues.approvalRule
     ), [values, initialValues]);
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     const resolvedBranchOptions = useMemo(() => {
         const base = form.branchOptions ?? [];
