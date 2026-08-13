@@ -122,13 +122,24 @@ class TransactionDataSeeder extends Seeder
             return $lineTotal;
         };
 
+        // Helper closure to generate safe historical entry dates (Max August 14, 2026)
+        $buildEntryDate = function ($year, $m, $defaultDay) {
+            if ($year === 2026 && $m === 8) {
+                $day = min(14, max(1, $defaultDay % 15));
+                if ($day === 0) $day = 14;
+                return sprintf('2026-08-%02d', $day);
+            }
+            $safeDay = min(28, max(1, $defaultDay));
+            return sprintf('%04d-%02d-%02d', $year, $m, $safeDay);
+        };
+
         // 2. Sales Quotes (Penawaran Penjualan - 2025 & 2026)
         $quoteCount = 0;
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $quoteCount++;
-                $entryDate = sprintf('%04d-%02d-10', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 10);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'sales_quote',
@@ -163,7 +174,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $orderCount++;
-                $entryDate = sprintf('%04d-%02d-15', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 12);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'sales_order',
@@ -213,7 +224,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $delivCount++;
-                $entryDate = sprintf('%04d-%02d-18', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 13);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'sales_delivery',
@@ -290,8 +301,8 @@ class TransactionDataSeeder extends Seeder
                 $invoicesThisMonth = 6;
                 for ($k = 1; $k <= $invoicesThisMonth; $k++) {
                     $invoiceSeq++;
-                    $day = min(28, 4 * $k + ($invoiceSeq % 2));
-                    $entryDate = sprintf('%04d-%02d-%02d', $year, $m, $day);
+                    $defaultDay = 4 * $k + ($invoiceSeq % 2);
+                    $entryDate = $buildEntryDate($year, $m, $defaultDay);
                     $dt = Carbon::parse($entryDate);
 
                     $pattern = $salesPatterns[($invoiceSeq - 1) % count($salesPatterns)];
@@ -361,7 +372,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 2; $m <= $maxM; $m += 3) {
                 $srCount++;
-                $entryDate = sprintf('%04d-%02d-20', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 11);
                 $dt = Carbon::parse($entryDate);
                 $refSiId = $siIds[$srCount] ?? $siIds[1];
                 $docId = DB::table('operation_documents')->insertGetId([
@@ -392,7 +403,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 3) {
                 $sdCount++;
-                $entryDate = sprintf('%04d-%02d-05', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 5);
                 $dt = Carbon::parse($entryDate);
                 DB::table('operation_documents')->insert([
                     'document_type' => 'sales_deposit',
@@ -419,7 +430,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $receiptSeq++;
-                $entryDate = sprintf('%04d-%02d-22', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 14);
                 $dt = Carbon::parse($entryDate);
                 $payAmount = 1250000;
                 $refDocNo = sprintf('SI.%04d.%02d.%05d', $year, $m, $receiptSeq);
@@ -465,7 +476,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $poCount++;
-                $entryDate = sprintf('%04d-%02d-03', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 3);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'purchase_order',
@@ -495,7 +506,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $grCount++;
-                $entryDate = sprintf('%04d-%02d-06', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 6);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'goods_receipt',
@@ -525,7 +536,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $piSeq++;
-                $entryDate = sprintf('%04d-%02d-08', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 8);
                 $dt = Carbon::parse($entryDate);
                 $isPaid = ($piSeq % 3 !== 0);
 
@@ -571,7 +582,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 3; $m <= $maxM; $m += 4) {
                 $prCount++;
-                $entryDate = sprintf('%04d-%02d-25', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 12);
                 $dt = Carbon::parse($entryDate);
                 $refPiId = $piIds[$prCount - 1] ?? null;
                 $docId = DB::table('operation_documents')->insertGetId([
@@ -602,7 +613,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $pySeq++;
-                $entryDate = sprintf('%04d-%02d-28', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 14);
                 $dt = Carbon::parse($entryDate);
                 $payAmount = 4500000;
                 $refDocNo = sprintf('PI.%04d.%02d.%05d', $year, $m, $pySeq);
@@ -648,7 +659,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 3) {
                 $reqCount++;
-                $entryDate = sprintf('%04d-%02d-12', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 12);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'item_request',
@@ -675,7 +686,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 3; $m <= $maxM; $m += 3) {
                 $iaSeq++;
-                $entryDate = sprintf('%04d-%02d-29', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 14);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'inventory_adjustment',
@@ -715,7 +726,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $trfSeq++;
-                $entryDate = sprintf('%04d-%02d-14', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 14);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'stock_transfer',
@@ -744,7 +755,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $cpSeq++;
-                $entryDate = sprintf('%04d-%02d-10', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 10);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'cash_payment',
@@ -785,7 +796,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $crSeq++;
-                $entryDate = sprintf('%04d-%02d-11', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 11);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'cash_receipt',
@@ -825,7 +836,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m += 2) {
                 $btSeq++;
-                $entryDate = sprintf('%04d-%02d-20', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 13);
                 $dt = Carbon::parse($entryDate);
                 DB::table('operation_documents')->insert([
                     'document_type' => 'bank_transfer',
@@ -852,7 +863,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $gjSeq++;
-                $entryDate = sprintf('%04d-%02d-27', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 13);
                 $dt = Carbon::parse($entryDate);
                 $docId = DB::table('operation_documents')->insertGetId([
                     'document_type' => 'general_journal',
@@ -917,7 +928,7 @@ class TransactionDataSeeder extends Seeder
             for ($m = 1; $m <= $maxM; $m++) {
                 foreach ($expenseTemplates as $tpl) {
                     $expSeq++;
-                    $entryDate = sprintf('%04d-%02d-26', $year, $m);
+                    $entryDate = $buildEntryDate($year, $m, 12);
                     $dueDate = date('Y-m-d', strtotime($entryDate . ' + 14 days'));
                     $dt = Carbon::parse($entryDate);
                     $isPaid = true;
@@ -978,7 +989,7 @@ class TransactionDataSeeder extends Seeder
             $maxM = ($year === 2026) ? 8 : 12;
             for ($m = 1; $m <= $maxM; $m++) {
                 $paySeq++;
-                $entryDate = sprintf('%04d-%02d-28', $year, $m);
+                $entryDate = $buildEntryDate($year, $m, 14);
                 $dt = Carbon::parse($entryDate);
                 $monthName = $monthsList[$m];
                 $totalDocAmount = 0;
