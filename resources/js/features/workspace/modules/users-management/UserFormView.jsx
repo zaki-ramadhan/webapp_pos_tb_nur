@@ -200,7 +200,7 @@ export default function UserFormView({ form, activeLevel2Tab, tableRows = [], on
             setActiveTabId={() => {}}
             status={status}
             saving={saving}
-            saveDisabled={saving || !isDirty}
+            saveDisabled={saving}
             onSave={handleSave}
         >
             <div className="flex-1 min-h-0 pt-2">

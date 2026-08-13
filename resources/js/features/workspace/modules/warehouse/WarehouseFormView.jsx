@@ -219,7 +219,7 @@ export default function WarehouseFormView({
             setActiveTabId={setActiveTabId}
             status={status}
             saving={saving}
-            saveDisabled={saving || !isDirty}
+            saveDisabled={saving}
             onSave={handleSave}
             actionsSlot={
                 isDetailMode && config.deleteLabel ? (

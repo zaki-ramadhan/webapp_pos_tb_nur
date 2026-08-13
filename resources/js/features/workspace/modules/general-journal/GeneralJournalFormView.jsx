@@ -75,7 +75,7 @@ export default function GeneralJournalFormView({
     }, [config, sourceRecord]);
 
     const validationMessage = useMemo(() => validateJournalValues(values, config), [config, values]);
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
+    const saveDisabled = saving || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     async function selectLookup(resource, title, onApply) {
         try {

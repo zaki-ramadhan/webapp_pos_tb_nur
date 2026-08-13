@@ -171,16 +171,11 @@ export default function AccountsFormView({ pageId, config, backendRows, activeLe
         values.isSubAccount,
         values.autoCode,
     ]);
-    const saveDisabled = saving || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1'))) || !hasChanges;
+    const saveDisabled = saving || Boolean(validationMessage && (validationMessage.includes('wajib diisi') || validationMessage.includes('wajib dipilih') || validationMessage.includes('wajib diisi minimal 1')));
 
     async function handleSave() {
         if (validationMessage) {
             rejectCrudFormAction(validationMessage, { setStatus });
-            return;
-        }
-
-        if (!hasChanges) {
-            rejectCrudFormAction('Belum ada perubahan untuk disimpan.', { setStatus });
             return;
         }
 

@@ -131,7 +131,7 @@ export function resolveSaveDisabledState({
     return {
         validationMessage,
         isDirty,
-        saveDisabled: Boolean(saving || validationMessage || !isDirty),
+        saveDisabled: Boolean(saving || validationMessage),
     };
 }
 

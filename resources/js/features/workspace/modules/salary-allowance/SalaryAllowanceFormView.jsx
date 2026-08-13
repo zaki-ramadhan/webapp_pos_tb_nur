@@ -78,7 +78,7 @@ export default function SalaryAllowanceFormView({
         { label: fields.expenseAccountLabel, value: expenseAccountId, type: 'lookup' },
     ]);
     const isDirty = !areComparableValuesEqual(initialComparable, currentComparable);
-    const resolvedSaveDisabled = Boolean(validationMessage) || !isDirty || saving;
+    const resolvedSaveDisabled = Boolean(validationMessage) || saving;
 
     useWorkspaceDirtyRegistration({
         pageId,

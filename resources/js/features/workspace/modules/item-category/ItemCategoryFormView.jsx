@@ -193,7 +193,7 @@ export default function ItemCategoryFormView({
             setActiveTabId={setActiveTabId}
             status={status}
             saving={saving}
-            saveDisabled={saving || !values.name?.trim() || (isDetail && !isDirty)}
+            saveDisabled={saving || !values.name?.trim()}
             onSave={handleSave}
             actionsSlot={
                 isDetail && config.deleteLabel ? (

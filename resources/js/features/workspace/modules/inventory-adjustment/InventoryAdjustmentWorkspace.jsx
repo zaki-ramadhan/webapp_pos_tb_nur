@@ -92,7 +92,7 @@ export function InventoryAdjustmentFormView({
         handleDelete,
     } = useTransactionForm({ validationMessage });
 
-    const saveDisabled = saving || !isDirty || Boolean(validationMessage);
+    const saveDisabled = saving || Boolean(validationMessage);
 
     useWorkspaceDirtyRegistration({
         pageId,
