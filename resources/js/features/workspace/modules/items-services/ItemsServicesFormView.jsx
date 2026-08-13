@@ -57,24 +57,26 @@ export default function ItemsServicesFormView({
     const isDetail = Boolean(detailRow);
     const [activeTabId, setActiveTabId] = useState(config.tabs?.[0]?.id ?? 'general');
     const initialValues = useMemo(() => buildItemsServicesFormValues(config, detailRow), [detailRow, config]);
+    const [savedSnapshot, setSavedSnapshot] = useState(() => initialValues);
     const [values, setValues] = useState(() => initialValues);
     const [status, setStatus] = useState({ tone: '', message: '' });
     const [saving, setSaving] = useState(false);
     const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
     const isDirty = useMemo(
-        () => !areComparableValuesEqual(initialValues, values),
-        [initialValues, values]
+        () => !areComparableValuesEqual(savedSnapshot, values),
+        [savedSnapshot, values]
     );
 
     const activeTabInstanceId = activeLevel2Tab?.id;
 
     useEffect(() => {
         setActiveTabId(config.tabs?.[0]?.id ?? 'general');
+        setSavedSnapshot(initialValues);
         setValues(initialValues);
         setStatus({ tone: '', message: '' });
         setDeleteConfirmationOpen(false);
-    }, [activeTabInstanceId]);
+    }, [activeTabInstanceId, detailRow?.id]);
 
     useEffect(() => {
         if (!detailRow?.id) return;
@@ -248,10 +250,7 @@ export default function ItemsServicesFormView({
             getErrorMessage: (error) => getBackendErrorMessage(error),
             onSuccess: async (record) => {
                 await onRefresh?.();
-                if (record) {
-                    const freshValues = buildItemsServicesFormValues(config, record);
-                    setValues(freshValues);
-                }
+                setSavedSnapshot(values);
                 if (isDetail && record && activeLevel2Tab?.id) {
                     window.dispatchEvent(
                         new CustomEvent('workspace:update-tab-label', {
