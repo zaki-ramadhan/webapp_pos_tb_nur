@@ -18,7 +18,9 @@ export default function DashboardWidgetGrid({
     dashboard = null,
 }) {
     const [analyticsDetailsExpanded, setAnalyticsDetailsExpanded] = useState(false);
-    const [chartExpanded, setChartExpanded] = useState(false);
+    const [chartExpanded, setChartExpanded] = useState(() => {
+        return typeof window !== 'undefined' && window.innerWidth >= 1024;
+    });
     const [refreshingByWidgetId, setRefreshingByWidgetId] = useState({});
     const [refreshErrorByWidgetId, setRefreshErrorByWidgetId] = useState({});
 
@@ -295,32 +297,7 @@ export default function DashboardWidgetGrid({
             if (widget.id === 'integrated-analysis' || widget.type === 'integrated-analysis') {
                 const openCount = (chartExpanded ? 1 : 0) + (analyticsDetailsExpanded ? 1 : 0);
 
-                if (openCount === 1) {
-                    const reg1Index = i + 1;
-                    const reg2Index = i + 2;
-
-                    if (
-                        reg2Index < activeWidgets.length &&
-                        !(activeWidgets[reg1Index].id === 'integrated-analysis' || activeWidgets[reg1Index].type === 'integrated-analysis') &&
-                        !(activeWidgets[reg2Index].id === 'integrated-analysis' || activeWidgets[reg2Index].type === 'integrated-analysis')
-                    ) {
-                        const reg1Widget = activeWidgets[reg1Index];
-                        const reg2Widget = activeWidgets[reg2Index];
-
-                        items.push(
-                            <div key={`stacked-group-2-${widget.id}`} className="contents">
-                                {renderWidgetCard(widget, i)}
-                                <div className="md:contents xl:flex xl:flex-col xl:gap-2 xl:h-full xl:justify-between min-w-0 flex-1">
-                                    {renderWidgetCard(reg1Widget, reg1Index)}
-                                    {renderWidgetCard(reg2Widget, reg2Index)}
-                                </div>
-                            </div>,
-                        );
-
-                        i += 3;
-                        continue;
-                    }
-                } else if (openCount === 0) {
+                if (openCount === 2) {
                     const reg1Index = i + 1;
                     const reg2Index = i + 2;
                     const reg3Index = i + 3;
@@ -338,7 +315,7 @@ export default function DashboardWidgetGrid({
                         items.push(
                             <div key={`stacked-group-3-${widget.id}`} className="contents">
                                 {renderWidgetCard(widget, i)}
-                                <div className="md:contents xl:flex xl:flex-col xl:gap-2 xl:h-full xl:justify-between min-w-0 flex-1">
+                                <div className="md:contents xl:flex xl:flex-col xl:gap-2.5 xl:h-full xl:justify-between min-w-0 flex-1">
                                     {renderWidgetCard(reg1Widget, reg1Index)}
                                     {renderWidgetCard(reg2Widget, reg2Index)}
                                     {renderWidgetCard(reg3Widget, reg3Index)}
@@ -347,6 +324,31 @@ export default function DashboardWidgetGrid({
                         );
 
                         i += 4;
+                        continue;
+                    }
+                } else {
+                    const reg1Index = i + 1;
+                    const reg2Index = i + 2;
+
+                    if (
+                        reg2Index < activeWidgets.length &&
+                        !(activeWidgets[reg1Index].id === 'integrated-analysis' || activeWidgets[reg1Index].type === 'integrated-analysis') &&
+                        !(activeWidgets[reg2Index].id === 'integrated-analysis' || activeWidgets[reg2Index].type === 'integrated-analysis')
+                    ) {
+                        const reg1Widget = activeWidgets[reg1Index];
+                        const reg2Widget = activeWidgets[reg2Index];
+
+                        items.push(
+                            <div key={`stacked-group-2-${widget.id}`} className="contents">
+                                {renderWidgetCard(widget, i)}
+                                <div className="md:contents xl:flex xl:flex-col xl:gap-2.5 xl:h-full xl:justify-between min-w-0 flex-1">
+                                    {renderWidgetCard(reg1Widget, reg1Index)}
+                                    {renderWidgetCard(reg2Widget, reg2Index)}
+                                </div>
+                            </div>,
+                        );
+
+                        i += 3;
                         continue;
                     }
                 }

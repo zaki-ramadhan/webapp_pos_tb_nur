@@ -1,33 +1,33 @@
 {
-  "_AuthLayout-FR0QAfp6.js": {
-    "file": "assets/AuthLayout-FR0QAfp6.js",
+  "_AuthLayout-Ch8jJDth.js": {
+    "file": "assets/AuthLayout-Ch8jJDth.js",
     "name": "AuthLayout",
     "imports": [
-      "_vendor-D7iv-2Fn.js",
-      "_GlobalBackgroundArt-SyzfTi-1.js",
+      "_vendor-B29Tx6S1.js",
+      "_GlobalBackgroundArt-BcQOXW87.js",
       "resources/js/app/App.jsx"
     ]
   },
-  "_GlobalBackgroundArt-SyzfTi-1.js": {
-    "file": "assets/GlobalBackgroundArt-SyzfTi-1.js",
+  "_GlobalBackgroundArt-BcQOXW87.js": {
+    "file": "assets/GlobalBackgroundArt-BcQOXW87.js",
     "name": "GlobalBackgroundArt",
     "imports": [
-      "_vendor-D7iv-2Fn.js"
+      "_vendor-B29Tx6S1.js"
     ]
   },
-  "_Notice-D6CIMY-X.js": {
-    "file": "assets/Notice-D6CIMY-X.js",
+  "_Notice-BzWxhvgp.js": {
+    "file": "assets/Notice-BzWxhvgp.js",
     "name": "Notice",
     "imports": [
-      "_vendor-D7iv-2Fn.js"
+      "_vendor-B29Tx6S1.js"
     ]
   },
-  "_vendor-D7iv-2Fn.js": {
-    "file": "assets/vendor-D7iv-2Fn.js",
+  "_vendor-B29Tx6S1.js": {
+    "file": "assets/vendor-B29Tx6S1.js",
     "name": "vendor"
   },
   "resources/css/app.css": {
-    "file": "assets/app-MqWc_rIS.css",
+    "file": "assets/app-BH30zC6b.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -36,12 +36,12 @@
     ]
   },
   "resources/js/app/App.jsx": {
-    "file": "assets/App-BrU4DQU9.js",
+    "file": "assets/App-XpbQRQkl.js",
     "name": "App",
     "src": "resources/js/app/App.jsx",
     "isEntry": true,
     "imports": [
-      "_vendor-D7iv-2Fn.js"
+      "_vendor-B29Tx6S1.js"
     ],
     "dynamicImports": [
       "resources/js/pages/DashboardPage.jsx",
@@ -52,62 +52,62 @@
     ]
   },
   "resources/js/pages/DashboardPage.jsx": {
-    "file": "assets/DashboardPage-DKZJV5Ad.js",
+    "file": "assets/DashboardPage-Cfb1XwMN.js",
     "name": "DashboardPage",
     "src": "resources/js/pages/DashboardPage.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor-D7iv-2Fn.js",
-      "_GlobalBackgroundArt-SyzfTi-1.js",
+      "_vendor-B29Tx6S1.js",
+      "_GlobalBackgroundArt-BcQOXW87.js",
       "resources/js/app/App.jsx"
     ]
   },
   "resources/js/pages/ErrorPage.jsx": {
-    "file": "assets/ErrorPage-Bey7UfsG.js",
+    "file": "assets/ErrorPage-CmVxu9jh.js",
     "name": "ErrorPage",
     "src": "resources/js/pages/ErrorPage.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor-D7iv-2Fn.js",
+      "_vendor-B29Tx6S1.js",
       "resources/js/app/App.jsx"
     ]
   },
   "resources/js/pages/HomePage.jsx": {
-    "file": "assets/HomePage-Gs0O0zvZ.js",
+    "file": "assets/HomePage-Cw56hbNw.js",
     "name": "HomePage",
     "src": "resources/js/pages/HomePage.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor-D7iv-2Fn.js",
-      "_AuthLayout-FR0QAfp6.js",
+      "_vendor-B29Tx6S1.js",
+      "_AuthLayout-Ch8jJDth.js",
       "resources/js/app/App.jsx",
-      "_Notice-D6CIMY-X.js",
-      "_GlobalBackgroundArt-SyzfTi-1.js"
+      "_Notice-BzWxhvgp.js",
+      "_GlobalBackgroundArt-BcQOXW87.js"
     ]
   },
   "resources/js/pages/RegisterPage.jsx": {
-    "file": "assets/RegisterPage-CLSoT-HR.js",
+    "file": "assets/RegisterPage-JWdBcUjf.js",
     "name": "RegisterPage",
     "src": "resources/js/pages/RegisterPage.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor-D7iv-2Fn.js",
-      "_AuthLayout-FR0QAfp6.js",
+      "_vendor-B29Tx6S1.js",
+      "_AuthLayout-Ch8jJDth.js",
       "resources/js/app/App.jsx",
-      "_GlobalBackgroundArt-SyzfTi-1.js"
+      "_GlobalBackgroundArt-BcQOXW87.js"
     ]
   },
   "resources/js/pages/ResetPasswordPage.jsx": {
-    "file": "assets/ResetPasswordPage-DUgO_CrJ.js",
+    "file": "assets/ResetPasswordPage-D93HNDLy.js",
     "name": "ResetPasswordPage",
     "src": "resources/js/pages/ResetPasswordPage.jsx",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor-D7iv-2Fn.js",
-      "_AuthLayout-FR0QAfp6.js",
+      "_vendor-B29Tx6S1.js",
+      "_AuthLayout-Ch8jJDth.js",
       "resources/js/app/App.jsx",
-      "_Notice-D6CIMY-X.js",
-      "_GlobalBackgroundArt-SyzfTi-1.js"
+      "_Notice-BzWxhvgp.js",
+      "_GlobalBackgroundArt-BcQOXW87.js"
     ]
   }
 }
