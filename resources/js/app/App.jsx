@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import { Toaster } from 'sonner';
 
 import FlashToastBridge from '@/components/feedback/FlashToastBridge';
+import AutoReloadOnDeploy from '@/components/feedback/AutoReloadOnDeploy';
 import AppErrorBoundary from '@/components/error/AppErrorBoundary';
 
 const applicationName = typeof document !== 'undefined' ? document.title || 'Toko Bangunan & Material TB Nur' : 'Toko Bangunan & Material TB Nur';
@@ -36,6 +37,7 @@ createInertiaApp({
                 <AppErrorBoundary pageProps={props.initialPage?.props}>
                     <App {...props} />
                     <FlashToastBridge />
+                    <AutoReloadOnDeploy />
                     <Toaster
                         position="top-right"
                         visibleToasts={4}
