@@ -30,6 +30,23 @@
                 50% { opacity: 0.5; }
             }
         </style>
+        <script>
+            (function() {
+                function removeLoader() {
+                    var loader = document.getElementById('initial-loader');
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(function() { if (loader && loader.parentNode) loader.parentNode.removeChild(loader); }, 300);
+                    }
+                }
+                if (document.readyState === 'complete') {
+                    setTimeout(removeLoader, 200);
+                } else {
+                    window.addEventListener('load', function() { setTimeout(removeLoader, 200); });
+                }
+                setTimeout(removeLoader, 2500);
+            })();
+        </script>
         <x-inertia::app />
     </body>
 </html>
