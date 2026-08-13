@@ -213,38 +213,44 @@ class TransactionDataSeeder extends Seeder
             }
         }
 
-        // 5. Sales Invoices (Rich Catalog, Varied Tactics & 18.5% YoY Growth in 2026)
+        // 5. Sales Invoices (Calibrated 25 Patterns for 7 Mixed-Color Varied-Confidence Apriori Rules)
         $salesPatterns = [
-            // Pair 1: Semen + Kuas (A ↔ C Blue)
+            // Rule 1 & 2: Semen [A] + Kuas [C] (Blue A↔C) & Semen [A] + Pasir [A] (Green A→A)
             [$pSemen => 15, $pKuas => 2, $pThn => 1],
-            [$pSemen => 12, $pKuas => 2, $pPasir => 1],
+            [$pSemen => 12, $pKuas => 2, $pPasir => 2],
             [$pSemen => 20, $pKuas => 3],
+            [$pSemen => 15, $pPasir => 2],
+            [$pSemen => 22, $pPasir => 2, $pBes12 => 4],
+            [$pSemen => 18], // Semen saja (varies Semen confidence to ~91.7% & ~85.7%)
+            [$pSemen => 10, $pBata => 500],
 
-            // Pair 2: Pasir + Thinner (A ↔ C Blue)
+            // Rule 3: Pipa [B] + Kran [B] (Orange B→B)
+            [$pPipa => 8,   $pKran => 3],
+            [$pPipa => 10,  $pKran => 2, $pLem => 2],
+            [$pPipa => 6], // Pipa saja (varies Pipa confidence to ~78.6%)
+            [$pPipa => 5,   $pBaja => 4],
+
+            // Rule 4: Sekop [C] + Kawat [C] (Purple C→C)
+            [$pSekop => 2,  $pKawat => 3],
+            [$pSekop => 1,  $pKawat => 2, $pPaku => 3],
+            [$pSekop => 2], // Sekop saja (varies Sekop confidence to ~73.3%)
+
+            // Rule 5: Pasir [A] + Thinner [C] (Blue A↔C)
             [$pPasir => 2,  $pThn => 2,  $pSemen => 10],
             [$pPasir => 3,  $pThn => 1],
+            [$pPasir => 2,  $pPipa => 4],
+            [$pPasir => 3], // Pasir saja (varies Pasir confidence to ~68.4%)
 
-            // Pair 3: Semen + Pasir (A → A Green)
-            [$pSemen => 15, $pPasir => 2],
-            [$pSemen => 22, $pPasir => 2, $pBes12 => 6],
-            [$pSemen => 10, $pPasir => 1, $pBes8 => 8],
-
-            // Pair 4: Semen3 + PasirC (A → A Green)
+            // Rule 6: Semen3 [A] + PasirC [A] (Green A→A)
             [$pSemen3 => 18, $pPasirC => 2],
             [$pSemen3 => 15, $pPasirC => 2, $pMortar => 4],
+            [$pSemen3 => 12], // Semen3 saja (varies Semen3 confidence to ~64.3%)
+            [$pSemen3 => 10, $pBes8 => 6],
 
-            // Pair 5: Pipa + Kran (B → B Orange)
-            [$pPipa => 8,   $pKran => 3],
-            [$pPipa12 => 10,$pKran => 2],
-            [$pPipa4 => 6,  $pKran => 2],
-
-            // Pair 6: Cat + Thinner (B → B Orange)
+            // Rule 7: Cat [B] + Thinner [B] (Orange B→B)
             [$pCat => 4,    $pThn => 2],
-            [$pDulux => 2,  $pThn => 1],
-
-            // Pair 7: Sekop + Kawat (C → C Purple)
-            [$pSekop => 2,  $pKawat => 3],
-            [$pPaku => 4,   $pKawat => 2, $pSekop => 1],
+            [$pCat => 3,    $pThn => 1,  $pKuas => 2],
+            [$pCat => 5], // Cat saja (varies Cat confidence to ~60.0%)
         ];
 
         $siIds = [];
