@@ -132,23 +132,13 @@ export default function InquiryWorkspaceView({
     const restrictionText = 'Anda tidak memiliki hak akses ke halaman ini. Hubungi Owner untuk menambahkan akses.';
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="flex flex-col flex-1 min-h-0 h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light overflow-hidden">
             <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
                         {searchControl ? (
                             <div className={searchControl.wrapperClassName ?? ''}>
                                 <InquiryControl control={searchControl} value={values[searchControl.id] ?? ''} onChange={handleChange} />
-                            </div>
-                        ) : null}
-
-                        {dateControls.length ? (
-                            <div className="flex items-center gap-1 shrink-0">
-                                {dateControls.map((control, index) => (
-                                    <div key={control.id ?? `control-date-${index}`} className={control.type === 'label' ? 'px-0.5 text-center text-sm text-text-darkest shrink-0' : 'w-[140px] sm:w-[155px] shrink-0'}>
-                                        <InquiryControl control={control} value={control.id ? values[control.id] ?? '' : ''} onChange={handleChange} />
-                                    </div>
-                                ))}
                             </div>
                         ) : null}
 
@@ -168,12 +158,18 @@ export default function InquiryWorkspaceView({
                                 label={exportAction.label}
                             />
                         ) : null}
+
+                        {selectControls.map((control) => (
+                            <div key={control.id} className={control.wrapperClassName ?? ''}>
+                                <InquiryControl control={control} value={values[control.id] ?? ''} onChange={handleChange} />
+                            </div>
+                        ))}
                     </div>
 
-                    {otherActions.length ? (
-                        <div className="flex items-center gap-2">
-                            {otherActions.map((action) => {
-                                if (action.id === 'switch-view') {
+                    {actions.length ? (
+                        <div className="flex flex-wrap items-center gap-2">
+                            {actions.map((action) => {
+                                if (action.type === 'switch-view') {
                                     return (
                                         <TransactionSwitchViewButton
                                             key={action.id}
@@ -207,8 +203,8 @@ export default function InquiryWorkspaceView({
                     hasSidePanel ? 'xl:grid-cols-[minmax(0,1fr)_300px] 2xl:grid-cols-[minmax(0,1fr)_380px]' : ''
                 }`.trim()}
             >
-                <div className="min-w-0 overflow-hidden flex flex-col">
-                    <div className="min-h-0 overflow-x-auto">
+                <div className="min-w-0 overflow-hidden flex flex-col flex-1">
+                    <div className="min-h-0 flex-1 flex flex-col overflow-hidden">
                         {activePageId === 'bank-history' || activePageId === 'account-history' ? (
                             <BankLedgerTable
                                 rows={isAccessRestricted ? [] : (rows ?? [])}
@@ -218,7 +214,7 @@ export default function InquiryWorkspaceView({
                                 className={config.table.tableClassName ?? 'min-w-[1200px]'}
                             />
                         ) : (
-                            <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="border-table-wrapper-border">
+                            <DataTable className={config.table.tableClassName ?? 'min-w-[680px] md:min-w-[780px]'} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
                                 <DataTableHeader className="bg-table-header-bg">
                                     <tr>
                                         {sortedRows.length > 0 && (

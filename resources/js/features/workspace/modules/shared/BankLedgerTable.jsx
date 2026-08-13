@@ -146,7 +146,7 @@ export default function BankLedgerTable({
     const hasData = rows.length > 0;
 
     return (
-        <DataTable className={className} wrapperClassName="border-table-wrapper-border">
+        <DataTable className={className} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
             <DataTableHeader className="bg-[#476278]">
                 <DataTableRow className="border-b-0">
                     <DataTableHead className="text-center w-[110px] whitespace-nowrap text-white">Tanggal</DataTableHead>
