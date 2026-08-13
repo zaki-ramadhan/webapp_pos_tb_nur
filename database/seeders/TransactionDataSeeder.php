@@ -154,23 +154,10 @@ class TransactionDataSeeder extends Seeder
         }
 
         // 3. Sales Orders (Pesanan Penjualan - 2025 & 2026)
+        // Dynamically distribute Sales Orders across all catalog products so 35+ products have active SO reservations
+        $allCatalogProducts = DB::table('products')->orderBy('id')->get()->toArray();
+        $totalCatalogCount = count($allCatalogProducts);
         $orderCount = 0;
-        $soItemPool = [
-            [$pSemen, 15, 78000],
-            [$pPipa, 10, 175000],
-            [$pBesi, 8, 95000],
-            [$pTpl, 5, 82000],
-            [$pCat, 3, 142000],
-            [$pKuas, 10, 18000],
-            [$pSng, 6, 68000],
-            [$pPaku, 4, 24000],
-            [$pKran, 2, 45000],
-            [$pKabel, 3, 210000],
-            [$pLem, 5, 12000],
-            [$pThn, 4, 35000],
-            [$pKrm, 8, 72000],
-            [$pMortar, 5, 98000],
-        ];
 
         for ($year = 2025; $year <= 2026; $year++) {
             $maxM = ($year === 2026) ? 8 : 12;
@@ -196,12 +183,27 @@ class TransactionDataSeeder extends Seeder
                     'updated_at' => $dt,
                 ]);
 
-                $item1 = $soItemPool[($orderCount * 2) % count($soItemPool)];
-                $item2 = $soItemPool[($orderCount * 2 + 1) % count($soItemPool)];
+                if ($totalCatalogCount > 0) {
+                    $p1Index = (($orderCount - 1) * 2) % $totalCatalogCount;
+                    $p2Index = (($orderCount - 1) * 2 + 1) % $totalCatalogCount;
 
-                $t1 = $insertLine($docId, 'sales_order', $item1[0], $item1[1], $item1[2], $dt);
-                $t2 = $insertLine($docId, 'sales_order', $item2[0], $item2[1], $item2[2], $dt);
-                DB::table('operation_documents')->where('id', $docId)->update(['subtotal' => $t1 + $t2, 'total_amount' => $t1 + $t2]);
+                    $prod1 = $allCatalogProducts[$p1Index];
+                    $prod2 = $allCatalogProducts[$p2Index];
+
+                    $qty1 = (($orderCount + $p1Index) % 10) + 3;
+                    $qty2 = (($orderCount + $p2Index) % 7) + 2;
+
+                    $price1 = (float) ($prod1->default_sale_price > 0 ? $prod1->default_sale_price : 50000);
+                    $price2 = (float) ($prod2->default_sale_price > 0 ? $prod2->default_sale_price : 35000);
+
+                    $t1 = $insertLine($docId, 'sales_order', $prod1->id, $qty1, $price1, $dt);
+                    $t2 = $insertLine($docId, 'sales_order', $prod2->id, $qty2, $price2, $dt);
+
+                    DB::table('operation_documents')->where('id', $docId)->update([
+                        'subtotal' => $t1 + $t2,
+                        'total_amount' => $t1 + $t2,
+                    ]);
+                }
             }
         }
 
