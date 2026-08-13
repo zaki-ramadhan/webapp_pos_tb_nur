@@ -341,7 +341,7 @@ export default function InventoryInquiryView({ config, pageId }) {
     }
 
     return (
-        <div className="flex min-h-full flex-col rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light">
+        <div className="flex flex-col flex-1 min-h-0 h-full rounded-[6px] border border-ui-border-medium bg-white px-3 py-3 shadow-card-light overflow-hidden">
             <fieldset disabled={isAccessRestricted} className="w-full border-0 p-0 m-0 disabled:opacity-60 disabled:pointer-events-none">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
@@ -349,8 +349,10 @@ export default function InventoryInquiryView({ config, pageId }) {
                             <div key={control.id} className={control.wrapperClassName ?? ''}>
                                 <InquiryControl
                                     control={control}
-                                    value={values[control.id] ?? ''}
+                                    value={control.id ? values[control.id] ?? '' : ''}
                                     onChange={handleChange}
+                                    onSelectLookup={handleLookupSelect}
+                                    onClearLookup={handleLookupClear}
                                     onRefresh={reload}
                                     exportConfig={{
                                         rows: sortedRows,
@@ -371,11 +373,11 @@ export default function InventoryInquiryView({ config, pageId }) {
                     </div>
 
                     {config.search ? (
-                        <div className="w-full lg:w-auto">
+                        <div className="w-full shrink-0 sm:w-auto">
                             <TextInput
                                 value={keyword}
                                 onChange={(event) => setKeyword(event.target.value)}
-                                placeholder={config.search.placeholder}
+                                placeholder={config.search.placeholder ?? 'Cari...'}
                                 trailing={<SearchIcon className="h-5 w-5 text-text-darkest" />}
                                 className={`h-[40px] rounded-[4px] border-ui-border ${config.search.className ?? ''}`.trim()}
                                 inputClassName="text-xs sm:text-sm text-brand-dark"
@@ -392,8 +394,8 @@ export default function InventoryInquiryView({ config, pageId }) {
                 </div>
             ) : null}
 
-            <div className="mt-3 min-h-0 overflow-x-auto">
-                <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="border-table-wrapper-border">
+            <div className="mt-3 flex flex-1 flex-col min-h-0 overflow-hidden">
+                <DataTable className={config.table.tableClassName ?? 'min-w-[1280px]'} wrapperClassName="flex-1 min-h-0 overflow-auto border-table-wrapper-border">
                     <DataTableHeader className="bg-table-header-bg">
                         <tr>
                             {firstColumnIsCheckbox ? (
