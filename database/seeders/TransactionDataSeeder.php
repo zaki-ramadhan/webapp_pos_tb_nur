@@ -227,13 +227,15 @@ class TransactionDataSeeder extends Seeder
             // Rule 3: Pipa [B] + Kran [B] (Orange B→B)
             [$pPipa => 8,   $pKran => 3],
             [$pPipa => 10,  $pKran => 2, $pLem => 2],
-            [$pPipa => 6], // Pipa saja (varies Pipa confidence to ~78.6%)
+            [$pPipa => 6], // Pipa saja
+            [$pKran => 2], // Kran saja (lowers Kran->Pipa confidence from 100% to ~80%)
             [$pPipa => 5,   $pBaja => 4],
 
             // Rule 4: Sekop [C] + Kawat [C] (Purple C→C)
             [$pSekop => 2,  $pKawat => 3],
             [$pSekop => 1,  $pKawat => 2, $pPaku => 3],
-            [$pSekop => 2], // Sekop saja (varies Sekop confidence to ~73.3%)
+            [$pKawat => 2], // Kawat saja (lowers Kawat->Sekop confidence from 100% to ~75%)
+            [$pSekop => 2], // Sekop saja
 
             // Rule 5: Pasir [A] + Thinner [C] (Blue A↔C)
             [$pPasir => 2,  $pThn => 2,  $pSemen => 10],
@@ -244,7 +246,8 @@ class TransactionDataSeeder extends Seeder
             // Rule 6: Semen3 [A] + PasirC [A] (Green A→A)
             [$pSemen3 => 18, $pPasirC => 2],
             [$pSemen3 => 15, $pPasirC => 2, $pMortar => 4],
-            [$pSemen3 => 12], // Semen3 saja (varies Semen3 confidence to ~64.3%)
+            [$pSemen3 => 12], // Semen3 saja (lowers Semen3->PasirC confidence to ~82%)
+            [$pPasirC => 2],  // PasirC saja (lowers PasirC->Semen3 confidence to ~78%)
             [$pSemen3 => 10, $pBes8 => 6],
 
             // Rule 7: Cat [B] + Thinner [B] (Orange B→B)
