@@ -156,7 +156,7 @@ export default function ItemsServicesFormView({
         }
     }, [filteredTabs, rightTabs, activeTabId]);
 
-    const saveDisabled = saving || !isDirty || !values.name?.trim() || (isDetail && !values.code?.trim());
+    const saveDisabled = saving || !values.name?.trim() || (isDetail && !values.code?.trim());
 
     useWorkspaceDirtyRegistration({
         pageId,

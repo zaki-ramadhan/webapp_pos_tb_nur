@@ -205,7 +205,7 @@ export default function TransactionApprovalFormView({
         <ModuleFormTemplate
             form={form}
             saving={saving}
-            saveDisabled={saving || !isDirty}
+            saveDisabled={saving}
             status={status}
             onSave={handleSave}
         >

@@ -1,51 +1,29 @@
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 
 const WorkspaceDraftStateContext = createContext(null);
-
-const DIRTY_PREFIX = '*';
 
 export function stripDirtyPrefix(label = '') {
     return String(label ?? '').replace(/^\*/, '');
 }
 
-export function renderTabLabel(label, active = false, isPrimary = false) {
-    if (typeof label === 'string' && label.startsWith('*')) {
-        const cleanLabel = label.slice(1);
-        const asteriskColor = isPrimary && active ? 'text-white' : 'text-tab-active-border-t';
-        return (
-            <span className="inline-flex items-baseline min-w-0 w-full">
-                <sup className={`text-[0.85em] font-semibold select-none align-super relative -top-[0.05em] mr-0.5 ${asteriskColor}`}>*</sup>
-                <span className="truncate">{cleanLabel}</span>
-            </span>
-        );
-    }
-    return label;
+export function renderTabLabel(label) {
+    return stripDirtyPrefix(label);
 }
 
-export function withDirtyLabel(label, dirty) {
-    const normalizedLabel = stripDirtyPrefix(label);
-
-    return dirty ? `${DIRTY_PREFIX}${normalizedLabel}` : normalizedLabel;
+export function withDirtyLabel(label) {
+    return stripDirtyPrefix(label);
 }
 
-export function isWorkspaceTabDirty(dirtyTabs, pageId, tabId) {
-    if (!pageId || !tabId) {
-        return false;
-    }
-
-    return Boolean(dirtyTabs?.[pageId]?.[tabId]);
+export function isWorkspaceTabDirty() {
+    return false;
 }
 
-export function hasDirtyTabsForPage(dirtyTabs, pageId) {
-    if (!pageId) {
-        return false;
-    }
-
-    return Object.values(dirtyTabs?.[pageId] ?? {}).some(Boolean);
+export function hasDirtyTabsForPage() {
+    return false;
 }
 
-export function hasAnyDirtyTabs(dirtyTabs) {
-    return Object.values(dirtyTabs ?? {}).some((pageTabs) => Object.values(pageTabs ?? {}).some(Boolean));
+export function hasAnyDirtyTabs() {
+    return false;
 }
 
 export function WorkspaceDraftStateProvider({ value, children }) {
@@ -66,27 +44,6 @@ export function useWorkspaceDraftState() {
     return context;
 }
 
-export function useWorkspaceDirtyRegistration({
-    pageId,
-    tabId,
-    dirty,
-    enabled = true,
-}) {
-    const { setTabDirty, clearTabDirty } = useWorkspaceDraftState();
-
-    useEffect(() => {
-        if (!enabled || !pageId || !tabId) {
-            return undefined;
-        }
-
-        if (dirty) {
-            setTabDirty(pageId, tabId);
-        } else {
-            clearTabDirty(pageId, tabId);
-        }
-
-        return () => {
-            clearTabDirty(pageId, tabId);
-        };
-    }, [clearTabDirty, dirty, enabled, pageId, setTabDirty, tabId]);
+export function useWorkspaceDirtyRegistration() {
+    // Option 1: No-op. All tabs remain clean without dirty asterisk indicators or modal close blocks.
 }
