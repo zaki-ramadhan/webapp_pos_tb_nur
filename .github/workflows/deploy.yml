@@ -6,37 +6,18 @@ on:
 
 jobs:
   deploy:
-    name: SSH Deploy
+    name: Webhook Deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.CPANEL_SSH_HOST }}
-          username: ${{ secrets.CPANEL_SSH_USER }}
-          key: ${{ secrets.CPANEL_SSH_PRIVATE_KEY }}
-          port: 2222
-          script: |
-            set -e
-
-            cd ~/webapp_pos_tb_nur
-
-            # Pull latest code (.env is untracked, aman)
-            git fetch origin
-            git reset --hard origin/main
-
-            # Sync compiled assets ke public_html
-            rm -rf ~/public_html/build
-            cp -rf public/build ~/public_html/
-
-            # Sync webp assets jika ada perubahan
-            cp -f public/*.webp ~/public_html/ 2>/dev/null || true
-
-            # Clear Laravel caches
-            php artisan config:clear
-            php artisan view:clear
-            php artisan route:clear
-
-            echo "✅ Deploy selesai: $(date '+%Y-%m-%d %H:%M:%S')"
+      - name: Trigger deploy webhook
+        run: |
+          RESPONSE=$(curl -s -o /tmp/deploy_out.txt -w "%{http_code}" \
+            "https://tb-nur.shop/deploy.php?token=${{ secrets.DEPLOY_TOKEN }}")
+          cat /tmp/deploy_out.txt
+          if [ "$RESPONSE" != "200" ]; then
+            echo "Deploy failed with HTTP $RESPONSE"
+            exit 1
+          fi
+          echo "✅ Deploy berhasil!"
