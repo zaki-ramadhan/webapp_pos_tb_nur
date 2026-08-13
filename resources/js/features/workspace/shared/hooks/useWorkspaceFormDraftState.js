@@ -17,9 +17,20 @@ export function useWorkspaceFormDraftState({
 
     const prevRecordId = useRef(recordId);
 
-    // Sync when recordId changes (e.g. switching tabs / opening new record)
+    // Calculate isDirty atomically: true ONLY if current values differ from savedSnapshot
+    const isDirty = useMemo(
+        () => !areComparableValuesEqual(state.savedSnapshot, state.values),
+        [state.savedSnapshot, state.values]
+    );
+
+    const isDirtyRef = useRef(isDirty);
+    isDirtyRef.current = isDirty;
+
+    // Sync when recordId changes OR when initialValues update while form is pristine (!isDirty)
     useEffect(() => {
-        if (recordId !== prevRecordId.current) {
+        const recordIdChanged = recordId !== prevRecordId.current;
+
+        if (recordIdChanged || !isDirtyRef.current) {
             prevRecordId.current = recordId;
             setState({
                 values: initialValues,
@@ -28,12 +39,6 @@ export function useWorkspaceFormDraftState({
             onSync?.(initialValues);
         }
     }, [recordId, initialValues, onSync]);
-
-    // Calculate isDirty atomically: true ONLY if current values differ from savedSnapshot
-    const isDirty = useMemo(
-        () => !areComparableValuesEqual(state.savedSnapshot, state.values),
-        [state.savedSnapshot, state.values]
-    );
 
     // Automatically register dirty state with WorkspaceTabStore
     useWorkspaceDirtyRegistration({
