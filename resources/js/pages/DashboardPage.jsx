@@ -9,13 +9,6 @@ export default function DashboardPage({ dashboard, widgets }) {
     const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
     const [topbarHeight, setTopbarHeight] = useState(0);
 
-    // 🔴 CI/CD TEST — HAPUS SETELAH VERIFIKASI
-    const cicdTestDiv = (
-        <div style={{ position: 'fixed', top: 80, right: 24, zIndex: 9999, background: 'red', color: 'white', padding: '16px 24px', borderRadius: 12, fontSize: 18, fontWeight: 700, boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
-            🚀 CI/CD BERHASIL!
-        </div>
-    );
-
 
     useEffect(() => {
         if (!topBarRef.current) {
@@ -43,7 +36,6 @@ export default function DashboardPage({ dashboard, widgets }) {
 
     return (
         <WorkspaceLayout title={dashboard.sample.label}>
-            {cicdTestDiv}
             <div className="flex h-screen flex-col overflow-hidden">
                 <div ref={topBarRef} className="fixed inset-x-0 top-0 z-50">
                     <DashboardTopBar
