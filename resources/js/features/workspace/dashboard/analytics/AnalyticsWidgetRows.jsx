@@ -57,7 +57,7 @@ export function RuleSummaryRow({ rule }) {
                                     );
                                 }
                             }}
-                            className="font-bold underline text-blue-700 hover:text-blue-900 cursor-pointer decoration-2 underline-offset-2 transition-colors text-left"
+                            className="font-medium underline text-blue-700 hover:text-blue-900 cursor-pointer underline-offset-2 transition-colors text-left"
                             title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
                         >
                             {rule.antecedent}
@@ -87,7 +87,7 @@ export function RuleSummaryRow({ rule }) {
                                     );
                                 }
                             }}
-                            className="font-bold underline text-blue-700 hover:text-blue-900 cursor-pointer decoration-2 underline-offset-2 transition-colors text-left"
+                            className="font-medium underline text-blue-700 hover:text-blue-900 cursor-pointer underline-offset-2 transition-colors text-left"
                             title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
                         >
                             {rule.consequent}

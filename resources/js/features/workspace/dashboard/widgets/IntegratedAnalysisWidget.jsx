@@ -187,7 +187,7 @@ export default function IntegratedAnalysisWidget({
                                                                 );
                                                             }
                                                         }}
-                                                        className="text-sm font-bold text-blue-700 hover:text-blue-900 underline decoration-2 underline-offset-2 transition-colors truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px] text-left cursor-pointer"
+                                                        className="text-sm font-medium text-blue-700 hover:text-blue-900 underline underline-offset-2 transition-colors truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px] text-left cursor-pointer"
                                                         title={`Klik untuk membuka halaman & detail data ${rule.antecedent}`}
                                                     >
                                                         {rule.antecedent}
@@ -224,7 +224,7 @@ export default function IntegratedAnalysisWidget({
                                                                 );
                                                             }
                                                         }}
-                                                        className="text-sm font-bold text-blue-700 hover:text-blue-900 underline decoration-2 underline-offset-2 transition-colors truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px] text-left cursor-pointer"
+                                                        className="text-sm font-medium text-blue-700 hover:text-blue-900 underline underline-offset-2 transition-colors truncate max-w-[200px] sm:max-w-[380px] lg:max-w-[480px] text-left cursor-pointer"
                                                         title={`Klik untuk membuka halaman & detail data ${rule.consequent}`}
                                                     >
                                                         {rule.consequent}
