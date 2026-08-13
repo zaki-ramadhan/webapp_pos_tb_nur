@@ -85,6 +85,16 @@ export function buildOperationDocumentTableRows(pageId, records) {
         const partnerName = record.customer?.name ?? record.supplier?.name ?? '';
         const totalText = formatCurrencyValue(record.total_amount ?? record.subtotal ?? record.paid_amount ?? 0);
 
+        const entryDateObj = record.entry_date ? new Date(record.entry_date) : null;
+        const ageDays = entryDateObj && !isNaN(entryDateObj.getTime())
+            ? Math.max(0, Math.floor((new Date().getTime() - entryDateObj.getTime()) / (1000 * 60 * 60 * 24)))
+            : 0;
+
+        const todayIso = new Date().toISOString().slice(0, 10);
+        const shipDate = record.shipping_date ? String(record.shipping_date).slice(0, 10) : todayIso;
+        const isDelivered = shipDate <= todayIso;
+        const shippingStatusLabel = isDelivered ? 'Terkirim' : 'Belum Dikirim';
+
         return {
             id: String(record.id),
             __backendRecord: record,
@@ -97,7 +107,8 @@ export function buildOperationDocumentTableRows(pageId, records) {
             shippingShort: truncateText(record.shipping_method ?? ''),
             status: mapDocumentStatus(record.status ?? 'Draft'),
             requiredIdType: record.metadata?.required_id_type ?? (record.customer?.tax_number ? (String(record.customer.tax_number).length >= 16 ? 'NIK' : 'NPWP') : '-'),
-            age: record.metadata?.age_days ?? '',
+            shippingStatusLabel,
+            age: ageDays,
             total: totalText,
             statusTone: String(record.status ?? '').toLowerCase().includes('lunas') || String(record.status ?? '').toLowerCase().includes('proses')
                 ? 'processed'

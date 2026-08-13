@@ -81,7 +81,7 @@ export const salesInvoiceListColumns = [
     { id: 'customerShort', label: 'Pelanggan', widthClassName: 'w-[190px]', align: 'left' },
     { id: 'notes', label: 'Keterangan', widthClassName: 'w-[48%]', align: 'left' },
     { id: 'status', label: 'Status', widthClassName: 'w-[150px]', align: 'left' },
-    { id: 'requiredIdType', label: 'Tipe ID Waj...', widthClassName: 'w-[100px]', align: 'left' },
+    { id: 'shippingStatusLabel', label: 'Pengiriman', widthClassName: 'w-[130px]', align: 'left' },
     { id: 'age', label: 'Umur (hr)', widthClassName: 'w-[100px]', align: 'right' },
     { id: 'total', label: 'Total', widthClassName: 'w-[160px]', align: 'right' },
 ];
