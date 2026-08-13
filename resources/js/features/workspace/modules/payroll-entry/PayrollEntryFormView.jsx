@@ -329,12 +329,7 @@ export default function PayrollEntryFormView({
             });
     }, [config.dockActions, isDetail, saveDisabled, saving, onSave, onRequestDelete]);
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     const resolvedConfig = useMemo(() => {
         return {

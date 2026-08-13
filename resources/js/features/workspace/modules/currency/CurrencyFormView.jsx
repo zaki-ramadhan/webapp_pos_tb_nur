@@ -84,12 +84,7 @@ export default function CurrencyFormView({
         saveDisabled,
     } = useTransactionForm({ validationMessage, isDirty });
 
-    useWorkspaceDirtyRegistration({
-        pageId: page.id,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(activeLevel2Tab?.id),
-    });
+
 
     async function handleSave() {
         if (validationMessage) {

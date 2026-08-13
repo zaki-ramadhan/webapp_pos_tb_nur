@@ -217,12 +217,7 @@ export default function SalesDocumentFormView({
 
 
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     function updateItems(updater) {
         setValues((current) => {

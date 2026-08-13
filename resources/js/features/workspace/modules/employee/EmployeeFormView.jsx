@@ -180,12 +180,7 @@ export default function EmployeeFormView({
         saveDisabled,
     } = useTransactionForm({ validationMessage, isDirty });
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     async function handleSave() {
         const fieldErrors = validateEmployeeFields(values);

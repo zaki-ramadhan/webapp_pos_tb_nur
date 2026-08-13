@@ -128,12 +128,7 @@ export default function SimpleMasterFormView({
         saveDisabled,
     } = useTransactionForm({ validationMessage, isDirty });
 
-    useWorkspaceDirtyRegistration({
-        pageId: page.id,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(activeLevel2Tab?.id),
-    });
+
 
     async function handleAction(actionId) {
         if (!backendConfig) {

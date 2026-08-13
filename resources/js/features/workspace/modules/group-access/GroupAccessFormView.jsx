@@ -67,12 +67,7 @@ export default function GroupAccessFormView({ pageId, activeLevel2Tab, form, onO
         saveDisabled,
     } = useTransactionForm({ validationMessage, isDirty });
 
-    useWorkspaceDirtyRegistration({
-        pageId,
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(pageId && activeLevel2Tab?.id),
-    });
+
 
     async function handleSave() {
         if (validationMessage) {

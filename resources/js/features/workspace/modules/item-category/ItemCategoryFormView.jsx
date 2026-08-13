@@ -87,12 +87,7 @@ export default function ItemCategoryFormView({
         }));
     }
 
-    useWorkspaceDirtyRegistration({
-        pageId: 'item-category',
-        tabId: activeLevel2Tab?.id,
-        dirty: isDirty,
-        enabled: Boolean(activeLevel2Tab?.id),
-    });
+
 
     async function handleSave() {
         if (!values.name?.trim()) {
