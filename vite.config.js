@@ -31,21 +31,12 @@ export default defineConfig({
         },
     },
     build: {
-        chunkSizeWarningLimit: 1000,
+        chunkSizeWarningLimit: 2000,
         rollupOptions: {
             output: {
                 manualChunks(id) {
                     if (id.includes('node_modules')) {
-                        if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('canvg') || id.includes('xlsx')) {
-                            return 'vendor-export';
-                        }
-                        if (id.includes('chart.js') || id.includes('react-chartjs-2')) {
-                            return 'vendor-charts';
-                        }
-                        if (id.includes('lucide-react')) {
-                            return 'vendor-icons';
-                        }
-                        return 'vendor-core';
+                        return 'vendor';
                     }
                 }
             }
