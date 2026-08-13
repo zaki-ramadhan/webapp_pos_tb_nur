@@ -9,36 +9,35 @@ export function useWorkspaceFormDraftState({
     tabId,
     onSync,
 }) {
-    // Single atomic state container to prevent race conditions between values and savedSnapshot
+    // Single atomic state container to prevent race conditions
     const [state, setState] = useState(() => ({
         values: initialValues,
         savedSnapshot: initialValues,
+        hasUserEdited: false,
     }));
 
     const prevRecordId = useRef(recordId);
 
-    // Calculate isDirty atomically: true ONLY if current values differ from savedSnapshot
+    // Calculate isDirty: ONLY true if user has actively edited AND values differ from savedSnapshot
     const isDirty = useMemo(
-        () => !areComparableValuesEqual(state.savedSnapshot, state.values),
-        [state.savedSnapshot, state.values]
+        () => state.hasUserEdited && !areComparableValuesEqual(state.savedSnapshot, state.values),
+        [state.hasUserEdited, state.savedSnapshot, state.values]
     );
 
-    const isDirtyRef = useRef(isDirty);
-    isDirtyRef.current = isDirty;
-
-    // Sync when recordId changes OR when initialValues update while form is pristine (!isDirty)
+    // Sync when recordId changes OR when initialValues update while form is pristine (!hasUserEdited)
     useEffect(() => {
         const recordIdChanged = recordId !== prevRecordId.current;
 
-        if (recordIdChanged || !isDirtyRef.current) {
+        if (recordIdChanged || !state.hasUserEdited) {
             prevRecordId.current = recordId;
-            setState({
+            setState((prev) => ({
+                ...prev,
                 values: initialValues,
                 savedSnapshot: initialValues,
-            });
+            }));
             onSync?.(initialValues);
         }
-    }, [recordId, initialValues, onSync]);
+    }, [recordId, initialValues, onSync, state.hasUserEdited]);
 
     // Automatically register dirty state with WorkspaceTabStore
     useWorkspaceDirtyRegistration({
@@ -48,35 +47,39 @@ export function useWorkspaceFormDraftState({
         enabled: Boolean(pageId && tabId),
     });
 
-    // Update user form values
+    // Update user form values (called when user edits a field)
     const setValues = useCallback((updater) => {
         setState((prev) => {
             const nextValues = typeof updater === 'function' ? updater(prev.values) : updater;
             return {
                 ...prev,
                 values: nextValues,
+                hasUserEdited: true, // Mark that user has actively modified form
             };
         });
     }, []);
 
-    // Mark form clean upon successful save (atomically syncs baseline to values)
+    // Mark form clean upon successful save (resets hasUserEdited flag and syncs savedSnapshot)
     const markClean = useCallback((newBaseline = null) => {
         setState((prev) => {
             const nextBaseline = newBaseline ?? prev.values;
             return {
                 values: nextBaseline,
                 savedSnapshot: nextBaseline,
+                hasUserEdited: false, // Reset user edit flag
             };
         });
     }, []);
 
-    // Update DB baseline without marking user edits dirty (e.g. for background item-locations fetch)
+    // Update DB baseline without marking user edits (e.g. background item-locations fetch)
     const updateDbBaseline = useCallback((updater) => {
         setState((prev) => {
             const nextValues = typeof updater === 'function' ? updater(prev.values) : updater;
             return {
+                ...prev,
                 values: nextValues,
                 savedSnapshot: nextValues,
+                // Preserves existing hasUserEdited state
             };
         });
     }, []);
@@ -88,5 +91,6 @@ export function useWorkspaceFormDraftState({
         markClean,
         updateDbBaseline,
         savedSnapshot: state.savedSnapshot,
+        hasUserEdited: state.hasUserEdited,
     };
 }
