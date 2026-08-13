@@ -201,6 +201,13 @@ export default function IntegratedAnalysisWidget({
                         <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
                             {(widget.rules ?? []).map((rule, idx) => {
                                 const tactic = getStrategyTactic(rule.antecedentAbc, rule.consequentAbc, rule.antecedent, rule.consequent);
+                                const liftVal = parseFloat(rule.lift ?? '0');
+                                let strengthText = 'Sedang';
+                                if (liftVal >= 3.0) strengthText = 'Sangat Kuat';
+                                else if (liftVal >= 1.8) strengthText = 'Kuat';
+                                else if (liftVal >= 1.2) strengthText = 'Sedang';
+                                else strengthText = 'Pendukung';
+
                                 return (
                                     <div key={rule.id ?? idx} className="rounded-lg border border-slate-200 bg-white p-3 hover:border-blue-400 hover:shadow-badge-group-a-glow transition-all duration-150">
                                         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -242,17 +249,17 @@ export default function IntegratedAnalysisWidget({
                                             </div>
 
                                             <div className="flex flex-wrap items-center gap-2 shrink-0">
-                                                <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium border shrink-0 ${tactic.bg}`}>
+                                                <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold border shrink-0 ${tactic.bg}`}>
                                                     <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tactic.badgeBg }}></span>
                                                     {tactic.title}
                                                 </span>
 
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50/50 border border-blue-100 px-2 py-1 text-sm font-medium text-blue-570 shrink-0" title="Tingkat Kepastian (Confidence)">
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-800 shrink-0" title="Tingkat Kepastian (Confidence)">
                                                     Confidence: {rule.confidence}
                                                 </span>
 
-                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-sm font-semibold text-emerald-800 shrink-0" title="Kekuatan Hubungan (Lift Ratio)">
-                                                    Lift Ratio: {rule.lift} ({tactic.strengthText})
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-800 shrink-0" title="Kekuatan Hubungan (Lift Ratio)">
+                                                    Lift Ratio: {rule.lift} ({strengthText})
                                                 </span>
                                             </div>
                                         </div>
