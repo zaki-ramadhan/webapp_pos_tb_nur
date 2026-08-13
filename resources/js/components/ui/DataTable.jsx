@@ -18,7 +18,7 @@ export function DataTable({ className = '', wrapperClassName = '', children, ...
 
     return (
         <div
-            className={`w-full overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-[4px] border border-table-border ${wrapperClassName}`.trim()}
+            className={`w-full overflow-auto overscroll-x-contain rounded-[4px] border border-table-border ${wrapperClassName}`.trim()}
         >
             <table className={`w-full min-w-full border-collapse ${cleanedClassName}`.trim()} {...props}>
                 {children}
@@ -29,7 +29,7 @@ export function DataTable({ className = '', wrapperClassName = '', children, ...
 
 export function DataTableHeader({ className = '', children, ...props }) {
     return (
-        <thead className={`bg-table-header-bg text-white ${className}`.trim()} {...props}>
+        <thead className={`bg-table-header-bg text-white sticky top-0 z-10 ${className}`.trim()} {...props}>
             {children}
         </thead>
     );
