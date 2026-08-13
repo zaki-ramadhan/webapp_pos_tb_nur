@@ -241,11 +241,17 @@ class DashboardAnalyticsQueryService
                         })->orWhere(function ($sub) {
                             $sub->where('document_type', 'expense_entry')
                                 ->whereIn('status', ['Posted', 'Sedang diproses', 'Terbayar', 'Lunas']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'cash_payment')
+                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
+                        })->orWhere(function ($sub) {
+                            $sub->where('document_type', 'purchase_payment')
+                                ->whereIn('status', ['Posted', 'Lunas', 'Terbayar']);
                         });
                     })
                     ->sum('total_amount');
                 $cashInSeries[] = (float) $inflow;
-                $cashOutSeries[] = - (float) $outflow;
+                $cashOutSeries[] = (float) $outflow;
             }
  
             $totalGaji = DB::table('operation_documents')
