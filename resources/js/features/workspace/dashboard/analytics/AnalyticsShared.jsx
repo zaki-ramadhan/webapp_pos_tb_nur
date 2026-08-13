@@ -44,7 +44,6 @@ export function HighlightProductText({ text, itemA, itemAId, itemB, itemBId }) {
                             type="button"
                             onClick={(e) => handleOpenProduct(e, itemAId, itemA)}
                             className="font-medium underline text-blue-700 hover:text-blue-900 cursor-pointer underline-offset-2 transition-colors mx-0.5 inline-baseline focus:outline-none focus:ring-1 focus:ring-blue-400 rounded-sm"
-                            title={`Klik untuk membuka halaman & detail data ${itemA}`}
                         >
                             {part}
                         </button>
@@ -58,7 +57,6 @@ export function HighlightProductText({ text, itemA, itemAId, itemB, itemBId }) {
                             type="button"
                             onClick={(e) => handleOpenProduct(e, itemBId, itemB)}
                             className="font-medium underline text-blue-700 hover:text-blue-900 cursor-pointer underline-offset-2 transition-colors mx-0.5 inline-baseline focus:outline-none focus:ring-1 focus:ring-blue-400 rounded-sm"
-                            title={`Klik untuk membuka halaman & detail data ${itemB}`}
                         >
                             {part}
                         </button>
